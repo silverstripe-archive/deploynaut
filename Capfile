@@ -1,27 +1,26 @@
 load 'deploy'
 
+# ---- load tasks from ./config dir ---- 
 Dir['config/*.rb'].each { |task| load(task) }
 
-set :stages, %w(localhost testing staging production)
-set :default_stage, "localhost"
+# ---- Load multistage extension ---- 
+set :stages, %w(testing staging production)
+#set :default_stage, "testing"
 require 'capistrano/ext/multistage'
 
-# This will be used for /sites/:application where all builds are released
-set :application, "aa.co.nz"
+# ---- What directories are shared between releases ---- 
 set :shared_children, %w(assets)
 
-ssh_options[:forward_agent] = true
+# ---- change the effective symlink to www ----
+set :current_dir, 'www'
 
-# ---- Keep at the most five releases
+# ---- Keep at the most five releases ----
 set :keep_releases, 5
 
-# ---------------- Users and SSH ----------------
-# As which user will we ssh login and execute remote commands as
-set :user, 'deploy'
-# This will be used to chown the deployed files, make sure that the depl
-set :webserver_group, "sites"
-
+# ---- Users and SSH ---- 
+# Prevent asking for passwords
+set :password, false
 set :use_sudo, false
 
+# ---- Build directory ---- 
 set :build_archive, "../builds"
-set :webserver_group, "sites"
