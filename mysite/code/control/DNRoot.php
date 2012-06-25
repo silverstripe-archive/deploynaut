@@ -3,29 +3,37 @@
 class DNRoot extends Controller {
 	protected $data;
 	
-	function Link() {
+	
+	public function init() {
+		parent::init();
+		Requirements::javascript('sapphire/thirdparty/jquery/jquery.js');
+		Requirements::javascript('themes/deploynaut/javascript/deploynaut.js');
+	}
+	
+	public function Link() {
 		return "naut/";
 	}
-	function index() {
+	
+	public function index() {
 		return $this->redirect($this->Link() . 'builds');
 	}
 
-	function DNData() {
+	public function DNData() {
 		if(!$this->data) $this->data = new DNData(BASE_PATH . "/builds", array(
-			"dojo", "staging", "live"
-		), new DemoDeploymentBackend());
+			"idp_dojo", "dojo", "staging", "live"
+		), new CapistranoDeploymentBackend());
 		return $this->data;
 	}
 	
-	function DNBuilds() {
+	public function DNBuilds() {
 		return $this->DNData()->DNBuildList();
 	}
 	
-	function DNEnvironments() {
+	public function DNEnvironments() {
 		return $this->DNData()->DNEnvironmentList();
 	}
 	
-	function environment() {
+	public function environment() {
 		$env = $this->DNData()->DNEnvironmentList()->byName($this->urlParams['ID']);
 		return array(
 			"DNEnvironment" => $env,
@@ -33,41 +41,65 @@ class DNRoot extends Controller {
 		);
 	}
 
-	function build() {
+	public function build() {
 		return array(
 			"DNBuild" => $this->DNData()->DNBuildList()->byName($this->urlParams['ID']),
 		);
 	}
 	
-	function getDeployForm($environmentName) {
+	public function getDeployForm($environmentName) {
 		$buildList = array('' => '(Choose a build)');
 		foreach($this->DNData()->DNBuildList() as $build) {
 			$buildList[$build->FullName()] = $build->Name();
 		}
 		
-		return new Form($this, 'DeployForm', new FieldList(
+		$form = new Form($this, 'DeployForm', new FieldList(
 			new HiddenField('EnvironmentName', '', $environmentName),
 			new DropdownField("BuildName", "Build", $buildList)
 		), new FieldList(
 			new FormAction('doDeploy', "Deploy to " . $environmentName)
 		));
+		$form->disableSecurityToken();
+		return $form;
 	}
-	function DeployForm() {
+	
+	public function DeployForm() {
 		// TODO: This reference to $_REQUEST is a bit of a hack
 		return $this->getDeployForm($_REQUEST['EnvironmentName']);
 	}
-	function doDeploy($data, $form) {
+	
+	public function doDeploy($data, $form) {
 		$build = $this->DNData()->DNBuildList()->byName($data['BuildName']);
 		$environment = $this->DNData()->DNEnvironmentList()->byName($data['EnvironmentName']);
 		
-		echo "<h2>Deploying " . $build->Name() . " to " . $environment->Name() . "</h2>";
-		echo "<pre>\n";
-		flush();
-		
-		$this->DNData()->Backend()->deploy($environment->Name(), $build->FullName(), $build->Filename());
-		
-		echo "</pre>\n";
-		echo "<p><a href=".  Director::baseURL() . "/naut/environment/" . $environment->Name() . ">done</a></p>";
+		return $this->customise(new ArrayData(array(
+			'EnvironmentName' => $environment->Name(),
+			'BuildFullName' => $build->FullName(),
+			'BuildFileName' => $build->Filename()
+		)))->renderWith('DNRoot_deploy');
+	}
+	
+	/**
+	 * Do the actual deploy
+	 *
+	 * @param SS_HTTPRequest $request 
+	 */
+	public function deploy(SS_HTTPRequest $request) {
+		$envName = $request->postVar('EnvironmentName');
+		$buildFullName = $request->postVar('BuildFullName');
+		$buildFileName = $request->postVar('BuildFileName');
+		$this->DNData()->Backend()->deploy($envName, $buildFullName, $buildFileName);
+	}
+	
+	/**
+	 *
+	 * @return string
+	 */
+	public function getlog() {
+		$lines = file(ASSETS_PATH . '/'."deploy-log.txt");
+		foreach($lines as $line) {
+			echo $line;
+		}
 	}
 	
 }

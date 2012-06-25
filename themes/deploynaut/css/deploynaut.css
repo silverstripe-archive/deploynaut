@@ -86,3 +86,18 @@ th, td {
 	clear:both;
 	height: 1px;
 }
+
+#deploy_log,
+#deploy_action {
+	background-color: #333;
+	padding: 5px;
+	border: #000 1px solid;
+	color: #fff;
+	font-family: "Andale Mono", "Monotype.com", monospace;
+	font-size: 12px;
+	white-space: pre-wrap;       /* css-3 */
+	white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+	white-space: -pre-wrap;      /* Opera 4-6 */
+	white-space: -o-pre-wrap;    /* Opera 7 */
+	word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
