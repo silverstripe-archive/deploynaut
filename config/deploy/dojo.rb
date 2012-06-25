@@ -6,9 +6,10 @@ set :deploy_to, "/sites/#{application}"
 set :webserver_group, "sites"
 
 ## Servers
-ssh_options[:port] = 2222
-server 'oscar.wgtn.silverstripe.com', :web, :db
+ssh_options[:port] = 22
+server 'localhost', :web, :db
 
 ## SSH options 
-set :user, 'sites'
+set :user, 'vagrant'
+set :password, 'vagrant'
 ssh_options[:forward_agent] = true

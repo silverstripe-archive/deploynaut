@@ -1,5 +1,5 @@
 ## Application name and deployment path
-set :application, "aa.co.nz"
+set :application, "idp.aa.dojo"
 set :deploy_to, "/sites/#{application}"
 
 # This will be used to chown the deployed files, make sure that the deploy user is part of this group

@@ -8,23 +8,39 @@ namespace :deploy do
 
 	# Overriden so we are using our code_deploy strategy with tar.gz uploading
 	task :update_code, :except => { :no_release => true } do
-		on_rollback { run "rm -rf #{release_path}; true" }
+		on_rollback { 
+			# @todo move into deploy::rollback if applicable
+			if latest_release
+				if ('true' ==  capture("if [ -e #{latest_release}/assets ]; then echo 'true'; fi").strip)
+					# Set permissions for files
+					run "find #{latest_release}/assets -not -perm 2775 -type d -exec chmod 2775 {} \\;"
+					# Set permissions for files
+					run "find #{latest_release}/assets -not -perm 664 -type f -exec chmod 664 {} \\;"
+				end
+				run "rm -rf #{release_path}; true"
+			end
+		}
 		code_deploy!
 		finalize_update
 	end
 
 	# distribute the tar.gz and unpack it on the target servers
 	task :code_deploy! do
-		top.upload "#{build_archive}/#{build_name}.tar.gz", "#{release_path}.tar.gz"
-		run "tar -C #{releases_path} -xzf #{release_path}.tar.gz"
-		run "rm #{release_path}.tar.gz && mv #{releases_path}/#{build_name} #{release_path}"
+		# Dont upload and unpack the release if it's been deployed previously
+		unless releases.include?(build_name) 
+			top.upload "#{build_archive}/#{build_name}.tar.gz", "#{release_path}.tar.gz"
+			run "tar -C #{releases_path} -xzf #{release_path}.tar.gz"
+			run "rm #{release_path}.tar.gz"
+		end 
 	end
 	
 	# Find the build number from the commandline argument -s build=aa-b123
 	def build_name 
-		return "#{build}" if exists?(:build)
-		# Throw an exception otherwise
-		raise 'You must pass a build by: "cap taskname -s build=aa-b234"'
+		_build_name = "#{build}" if exists?(:build)
+		raise 'You must pass a build by: "cap taskname -s build=aa-b234"' unless _build_name
+		set :deploy_timestamped, false;
+		set :release_name,  _build_name
+		release_name
 	end 
 
 	# The migrate task takes care of Silverstripe specifics
@@ -37,7 +53,7 @@ namespace :deploy do
 		# top.upload "./config/_ss_environment.php", "#{latest_release}/_ss_environment.php", :via => :scp
 
 		# Add the cache folder inside this release so we don't need to worry about the cache being weird.
-		run "mkdir #{latest_release}/silverstripe-cache"
+		run "mkdir -p #{latest_release}/silverstripe-cache"
 
 		# Make sure that sapphire/sake is executable
 		run "chmod a+x #{latest_release}/sapphire/sake"
@@ -62,12 +78,13 @@ namespace :deploy do
 	# Overriden due to we don't want to touch javascript and css folders
 	task :finalize_update, :except => { :no_release => true } do
 		shared_children.map do |d|
-			run "ln -s #{shared_path}/#{d.split('/').last} #{latest_release}/#{d}"
+			run "ln -sf #{shared_path}/#{d.split('/').last} #{latest_release}/#{d}"
 		end
     end
 
 	# Overriden due to we don't want to restart any services on the server.
 	task :restart do
-		logger.debug "No services to deploy."
+		system "echo \""+Time.now.strftime("%Y-%m-%d %H:%M:%S")+" => #{build_name} \" >> assets/#{stage}.deploy-history.txt";
+		logger.debug "Deploy finished."
 	end
 end
