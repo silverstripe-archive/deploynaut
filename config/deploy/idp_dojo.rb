@@ -8,3 +8,6 @@ set :webserver_group, "sites"
 ## Servers
 ssh_options[:port] = 2222
 server 'oscar.wgtn.silverstripe.com', :web, :db
+
+ssh_options[:username] = 'dojo'
+ssh_options[:keys] = '/sites/deploynaut/www-keys/id_rsa'

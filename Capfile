@@ -4,8 +4,8 @@ load 'deploy'
 Dir['config/*.rb'].each { |task| load(task) }
 
 # ---- Load multistage extension ---- 
-set :stages, %w(idp_dojo testing dojo staging production)
-#set :default_stage, "testing"
+set :stages, %w(idp_dojo dojo test-ss3 internal_test)
+
 require 'capistrano/ext/multistage'
 
 # ---- What directories are shared between releases ---- 
@@ -21,8 +21,7 @@ set :keep_releases, 5
 # Prevent asking for passwords
 set :password, false
 set :use_sudo, false
-ssh_options[:username] = 'dojo'
-ssh_options[:keys] = '/sites/deploynaut/www-keys/id_rsa'
 
 # ---- Build directory ---- 
 set :build_archive, "../builds"
+set :scm, "git"
