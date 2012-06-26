@@ -37,7 +37,6 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 	public function deployHistory($environment) {
 		$file = ASSETS_PATH . '/' . $environment . ".deploy-history.txt";
 		$CLI_file = escapeshellarg($file);
-		var_dump($CLI_file);
 		
 		$history = array();
 		if(file_exists($file)) {

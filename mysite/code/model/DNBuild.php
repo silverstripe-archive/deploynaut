@@ -1,10 +1,29 @@
 <?php
 
 class DNBuild extends ViewableData {
+	
+	/**
+	 *
+	 * @var string
+	 */
 	protected $filename;
+	
+	/**
+	 *
+	 * @var string
+	 */
 	protected $buildname;
+	
+	/**
+	 *
+	 * @var string
+	 */
 	protected $simplename;
 	
+	/**
+	 *
+	 * @var DNData 
+	 */
 	protected $data;
 	
 	function __construct($filename, DNData $data) {
@@ -17,29 +36,53 @@ class DNBuild extends ViewableData {
 		parent::__construct();
 	}
 
-	function Link() {
+	/**
+	 *
+	 * @return string
+	 */
+	public function Link() {
 		return "naut/build/" . $this->name;
 	}
 	
-	function FullName() {
+	/**
+	 *
+	 * @return string
+	 */
+	public function FullName() {
 		return $this->buildname;
 	}
 	
-	function Name() {
+	/**
+	 *
+	 * @return string
+	 */
+	public function Name() {
 		return $this->simplename;
 	}
 	
-	function Filename() {
+	/**
+	 *
+	 * @return string
+	 */
+	public function Filename() {
 		return $this->filename;
 	}
 	
-	function Created() {
+	/**
+	 *
+	 * @return \SS_Datetime 
+	 */
+	public function Created() {
 		$d = new SS_Datetime();
 		$d->setValue(date('Y-m-d H:i:s', filemtime($this->filename)));
 		return $d;
 	}
 	
-	function CurrentlyDeployedTo() {
+	/**
+	 *
+	 * @return \ArrayList 
+	 */
+	public function CurrentlyDeployedTo() {
 		$output = new ArrayList;
 		foreach($this->data->DNEnvironmentList() as $environment) {
 			if($environment->CurrentBuild() == $this->buildname) $output->push($environment);
@@ -47,7 +90,11 @@ class DNBuild extends ViewableData {
 		return $output;
 	}
 
-	function EverDeployedTo($environmentName) {
+	/**
+	 *
+	 * @param type $environmentName 
+	 */
+	public function EverDeployedTo($environmentName) {
 		$environment = $this->data->DNEnvironmentList()->byName($environmentName);
 		
 	}

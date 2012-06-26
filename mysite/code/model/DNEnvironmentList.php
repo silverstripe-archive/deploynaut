@@ -2,10 +2,24 @@
 
 class DNEnvironmentList extends ArrayList {
 
+	/**
+	 *
+	 * @var DNData 
+	 */
 	protected $data;
+	
+	/**
+	 *
+	 * @var array of DNEnvironment
+	 */
 	protected $environments;
 
-	function __construct($environmentNames, DNData $data) {
+	/**
+	 *
+	 * @param string $environmentNames
+	 * @param DNData $data 
+	 */
+	public function __construct($environmentNames, DNData $data) {
 		$this->data = $data;
 
 		$this->environments = array();
@@ -16,8 +30,15 @@ class DNEnvironmentList extends ArrayList {
 		parent::__construct(array_values($this->environments));
 	}
 	
-	function byName($name) {
-		return $this->environments[$name];
+	/**
+	 *
+	 * @param string $name
+	 * @return string 
+	 */
+	public function byName($name) {
+		if(isset($this->environments[$name])) {
+			return $this->environments[$name];
+		}
+		return 'unknown';
 	}
-	
 }

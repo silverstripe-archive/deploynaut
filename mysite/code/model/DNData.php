@@ -4,14 +4,44 @@
  * Parent class for managing a set of Deploynaut data
  */
 class DNData {
+	
+	/**
+	 *
+	 * @var string
+	 */
 	protected $buildPath;
+	
+	/**
+	 *
+	 * @var array
+	 */
 	protected $environmentNames;
 	
+	/**
+	 *
+	 * @var DNEnvironmentList 
+	 */
 	protected $environmentList;
+	
+	/**
+	 *
+	 * @var DNBuildList 
+	 */
 	protected $buildList;
+	
+	/**
+	 *
+	 * @var DeploymentBackend
+	 */
 	protected $backend;
 	
-	function __construct($buildPath, $environmentNames, $backend) {
+	/**
+	 *
+	 * @param string $buildPath
+	 * @param array $environmentNames
+	 * @param DeploymentBackend $backend 
+	 */
+	public function __construct($buildPath, $environmentNames, $backend) {
 		$this->buildPath = $buildPath;
 		$this->environmentNames = $environmentNames;
 		
@@ -21,13 +51,27 @@ class DNData {
 		$this->backend = $backend;
 	}
 	
-	function DNEnvironmentList() {
+	/**
+	 *
+	 * @return DNEnvironmentList
+	 */
+	public function DNEnvironmentList() {
 		return $this->environmentList;
 	}
-	function DNBuildList() {
+	
+	/**
+	 *
+	 * @return DNBuildList 
+	 */
+	public function DNBuildList() {
 		return $this->buildList;
 	}
-	function Backend() {
+	
+	/**
+	 *
+	 * @return DeploymentBackend 
+	 */
+	public function Backend() {
 		return $this->backend;
 	}
 }
