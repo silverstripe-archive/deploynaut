@@ -21,6 +21,8 @@ set :keep_releases, 5
 # Prevent asking for passwords
 set :password, false
 set :use_sudo, false
+ssh_options[:username] = 'dojo'
+ssh_options[:keys] = '/sites/deploynaut/www-keys/id_rsa'
 
 # ---- Build directory ---- 
 set :build_archive, "../builds"

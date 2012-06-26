@@ -8,7 +8,3 @@ set :webserver_group, "sites"
 ## Servers
 ssh_options[:port] = 2222
 server 'oscar.wgtn.silverstripe.com', :web, :db
-
-## SSH options 
-set :user, 'sites'
-ssh_options[:forward_agent] = true
