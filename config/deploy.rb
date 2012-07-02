@@ -62,10 +62,10 @@ namespace :deploy do
 		run "#{latest_release}/sapphire/sake dev/build"
 
 		# Set permissions for directories
-		run "find #{latest_release} -not -perm 2775 -type d -exec chmod 2775 {} \\;"
+		run "find #{latest_release} -not -group #{webserver_group} -not -perm 2775 -type d -exec chmod 2775 {} \\;"
 
 		# Set permissions for files
-		run "find #{latest_release} -not -perm 664 -type f -exec chmod 664 {} \\;"
+		run "find #{latest_release} -not -group #{webserver_group} -not -perm 664 -type f -exec chmod 664 {} \\;"
 
 		# Set the execute permissions on sapphire/sake again
 		run "chmod a+x #{latest_release}/sapphire/sake"

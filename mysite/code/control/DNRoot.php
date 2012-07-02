@@ -38,9 +38,7 @@ class DNRoot extends Controller {
 	 * @return DNData 
 	 */
 	public function DNData() {
-		if(!$this->data) $this->data = new DNData(BASE_PATH . "/../builds", array(
-			"idp_dojo", 'test-ss3', "dojo"
-		), new CapistranoDeploymentBackend());
+		if(!$this->data) $this->data = new DNData(BASE_PATH . "/../builds", new CapistranoDeploymentBackend());
 		return $this->data;
 	}
 	

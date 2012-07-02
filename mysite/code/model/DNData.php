@@ -15,7 +15,7 @@ class DNData {
 	 *
 	 * @var array
 	 */
-	protected $environmentNames;
+	protected static $environment_names = array();
 	
 	/**
 	 *
@@ -36,16 +36,23 @@ class DNData {
 	protected $backend;
 	
 	/**
+	 * Set the environment names that will be used
+	 * @var array $environmentNames
+	 */
+	public static function set_environment_names($environmentNames) {
+		self::$environment_names = $environmentNames;
+	}
+	
+	/**
 	 *
 	 * @param string $buildPath
 	 * @param array $environmentNames
 	 * @param DeploymentBackend $backend 
 	 */
-	public function __construct($buildPath, $environmentNames, $backend) {
+	public function __construct($buildPath, $backend) {
 		$this->buildPath = $buildPath;
-		$this->environmentNames = $environmentNames;
 		
-		$this->environmentList = new DNEnvironmentList($this->environmentNames, $this);
+		$this->environmentList = new DNEnvironmentList(self::$environment_names, $this);
 		$this->buildList = new DNBuildList($this->buildPath, $this);
 		
 		$this->backend = $backend;
