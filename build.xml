@@ -6,11 +6,16 @@
 	<property name="buildrepository" value="## enter build repository destination here - user@server:/dir ##" />
 
 	<!-- install the buildtools if they're not already installed -->
-	<if><not><available file="${phpsupportDir}" /></not><then>
-	<exec dir="." executable="git" passthru="true">
-		<arg line="clone git@gitorious.silverstripe.com:ss-tools/buildtools.git ./buildtools" />
-	</exec>
-	</then></if>
+	<if>
+		<not>
+			<available file="${phpsupportDir}" />
+		</not>
+		<then>
+			<exec dir="." executable="git" passthru="true">
+				<arg line="clone ssh://git@gitorious.silverstripe.com:2222/ss-tools/buildtools.git ./buildtools" />
+			</exec>
+		</then>
+	</if>
 
 	<import file="${phpsupportDir}/build-support.xml" />
 </project>
