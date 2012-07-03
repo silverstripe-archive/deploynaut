@@ -1,5 +1,5 @@
 # Before the switching the current symlink, do the silverstripe specifics
-before "deploy:symlink", "deploy:silverstripe"
+after "deploy:finalize_update", "deploy:silverstripe"
 # Automatically remove old releases
 #after "deploy:update", "deploy:cleanup"
 
