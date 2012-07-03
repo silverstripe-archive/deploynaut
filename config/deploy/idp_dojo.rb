@@ -5,6 +5,9 @@ set :deploy_to, "/sites/#{application}"
 # This will be used to chown the deployed files, make sure that the deploy user is part of this group
 set :webserver_group, "sites"
 
+## Where the error log is located
+set :apache_error_log, "/sites/#{application}/logs/apache.error.log"
+
 ## Servers
 ssh_options[:port] = 2222
 server 'oscar.wgtn.silverstripe.com', :web, :db
