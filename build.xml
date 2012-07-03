@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- This is an Phing build.xml file, not an Ant one -->
-<project name="deploynaut" default="archive" basedir=".">
+<project name="deploynaut" default="checkout" basedir=".">
 	<property name="project" value="deploynaut" />
 	<property name="phpsupportDir" value="./buildtools" />
-	<property name="buildrepository" value="## enter build repository destination here - user@server:/dir ##" />
+	
+	<mkdir dir="./builds" />
+	<mkdir dir="./logs" />
+	<mkdir dir="./www-keys" />
+
 
 	<!-- install the buildtools if they're not already installed -->
 	<if>
