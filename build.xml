@@ -4,10 +4,9 @@
 	<property name="project" value="deploynaut" />
 	<property name="phpsupportDir" value="./buildtools" />
 	
-	<mkdir dir="./builds" />
-	<mkdir dir="./logs" />
-	<mkdir dir="./www-keys" />
-
+	<mkdir dir="../builds" />
+	<mkdir dir="../logs" />
+	<mkdir dir="../www-keys" />
 
 	<!-- install the buildtools if they're not already installed -->
 	<if>
