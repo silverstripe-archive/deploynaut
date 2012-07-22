@@ -24,6 +24,7 @@ DNData::set_environment_names(array(
 	"internal_live",
 	"idp_dojo",
 	"carfair_dojo",
+	"test-ss2",
 	'test-ss3',
 	'test-ss4',
 	"dojo"

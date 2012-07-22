@@ -62,7 +62,7 @@ On [deploynaut.silverstripe.com/](http://deploynaut.silverstripe.com/) `www-data
 Following commands will be issued as user on the target server with sudo
 
 	$ sudo mkdir -p /sites/fictional/
-	$ sudo mkdir -p releases/ logs /shared/assets
+	$ sudo mkdir -p releases/ logs shared/assets
 	$ sudo chmod -R 775 /sites/fictional/
 	$ sudo chown -R silvers:www-data /sites/fictional
 
