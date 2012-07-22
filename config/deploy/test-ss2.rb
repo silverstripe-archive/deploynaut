@@ -1,5 +1,5 @@
 ## Application name and deployment path
-set :application, "test-ss4"
+set :application, "test-ss2"
 set :deploy_to, "/sites2/#{application}"
 
 # This will be used to chown the deployed files, make sure that the deploy user is part of this group

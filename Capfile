@@ -4,7 +4,7 @@ load 'deploy'
 Dir['config/*.rb'].each { |task| load(task) }
 
 # ---- Load multistage extension ---- 
-set :stages, %w(carfair_dojo idp_dojo dojo test-ss3 test-ss4 internal_dev internal_live)
+set :stages, %w(carfair_dojo idp_dojo dojo test-ss2 test-ss3 test-ss4 internal_dev internal_live)
 
 require 'capistrano/ext/multistage'
 

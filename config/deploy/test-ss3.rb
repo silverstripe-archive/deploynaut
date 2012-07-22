@@ -1,9 +1,9 @@
 ## Application name and deployment path
 set :application, "test-ss3"
-set :deploy_to, "/sites/#{application}"
+set :deploy_to, "/sites2/#{application}"
 
 # This will be used to chown the deployed files, make sure that the deploy user is part of this group
-set :webserver_group, "silvers"
+set :webserver_group, "www-data"
 
 ## Servers
 ssh_options[:port] = 22
