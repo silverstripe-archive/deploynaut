@@ -13,7 +13,7 @@ namespace :deploy do
 			if latest_release
 				if ('true' ==  capture("if [ -e #{latest_release}/assets ]; then echo 'true'; fi").strip)
 					# Set permissions for files
-					run "find #{latest_release}/assets -not -perm 2775 -type d -exec chmod 2775 {} \\;"
+					run "find #{latest_release}/assets -not -perm 775 -type d -exec chmod 775 {} \\;"
 					# Set permissions for files
 					run "find #{latest_release}/assets -not -perm 664 -type f -exec chmod 664 {} \\;"
 				end
@@ -45,7 +45,7 @@ namespace :deploy do
 
 	# The migrate task takes care of Silverstripe specifics
 	#	1) Create a silverstripe-cache in the release folder
-	#	2) Set 2775 permissions on all folder
+	#	2) Set 775 permissions on all folder
 	#	3) Set 664 permissions on all files
 	#	4) Change the owner of everything to the 'webserver_group'
 	task :silverstripe do
@@ -62,7 +62,7 @@ namespace :deploy do
 		run "#{latest_release}/sapphire/sake dev/build"
 
 		# Set permissions for directories
-		run "find #{latest_release} -not -group #{webserver_group} -not -perm 2775 -type d -exec chmod 2775 {} \\;"
+		run "find #{latest_release} -not -group #{webserver_group} -not -perm 775 -type d -exec chmod 775 {} \\;"
 
 		# Set permissions for files
 		run "find #{latest_release} -not -group #{webserver_group} -not -perm 664 -type f -exec chmod 664 {} \\;"

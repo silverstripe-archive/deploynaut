@@ -11,7 +11,7 @@ set :webserver_group, "www-data"
 # set :gateway, 'slindqvist@192.168.2.178'
 
 ssh_options[:port] = 22
-server '202.175.137.226', :web, :db
+#server '202.175.137.226', :web, :db
 server '10.60.250.182', :web, :db
 
 
