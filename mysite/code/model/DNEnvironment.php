@@ -26,7 +26,7 @@ class DNEnvironment extends ViewableData {
 		foreach($history as $item) {
 			$output->push(new ArrayData(array(
 				'BuildName' => $item['buildname'],
-				'DateTime' => DBField::create('SS_Datetime', $item['datetime']),
+				'DateTime' => DBField::create_field('SS_Datetime', $item['datetime']),
 			)));
 		}
 		return $output;

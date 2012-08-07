@@ -1,12 +1,8 @@
-<ul id="main-nav">
-	<li><a href="{$Link}builds">Builds</a></li>
-	<li class="current"><a href="{$Link}environments">Environments</a></li>
-</ul>
-
-<article id="content">
-	<table>
+<article id="content" class="span12">
+	<p>These are the environment that can be deployed to.
+	<table class="table-striped table table-bordered">
 		<thead>
-			<tr><th>Environment</th><th>Current build</th></tr>
+			<tr><th>Environment</th><th>Build currently deployed</th></tr>
 		</thead>
 		<tbody>
 		<% control DNEnvironments %>

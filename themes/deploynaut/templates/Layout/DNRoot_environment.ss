@@ -1,45 +1,47 @@
-<ul id="main-nav">
-	<li><a href="{$Link}builds">Builds</a></li>
-	<li class="current"><a href="{$Link}environments">Environments</a></li>
-</ul>
-
 <article id="content">
-	<% with DNEnvironment %>
-	<h2>$Name</h2>
-	<% if CurrentBuild %>
-	<p>Currently running <strong>$CurrentBuild</strong>.</p>
-	<% else %>
-	<p>New environment - deploy your first build.</p>
-	<% end_if %>
+	<div class="span12">
+		<% with DNEnvironment %>
+		<h1>$Name</h1>
+		<% if CurrentBuild %>
+		<p><strong>$Name</strong> is currently running build <strong>$CurrentBuild</strong>.</p>
+		<% else %>
+		<p>New environment - deploy your first build.</p>
+		<% end_if %>
+		<% end_with %>
+	</div>
+	
+	<div class="span12">
+		<h2>Deploy a new release</h2>
+		<p>Choose a build from the dropdown and press the deploy button.</p>
+	
+	
+	<% with DeployForm %>
+	<form $FormAttributes class='form-inline'>
+		<% loop VisibleFields %>$Field<% end_loop %>
+		$Actions
+		$HiddenFields
+	</form>
 	<% end_with %>
+	
+	</div>
 
-	<div class="right-half">
-		<h3>Deploy history</h3>
-		<table>
+	<div class="span12">
+		<h2>Deploy history</h2>
+		<p>Below builds have previous been deployed to this environment, ordered by deploy date descending.</p>
+		<table class="table-striped table table-bordered">
 			<thead>
-				<tr><th>Build</th><th>Date</th></tr>
+				<tr><th>Build</th><th>Date deployed</th></tr>
 			</thead>
 			<tbody>
 			<% loop DNEnvironment.DeployHistory %>
 				<tr>
 					<td>$BuildName</td>
-					<td>$DateTime.Nice</td>
+					<td>$DateTime.Rfc2822</td>
 				</tr>
 			<% end_loop %>
 			</tbody>
 		</table>
 	</div>
 	
-	<div class="left-half">
-		<h3>Deploy a new release</h3>
-		<% with DeployForm %>
-		<form $FormAttributes>
-			<% loop VisibleFields %>$Field<% end_loop %>
-			$HiddenFields
-			$Actions
-		</form>
-		<% end_with %>
-	</div>
 	
-	<div class="spacer"></div>
 </article>

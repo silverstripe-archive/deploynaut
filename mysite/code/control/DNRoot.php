@@ -13,8 +13,17 @@ class DNRoot extends Controller {
 	 */
 	public function init() {
 		parent::init();
-		Requirements::javascript('sapphire/thirdparty/jquery/jquery.js');
-		Requirements::javascript('themes/deploynaut/javascript/deploynaut.js');
+		Requirements::combine_files(
+			'deploynaut.js',
+			array(
+				THIRDPARTY_DIR . '/jquery/jquery.js',
+				'themes/deploynaut/javascript/bootstrap.js',
+				'themes/deploynaut/javascript/deploynaut.js',
+				
+			)
+		);
+		
+		Requirements::css(FRAMEWORK_ADMIN_DIR .'/thirdparty/chosen/chosen/chosen.css');
 	}
 	
 	/**
@@ -95,8 +104,9 @@ class DNRoot extends Controller {
 			new HiddenField('EnvironmentName', '', $environmentName),
 			new DropdownField("BuildName", "Build", $buildList)
 		), new FieldList(
-			new FormAction('doDeploy', "Deploy to " . $environmentName)
+			$deployAction = new FormAction('doDeploy', "Deploy to " . $environmentName)
 		));
+		$deployAction->addExtraClass('btn');
 		$form->disableSecurityToken();
 		return $form;
 	}
