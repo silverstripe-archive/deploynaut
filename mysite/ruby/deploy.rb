@@ -28,7 +28,10 @@ namespace :deploy do
 	task :code_deploy! do
 		# Dont upload and unpack the release if it's been deployed previously
 		unless releases.include?(build_name) 
-			top.upload "#{build_archive}/#{build_name}.tar.gz", "#{release_path}.tar.gz"
+			# Grab the first part of the config - the project name (that maps to a config & build directory)
+			project = config_name.split(':').first
+			# Sftp the file up
+			top.upload "#{build_archive}/#{project}/#{build_name}.tar.gz", "#{release_path}.tar.gz"
 			run "tar -C #{releases_path} -xzf #{release_path}.tar.gz"
 			run "rm #{release_path}.tar.gz"
 		end 
@@ -55,11 +58,11 @@ namespace :deploy do
 		# Add the cache folder inside this release so we don't need to worry about the cache being weird.
 		run "mkdir -p #{latest_release}/silverstripe-cache"
 
-		# Make sure that sapphire/sake is executable
-		run "chmod a+x #{latest_release}/sapphire/sake"
+		# Make sure that framework/sake is executable
+		run "chmod a+x #{latest_release}/framework/sake"
 
 		# Run the mighty dev/build
-		run "#{latest_release}/sapphire/sake dev/build"
+		run "#{latest_release}/framework/sake dev/build"
 
 		# Set permissions for directories
 		run "find #{latest_release} -not -group #{webserver_group} -not -perm 775 -type d -exec chmod 775 {} \\;"
@@ -67,8 +70,8 @@ namespace :deploy do
 		# Set permissions for files
 		run "find #{latest_release} -not -group #{webserver_group} -not -perm 664 -type f -exec chmod 664 {} \\;"
 
-		# Set the execute permissions on sapphire/sake again
-		run "chmod a+x #{latest_release}/sapphire/sake"
+		# Set the execute permissions on framework/sake again
+		run "chmod a+x #{latest_release}/framework/sake"
 
 		# Set the group owner to the webserver group
 		run "chown -RP :#{webserver_group} #{latest_release}"
@@ -84,7 +87,7 @@ namespace :deploy do
 
 	# Overriden due to we don't want to restart any services on the server.
 	task :restart do
-		system "echo \""+Time.now.strftime("%Y-%m-%d %H:%M:%S")+" => #{build_name} \" >> assets/#{stage}.deploy-history.txt";
+		system "echo \""+Time.now.strftime("%Y-%m-%d %H:%M:%S")+" => #{build_name} \" >> assets/#{config_name}.deploy-history.txt";
 		logger.debug "Deploy finished."
 	end
 end

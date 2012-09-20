@@ -8,9 +8,9 @@ Capistrano is written in ruby, and often deployed as a ruby gem. So the first re
 
 	$ sudo gem install capistrano --no-ri --no-rdoc
 
-Our implementation also relies on having multiple stages, such as dev, staging and live. This is supported by installing an extension to capistrano
+Our implementation relies on capistrano-multiconfig extension which provides us with the ability to have multiple projects, each with serveral configurations (stages):
 
-	$ sudo gem install capistrano-ext --no-ri --no-rdoc
+	$ sudo gem install capistrano-multiconfig --no-ri --no-rdoc
 
 ## Deploynaut installation
 
@@ -23,11 +23,21 @@ Now it's time to create folders and checkout dependent silverstripe modules
 
 	cd www && phing
 
+Deploynaut expects that the following directory structure is present (from the site root):
+
+	../deploynaut-resources/builds/
+	../deploynaut-resources/configs/
+
+Within each of these the project folders should be added - these names will be mapped to each another when deploying, eg:
+
+	../deploynaut-resources/builds/ss3
+	../deploynaut-resources/configs/ss3/dev.rb
+
 ## Test the Capistrano 
 
 Now you should be able to test that capistrano works as intented.
 
-	cap dojo info:uptime
+	cap ss3:dev info:uptime
 
 This should give you the results from running the uptime command on the dojo server (at the time of this being written; oscar).
 

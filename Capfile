@@ -1,12 +1,10 @@
 load 'deploy'
 
+set :config_root, '../deploynaut-resources/configs'
+require 'capistrano/multiconfig'
+
 # ---- load tasks from ./config dir ---- 
-Dir['config/*.rb'].each { |task| load(task) }
-
-# ---- Load multistage extension ---- 
-set :stages, %w(carfair_dojo idp_dojo dojo test-ss2 test-ss3 test-ss4 internal_dev internal_live)
-
-require 'capistrano/ext/multistage'
+Dir['mysite/ruby/*.rb'].each { |task| load(task) }
 
 # ---- What directories are shared between releases ---- 
 set :shared_children, %w(assets)
@@ -23,5 +21,5 @@ set :password, false
 set :use_sudo, false
 
 # ---- Build directory ---- 
-set :build_archive, "../builds"
+set :build_archive, "../deploynaut-resources/builds"
 set :scm, "git"

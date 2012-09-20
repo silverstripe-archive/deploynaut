@@ -1,4 +1,4 @@
-# Adding a new stage
+# Adding a new project
 
 ## Example data
 
@@ -9,20 +9,13 @@ For this example I'm going to create a fictional stage that will be deployed to:
 - httpd group: www-data
 - User that does the deploy: silvers
 
+## Create an environment for the project
 
-## Create recipie
+Each environment within each project requires a config file.
 
-First create the stage in `Capfile` by changing this:
+In our case we will create a *fictional* environment in *ss3* project.
 
-	set :stages, %w(idp_dojo dojo test-ss3 internal_dev internal_live)
-
-to
-
-	set :stages, %w(fictional idp_dojo dojo test-ss3 internal_dev internal_live)
-
-
-
-Then create the deployment recipie at `config/deploy/fictional.rb`
+Create config file in `../deploynaut-resources/configs/ss3/fictional.rb` (relative to deploynaut webroot)
 
 	## Application name and deployment path
 	set :application, "fictional"
@@ -42,11 +35,11 @@ Then create the deployment recipie at `config/deploy/fictional.rb`
 	## The SSH ident keys that will be user for passwordless login
 	ssh_options[:keys] = '/sites/deploynaut/www-keys/id_rsa'
 
-## Test the recipie
+## Test the deployment
 
-Test you recipe by running a simple Capistrano command for requesting the uptime:
+Test you environment by running a simple Capistrano command for requesting the uptime:
 
-	$ cap test-ss4 info:uptime
+	$ cap ss3:fictional info:uptime
 
 This should return the uptime for the server. If you're getting permission problems you need to stick the public key `/sites/deploynaut/www-keys/id_rsa.pub` into the `.ssh/authorized_keys` of the user `silvers` that are used for executing commands on the server `127.0.0.1`./sites/deploynaut/www-keys/id_rsa
 
@@ -84,11 +77,11 @@ Set up a vhost that points to the correct docroot
 Back at the deploynaut test the setup
 
 	$ sudo su www-data
-	$ cap fictional deploy:check
+	$ cap ss3:fictional deploy:check
 
 ## Test deploy!
 
-	$ cap test-ss4 deploy -s build=aa-b161
+	$ cap ss3:fictional deploy -s build=aa-b161
 
 
 
