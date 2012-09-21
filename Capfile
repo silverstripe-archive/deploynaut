@@ -1,6 +1,6 @@
 load 'deploy'
 
-set :config_root, '../deploynaut-resources/configs'
+set :config_root, '../deploynaut-resources/envs'
 require 'capistrano/multiconfig'
 
 # ---- load tasks from ./config dir ---- 

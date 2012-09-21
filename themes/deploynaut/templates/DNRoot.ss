@@ -28,11 +28,10 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="{$Link}builds">deploynaut</a>
+          <a class="brand" href="{$Link}projects">deploynaut</a>
           <div class="nav-collapse">
             <ul class="nav">
-				<li><a href="{$Link}builds">builds</a></li>
-				<li><a href="{$Link}environments">environments</a></li>
+				<li><a href="{$Link}projects">projects</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>

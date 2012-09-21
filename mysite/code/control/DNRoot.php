@@ -1,7 +1,14 @@
 <?php
 
 class DNRoot extends Controller {
-	
+	static $url_handlers = array(
+		'project/$Project/environment/$Environment/DeployForm' => 'getDeployForm',
+		'project/$Project/environment/$Environment' => 'environment',
+		'project/$Project/build/$Build' => 'build',
+		'project/$Project' => 'project',
+		'projects' => 'projects',
+	);
+
 	/**
 	 *
 	 * @var DNData
@@ -39,7 +46,24 @@ class DNRoot extends Controller {
 	 * @return null 
 	 */
 	public function index() {
-		return $this->redirect($this->Link() . 'builds');
+		return $this->redirect($this->Link() . 'projects/');
+	}
+
+	public function projects() {
+		return $this->renderWith(array('DNRoot_projects', 'DNRoot'));
+	}
+
+	public function project($request) {
+		$project = $this->DNProjectList()->byName($request->latestParam('Project'));
+		return $project->renderWith(array('DNRoot_project', 'DNRoot'));
+	}
+
+	public function environment($request) {
+		$project = $this->DNProjectList()->byName($request->latestParam('Project'));
+		$env = $project->DNEnvironmentList()->byName($request->latestParam('Environment'));
+		return $env->customise(array(
+			'DeployForm' => $this->getDeployForm($request)			
+		))->renderWith(array('DNRoot_environment', 'DNRoot'));
 	}
 
 	/**
@@ -47,7 +71,11 @@ class DNRoot extends Controller {
 	 * @return DNData 
 	 */
 	public function DNData() {
-		if(!$this->data) $this->data = new DNData(BASE_PATH . "/../builds", new CapistranoDeploymentBackend());
+		if(!$this->data) $this->data = new DNData(
+			BASE_PATH . "/../deploynaut-resources/builds", 
+			BASE_PATH . "/../deploynaut-resources/envs", 
+			new CapistranoDeploymentBackend()
+		);
 		return $this->data;
 	}
 	
@@ -55,69 +83,33 @@ class DNRoot extends Controller {
 	 *
 	 * @return DNBuildList
 	 */
-	public function DNBuilds() {
-		return $this->DNData()->DNBuildList();
-	}
-	
-	/**
-	 *
-	 * @return DNEnvironmentList 
-	 */
-	public function DNEnvironments() {
-		return $this->DNData()->DNEnvironmentList();
-	}
-	
-	/**
-	 *
-	 * @return array 
-	 */
-	public function environment() {
-		$env = $this->DNData()->DNEnvironmentList()->byName($this->urlParams['ID']);
-		return array(
-			"DNEnvironment" => $env,
-			"DeployForm" => $this->getDeployForm($env->Name()),
-		);
+	public function DNProjectList() {
+		return $this->DNData()->DNProjectList();
 	}
 
-	/**
-	 *
-	 * @return array 
-	 */
-	public function build() {
-		return array(
-			"DNBuild" => $this->DNData()->DNBuildList()->byName($this->urlParams['ID']),
-		);
-	}
-	
 	/**
 	 *
 	 * @param string $environmentName
 	 * @return \Form 
 	 */
-	public function getDeployForm($environmentName) {
+	public function getDeployForm($request) {
+		$project = $this->DNProjectList()->byName($request->latestParam('Project'));
+		$environment = $project->DNEnvironmentList()->byName($request->latestParam('Environment'));
+
 		$buildList = array('' => '(Choose a build)');
-		foreach($this->DNData()->DNBuildList() as $build) {
+		foreach($project->DNBuildList() as $build) {
 			$buildList[$build->FullName()] = $build->Name();
 		}
 		
 		$form = new Form($this, 'DeployForm', new FieldList(
-			new HiddenField('EnvironmentName', '', $environmentName),
 			new DropdownField("BuildName", "Build", $buildList)
 		), new FieldList(
-			$deployAction = new FormAction('doDeploy', "Deploy to " . $environmentName)
+			$deployAction = new FormAction('doDeploy', "Deploy to " . $environment->Name())
 		));
 		$deployAction->addExtraClass('btn');
 		$form->disableSecurityToken();
+		$form->setFormAction($request->getURL().'/DeployForm');
 		return $form;
-	}
-	
-	/**
-	 *
-	 * @return Form
-	 */
-	public function DeployForm() {
-		// TODO: This reference to $_REQUEST is a bit of a hack
-		return $this->getDeployForm($_REQUEST['EnvironmentName']);
 	}
 	
 	/**
@@ -127,10 +119,12 @@ class DNRoot extends Controller {
 	 * @return string - HTML 
 	 */
 	public function doDeploy($data, $form) {
-		$build = $this->DNData()->DNBuildList()->byName($data['BuildName']);
-		$environment = $this->DNData()->DNEnvironmentList()->byName($data['EnvironmentName']);
+		$project = $this->DNProjectList()->byName($form->request->latestParam('Project'));
+		$environment = $project->DNEnvironmentList()->byName($form->request->latestParam('Environment'));
+		$build = $project->DNBuildList()->byName($data['BuildName']);
 		
 		return $this->customise(new ArrayData(array(
+			'Project' => $project,
 			'EnvironmentName' => $environment->Name(),
 			'BuildFullName' => $build->FullName(),
 			'BuildFileName' => $build->Filename()

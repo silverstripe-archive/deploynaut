@@ -18,14 +18,3 @@ Director::addRules(51, array(
 	'' => '->naut',
 	'naut' => 'DNRoot',
 ));
-
-DNData::set_environment_names(array(
-	"internal_dev",
-	"internal_live",
-	"idp_dojo",
-	"carfair_dojo",
-	"test-ss2",
-	'test-ss3',
-	'test-ss4',
-	"dojo"
-));

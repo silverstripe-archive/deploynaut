@@ -4,30 +4,21 @@
  * Parent class for managing a set of Deploynaut data
  */
 class DNData {
+
+	/**
+	 * Path where the build tarballs can be found.
+	 */
+	protected $buildDir;
+
+	/**
+	 * Path where the environment configurations can be found.
+	 */
+	protected $environmentDir;
 	
 	/**
-	 *
-	 * @var string
+	 * A prebuilt DNProjectList.
 	 */
-	protected $buildPath;
-	
-	/**
-	 *
-	 * @var array
-	 */
-	protected static $environment_names = array();
-	
-	/**
-	 *
-	 * @var DNEnvironmentList 
-	 */
-	protected $environmentList;
-	
-	/**
-	 *
-	 * @var DNBuildList 
-	 */
-	protected $buildList;
+	protected $projectList;
 	
 	/**
 	 *
@@ -36,42 +27,34 @@ class DNData {
 	protected $backend;
 	
 	/**
-	 * Set the environment names that will be used
-	 * @var array $environmentNames
-	 */
-	public static function set_environment_names($environmentNames) {
-		self::$environment_names = $environmentNames;
-	}
-	
-	/**
 	 *
 	 * @param string $buildPath
 	 * @param array $environmentNames
 	 * @param DeploymentBackend $backend 
 	 */
-	public function __construct($buildPath, $backend) {
-		$this->buildPath = $buildPath;
+	public function __construct($buildDir, $environmentDir, $backend) {
+		$this->buildDir = $buildDir;
+		$this->environmentDir = $environmentDir;
 		
-		$this->environmentList = new DNEnvironmentList(self::$environment_names, $this);
-		$this->buildList = new DNBuildList($this->buildPath, $this);
+		$this->projectList = new DNProjectList($this);
 		
 		$this->backend = $backend;
 	}
-	
-	/**
-	 *
-	 * @return DNEnvironmentList
-	 */
-	public function DNEnvironmentList() {
-		return $this->environmentList;
+
+	public function getBuildDir() {
+		return $this->buildDir;
+	}
+
+	public function getEnvironmentDir() {
+		return $this->environmentDir;
 	}
 	
 	/**
 	 *
 	 * @return DNBuildList 
 	 */
-	public function DNBuildList() {
-		return $this->buildList;
+	public function DNProjectList() {
+		return $this->projectList;
 	}
 	
 	/**

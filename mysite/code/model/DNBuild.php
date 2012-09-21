@@ -7,32 +7,35 @@ class DNBuild extends ViewableData {
 	 * @var string
 	 */
 	protected $filename;
-	
+
 	/**
 	 *
 	 * @var string
 	 */
 	protected $buildname;
-	
+
 	/**
 	 *
 	 * @var string
 	 */
 	protected $simplename;
-	
+
+	protected $project;
+
 	/**
 	 *
 	 * @var DNData 
 	 */
 	protected $data;
 	
-	function __construct($filename, DNData $data) {
+	function __construct($filename, $project, DNData $data) {
 		$this->data = $data;
+		$this->project = $project;
 		
 		$this->filename = $filename;
 		$this->buildname = preg_replace('/\.tar\.gz$/', '', basename($this->filename));
 		$this->simplename = preg_replace('/^[^-]+-/', '', $this->buildname);
-		
+
 		parent::__construct();
 	}
 
@@ -41,7 +44,7 @@ class DNBuild extends ViewableData {
 	 * @return string
 	 */
 	public function Link() {
-		return "naut/build/" . $this->name;
+		return "naut/project/".$this->project->getName()."/build/" . $this->name;
 	}
 	
 	/**
@@ -68,6 +71,10 @@ class DNBuild extends ViewableData {
 		return $this->filename;
 	}
 	
+	function getProject() {
+		return $this->project;
+	}
+
 	/**
 	 *
 	 * @return \SS_Datetime 
@@ -84,7 +91,7 @@ class DNBuild extends ViewableData {
 	 */
 	public function CurrentlyDeployedTo() {
 		$output = new ArrayList;
-		foreach($this->data->DNEnvironmentList() as $environment) {
+		foreach($this->project->DNEnvironmentList() as $environment) {
 			if($environment->CurrentBuild() == $this->buildname) $output->push($environment);
 		}
 		return $output;
@@ -95,7 +102,6 @@ class DNBuild extends ViewableData {
 	 * @param type $environmentName 
 	 */
 	public function EverDeployedTo($environmentName) {
-		$environment = $this->data->DNEnvironmentList()->byName($environmentName);
-		
+		$environment = $this->project->DNEnvironmentList()->byName($environmentName);
 	}
 }

@@ -1,27 +1,24 @@
 <article id="content">
 	<div class="span12">
-		<% with DNEnvironment %>
-		<h1>$Name</h1>
+		<h1>$Project.Name:$Name</h1>
 		<% if CurrentBuild %>
-		<p><strong>$Name</strong> is currently running build <strong>$CurrentBuild</strong>.</p>
+		<p><strong>$Project.Name:$Name</strong> is currently running build <strong>$CurrentBuild</strong>.</p>
 		<% else %>
 		<p>New environment - deploy your first build.</p>
 		<% end_if %>
-		<% end_with %>
 	</div>
-	
+
 	<div class="span12">
 		<h2>Deploy a new release</h2>
 		<p>Choose a build from the dropdown and press the deploy button.</p>
-	
-	
-	<% with DeployForm %>
-	<form $FormAttributes class='form-inline'>
-		<% loop VisibleFields %>$Field<% end_loop %>
-		$Actions
-		$HiddenFields
-	</form>
-	<% end_with %>
+		
+		<% with DeployForm %>
+		<form $FormAttributes class='form-inline'>
+			<% loop VisibleFields %>$Field<% end_loop %>
+			$Actions
+			$HiddenFields
+		</form>
+		<% end_with %>
 	
 	</div>
 
@@ -33,7 +30,7 @@
 				<tr><th>Build</th><th>Date deployed</th></tr>
 			</thead>
 			<tbody>
-			<% loop DNEnvironment.DeployHistory %>
+			<% loop DeployHistory %>
 				<tr>
 					<td>$BuildName</td>
 					<td>$DateTime.Rfc2822</td>
@@ -42,6 +39,5 @@
 			</tbody>
 		</table>
 	</div>
-	
 	
 </article>

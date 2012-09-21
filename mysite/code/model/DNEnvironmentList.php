@@ -1,44 +1,39 @@
 <?php
 
 class DNEnvironmentList extends ArrayList {
-
-	/**
-	 *
-	 * @var DNData 
-	 */
+	protected $baseDir;
 	protected $data;
-	
-	/**
-	 *
-	 * @var array of DNEnvironment
-	 */
 	protected $environments;
-
-	/**
-	 *
-	 * @param string $environmentNames
-	 * @param DNData $data 
-	 */
-	public function __construct($environmentNames, DNData $data) {
+	protected $project;
+	
+	function __construct($baseDir, $project, DNData $data) {
+		$this->baseDir = $baseDir;
 		$this->data = $data;
+		$this->project = $project;
+		
+		$environments = $this->getEnvironments();
 
 		$this->environments = array();
-		foreach($environmentNames as $name) {
-			$this->environments[$name] = new DNEnvironment($name, $this->data);
+		foreach($environments as $environment) {
+			$this->environments[$environment->Name()] = $environment;
 		}
-		
-		parent::__construct(array_values($this->environments));
+
+		parent::__construct($environments);
 	}
 	
-	/**
-	 *
-	 * @param string $name
-	 * @return string 
-	 */
-	public function byName($name) {
-		if(isset($this->environments[$name])) {
-			return $this->environments[$name];
+	protected function getEnvironments() {
+		$environments = array();
+		foreach(scandir($this->baseDir) as $environmentFile) {
+			if(preg_match('/\.rb$/', $environmentFile)) {
+				$path = "$this->baseDir/$environmentFile";
+				$environments[filemtime($path)] = new DNEnvironment($path, $this->project, $this->data);
+			}
 		}
-		return 'unknown';
+		krsort($environments);
+		return array_values($environments);
+	}
+
+	function byName($name) {
+		return $this->environments[$name];
 	}
 }

@@ -1,15 +1,24 @@
 <?php
 
 class DNEnvironment extends ViewableData {
-	protected $data, $name;
+	protected $data;
+	protected $filename;
+	protected $name;
+	protected $project;
 	
-	function __construct($name, DNData $data) {
+	function __construct($filename, $project, DNData $data) {
 		$this->data = $data;
-		$this->name = $name;
+		$this->filename = $filename;
+		$this->name = preg_replace('/\.rb$/', '', basename($this->filename));
+		$this->project = $project;
 	}
 	
 	function Name() {
 		return $this->name;
+	}
+
+	function getProject() {
+		return $this->project;
 	}
 	
 	function CurrentBuild() {
@@ -33,6 +42,6 @@ class DNEnvironment extends ViewableData {
 	}
 	
 	function Link() {
-		return "naut/environment/" . $this->name;
+		return "naut/project/".$this->project->getName()."/environment/" . $this->name;
 	}
 }
