@@ -8,8 +8,14 @@
 
 class DNProjectList extends ArrayList {
 
+	/**
+	 * Backlink to the contex DNData object.
+	 */
 	protected $data;
 
+	/**
+	 * An associative array of name => DNProject object.
+	 */
 	protected $projects;
 
 	function __construct(DNData $data) {
@@ -40,6 +46,9 @@ class DNProjectList extends ArrayList {
 		return array_values($projects);
 	}
 
+	/**
+	 * Find a project by its name.
+	 */
 	function byName($name) {
 		return $this->projects[$name];
 	}

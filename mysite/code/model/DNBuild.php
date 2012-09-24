@@ -20,6 +20,9 @@ class DNBuild extends ViewableData {
 	 */
 	protected $simplename;
 
+	/**
+	 * Project this DNBuild belongs to. Effectively, a has_one-like relatonship.
+	 */
 	protected $project;
 
 	/**

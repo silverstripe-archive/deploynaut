@@ -1,6 +1,9 @@
 <?php
 
 class DNRoot extends Controller {
+	/**
+	 * URL handlers pretending that we have a deep URL structure.
+	 */
 	static $url_handlers = array(
 		'project/$Project/environment/$Environment/DeployForm' => 'getDeployForm',
 		'project/$Project/environment/$Environment' => 'environment',
@@ -42,8 +45,7 @@ class DNRoot extends Controller {
 	}
 	
 	/**
-	 *
-	 * @return null 
+	 * Actions.
 	 */
 	public function index() {
 		return $this->redirect($this->Link() . 'projects/');
@@ -67,8 +69,7 @@ class DNRoot extends Controller {
 	}
 
 	/**
-	 *
-	 * @return DNData 
+	 * Get the DNData object.
 	 */
 	public function DNData() {
 		if(!$this->data) $this->data = new DNData(
@@ -78,19 +79,16 @@ class DNRoot extends Controller {
 		);
 		return $this->data;
 	}
-	
+
 	/**
-	 *
-	 * @return DNBuildList
+	 * Provide DNProjectList (with all projects enumerated within).
 	 */
 	public function DNProjectList() {
 		return $this->DNData()->DNProjectList();
 	}
 
 	/**
-	 *
-	 * @param string $environmentName
-	 * @return \Form 
+	 * Construct the deployment form.
 	 */
 	public function getDeployForm($request) {
 		$project = $this->DNProjectList()->byName($request->latestParam('Project'));
@@ -108,15 +106,15 @@ class DNRoot extends Controller {
 		));
 		$deployAction->addExtraClass('btn');
 		$form->disableSecurityToken();
+
+		// Tweak the action so it plays well with our fake URL structure.
 		$form->setFormAction($request->getURL().'/DeployForm');
+
 		return $form;
 	}
-	
+
 	/**
-	 *
-	 * @param array $data
-	 * @param Form $form
-	 * @return string - HTML 
+	 * Deployment form submission handler.
 	 */
 	public function doDeploy($data, $form) {
 		$project = $this->DNProjectList()->byName($form->request->latestParam('Project'));

@@ -1,9 +1,25 @@
 <?php
 
 class DNBuildList extends ArrayList {
+	/**
+	 * This project's build files directory. 
+	 * All tarballs sit directly under that path.
+	 */
 	protected $baseDir;
+
+	/**
+	 * Backlink to the contex DNData object.
+	 */
 	protected $data;
+
+	/**
+	 * An associative array of build name => DNBuild object.
+	 */
 	protected $builds;
+
+	/**
+	 * Project this DNBuildList belongs to. Effectively, a has_one-like relatonship.
+	 */
 	protected $project;
 	
 	function __construct($baseDir, $project, DNData $data) {
@@ -20,11 +36,17 @@ class DNBuildList extends ArrayList {
 		
 		parent::__construct($builds);
 	}
-	
+
+	/**
+	 * Scan the directory and enumerate all builds founds within.
+	 * Returns an array of DNBuilds.
+	 */
 	protected function getBuilds() {
 		$builds = array();
+		// Search the directory for tarballs.
 		foreach(scandir($this->baseDir) as $buildFile) {
 			if(preg_match('/tar\\.gz$/', $buildFile)) {
+				// Found, wrap in an object.
 				$path = "$this->baseDir/$buildFile";
 				$builds[filemtime($path)] = new DNBuild($path, $this->project, $this->data);
 			}
@@ -33,6 +55,9 @@ class DNBuildList extends ArrayList {
 		return array_values($builds);
 	}
 
+	/**
+	 * Find a build in this set by name.
+	 */
 	function byName($name) {
 		return $this->builds[$name];
 	}
