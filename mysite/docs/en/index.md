@@ -56,3 +56,9 @@ First add an _ss_environment.php file, here is a sample:
 	define('SS_DEFAULT_ADMIN_USERNAME', 'admin');
 	define('SS_DEFAULT_ADMIN_PASSWORD', 'password');
 	$_FILE_TO_URL_MAPPING['/path/to/deploynaut'] = 'http://localhost/';
+
+## Troubleshooting
+
+*Q: The deployment script log is not showing up, and the "Executing:" is not showing the command.*
+
+The deployment relies on deploynaut.js file being available. For some reason it is not executing - check if the webserver can write to assets (it is trying to combine JS files into this directory).
