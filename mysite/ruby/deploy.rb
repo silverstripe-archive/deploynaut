@@ -56,13 +56,14 @@ namespace :deploy do
 		# top.upload "./config/_ss_environment.php", "#{latest_release}/_ss_environment.php", :via => :scp
 
 		# Add the cache folder inside this release so we don't need to worry about the cache being weird.
-		run "mkdir -p #{latest_release}/silverstripe-cache"
+		# ...Not needed - cache for each version will be put into separate dir anywa as we are symlinking!
+		# run "mkdir -p #{latest_release}/silverstripe-cache"
 
 		# Make sure that framework/sake is executable
 		run "chmod a+x #{latest_release}/framework/sake"
 
-		# Run the mighty dev/build
-		run "#{latest_release}/framework/sake dev/build"
+		# Run the mighty dev/build, as a webserver.
+		run "sudo -u www-data #{latest_release}/framework/sake dev/build flush=1"
 
 		# Set permissions for directories
 		run "find #{latest_release} -not -group #{webserver_group} -not -perm 775 -type d -exec chmod 775 {} \\;"
@@ -81,7 +82,10 @@ namespace :deploy do
 	# Overriden due to we don't want to touch javascript and css folders
 	task :finalize_update, :except => { :no_release => true } do
 		shared_children.map do |d|
-			run "ln -sf #{shared_path}/#{d.split('/').last} #{latest_release}/#{d}"
+			# Only recreate if symlink missing.
+			if ('true' !=  capture("if [ -e #{latest_release}/#{d} ]; then echo 'true'; fi").strip)
+				run "ln -sf #{shared_path}/#{d.split('/').last} #{latest_release}/#{d}"
+			end
 		end
     end
 
