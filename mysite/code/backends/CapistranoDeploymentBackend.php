@@ -3,7 +3,7 @@
 class CapistranoDeploymentBackend implements DeploymentBackend {
 	
 	/**
-	 * Deploy the given build to the given environment
+	 * Deploy the given build to the given environment.
 	 */
 	public function currentBuild($environment) {
 		$file = ASSETS_PATH . '/' . $environment . ".deploy-history.txt";

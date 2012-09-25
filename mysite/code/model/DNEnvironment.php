@@ -37,7 +37,7 @@ class DNEnvironment extends ViewableData {
 	}
 
 	function CurrentBuild() {
-		$buildInfo = $this->data->Backend()->currentBuild($this->name);
+		$buildInfo = $this->data->Backend()->currentBuild($this->project->getName().':'.$this->name);
 		return $buildInfo['buildname'];
 	}
 
@@ -45,7 +45,7 @@ class DNEnvironment extends ViewableData {
 	 * A history of all builds deployed to this environment
 	 */
 	function DeployHistory() {
-		$history = $this->data->Backend()->deployHistory($this->name);
+		$history = $this->data->Backend()->deployHistory($this->project->getName().':'.$this->name);
 		$output = new ArrayList;
 		foreach($history as $item) {
 			$output->push(new ArrayData(array(
