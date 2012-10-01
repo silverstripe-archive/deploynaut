@@ -37,9 +37,12 @@ class DNProjectList extends ArrayList {
 	function getProjects() {
 		$projects = array();
 		foreach(scandir($this->data->getEnvironmentDir()) as $project) {
-			$path = $this->data->getEnvironmentDir().'/'.$project;
-			if(is_dir($path) && $project!='.' && $project!='..') {
-				$projects[$project] = new DNProject($project, $this->data);
+			// Exlcude dot-prefixed directories (.git was getting in the way)
+			if(preg_match('/^[^\.]/', $project)) {
+				$path = $this->data->getEnvironmentDir().'/'.$project;
+				if(is_dir($path) && $project!='.' && $project!='..') {
+					$projects[$project] = new DNProject($project, $this->data);
+				}
 			}
 		}
 		ksort($projects);
