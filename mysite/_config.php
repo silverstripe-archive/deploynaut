@@ -18,3 +18,6 @@ Director::addRules(51, array(
 	'' => '->naut',
 	'naut' => 'DNRoot',
 ));
+
+BasicAuth::protect_entire_site(true);
+
