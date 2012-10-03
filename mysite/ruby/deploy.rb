@@ -62,11 +62,13 @@ namespace :deploy do
 		# Make sure that framework/sake is executable
 		run "chmod a+x #{latest_release}/framework/sake"
 
-		# Run the mighty dev/build, as a webserver user if requested.
-		if webserver_user
-			run "sudo -u #{webserver_user} #{latest_release}/framework/sake dev/build flush=1"
-		else
-			run "#{latest_release}/framework/sake dev/build flush=1"
+		if !exists?(:prevent_devbuild)
+			# Run the mighty dev/build, as a webserver user if requested.
+			if exists?(:webserver_user)
+				run "sudo -u #{webserver_user} #{latest_release}/framework/sake dev/build flush=1"
+			else
+				run "#{latest_release}/framework/sake dev/build flush=1"
+			end
 		end
 
 		# Set permissions for directories

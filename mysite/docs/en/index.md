@@ -62,3 +62,7 @@ First add an _ss_environment.php file, here is a sample:
 *Q: The deployment script log is not showing up, and the "Executing:" is not showing the command.*
 
 The deployment relies on deploynaut.js file being available. For some reason it is not executing - check if the webserver can write to assets (it is trying to combine JS files into this directory).
+
+*Q: The file upload fails with "no such file".
+
+Make sure you are not using relative paths (e.g. ~)
