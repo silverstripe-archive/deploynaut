@@ -15,6 +15,7 @@ The environment config files are placed under `../deploynaut-resources/envs`, in
 * `webserver_group`: the group the webserver runs on
 * `webserver_user`: the webserver user, will be used to run dev/build. Leave out to prevent sudo.
 * `prevent_devbuild`: set to skip dev/build. Not recommended on actual live sites.
+* `sake_path`: overrides the default sake path (framework/sake).
 * `web`: the URL of the server
 * `db`: the URL of the DB server
 

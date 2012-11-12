@@ -1,6 +1,8 @@
 # Deploynaut
 
-The deploynaut is a blend of a SS Website and [Capistrano](https://github.com/capistrano/capistrano/) recipies to manage deployment of SilverStripe sites. Capistrano has for a long time been a popular choice for exectuting shell commands on a remote server. 
+The deploynaut is a blend of a SS Website and [Capistrano](https://github.com/capistrano/capistrano/) recipies to manage deployment of SilverStripe sites. Capistrano has for a long time been a popular choice for exectuting shell commands on a remote server.
+
+Originally it has been written to support the deployments of Rails applications. We reuse a lot of the original code, but some of it has to be customised to fit with our infrastructure.
 
 ## Capistrano Installation
 

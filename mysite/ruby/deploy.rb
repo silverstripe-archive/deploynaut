@@ -59,6 +59,11 @@ namespace :deploy do
 		# ...Not needed - cache for each version will be put into separate dir anywa as we are symlinking!
 		# run "mkdir -p #{latest_release}/silverstripe-cache"
 
+		# Default to the SS3 sake path, if not specified.
+		if !exists?(:sake_path)
+			sake_path = "framework/sake"
+		end
+
 		# Make sure that framework/sake is executable
 		run "chmod a+x #{latest_release}/framework/sake"
 
