@@ -6,6 +6,19 @@ after "deploy:finalize_update", "deploy:silverstripe"
 # Override the default capistrano deploy recipe that is build for rails apps
 namespace :deploy do
 
+	# Override original, we only want to set g+w on the shared folders, but not on the deployment root.
+	task :setup, :except => { :no_release => true } do
+		_shared_children = shared_children.map { |d| File.join(shared_path, d.split('/').last) }
+
+		# Create directories
+		create_dirs = [deploy_to, releases_path, shared_path, _shared_children]
+		run "#{try_sudo} mkdir -p #{create_dirs.join(' ')}"
+
+		# Set up permissions on shared directiories only
+		group_writable_dirs = [_shared_children]
+		run "#{try_sudo} chmod g+w #{group_writable_dirs.join(' ')}" if fetch(:group_writable, true)
+	end
+
 	# Overriden so we are using our code_deploy strategy with tar.gz uploading
 	task :update_code, :except => { :no_release => true } do
 		on_rollback { 
