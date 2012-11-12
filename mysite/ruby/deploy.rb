@@ -69,23 +69,25 @@ namespace :deploy do
 		# top.upload "./config/_ss_environment.php", "#{latest_release}/_ss_environment.php", :via => :scp
 
 		# Add the cache folder inside this release so we don't need to worry about the cache being weird.
-		# ...Not needed - cache for each version will be put into separate dir anywa as we are symlinking!
+		# ...Not needed - cache for each version will be put into separate dir anyway as we are symlinking!
 		# run "mkdir -p #{latest_release}/silverstripe-cache"
 
 		# Default to the SS3 sake path, if not specified.
 		if !exists?(:sake_path)
-			sake_path = "framework/sake"
+			_sake_path = "framework/sake"
+		else
+			_sake_path = "#{sake_path}"
 		end
 
 		# Make sure that framework/sake is executable
-		run "chmod a+x #{latest_release}/framework/sake"
+		run "chmod a+x #{latest_release}/#{_sake_path}"
 
 		if !exists?(:prevent_devbuild)
 			# Run the mighty dev/build, as a webserver user if requested.
 			if exists?(:webserver_user)
-				run "sudo -u #{webserver_user} #{latest_release}/framework/sake dev/build flush=1"
+				run "sudo -u #{webserver_user} #{latest_release}/#{_sake_path} dev/build flush=1"
 			else
-				run "#{latest_release}/framework/sake dev/build flush=1"
+				run "#{latest_release}/#{_sake_path} dev/build flush=1"
 			end
 		end
 
@@ -96,7 +98,7 @@ namespace :deploy do
 		run "find #{latest_release} -not -group #{webserver_group} -not -perm 664 -type f -exec chmod 664 {} \\;"
 
 		# Set the execute permissions on framework/sake again
-		run "chmod a+x #{latest_release}/framework/sake"
+		run "chmod a+x #{latest_release}/#{_sake_path}"
 
 		# Set the group owner to the webserver group
 		run "chown -RP :#{webserver_group} #{latest_release}"
