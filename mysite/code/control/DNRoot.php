@@ -70,11 +70,11 @@ class DNRoot extends Controller {
 
 	/**
 	 * Get the DNData object.
+	 * 
+	 * @return DNData
 	 */
 	public function DNData() {
 		if(!$this->data) $this->data = new DNData(
-			BASE_PATH . "/../deploynaut-resources/builds", 
-			BASE_PATH . "/../deploynaut-resources/envs", 
 			new CapistranoDeploymentBackend()
 		);
 		return $this->data;

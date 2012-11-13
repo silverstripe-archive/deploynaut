@@ -8,12 +8,12 @@ class DNData {
 	/**
 	 * Path where the build tarballs can be found.
 	 */
-	protected $buildDir;
+	protected static $build_dir = '';
 
 	/**
 	 * Path where the environment configurations can be found.
 	 */
-	protected $environmentDir;
+	protected static $environment_dir = '';
 	
 	/**
 	 * A prebuilt DNProjectList.
@@ -28,25 +28,45 @@ class DNData {
 	
 	/**
 	 *
+	 * @param string $buildDir 
+	 */
+	public static function set_builds_dir($buildDir) {
+		self::$build_dir = $buildDir;
+	}
+	
+	/**
+	 *
+	 * @param string $environmentDir 
+	 */
+	public static function set_environment_dir($environmentDir) {
+		self::$environment_dir = $environmentDir;
+	}
+	
+	/**
+	 *
 	 * @param string $buildPath
 	 * @param array $environmentNames
 	 * @param DeploymentBackend $backend 
 	 */
-	public function __construct($buildDir, $environmentDir, $backend) {
-		$this->buildDir = $buildDir;
-		$this->environmentDir = $environmentDir;
-		
+	public function __construct($backend) {
 		$this->projectList = new DNProjectList($this);
-		
 		$this->backend = $backend;
 	}
 
+	/**
+	 *
+	 * @return string
+	 */
 	public function getBuildDir() {
-		return $this->buildDir;
+		return self::$build_dir;
 	}
 
+	/**
+	 *
+	 * @return string
+	 */
 	public function getEnvironmentDir() {
-		return $this->environmentDir;
+		return self::$environment_dir;
 	}
 	
 	/**

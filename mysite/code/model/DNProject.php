@@ -13,17 +13,19 @@ class DNProject extends ViewableData {
 
 	/**
 	 * Backlink to the contex DNData object.
+	 * 
+	 * @var DNData
 	 */
-	protected $data;
+	protected $dnData;
 
 	/**
 	 * Name of this project.
 	 */
 	protected $name;
 
-	function __construct($name, DNData $data) {
+	function __construct($name, DNData $dnData) {
 		$this->name = $name;
-		$this->data = $data;
+		$this->dnData = $dnData;
 		parent::__construct();
 	}
 
@@ -35,14 +37,14 @@ class DNProject extends ViewableData {
 	 * Provides a DNBuildList of builds found in this project.
 	 */
 	function DNBuildList() {
-		return new DNBuildList($this->data->getBuildDir().'/'.$this->name, $this, $this->data);
+		return new DNBuildList($this->dnData->getBuildDir().'/'.$this->name, $this, $this->dnData);
 	}
 
 	/**
 	 * Provides a DNEnvironmentList of environments found in this project.
 	 */
 	function DNEnvironmentList() {
-		return new DNEnvironmentList($this->data->getEnvironmentDir().'/'.$this->name, $this, $this->data);
+		return new DNEnvironmentList($this->dnData->getEnvironmentDir().'/'.$this->name, $this, $this->dnData);
 	}
 
 	public function Link() {

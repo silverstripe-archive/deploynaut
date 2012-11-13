@@ -25,7 +25,9 @@ class DNProjectList extends ArrayList {
 
 		// Build the projects array that can be referenced by name.
 		$this->projects = array();
-		foreach($projects as $project) $this->projects[$project->getName()] = $project;
+		foreach($projects as $project) {
+			$this->projects[$project->getName()] = $project;
+		}
 
 		parent::__construct($projects);
 	}

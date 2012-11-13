@@ -31,7 +31,14 @@ class DNBuild extends ViewableData {
 	 */
 	protected $data;
 	
-	function __construct($filename, $project, DNData $data) {
+	
+	/**
+	 *
+	 * @param string $filename
+	 * @param string $project
+	 * @param DNData $data 
+	 */
+	public function __construct($filename, $project, DNData $data) {
 		$this->data = $data;
 		$this->project = $project;
 		
@@ -47,7 +54,7 @@ class DNBuild extends ViewableData {
 	 * @return string
 	 */
 	public function Link() {
-		return "naut/project/".$this->project->getName()."/build/" . $this->name;
+		return Controller::join_links('naut', 'project', $this->project->getName(), "build", $this->name);
 	}
 	
 	/**
@@ -80,7 +87,7 @@ class DNBuild extends ViewableData {
 
 	/**
 	 *
-	 * @return \SS_Datetime 
+	 * @return SS_Datetime 
 	 */
 	public function Created() {
 		$d = new SS_Datetime();
@@ -90,7 +97,7 @@ class DNBuild extends ViewableData {
 	
 	/**
 	 *
-	 * @return \ArrayList 
+	 * @return ArrayList 
 	 */
 	public function CurrentlyDeployedTo() {
 		$output = new ArrayList;

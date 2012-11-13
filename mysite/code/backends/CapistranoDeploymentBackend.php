@@ -24,9 +24,15 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 	public function deploy($environment, $buildname, $buildFile) {
 		$deployLog = ASSETS_PATH . '/'."deploy-log.txt";
 		chdir(dirname(getcwd()));
-		$deploymentCommand = "cap $environment deploy -s build=$buildname";
+		$deploymentCommand = "cap -v $environment deploy -s build=$buildname";
 		echo $deploymentCommand;
-		$command = "nohup $deploymentCommand > '$deployLog' 2> '$deployLog' < /dev/null &";
+		
+		$command = '';
+		// Mac OS X don't support nohup
+		if(PHP_OS !== 'Darwin') {
+			$command .= 'nohup ';
+		}
+		$command .= $deploymentCommand. " > '{$deployLog}' 2> '{$deployLog}' < /dev/null &";
 		system($command);
 	}
 
@@ -50,6 +56,9 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 		return array_reverse($history);
 	}
 	
+	/**
+	 * @return  array
+	 */
 	protected function convertLine($line) {
 		if(!trim($line)) return null;
 		if(!strpos($line, "=>")) return null;

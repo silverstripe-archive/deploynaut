@@ -24,6 +24,7 @@ class DNEnvironmentList extends ArrayList {
 	protected $project;
 	
 	function __construct($baseDir, $project, DNData $data) {
+		
 		$this->baseDir = $baseDir;
 		$this->data = $data;
 		$this->project = $project;
@@ -50,10 +51,10 @@ class DNEnvironmentList extends ArrayList {
 			if(preg_match('/\.rb$/', $environmentFile)) {
 				// Config found, wrap it into an object.
 				$path = "$this->baseDir/$environmentFile";
-				$environments[filemtime($path)] = new DNEnvironment($path, $this->project, $this->data);
+				$environments[] = new DNEnvironment($path, $this->project, $this->data);
 			}
 		}
-		krsort($environments);
+		sort($environments);
 		return array_values($environments);
 	}
 

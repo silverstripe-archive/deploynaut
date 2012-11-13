@@ -1,0 +1,8 @@
+---
+Name: mysiteroutes
+After: 'rootroutes'
+---
+Director:
+  rules:
+    '': '->naut'
+    'naut': 'DNRoot'
