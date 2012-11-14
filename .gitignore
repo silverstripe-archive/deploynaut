@@ -4,3 +4,7 @@ buildtools
 assets
 silverstripe-cache
 nbproject
+
+# Composer added modules
+framework
+vendor
