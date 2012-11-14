@@ -46,6 +46,9 @@ class DNEnvironmentList extends ArrayList {
 	 */
 	protected function getEnvironments() {
 		$environments = array();
+		if(!file_exists($this->baseDir)) {
+			throw new Exception('Environment directory '.$this->baseDir.' doesn\'t exist. Create it first.');
+		}
 		// Search the directory for config files.
 		foreach(scandir($this->baseDir) as $environmentFile) {
 			if(preg_match('/\.rb$/', $environmentFile)) {

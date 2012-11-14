@@ -38,6 +38,9 @@ class DNProjectList extends ArrayList {
 	 */
 	function getProjects() {
 		$projects = array();
+		if(!file_exists($this->data->getEnvironmentDir())) {
+			throw new Exception('The environment directory '.$this->data->getEnvironmentDir().' doesn\'t exist. Create it first and add some projects to it.');
+		}
 		foreach(scandir($this->data->getEnvironmentDir()) as $project) {
 			// Exlcude dot-prefixed directories (.git was getting in the way)
 			if(preg_match('/^[^\.]/', $project)) {

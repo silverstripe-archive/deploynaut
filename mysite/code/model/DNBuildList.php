@@ -43,6 +43,10 @@ class DNBuildList extends ArrayList {
 	 */
 	protected function getBuilds() {
 		$builds = array();
+		
+		if(!file_exists($this->baseDir)) {
+			throw new Exception('Build directory '.$this->baseDir.' doesn\'t exist. Create it first.');
+		}
 		// Search the directory for tarballs.
 		foreach(scandir($this->baseDir) as $buildFile) {
 			if(preg_match('/tar\\.gz$/', $buildFile)) {
