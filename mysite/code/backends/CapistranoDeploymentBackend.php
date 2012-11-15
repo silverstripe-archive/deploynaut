@@ -21,19 +21,15 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 	 * - 'buildname' - the non-simplified name of the build deployed
 	 * - 'datetime' - the datetime when the deployment occurred, in 'Y-m-d H:i:s' format
 	 */
-	public function deploy($environment, $buildname, $buildFile) {
-		$deployLog = ASSETS_PATH . '/'."deploy-log.txt";
-		chdir(dirname(getcwd()));
-		$deploymentCommand = "cap -v $environment deploy -s build=$buildname";
-		echo $deploymentCommand;
+	public function deploy($environment, $buildname, $buildFile, $logFile) {
 		
-		$command = '';
-		// Mac OS X don't support nohup
-		if(PHP_OS !== 'Darwin') {
-			$command .= 'nohup ';
-		}
-		$command .= $deploymentCommand. " > '{$deployLog}' 2> '{$deployLog}' < /dev/null &";
-		system($command);
+		$job = new CapistranoDeploy();
+		$job->args = array(
+			'environment' => $environment,
+			'buildname' => $buildname,
+			'logfile' => $logFile,
+		);
+		$job->perform();
 	}
 
 	/**

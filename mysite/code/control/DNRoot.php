@@ -125,7 +125,8 @@ class DNRoot extends Controller {
 			'Project' => $project,
 			'EnvironmentName' => $environment->Name(),
 			'BuildFullName' => $build->FullName(),
-			'BuildFileName' => $build->Filename()
+			'BuildFileName' => $build->Filename(),
+			'LogFile' => $project->Name.'.'.$environment->Name().'.'.$build->Name().'.log',
 		)))->renderWith('DNRoot_deploy');
 	}
 	
@@ -135,10 +136,12 @@ class DNRoot extends Controller {
 	 * @param SS_HTTPRequest $request 
 	 */
 	public function deploy(SS_HTTPRequest $request) {
-		$envName = $request->postVar('EnvironmentName');
-		$buildFullName = $request->postVar('BuildFullName');
-		$buildFileName = $request->postVar('BuildFileName');
-		$this->DNData()->Backend()->deploy($envName, $buildFullName, $buildFileName);
+		$this->DNData()->Backend()->deploy(
+			$request->postVar('EnvironmentName'), 
+			$request->postVar('BuildFullName'),
+			$request->postVar('BuildFileName'),
+			$request->postVar('LogFile')
+		);
 	}
 	
 	/**
@@ -146,8 +149,11 @@ class DNRoot extends Controller {
 	 *
 	 * @return string
 	 */
-	public function getlog() {
-		$lines = file(ASSETS_PATH . '/'."deploy-log.txt");
+	public function getlog(SS_HTTPRequest $request) {
+		
+		$logFile = $request->getVar('logfile');
+		
+		$lines = file(ASSETS_PATH . '/'. $logFile );
 		foreach($lines as $line) {
 			echo $line;
 		}
