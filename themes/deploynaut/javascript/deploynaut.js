@@ -43,7 +43,7 @@
 		});
 		
 		
-		if($('#deploy_log')) {
+		if($('#deploy_log').length) {
 			deploy.start();
 		}
 	});
