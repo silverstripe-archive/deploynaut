@@ -42,11 +42,10 @@
       <article id="content" class="span12">
 		<div>Currently deploying <strong class="buildfullname">$BuildFullName</strong> to <strong class="environmentname" >$Project.Name:$EnvironmentName</strong></div>
 		<div>This buildfile will be used: <strong class="buildfilename">$BuildFileName</strong></div>
-		<h5>Executing:</h5>
-
-		<div id="deploy_action"></div>
+		<h5>Status:</h5>
+		<pre id="deploy_action"></pre>
 		<h5>Deploy log:</h5>
-		<pre id="deploy_log"></pre>
+		<pre id="deploy_log" data-logfile="$LogFile"></pre>
 	</article>
     </div> <!-- /container -->
 

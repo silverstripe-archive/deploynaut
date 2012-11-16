@@ -22,14 +22,13 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 	 * - 'datetime' - the datetime when the deployment occurred, in 'Y-m-d H:i:s' format
 	 */
 	public function deploy($environment, $buildname, $buildFile, $logFile) {
-		
-		$job = new CapistranoDeploy();
-		$job->args = array(
+		$args = array(
 			'environment' => $environment,
 			'buildname' => $buildname,
 			'logfile' => $logFile,
 		);
-		$job->perform();
+		$token = Resque::enqueue('deploy', 'CapistranoDeploy', $args);
+		echo 'Deploy queued as job '.$token;
 	}
 
 	/**

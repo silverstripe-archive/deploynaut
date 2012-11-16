@@ -13,21 +13,19 @@ class CapistranoDeploy {
 		$environment = $this->args['environment'];
 		$buildname = $this->args['buildname'];
 		$logfile = $this->args['logfile'];
-		
-		
-		chdir(dirname(getcwd()));
+		chdir(BASE_PATH);
 		$deploymentCommand = 'cap -v '.$environment.' deploy -s build='.$buildname;
-		
-		$logfilePath = ASSETS_DIR.DIRECTORY_SEPARATOR.$logfile;
+		$logfilePath = ASSETS_PATH.DIRECTORY_SEPARATOR.$logfile;
 		$command = '';
-		// Mac OS X don't support nohup
-		if(PHP_OS !== 'Darwin') {
-			$command .= 'nohup ';
-		}
-		
 		$command .= $deploymentCommand;
-		
-		$command .= $command. " > '{$logfilePath}' 2> '{$logfilePath}' < /dev/null &";
-		system($command);
+		$command .= $command. " &> '{$logfilePath}'";
+		echo '[=] Start deploy for "'.$environment.'" build "'.$buildname.'"'.PHP_EOL;
+		system($command, $status);
+		if($status===0) {
+			echo '[+] Success '.$logfile.PHP_EOL;
+		} else {
+			echo '[-] Fail '.$logfile.PHP_EOL;
+			throw new Exception('Deployment for "'.$environment.'" build "'.$buildname.'", logfile '.$logfile);
+		}
 	}
 }

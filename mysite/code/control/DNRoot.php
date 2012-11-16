@@ -106,10 +106,8 @@ class DNRoot extends Controller {
 		));
 		$deployAction->addExtraClass('btn');
 		$form->disableSecurityToken();
-
 		// Tweak the action so it plays well with our fake URL structure.
 		$form->setFormAction($request->getURL().'/DeployForm');
-
 		return $form;
 	}
 
@@ -126,7 +124,7 @@ class DNRoot extends Controller {
 			'EnvironmentName' => $environment->Name(),
 			'BuildFullName' => $build->FullName(),
 			'BuildFileName' => $build->Filename(),
-			'LogFile' => $project->Name.'.'.$environment->Name().'.'.$build->Name().'.log',
+			'LogFile' => $project->Name.'.'.$environment->Name().'.'.$build->Name().'.'.time().'.log',
 		)))->renderWith('DNRoot_deploy');
 	}
 	
@@ -153,7 +151,12 @@ class DNRoot extends Controller {
 		
 		$logFile = $request->getVar('logfile');
 		
-		$lines = file(ASSETS_PATH . '/'. $logFile );
+		if(!file_exists(ASSETS_PATH . DIRECTORY_SEPARATOR . $logFile )) {
+			echo 'Waiting for deployment to start';
+			return;
+		}
+		
+		$lines = file(ASSETS_PATH . DIRECTORY_SEPARATOR . $logFile );
 		foreach($lines as $line) {
 			echo $line;
 		}
