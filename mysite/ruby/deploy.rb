@@ -85,7 +85,7 @@ namespace :deploy do
 		if !exists?(:prevent_devbuild)
 			# Run the mighty dev/build, as a webserver user if requested.
 			if exists?(:webserver_user)
-				run "sudo -u #{webserver_user} #{latest_release}/#{_sake_path} dev/build flush=1"
+				run "sudo su #{webserver_user} -c \"#{latest_release}/#{_sake_path} dev/build flush=1\""
 			else
 				run "#{latest_release}/#{_sake_path} dev/build flush=1"
 			end
