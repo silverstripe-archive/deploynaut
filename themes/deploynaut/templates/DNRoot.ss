@@ -28,19 +28,6 @@
 					</ul>
 				</div>
 			</div>
-			<div class="container">
-				<div class="pull-right">
-					<% if RedisUnavailable %>
-					<p class="text-error">Can't connect to redis: "$RedisUnavailable"</p>
-					<% else %>
-						<% if $RedisWorkersCount %>
-						<p class="muted">$RedisWorkersCount worker(s) connected</p>
-						<% else %>
-						<p class="text-error">No workers connected</p>
-						<% end_if %>
-					<% end_if %>
-				</div>
-			</div>
 		</div>
 
 		<div class="container">
