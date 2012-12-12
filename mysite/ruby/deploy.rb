@@ -79,15 +79,15 @@ namespace :deploy do
 		run "chmod a+x #{latest_release}/#{_sake_path}"
 
 		if !exists?(:prevent_devbuild)
-			run "mkdir -p #{latest_release}/silverstripe-cache"
 			# Run the mighty dev/build, as a webserver user if requested.
 			if exists?(:webserver_user)
-				run "sudo su -u #{webserver_user} #{latest_release}/#{_sake_path} dev/build flush=1"
+				run "sudo su #{webserver_user} -c '#{latest_release}/#{_sake_path} dev/build flush=1'"
 			else
+				run "mkdir -p #{latest_release}/silverstripe-cache"
 				run "#{latest_release}/#{_sake_path} dev/build flush=1"
+				run "rm -rf #{latest_release}/silverstripe-cache"
 			end
 			# Remove the cache folder that was used for dev/build
-			run "rm -rf #{latest_release}/silverstripe-cache"
 		end
 
 		# Set permissions for directories
