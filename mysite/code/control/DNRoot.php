@@ -161,4 +161,15 @@ class DNRoot extends Controller {
 			echo $line;
 		}
 	}
+	
+	/**
+	 * For template 
+	 */
+	public function RedisUnavailable() {
+		return SSResqueHealthCheck::redis_unavailable();
+	}
+	
+	public function RedisWorkersCount() {
+		return SSResqueHealthCheck::workers_count();
+	}
 }

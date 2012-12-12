@@ -1,5 +1,5 @@
 <article id="content" class="span12">
-	<h1>Environments</h1>
+	<h3>Environments</h3>
 	<p></p>
 	<table class="table-striped table table-bordered">
 		<thead>
@@ -15,7 +15,7 @@
 		</tbody>
 	</table>
 
-	<h1>Builds</h1>
+	<h3>Builds</h3>
 	<p></p>
 	<table class="table-striped table table-bordered">
 		<thead>

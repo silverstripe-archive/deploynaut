@@ -1,5 +1,5 @@
 <article id="content" class="span12">
-	<h1>Projects</h1>
+	<h3>Projects</h3>
 	<p></p>
 	<table class="table-striped table table-bordered">
 		<thead>
