@@ -68,10 +68,6 @@ namespace :deploy do
 		# Disabled the uploading of the _ss_environment.php, but leaving it here as an example
 		# top.upload "./config/_ss_environment.php", "#{latest_release}/_ss_environment.php", :via => :scp
 
-		# Add the cache folder inside this release so we don't need to worry about the cache being weird.
-		# ...Not needed - cache for each version will be put into separate dir anyway as we are symlinking!
-		# run "mkdir -p #{latest_release}/silverstripe-cache"
-
 		# Default to the SS3 sake path, if not specified.
 		if !exists?(:sake_path)
 			_sake_path = "framework/sake"
@@ -83,12 +79,15 @@ namespace :deploy do
 		run "chmod a+x #{latest_release}/#{_sake_path}"
 
 		if !exists?(:prevent_devbuild)
+			run "mkdir -p #{latest_release}/silverstripe-cache"
 			# Run the mighty dev/build, as a webserver user if requested.
 			if exists?(:webserver_user)
-				run "sudo su #{webserver_user} -c \"#{latest_release}/#{_sake_path} dev/build flush=1\""
+				run "sudo su -u #{webserver_user} #{latest_release}/#{_sake_path} dev/build flush=1"
 			else
 				run "#{latest_release}/#{_sake_path} dev/build flush=1"
 			end
+			# Remove the cache folder that was used for dev/build
+			run "rm -rf #{latest_release}/silverstripe-cache"
 		end
 
 		# Set permissions for directories
