@@ -160,9 +160,11 @@ class DNRoot extends Controller {
 	 * @return string
 	 */
 	public function getlog() {
-		$lines = file(ASSETS_PATH . '/'."deploy-log.txt");
-		foreach($lines as $line) {
-			echo $line;
+		if(file_exists(ASSETS_PATH . '/'."deploy-log.txt")) {
+			$lines = file(ASSETS_PATH . '/'."deploy-log.txt");
+			foreach($lines as $line) {
+				echo $line;
+			}
 		}
 	}
 }
