@@ -22,12 +22,16 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 	 * Deploy the given build to the given environment.
 	 */
 	public function deploy($environment, $buildname, $buildFile, DNProject $project) {
+		GraphiteDeploymentNotifier::notify_start($environment, $buildname, $buildFile, $project);
+
 		$deployLog = ASSETS_PATH . '/'."deploy-log.txt";
 		chdir(dirname(getcwd()));
 		$deploymentCommand = "cap $environment deploy -s build=$buildname";
 		echo $deploymentCommand;
 		$command = "nohup $deploymentCommand > '$deployLog' 2> '$deployLog' < /dev/null &";
 		system($command);
+
+		GraphiteDeploymentNotifier::notify_end($environment, $buildname, $buildFile, $project);
 	}
 
 	/**
