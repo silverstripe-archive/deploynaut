@@ -151,7 +151,9 @@ class DNRoot extends Controller {
 		$envName = $request->postVar('EnvironmentName');
 		$buildFullName = $request->postVar('BuildFullName');
 		$buildFileName = $request->postVar('BuildFileName');
-		$this->DNData()->Backend()->deploy($envName, $buildFullName, $buildFileName);
+
+		$project = $this->DNData()->DNProjectList()->byName(strtok($envName, ":"));
+		$this->DNData()->Backend()->deploy($envName, $buildFullName, $buildFileName, $project);
 	}
 	
 	/**

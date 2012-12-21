@@ -11,7 +11,7 @@ class DemoDeploymentBackend implements DeploymentBackend {
 	/**
 	 * Deploy the given build to the given environment
 	 */
-	function deploy($environment, $buildname, $buildFile) {
+	function deploy($environment, $buildname, $buildFile, DNProject $project) {
 		$file = ASSETS_PATH . '/' . $environment . ".deploy-history.txt";
 		$CLI_file = escapeshellarg($file);
 		$CLI_line = escapeshellarg(date('Y-m-d H:i:s') . " => $buildname");

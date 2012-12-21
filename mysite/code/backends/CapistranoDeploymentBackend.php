@@ -3,7 +3,10 @@
 class CapistranoDeploymentBackend implements DeploymentBackend {
 	
 	/**
-	 * Deploy the given build to the given environment.
+	 * Return information about the current build on the given environment.
+	 * Returns a map with keys:
+	 * - 'buildname' - the non-simplified name of the build deployed
+	 * - 'datetime' - the datetime when the deployment occurred, in 'Y-m-d H:i:s' format
 	 */
 	public function currentBuild($environment) {
 		$file = ASSETS_PATH . '/' . $environment . ".deploy-history.txt";
@@ -16,12 +19,9 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 	}
 
 	/**
-	 * Return information about the current build on the given environment.
-	 * Returns a map with keys:
-	 * - 'buildname' - the non-simplified name of the build deployed
-	 * - 'datetime' - the datetime when the deployment occurred, in 'Y-m-d H:i:s' format
+	 * Deploy the given build to the given environment.
 	 */
-	public function deploy($environment, $buildname, $buildFile) {
+	public function deploy($environment, $buildname, $buildFile, DNProject $project) {
 		$deployLog = ASSETS_PATH . '/'."deploy-log.txt";
 		chdir(dirname(getcwd()));
 		$deploymentCommand = "cap $environment deploy -s build=$buildname";
