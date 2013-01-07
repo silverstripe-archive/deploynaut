@@ -58,8 +58,10 @@ class GraphiteDeploymentNotifier {
 	protected static function graphite_metric($key, $value, $timestamp = null) {
 		if($timestamp === null) $timestamp = time();
 
-		if(self::$graphite_host && self::$graphite_port) {
-			$socket = fsockopen(self::$graphite_host, self::$graphite_port);
+		$graphiteHost = Config::inst()->get(get_class(), 'graphite_host');
+		$graphitePort = Config::inst()->get(get_class(), 'graphite_port');
+		if($graphiteHost && $graphitePort) {
+			$socket = fsockopen($graphiteHost, $graphitePort);
 			fwrite($socket, "$key $value $timestamp\n");
 			fclose($socket);
 		} else {
