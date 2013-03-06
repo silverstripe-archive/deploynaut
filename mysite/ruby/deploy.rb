@@ -81,11 +81,11 @@ namespace :deploy do
 		if !exists?(:prevent_devbuild)
 			# Run the mighty dev/build, as a webserver user if requested.
 			if exists?(:webserver_user)
-				run "sudo su #{webserver_user} -c '#{latest_release}/#{_sake_path} dev/build flush=1'"
+				run "sudo su #{webserver_user} -c '#{latest_release}/#{_sake_path} dev/build flush=1'", :roles => :db
 			else
-				run "mkdir -p #{latest_release}/silverstripe-cache"
-				run "#{latest_release}/#{_sake_path} dev/build flush=1"
-				run "rm -rf #{latest_release}/silverstripe-cache"
+				run "mkdir -p #{latest_release}/silverstripe-cache", :roles => :db
+				run "#{latest_release}/#{_sake_path} dev/build flush=1", :roles => :db
+				run "rm -rf #{latest_release}/silverstripe-cache", :roles => :db
 			end
 			# Remove the cache folder that was used for dev/build
 		end
