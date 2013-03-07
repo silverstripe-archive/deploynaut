@@ -1,37 +1,133 @@
 {
-    "hash": "be11ba5432045c01635a945893b2a6c3",
+    "hash": "57423664ab0a83fc6b7a2deffa5e7e39",
     "packages": [
+        {
+            "name": "chrisboulton/php-resque",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/chrisboulton/php-resque.git",
+                "reference": "c18b5441f5ffe0b309b92298d97919fdd076bf7f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/chrisboulton/php-resque/zipball/c18b5441f5ffe0b309b92298d97919fdd076bf7f",
+                "reference": "c18b5441f5ffe0b309b92298d97919fdd076bf7f",
+                "shasum": ""
+            },
+            "require": {
+                "colinmollenhour/credis": "dev-master",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "3.7.*"
+            },
+            "suggest": {
+                "ext-proctitle": "Allows php-resque to rename the title of UNIX processes to show the status of a worker.",
+                "ext-redis": "Native PHP extension for Redis connectivity. Credis will automatically utilize when available."
+            },
+            "time": "2013-02-28 12:57:04",
+            "bin": [
+                "bin/resque"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Resque": "lib"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Boulton",
+                    "email": "chris@bigcommerce.com"
+                }
+            ],
+            "description": "Redis backed library for creating background jobs and processing them later. Based on resque for Ruby.",
+            "homepage": "http://www.github.com/chrisboulton/php-resque/",
+            "keywords": [
+                "background",
+                "job",
+                "redis",
+                "resque"
+            ]
+        },
+        {
+            "name": "colinmollenhour/credis",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/colinmollenhour/credis.git",
+                "reference": "2a8adc5745f6331a657ff167307faa901b885715"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/colinmollenhour/credis/zipball/2a8adc5745f6331a657ff167307faa901b885715",
+                "reference": "2a8adc5745f6331a657ff167307faa901b885715",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "time": "2013-01-12 23:02:40",
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "Client.php",
+                    "Cluster.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Colin Mollenhour",
+                    "email": "colin@mollenhour.com"
+                }
+            ],
+            "description": "Credis is a lightweight interface to the Redis key-value store which wraps the phpredis library when available for better performance.",
+            "homepage": "https://github.com/colinmollenhour/credis"
+        },
         {
             "name": "composer/installers",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/composer/installers",
-                "reference": "7b12a92ef9d6d10f90ef80f90bf40a4107394bfd"
+                "url": "https://github.com/composer/installers.git",
+                "reference": "v1.0.3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/composer/installers/archive/7b12a92ef9d6d10f90ef80f90bf40a4107394bfd.zip",
-                "reference": "7b12a92ef9d6d10f90ef80f90bf40a4107394bfd",
+                "url": "https://api.github.com/repos/composer/installers/zipball/v1.0.3",
+                "reference": "v1.0.3",
                 "shasum": ""
             },
             "replace": {
                 "shama/baton": "*"
             },
             "require-dev": {
-                "composer/composer": "1.0.*@dev"
+                "composer/composer": "1.0.*@dev",
+                "phpunit/phpunit": "3.7.*"
             },
-            "time": "1350964745",
+            "time": "2013-03-02 22:45:58",
             "type": "composer-installer",
             "extra": {
-                "class": "Composer\\Installers\\Installer"
+                "class": "Composer\\Installers\\Installer",
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
             },
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "Composer\\Installers\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -46,87 +142,55 @@
             "description": "A multi-framework Composer library installer",
             "homepage": "http://composer.github.com/installers/",
             "keywords": [
-                "symfony",
-                "installer",
-                "zend",
-                "wordpress",
+                "TYPO3 Flow",
+                "TYPO3 Neos",
+                "agl",
                 "cakephp",
                 "codeigniter",
-                "fuelphp",
                 "drupal",
-                "lithium",
-                "li3",
+                "fuelphp",
+                "installer",
                 "joomla",
+                "kohana",
                 "laravel",
+                "li3",
+                "lithium",
+                "mako",
                 "phpbb",
                 "ppi",
                 "silverstripe",
-                "kohana",
-                "mako"
-            ]
-        },
-        {
-            "name": "silverstripe-themes/simple",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/silverstripe-themes/silverstripe-simple",
-                "reference": "5779d770dc3cd9bf6f839b747a456f81d00a8329"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://github.com/silverstripe-themes/silverstripe-simple/archive/5779d770dc3cd9bf6f839b747a456f81d00a8329.zip",
-                "reference": "5779d770dc3cd9bf6f839b747a456f81d00a8329",
-                "shasum": ""
-            },
-            "require": {
-                "composer/installers": "*",
-                "silverstripe/framework": ">=3.0"
-            },
-            "time": "1352018334",
-            "type": "silverstripe-theme",
-            "installation-source": "source",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Sara Tušar (Innovaif)",
-                    "homepage": "http://www.saratusar.com"
-                }
-            ],
-            "description": "The SilverStripe simple theme (default SilverStripe 3 theme)",
-            "keywords": [
-                "theme",
-                "silverstripe"
+                "symfony",
+                "wordpress",
+                "yii",
+                "zend"
             ]
         },
         {
             "name": "silverstripe/framework",
-            "version": "dev-master",
+            "version": "3.0.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/silverstripe/sapphire",
-                "reference": "bde6344abf79323868e35135b5d0557d4f8131fe"
+                "url": "https://github.com/silverstripe/sapphire.git",
+                "reference": "3.0.5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/silverstripe/sapphire/archive/bde6344abf79323868e35135b5d0557d4f8131fe.zip",
-                "reference": "bde6344abf79323868e35135b5d0557d4f8131fe",
+                "url": "https://api.github.com/repos/silverstripe/sapphire/zipball/3.0.5",
+                "reference": "3.0.5",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.2",
-                "composer/installers": "*"
+                "composer/installers": "*",
+                "php": ">=5.3.2"
             },
-            "time": "1352390424",
+            "time": "2013-02-19 23:39:00",
             "type": "silverstripe-module",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.1.x-dev"
-                }
+            "autoload": {
+                "classmap": [
+                    "tests/behat/features/bootstrap"
+                ]
             },
-            "installation-source": "source",
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
@@ -146,6 +210,43 @@
                 "framework",
                 "silverstripe"
             ]
+        },
+        {
+            "name": "stojg/silverstripe-resque",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/stojg/silverstripe-resque.git",
+                "reference": "59d625ff2a79b8b935d4731d5931c2a9689e8068"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/stojg/silverstripe-resque/zipball/59d625ff2a79b8b935d4731d5931c2a9689e8068",
+                "reference": "59d625ff2a79b8b935d4731d5931c2a9689e8068",
+                "shasum": ""
+            },
+            "require": {
+                "chrisboulton/php-resque": ">=1.2"
+            },
+            "time": "2012-11-19 05:37:45",
+            "type": "module",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD"
+            ],
+            "authors": [
+                {
+                    "name": "Stig Lindqvist",
+                    "email": "stojg.lindqvist@gmail.com",
+                    "homepage": "https://www.stojg.se/"
+                }
+            ],
+            "description": "Wraps around the resque code for background jobss",
+            "homepage": "http://github.com/silverstripe-resque",
+            "keywords": [
+                "redis",
+                "silverstripe"
+            ]
         }
     ],
     "packages-dev": null,
@@ -153,7 +254,7 @@
 
     ],
     "minimum-stability": "dev",
-    "stability-flags": [
-
-    ]
+    "stability-flags": {
+        "silverstripe/framework": 0
+    }
 }
