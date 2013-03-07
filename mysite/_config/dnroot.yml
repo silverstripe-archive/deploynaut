@@ -1,0 +1,24 @@
+---
+Only:
+    environment: dev
+---
+DNRoot:
+    deployment_build_path: "deploynaut-resources/builds"
+    deployment_env_path: "deploynaut-resources/envs"
+Injector:
+    DeploymentBackend:
+        class: DemoDeploymentBackend
+---
+Only:
+    environment: live
+---
+DNRoot:
+    deployment_build_path: "../deploynaut-resources/builds"
+    deployment_env_path: "../deploynaut-resources/envs"
+GraphiteDeploymentNotifier:
+    graphite_host: graphite.silverstripe.com
+    graphite_port: 2003
+Injector:
+    DeploymentBackend:
+        class: CapistranoDeploymentBackend
+---

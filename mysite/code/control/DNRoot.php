@@ -2,6 +2,13 @@
 
 class DNRoot extends Controller {
 	/**
+	 * Configuration - defined in _config/dnroot.yml
+	 */
+	static $deployment_build_path = null;
+	static $deployment_env_path = null;
+
+
+	/**
 	 * URL handlers pretending that we have a deep URL structure.
 	 */
 	static $url_handlers = array(
@@ -74,9 +81,18 @@ class DNRoot extends Controller {
 	 * @return DNData
 	 */
 	public function DNData() {
-		if(!$this->data) $this->data = new DNData(
-			new CapistranoDeploymentBackend()
-		);
+		if(!$this->data) {
+			$buildPath = $this->config()->deployment_build_path;
+			if($buildPath[0] != "/") $buildPath = BASE_PATH . '/' . $buildPath;
+
+			$envPath = $this->config()->deployment_env_path;
+			if($envPath[0] != "/") $envPath = BASE_PATH . '/' . $envPath;
+
+			$backend = Injector::inst()->get('DeploymentBackend');
+
+			$this->data = new DNData($buildPath, $envPath, $backend);
+		}
+
 		return $this->data;
 	}
 
@@ -138,7 +154,8 @@ class DNRoot extends Controller {
 			$request->postVar('EnvironmentName'), 
 			$request->postVar('BuildFullName'),
 			$request->postVar('BuildFileName'),
-			$request->postVar('LogFile')
+			$request->postVar('LogFile'),
+			$this->DNData()->DNProjectList()->byName(strtok($envName, ":"))
 		);
 	}
 	

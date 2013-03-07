@@ -5,7 +5,7 @@ interface DeploymentBackend {
 	/**
 	 * Deploy the given build to the given environment
 	 */
-	function deploy($environment, $buildname, $buildFile, $logFile);
+	function deploy($environment, $buildname, $buildFile, $logFile, DNProject $project);
 
 	/**
 	 * Return information about the current build on the given environment.
