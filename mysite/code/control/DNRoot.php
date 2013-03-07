@@ -151,7 +151,7 @@ class DNRoot extends Controller {
 	 */
 	public function deploy(SS_HTTPRequest $request) {
 		$this->DNData()->Backend()->deploy(
-			$request->postVar('EnvironmentName'), 
+			$envName = $request->postVar('EnvironmentName'), 
 			$request->postVar('BuildFullName'),
 			$request->postVar('BuildFileName'),
 			$request->postVar('LogFile'),

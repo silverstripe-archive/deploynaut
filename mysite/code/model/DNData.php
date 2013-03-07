@@ -28,28 +28,16 @@ class DNData {
 	
 	/**
 	 *
-	 * @param string $buildDir 
-	 */
-	public static function set_builds_dir($buildDir) {
-		self::$build_dir = $buildDir;
-	}
-	
-	/**
-	 *
-	 * @param string $environmentDir 
-	 */
-	public static function set_environment_dir($environmentDir) {
-		self::$environment_dir = $environmentDir;
-	}
-	
-	/**
-	 *
 	 * @param string $buildPath
 	 * @param array $environmentNames
 	 * @param DeploymentBackend $backend 
 	 */
-	public function __construct($backend) {
+	public function __construct($buildDir, $environmentDir, $backend) {
+		$this->buildDir = $buildDir;
+		$this->environmentDir = $environmentDir;
+		
 		$this->projectList = new DNProjectList($this);
+		
 		$this->backend = $backend;
 	}
 
@@ -58,7 +46,7 @@ class DNData {
 	 * @return string
 	 */
 	public function getBuildDir() {
-		return self::$build_dir;
+		return $this->buildDir;
 	}
 
 	/**
@@ -66,7 +54,7 @@ class DNData {
 	 * @return string
 	 */
 	public function getEnvironmentDir() {
-		return self::$environment_dir;
+		return $this->environmentDir;
 	}
 	
 	/**
