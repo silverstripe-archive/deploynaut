@@ -1,8 +1,0 @@
----
-Name: 'resqueroutes'
-After: '*'
----
-Director:
-  rules:
-    'dev/resque/run': 'SSResqueRun'
-    'dev/resque/ping': 'SSResquePing'
