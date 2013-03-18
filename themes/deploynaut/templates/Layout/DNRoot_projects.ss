@@ -24,7 +24,7 @@
 		<tbody>
 		<% loop DNProjectList %>
 			<tr>
-				<td><a href='$Link'>$Name</a></td>
+				<td><a href="$Link">$Name</a></td>
 			</tr>
 		<% end_loop %>
 		</tbody>
