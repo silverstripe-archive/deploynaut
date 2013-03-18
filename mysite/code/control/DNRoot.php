@@ -2,13 +2,6 @@
 
 class DNRoot extends Controller {
 	/**
-	 * Configuration - defined in _config/dnroot.yml
-	 */
-	static $deployment_build_path = null;
-	static $deployment_env_path = null;
-
-
-	/**
 	 * URL handlers pretending that we have a deep URL structure.
 	 */
 	static $url_handlers = array(
@@ -63,13 +56,13 @@ class DNRoot extends Controller {
 	}
 
 	public function project($request) {
-		$project = $this->DNProjectList()->byName($request->latestParam('Project'));
+		$project = $this->DNProjectList()->filter('Name', $request->latestParam('Project'))->First();
 		return $project->renderWith(array('DNRoot_project', 'DNRoot'));
 	}
 
 	public function environment($request) {
-		$project = $this->DNProjectList()->byName($request->latestParam('Project'));
-		$env = $project->DNEnvironmentList()->byName($request->latestParam('Environment'));
+		$project = $this->DNProjectList()->filter('Name', $request->latestParam('Project'))->First();
+		$env = $project->DNEnvironmentList()->filter('Name', $request->latestParam('Environment'))->First();
 		return $env->customise(array(
 			'DeployForm' => $this->getDeployForm($request)			
 		))->renderWith(array('DNRoot_environment', 'DNRoot'));
@@ -81,34 +74,22 @@ class DNRoot extends Controller {
 	 * @return DNData
 	 */
 	public function DNData() {
-		if(!$this->data) {
-			$buildPath = $this->config()->deployment_build_path;
-			if($buildPath[0] != "/") $buildPath = BASE_PATH . '/' . $buildPath;
-
-			$envPath = $this->config()->deployment_env_path;
-			if($envPath[0] != "/") $envPath = BASE_PATH . '/' . $envPath;
-
-			$backend = Injector::inst()->get('DeploymentBackend');
-
-			$this->data = new DNData($buildPath, $envPath, $backend);
-		}
-
-		return $this->data;
+		return Injector::inst()->get('DNData');
 	}
 
 	/**
 	 * Provide DNProjectList (with all projects enumerated within).
 	 */
 	public function DNProjectList() {
-		return $this->DNData()->DNProjectList();
+		return DataObject::get('DNProject');
 	}
 
 	/**
 	 * Construct the deployment form.
 	 */
 	public function getDeployForm($request) {
-		$project = $this->DNProjectList()->byName($request->latestParam('Project'));
-		$environment = $project->DNEnvironmentList()->byName($request->latestParam('Environment'));
+		$project = $this->DNProjectList()->filter('Name', $request->latestParam('Project'))->First();
+		$environment = $project->DNEnvironmentList()->filter('Name', $request->latestParam('Environment'))->First();
 
 		$buildList = array('' => '(Choose a build)');
 		foreach($project->DNBuildList() as $build) {
@@ -118,7 +99,7 @@ class DNRoot extends Controller {
 		$form = new Form($this, 'DeployForm', new FieldList(
 			new DropdownField("BuildName", "Build", $buildList)
 		), new FieldList(
-			$deployAction = new FormAction('doDeploy', "Deploy to " . $environment->Name())
+			$deployAction = new FormAction('doDeploy', "Deploy to " . $environment->Name)
 		));
 		$deployAction->addExtraClass('btn');
 		$form->disableSecurityToken();
@@ -131,16 +112,16 @@ class DNRoot extends Controller {
 	 * Deployment form submission handler.
 	 */
 	public function doDeploy($data, $form) {
-		$project = $this->DNProjectList()->byName($form->request->latestParam('Project'));
-		$environment = $project->DNEnvironmentList()->byName($form->request->latestParam('Environment'));
+		$project = $this->DNProjectList()->filter('Name', $form->request->latestParam('Project'))->First();
+		$environment = $project->DNEnvironmentList()->filter('Name', $form->request->latestParam('Environment'))->First();
 		$build = $project->DNBuildList()->byName($data['BuildName']);
 		
 		return $this->customise(new ArrayData(array(
 			'Project' => $project,
-			'EnvironmentName' => $environment->Name(),
+			'EnvironmentName' => $environment->Name,
 			'BuildFullName' => $build->FullName(),
 			'BuildFileName' => $build->Filename(),
-			'LogFile' => $project->Name.'.'.$environment->Name().'.'.$build->Name().'.'.time().'.log',
+			'LogFile' => $project->Name.'.'.$environment->Name.'.'.$build->Name().'.'.time().'.log',
 		)))->renderWith('DNRoot_deploy');
 	}
 	
@@ -155,7 +136,7 @@ class DNRoot extends Controller {
 			$request->postVar('BuildFullName'),
 			$request->postVar('BuildFileName'),
 			$request->postVar('LogFile'),
-			$this->DNData()->DNProjectList()->byName(strtok($envName, ":"))
+			$this->DNData()->DNProjectList()->filter('Name', strtok($envName, ":"))->First()
 		);
 	}
 	

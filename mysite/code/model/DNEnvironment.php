@@ -1,43 +1,32 @@
 <?php
 
-class DNEnvironment extends ViewableData {
-	/**
-	 * Context.
-	 */
-	protected $data;
+class DNEnvironment extends DataObject {
+	static $db = array(
+		"Filename" => "Varchar(255)",
+		"Name" => "Varchar",
+	);
+	static $has_one = array(
+		"Project" => "DNProject",
+	);
 
-	/**
-	 * The config path associated with this environment.
-	 */
-	protected $filename;
-
-	/**
-	 * The name of this environment (filename without extension).
-	 */
-	protected $name;
-
-	/**
-	 * Project this DNEnvironment belongs to. Effectively, a has_one-like relatonship.
-	 */	
-	protected $project;
-
-	function __construct($filename, $project, DNData $data) {
-		$this->data = $data;
-		$this->filename = $filename;
-		$this->name = preg_replace('/\.rb$/', '', basename($this->filename));
-		$this->project = $project;
+	static function get($callerClass = null, $filter = "", $sort = "", $join = "", $limit = null,
+			$containerClass = 'DataList') {
+		return new DNEnvironmentList('DNEnvironment');
 	}
 
-	function Name() {
-		return $this->name;
+	static function create_from_path($path) {
+		$e = new DNEnvironment;
+		$e->Filename = $path;
+		$e->Name = preg_replace('/\.rb$/', '', basename($e->Filename));
+		return $e;
 	}
 
-	function getProject() {
-		return $this->project;
+	function DNData() {
+		return Injector::inst()->get('DNData');
 	}
 
 	function CurrentBuild() {
-		$buildInfo = $this->data->Backend()->currentBuild($this->project->getName().':'.$this->name);
+		$buildInfo = $this->DNData()->Backend()->currentBuild($this->Project()->Name.':'.$this->Name);
 		return $buildInfo['buildname'];
 	}
 
@@ -45,7 +34,7 @@ class DNEnvironment extends ViewableData {
 	 * A history of all builds deployed to this environment
 	 */
 	function DeployHistory() {
-		$history = $this->data->Backend()->deployHistory($this->project->getName().':'.$this->name);
+		$history = $this->DNData()->Backend()->deployHistory($this->Project()->Name.':'.$this->Name);
 		$output = new ArrayList;
 		foreach($history as $item) {
 			$output->push(new ArrayData(array(
@@ -57,6 +46,6 @@ class DNEnvironment extends ViewableData {
 	}
 	
 	function Link() {
-		return "naut/project/".$this->project->getName()."/environment/" . $this->name;
+		return $this->Project()->Link()."/environment/" . $this->Name;
 	}
 }

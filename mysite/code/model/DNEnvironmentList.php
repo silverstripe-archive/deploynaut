@@ -1,70 +1,33 @@
 <?php
 
-class DNEnvironmentList extends ArrayList {
-	/**
-	 * This project's env files directory. 
-	 * All configs sit directly under that path.
-	 */
-	protected $baseDir;
+class DNEnvironmentList extends DataList {
+	protected $projectID;
 
-	/**
-	 * This project's build files directory. 
-	 * All tarballs sit directly under that path.
-	 */
-	protected $data;
-
-	/**
-	 * An associative array of build name => DNEvnironment objects.
-	 */
-	protected $environments;
-
-	/**
-	 * Project this DNEnvironmentList belongs to. Effectively, a has_one-like relatonship.
-	 */	
-	protected $project;
-	
-	function __construct($baseDir, $project, DNData $data) {
-		
-		$this->baseDir = $baseDir;
-		$this->data = $data;
-		$this->project = $project;
-		
-		$environments = $this->getEnvironments();
-
-		$this->environments = array();
-		foreach($environments as $environment) {
-			$this->environments[$environment->Name()] = $environment;
-		}
-
-		parent::__construct($environments);
+	function setProjectID($projectID) {
+		$this->projectID = $projectID;
+		return $this;
 	}
-
-		
+	
 	/**
-	 * Scan the directory and enumerate all envs founds within.
-	 * Returns an array of DNEnvironments.
+	 * Sync the in-db project list with a list of file paths
+	 * @param array $paths Array of pathnames
 	 */
-	protected function getEnvironments() {
-		$environments = array();
-		if(!file_exists($this->baseDir)) {
-			throw new Exception('Environment directory '.$this->baseDir.' doesn\'t exist. Create it first.');
-		}
-		// Search the directory for config files.
-		foreach(scandir($this->baseDir) as $environmentFile) {
-			if(preg_match('/\.rb$/', $environmentFile)) {
-				// Config found, wrap it into an object.
-				$path = "$this->baseDir/$environmentFile";
-				$environments[] = new DNEnvironment($path, $this->project, $this->data);
+	public function syncWithPaths($paths) {
+		foreach($paths as $path) {
+			if(!$this->filter('Filename', $path)->count()) {
+				Debug::message("Adding '$path' to project #$this->projectID");
+				$e = DNEnvironment::create_from_path($path);
+				$e->ProjectID = $this->projectID;
+				$e->write();
 			}
 		}
-		sort($environments);
-		return array_values($environments);
+
+		$remove = $this->filter('Filename:not', $paths);
+		if($count = $remove->Count()) {
+			Debug::message("Removing $count obsolete records from project #$this->projectID");
+			$remove->removeAll();
+		}
+		
 	}
 
-	/**
-	 * Find an environment within this set by name.
-	 */
-	function byName($name) {
-		return $this->environments[$name];
-	}
 }

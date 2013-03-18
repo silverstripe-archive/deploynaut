@@ -9,45 +9,46 @@
  * deploynaut-resources/builds/ss3/ss3-1.0.3.tar.gz
  */
 
-class DNProject extends ViewableData {
+class DNProject extends DataObject {
+	static $db = array(
+		"Name" => "Varchar",
+	);
+	static $has_many = array(
+		"Environments" => "DNEnvironment",
+	);
 
-	/**
-	 * Backlink to the contex DNData object.
-	 * 
-	 * @var DNData
-	 */
-	protected $dnData;
-
-	/**
-	 * Name of this project.
-	 */
-	protected $name;
-
-	function __construct($name, DNData $dnData) {
-		$this->name = $name;
-		$this->dnData = $dnData;
-		parent::__construct();
+	static function get($callerClass = null, $filter = "", $sort = "", $join = "", $limit = null,
+			$containerClass = 'DataList') {
+		return new DNProjectList('DNProject');
 	}
 
-	function getName() {
-		return $this->name;
+	static function create_from_path($path) {
+		$p = new DNProject;
+		$p->Name = $path;
+		$p->write();
+		return $p;
+	}
+
+	function DNData() {
+		return Injector::inst()->get('DNData');
 	}
 
 	/**
 	 * Provides a DNBuildList of builds found in this project.
 	 */
 	function DNBuildList() {
-		return new DNBuildList($this->dnData->getBuildDir().'/'.$this->name, $this, $this->dnData);
+		return new DNBuildList($this->DNData()->getBuildDir().'/'.$this->Name, $this, $this->DNData());
 	}
 
 	/**
 	 * Provides a DNEnvironmentList of environments found in this project.
 	 */
-	function DNEnvironmentList() {
-		return new DNEnvironmentList($this->dnData->getEnvironmentDir().'/'.$this->name, $this, $this->dnData);
+	public function DNEnvironmentList() {
+		return DNEnvironment::get()->filter('ProjectID', $this->ID)->setProjectID($this->ID);
 	}
 
+
 	public function Link() {
-		return "naut/project/$this->name";
+		return "naut/project/$this->Name";
 	}
 }

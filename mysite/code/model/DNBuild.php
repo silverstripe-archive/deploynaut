@@ -54,7 +54,7 @@ class DNBuild extends ViewableData {
 	 * @return string
 	 */
 	public function Link() {
-		return Controller::join_links('naut', 'project', $this->project->getName(), "build", $this->name);
+		return Controller::join_links('naut', 'project', $this->project->Name, "build", $this->name);
 	}
 	
 	/**
@@ -112,6 +112,6 @@ class DNBuild extends ViewableData {
 	 * @param type $environmentName 
 	 */
 	public function EverDeployedTo($environmentName) {
-		$environment = $this->project->DNEnvironmentList()->byName($environmentName);
+		$environment = $this->project->DNEnvironmentList()->filter('Name', $environmentName)->First();
 	}
 }
