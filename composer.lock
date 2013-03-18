@@ -1,5 +1,5 @@
 {
-    "hash": "365d2cceb836a4847ec73285de622c15",
+    "hash": "4d229a947ded541d4a60d66658b9a484",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
@@ -26,6 +26,7 @@
                 "ext-proctitle": "Allows php-resque to rename the title of UNIX processes to show the status of a worker.",
                 "ext-redis": "Native PHP extension for Redis connectivity. Credis will automatically utilize when available."
             },
+            "time": "2013-03-07 03:56:25",
             "bin": [
                 "bin/resque"
             ],
@@ -52,8 +53,7 @@
                 "job",
                 "redis",
                 "resque"
-            ],
-            "time": "2013-03-07 03:56:25"
+            ]
         },
         {
             "name": "colinmollenhour/credis",
@@ -72,6 +72,7 @@
             "require": {
                 "php": ">=5.3.0"
             },
+            "time": "2013-03-12 15:41:08",
             "type": "library",
             "autoload": {
                 "classmap": [
@@ -90,8 +91,7 @@
                 }
             ],
             "description": "Credis is a lightweight interface to the Redis key-value store which wraps the phpredis library when available for better performance.",
-            "homepage": "https://github.com/colinmollenhour/credis",
-            "time": "2013-03-12 15:41:08"
+            "homepage": "https://github.com/colinmollenhour/credis"
         },
         {
             "name": "composer/installers",
@@ -114,6 +114,7 @@
                 "composer/composer": "1.0.*@dev",
                 "phpunit/phpunit": "3.7.*"
             },
+            "time": "2013-03-02 22:45:58",
             "type": "composer-installer",
             "extra": {
                 "class": "Composer\\Installers\\Installer",
@@ -134,7 +135,7 @@
                 {
                     "name": "Kyle Robinson Young",
                     "email": "kyle@dontkry.com",
-                    "homepage": "https://github.com/shama",
+                    "homepage": "http://dontkry.com",
                     "role": "Developer"
                 }
             ],
@@ -162,8 +163,59 @@
                 "wordpress",
                 "yii",
                 "zend"
+            ]
+        },
+        {
+            "name": "gitonomy/gitlib",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/gitonomy/gitlib.git",
+                "reference": "09d51b5c8ee8e62f17a36bde5e21129f00e43916"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/gitonomy/gitlib/zipball/09d51b5c8ee8e62f17a36bde5e21129f00e43916",
+                "reference": "09d51b5c8ee8e62f17a36bde5e21129f00e43916",
+                "shasum": ""
+            },
+            "require": {
+                "symfony/process": "<3"
+            },
+            "require-dev": {
+                "psr/log": ">=1.0,<2.0"
+            },
+            "suggest": {
+                "psr/log": "Add some log"
+            },
+            "time": "2013-03-15 14:38:10",
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Gitonomy\\Git": [
+                        "src/",
+                        "tests/"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
             ],
-            "time": "2013-03-02 22:45:58"
+            "authors": [
+                {
+                    "name": "Alexandre Salomé",
+                    "email": "alexandre.salome@gmail.com",
+                    "homepage": "http://alexandre-salome.fr"
+                },
+                {
+                    "name": "Julien DIDIER",
+                    "email": "genzo.wm@gmail.com",
+                    "homepage": "http://www.jdidier.net"
+                }
+            ],
+            "description": "Library for accessing git",
+            "homepage": "http://gitonomy.com"
         },
         {
             "name": "silverstripe/framework",
@@ -183,6 +235,7 @@
                 "composer/installers": "*",
                 "php": ">=5.3.2"
             },
+            "time": "2013-02-26 01:17:47",
             "type": "silverstripe-module",
             "autoload": {
                 "classmap": [
@@ -208,8 +261,7 @@
             "keywords": [
                 "framework",
                 "silverstripe"
-            ],
-            "time": "2013-02-26 01:17:47"
+            ]
         },
         {
             "name": "stojg/silverstripe-resque",
@@ -228,6 +280,7 @@
             "require": {
                 "chrisboulton/php-resque": ">=1.2"
             },
+            "time": "2013-03-13 22:30:37",
             "type": "silverstripe-module",
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -245,93 +298,63 @@
             "keywords": [
                 "redis",
                 "silverstripe"
-            ],
-            "time": "2013-03-13 22:30:37"
-        }
-    ],
-    "packages-dev": [
-        {
-            "name": "silverstripe/compass",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/silverstripe-labs/silverstripe-compass.git",
-                "reference": "df401ac7e503b30c6cc0828448abeb18ecf767a9"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/silverstripe-labs/silverstripe-compass/zipball/df401ac7e503b30c6cc0828448abeb18ecf767a9",
-                "reference": "df401ac7e503b30c6cc0828448abeb18ecf767a9",
-                "shasum": ""
-            },
-            "require": {
-                "silverstripe/framework": "3.*"
-            },
-            "type": "silverstripe-module",
-            "notification-url": "https://packagist.org/downloads/",
-            "authors": [
-                {
-                    "name": "Hamish Friedlander",
-                    "email": "hamish@silverstripe.com"
-                }
-            ],
-            "description": "The Compass module for SilverStripe seamlessly integrates Sass and Compass in SilverStripe modules and themes. You write your styles in sass, and the module automatically compiles these sass files to css.",
-            "keywords": [
-                "compass",
-                "css",
-                "sass",
-                "silverstripe"
-            ],
-            "time": "2013-01-16 09:27:25"
+            ]
         },
         {
-            "name": "silverstripe/docsviewer",
+            "name": "symfony/process",
             "version": "dev-master",
+            "target-dir": "Symfony/Component/Process",
             "source": {
                 "type": "git",
-                "url": "https://github.com/silverstripe/silverstripe-docsviewer.git",
-                "reference": "158db9d41598c7ed3fce47f665abdf689404ad32"
+                "url": "https://github.com/symfony/Process.git",
+                "reference": "6ebe4ba544cfc0dd25bfe49402da4d5267ee1b43"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/silverstripe/silverstripe-docsviewer/zipball/158db9d41598c7ed3fce47f665abdf689404ad32",
-                "reference": "158db9d41598c7ed3fce47f665abdf689404ad32",
+                "url": "https://api.github.com/repos/symfony/Process/zipball/6ebe4ba544cfc0dd25bfe49402da4d5267ee1b43",
+                "reference": "6ebe4ba544cfc0dd25bfe49402da4d5267ee1b43",
                 "shasum": ""
             },
             "require": {
-                "silverstripe/framework": "3.*"
+                "php": ">=5.3.3"
             },
-            "type": "silverstripe-module",
+            "time": "2013-02-18 21:28:20",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.3-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Component\\Process\\": ""
+                }
+            },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "BSD-3-Clause"
+                "MIT"
             ],
             "authors": [
                 {
-                    "name": "Will Rossiter",
-                    "email": "will@fullscreen.io",
-                    "homepage": "http://wilr.github.com"
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
                 }
             ],
-            "description": "Documentation viewer module for SilverStripe",
-            "keywords": [
-                "documentation",
-                "silverstripe"
-            ],
-            "time": "2013-02-19 21:22:18"
+            "description": "Symfony Process Component",
+            "homepage": "http://symfony.com"
         }
     ],
+    "packages-dev": null,
     "aliases": [
 
     ],
     "minimum-stability": "dev",
     "stability-flags": {
-        "silverstripe/framework": 10
-    },
-    "platform": {
-        "php": ">=5.3.2"
-    },
-    "platform-dev": [
-
-    ]
+        "silverstripe/framework": 10,
+        "gitonomy/gitlib": 20
+    }
 }

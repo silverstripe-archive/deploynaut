@@ -8,3 +8,4 @@ nbproject
 # Composer added modules
 framework
 vendor
+silverstripe-resque
