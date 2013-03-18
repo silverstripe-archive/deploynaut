@@ -57,12 +57,23 @@ class DNRoot extends Controller {
 
 	public function project($request) {
 		$project = $this->DNProjectList()->filter('Name', $request->latestParam('Project'))->First();
-		return $project->renderWith(array('DNRoot_project', 'DNRoot'));
+		if(!$project) {
+			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
+		}
+	return $project->renderWith(array('DNRoot_project', 'DNRoot'));
 	}
 
 	public function environment($request) {
 		$project = $this->DNProjectList()->filter('Name', $request->latestParam('Project'))->First();
+		if(!$project) {
+			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
+		}
+
 		$env = $project->DNEnvironmentList()->filter('Name', $request->latestParam('Environment'))->First();
+		if(!$env) {
+			return new SS_HTTPResponse("Environment '" . $request->latestParam('Environment') . "' not found.", 404);
+		}
+
 		return $env->customise(array(
 			'DeployForm' => $this->getDeployForm($request)			
 		))->renderWith(array('DNRoot_environment', 'DNRoot'));
@@ -81,7 +92,9 @@ class DNRoot extends Controller {
 	 * Provide DNProjectList (with all projects enumerated within).
 	 */
 	public function DNProjectList() {
-		return DataObject::get('DNProject');
+		return DataObject::get('DNProject')->filterByCallback(function($record) {
+			return $record->canView();
+		});
 	}
 
 	/**
@@ -90,6 +103,8 @@ class DNRoot extends Controller {
 	public function getDeployForm($request) {
 		$project = $this->DNProjectList()->filter('Name', $request->latestParam('Project'))->First();
 		$environment = $project->DNEnvironmentList()->filter('Name', $request->latestParam('Environment'))->First();
+
+		if(!$environment->canDeploy()) return null;
 
 		$buildList = array('' => '(Choose a build)');
 		foreach($project->DNBuildList() as $build) {

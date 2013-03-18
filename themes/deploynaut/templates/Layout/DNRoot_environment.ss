@@ -8,6 +8,7 @@
 		<% end_if %>
 	</div>
 
+	<% if DeployForm %>
 	<div class="span12">
 		<h4>Deploy a new release</h4>
 		<p>Choose a build from the dropdown and press the deploy button.</p>
@@ -19,8 +20,20 @@
 			$HiddenFields
 		</form>
 		<% end_with %>
-	
 	</div>
+	<% else %>
+	<div class="span12">
+		<h4>Deploy a new release</h4>
+
+		<p>Please ask one of the following people to deploy to this environment:</p>
+
+		<ul>
+		<% loop Deployers %>
+		<li>$FirstName $Surname</li>
+		<% end_loop %> 
+		</ul>
+	</div>
+	<% end_if %>
 
 	<div class="span12">
 		<h4>Deploy history</h4>

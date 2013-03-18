@@ -16,6 +16,17 @@ class DNProject extends DataObject {
 	static $has_many = array(
 		"Environments" => "DNEnvironment",
 	);
+	static $many_many = array(
+		"Viewers" => "Group",
+	);
+
+	static $summary_fields = array(
+		"Name",
+		"ViewersList",
+	);
+	static $searchable_fields = array(
+		"Name",
+	);
 
 	static function get($callerClass = null, $filter = "", $sort = "", $join = "", $limit = null,
 			$containerClass = 'DataList') {
@@ -27,6 +38,21 @@ class DNProject extends DataObject {
 		$p->Name = $path;
 		$p->write();
 		return $p;
+	}
+
+	public function canView($member = null) {
+		if(!$member) $member = Member::currentUser();
+
+		if(Permission::checkMember($member, "ADMIN")) return true;
+
+		foreach($this->Viewers() as $group) {
+			if($group->Members()->byID($member->ID)) return true;
+		}
+		return false;
+	}
+
+	function getViewersList() {
+		return implode(", ", $this->Viewers()->column("Title"));
 	}
 
 	function DNData() {
@@ -50,5 +76,22 @@ class DNProject extends DataObject {
 
 	public function Link() {
 		return "naut/project/$this->Name";
+	}
+
+	public function getCMSFields() {
+		$fields = parent::getCMSFields();
+
+		$environments = $fields->dataFieldByName("Environments");
+
+		$fields->fieldByName("Root")->removeByName("Viewers");
+		$fields->fieldByName("Root")->removeByName("Environments");
+
+		$fields->addFieldToTab("Root.Main", $environments);
+		$fields->addFieldToTab("Root.Main",
+			new CheckboxSetField("Viewers", "Groups with read access to this project",
+				Group::get()->map()));
+
+
+		return $fields;
 	}
 }

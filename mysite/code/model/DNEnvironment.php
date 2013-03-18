@@ -8,8 +8,19 @@ class DNEnvironment extends DataObject {
 	static $has_one = array(
 		"Project" => "DNProject",
 	);
+	static $many_many = array(
+		"Deployers" => "Member",
+	);
 
-	static function get($callerClass = null, $filter = "", $sort = "", $join = "", $limit = null,
+	static $summary_fields = array(
+		"Name",
+		"DeployersList",
+	);
+	static $searchable_fields = array(
+		"Name",
+	);
+
+static function get($callerClass = null, $filter = "", $sort = "", $join = "", $limit = null,
 			$containerClass = 'DataList') {
 		return new DNEnvironmentList('DNEnvironment');
 	}
@@ -19,6 +30,19 @@ class DNEnvironment extends DataObject {
 		$e->Filename = $path;
 		$e->Name = preg_replace('/\.rb$/', '', basename($e->Filename));
 		return $e;
+	}
+
+	function canView($member = null) {
+		return $this->Project()->canView($member);
+	}
+	function canDeploy($member = null) {
+		if(!$member) $member = Member::currentUser();
+
+		return (bool)($this->Deployers()->byID($member->ID));
+	}
+
+	function getDeployersList() {
+		return implode(", ", $this->Deployers()->column("FirstName"));
 	}
 
 	function DNData() {
@@ -47,5 +71,25 @@ class DNEnvironment extends DataObject {
 	
 	function Link() {
 		return $this->Project()->Link()."/environment/" . $this->Name;
+	}
+
+	public function getCMSFields() {
+		$fields = parent::getCMSFields();
+
+		$members = array();
+		foreach($this->Project()->Viewers() as $group) {
+			foreach($group->Members()->map() as $k => $v) {
+				$members[$k] = $v;
+			}
+		}
+		asort($members);
+
+		$fields->fieldByName("Root")->removeByName("Deployers");
+		$fields->addFieldToTab("Root.Main", 
+			new CheckboxSetField("Deployers", "Users who can deploy to this environment", 
+				$members));
+
+
+		return $fields;
 	}
 }
