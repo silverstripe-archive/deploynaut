@@ -3,7 +3,7 @@
 	"description": "The SilverStripe deployment framework",
 	"require": {
 		"php": ">=5.3.2",
-		"silverstripe/framework": "3.0.*@stable",
+		"silverstripe/framework": "3.1.*@beta",
         "stojg/silverstripe-resque": "*"
 	},
 	"require-dev": {

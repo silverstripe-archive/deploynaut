@@ -1,5 +1,5 @@
 {
-    "hash": "57423664ab0a83fc6b7a2deffa5e7e39",
+    "hash": "365d2cceb836a4847ec73285de622c15",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
@@ -7,12 +7,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/chrisboulton/php-resque.git",
-                "reference": "c18b5441f5ffe0b309b92298d97919fdd076bf7f"
+                "reference": "cd85e8be852d6ea33e26668b9e55218d2492e91a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/chrisboulton/php-resque/zipball/c18b5441f5ffe0b309b92298d97919fdd076bf7f",
-                "reference": "c18b5441f5ffe0b309b92298d97919fdd076bf7f",
+                "url": "https://api.github.com/repos/chrisboulton/php-resque/zipball/cd85e8be852d6ea33e26668b9e55218d2492e91a",
+                "reference": "cd85e8be852d6ea33e26668b9e55218d2492e91a",
                 "shasum": ""
             },
             "require": {
@@ -26,7 +26,6 @@
                 "ext-proctitle": "Allows php-resque to rename the title of UNIX processes to show the status of a worker.",
                 "ext-redis": "Native PHP extension for Redis connectivity. Credis will automatically utilize when available."
             },
-            "time": "2013-02-28 12:57:04",
             "bin": [
                 "bin/resque"
             ],
@@ -53,7 +52,8 @@
                 "job",
                 "redis",
                 "resque"
-            ]
+            ],
+            "time": "2013-03-07 03:56:25"
         },
         {
             "name": "colinmollenhour/credis",
@@ -61,18 +61,17 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/colinmollenhour/credis.git",
-                "reference": "2a8adc5745f6331a657ff167307faa901b885715"
+                "reference": "d2bd88084be5a42874ce76069814b30e1ea0c75b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/colinmollenhour/credis/zipball/2a8adc5745f6331a657ff167307faa901b885715",
-                "reference": "2a8adc5745f6331a657ff167307faa901b885715",
+                "url": "https://api.github.com/repos/colinmollenhour/credis/zipball/d2bd88084be5a42874ce76069814b30e1ea0c75b",
+                "reference": "d2bd88084be5a42874ce76069814b30e1ea0c75b",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
-            "time": "2013-01-12 23:02:40",
             "type": "library",
             "autoload": {
                 "classmap": [
@@ -91,7 +90,8 @@
                 }
             ],
             "description": "Credis is a lightweight interface to the Redis key-value store which wraps the phpredis library when available for better performance.",
-            "homepage": "https://github.com/colinmollenhour/credis"
+            "homepage": "https://github.com/colinmollenhour/credis",
+            "time": "2013-03-12 15:41:08"
         },
         {
             "name": "composer/installers",
@@ -114,7 +114,6 @@
                 "composer/composer": "1.0.*@dev",
                 "phpunit/phpunit": "3.7.*"
             },
-            "time": "2013-03-02 22:45:58",
             "type": "composer-installer",
             "extra": {
                 "class": "Composer\\Installers\\Installer",
@@ -163,27 +162,27 @@
                 "wordpress",
                 "yii",
                 "zend"
-            ]
+            ],
+            "time": "2013-03-02 22:45:58"
         },
         {
             "name": "silverstripe/framework",
-            "version": "3.0.5",
+            "version": "3.1.0-beta2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/silverstripe/sapphire.git",
-                "reference": "3.0.5"
+                "reference": "3.1.0-beta2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/silverstripe/sapphire/zipball/3.0.5",
-                "reference": "3.0.5",
+                "url": "https://api.github.com/repos/silverstripe/sapphire/zipball/3.1.0-beta2",
+                "reference": "3.1.0-beta2",
                 "shasum": ""
             },
             "require": {
                 "composer/installers": "*",
                 "php": ">=5.3.2"
             },
-            "time": "2013-02-19 23:39:00",
             "type": "silverstripe-module",
             "autoload": {
                 "classmap": [
@@ -209,7 +208,8 @@
             "keywords": [
                 "framework",
                 "silverstripe"
-            ]
+            ],
+            "time": "2013-02-26 01:17:47"
         },
         {
             "name": "stojg/silverstripe-resque",
@@ -217,19 +217,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/stojg/silverstripe-resque.git",
-                "reference": "59d625ff2a79b8b935d4731d5931c2a9689e8068"
+                "reference": "3ab274b9f9f037df607eae57da80b631afc9dd8e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stojg/silverstripe-resque/zipball/59d625ff2a79b8b935d4731d5931c2a9689e8068",
-                "reference": "59d625ff2a79b8b935d4731d5931c2a9689e8068",
+                "url": "https://api.github.com/repos/stojg/silverstripe-resque/zipball/3ab274b9f9f037df607eae57da80b631afc9dd8e",
+                "reference": "3ab274b9f9f037df607eae57da80b631afc9dd8e",
                 "shasum": ""
             },
             "require": {
                 "chrisboulton/php-resque": ">=1.2"
             },
-            "time": "2012-11-19 05:37:45",
-            "type": "module",
+            "type": "silverstripe-module",
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD"
@@ -238,23 +237,101 @@
                 {
                     "name": "Stig Lindqvist",
                     "email": "stojg.lindqvist@gmail.com",
-                    "homepage": "https://www.stojg.se/"
+                    "homepage": "https://stojg.se/"
                 }
             ],
             "description": "Wraps around the resque code for background jobss",
-            "homepage": "http://github.com/silverstripe-resque",
+            "homepage": "http://github.com/stojg/silverstripe-resque",
             "keywords": [
                 "redis",
                 "silverstripe"
-            ]
+            ],
+            "time": "2013-03-13 22:30:37"
         }
     ],
-    "packages-dev": null,
+    "packages-dev": [
+        {
+            "name": "silverstripe/compass",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/silverstripe-labs/silverstripe-compass.git",
+                "reference": "df401ac7e503b30c6cc0828448abeb18ecf767a9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/silverstripe-labs/silverstripe-compass/zipball/df401ac7e503b30c6cc0828448abeb18ecf767a9",
+                "reference": "df401ac7e503b30c6cc0828448abeb18ecf767a9",
+                "shasum": ""
+            },
+            "require": {
+                "silverstripe/framework": "3.*"
+            },
+            "type": "silverstripe-module",
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Hamish Friedlander",
+                    "email": "hamish@silverstripe.com"
+                }
+            ],
+            "description": "The Compass module for SilverStripe seamlessly integrates Sass and Compass in SilverStripe modules and themes. You write your styles in sass, and the module automatically compiles these sass files to css.",
+            "keywords": [
+                "compass",
+                "css",
+                "sass",
+                "silverstripe"
+            ],
+            "time": "2013-01-16 09:27:25"
+        },
+        {
+            "name": "silverstripe/docsviewer",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/silverstripe/silverstripe-docsviewer.git",
+                "reference": "158db9d41598c7ed3fce47f665abdf689404ad32"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/silverstripe/silverstripe-docsviewer/zipball/158db9d41598c7ed3fce47f665abdf689404ad32",
+                "reference": "158db9d41598c7ed3fce47f665abdf689404ad32",
+                "shasum": ""
+            },
+            "require": {
+                "silverstripe/framework": "3.*"
+            },
+            "type": "silverstripe-module",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Will Rossiter",
+                    "email": "will@fullscreen.io",
+                    "homepage": "http://wilr.github.com"
+                }
+            ],
+            "description": "Documentation viewer module for SilverStripe",
+            "keywords": [
+                "documentation",
+                "silverstripe"
+            ],
+            "time": "2013-02-19 21:22:18"
+        }
+    ],
     "aliases": [
 
     ],
     "minimum-stability": "dev",
     "stability-flags": {
-        "silverstripe/framework": 0
-    }
+        "silverstripe/framework": 10
+    },
+    "platform": {
+        "php": ">=5.3.2"
+    },
+    "platform-dev": [
+
+    ]
 }
