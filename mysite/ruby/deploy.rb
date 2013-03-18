@@ -1,7 +1,8 @@
 # Before the switching the current symlink, do the silverstripe specifics
 after "deploy:finalize_update", "deploy:silverstripe"
 # Automatically remove old releases
-after "deploy:update", "deploy:cleanup"
+# Disabled this because permission problems can cause it to mess up the whole release process
+# after "deploy:update", "deploy:cleanup"
 
 # Override the default capistrano deploy recipe that is build for rails apps
 namespace :deploy do
