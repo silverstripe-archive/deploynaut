@@ -13,6 +13,8 @@ class CapistranoDeploy {
 		$buildname = $this->args['buildname'];
 		$logfile = $this->args['logfile'];
 		$projectName = $this->args['projectName'];
+		global $databaseConfig;
+		DB::connect($databaseConfig);
 		$project = DNProject::get()->filter('Name', $projectName)->first();
 		GraphiteDeploymentNotifier::notify_start($environment, $buildname, null, $project);
 
