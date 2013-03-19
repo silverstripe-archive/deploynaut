@@ -12,15 +12,17 @@
 		},
 		
 		start: function() {
-			$.post('naut/deploy', {
-				'EnvironmentName': $('.environmentname').html(),
-				'BuildFullName': $('.buildfullname').html(),
-				'BuildFileName': $('.buildfilename').html(),
-				'LogFile': logFile
-			}, function(data) {
+
+			var data = {
+				'environment': $('#environment').val(),
+				'sha': $('#sha').val(),
+				'logfile': $('#logfile').val(),
+				'project': $('#project').val(),
+			}
+
+			$.post('naut/deploy', data, function(data) {
 				$('#deploy_action').html(data);
-				// reload every second
-				setInterval(function(){deploy.showlog("#deploy_log", logFile);}, 1000);
+				setInterval(function(){deploy.showlog("#deploy_log", logFile);}, 2000);
 			}).error(function(xhr) {
 				$('#deploy_log').html(xhr.responseText);
 			});

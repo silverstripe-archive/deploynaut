@@ -132,14 +132,14 @@ class DNRoot extends Controller implements PermissionProvider {
 	public function doDeploy($data, $form) {
 		$project = $this->DNProjectList()->filter('Name', $form->request->latestParam('Project'))->First();
 		$environment = $project->DNEnvironmentList()->filter('Name', $form->request->latestParam('Environment'))->First();
-		$build = $project->DNBuildList()->byName($data['BuildName']);
-		
+		$sha = $project->DNBuildList()->byName($data['BuildName']);
+
 		return $this->customise(new ArrayData(array(
-			'Project' => $project,
-			'EnvironmentName' => $environment->Name,
-			'BuildFullName' => $build->FullName(),
-			'BuildFileName' => $build->Filename(),
-			'LogFile' => $project->Name.'.'.$environment->Name.'.'.$build->Name().'.'.time().'.log',
+			'Environment' => $environment->Name,
+			'Repository' => $project->LocalCVSPath,
+			'Sha' => $sha->FullName(),
+			'LogFile' => $project->Name.'.'.$environment->Name.'.'.$sha->Name().'.'.time().'.log',
+			'Project' => $project->Name,
 		)))->renderWith('DNRoot_deploy');
 	}
 	
@@ -149,12 +149,12 @@ class DNRoot extends Controller implements PermissionProvider {
 	 * @param SS_HTTPRequest $request 
 	 */
 	public function deploy(SS_HTTPRequest $request) {
+		$DNProject = $this->DNData()->DNProjectList()->filter('Name', $request->postVar('project'))->First();
 		$this->DNData()->Backend()->deploy(
-			$envName = $request->postVar('EnvironmentName'), 
-			$request->postVar('BuildFullName'),
-			$request->postVar('BuildFileName'),
-			$request->postVar('LogFile'),
-			$this->DNData()->DNProjectList()->filter('Name', strtok($envName, ":"))->First()
+			$request->postVar('environment'),
+			$request->postVar('sha'),
+			$request->postVar('logfile'),
+			$DNProject
 		);
 	}
 	

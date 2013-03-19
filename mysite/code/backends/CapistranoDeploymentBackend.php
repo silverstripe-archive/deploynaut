@@ -21,10 +21,11 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 	/**
 	 * Deploy the given build to the given environment.
 	 */
-	public function deploy($environment, $buildname, $buildFile, $logFile, DNProject $project) {
+	public function deploy($environment, $sha, $logFile, DNProject $project) {
 		$args = array(
 			'environment' => $environment,
-			'buildname' => $buildname,
+			'sha' => $sha,
+			'repository' => $project->LocalCVSPath,
 			'logfile' => $logFile,
 			'projectName' => $project->Name,
 		);

@@ -7,30 +7,51 @@
 class CapistranoDeploy {
 	
 	public $args;
+
+	public function setUp() {
+        global $databaseConfig;
+		DB::connect($databaseConfig);
+		chdir(BASE_PATH);
+    }
 	
 	public function perform() {
 		$environment = $this->args['environment'];
-		$buildname = $this->args['buildname'];
+		$repository = $this->args['repository'];
+		$sha = $this->args['sha'];
 		$logfile = $this->args['logfile'];
 		$projectName = $this->args['projectName'];
-		global $databaseConfig;
-		DB::connect($databaseConfig);
-		$project = DNProject::get()->filter('Name', $projectName)->first();
-		GraphiteDeploymentNotifier::notify_start($environment, $buildname, null, $project);
 
-		$logfilePath = ASSETS_PATH.DIRECTORY_SEPARATOR.$logfile;
-		chdir(BASE_PATH);
-		$logfilePath = ASSETS_PATH.DIRECTORY_SEPARATOR.$logfile;
-		$deploymentCommand = 'cap -v '.$environment.' deploy -s build='.$buildname;
-		$command = $deploymentCommand. " > '{$logfilePath}' 2> '{$logfilePath}'";
-		echo '[=] Start deploy for "'.$environment.'" build "'.$buildname.'"'.PHP_EOL;
+		$project = DNProject::get()->filter('Name', $projectName)->first();
+		GraphiteDeploymentNotifier::notify_start($environment, $sha, null, $project);
+		
+		$command = $this->getCommand($projectName.':'.$environment, $repository, $sha, $logfile);
+		echo '[=] Deploying "'.$sha.'" to "'.$projectName.':'.$environment.'"'.PHP_EOL;
 		system($command, $status);
-		if($status===0) {
-				echo '[+] Success '.$logfile.PHP_EOL;
-		} else {
-				echo '[-] Fail '.$logfile.PHP_EOL;
-				throw new Exception('Deployment for "'.$environment.'" build "'.$buildname.'", logfile '.$logfile);
-		}
-		GraphiteDeploymentNotifier::notify_end($environment, $buildname, null, $project);
+		if($status !== 0) {
+			throw new Exception('Deployment failed');
+		} 
+		echo '[+] Success '.$logfile.PHP_EOL;
+		GraphiteDeploymentNotifier::notify_end($environment, $sha, null, $project);
 	}
+
+	/**
+	 *
+	 * @param string $environment
+	 * @param string $repository
+	 * @param string $sha
+	 * @param string $logfile
+	 * @return type
+	 */
+	protected function getCommand($environment, $repository, $sha, $logfile) {
+		$logfile = ASSETS_PATH.'/'.$logfile;
+		
+		$command = 'cap -vv '.$environment.' deploy';
+		$command.= ' -s repository='.$repository;
+		$command.= ' -s branch='.$sha;
+		$command.= " > '{$logfile}' 2> '{$logfile}'";
+		return $command;
+	}
+
+	public function tearDown() {
+    }
 }

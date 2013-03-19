@@ -1,123 +1,43 @@
-# Before the switching the current symlink, do the silverstripe specifics
-after "deploy:finalize_update", "deploy:silverstripe"
-# Automatically remove old releases
-# Disabled this because permission problems can cause it to mess up the whole release process
-# after "deploy:update", "deploy:cleanup"
+# Defines for the default deployment recipes whether we want to use sudo or not.
+set :use_sudo, false
 
-# Override the default capistrano deploy recipe that is build for rails apps
+# This a space separated list of folders that will be shared between deploys
+set :shared_children, %w(assets)
+
+# The number of old releases to keep, defaults to 5, can be overridden with
+# any positive integer.
+set :keep_releases, 5
+#after "deploy:restart", "deploy:cleanup"
+
+# Keep set to false, RubyOnRails behaviour, will brake in Silverstripe
+set :normalize_asset_timestamps, false
+
+# Deploy the code by copying it up to the server so the target servers don't need
+# to have access to the git repo
+set :deploy_via, :copy
+set :copy_strategy, :export
+set :copy_cache, true
+
+
+# The migrate task takes care of doing the dev/build
 namespace :deploy do
-
-	# Override original, we only want to set g+w on the shared folders, but not on the deployment root.
-	task :setup, :except => { :no_release => true } do
-		_shared_children = shared_children.map { |d| File.join(shared_path, d.split('/').last) }
-
-		# Create directories
-		create_dirs = [deploy_to, releases_path, shared_path, _shared_children]
-		run "#{try_sudo} mkdir -p #{create_dirs.join(' ')}"
-
-		# Set up permissions on shared directiories only
-		group_writable_dirs = [_shared_children]
-		run "#{try_sudo} chmod g+w #{group_writable_dirs.join(' ')}" if fetch(:group_writable, true)
+	task :migrate, :roles => :db, :only => { :primary => true } do
+		run "#{latest_release}/framework/sake dev/build"
 	end
 
-	# Overriden so we are using our code_deploy strategy with tar.gz uploading
-	task :update_code, :except => { :no_release => true } do
-		on_rollback { 
-			# @todo move into deploy::rollback if applicable
-			if latest_release
-				if ('true' ==  capture("if [ -e #{latest_release}/assets ]; then echo 'true'; fi").strip)
-					# Set permissions for files
-					run "find #{latest_release}/assets -not -perm 775 -type d -exec chmod 775 {} \\;"
-					# Set permissions for files
-					run "find #{latest_release}/assets -not -perm 664 -type f -exec chmod 664 {} \\;"
-				end
-				run "rm -rf #{release_path}; true"
-			end
-		}
-		code_deploy!
-		finalize_update
-	end
-
-	# distribute the tar.gz and unpack it on the target servers
-	task :code_deploy! do
-		# Dont upload and unpack the release if it's been deployed previously
-		unless releases.include?(build_name) 
-			# Grab the first part of the config - the project name (that maps to a config & build directory)
-			project = config_name.split(':').first
-			# Sftp the file up
-			top.upload "#{build_archive}/#{project}/#{build_name}.tar.gz", "#{release_path}.tar.gz"
-			run "tar -C #{releases_path} -xzf #{release_path}.tar.gz"
-			run "rm #{release_path}.tar.gz"
-		end 
-	end
-	
-	# Find the build number from the commandline argument -s build=aa-b123
-	def build_name 
-		_build_name = "#{build}" if exists?(:build)
-		raise 'You must pass a build by: "cap taskname -s build=aa-b234"' unless _build_name
-		set :deploy_timestamped, false;
-		set :release_name,  _build_name
-		release_name
-	end 
-
-	# The migrate task takes care of Silverstripe specifics
-	#	1) Create a silverstripe-cache in the release folder
-	#	2) Set 775 permissions on all folder
-	#	3) Set 664 permissions on all files
-	#	4) Change the owner of everything to the 'webserver_group'
-	task :silverstripe do
-		# Disabled the uploading of the _ss_environment.php, but leaving it here as an example
-		# top.upload "./config/_ss_environment.php", "#{latest_release}/_ss_environment.php", :via => :scp
-
-		# Default to the SS3 sake path, if not specified.
-		if !exists?(:sake_path)
-			_sake_path = "framework/sake"
-		else
-			_sake_path = "#{sake_path}"
-		end
-
-		# Make sure that framework/sake is executable
-		run "chmod a+x #{latest_release}/#{_sake_path}"
-
-		if !exists?(:prevent_devbuild)
-			# Run the mighty dev/build, as a webserver user if requested.
-			if exists?(:webserver_user)
-				run "sudo su #{webserver_user} -c '#{latest_release}/#{_sake_path} dev/build flush=1'", :roles => :db
-			else
-				run "mkdir -p #{latest_release}/silverstripe-cache", :roles => :db
-				run "#{latest_release}/#{_sake_path} dev/build flush=1", :roles => :db
-				run "rm -rf #{latest_release}/silverstripe-cache", :roles => :db
-			end
-			# Remove the cache folder that was used for dev/build
-		end
-
-		# Set permissions for directories
-		run "find #{latest_release} -not -group #{webserver_group} -not -perm 775 -type d -exec chmod 775 {} \\;"
-
-		# Set permissions for files
-		run "find #{latest_release} -not -group #{webserver_group} -not -perm 664 -type f -exec chmod 664 {} \\;"
-
-		# Set the execute permissions on framework/sake again
-		run "chmod a+x #{latest_release}/#{_sake_path}"
-
-		# Set the group owner to the webserver group
-		run "chown -RP :#{webserver_group} #{latest_release}"
-	end
-
-	# Symlink all the 'shared_children into the newly relasesed folder
-	# Overriden due to we don't want to touch javascript and css folders
-	task :finalize_update, :except => { :no_release => true } do
-		shared_children.map do |d|
-			# Only recreate if symlink missing.
-			if ('true' !=  capture("if [ -e #{latest_release}/#{d} ]; then echo 'true'; fi").strip)
-				run "ln -sf #{shared_path}/#{d.split('/').last} #{latest_release}/#{d}"
-			end
-		end
-    end
-
-	# Overriden due to we don't want to restart any services on the server.
 	task :restart do
-		system "echo \""+Time.now.strftime("%Y-%m-%d %H:%M:%S")+" => #{build_name} \" >> assets/#{config_name}.deploy-history.txt";
+		system "echo \""+Time.now.strftime("%Y-%m-%d %H:%M:%S")+" => #{release_name} \" >> assets/#{config_name}.deploy-history.txt";
 		logger.debug "Deploy finished."
 	end
 end
+
+# Change the deploy target folder to the current branch name if the :branch
+# is set, otherwise use default timestamp
+before "deploy:update" do
+	# check if the branch is set to head and .. do something?
+	set :release_name,  "#{branch}" if exists?(:branch)
+end
+
+
+
+after "deploy:finalize_update", "deploy:migrate"

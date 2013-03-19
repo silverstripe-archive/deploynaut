@@ -1,6 +1,7 @@
 <?php
 
 class DNBuildList extends ArrayList {
+	
 	/**
 	 * This project's build files directory. 
 	 * All tarballs sit directly under that path.

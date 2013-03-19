@@ -11,23 +11,17 @@ class DemoDeploymentBackend implements DeploymentBackend {
 	/**
 	 * Deploy the given build to the given environment
 	 */
-	function deploy($environment, $buildname, $buildFile, $logFile, DNProject $project) {
-		GraphiteDeploymentNotifier::notify_start($environment, $buildname, $buildFile, $project);
-
-		$file = ASSETS_PATH . '/' . $environment . ".deploy-history.txt";
+	public function deploy($environment, $sha, $logFile, DNProject $project) {
+		GraphiteDeploymentNotifier::notify_start($environment, $sha, null, $project);
+		$file = ASSETS_PATH . '/' . $project->Name. ':' .$environment . ".deploy-history.txt";
 		$CLI_file = escapeshellarg($file);
-		$CLI_line = escapeshellarg(date('Y-m-d H:i:s') . " => $buildname");
-
+		$CLI_line = escapeshellarg(date('Y-m-d H:i:s') . " => $sha");
 		$logfilePath = ASSETS_PATH.DIRECTORY_SEPARATOR.$logFile;
-
-
 		$CLI_status = escapeshellarg("Demo deployment: echo $CLI_line >> $CLI_file");
 		$CLI_logfilePath = escapeshellarg($logfilePath);
 		`echo $CLI_status >> $CLI_logfilePath`;
-
 		`echo $CLI_line >> $CLI_file`;
-
-		GraphiteDeploymentNotifier::notify_end($environment, $buildname, $buildFile, $project);
+		GraphiteDeploymentNotifier::notify_end($environment, $sha, null, $project);
 	}
 
 	/**

@@ -21,9 +21,8 @@ class GraphiteDeploymentNotifier {
 	 * @return void
 	 */
 	static function notify_start($environment, $buildname, $buildFile, DNProject $project) {
-		list($projectName, $envName) = explode(":", $environment, 2);
-
-		$graphiteKey = "deploys.$projectName.$envName.start";
+		$projectName = $project->Name;
+		$graphiteKey = "deploys.$projectName.$environment.start";
 		$graphiteValue = self::buildname_to_counter($buildname, $project);
 		if(!$graphiteValue) $graphiteValue = 1;
 
@@ -39,9 +38,8 @@ class GraphiteDeploymentNotifier {
 	 * @return void
 	 */
 	static function notify_end($environment, $buildname, $buildFile, DNProject $project) {
-		list($projectName, $envName) = explode(":", $environment, 2);
-
-		$graphiteKey = "deploys.$projectName.$envName.end";
+		$projectName = $project->Name;
+		$graphiteKey = "deploys.$projectName.$environment.end";
 		$graphiteValue = self::buildname_to_counter($buildname, $project);
 		if(!$graphiteValue) $graphiteValue = 1;
 

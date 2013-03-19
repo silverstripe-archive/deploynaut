@@ -12,6 +12,8 @@
 class DNProject extends DataObject {
 	static $db = array(
 		"Name" => "Varchar",
+		"CVSPath" => "Varchar(255)",
+		"LocalCVSPath" => "Varchar(255)",
 	);
 	static $has_many = array(
 		"Environments" => "DNEnvironment",
@@ -63,6 +65,7 @@ class DNProject extends DataObject {
 	 * Provides a DNBuildList of builds found in this project.
 	 */
 	function DNBuildList() {
+		return new DNReferenceList($this, $this->DNData());
 		return new DNBuildList($this->DNData()->getBuildDir().'/'.$this->Name, $this, $this->DNData());
 	}
 
@@ -86,12 +89,29 @@ class DNProject extends DataObject {
 		$fields->fieldByName("Root")->removeByName("Viewers");
 		$fields->fieldByName("Root")->removeByName("Environments");
 
+		$cvsField = $fields->fieldByName('Root.Main.LocalCVSPath')->performReadonlyTransformation();
+		$fields->replaceField('LocalCVSPath', $cvsField);
+		
 		$fields->addFieldToTab("Root.Main", $environments);
 		$fields->addFieldToTab("Root.Main",
 			new CheckboxSetField("Viewers", "Groups with read access to this project",
 				Group::get()->map()));
 
-
 		return $fields;
+	}
+
+	/**
+	 * 
+	 */
+	public function onBeforeWrite() {
+		$changedFields = $this->getChangedFields(true, 2);
+		if(isset($changedFields['CVSPath']) && $this->CVSPath) {
+			$this->LocalCVSPath = ASSETS_PATH.'/'.$this->Name;
+			$token = Resque::enqueue('git', 'UpdateGitRepo', array(
+				'repo' => $this->CVSPath,
+				'path' =>  ASSETS_PATH.'/'.$this->Name
+			));
+		}
+		parent::onBeforeWrite();
 	}
 }

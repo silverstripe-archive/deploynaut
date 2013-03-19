@@ -4,11 +4,11 @@ Only:
 ---
 Injector:
     DeploymentBackend:
-        class: DemoDeploymentBackend
+        class: CapistranoDeploymentBackend
     DNData:
         constructor:
-            0: "deploynaut-resources/builds"
-            1: "deploynaut-resources/envs"
+            0: "../deploynaut-resources/builds"
+            1: "../deploynaut-resources/envs"
 ---
 Only:
     environment: live
