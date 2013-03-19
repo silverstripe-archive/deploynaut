@@ -12,9 +12,9 @@ class CapistranoDeploy {
 		$environment = $this->args['environment'];
 		$buildname = $this->args['buildname'];
 		$logfile = $this->args['logfile'];
-		$project = $this->args['project'];
-
-		GraphiteDeploymentNotifier::notify_start($environment, $buildname, $buildFile, $project);
+		$projectName = $this->args['projectName'];
+		$project = DNProject::get()->filter('Name', $projectName)->first();
+		GraphiteDeploymentNotifier::notify_start($environment, $buildname, null, $project);
 
 		$logfilePath = ASSETS_PATH.DIRECTORY_SEPARATOR.$logfile;
 		chdir(BASE_PATH);
@@ -29,7 +29,6 @@ class CapistranoDeploy {
 				echo '[-] Fail '.$logfile.PHP_EOL;
 				throw new Exception('Deployment for "'.$environment.'" build "'.$buildname.'", logfile '.$logfile);
 		}
-
-		GraphiteDeploymentNotifier::notify_end($environment, $buildname, $buildFile, $project);
+		GraphiteDeploymentNotifier::notify_end($environment, $buildname, null, $project);
 	}
 }

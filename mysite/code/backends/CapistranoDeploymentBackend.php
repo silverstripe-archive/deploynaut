@@ -26,7 +26,7 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 			'environment' => $environment,
 			'buildname' => $buildname,
 			'logfile' => $logFile,
-			'project' => $project,
+			'projectName' => $project->Name,
 		);
 		$token = Resque::enqueue('deploy', 'CapistranoDeploy', $args);
 		echo 'Deploy queued as job '.$token;
