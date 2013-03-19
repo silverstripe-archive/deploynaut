@@ -12,6 +12,6 @@ MySQLDatabase::set_connection_charset('utf8');
 
 SSViewer::set_theme('deploynaut');
 
-BasicAuth::protect_entire_site(true);
+BasicAuth::protect_entire_site(true, "DEPLOYNAUT_ACCESS");
 
 if(defined('IS_SSL') && IS_SSL) Director::forceSSL();

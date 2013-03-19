@@ -1,6 +1,6 @@
 <?php
 
-class DNRoot extends Controller {
+class DNRoot extends Controller implements PermissionProvider {
 	/**
 	 * URL handlers pretending that we have a deep URL structure.
 	 */
@@ -22,6 +22,9 @@ class DNRoot extends Controller {
 	 * 
 	 */
 	public function init() {
+		$member = BasicAuth::requireLogin('DEPLOYNAUT_ACCESS');
+		if($member && $member->ID != Member::currentUserID()) $member->logIn();
+
 		parent::init();
 		Requirements::combine_files(
 			'deploynaut.js',
@@ -184,5 +187,14 @@ class DNRoot extends Controller {
 	
 	public function RedisWorkersCount() {
 		return SSResqueHealthCheck::workers_count();
+	}
+
+	public function providePermissions() {
+		return array(
+			"DEPLOYNAUT_ACCESS" => array(
+				'name' => "Access to Deploynaut",
+				'category' => "Deploynaut",
+			),
+		);
 	}
 }
