@@ -8,7 +8,6 @@
 		"gitonomy/gitlib": "dev-master"
 	},
 	"require-dev": {
-		"silverstripe/compass": "*",
 		"silverstripe/docsviewer": "*"
 	},
 	"minimum-stability": "dev"
