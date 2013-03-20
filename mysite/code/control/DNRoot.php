@@ -167,12 +167,12 @@ class DNRoot extends Controller implements PermissionProvider {
 		
 		$logFile = $request->getVar('logfile');
 		
-		if(!file_exists(ASSETS_PATH . DIRECTORY_SEPARATOR . $logFile )) {
+		if(!file_exists(DEPLOYNAUT_LOG_PATH . '/' . $logFile )) {
 			echo 'Waiting for deployment to start';
 			return;
 		}
 		
-		$lines = file(ASSETS_PATH . DIRECTORY_SEPARATOR . $logFile );
+		$lines = file(DEPLOYNAUT_LOG_PATH . '/' . $logFile );
 		foreach($lines as $line) {
 			echo $line;
 		}

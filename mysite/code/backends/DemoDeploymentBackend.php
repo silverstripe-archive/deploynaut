@@ -13,10 +13,10 @@ class DemoDeploymentBackend implements DeploymentBackend {
 	 */
 	public function deploy($environment, $sha, $logFile, DNProject $project) {
 		GraphiteDeploymentNotifier::notify_start($environment, $sha, null, $project);
-		$file = ASSETS_PATH . '/' . $project->Name. ':' .$environment . ".deploy-history.txt";
+		$file = DEPLOYNAUT_LOG_PATH . '/' . $project->Name. ':' .$environment . ".deploy-history.txt";
 		$CLI_file = escapeshellarg($file);
 		$CLI_line = escapeshellarg(date('Y-m-d H:i:s') . " => $sha");
-		$logfilePath = ASSETS_PATH.DIRECTORY_SEPARATOR.$logFile;
+		$logfilePath = DEPLOYNAUT_LOG_PATH . '/' . $logFile;
 		$CLI_status = escapeshellarg("Demo deployment: echo $CLI_line >> $CLI_file");
 		$CLI_logfilePath = escapeshellarg($logfilePath);
 		`echo $CLI_status >> $CLI_logfilePath`;
@@ -31,7 +31,7 @@ class DemoDeploymentBackend implements DeploymentBackend {
 	 * - 'datetime' - the datetime when the deployment occurred, in 'Y-m-d H:i:s' format
 	 */
 	function currentBuild($environment) {
-		$file = ASSETS_PATH . '/' . $environment . ".deploy-history.txt";
+		$file = DEPLOYNAUT_LOG_PATH . '/' . $environment . ".deploy-history.txt";
 		if(file_exists($file)) {
 			$CLI_file = escapeshellarg($file);
 			$lastLine = trim(`tail -n 1 $$CLI_file`);
@@ -45,7 +45,7 @@ class DemoDeploymentBackend implements DeploymentBackend {
 	 * Each map matches the format returned by {@link getCurrentBuild()}, and are returned newest first
 	 */
 	function deployHistory($environment) {
-		$file = ASSETS_PATH . '/' . $environment . ".deploy-history.txt";
+		$file = DEPLOYNAUT_LOG_PATH . '/' . $environment . ".deploy-history.txt";
 		$CLI_file = escapeshellarg($file);
 		
 		$history = array();

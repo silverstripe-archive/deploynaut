@@ -43,7 +43,7 @@ class CapistranoDeploy {
 	 * @return type
 	 */
 	protected function getCommand($environment, $repository, $sha, $logfile) {
-		$logfile = ASSETS_PATH.'/'.$logfile;
+		$logfile = DEPLOYNAUT_LOG_PATH . '/' . $logfile;
 		
 		$command = 'cap -vv '.$environment.' deploy';
 		$command.= ' -s repository='.$repository;

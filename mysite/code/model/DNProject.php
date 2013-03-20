@@ -106,10 +106,11 @@ class DNProject extends DataObject {
 	public function onBeforeWrite() {
 		$changedFields = $this->getChangedFields(true, 2);
 		if(isset($changedFields['CVSPath']) && $this->CVSPath) {
-			$this->LocalCVSPath = ASSETS_PATH.'/'.$this->Name;
+			$this->LocalCVSPath = DEPLOYNAUT_LOCAL_VCS_PATH . '/' . $this->Name;
+
 			$token = Resque::enqueue('git', 'UpdateGitRepo', array(
 				'repo' => $this->CVSPath,
-				'path' =>  ASSETS_PATH.'/'.$this->Name
+				'path' => $this->LocalCVSPath
 			));
 		}
 		parent::onBeforeWrite();
