@@ -13,11 +13,21 @@ class UpdateGitRepo {
 			$this->delTree($path);
 		}
 		mkdir($path, 0777, true);
-		echo '[+] Cloning '.$repo.' to '.$path.''.PHP_EOL;
+		echo '[+] Cloning ' . $repo.' to ' . $path . PHP_EOL;
+
 		// using git clone straight of since doing it via Gitonomy\Git\Admin
 		// times out. Silly.
-		system('`which git` clone --bare -q '.$repo.' '.$path);
-		echo '[+] Cloned '.$repo.' to '.$path.''.PHP_EOL;
+		$command = sprintf('git clone --bare -q %s %s', $repo, $path);
+		exec($command, $output, $return_var);
+
+		if($return_var != 0) {
+			$file = DEPLOYNAUT_LOG_PATH . '/updategitrepo.log';
+			$fh = fopen($file, 'a');
+			fwrite($fh, sprintf('\'%s\' exited with return code %s. Output: "%s"' . PHP_EOL, $command, $return_var, var_export($output, true)));
+			fclose($fh);
+		}
+
+		echo '[+] Cloned ' . $repo . ' to ' . $path . PHP_EOL;
 	}
 
 	protected function delTree($dir) {
