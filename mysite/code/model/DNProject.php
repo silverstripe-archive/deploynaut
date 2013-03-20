@@ -91,8 +91,8 @@ class DNProject extends DataObject {
 
 		$cvsField = $fields->fieldByName('Root.Main.LocalCVSPath')->performReadonlyTransformation();
 		$fields->replaceField('LocalCVSPath', $cvsField);
-		
-		$fields->addFieldToTab("Root.Main", $environments);
+
+		if($environments) $fields->addFieldToTab("Root.Main", $environments);
 		$fields->addFieldToTab("Root.Main",
 			new CheckboxSetField("Viewers", "Groups with read access to this project",
 				Group::get()->map()));
