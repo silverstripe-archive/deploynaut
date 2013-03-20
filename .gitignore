@@ -4,6 +4,7 @@ buildtools
 assets
 silverstripe-cache
 nbproject
+.DS_Store
 
 # Composer added modules
 framework

@@ -1,4 +1,5 @@
-<div>Deploying <em>$Sha</em> to <em>$Project:$Environment</em></div>
+<h3>Deploying to $Project:$Environment</h3>
+<div>Deploying <em>$Sha</em></div>
 <form id="deploydata">
 	<input type="hidden" name="environment" id="environment" value="$Environment" >
 	<input type="hidden" name="sha" id="sha" value="$Sha" >

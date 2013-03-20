@@ -23,6 +23,5 @@
 			<% include RedisStatus %>
 			$Layout
 		</div>
-
 	</body>
 </html>
