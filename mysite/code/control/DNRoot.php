@@ -1,6 +1,6 @@
 <?php
 
-class DNRoot extends Controller implements PermissionProvider {
+class DNRoot extends Controller implements PermissionProvider, TemplateGlobalProvider {
 	/**
 	 * URL handlers pretending that we have a deep URL structure.
 	 */
@@ -177,18 +177,41 @@ class DNRoot extends Controller implements PermissionProvider {
 			echo $line;
 		}
 	}
-	
-	/**
-	 * For template 
-	 */
-	public function RedisUnavailable() {
-		return SSResqueHealthCheck::redis_unavailable();
-	}
-	
-	public function RedisWorkersCount() {
-		return SSResqueHealthCheck::workers_count();
+
+	public static function get_template_global_variables() {
+		return array(
+			'RedisUnavailable' => 'RedisUnavailable',
+			'RedisWorkersCount' => 'RedisWorkersCount'
+		);
 	}
 
+	/**
+	 * Returns an error message if redis is unavailable
+	 *
+	 * @return string
+	 */
+	public static function RedisUnavailable() {
+		try {
+			Resque::queues();
+		} catch(Exception $e) {
+			return $e->getMessage();
+		}
+		return '';
+	}
+
+	/**
+	 * Returns the number of connected Redis workers
+	 *
+	 * @return int
+	 */
+	public static function RedisWorkersCount() {
+		return count(Resque_Worker::all());
+	}
+
+	/**
+	 *
+	 * @return array
+	 */
 	public function providePermissions() {
 		return array(
 			"DEPLOYNAUT_ACCESS" => array(

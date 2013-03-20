@@ -13,24 +13,14 @@
 		<!--[if lt IE 9]>
 		  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
-		<style>
-			
-		</style>
 	</head>
 
 	<body>
-		<div class="navbar navbar-fixed-top">
-			<div class="navbar-inner">
-				<div class="container">
-					<a class="brand" href="naut/projects">deploynaut<sup>&trade;</sup></a>
-					<ul class="nav">
-						<li><a href="naut/projects">projects</a></li>
-					</ul>
-				</div>
-			</div>
-		</div>
-
 		<div class="container">
+			<div class="navbar">
+				<% include Header %>
+			</div>
+			<% include RedisStatus %>
 			$Layout
 		</div>
 
