@@ -3,13 +3,21 @@
 	<p></p>
 	<table class="table-striped table table-bordered">
 		<thead>
-			<tr><th>Environment</th><th>Build currently deployed</th></tr>
+			<tr><th>Environment</th><th>Build currently deployed</th><th>Can you deploy?</th></tr>
 		</thead>
 		<tbody>
 		<% control DNEnvironmentList %>
 			<tr>
 				<td><a href="$Link">$Name</a></td>
 				<td>$CurrentBuild</td>
+				<td>
+				<% if CanDeploy %><span class="good">Yes</span>
+				<% else_if DeployersList %>
+				No, ask $DeployersList
+				<% else %>
+				Deployment disabled
+				<% end_if %>
+				</td>
 			</tr>
 		<% end_control %>
 		</tbody>
