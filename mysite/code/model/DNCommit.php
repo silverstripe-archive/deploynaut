@@ -7,8 +7,13 @@ class DNCommit extends ViewableData {
 	 *
 	 * @var Gitonomy\Git\Commit
 	 */
-	protected $commit;
+	protected $commit = null;
 
+
+	protected $name = null;
+
+	protected $references = null;
+	
 	/**
 	 *
 	 * @param Gitonomy\Git\Commit $commit
@@ -27,19 +32,35 @@ class DNCommit extends ViewableData {
 	 * @return type
 	 */
 	public function Name() {
-		$references = $this->commit->resolveReferences();
-		$hash = substr($this->commit->getHash(),0,8);
-
-		if($references) {
-			$names = array();
-			foreach($references as $ref) {
-				$names[] = $ref->getName();
-			}
-			$refs = implode(', ', $names);
-			return "$refs ($hash)";
-			#return $refs.' - '.$this->commit->getSubjectMessage();
+		if($this->name == null) {
+			$this->name = $this->commit->getFixedShortHash(8);
 		}
-		return $hash;
+		
+		return $this->name;
+	}
+
+	/**
+	 *
+	 * @return ArrayList
+	 */
+	public function References() {
+		if($this->references !== null ) {
+			return $this->references;
+		}
+		$this->references = new ArrayList();
+		
+		foreach($this->commit->resolveReferences() as $reference) {
+			$data = array('Name'=>$reference->getName());
+			if($reference instanceof \Gitonomy\Git\Reference\Branch) {
+				$data['Type'] = 'Branch';
+			} elseif($reference instanceof \Gitonomy\Git\Reference\Tag) {
+				$data['Type'] = 'Tag';
+			} elseif($reference instanceof \Gitonomy\Git\Reference\Stash) {
+				$data['Type'] = 'Stash';
+			}
+			$this->references->push(new ArrayData($data));
+		}
+		return $this->references;
 	}
 
 	/**

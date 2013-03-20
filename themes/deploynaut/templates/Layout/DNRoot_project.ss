@@ -24,11 +24,16 @@
 	</table>
 
 	<h3>Builds</h3>
-	<p></p>
+	<p>Legend: 
+		<span class="label label-info">branch</span>
+		<span class="label">tag</span>
+	</p>
 	<table class="table-striped table table-bordered">
 		<thead>
 			<tr>
+				
 				<th>Build name</th>
+				<th>Reference</th>
 				<th>Currently on</th>
 				<th>Date for build creation</th>
 			</tr>
@@ -37,6 +42,10 @@
 		<% loop DNBuildList %>
 			<tr>
 				<td>$Name</td>
+				<td><% loop $References %>
+					<span class="label <% if $Type = Branch %>label-info<% end_if %>" title="$Type">$Name</span>
+				<% end_loop %>
+				</td>
 				<td>
 					<% control CurrentlyDeployedTo %>
 					<a href="{$Link}">$Name</a><% if not $Last %>,<% end_if %>
