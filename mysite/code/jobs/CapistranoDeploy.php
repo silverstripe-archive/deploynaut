@@ -1,9 +1,11 @@
 <?php
-
 /**
  * Description of DeployJob
  *
  */
+
+require_once(BASE_PATH.'/vendor/autoload.php');
+
 class CapistranoDeploy {
 	
 	public $args;
@@ -18,19 +20,30 @@ class CapistranoDeploy {
 		$environment = $this->args['environment'];
 		$repository = $this->args['repository'];
 		$sha = $this->args['sha'];
-		$logfile = $this->args['logfile'];
+		$logfile = DEPLOYNAUT_LOG_PATH . '/' . $this->args['logfile'];
 		$projectName = $this->args['projectName'];
 
 		$project = DNProject::get()->filter('Name', $projectName)->first();
 		GraphiteDeploymentNotifier::notify_start($environment, $sha, null, $project);
-		
+		echo '[-] Deploying "'.$sha.'" to "'.$projectName.':'.$environment.'"'.PHP_EOL;
+
 		$command = $this->getCommand($projectName.':'.$environment, $repository, $sha, $logfile);
-		echo '[=] Deploying "'.$sha.'" to "'.$projectName.':'.$environment.'"'.PHP_EOL;
-		system($command, $status);
-		if($status !== 0) {
-			throw new Exception('Deployment failed');
-		} 
-		echo '[+] Success '.$logfile.PHP_EOL;
+		$command ->run(function ($type, $buffer) use($logfile) {
+			$fh = fopen($logfile, 'a');
+			if(!$fh) {
+				throw new RuntimeException('Can\'t open file "'.$logfile.'" for logging.');
+			}
+			do {
+				usleep(rand(1, 10000));
+			} while (!flock($fh, LOCK_EX));
+			fwrite($fh, $buffer);
+			flock($fh, LOCK_UN);
+			fclose($fh);
+		});
+		if(!$command->isSuccessful()) {
+			throw new RuntimeException($command->getErrorOutput());
+		}
+		echo '[-] Deploy done "'.$sha.'" to "'.$projectName.':'.$environment.'"'.PHP_EOL;
 		GraphiteDeploymentNotifier::notify_end($environment, $sha, null, $project);
 	}
 
@@ -40,16 +53,15 @@ class CapistranoDeploy {
 	 * @param string $repository
 	 * @param string $sha
 	 * @param string $logfile
-	 * @return type
+	 * @return \Symfony\Component\Process\Process
 	 */
 	protected function getCommand($environment, $repository, $sha, $logfile) {
-		$logfile = DEPLOYNAUT_LOG_PATH . '/' . $logfile;
-		
-		$command = 'cap -vv '.$environment.' deploy';
+		$command = 'cap -v '.$environment.' deploy';
 		$command.= ' -s repository='.$repository;
 		$command.= ' -s branch='.$sha;
-		$command.= " > '{$logfile}' 2> '{$logfile}'";
-		return $command;
+		$process = new \Symfony\Component\Process\Process($command);
+		$process->setTimeout(3600);
+		return $process;
 	}
 
 	public function tearDown() {
