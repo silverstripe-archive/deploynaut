@@ -33,7 +33,8 @@ class DNReferenceList extends ArrayList {
 	 */
 	protected function getReferences() {
 		$repository = new Gitonomy\Git\Repository($this->project->LocalCVSPath);
-		$repository->run('fetch', array('--all'));
+		$repository->run('fetch', array('origin', '--tags'));
+		
 		// cache them for look up in byName
 		$builds = array();
 		foreach($repository->getLog()->setLimit(10) as $reference) {
