@@ -28,16 +28,18 @@ class DNCommit extends ViewableData {
 	 */
 	public function Name() {
 		$references = $this->commit->resolveReferences();
+		$hash = substr($this->commit->getHash(),0,8);
+
 		if($references) {
 			$names = array();
 			foreach($references as $ref) {
-				$names[] = $ref->getFullName();
+				$names[] = $ref->getName();
 			}
 			$refs = implode(', ', $names);
+			return "$refs ($hash)";
 			#return $refs.' - '.$this->commit->getSubjectMessage();
 		}
-		return $this->commit->getHash();
-		return $this->commit->getSubjectMessage();
+		return $hash;
 	}
 
 	/**
@@ -66,6 +68,18 @@ class DNCommit extends ViewableData {
 			if($environment->CurrentBuild() == $this->buildname) $output->push($environment);
 		}
 		return $output;
+	}
+
+	/**
+	 *
+	 * @return SS_Datetime 
+	 */
+	public function Created() {
+		$created = $this->commit->getCommitterDate();
+
+		$d = new SS_Datetime();
+		$d->setValue($created->format('Y-m-d H:i:s'));
+		return $d;
 	}
 
 }
