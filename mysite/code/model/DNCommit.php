@@ -14,17 +14,20 @@ class DNCommit extends ViewableData {
 
 	protected $references = null;
 	
+	protected $ownerBranchName = null;
+	
 	/**
 	 *
 	 * @param Gitonomy\Git\Commit $commit
 	 * @param DNProject $project
 	 * @param DNData $data
 	 */
-	public function __construct(Gitonomy\Git\Commit $commit, DNProject $project, DNData $data) {
+	public function __construct(Gitonomy\Git\Commit $commit, DNProject $project, DNData $data, $ownerBranchName = null) {
 		$this->commit = $commit;
 		$this->buildname = $commit->getHash();
 		$this->project = $project;
 		$this->data = $data;
+		$this->ownerBranchName = $ownerBranchName;
 	}
 
 	/**
@@ -48,18 +51,27 @@ class DNCommit extends ViewableData {
 			return $this->references;
 		}
 		$this->references = new ArrayList();
-		
+
+		// Add tags
 		foreach($this->commit->resolveReferences() as $reference) {
-			$data = array('Name'=>$reference->getName());
-			if($reference instanceof \Gitonomy\Git\Reference\Branch) {
-				$data['Type'] = 'Branch';
-			} elseif($reference instanceof \Gitonomy\Git\Reference\Tag) {
-				$data['Type'] = 'Tag';
-			} elseif($reference instanceof \Gitonomy\Git\Reference\Stash) {
-				$data['Type'] = 'Stash';
+			if($reference instanceof \Gitonomy\Git\Reference\Tag) {
+				$this->references->push(new ArrayData(array(
+					'Name' => $reference->getName(),
+					'Type' => 'Tag',
+				)));
 			}
-			$this->references->push(new ArrayData($data));
 		}
+
+		// Add other branches that this SHA belongs to
+		foreach($this->commit->getIncludingBranches() as $branch) {
+			if(!$this->ownerBranchName || $branch->getName() != $this->ownerBranchName) {
+				$this->references->push(new ArrayData(array(
+					'Type' =>'OtherBranch',
+					'Name' => $branch->getName(),
+				)));
+			}
+		}
+
 		return $this->references;
 	}
 

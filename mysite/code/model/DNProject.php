@@ -73,8 +73,16 @@ class DNProject extends DataObject {
 	 */
 	function DNBuildList() {
 		return new DNReferenceList($this, $this->DNData());
-		return new DNBuildList($this->DNData()->getBuildDir().'/'.$this->Name, $this, $this->DNData());
 	}
+
+	/**
+	 * Provides a list of the branches in this project.
+	 */
+	function DNBranchList() {
+		return new DNBranchList($this, $this->DNData());
+	}
+
+
 
 	/**
 	 * Provides a DNEnvironmentList of environments found in this project.

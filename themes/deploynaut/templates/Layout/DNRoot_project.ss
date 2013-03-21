@@ -21,10 +21,12 @@
 	</tbody>
 </table>
 
-<h3>Builds</h3>
+<% loop DNBranchList %>
+<% if DNBuildList.Count %>
+<h3>$Name (last updated $LastUpdated.Nice)</h3>
 <p>Legend: 
-	<span class="label label-info">branch</span>
-	<span class="label">tag</span>
+	<span class="label label-info">release tag</span>
+	<span class="label">other branch containing this</span>
 </p>
 <table class="table-striped table table-bordered">
 	<thead>
@@ -40,7 +42,7 @@
 		<tr>
 			<td>$Name</td>
 			<td><% loop $References %>
-				<span class="label <% if $Type = Branch %>label-info<% end_if %>" title="$Type">$Name</span>
+				<span class="label <% if $Type = Tag %>label-info<% end_if %>" title="$Type">$Name</span>
 			<% end_loop %>
 			</td>
 			<td>
@@ -53,4 +55,5 @@
 	<% end_loop %>
 	</tbody>
 </table>
-
+<% end_if %>
+<% end_loop %>

@@ -1,14 +1,10 @@
 <?php
 
-class DNReferenceList extends ArrayList {
+class DNBranchList extends ArrayList {
 
 	protected static $refs_dir = '';
 
 	protected $loaded = false;
-
-	protected $reference = null;
-
-	protected $blockBranch;
 	
 	protected $builds = array();
 
@@ -26,11 +22,9 @@ class DNReferenceList extends ArrayList {
 	 * @param DNProject $project
 	 * @param DNData $data
 	 */
-	public function __construct(DNProject $project, DNData $data, Gitonomy\Git\Reference $reference = null, $blockBranch = null) {
+	public function __construct(DNProject $project, DNData $data) {
 		$this->project = $project;
 		$this->data = $data;
-		$this->reference = $reference;
-		$this->blockBranch = $blockBranch;
 		parent::__construct(array());
 	}
 
@@ -38,31 +32,19 @@ class DNReferenceList extends ArrayList {
 	 * @return array()
 	 */
 	protected function getReferences() {
-		if($this->reference) {
-			$log = $this->reference->getLog();
+		$branches = array();
+		// Placeholder to put master branch first
+		$firstBranch = null;
 
-		} else {
-			$repository = new Gitonomy\Git\Repository($this->project->LocalCVSPath);
-			$repository->run('fetch', array('origin', '--tags'));
-			$log = $repository->getLog();
+		$repository = new Gitonomy\Git\Repository($this->project->LocalCVSPath);
+		foreach($repository->getReferences()->getBranches() as $branch) {
+			$obj = new DNBranch($branch, $this->project, $this->data);
+			if($branch->getName() == 'master') $firstBranch = $obj;
+			else $branches[] = $obj;
 		}
-		
-		// cache them for look up in byName
-		$builds = array();
-		foreach($log->setLimit(10) as $reference) {
-			if($this->blockBranch) {
-				$branchesIncluding = $reference->getIncludingBranches();
-				foreach($branchesIncluding as $candidate) {
-					if($candidate->getName() == $this->blockBranch) {
-						// Break out of the function
-						return $builds;
-					}
-				}
-			}
+		if($firstBranch) array_unshift($branches, $firstBranch);
 
-			$builds[$reference->getHash()] = new DNCommit($reference, $this->project, $this->data, $this->reference->getName());
-		}
-		return $builds;
+		return $branches;
 	}
 
 	/**
@@ -74,11 +56,6 @@ class DNReferenceList extends ArrayList {
 			$this->loaded = true;
 		}
 		return $this->items[$hash];
-	}
-
-	public function Count() {
-		$this->getIterator();
-		return parent::Count();	
 	}
 
 	/**
