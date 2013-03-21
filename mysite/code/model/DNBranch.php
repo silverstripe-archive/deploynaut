@@ -57,4 +57,9 @@ class DNBranch extends ViewableData {
 		return $d;
 	}
 
+	public function IsOpenByDefault() {
+		if($this->Name() == 'master') return " open";
+		else return "";
+	}
+
 }

@@ -27,3 +27,26 @@
 	color: green;
 	font-weight :bold;
 }
+
+.project-branch > .project-branch-content {
+	display: none;
+}
+	.project-branch.open > .project-branch-content {
+		display: block;
+	}
+	.project-branch > h3 {
+		display: block;
+		cursor: pointer;
+	}
+	.project-branch.open > h3 .open-icon {
+		display: inline;
+	}
+	.project-branch.open > h3 .closed-icon {
+		display: none;
+	}	
+	.project-branch > h3 .open-icon {
+		display: none;
+	}
+	.project-branch > h3 .closed-icon {
+		display: inline;
+	}	

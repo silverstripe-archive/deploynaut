@@ -48,5 +48,11 @@
 		if($('#deploy_log').length) {
 			deploy.start();
 		}
+
+		$('.project-branch > h3').click(function() {
+			var $project = $(this).parent();
+			if($project.hasClass('open')) $project.removeClass('open');
+			else $project.addClass('open');
+		})
 	});
 }(jQuery));
