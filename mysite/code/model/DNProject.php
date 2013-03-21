@@ -30,6 +30,8 @@ class DNProject extends DataObject {
 		"Name",
 	);
 
+	protected static $relation_cache = array();
+
 	static function get($callerClass = null, $filter = "", $sort = "", $join = "", $limit = null,
 			$containerClass = 'DataList') {
 		return new DNProjectList('DNProject');
@@ -90,6 +92,21 @@ class DNProject extends DataObject {
 	public function DNEnvironmentList() {
 		return DNEnvironment::get()->filter('ProjectID', $this->ID)->setProjectID($this->ID);
 	}
+
+	/**
+	 * Returns a map of envrionment name to build name
+	 */
+	public function currentBuilds() {
+		if(!isset(self::$relation_cache['currentBuilds.'.$this->ID])) {
+			$currentBuilds = array();
+			foreach($this->Environments() as $env) {
+				$currentBuilds[$env->Name] = $env->CurrentBuild();
+			}
+			self::$relation_cache['currentBuilds.'.$this->ID] = $currentBuilds;
+		}
+		return self::$relation_cache['currentBuilds.'.$this->ID];
+	}
+
 
 
 	public function Link() {

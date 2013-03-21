@@ -63,7 +63,7 @@ class DNCommit extends ViewableData {
 		}
 
 		// Add other branches that this SHA belongs to
-		foreach($this->commit->getIncludingBranches() as $branch) {
+		foreach(GitonomyCache::getIncludingBranches($this->commit) as $branch) {
 			if(!$this->ownerBranchName || $branch->getName() != $this->ownerBranchName) {
 				$this->references->push(new ArrayData(array(
 					'Type' =>'OtherBranch',
@@ -95,12 +95,15 @@ class DNCommit extends ViewableData {
 	 *
 	 * @return ArrayList
 	 */
+
 	public function CurrentlyDeployedTo() {
-		$output = new ArrayList();
-		foreach($this->project->DNEnvironmentList() as $environment) {
-			if($environment->CurrentBuild() == $this->buildname) $output->push($environment);
+		$envNames = array();
+		foreach($this->project->currentBuilds() as $envName => $currentBuild) {
+			if($currentBuild == $this->buildname) $envNames[] = $envName;
 		}
-		return $output;
+		
+		if($envNames) return $this->project->Environments()->filter('Name', $envNames);
+		else return new ArrayList;
 	}
 
 	/**

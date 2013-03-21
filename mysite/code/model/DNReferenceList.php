@@ -51,7 +51,7 @@ class DNReferenceList extends ArrayList {
 		$builds = array();
 		foreach($log->setLimit(10) as $reference) {
 			if($this->blockBranch) {
-				$branchesIncluding = $reference->getIncludingBranches();
+				$branchesIncluding = GitonomyCache::getIncludingBranches($reference);
 				foreach($branchesIncluding as $candidate) {
 					if($candidate->getName() == $this->blockBranch) {
 						// Break out of the function

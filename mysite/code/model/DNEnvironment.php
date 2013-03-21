@@ -20,7 +20,9 @@ class DNEnvironment extends DataObject {
 		"Name",
 	);
 
-static function get($callerClass = null, $filter = "", $sort = "", $join = "", $limit = null,
+	protected static $relation_cache = array();
+
+	static function get($callerClass = null, $filter = "", $sort = "", $join = "", $limit = null,
 			$containerClass = 'DataList') {
 		return new DNEnvironmentList('DNEnvironment');
 	}
@@ -39,6 +41,13 @@ static function get($callerClass = null, $filter = "", $sort = "", $join = "", $
 		}
 
 		return $e;
+	}
+
+	public function Project() {
+		if(!isset(self::$relation_cache['DNProject.' . $this->ProjectID])) {
+			self::$relation_cache['DNProject.' . $this->ProjectID] = $this->getComponent('Project');
+		}
+		return self::$relation_cache['DNProject.' . $this->ProjectID];
 	}
 
 	function canView($member = null) {

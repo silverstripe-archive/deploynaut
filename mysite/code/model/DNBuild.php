@@ -100,11 +100,13 @@ class DNBuild extends ViewableData {
 	 * @return ArrayList 
 	 */
 	public function CurrentlyDeployedTo() {
-		$output = new ArrayList;
-		foreach($this->project->DNEnvironmentList() as $environment) {
-			if($environment->CurrentBuild() == $this->buildname) $output->push($environment);
+		$envNames = array();
+		foreach($this->project->currentBuilds() as $envName => $currentBuild) {
+			if($currentBuild == $this->buildname) $envNames[] = $envName;
 		}
-		return $output;
+		
+		if($envNames) return $this->project->Environments()->filter('Name', $envNames);
+		else return new ArrayList;
 	}
 
 	/**
