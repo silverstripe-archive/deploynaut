@@ -24,7 +24,11 @@
 <% loop DNBranchList %>
 <% if DNBuildList.Count %>
 <div class="project-branch$IsOpenByDefault">
-<h3><span class="open-icon">-</span><span class="closed-icon">+</span> $Name (last updated $LastUpdated.Nice)</h3>
+<h3>
+	<span class="open-icon">-</span><span class="closed-icon">+</span>
+	$Name
+	<small>last updated: $LastUpdated.Nice</small>
+</h3>
 <div class="project-branch-content">
 <p>Legend: 
 	<span class="label label-info">release tag</span>
