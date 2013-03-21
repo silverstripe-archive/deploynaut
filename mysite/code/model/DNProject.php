@@ -39,6 +39,13 @@ class DNProject extends DataObject {
 		$p = new DNProject;
 		$p->Name = $path;
 		$p->write();
+
+		// add the administrators group as the viewers of the new project
+		$adminGroup = Group::get()->filter('Code', 'administrators')->first();
+		if($adminGroup && $adminGroup->exists()) {
+			$p->Viewers()->add($adminGroup);
+		}
+
 		return $p;
 	}
 

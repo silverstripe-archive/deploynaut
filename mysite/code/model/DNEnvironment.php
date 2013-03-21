@@ -29,6 +29,15 @@ static function get($callerClass = null, $filter = "", $sort = "", $join = "", $
 		$e = new DNEnvironment;
 		$e->Filename = $path;
 		$e->Name = preg_replace('/\.rb$/', '', basename($e->Filename));
+
+		// add each administrator member as a deployer of the new environment
+		$adminGroup = Group::get()->filter('Code', 'administrators')->first();
+		if($adminGroup && $adminGroup->exists()) {
+			foreach($adminGroup->Members() as $member) {
+				$e->Deployers()->add($member);
+			}
+		}
+
 		return $e;
 	}
 
