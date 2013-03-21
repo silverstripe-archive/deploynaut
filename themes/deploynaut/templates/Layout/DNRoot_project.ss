@@ -27,7 +27,7 @@
 <h3>
 	<span class="open-icon">-</span><span class="closed-icon">+</span>
 	$Name
-	<small>last updated: $LastUpdated.Nice</small>
+	<small>last updated: $LastUpdated.Nice ($LastUpdated.Ago)</small>
 </h3>
 <div class="project-branch-content">
 <p>Legend: 
@@ -37,10 +37,10 @@
 <table class="table-striped table table-bordered">
 	<thead>
 		<tr>
-			<th>Build name</th>
-			<th>Reference</th>
+			<th>Change ID</th>
+			<th>Release</th>
 			<th>Currently on</th>
-			<th>Date for build creation</th>
+			<th>Date created</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -56,7 +56,7 @@
 				<a href="{$Link}">$Name</a><% if not $Last %>,<% end_if %>
 				<% end_control %>
 			</td>
-			<td>$Created</td>
+			<td>$Created.Nice ($Created.Ago)</td>
 		</tr>
 	<% end_loop %>
 	</tbody>
