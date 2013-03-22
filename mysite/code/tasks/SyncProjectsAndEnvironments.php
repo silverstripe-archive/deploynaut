@@ -1,7 +1,7 @@
 <?php
 
 class SyncProjectsAndEnvironments extends BuildTask {
-	function run($request = nll) {
+	function run($request = null) {
 		$data = Injector::inst()->get('DNData');
 
 		$projectPaths = $data->getProjectPaths();
