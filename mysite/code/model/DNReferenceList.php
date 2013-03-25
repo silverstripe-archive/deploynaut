@@ -60,7 +60,8 @@ class DNReferenceList extends ArrayList {
 				}
 			}
 
-			$builds[$reference->getHash()] = new DNCommit($reference, $this->project, $this->data, $this->reference->getName());
+			$name = $this->reference ? $this->reference->getName() : '';
+			$builds[$reference->getHash()] = new DNCommit($reference, $this->project, $this->data, $name);
 		}
 		return $builds;
 	}
