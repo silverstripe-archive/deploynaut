@@ -41,15 +41,23 @@ class DNCommit extends ViewableData {
 	}
 
 	/**
-	 * Return the commit message.
+	 * Return the first line of the commit message.
 	 * @return string
 	 */
-	public function Message() {
-		if($this->message == null) {
-			$this->message = $this->commit->getMessage();
+	public function SubjectMessage() {
+		if($this->subjectMessage == null) {
+			$this->subjectMessage = $this->commit->getSubjectMessage();
 		}
 
-		return $this->message;
+		return $this->subjectMessage;
+	}
+
+	public function BodyMessage() {
+		if($this->bodyMessage == null) {
+			$this->bodyMessage = $this->commit->getBodyMessage();
+		}
+
+		return $this->bodyMessage;
 	}
 
 	/**
