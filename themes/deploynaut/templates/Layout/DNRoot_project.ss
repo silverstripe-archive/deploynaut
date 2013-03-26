@@ -48,7 +48,7 @@
 	<% loop DNBuildList %>
 		<tr>
 			<td>$Name</td>
-			<td>$Message</td>
+			<td title="$SubjectMessage $BodyMessage">$SubjectMessage</td>
 			<td><% loop $References %>
 				<span class="label <% if $Type = Tag %>label-info<% end_if %>" title="$Type">$Name</span>
 			<% end_loop %>
