@@ -1,6 +1,4 @@
 <?php
-
-
 class DNCommit extends ViewableData {
 
 	/**
@@ -31,8 +29,8 @@ class DNCommit extends ViewableData {
 	}
 
 	/**
-	 *
-	 * @return type
+	 * Return the hash of the commit, used to name this commit.
+	 * @return string
 	 */
 	public function Name() {
 		if($this->name == null) {
@@ -40,6 +38,18 @@ class DNCommit extends ViewableData {
 		}
 		
 		return $this->name;
+	}
+
+	/**
+	 * Return the commit message.
+	 * @return string
+	 */
+	public function Message() {
+		if($this->message == null) {
+			$this->message = $this->commit->getMessage();
+		}
+
+		return $this->message;
 	}
 
 	/**
