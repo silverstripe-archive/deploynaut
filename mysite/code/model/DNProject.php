@@ -132,6 +132,15 @@ class DNProject extends DataObject {
 		return $fields;
 	}
 
+	public function updateRepo() {
+		$this->LocalCVSPath = DEPLOYNAUT_LOCAL_VCS_PATH . '/' . $this->Name;
+
+		Resque::enqueue('git', 'UpdateGitRepo', array(
+			'repo' => $this->CVSPath,
+			'path' => $this->LocalCVSPath
+		));
+	}
+
 	/**
 	 * 
 	 */
@@ -139,11 +148,7 @@ class DNProject extends DataObject {
 		$changedFields = $this->getChangedFields(true, 2);
 		if(isset($changedFields['CVSPath']) && $this->CVSPath) {
 			$this->LocalCVSPath = DEPLOYNAUT_LOCAL_VCS_PATH . '/' . $this->Name;
-
-			$token = Resque::enqueue('git', 'UpdateGitRepo', array(
-				'repo' => $this->CVSPath,
-				'path' => $this->LocalCVSPath
-			));
+			$this->updateRepo();
 		}
 		parent::onBeforeWrite();
 	}
