@@ -63,7 +63,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		if(!$project) {
 			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
 		}
-	return $project->renderWith(array('DNRoot_project', 'DNRoot'));
+		return $project->renderWith(array('DNRoot_project', 'DNRoot'));
 	}
 
 	public function environment($request) {
