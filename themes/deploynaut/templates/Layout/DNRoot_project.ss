@@ -4,7 +4,7 @@
 		<tr><th>Environment</th><th>Build currently deployed</th><th>Can you deploy?</th></tr>
 	</thead>
 	<tbody>
-	<% control DNEnvironmentList %>
+	<% loop DNEnvironmentList %>
 		<tr>
 			<td><a href="$Link">$Name</a></td>
 			<td>$CurrentBuild</td>
@@ -17,7 +17,7 @@
 			<% end_if %>
 			</td>
 		</tr>
-	<% end_control %>
+	<% end_loop %>
 	</tbody>
 </table>
 
@@ -54,9 +54,9 @@
 			<% end_loop %>
 			</td>
 			<td>
-				<% control CurrentlyDeployedTo %>
+				<% loop CurrentlyDeployedTo %>
 				<a href="{$Link}">$Name</a><% if not $Last %>,<% end_if %>
-				<% end_control %>
+				<% end_loop %>
 			</td>
 			<td>$Created.Nice ($Created.Ago)</td>
 		</tr>

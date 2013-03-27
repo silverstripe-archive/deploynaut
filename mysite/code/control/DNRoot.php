@@ -111,7 +111,16 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		$buildList = array('' => '(Choose a build)');
 		foreach($project->DNBuildList() as $build) {
-			$buildList[$build->FullName()] = $build->Name();
+			$name = $build->Name();
+			$name .= ' (' . $build->SubjectMessage();
+			$tags = array();
+			foreach($build->References() as $ref) {
+				if($ref->Tag) $tags[] = $ref->Name;
+			}
+			if($tags) $name .= ' (tags: ' . implode(', ', $tags) . ')';
+			$name .= ')';
+
+			$buildList[$build->FullName()] = $name;
 		}
 		
 		$form = new Form($this, 'DeployForm', new FieldList(
