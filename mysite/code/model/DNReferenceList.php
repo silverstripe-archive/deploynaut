@@ -43,10 +43,10 @@ class DNReferenceList extends ArrayList {
 
 		} else {
 			$repository = new Gitonomy\Git\Repository($this->project->LocalCVSPath);
-			$repository->run('fetch', array('origin', '--tags'));
+			$repository->run('fetch', array('origin', '+refs/heads/*:refs/heads/*', '--tags'));
 			$log = $repository->getLog();
 		}
-		
+
 		// cache them for look up in byName
 		$builds = array();
 		foreach($log->setLimit(10) as $reference) {
