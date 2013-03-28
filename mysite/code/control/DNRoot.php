@@ -115,7 +115,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			$name .= ' (' . $build->SubjectMessage();
 			$tags = array();
 			foreach($build->References() as $ref) {
-				if($ref->Tag) $tags[] = $ref->Name;
+				if($ref->Type=='Tag') $tags[] = $ref->Name;
 			}
 			if($tags) $name .= ' (tags: ' . implode(', ', $tags) . ')';
 			$name .= ')';
