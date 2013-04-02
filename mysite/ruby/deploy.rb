@@ -15,7 +15,7 @@ set :normalize_asset_timestamps, false
 # to have access to the git repo
 set :deploy_via, :copy
 set :copy_strategy, :export
-set :copy_cache, true
+set :copy_cache, false
 
 _cset(:sake_path) { "./framework/sake" }
 
