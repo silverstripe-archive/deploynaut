@@ -91,6 +91,11 @@ namespace :deploy do
 			# Remove the cache folder that was used for dev/build
 		end
 
+		# Initialise the cache, in case dev/build wasn't executed on all hosts
+		if exists?(:webserver_user)
+			run "sudo su #{webserver_user} -c '#{latest_release}/#{_sake_path} dev"
+		end
+
 		# Set permissions for directories
 		run "find #{latest_release} -not -group #{webserver_group} -not -perm 775 -type d -exec chmod 775 {} \\;"
 
