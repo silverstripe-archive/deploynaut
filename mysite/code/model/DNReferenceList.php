@@ -38,12 +38,12 @@ class DNReferenceList extends ArrayList {
 	 * @return array()
 	 */
 	protected function getReferences() {
+		$repository = new Gitonomy\Git\Repository($this->project->LocalCVSPath);
+		$repository->run('fetch', array('origin', '+refs/heads/*:refs/heads/*', '--tags'));
+
 		if($this->reference) {
 			$log = $this->reference->getLog();
-
 		} else {
-			$repository = new Gitonomy\Git\Repository($this->project->LocalCVSPath);
-			$repository->run('fetch', array('origin', '+refs/heads/*:refs/heads/*', '--tags'));
 			$log = $repository->getLog();
 		}
 
