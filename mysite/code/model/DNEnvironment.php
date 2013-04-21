@@ -106,8 +106,9 @@ class DNEnvironment extends DataObject {
 		$fields->addFieldToTab("Root.Main", 
 			new CheckboxSetField("Deployers", "Users who can deploy to this environment", 
 				$members));
-
-
+		$fields->makeFieldReadonly('Filename');
+		
+	
 		return $fields;
 	}
 }
