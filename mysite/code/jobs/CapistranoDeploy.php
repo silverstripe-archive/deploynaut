@@ -56,7 +56,7 @@ class CapistranoDeploy {
 	 * @return \Symfony\Component\Process\Process
 	 */
 	protected function getCommand($environment, $repository, $sha, $logfile) {
-		$command = 'cap -v '.$environment.' deploy';
+		$command = 'cap -vv '.$environment.' deploy';
 		$command.= ' -s repository='.$repository;
 		$command.= ' -s branch='.$sha;
 		$command.= ' -s history_path='.realpath(DEPLOYNAUT_LOG_PATH.'/');
