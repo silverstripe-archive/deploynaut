@@ -33,18 +33,9 @@ namespace :deploy do
 	end
 
 	task :restart do
-		system "echo \""+Time.now.strftime("%Y-%m-%d %H:%M:%S")+" => #{release_name} \" >> #{history_path}/#{config_name}.deploy-history.txt";
+		system "echo \""+Time.now.strftime("%Y-%m-%d %H:%M:%S")+" => #{branch} \" >> #{history_path}/#{config_name}.deploy-history.txt";
 		logger.debug "Deploy finished."
 	end
 end
-
-# Change the deploy target folder to the current branch name if the :branch
-# is set, otherwise use default timestamp
-before "deploy:update" do
-	# check if the branch is set to head and .. do something?
-	set :release_name,  "#{branch}" if exists?(:branch)
-end
-
-
 
 after "deploy:finalize_update", "deploy:migrate"
