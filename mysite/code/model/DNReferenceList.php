@@ -12,6 +12,8 @@ class DNReferenceList extends ArrayList {
 	
 	protected $builds = array();
 
+	protected $limit = 10;
+
 	public static function set_refs_dir($refsDir) {
 		self::$refs_dir = $refsDir;
 	}
@@ -35,6 +37,16 @@ class DNReferenceList extends ArrayList {
 	}
 
 	/**
+	 *
+	 * @param int $limit
+	 */
+	public function setLimit($limit) {
+		$this->limit = $limit;
+	}
+
+	/**
+	 *
+	 * @param int $limit - defaults to the ten lates
 	 * @return array()
 	 */
 	protected function getReferences() {
@@ -49,7 +61,7 @@ class DNReferenceList extends ArrayList {
 
 		// cache them for look up in byName
 		$builds = array();
-		foreach($log->setLimit(10) as $reference) {
+		foreach($log->setLimit($this->limit) as $reference) {
 			if($this->blockBranch) {
 				$branchesIncluding = GitonomyCache::getIncludingBranches($reference);
 				foreach($branchesIncluding as $candidate) {

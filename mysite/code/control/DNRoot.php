@@ -110,7 +110,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		if(!$environment->canDeploy()) return null;
 
 		$buildList = array('' => '(Choose a build)');
-		foreach($project->DNBuildList() as $build) {
+		$buildList = $project->DNBuildList();
+		$buildList->setLimit(20);
+		foreach($buildList as $build) {
 			$name = $build->Name();
 			$name .= ' (' . $build->SubjectMessage();
 			$tags = array();
