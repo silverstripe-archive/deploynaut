@@ -86,6 +86,14 @@ class DNReferenceList extends ArrayList {
 			$this->items = $this->getReferences();
 			$this->loaded = true;
 		}
+		// The item might not be in the list because of the limit, try to find
+		// in an older version and add it to the list.
+		if(!isset($this->items[$hash])) {
+			$repository = new Gitonomy\Git\Repository($this->project->LocalCVSPath);
+			$commit = new Gitonomy\Git\Commit($repository, $hash);
+			$this->items[$hash] = new DNCommit($commit, $this->project, $this->data);
+		};
+
 		return $this->items[$hash];
 	}
 

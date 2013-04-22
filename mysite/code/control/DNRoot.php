@@ -109,24 +109,31 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		if(!$environment->canDeploy()) return null;
 
-		$buildList = array('' => '(Choose a build)');
-		$buildList = $project->DNBuildList();
-		$buildList->setLimit(20);
-		foreach($buildList as $build) {
-			$name = $build->Name();
-			$name .= ' (' . $build->SubjectMessage();
-			$tags = array();
-			foreach($build->References() as $ref) {
-				if($ref->Type=='Tag') $tags[] = $ref->Name;
-			}
-			if($tags) $name .= ' (tags: ' . implode(', ', $tags) . ')';
-			$name .= ')';
+		
+		$branchList = $project->DNBranchList();
 
-			$buildList[$build->FullName()] = $name;
+		$branches = array();
+		foreach($branchList as $branch) {
+
+			$builds = array();
+			foreach($branch->DNBuildList() as $build) {
+				$name = $build->Name();
+				$name .= ' - ' . $build->SubjectMessage();
+				$tags = array();
+				foreach($build->References() as $ref) {
+					if($ref->Type=='Tag') $tags[] = $ref->Name;
+				}
+				if($tags) $name .= ' (tags: ' . implode(', ', $tags) . ')';
+				
+				$builds[$build->FullName()] = $name;
+			}
+			if(count($builds)) {
+				$branches[$branch->Name()] = $builds;
+			}
 		}
 		
 		$form = new Form($this, 'DeployForm', new FieldList(
-			new DropdownField("BuildName", "Build", $buildList)
+			new GroupedDropdownField("BuildName", "Build", $branches)
 		), new FieldList(
 			$deployAction = new FormAction('doDeploy', "Deploy to " . $environment->Name)
 		));

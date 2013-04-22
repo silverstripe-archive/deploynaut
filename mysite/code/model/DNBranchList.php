@@ -18,7 +18,6 @@ class DNBranchList extends ArrayList {
 
 	/**
 	 *
-	 * @param string $buildFolder - name of buildfolder inside of $builds_dir
 	 * @param DNProject $project
 	 * @param DNData $data
 	 */
