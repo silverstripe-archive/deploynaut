@@ -103,6 +103,10 @@ class DNEnvironment extends DataObject {
 		asort($members);
 
 		$fields->fieldByName("Root")->removeByName("Deployers");
+		$nameField = $fields->fieldByName('Root.Main.Name')->performReadonlyTransformation();
+		$fields->replaceField('Name', $nameField);
+		$projectField = $fields->fieldByName('Root.Main.ProjectID')->performReadonlyTransformation();
+		$fields->replaceField('ProjectID', $projectField);
 		$fields->addFieldToTab("Root.Main", 
 			new CheckboxSetField("Deployers", "Users who can deploy to this environment", 
 				$members));

@@ -121,10 +121,19 @@ class DNProject extends DataObject {
 		$fields->fieldByName("Root")->removeByName("Viewers");
 		$fields->fieldByName("Root")->removeByName("Environments");
 
+		$nameField = $fields->fieldByName('Root.Main.Name')->performReadonlyTransformation();
+		$fields->replaceField('Name', $nameField);
+
+
 		$cvsField = $fields->fieldByName('Root.Main.LocalCVSPath')->performReadonlyTransformation();
 		$fields->replaceField('LocalCVSPath', $cvsField);
 
-		if($environments) $fields->addFieldToTab("Root.Main", $environments);
+		if($environments) {
+			$environments->getConfig()->removeComponentsByType('GridFieldAddNewButton');
+			$environments->getConfig()->removeComponentsByType('GridFieldAddExistingAutocompleter');
+			$environments->getConfig()->removeComponentsByType('GridFieldDeleteAction');
+			$fields->addFieldToTab("Root.Main", $environments);
+		}
 		$fields->addFieldToTab("Root.Main",
 			new CheckboxSetField("Viewers", "Groups with read access to this project",
 				Group::get()->map()));
