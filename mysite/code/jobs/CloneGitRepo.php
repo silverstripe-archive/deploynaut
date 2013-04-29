@@ -1,6 +1,6 @@
 <?php
 
-class UpdateGitRepo {
+class CloneGitRepo {
 
 	public $args;
 
@@ -15,13 +15,13 @@ class UpdateGitRepo {
 		mkdir($path, 0777, true);
 		echo '[+] Cloning ' . $repo.' to ' . $path . PHP_EOL;
 
-		// using git clone straight of since doing it via Gitonomy\Git\Admin
-		// times out. Silly.
+		// using git clone straight via system call since doing it via the
+		// Gitonomy\Git\Admin times out. Silly.
 		$command = sprintf('git clone --bare -q %s %s', $repo, $path);
 		exec($command, $output, $return_var);
 
 		if($return_var != 0) {
-			$file = DEPLOYNAUT_LOG_PATH . '/updategitrepo.log';
+			$file = DEPLOYNAUT_LOG_PATH . '/clonegitrepo.log';
 			$fh = fopen($file, 'a');
 			fwrite($fh, sprintf('\'%s\' exited with return code %s. Output: "%s"' . PHP_EOL, $command, $return_var, var_export($output, true)));
 			fclose($fh);

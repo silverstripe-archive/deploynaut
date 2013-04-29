@@ -144,7 +144,7 @@ class DNProject extends DataObject {
 	public function updateRepo() {
 		$this->LocalCVSPath = DEPLOYNAUT_LOCAL_VCS_PATH . '/' . $this->Name;
 
-		Resque::enqueue('git', 'UpdateGitRepo', array(
+		Resque::enqueue('git', 'CloneGitRepo', array(
 			'repo' => $this->CVSPath,
 			'path' => $this->LocalCVSPath
 		));
