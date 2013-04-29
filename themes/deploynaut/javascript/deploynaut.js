@@ -54,5 +54,17 @@
 			if($project.hasClass('open')) $project.removeClass('open');
 			else $project.addClass('open');
 		})
+
+		$('a.update-repository').click(function(e){
+			e.preventDefault();
+
+			$(this).attr('disabled', 'disabled');
+			$(this).html('Fetching');
+			$(this).toggleClass('loading');
+			$.get($(this).attr('href'), function(data){
+				location.reload();
+			});
+			
+		});
 	});
 }(jQuery));

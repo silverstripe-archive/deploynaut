@@ -8,6 +8,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'project/$Project/environment/$Environment/DeployForm' => 'getDeployForm',
 		'project/$Project/environment/$Environment' => 'environment',
 		'project/$Project/build/$Build' => 'build',
+		'project/$Project/update' => 'update',
 		'project/$Project' => 'project',
 		'projects' => 'projects',
 	);
@@ -56,6 +57,21 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 	public function projects() {
 		return $this->renderWith(array('DNRoot_projects', 'DNRoot'));
+	}
+
+	/**
+	 * Updates (fetches) the latest changes from the git origin
+	 *
+	 * @return \SS_HTTPResponse
+	 */
+	public function update(SS_HTTPRequest $request) {
+		$project = $this->DNProjectList()->filter('Name', $request->latestParam('Project'))->First();
+		if(!$project) {
+			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
+		}
+		$repository = new Gitonomy\Git\Repository($project->LocalCVSPath);
+		$repository->run('fetch', array('origin', '+refs/heads/*:refs/heads/*', '--tags'));
+		return true;
 	}
 
 	public function project($request) {

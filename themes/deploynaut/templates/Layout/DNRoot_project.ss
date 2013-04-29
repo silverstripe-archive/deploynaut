@@ -21,6 +21,8 @@
 	</tbody>
 </table>
 
+<a href="{$Link}/update" class="btn update-repository">Fetch latest changes</a>
+
 <% loop DNBranchList %>
 <% if DNBuildList.Count %>
 <div class="project-branch$IsOpenByDefault">
