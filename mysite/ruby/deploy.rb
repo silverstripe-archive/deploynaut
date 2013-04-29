@@ -11,10 +11,10 @@ namespace :deploy do
 
 	task :migrate do
 		if exists?(:webserver_user)
-			run "sudo su #{webserver_user} -c '#{latest_release}/#{_sake_path} dev/build flush=1'", :roles => :db
+			run "sudo su #{webserver_user} -c '#{latest_release}/#{:sake_path} dev/build flush=1'", :roles => :db
 		else
 			run "mkdir -p #{latest_release}/silverstripe-cache", :roles => :db
-			run "#{latest_release}/#{_sake_path} dev/build flush=1", :roles => :db
+			run "#{latest_release}/#{:sake_path} dev/build flush=1", :roles => :db
 			run "rm -rf #{latest_release}/silverstripe-cache", :roles => :db
 		end
 
