@@ -1,16 +1,3 @@
-# Defines for the default deployment recipes whether we want to use sudo or not.
-set :use_sudo, false
-
-# This a space separated list of folders that will be shared between deploys
-set :shared_children, %w(assets)
-
-# The number of old releases to keep, defaults to 5, can be overridden with
-# any positive integer.
-set :keep_releases, 10
-
-# Keep set to false, RubyOnRails behaviour, will brake in Silverstripe
-set :normalize_asset_timestamps, false
-
 # Deploy the code by copying it up to the server so the target servers don't need
 # to have access to the git repo
 set :deploy_via, :copy

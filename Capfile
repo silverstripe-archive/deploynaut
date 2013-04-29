@@ -1,6 +1,10 @@
+# ----  Load the default capistrano deploy recipe ---- 
 load 'deploy'
 
+# ---- Set where the environment specific configuration are ----
 set :config_root, '../deploynaut-resources/envs'
+
+# ----  Load the recipes from the multiconfig gem ----
 require 'capistrano/multiconfig'
 
 # ---- load tasks from ./config dir ---- 
@@ -15,11 +19,17 @@ set :current_dir, 'www'
 # ---- Keep at the most five releases ----
 set :keep_releases, 5
 
-# ---- Users and SSH ---- 
-# Prevent asking for passwords
+# ---- Prevent asking for passwords ----
 set :password, false
 set :use_sudo, false
 
-# ---- Build directory ---- 
-set :build_archive, "../deploynaut-resources/builds"
+# ---- SSH options ----
+ssh_options[:forward_agent] = true
+ssh_options[:keys] = '../www-keys/id_rsa'
+default_run_options[:pty] = true
+
+# ---- What SCM are we using ----
 set :scm, "git"
+
+# --- RoR behaviour override ---
+set :normalize_asset_timestamps, false
