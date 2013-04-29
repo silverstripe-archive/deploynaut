@@ -22,13 +22,18 @@ _cset(:sake_path) { "./framework/sake" }
 # The migrate task takes care of doing the dev/build
 namespace :deploy do
 
-	task :migrate, :roles => :db do
+	task :migrate do
 		if exists?(:webserver_user)
-			run "sudo -u #{webserver_user} #{latest_release}/#{sake_path} dev/build"
+			run "sudo su #{webserver_user} -c '#{latest_release}/#{_sake_path} dev/build flush=1'", :roles => :db
 		else
-			run "mkdir -p #{latest_release}/silverstripe-cache"
-			run "#{latest_release}/#{sake_path} dev/build flush=1"
-			run "rm -rf #{latest_release}/silverstripe-cache"
+			run "mkdir -p #{latest_release}/silverstripe-cache", :roles => :db
+			run "#{latest_release}/#{_sake_path} dev/build flush=1", :roles => :db
+			run "rm -rf #{latest_release}/silverstripe-cache", :roles => :db
+		end
+
+		# Initialise the cache, in case dev/build wasn't executed on all hosts
+		if exists?(:webserver_user)
+			run "sudo su #{webserver_user} -c '#{latest_release}/#{_sake_path} dev"
 		end
 	end
 
