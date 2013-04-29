@@ -20,7 +20,7 @@ namespace :deploy do
 
 		# Initialise the cache, in case dev/build wasn't executed on all hosts
 		if exists?(:webserver_user)
-			run "sudo su #{webserver_user} -c '#{latest_release}/#{_sake_path} dev"
+			run "sudo su #{webserver_user} -c '#{latest_release}/#{:sake_path} dev"
 		end
 	end
 
