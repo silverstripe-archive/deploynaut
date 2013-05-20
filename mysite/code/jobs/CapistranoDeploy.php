@@ -60,6 +60,9 @@ class CapistranoDeploy {
 		$command.= ' -s repository='.$repository;
 		$command.= ' -s branch='.$sha;
 		$command.= ' -s history_path='.realpath(DEPLOYNAUT_LOG_PATH.'/');
+
+		echo "[-] $command";
+
 		$process = new \Symfony\Component\Process\Process($command);
 		$process->setTimeout(3600);
 		return $process;
