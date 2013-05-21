@@ -87,7 +87,8 @@ class DNProject extends DataObject {
 			try {
 				Gitonomy\Git\Admin::cloneTo(DEPLOYNAUT_LOCAL_VCS_PATH . '/' . $this->Name, $this->CVSPath);
 			} catch (Exception $e) {
-				// This happens when deploynaut can't clone. Do nothing in this case.
+				// if we can't clone the repo, log the error, but don't block execution
+				SS_Log::log($e, SS_Log::ERR);
 			}
 		}
 		return new DNBranchList($this, $this->DNData());
