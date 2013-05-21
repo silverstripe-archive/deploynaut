@@ -81,10 +81,17 @@ class DNProject extends DataObject {
 	 * Provides a list of the branches in this project.
 	 */
 	function DNBranchList() {
+		// if we need to, clone the repository if it doesn't exist
+		// this doesn't use resque, though
+		if(!$this->repoExists() && $this->CVSPath) {
+			try {
+				Gitonomy\Git\Admin::cloneTo(DEPLOYNAUT_LOCAL_VCS_PATH . '/' . $this->Name, $this->CVSPath);
+			} catch (Exception $e) {
+				// This happens when deploynaut can't clone. Do nothing in this case.
+			}
+		}
 		return new DNBranchList($this, $this->DNData());
 	}
-
-
 
 	/**
 	 * Provides a DNEnvironmentList of environments found in this project.
@@ -139,6 +146,10 @@ class DNProject extends DataObject {
 				Group::get()->map()));
 
 		return $fields;
+	}
+
+	public function repoExists() {
+		return file_exists(DEPLOYNAUT_LOCAL_VCS_PATH . '/' . $this->Name);
 	}
 
 	public function updateRepo() {
