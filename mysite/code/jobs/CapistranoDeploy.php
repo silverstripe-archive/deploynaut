@@ -61,13 +61,11 @@ class CapistranoDeploy {
 		$command.= ' -s branch='.$sha;
 		$command.= ' -s history_path='.realpath(DEPLOYNAUT_LOG_PATH.'/');
 
-		echo "[-] $command";
+		echo "[-] Running command: $command";
 
 		$process = new \Symfony\Component\Process\Process($command);
 		$process->setTimeout(3600);
 		return $process;
 	}
 
-	public function tearDown() {
-    }
 }
