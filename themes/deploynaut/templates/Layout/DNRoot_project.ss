@@ -8,6 +8,7 @@
 		</tr>
 	</thead>
 	<tbody>
+	<% if DNEnvironmentList %>
 	<% loop DNEnvironmentList %>
 		<tr>
 			<td><a href="$Link">$Name</a></td>
@@ -17,6 +18,11 @@
 			</td>
 		</tr>
 	<% end_loop %>
+	<% else %>
+		<tr>
+			<td colspan="3">No environments available yet!</td>
+		</tr>
+	<% end_if %>
 	</tbody>
 </table>
 
