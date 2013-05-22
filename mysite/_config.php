@@ -14,6 +14,11 @@ SSViewer::set_theme('deploynaut');
 
 if(defined('IS_SSL') && IS_SSL) Director::forceSSL();
 
+// send fatal errors and warnings to the defined error email
+if(defined('DEPLOYNAUT_ERROR_EMAIL')) {
+	SS_Log::add_writer(new SS_LogEmailWriter(DEPLOYNAUT_ERROR_EMAIL), SS_Log::WARN, '<=');
+}
+
 if(!defined('DEPLOYNAUT_LOG_PATH')) {
 	// The reason is that sys_get_temp_dir() can be different in cli and webserver environment.
 	throw new RuntimeException('You must set the DEPLOYNAUT_LOG_PATH in _ss_environment.php');
