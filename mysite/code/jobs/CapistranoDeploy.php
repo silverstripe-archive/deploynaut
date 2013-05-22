@@ -7,15 +7,15 @@
 require_once(BASE_PATH.'/vendor/autoload.php');
 
 class CapistranoDeploy {
-	
+
 	public $args;
 
 	public function setUp() {
-        global $databaseConfig;
+        	global $databaseConfig;
 		DB::connect($databaseConfig);
 		chdir(BASE_PATH);
-    }
-	
+	}
+
 	public function perform() {
 		$environment = $this->args['environment'];
 		$repository = $this->args['repository'];
