@@ -23,8 +23,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * 
 	 */
 	public function init() {
-		$member = BasicAuth::requireLogin('DEPLOYNAUT_ACCESS');
-		if($member && $member->ID != Member::currentUserID()) $member->logIn();
+		if(!Permission::check('DEPLOYNAUT_ACCESS')) {
+			return Security::permissionFailure();
+		}
 
 		parent::init();
 		Requirements::combine_files(
