@@ -1,7 +1,11 @@
 <h3>Environments</h3>
 <table class="table-striped table table-bordered">
 	<thead>
-		<tr><th>Environment</th><th>Build currently deployed</th><th>Can you deploy?</th></tr>
+		<tr>
+			<th>Environment</th>
+			<th>Build currently deployed</th>
+			<th>Can you deploy?</th>
+		</tr>
 	</thead>
 	<tbody>
 	<% loop DNEnvironmentList %>
@@ -9,12 +13,7 @@
 			<td><a href="$Link">$Name</a></td>
 			<td>$CurrentBuild</td>
 			<td>
-			<% if CanDeploy %><span class="good">Yes</span>
-			<% else_if DeployersList %>
-			No, ask $DeployersList
-			<% else %>
-			Deployment disabled
-			<% end_if %>
+			<% if CanDeploy %><span class="good">Yes</span><% else %><span class="bad">No, please <a href="http://helpdesk.cwp.govt.nz">request a deployment</a> on CWP helpdesk</span><% end_if %>
 			</td>
 		</tr>
 	<% end_loop %>
