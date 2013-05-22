@@ -57,7 +57,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	public function projects() {
-		return $this->renderWith(array('DNRoot_projects', 'DNRoot'));
+		return $this->customise(array('Title' => 'Projects'))->renderWith(array('DNRoot_projects', 'DNRoot'));
 	}
 
 	/**
