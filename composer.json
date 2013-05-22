@@ -4,11 +4,14 @@
 	"require": {
 		"php": ">=5.3.2",
 		"silverstripe/framework": "3.1.*@beta",
-        "stojg/silverstripe-resque": "*",
-		"gitonomy/gitlib": "dev-master"
+		"stojg/silverstripe-resque": "*",
+		"gitonomy/gitlib": "*"
 	},
 	"require-dev": {
-		"silverstripe/docsviewer": "*"
+		"phpunit/phpunit": "3.7.*@stable"
+	},
+	"config": {
+		"process-timeout": 900
 	},
 	"minimum-stability": "dev"
 }
