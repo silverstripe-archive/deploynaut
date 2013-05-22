@@ -14,6 +14,11 @@ SSViewer::set_theme('deploynaut');
 
 if(defined('IS_SSL') && IS_SSL) Director::forceSSL();
 
+// set default from address in emails, unless otherwise overriden by specific emails
+if(defined('DEPLOYNAUT_ADMIN_EMAIL')) {
+	Email::setAdminEmail(DEPLOYNAUT_ADMIN_EMAIL);
+}
+
 // send fatal errors and warnings to the defined error email
 if(defined('DEPLOYNAUT_ERROR_EMAIL')) {
 	SS_Log::add_writer(new SS_LogEmailWriter(DEPLOYNAUT_ERROR_EMAIL), SS_Log::WARN, '<=');
