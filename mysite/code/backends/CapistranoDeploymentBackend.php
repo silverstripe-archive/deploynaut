@@ -53,6 +53,8 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 		$message = 'Deploy queued as job ' . $token;
 		fwrite($fh, $message);
 		echo $message;
+
+		fclose($fh);
 	}
 
 	/**
