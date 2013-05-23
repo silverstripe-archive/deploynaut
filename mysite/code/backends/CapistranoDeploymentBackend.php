@@ -30,6 +30,7 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 			'projectName' => $project->Name,
 		);
 
+		$member = Member::currentUser();
 		if($member && $member->exists()) {
 			echo sprintf(
 				'Deployment initiated by %s (%s) (project: %s, env: %s, repo: %s)',
