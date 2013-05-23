@@ -14,7 +14,7 @@
 			<td><a href="$Link">$Name</a></td>
 			<td>$CurrentBuild</td>
 			<td>
-			<% if CanDeploy %><span class="good">Yes</span><% else %><span class="bad">No, please <a href="http://helpdesk.cwp.govt.nz">request a deployment</a> on CWP helpdesk</span><% end_if %>
+			<% if CanDeploy %><span class="good">Yes</span><% else %><span class="bad">No</span><% end_if %>
 			</td>
 		</tr>
 	<% end_loop %>
