@@ -33,7 +33,7 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 		$fh = fopen(DEPLOYNAUT_LOG_PATH . '/' . $logfile, 'a');
 		if(!$fh) {
 			throw new RuntimeException('Can\'t open file "'.$logfile.'" for logging.');
-                }
+		}
 
 		$member = Member::currentUser();
 		if($member && $member->exists()) {
@@ -50,7 +50,7 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 
 		$token = Resque::enqueue('deploy', 'CapistranoDeploy', $args);
 
-		$message = 'Deploy queued as job ' . $token;
+		$message = 'Deploy queued as job ' . $token . PHP_EOL;
 		fwrite($fh, $message);
 		echo $message;
 
