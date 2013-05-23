@@ -29,6 +29,18 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 			'logfile' => $logFile,
 			'projectName' => $project->Name,
 		);
+
+		if($member && $member->exists()) {
+			echo sprintf(
+				'Deployment initiated by %s (%s) (project: %s, env: %s, repo: %s)',
+				$member->getName(),
+				$member->Email,
+				$project->Name,
+				$environment,
+				$project->LocalCVSPath
+			);
+		}
+
 		$token = Resque::enqueue('deploy', 'CapistranoDeploy', $args);
 		echo 'Deploy queued as job '.$token;
 	}
