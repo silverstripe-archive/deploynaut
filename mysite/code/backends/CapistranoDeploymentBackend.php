@@ -38,8 +38,8 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 				$member->Email,
 				$project->Name,
 				$environment,
-				$project->LocalCVSPath
-			);
+				$project->CVSPath
+			) . PHP_EOL;
 		}
 
 		$token = Resque::enqueue('deploy', 'CapistranoDeploy', $args);

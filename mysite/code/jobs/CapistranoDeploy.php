@@ -71,7 +71,7 @@ class CapistranoDeploy {
 		$command.= ' -s history_path='.realpath(DEPLOYNAUT_LOG_PATH.'/');
 
 		$fh = $this->getLogHandle();
-		fwrite($fh, "Running command: $command");
+		fwrite($fh, "Running command: $command" . PHP_EOL);
 
 		$process = new \Symfony\Component\Process\Process($command);
 		$process->setTimeout(3600);
