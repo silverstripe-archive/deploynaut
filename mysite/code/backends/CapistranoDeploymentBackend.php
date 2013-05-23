@@ -30,7 +30,7 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 			'projectName' => $project->Name,
 		);
 
-		$fh = fopen($logfile, 'a');
+		$fh = fopen(DEPLOYNAUT_LOG_PATH . '/' . $logfile, 'a');
 		if(!$fh) {
 			throw new RuntimeException('Can\'t open file "'.$logfile.'" for logging.');
                 }
