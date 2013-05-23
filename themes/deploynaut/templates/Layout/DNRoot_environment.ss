@@ -16,16 +16,6 @@
 	$HiddenFields
 </form>
 <% end_with %>
-<% else %>
-<h4>Deploy a new release</h4>
-
-<p>Please ask one of the following people to deploy to this environment:</p>
-
-<ul>
-<% loop Deployers %>
-<li>$FirstName $Surname</li>
-<% end_loop %> 
-</ul>
 <% end_if %>
 
 <h4>Deploy history</h4>

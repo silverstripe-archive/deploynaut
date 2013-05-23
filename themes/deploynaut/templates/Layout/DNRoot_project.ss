@@ -11,7 +11,7 @@
 	<% if DNEnvironmentList %>
 	<% loop DNEnvironmentList %>
 		<tr>
-			<td><a href="$Link">$Name</a></td>
+			<td><% if CanDeploy %><a href="$Link">$Name</a><% else %>$Name<% end_if %></td>
 			<td>$CurrentBuild</td>
 			<td>
 			<% if CanDeploy %><span class="good">Yes</span><% else %><span class="bad">No</span><% end_if %>
