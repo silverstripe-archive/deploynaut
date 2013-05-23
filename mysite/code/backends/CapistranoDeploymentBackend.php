@@ -21,29 +21,38 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 	/**
 	 * Deploy the given build to the given environment.
 	 */
-	public function deploy($environment, $sha, $logFile, DNProject $project) {
+	public function deploy($environment, $sha, $logfile, DNProject $project) {
 		$args = array(
 			'environment' => $environment,
 			'sha' => $sha,
 			'repository' => $project->LocalCVSPath,
-			'logfile' => $logFile,
+			'logfile' => $logfile,
 			'projectName' => $project->Name,
 		);
 
+		$fh = fopen($logfile, 'a');
+		if(!$fh) {
+			throw new RuntimeException('Can\'t open file "'.$logfile.'" for logging.');
+                }
+
 		$member = Member::currentUser();
 		if($member && $member->exists()) {
-			echo sprintf(
-				'Deploy to %s:%s initiated by %s (%s) using repo %s',
+			$message = sprintf(
+				'Deploy to %s:%s initiated by %s (%s)',
 				$project->Name,
 				$environment,
 				$member->getName(),
-				$member->Email,
-				$project->CVSPath
+				$member->Email
 			) . PHP_EOL;
+			fwrite($fh, $message);
+			echo $message;
 		}
 
 		$token = Resque::enqueue('deploy', 'CapistranoDeploy', $args);
-		echo 'Deploy queued as job ' . $token;
+
+		$message = 'Deploy queued as job ' . $token;
+		fwrite($fh, $message);
+		echo $message;
 	}
 
 	/**
