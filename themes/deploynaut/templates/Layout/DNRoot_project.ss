@@ -28,6 +28,11 @@
 
 <a href="{$Link}/update" class="btn update-repository">Fetch latest changes</a>
 
+<% if getPublicKey %>
+	<h3>Public key</h3>
+	<pre>$getPublicKey</pre>
+<% end_if %>
+
 <% loop DNBranchList %>
 <% if DNBuildList.Count %>
 <div class="project-branch$IsOpenByDefault">

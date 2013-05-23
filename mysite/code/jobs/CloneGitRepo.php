@@ -8,6 +8,7 @@ class CloneGitRepo {
 		set_time_limit(0);
 		$path = $this->args['path'];
 		$repo = $this->args['repo'];
+		$env = $this->args['env'];
 		$logfile = DEPLOYNAUT_LOG_PATH . '/clonegitrepo.log';
 		$fh = fopen($logfile, 'a');
 		if(!$fh) {
@@ -27,11 +28,12 @@ class CloneGitRepo {
 
 		fwrite($fh, 'Running command: ' . $command . PHP_EOL);
 
-		exec($command, $output, $return_var);
-
-		if($return_var != 0) {
-			fwrite($fh, sprintf('\'%s\' exited with return code %s. Output: "%s"' . PHP_EOL, $command, $return_var, var_export($output, true)));
-			fclose($fh);
+		$process = new \Symfony\Component\Process\Process($command);
+		$process->setEnv($env);
+		$process->setTimeout(3600);
+		$process->run();
+		if(!$process->isSuccessful()) {
+			throw new RuntimeException($process->getErrorOutput());
 		}
 
 		echo fwrite($fh, 'Cloned ' . $repo . ' to ' . $path . PHP_EOL);
@@ -43,5 +45,5 @@ class CloneGitRepo {
 			(is_dir("$dir/$file")) ? $this->delTree("$dir/$file") : unlink("$dir/$file");
 		}
 		return rmdir($dir);
-  }
+	}
 }

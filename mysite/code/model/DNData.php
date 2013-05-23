@@ -16,6 +16,11 @@ class DNData {
 	protected static $environment_dir = '';
 	
 	/**
+	 * Path where the keys are stored.
+	 */
+	protected static $key_dir = '';
+
+	/**
 	 * A prebuilt DNProjectList.
 	 */
 	protected $projectList;
@@ -32,10 +37,11 @@ class DNData {
 	 * @param array $environmentNames
 	 * @param DeploymentBackend $backend 
 	 */
-	public function __construct($buildDir, $environmentDir) {
+	public function __construct($buildDir, $environmentDir, $keyDir) {
 		$this->backend = Injector::inst()->get('DeploymentBackend');
 		$this->setBuildDir($buildDir);
 		$this->setEnvironmentDir($environmentDir);
+		$this->setKeyDir($keyDir);
 	}
 
 	public function getBuildDir() {
@@ -52,6 +58,14 @@ class DNData {
 	public function setEnvironmentDir($environmentDir) {
 		if($environmentDir[0] != "/") $environmentDir = BASE_PATH . '/' . $environmentDir;
 		$this->environmentDir = $environmentDir;
+	}
+
+	public function getKeyDir() {
+		return $this->keyDir;
+	}
+	public function setKeyDir($keyDir) {
+		if($keyDir[0] != "/") $keyDir = BASE_PATH . '/' . $keyDir;
+		$this->keyDir = $keyDir;
 	}
 
 	/**

@@ -70,7 +70,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		if(!$project) {
 			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
 		}
-		$repository = new Gitonomy\Git\Repository($project->LocalCVSPath);
+		$repository = new Gitonomy\Git\Repository($project->LocalCVSPath, array(
+			'environment_variables' => $project->getProcessEnv()
+		));
 		$repository->run('fetch', array('origin', '+refs/heads/*:refs/heads/*', '--tags'));
 		return true;
 	}

@@ -62,6 +62,24 @@ class DNProject extends DataObject {
 		return false;
 	}
 
+	/**
+	 * Build an environment variable array to be used with this project.
+	 * Include this with all Gitonomy\Git\Repository, and \Symfony\Component\Process\Processes.
+	 */
+	public function getProcessEnv() {
+
+		if (file_exists($this->DNData()->getKeyDir()."/$this->Name/$this->Name")) {
+			// Key-pair is available, use it.
+			return array(
+				'IDENT_KEY' => $this->DNData()->getKeyDir()."/$this->Name/$this->Name",
+				'GIT_SSH' => BASE_PATH."/git-deploy.sh"
+			);
+		} else {
+			return array();
+		}
+
+	}
+
 	function getViewersList() {
 		return implode(", ", $this->Viewers()->column("Title"));
 	}
@@ -158,7 +176,8 @@ class DNProject extends DataObject {
 
 		Resque::enqueue('git', 'CloneGitRepo', array(
 			'repo' => $this->CVSPath,
-			'path' => $this->LocalCVSPath
+			'path' => $this->LocalCVSPath,
+			'env' => $this->getProcessEnv()
 		));
 	}
 
@@ -171,6 +190,17 @@ class DNProject extends DataObject {
 			$this->LocalCVSPath = DEPLOYNAUT_LOCAL_VCS_PATH . '/' . $this->Name;
 			$this->updateRepo();
 		}
+
 		parent::onBeforeWrite();
+	}
+
+	/**
+	 * Fetch the public key for this project.
+	 */
+	public function getPublicKey() {
+		$keyDir = $this->DNData()->getKeyDir();
+		if (file_exists("$keyDir/$this->Name/$this->Name")) {
+			return file_get_contents("$keyDir/$this->Name/$this->Name.pub");
+		}
 	}
 }

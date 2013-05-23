@@ -28,6 +28,7 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 			'repository' => $project->LocalCVSPath,
 			'logfile' => $logfile,
 			'projectName' => $project->Name,
+			'env' => $project->getProcessEnv()
 		);
 
 		$fh = fopen(DEPLOYNAUT_LOG_PATH . '/' . $logfile, 'a');
