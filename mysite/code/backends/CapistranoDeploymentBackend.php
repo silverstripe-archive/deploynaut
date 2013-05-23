@@ -33,17 +33,17 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 		$member = Member::currentUser();
 		if($member && $member->exists()) {
 			echo sprintf(
-				'Deployment initiated by %s (%s) (project: %s, env: %s, repo: %s)',
-				$member->getName(),
-				$member->Email,
+				'Deploy to %s:%s initiated by %s (%s) using repo %s',
 				$project->Name,
 				$environment,
+				$member->getName(),
+				$member->Email,
 				$project->CVSPath
 			) . PHP_EOL;
 		}
 
 		$token = Resque::enqueue('deploy', 'CapistranoDeploy', $args);
-		echo 'Deploy queued as job '.$token;
+		echo 'Deploy queued as job ' . $token;
 	}
 
 	/**
