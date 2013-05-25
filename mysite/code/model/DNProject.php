@@ -104,15 +104,8 @@ class DNProject extends DataObject {
 	 * Provides a list of the branches in this project.
 	 */
 	function DNBranchList() {
-		// if we need to, clone the repository if it doesn't exist
-		// this doesn't use resque, though
-		if(!$this->repoExists() && $this->CVSPath) {
-			try {
-				Gitonomy\Git\Admin::cloneTo(DEPLOYNAUT_LOCAL_VCS_PATH . '/' . $this->Name, $this->CVSPath);
-			} catch (Exception $e) {
-				// if we can't clone the repo, log the error, but don't block execution
-				SS_Log::log($e, SS_Log::ERR);
-			}
+		if($this->CVSPath && !$this->repoExists()) {
+			$this->cloneRepo();
 		}
 		return new DNBranchList($this, $this->DNData());
 	}
@@ -176,7 +169,7 @@ class DNProject extends DataObject {
 		return file_exists(DEPLOYNAUT_LOCAL_VCS_PATH . '/' . $this->Name);
 	}
 
-	public function updateRepo() {
+	public function cloneRepo() {
 		$this->LocalCVSPath = DEPLOYNAUT_LOCAL_VCS_PATH . '/' . $this->Name;
 
 		Resque::enqueue('git', 'CloneGitRepo', array(
@@ -193,7 +186,7 @@ class DNProject extends DataObject {
 		$changedFields = $this->getChangedFields(true, 2);
 		if(isset($changedFields['CVSPath']) && $this->CVSPath) {
 			$this->LocalCVSPath = DEPLOYNAUT_LOCAL_VCS_PATH . '/' . $this->Name;
-			$this->updateRepo();
+			$this->cloneRepo();
 		}
 
 		parent::onBeforeWrite();

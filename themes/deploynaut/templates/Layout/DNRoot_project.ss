@@ -41,7 +41,11 @@
 <% if getRepositoryURL %>
 	<pre>$getRepositoryURL</pre>
 <% end_if %>
-<a href="{$Link}/update" class="btn update-repository">Fetch latest changes</a>
+<% if repoExists %>
+	<a href="{$Link}/update" class="btn update-repository">Fetch latest changes</a>
+<% else %>
+	<p>Getting latest changes from your repository. You may refresh this page at will.</p>
+<% end_if %>
 
 <% if getPublicKey %>
 	<h3>Public key</h3>
