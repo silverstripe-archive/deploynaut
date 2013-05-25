@@ -36,7 +36,8 @@ class CapistranoDeploy {
 		GraphiteDeploymentNotifier::notify_start($environment, $sha, null, $project);
 
 		$fh = $this->getLogHandle();
-		fwrite($fh, 'Deploying "'.$sha.'" to "'.$projectName.':'.$environment.'"'.PHP_EOL);
+		fwrite($fh, '['.date('Y-m-d H:m:s').'] Deploying "'.$sha.'" to "'.$projectName.':'.$environment.'"'.PHP_EOL);
+		echo "[-] CapistranoDeploy starting" . PHP_EOL;
 
 		$command = $this->getCommand($projectName.':'.$environment, $repository, $sha, $env);
 		$command->run(function ($type, $buffer) use($fh) {
@@ -50,7 +51,7 @@ class CapistranoDeploy {
 			throw new RuntimeException($command->getErrorOutput());
 		}
 
-		fwrite($fh, 'Deploy done "'.$sha.'" to "'.$projectName.':'.$environment.'"'.PHP_EOL);
+		fwrite($fh, '['.date('Y-m-d H:m:s').'] Deploy done "'.$sha.'" to "'.$projectName.':'.$environment.'"'.PHP_EOL);
 
 		fclose($fh);
 
@@ -82,7 +83,7 @@ class CapistranoDeploy {
 		$command.= ' -s history_path='.realpath(DEPLOYNAUT_LOG_PATH.'/');
 
 		$fh = $this->getLogHandle();
-		fwrite($fh, "Running command: $command" . PHP_EOL);
+		fwrite($fh, '['.date('Y-m-d H:m:s')."] Running command: $command" . PHP_EOL);
 
 		$process = new \Symfony\Component\Process\Process($command);
 		// Capistrano doesn't like it - see comment above.
