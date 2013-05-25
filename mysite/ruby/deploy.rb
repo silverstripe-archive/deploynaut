@@ -11,7 +11,7 @@ namespace :deploy do
 
 	task :migrate do
 		if exists?(:webserver_user)
-			run "sudo su #{webserver_user} -c '#{latest_release}/#{sake_path} dev/build flush=1'", :roles => :db
+			run "sudo -u #{webserver_user} #{latest_release}/#{sake_path} dev/build flush=1", :roles => :db
 		else
 			run "mkdir -p #{latest_release}/silverstripe-cache", :roles => :db
 			run "#{latest_release}/#{sake_path} dev/build flush=1", :roles => :db
@@ -20,7 +20,7 @@ namespace :deploy do
 
 		# Initialise the cache, in case dev/build wasn't executed on all hosts
 		if exists?(:webserver_user)
-			run "sudo su #{webserver_user} -c '#{latest_release}/#{sake_path} dev"
+			run "sudo -u #{webserver_user} #{latest_release}/#{sake_path} dev"
 		end
 	end
 
