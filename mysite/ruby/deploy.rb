@@ -3,6 +3,7 @@
 set :deploy_via, :copy
 set :copy_strategy, :export
 set :copy_cache, false
+set :keep_releases, 1
 
 _cset(:sake_path) { "./framework/sake" }
 
@@ -30,4 +31,4 @@ namespace :deploy do
 	end
 end
 
-after "deploy:finalize_update", "deploy:migrate"
+after "deploy:finalize_update", "deploy:migrate", "deploy:cleanup"
