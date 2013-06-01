@@ -3,7 +3,6 @@
 set :deploy_via, :copy
 set :copy_strategy, :export
 set :copy_cache, false
-set :keep_releases, 1
 
 _cset(:sake_path) { "./framework/sake" }
 
