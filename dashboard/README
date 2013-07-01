@@ -1,0 +1,6 @@
+SilverStripe Dashboards
+=======================
+
+These dashboards are designed to pull data from our Graphite server.  See `dashboard.loadavg.php` for simple example.
+
+To add a new one, create a file name `dashboard.<something>.php` in the `dashboard/` directory of the `ss-tools` repository.

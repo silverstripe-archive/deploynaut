@@ -4,6 +4,7 @@ class DNEnvironment extends DataObject {
 	static $db = array(
 		"Filename" => "Varchar(255)",
 		"Name" => "Varchar",
+		"GraphiteServers" => "Text",
 	);
 	static $has_one = array(
 		"Project" => "DNProject",
@@ -20,7 +21,7 @@ class DNEnvironment extends DataObject {
 		"Name",
 	);
 
-static function get($callerClass = null, $filter = "", $sort = "", $join = "", $limit = null,
+	static function get($callerClass = null, $filter = "", $sort = "", $join = "", $limit = null,
 			$containerClass = 'DataList') {
 		return new DNEnvironmentList('DNEnvironment');
 	}
@@ -68,6 +69,49 @@ static function get($callerClass = null, $filter = "", $sort = "", $join = "", $
 		}
 		return $output;
 	}
+
+	function HasMetrics() {
+		return trim($this->GraphiteServers) != "";
+	}
+
+	/**
+	 * All graphs
+	 */
+	function Graphs() {
+		if(!$this->HasMetrics()) return null;
+
+		$serverList = preg_split('/\s+/', trim($this->GraphiteServers));
+		
+		return new GraphiteList($serverList);
+	}
+
+	/**
+	 * Graphs, grouped by server
+	 */
+	function GraphServers() {
+		if(!$this->HasMetrics()) return null;
+
+		$serverList = preg_split('/\s+/', trim($this->GraphiteServers));
+
+		$output = new ArrayList;
+		foreach($serverList as $server) {
+			// Hardcoded reference to db
+			if(strpos($server,'nzaadb') !== false) {
+				$metricList = array("Load average", "CPU Usage", "Memory Free", "Physical Memory Used", "Swapping");
+			} else {
+				$metricList = array("Apache", "Load average", "CPU Usage", "Memory Free", "Physical Memory Used", "Swapping");
+			}
+
+			$output->push(new ArrayData(array(
+				'Server' => $server,
+				'ServerName' => substr($server,strrpos($server,'.')+1),
+				'Graphs' => new GraphiteList(array($server), $metricList),
+			)));
+		}
+
+		return $output;
+	}
+
 	
 	function Link() {
 		return $this->Project()->Link()."/environment/" . $this->Name;

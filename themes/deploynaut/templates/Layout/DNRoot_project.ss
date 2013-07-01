@@ -3,7 +3,12 @@
 	<p></p>
 	<table class="table-striped table table-bordered">
 		<thead>
-			<tr><th>Environment</th><th>Build currently deployed</th><th>Can you deploy?</th></tr>
+			<tr>
+				<th>Environment</th>
+				<th>Build currently deployed</th>
+				<th>Can you deploy?</th>
+				<th>More info</th>
+			</tr>
 		</thead>
 		<tbody>
 		<% control DNEnvironmentList %>
@@ -17,6 +22,11 @@
 				<% else %>
 				Deployment disabled
 				<% end_if %>
+				</td>
+				<td>
+					<% if HasMetrics %>
+					<a a href="$Link/metrics">Metrics</a>
+					<% end_if %>
 				</td>
 			</tr>
 		<% end_control %>

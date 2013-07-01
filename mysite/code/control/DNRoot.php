@@ -6,6 +6,7 @@ class DNRoot extends Controller implements PermissionProvider {
 	 */
 	static $url_handlers = array(
 		'project/$Project/environment/$Environment/DeployForm' => 'getDeployForm',
+		'project/$Project/environment/$Environment/metrics' => 'metrics',
 		'project/$Project/environment/$Environment' => 'environment',
 		'project/$Project/build/$Build' => 'build',
 		'project/$Project' => 'project',
@@ -80,6 +81,20 @@ class DNRoot extends Controller implements PermissionProvider {
 		return $env->customise(array(
 			'DeployForm' => $this->getDeployForm($request)			
 		))->renderWith(array('DNRoot_environment', 'DNRoot'));
+	}
+
+	public function metrics($request) {
+		$project = $this->DNProjectList()->filter('Name', $request->latestParam('Project'))->First();
+		if(!$project) {
+			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
+		}
+
+		$env = $project->DNEnvironmentList()->filter('Name', $request->latestParam('Environment'))->First();
+		if(!$env) {
+			return new SS_HTTPResponse("Environment '" . $request->latestParam('Environment') . "' not found.", 404);
+		}
+
+		return $env->renderWith(array('DNRoot_metrics', 'DNRoot'));
 	}
 
 	/**

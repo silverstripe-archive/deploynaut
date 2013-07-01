@@ -6,3 +6,5 @@ Director:
   rules:
     '': '->naut'
     'naut': 'DNRoot'
+    'metrics': 'MetricDashboard'
+    'graphite': 'GraphiteProxy'
