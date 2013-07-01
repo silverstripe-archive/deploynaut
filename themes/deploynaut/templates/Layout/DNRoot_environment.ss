@@ -1,8 +1,11 @@
-<h3>$Project.Name:$Name</h3>
+<h3><a href="naut/project/$Project.Name">$Project.Name</a>:$Name</h3>
 <% if CurrentBuild %>
 <p><strong>$Project.Name:$Name</strong> is currently running build <strong>$CurrentBuild</strong>.</p>
 <% else %>
 <p>New environment - deploy your first build.</p>
+<% end_if %>
+<% if HasMetrics %>
+<p><a href="naut/project/$Project.Name/environment/$Name/metrics">See graphs for this environment</a></p>
 <% end_if %>
 
 <% if DeployForm %>

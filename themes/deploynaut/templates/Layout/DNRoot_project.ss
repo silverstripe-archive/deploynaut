@@ -5,6 +5,7 @@
 			<th>Environment</th>
 			<th>Build currently deployed</th>
 			<th>Can you deploy?</th>
+			<th>More info</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -14,7 +15,17 @@
 			<td><% if CanDeploy %><a href="$Link">$Name</a><% else %>$Name<% end_if %></td>
 			<td>$CurrentBuild</td>
 			<td>
-			<% if CanDeploy %><span class="good">Yes</span><% else %><span class="bad">No</span><% end_if %>
+			<% if CanDeploy %><span class="good">Yes</span>
+			<% else_if DeployersList %>
+			No, ask $DeployersList
+			<% else %>
+			<span class="bad">Deployment disabled</span>
+			<% end_if %>
+			</td>
+			<td>
+				<% if HasMetrics %>
+				<a a href="$Link/metrics">Metrics</a>
+				<% end_if %>
 			</td>
 		</tr>
 	<% end_loop %>
