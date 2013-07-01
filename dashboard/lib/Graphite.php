@@ -25,9 +25,16 @@ class Graphite {
         return new Graphite();
     }
 
-    public function __construct() {
-        $this->base_url = GraphiteConfig::$graphite_base_url;
-        $this->deploys = GraphiteConfig::$graphite_deploys;
+    public function __construct($baseURL = null) {
+        $this->base_url = $baseURL ? $baseURL : GraphiteConfig::$graphite_base_url;
+    }
+
+    public function getBaseURL() {
+        return $this->base_url;
+    }
+    public function setBaseURL($baseURL) {
+        if(substr($baseURL,-1) == '/') $baseURL = substr($baseURL, 0, -1);
+        $this->base_url = $baseURL;
     }
     
     public function setTime($time) {

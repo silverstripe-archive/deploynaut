@@ -2,7 +2,7 @@
 
 class GraphiteConfig {
 
-    public static $graphite_base_url = 'http://localhost/deploynaut/graphite';
+    public static $graphite_base_url = null;
 
     public static $graphite_deploys = array(
         'config' => array('color' => '#0000ff', 'title' => 'Config',    'target' => 'deploy.config.prod'),
