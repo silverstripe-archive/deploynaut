@@ -1,6 +1,18 @@
 <?php
 
 class DNRoot extends Controller implements PermissionProvider, TemplateGlobalProvider {
+
+	static $allowed_actions = array(
+		'projects',
+		'update',
+		'project',
+		'environment',
+		'metrics',
+		'getDeployForm',
+		'deploy',
+		'getlog'
+	);
+
 	/**
 	 * URL handlers pretending that we have a deep URL structure.
 	 */
