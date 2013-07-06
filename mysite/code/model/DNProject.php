@@ -30,6 +30,11 @@ class DNProject extends DataObject {
 		"Name",
 	);
 
+	/**
+	 * Display the repository URL on the project page.
+	 */
+	private static $show_repository_url = false;
+
 	protected static $relation_cache = array();
 
 	static function get($callerClass = null, $filter = "", $sort = "", $join = "", $limit = null,
@@ -201,6 +206,16 @@ class DNProject extends DataObject {
 		$keyDir = $this->DNData()->getKeyDir();
 		if (file_exists("$keyDir/$this->Name/$this->Name")) {
 			return file_get_contents("$keyDir/$this->Name/$this->Name.pub");
+		}
+	}
+
+	/**
+	 * Provide current repository URL to the users.
+	 */
+	public function getRepositoryURL() {
+		$showUrl = Config::inst()->get($this->class, 'show_repository_url');
+		if ($showUrl) {
+			return $this->CVSPath;
 		}
 	}
 }

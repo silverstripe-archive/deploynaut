@@ -37,6 +37,10 @@
 	</tbody>
 </table>
 
+<h3>Repository</h3>
+<% if getRepositoryURL %>
+	<pre>$getRepositoryURL</pre>
+<% end_if %>
 <a href="{$Link}/update" class="btn update-repository">Fetch latest changes</a>
 
 <% if getPublicKey %>
