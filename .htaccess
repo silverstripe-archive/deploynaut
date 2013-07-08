@@ -27,3 +27,8 @@ ErrorDocument 500 /assets/error-500.html
 
 </IfModule>
 ### SILVERSTRIPE END ###
+
+<IfModule mod_headers.c>
+	Header always append X-Frame-Options SAMEORIGIN
+</IfModule>
+
