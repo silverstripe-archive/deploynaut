@@ -36,6 +36,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * 
 	 */
 	public function init() {
+		parent::init();
+
 		if(!Permission::check('DEPLOYNAUT_ACCESS')) {
 			return Security::permissionFailure();
 		}
