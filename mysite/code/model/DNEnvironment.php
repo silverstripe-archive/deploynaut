@@ -4,6 +4,7 @@ class DNEnvironment extends DataObject {
 	static $db = array(
 		"Filename" => "Varchar(255)",
 		"Name" => "Varchar",
+		"URL" => "Varchar",
 		"GraphiteServers" => "Text",
 	);
 	static $has_one = array(
@@ -15,6 +16,7 @@ class DNEnvironment extends DataObject {
 
 	static $summary_fields = array(
 		"Name",
+		"URL",
 		"DeployersList",
 	);
 	static $searchable_fields = array(

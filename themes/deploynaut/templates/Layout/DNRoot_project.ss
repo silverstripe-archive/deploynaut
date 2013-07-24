@@ -3,6 +3,7 @@
 	<thead>
 		<tr>
 			<th>Environment</th>
+			<th>URL</th>
 			<th>Build currently deployed</th>
 			<th>Can you deploy?</th>
 			<th>More info</th>
@@ -13,6 +14,7 @@
 	<% loop DNEnvironmentList %>
 		<tr>
 			<td><% if CanDeploy %><a href="$Link">$Name</a><% else %>$Name<% end_if %></td>
+			<td><a href="$URL">$URL</a></td>
 			<td>$CurrentBuild</td>
 			<td>
 			<% if CanDeploy %><span class="good">Yes</span>

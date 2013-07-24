@@ -1,4 +1,7 @@
 <h3><a href="naut/project/$Project.Name">$Project.Name</a>:$Name</h3>
+<% if URL %>
+<h4><a href="$URL">$URL</a></h4>
+<% end_if %>
 <% if CurrentBuild %>
 <p><strong>$Project.Name:$Name</strong> is currently running build <strong>$CurrentBuild</strong>.</p>
 <% else %>
