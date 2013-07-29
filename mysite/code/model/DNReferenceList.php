@@ -14,6 +14,8 @@ class DNReferenceList extends ArrayList {
 
 	protected $limit = 10;
 
+	protected $getTags = false;
+
 	public static function set_refs_dir($refsDir) {
 		self::$refs_dir = $refsDir;
 	}
@@ -28,11 +30,12 @@ class DNReferenceList extends ArrayList {
 	 * @param DNProject $project
 	 * @param DNData $data
 	 */
-	public function __construct(DNProject $project, DNData $data, Gitonomy\Git\Reference $reference = null, $blockBranch = null) {
+	public function __construct(DNProject $project, DNData $data, Gitonomy\Git\Reference $reference = null, $blockBranch = null, $getTags = false) {
 		$this->project = $project;
 		$this->data = $data;
 		$this->reference = $reference;
 		$this->blockBranch = $blockBranch;
+		$this->getTags = $getTags;
 		parent::__construct(array());
 	}
 
@@ -42,6 +45,7 @@ class DNReferenceList extends ArrayList {
 	 */
 	public function setLimit($limit) {
 		$this->limit = $limit;
+		return $this;
 	}
 
 	/**
@@ -51,15 +55,29 @@ class DNReferenceList extends ArrayList {
 	 */
 	protected function getReferences() {
 		$repository = new Gitonomy\Git\Repository($this->project->LocalCVSPath);
-		if($this->reference) {
+		if($this->getTags) {
+			if($this->reference) throw new LogicException("Can't have \$reference and \$getTags both set");
+			$log = $repository->getReferences()->getTags();
+
+		} else if($this->reference) {
 			$log = $this->reference->getLog();
 		} else {
 			$log = $repository->getLog();
 		}
 
+		if($this->limit) {
+			if(is_array($log)) {
+				$limitedLog = array_slice($log, 0, $this->limit);
+			} else {
+				$limitedLog = $log->setLimit($this->limit);
+			}
+		} else {
+			$limitedLog = $log;
+		}
+
 		// cache them for look up in byName
 		$builds = array();
-		foreach($log->setLimit($this->limit) as $reference) {
+		foreach($limitedLog as $reference) {
 			if($this->blockBranch) {
 				$branchesIncluding = GitonomyCache::getIncludingBranches($reference);
 				foreach($branchesIncluding as $candidate) {
@@ -70,8 +88,13 @@ class DNReferenceList extends ArrayList {
 				}
 			}
 
-			$name = $this->reference ? $this->reference->getName() : '';
-			$builds[$reference->getHash()] = new DNCommit($reference, $this->project, $this->data, $name);
+			if($this->getTags) {
+				$builds[$reference->getCommitHash()] = new DNTag($reference, $this->project, $this->data);
+
+			} else {
+				$name = $this->reference ? $this->reference->getName() : '';
+				$builds[$reference->getHash()] = new DNCommit($reference, $this->project, $this->data, $name);
+			}
 		}
 		return $builds;
 	}

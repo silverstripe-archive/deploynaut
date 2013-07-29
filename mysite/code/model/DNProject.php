@@ -111,6 +111,16 @@ class DNProject extends DataObject {
 	}
 
 	/**
+	 * Provides a list of the tags in this project.
+	 */
+	function DNTagList() {
+		if($this->CVSPath && !$this->repoExists()) {
+			$this->cloneRepo();
+		}
+		return new DNReferenceList($this, $this->DNData(), null, null, true);
+	}
+
+	/**
 	 * Provides a DNEnvironmentList of environments found in this project.
 	 */
 	public function DNEnvironmentList() {
