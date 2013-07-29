@@ -157,31 +157,67 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		if(!$environment->canDeploy()) return null;
 
-		
-		$branchList = $project->DNBranchList();
-
 		$branches = array();
-		foreach($branchList as $branch) {
+		foreach($project->DNBranchList() as $branch) {
+			$sha = $branch->SHA();
+			$name = $branch->Name();
 
-			$builds = array();
-			foreach($branch->DNBuildList() as $build) {
-				$name = $build->Name();
-				$name .= ' - ' . $build->SubjectMessage();
-				$tags = array();
-				foreach($build->References() as $ref) {
-					if($ref->Type=='Tag') $tags[] = $ref->Name;
+			$branches[$sha] = $name . ' (' . substr($sha,0,8) . ', ' . $branch->LastUpdated()->TimeDiff() . ' old)';
+		}
+
+		$tags = array();
+		foreach($project->DNTagList()->setLimit(null) as $tag) {
+			$sha = $tag->SHA();
+			$name = $tag->Name();
+
+			$tags[$sha] = $name . ' (' . substr($sha,0,8) . ', ' . $tag->Created()->TimeDiff() . ' old)';
+		}
+		$tags = array_reverse($tags);
+
+		$redeploy = array();
+		foreach($project->DNEnvironmentList() as $environment) {
+			$envName = $environment->Name;
+			$redeploy[$envName] = array();
+			foreach($environment->DeployHistory() as $deploy) {
+				$sha = $deploy->BuildName;
+				if(!isset($redeploy[$envName][$sha])) {
+					$redeploy[$envName][$sha] = substr($sha,0,8) . ' (deployed ' . $deploy->DateTime->Ago() . ')';
 				}
-				if($tags) $name .= ' (tags: ' . implode(', ', $tags) . ')';
-				
-				$builds[$build->FullName()] = $name;
-			}
-			if(count($builds)) {
-				$branches[$branch->Name()] = $builds;
 			}
 		}
+
+
+		$releaseMethods = array(
+			new SelectionGroup_Item(
+				'Tag',
+				new DropdownField('Tag', '', $tags),
+				'Deploy a tagged release'
+			),
+			new SelectionGroup_Item(
+				'Branch',
+				new DropdownField('Branch', '', $branches),
+				'Deploy the latest version of a branch'
+			),
+			new SelectionGroup_Item(
+				'Redeploy',
+				new GroupedDropdownField('Redeploy', '', $redeploy),
+				'Redeploy a release that was previously deployed (to any environment)'
+			),
+			new SelectionGroup_Item(
+				'SHA',
+				new Textfield('SHA', 'Please specify the full SHA'),
+				'Deploy a specific SHA'
+			),
+		);
+		 
+	 	$field = new SelectionGroup('SelectRelease', $releaseMethods);
+	 	$field->setValue('Tag');
+	 
+
+		//new GroupedDropdownField("BuildName", "Build", $branches)
 		
 		$form = new Form($this, 'DeployForm', new FieldList(
-			new GroupedDropdownField("BuildName", "Build", $branches)
+			$field
 		), new FieldList(
 			$deployAction = new FormAction('doDeploy', "Deploy to " . $environment->Name)
 		));
@@ -196,9 +232,17 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * Deployment form submission handler.
 	 */
 	public function doDeploy($data, $form) {
+		if(in_array($data['SelectRelease'], array('Tag','Branch','Redeploy','SHA'))) {
+			$buildName = $data[$data['SelectRelease']];
+		} else {
+			throw new LogicException("Bad release selection method '{$data['SelectRelease']}'");
+		}
+
+		
+
 		$project = $this->DNProjectList()->filter('Name', $form->request->latestParam('Project'))->First();
 		$environment = $project->DNEnvironmentList()->filter('Name', $form->request->latestParam('Environment'))->First();
-		$sha = $project->DNBuildList()->byName($data['BuildName']);
+		$sha = $project->DNBuildList()->byName($buildName);
 
 		return $this->customise(new ArrayData(array(
 			'Environment' => $environment->Name,

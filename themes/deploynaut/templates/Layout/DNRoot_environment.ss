@@ -13,11 +13,11 @@
 
 <% if DeployForm %>
 <h4>Deploy a new release</h4>
-<p>Choose a build from the dropdown and press the deploy button.</p>
+<p>Choose a release below and press the 'Deploy to $Name' button.</p>
 
 <% with DeployForm %>
 <form $FormAttributes class='form-inline'>
-	<% loop VisibleFields %>$Field<% end_loop %>
+	<% loop VisibleFields %>$FieldHolder<% end_loop %>
 	$Actions
 	$HiddenFields
 </form>

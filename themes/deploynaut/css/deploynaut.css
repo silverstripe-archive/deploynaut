@@ -82,3 +82,7 @@
 	.project-branch > h3 .closed-icon {
 		display: inline;
 	}	
+
+#Form_DeployForm select, #Form_DeployForm input[type=text] {
+	width: 450px;
+}
