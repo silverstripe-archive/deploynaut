@@ -175,10 +175,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$tags = array_reverse($tags);
 
 		$redeploy = array();
-		foreach($project->DNEnvironmentList() as $environment) {
-			$envName = $environment->Name;
+		foreach($project->DNEnvironmentList() as $dnEnvironment) {
+			$envName = $dnEnvironment->Name;
 			$redeploy[$envName] = array();
-			foreach($environment->DeployHistory() as $deploy) {
+			foreach($dnEnvironment->DeployHistory() as $deploy) {
 				$sha = $deploy->BuildName;
 				if(!isset($redeploy[$envName][$sha])) {
 					$redeploy[$envName][$sha] = substr($sha,0,8) . ' (deployed ' . $deploy->DateTime->Ago() . ')';
