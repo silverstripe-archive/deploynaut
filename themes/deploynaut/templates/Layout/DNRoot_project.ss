@@ -67,7 +67,6 @@
 	<span class="label label-info">release tag</span>
 	<span class="label">other branch containing this</span>
 </p>
-<% if $IsOpenByDefault %>
 <table class="table-striped table table-bordered">
 	<thead>
 		<tr>
@@ -113,7 +112,6 @@
 	<% end_loop %>
 	</tbody>
 </table>
-<% end_if %>
 </div>
 </div>
 <% end_if %>
