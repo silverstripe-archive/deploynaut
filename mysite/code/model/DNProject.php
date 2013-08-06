@@ -17,6 +17,7 @@ class DNProject extends DataObject {
 	);
 	static $has_many = array(
 		"Environments" => "DNEnvironment",
+		"ReleaseSteps" => "DNReleaseStep",
 	);
 	static $many_many = array(
 		"Viewers" => "Group",
@@ -151,9 +152,11 @@ class DNProject extends DataObject {
 		$fields = parent::getCMSFields();
 
 		$environments = $fields->dataFieldByName("Environments");
+		$releaseSteps = $fields->dataFieldByName('ReleaseSteps');
 
 		$fields->fieldByName("Root")->removeByName("Viewers");
 		$fields->fieldByName("Root")->removeByName("Environments");
+		$fields->fieldByName("Root")->removeByName("ReleaseSteps");
 
 		$nameField = $fields->fieldByName('Root.Main.Name')->performReadonlyTransformation();
 		$fields->replaceField('Name', $nameField);
@@ -166,8 +169,21 @@ class DNProject extends DataObject {
 			$environments->getConfig()->removeComponentsByType('GridFieldAddNewButton');
 			$environments->getConfig()->removeComponentsByType('GridFieldAddExistingAutocompleter');
 			$environments->getConfig()->removeComponentsByType('GridFieldDeleteAction');
+			$environments->getConfig()->removeComponentsByType('GridFieldPageCount');
 			$fields->addFieldToTab("Root.Main", $environments);
 		}
+
+		if($releaseSteps) {
+			$releaseSteps->getConfig()->addComponent(new GridFieldSortableRows('Sort'));
+			$releaseSteps->getConfig()->removeComponentsByType('GridFieldAddExistingAutocompleter');
+			$releaseSteps->getConfig()->removeComponentsByType('GridFieldAddNewButton');
+			$releaseSteps->getConfig()->removeComponentsByType('GridFieldPageCount');
+			$addNewRelease = new GridFieldAddNewButton('toolbar-header-right');
+			$addNewRelease->setButtonName('Add');
+			$releaseSteps->getConfig()->addComponent($addNewRelease);
+			$fields->addFieldToTab("Root.Main", $releaseSteps);
+		}
+
 		$fields->addFieldToTab("Root.Main",
 			new CheckboxSetField("Viewers", "Groups with read access to this project",
 				Group::get()->map()));

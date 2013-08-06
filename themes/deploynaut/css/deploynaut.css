@@ -86,3 +86,16 @@
 #Form_DeployForm select, #Form_DeployForm input[type=text] {
 	width: 450px;
 }
+
+.table th, .table td.nowrap {
+	white-space: nowrap;
+}
+
+.release-process a {
+	border-radius: 3px 10px 10px 3px;
+	padding-right: 10px;
+}
+.release-process a.last {
+	border-radius: 3px;
+	padding-right: 4px;
+}

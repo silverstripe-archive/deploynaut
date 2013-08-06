@@ -67,35 +67,53 @@
 	<span class="label label-info">release tag</span>
 	<span class="label">other branch containing this</span>
 </p>
+<% if $IsOpenByDefault %>
 <table class="table-striped table table-bordered">
 	<thead>
 		<tr>
-			<th>Change ID</th>
-			<th>Message</th>
 			<th>Release</th>
+			<th>Message</th>
 			<th>Currently on</th>
 			<th>Date created</th>
+			<% if Top.ReleaseSteps %>
+			<th>Release Process</th>
+			<% end_if %>
 		</tr>
 	</thead>
 	<tbody>
 	<% loop DNBuildList %>
 		<tr>
-			<td>$Name</td>
-			<td title="$SubjectMessage $BodyMessage">$SubjectMessage</td>
-			<td><% loop $References %>
+			<td
+				>$Name
+				<% loop $References %>
 				<span class="label <% if $Type = Tag %>label-info<% end_if %>" title="$Type">$Name</span>
-			<% end_loop %>
+				<% end_loop %>
 			</td>
+			<td title="$SubjectMessage $BodyMessage">$SubjectMessage</td>
 			<td>
 				<% loop CurrentlyDeployedTo %>
 				<a href="{$Link}">$Name</a><% if not $Last %>,<% end_if %>
 				<% end_loop %>
 			</td>
-			<td>$Created.Nice ($Created.Ago)</td>
+			<td class="nowrap">$Created.Nice ($Created.Ago)</td>
+			<% if ReleaseSteps %>
+			<td class="release-process nowrap">
+				<% loop ReleaseSteps %>
+				<% if $Status = "success" %>
+				<a href="$Link" class="label label-success $FirstLast">$Name</a>
+				<% else_if $Status = "failure" %>
+				<a href="$Link" class="label label-important $FirstLast">$Name</a>
+				<% else %>
+				<a href="$Link" class="label $FirstLast">$Name</a>
+				<% end_if %>
+				<% end_loop %>
+			</td>
+			<% end_if %>
 		</tr>
 	<% end_loop %>
 	</tbody>
 </table>
+<% end_if %>
 </div>
 </div>
 <% end_if %>

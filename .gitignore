@@ -5,8 +5,10 @@ assets
 silverstripe-cache
 nbproject
 .DS_Store
+deploynaut-resources
 
 # Composer added modules
 framework
 vendor
 silverstripe-resque
+sortablegridfield

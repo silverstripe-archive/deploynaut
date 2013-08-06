@@ -126,6 +126,39 @@ class DNCommit extends ViewableData {
 
 	/**
 	 *
+	 * @param string $environmentName 
+	 * @return boolean True if this release has ever been deployed to the given environment
+	 */
+	public function EverDeployedTo($environmentName) {
+		$sha = $this->commit->getHash();
+
+		$history = $this->data->Backend()->deployHistory($this->project->Name.':'.$environmentName);
+		foreach($history as $item) {
+			if($item['buildname'] == $sha) return true;	
+		}
+
+		return false;
+	}
+
+
+	/**
+	 * Release steps of the project and their status for this release
+	 */
+	public function ReleaseSteps() {
+		$output = new ArrayList;
+		$sha = $this->commit->getHash();
+
+		foreach($this->project->ReleaseSteps() as $step) {
+			$output->push($step->customise(array(
+				'Status' => $step->getReleaseStatus($this, $sha),
+				'Link' => $step->getReleaseLink($this, $sha),
+			)));
+		}
+
+		return $output;
+	}
+	/**
+	 *
 	 * @return SS_Datetime 
 	 */
 	public function Created() {
