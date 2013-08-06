@@ -88,7 +88,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$repository = new Gitonomy\Git\Repository($project->LocalCVSPath, array(
 			'environment_variables' => $project->getProcessEnv()
 		));
-		$repository->run('fetch', array('origin', '+refs/heads/*:refs/heads/*', '--tags'));
+		$repository->run('fetch', array('-p', 'origin', '+refs/heads/*:refs/heads/*', '--tags'));
 		return true;
 	}
 
