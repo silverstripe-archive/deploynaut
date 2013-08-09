@@ -1,18 +1,11 @@
 {
 	"name": "silverstripe/deploynaut",
-	"description": "The SilverStripe deployment framework",
+	"description": "The SilverStripe deployment framework - a module",
 	"require": {
 		"php": ">=5.3.2",
-		"silverstripe/framework": "3.1.0-beta2",
+		"silverstripe/framework": "3.1.*@beta",
 		"stojg/silverstripe-resque": "*",
-		"gitonomy/gitlib": "*",
+		"gitonomy/gitlib": "dev-master",
 		"undefinedoffset/sortablegridfield": "*"
-	},
-	"require-dev": {
-		"phpunit/phpunit": "3.7.*@stable"
-	},
-	"config": {
-		"process-timeout": 900
-	},
-	"minimum-stability": "dev"
+	}
 }
