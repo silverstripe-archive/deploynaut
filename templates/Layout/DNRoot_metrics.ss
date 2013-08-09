@@ -1,4 +1,3 @@
-
 <style>
 .graphgroup {
 	float: left;
@@ -12,21 +11,15 @@
 	color: white;
 }
 </style>
-<article id="content">
-	<div class="span12">
-		<h3><a href="naut/project/$Project.Name">$Project.Name</a>:<a href="naut/project/$Project.Name/environment/$Name">$Name</a></h3>
-		 <h4>Metric dashboard</h4>
-	</div>
 
-	<% control GraphServers %>
+<h3><a href="naut/project/$Project.Name">$Project.Name</a>:<a href="naut/project/$Project.Name/environment/$Name">$Name</a></h3>
+<h4>Metric dashboard</h4>
+
+<% control GraphServers %>
 	<div class="span12 graphgroup">
 	<h4>$ServerName<h4>
 	<% control Graphs %>
-	$Graph
+		$Graph
 	<% end_control %>
 	</div>
-	<% end_control %>
-	
-</article>
-
-
+<% end_control %>
