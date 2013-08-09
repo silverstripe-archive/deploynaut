@@ -23,6 +23,9 @@ set :keep_releases, 5
 set :password, false
 set :use_sudo, false
 
+# ---- Prevent transfer of VCS files ----
+set :copy_exclude, ["**/.git", "**/.svn", "**/.DS_Store"]
+
 # ---- SSH options ----
 ssh_options[:forward_agent] = true
 ssh_options[:keys] = '../www-keys/id_rsa'
