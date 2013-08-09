@@ -1,5 +1,6 @@
 {
 	"name": "silverstripe/deploynaut",
+	"type": "silverstripe-module",
 	"description": "The SilverStripe deployment framework - a module",
 	"require": {
 		"php": ">=5.3.2",
