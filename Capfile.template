@@ -2,13 +2,13 @@
 load 'deploy'
 
 # ---- Set where the environment specific configuration are ----
-set :config_root, '../deploynaut-resources/envs'
+set :config_root, '<config root>'
 
 # ----  Load the recipes from the multiconfig gem ----
 require 'capistrano/multiconfig'
 
 # ---- load tasks from ./config dir ---- 
-Dir['mysite/ruby/*.rb'].each { |task| load(task) }
+Dir['ruby/*.rb'].each { |task| load(task) }
 
 # ---- What directories are shared between releases ---- 
 set :shared_children, %w(assets)
@@ -28,7 +28,7 @@ set :copy_exclude, ["**/.git", "**/.svn", "**/.DS_Store"]
 
 # ---- SSH options ----
 ssh_options[:forward_agent] = true
-ssh_options[:keys] = '../www-keys/id_rsa'
+ssh_options[:keys] = '<ssh key>'
 default_run_options[:pty] = true
 
 # ---- What SCM are we using ----
