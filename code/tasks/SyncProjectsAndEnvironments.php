@@ -11,11 +11,15 @@ class SyncProjectsAndEnvironments extends BuildTask {
 		$projects = DNProject::get();
 		$projects->syncWithPaths($projectPaths, $remove);
 
+		$dryRun = (!empty($_GET['dryrun']));
+
 		foreach($projects as $project) {
+			echo "<h2>$project->Name</h2>\n";
+
 			// Sync environments for each project
 			$environmentPaths = $data->getEnvironmentPaths($project->Name);
 
-			$project->DNEnvironmentList()->syncWithPaths($environmentPaths, $remove);
+			$project->DNEnvironmentList()->syncWithPaths($environmentPaths, $remove, $dryRun);
 		}
 	}
 }
