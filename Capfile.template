@@ -8,7 +8,7 @@ set :config_root, '<config root>'
 require 'capistrano/multiconfig'
 
 # ---- load tasks from ./config dir ---- 
-Dir['ruby/*.rb'].each { |task| load(task) }
+Dir['<base path>/deploynaut/ruby/*.rb'].each { |task| load(task) }
 
 # ---- What directories are shared between releases ---- 
 set :shared_children, %w(assets)

@@ -77,13 +77,21 @@ class CapistranoDeploy {
 			}
 		}
 
+		// Generate a capfile from a template
 		$capTemplate = file_get_contents(BASE_PATH.'/deploynaut/Capfile.template');
-		$cap = str_replace('<config root>', DEPLOYNAUT_ENV_ROOT, $capTemplate);
-		$cap = str_replace('<ssh key>', DEPLOYNAUT_SSH_KEY, $capTemplate);
-		../www-keys/id_rsa
-		file_put_contents(BASE_PATH.'/deploynaut/Capfile', $cap);
+		$cap = str_replace(
+			array('<config root>', '<ssh key>', '<base path>'),
+			array(DEPLOYNAUT_ENV_ROOT, DEPLOYNAUT_SSH_KEY, BASE_PATH),
+			$capTemplate);
+		
+		if(defined('DEPLOYNAUT_CAPFILE')) {
+			$capFile = DEPLOYNAUT_CAPFILE;
+		} else {
+			$capFile = BASE_PATH.'/assets/Capfile';
+		}
+		file_put_contents($capFile, $cap);
 
-		$command = "{$envString}cap -f deploynaut/Capfile -vv $environment deploy";
+		$command = "{$envString}cap -f " . escapeshellarg($capFile) . " -vv $environment deploy";
 		$command.= ' -s repository='.$repository;
 		$command.= ' -s branch='.$sha;
 		$command.= ' -s history_path='.realpath(DEPLOYNAUT_LOG_PATH.'/');
