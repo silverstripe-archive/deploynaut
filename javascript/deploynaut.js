@@ -6,6 +6,7 @@
 				function(data){
 					$status.text(data.status);
 					$content.text(data.content);
+					$status.attr('class',data.status);
 				}
 			);
 		},

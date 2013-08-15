@@ -17,6 +17,16 @@
 	box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, rgba(0, 0, 0, 0.8) 0 1px 7px 0px inset;
 }
 
+#deploy_action.Complete {
+	background-color: #356635;
+}
+#deploy_action.Invalid, #deploy_action.Failed {
+	background-color: #b94a48;
+}
+#deploy_action.Running {
+	background-color: #3a87ad;
+}
+
 .navbar-inner {
 	-webkit-border-radius: 0px 0px 4px 4px;
 	border-radius: 0px 0px 4px 4px;
