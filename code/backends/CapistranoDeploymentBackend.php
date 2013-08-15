@@ -21,41 +21,73 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 	/**
 	 * Deploy the given build to the given environment.
 	 */
-	public function deploy($environment, $sha, $logfile, DNProject $project) {
-		$args = array(
-			'environment' => $environment,
-			'sha' => $sha,
-			'repository' => $project->LocalCVSPath,
-			'logfile' => $logfile,
-			'projectName' => $project->Name,
-			'env' => $project->getProcessEnv()
-		);
+	public function deploy($environment, $sha, $log, DNProject $project) {
+		$repository = $project->LocalCVSPath;
+		$projectName = $project->Name;
+		$env = $project->getProcessEnv();
 
-		$fh = fopen(DEPLOYNAUT_LOG_PATH . '/' . $logfile, 'a');
-		if(!$fh) {
-			throw new RuntimeException('Can\'t open file "'.$logfile.'" for logging.');
+		$project = DNProject::get()->filter('Name', $projectName)->first();
+		GraphiteDeploymentNotifier::notify_start($environment, $sha, null, $project);
+
+		$log->write('Deploying "'.$sha.'" to "'.$projectName.':'.$environment.'"');
+
+		$command = $this->getCommand($projectName.':'.$environment, $repository, $sha, $env, $log);
+		$command->run(function ($type, $buffer) use($log) {
+			$log->write($buffer);
+		});
+		if(!$command->isSuccessful()) {
+			throw new RuntimeException($command->getErrorOutput());
+		}
+		$log->write('Deploy done "'.$sha.'" to "'.$projectName.':'.$environment.'"');
+
+		GraphiteDeploymentNotifier::notify_end($environment, $sha, null, $project);
+	}
+
+	/**
+	 *
+	 * @param string $environment
+	 * @param string $repository
+	 * @param string $sha
+	 * @param string $logfile
+	 * @return \Symfony\Component\Process\Process
+	 */
+	protected function getCommand($environment, $repository, $sha, $env, $log) {
+		// Inject env string directly into the command.
+		// Capistrano doesn't like the $process->setEnv($env) we'd normally do below.
+		$envString = '';
+		if (!empty($env)) {
+			$envString .= 'env ';
+			foreach ($env as $key => $value) {
+				$envString .= "$key=\"$value\" ";
+			}
 		}
 
-		$member = Member::currentUser();
-		if($member && $member->exists()) {
-			$message = sprintf(
-				'Deploy to %s:%s initiated by %s (%s)',
-				$project->Name,
-				$environment,
-				$member->getName(),
-				$member->Email
-			) . PHP_EOL;
-			fwrite($fh, $message);
-			echo $message;
+		// Generate a capfile from a template
+		$capTemplate = file_get_contents(BASE_PATH.'/deploynaut/Capfile.template');
+		$cap = str_replace(
+			array('<config root>', '<ssh key>', '<base path>'),
+			array(DEPLOYNAUT_ENV_ROOT, DEPLOYNAUT_SSH_KEY, BASE_PATH),
+			$capTemplate);
+		
+		if(defined('DEPLOYNAUT_CAPFILE')) {
+			$capFile = DEPLOYNAUT_CAPFILE;
+		} else {
+			$capFile = BASE_PATH.'/assets/Capfile';
 		}
+		file_put_contents($capFile, $cap);
 
-		$token = Resque::enqueue('deploy', 'CapistranoDeploy', $args);
+		$command = "{$envString}cap -f " . escapeshellarg($capFile) . " -vv $environment deploy";
+		$command.= ' -s repository='.$repository;
+		$command.= ' -s branch='.$sha;
+		$command.= ' -s history_path='.realpath(DEPLOYNAUT_LOG_PATH.'/');
 
-		$message = 'Deploy queued as job ' . $token . PHP_EOL;
-		fwrite($fh, $message);
-		echo $message;
+		$log->write("Running command: $command");
 
-		fclose($fh);
+		$process = new \Symfony\Component\Process\Process($command);
+		// Capistrano doesn't like it - see comment above.
+		//$process->setEnv($env);
+		$process->setTimeout(3600);
+		return $process;
 	}
 
 	/**

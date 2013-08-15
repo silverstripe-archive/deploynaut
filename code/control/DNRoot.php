@@ -238,8 +238,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			throw new LogicException("Bad release selection method '{$data['SelectRelease']}'");
 		}
 
-		
-
 		$project = $this->DNProjectList()->filter('Name', $form->request->latestParam('Project'))->First();
 		$environment = $project->DNEnvironmentList()->filter('Name', $form->request->latestParam('Environment'))->First();
 		$sha = $project->DNBuildList()->byName($buildName);
@@ -260,12 +258,37 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function deploy(SS_HTTPRequest $request) {
 		$DNProject = $this->DNData()->DNProjectList()->filter('Name', $request->postVar('project'))->First();
-		$this->DNData()->Backend()->deploy(
-			$request->postVar('environment'),
-			$request->postVar('sha'),
-			$request->postVar('logfile'),
-			$DNProject
+
+		$args = array(
+			'environment' => $request->postVar('environment'),
+			'sha' => $request->postVar('sha'),
+			'repository' => $DNProject->LocalCVSPath,
+			'logfile' => $request->postVar('logfile'),
+			'projectName' => $DNProject->Name,
+			'env' => $DNProject->getProcessEnv()
 		);
+
+		$log = new DeploynautLogFile($request->postVar('logfile'));
+		$log->write('Deploying "'.$args['sha'].'" to "'.$args['projectName'].':'.$args['environment'].'"');
+
+		$member = Member::currentUser();
+		if($member && $member->exists()) {
+			$message = sprintf(
+				'Deploy to %s:%s initiated by %s (%s)',
+				$DNProject->Name,
+				$args['environment'],
+				$member->getName(),
+				$member->Email
+			);
+			$log->write($message);
+			echo $message . PHP_EOL;
+		}
+
+		$token = Resque::enqueue('deploy', 'DeployJob', $args);
+
+		$message = 'Deploy queued as job ' . $token;
+		$log->write($message);
+		echo $message . PHP_EOL;
 	}
 	
 	/**
@@ -274,17 +297,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return string
 	 */
 	public function getlog(SS_HTTPRequest $request) {
-		
-		$logFile = $request->getVar('logfile');
-		
-		if(!file_exists(DEPLOYNAUT_LOG_PATH . '/' . $logFile )) {
+		$log = new DeploynautLogFile($request->getVar('logfile'));
+
+		if($log->exists()) {
+			echo $log->content();
+		} else {
 			echo 'Waiting for deployment to start';
-			return;
-		}
-		
-		$lines = file(DEPLOYNAUT_LOG_PATH . '/' . $logFile );
-		foreach($lines as $line) {
-			echo $line;
 		}
 	}
 
