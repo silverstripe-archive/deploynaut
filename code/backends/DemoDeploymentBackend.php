@@ -20,6 +20,10 @@ class DemoDeploymentBackend implements DeploymentBackend {
 
 		$log->write("Demo deployment: echo $CLI_line >> $CLI_file");
 		`echo $CLI_line >> $CLI_file`;
+		$log->write("Arbitrary pause for 10s");
+		sleep(10);
+		$log->write("Well, that was a waste of time");
+
 
 		GraphiteDeploymentNotifier::notify_end($environment, $sha, null, $project);
 	}
