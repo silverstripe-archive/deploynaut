@@ -1,31 +1,24 @@
 (function($) {
 	
-	logFile = $('#deploy_log').data('logfile');
-	
 	var deploy = {
-		showlog: function (selector, logfile) {
-			$.get('naut/getlog', {logfile: logFile, randval: Math.random()},
+		showlog: function (selector, logLink) {
+			$.get(logLink, { randval: Math.random()},
 				function(data){
-					$(selector).html(data);
+					$(selector).text(data);
 				}
 			);
 		},
 		
 		start: function() {
-
-			var data = {
-				'environment': $('#environment').val(),
-				'sha': $('#sha').val(),
-				'logfile': $('#logfile').val(),
-				'project': $('#project').val(),
+			var __refresh = function(){
+				deploy.showlog(
+					"#deploy_log",
+					$('#deploy_log').data('loglink')
+				);
+				setTimeout(__refresh, 2000);
 			}
 
-			$.post('naut/deploy', data, function(data) {
-				$('#deploy_action').html(data);
-				setInterval(function(){deploy.showlog("#deploy_log", logFile);}, 2000);
-			}).error(function(xhr) {
-				$('#deploy_log').html(xhr.responseText);
-			});
+			setTimeout(__refresh, 2000);
 		}
 	}
 
@@ -44,7 +37,7 @@
 			return confirm('Are you sure that you want to deploy?');
 		});
 		
-		
+		// Deployment screen
 		if($('#deploy_log').length) {
 			deploy.start();
 		}

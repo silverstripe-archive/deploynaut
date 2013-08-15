@@ -10,7 +10,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'metrics',
 		'getDeployForm',
 		'deploy',
-		'getlog'
+		'deploylog',
 	);
 
 	/**
@@ -19,6 +19,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	static $url_handlers = array(
 		'project/$Project/environment/$Environment/DeployForm' => 'getDeployForm',
 		'project/$Project/environment/$Environment/metrics' => 'metrics',
+		'project/$Project/environment/$Environment/deploy/$Identifier/log' => 'deploylog',
+		'project/$Project/environment/$Environment/deploy/$Identifier' => 'deploy',
 		'project/$Project/environment/$Environment' => 'environment',
 		'project/$Project/build/$Build' => 'build',
 		'project/$Project/update' => 'update',
@@ -230,6 +232,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 	/**
 	 * Deployment form submission handler.
+	 *
+	 * Initiate a DNDeployment record and redirect to it for status polling
 	 */
 	public function doDeploy($data, $form) {
 		if(in_array($data['SelectRelease'], array('Tag','Branch','Redeploy','SHA'))) {
@@ -242,13 +246,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$environment = $project->DNEnvironmentList()->filter('Name', $form->request->latestParam('Environment'))->First();
 		$sha = $project->DNBuildList()->byName($buildName);
 
-		return $this->customise(new ArrayData(array(
-			'Environment' => $environment->Name,
-			'Repository' => $project->LocalCVSPath,
-			'Sha' => $sha->FullName(),
-			'LogFile' => $project->Name.'.'.$environment->Name.'.'.$sha->Name().'.'.time().'.log',
-			'Project' => $project->Name,
-		)))->renderWith('DNRoot_deploy');
+		$d = new DNDeployment;
+		$d->EnvironmentID = $environment->ID;
+		$d->SHA = $sha->FullName();
+		$d->write();
+		$d->start();
+
+		$this->redirect($d->Link());
 	}
 	
 	/**
@@ -257,38 +261,26 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @param SS_HTTPRequest $request 
 	 */
 	public function deploy(SS_HTTPRequest $request) {
-		$DNProject = $this->DNData()->DNProjectList()->filter('Name', $request->postVar('project'))->First();
+		$params = $request->params();
+		$deployment = DNDeployment::get()->byId($params['Identifier']);
 
-		$args = array(
-			'environment' => $request->postVar('environment'),
-			'sha' => $request->postVar('sha'),
-			'repository' => $DNProject->LocalCVSPath,
-			'logfile' => $request->postVar('logfile'),
-			'projectName' => $DNProject->Name,
-			'env' => $DNProject->getProcessEnv()
-		);
+		if(!$deployment || !$deployment->ID) throw new SS_HTTPResponse_Exception('Deployment not found', 404);
+		if(!$deployment->canView()) return Security::permissionFailure();
 
-		$log = new DeploynautLogFile($request->postVar('logfile'));
-		$log->write('Deploying "'.$args['sha'].'" to "'.$args['projectName'].':'.$args['environment'].'"');
+		$environment = $deployment->Environment();
+		$project = $environment->Project();
 
-		$member = Member::currentUser();
-		if($member && $member->exists()) {
-			$message = sprintf(
-				'Deploy to %s:%s initiated by %s (%s)',
-				$DNProject->Name,
-				$args['environment'],
-				$member->getName(),
-				$member->Email
-			);
-			$log->write($message);
-			echo $message . PHP_EOL;
-		}
+		if($environment->Name != $params['Environment']) throw new LogicException("Environment in URL doesn't match this deploy");
+		if($project->Name != $params['Project']) throw new LogicException("Project in URL doesn't match this deploy");
 
-		$token = Resque::enqueue('deploy', 'DeployJob', $args);
+		return $this->customise(new ArrayData(array(
+			'Environment' => $environment->Name,
+			'Project' => $project->Name,
+			'Sha' => $deployment->SHA,
+			'LogLink' => Controller::join_links($deployment->Link(),'log'),
+			'LogContent' => $deployment->log()->content(),
 
-		$message = 'Deploy queued as job ' . $token;
-		$log->write($message);
-		echo $message . PHP_EOL;
+		)))->renderWith('DNRoot_deploy');
 	}
 	
 	/**
@@ -296,13 +288,28 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 *
 	 * @return string
 	 */
-	public function getlog(SS_HTTPRequest $request) {
-		$log = new DeploynautLogFile($request->getVar('logfile'));
+	public function deploylog(SS_HTTPRequest $request) {
+		$params = $request->params();
+		$deployment = DNDeployment::get()->byId($params['Identifier']);
+
+		if(!$deployment || !$deployment->ID) throw new SS_HTTPResponse_Exception('Deployment not found', 404);
+		if(!$deployment->canView()) return Security::permissionFailure();
+
+		$environment = $deployment->Environment();
+		$project = $environment->Project();
+
+		if($environment->Name != $params['Environment']) throw new LogicException("Environment in URL doesn't match this deploy");
+		if($project->Name != $params['Project']) throw new LogicException("Project in URL doesn't match this deploy");
+
+
+		$log = $deployment->log();
+
+		$this->response->addHeader("Content-type", "text/plain");
 
 		if($log->exists()) {
-			echo $log->content();
+			return $log->content();
 		} else {
-			echo 'Waiting for deployment to start';
+			return 'Waiting for deployment to start';
 		}
 	}
 
