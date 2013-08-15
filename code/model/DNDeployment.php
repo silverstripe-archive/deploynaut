@@ -7,6 +7,7 @@ class DNDeployment extends DataObject {
 
 	private static $db = array(
 		"SHA" => "Varchar(255)",
+		"ResqueToken" => "Varchar(255)",
 	);
 	private static $has_one = array(
 		"Environment" => "DNEnvironment",
@@ -21,6 +22,9 @@ class DNDeployment extends DataObject {
 	function Link() {
 		return Controller::join_links($this->Environment()->Link(), 'deploy', $this->ID);
 	}
+	function LogLink() {
+		return $this->Link() . '/log';
+	}
 
 	function canView($member = null) {
 		return $this->Environment()->canView($member);
@@ -34,6 +38,23 @@ class DNDeployment extends DataObject {
 
 	function log() {
 		return new DeploynautLogFile($this->logfile());
+	}
+	function LogContent() {
+		return $this->log()->content();
+	}
+
+	function ResqueStatus() {
+		$status = new Resque_Job_Status($this->ResqueToken);
+
+		$remap = array(
+			Resque_Job_Status::STATUS_WAITING => "Queued",
+			Resque_Job_Status::STATUS_RUNNING => "Running",
+			Resque_Job_Status::STATUS_FAILED => "Failed",
+			Resque_Job_Status::STATUS_COMPLETE => "Complete",
+			false => "Invalid",
+		);
+
+		return $remap[$status->get()];
 	}
 
 	function start() {
@@ -65,7 +86,9 @@ class DNDeployment extends DataObject {
 			$log->write($message);
 		}
 
-		$token = Resque::enqueue('deploy', 'DeployJob', $args);
+		$token = Resque::enqueue('deploy', 'DeployJob', $args, true);
+		$this->ResqueToken = $token;
+		$this->write();
 
 		$message = 'Deploy queued as job ' . $token;
 		$log->write($message);

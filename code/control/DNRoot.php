@@ -274,12 +274,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		if($project->Name != $params['Project']) throw new LogicException("Project in URL doesn't match this deploy");
 
 		return $this->customise(new ArrayData(array(
-			'Environment' => $environment->Name,
-			'Project' => $project->Name,
-			'Sha' => $deployment->SHA,
-			'LogLink' => Controller::join_links($deployment->Link(),'log'),
-			'LogContent' => $deployment->log()->content(),
-
+			'Deployment' => $deployment,
 		)))->renderWith('DNRoot_deploy');
 	}
 	
@@ -289,6 +284,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return string
 	 */
 	public function deploylog(SS_HTTPRequest $request) {
+		$sendJSON = (strpos($request->getHeader('Accept'), 'application/json') !== false);
+
 		$params = $request->params();
 		$deployment = DNDeployment::get()->byId($params['Identifier']);
 
@@ -303,14 +300,24 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 
 		$log = $deployment->log();
-
-		$this->response->addHeader("Content-type", "text/plain");
-
 		if($log->exists()) {
-			return $log->content();
+			$content = $log->content();
 		} else {
-			return 'Waiting for deployment to start';
+			$content = 'Waiting for deployment to start';
 		}
+
+		if($sendJSON) {
+			$this->response->addHeader("Content-type", "application/json");
+			return json_encode(array(
+				'status' => $deployment->ResqueStatus(),
+				'content' => $content,
+			));
+
+		} else {
+			$this->response->addHeader("Content-type", "text/plain");
+			return $content;
+		}
+
 	}
 
 	public static function get_template_global_variables() {

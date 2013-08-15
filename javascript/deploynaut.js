@@ -1,10 +1,11 @@
 (function($) {
 	
 	var deploy = {
-		showlog: function (selector, logLink) {
-			$.get(logLink, { randval: Math.random()},
+		showlog: function ($status, $content, logLink) {
+			$.getJSON(logLink, { randval: Math.random()},
 				function(data){
-					$(selector).text(data);
+					$status.text(data.status);
+					$content.text(data.content);
 				}
 			);
 		},
@@ -12,7 +13,8 @@
 		start: function() {
 			var __refresh = function(){
 				deploy.showlog(
-					"#deploy_log",
+					$("#deploy_action"),
+					$("#deploy_log"),
 					$('#deploy_log').data('loglink')
 				);
 				setTimeout(__refresh, 2000);
