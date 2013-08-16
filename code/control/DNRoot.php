@@ -284,8 +284,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return string
 	 */
 	public function deploylog(SS_HTTPRequest $request) {
-		$sendJSON = (strpos($request->getHeader('Accept'), 'application/json') !== false);
-
 		$params = $request->params();
 		$deployment = DNDeployment::get()->byId($params['Identifier']);
 
@@ -305,6 +303,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		} else {
 			$content = 'Waiting for deployment to start';
 		}
+
+		$sendJSON = (strpos($request->getHeader('Accept'), 'application/json') !== false)
+			|| $request->getExtension() == 'json';
 
 		if($sendJSON) {
 			$this->response->addHeader("Content-type", "application/json");
