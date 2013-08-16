@@ -18,13 +18,44 @@
 }
 
 #deploy_action.Complete {
-	background-color: #356635;
+	background-color: #558655;
+	-webkit-box-shadow: rgba(65, 114, 65, 0.1) 0 1px 0, rgba(65, 114, 65, 0.8) 0 1px 7px 0px inset;
+	-moz-box-shadow: rgba(65, 114, 65, 0.1) 0 1px 0, rgba(65, 114, 65, 0.8) 0 1px 7px 0px inset;
+	box-shadow: rgba(65, 114, 65, 0.1) 0 1px 0, rgba(65, 114, 65, 0.8) 0 1px 7px 0px inset;
 }
 #deploy_action.Invalid, #deploy_action.Failed {
 	background-color: #b94a48;
+	-webkit-box-shadow: rgba(120, 60, 60, 0.1) 0 1px 0, rgba(120, 60, 60, 0.8) 0 1px 7px 0px inset;
+	-moz-box-shadow: rgba(120, 60, 60, 0.1) 0 1px 0, rgba(120, 60, 60, 0.8) 0 1px 7px 0px inset;
+	box-shadow: rgba(120, 60, 60, 0.1) 0 1px 0, rgba(120, 60, 60, 0.8) 0 1px 7px 0px inset;
 }
 #deploy_action.Running {
 	background-color: #3a87ad;
+	-webkit-box-shadow: rgba(38, 105, 143, 0.1) 0 1px 0, rgba(38, 105, 143, 0.8) 0 1px 7px 0px inset;
+	-moz-box-shadow: rgba(38, 105, 143, 0.1) 0 1px 0, rgba(38, 105, 143, 0.8) 0 1px 7px 0px inset;
+	box-shadow: rgba(38, 105, 143, 0.1) 0 1px 0, rgba(38, 105, 143, 0.8) 0 1px 7px 0px inset;
+	background-image: -webkit-gradient(linear, 0 0, 100% 100%,
+        color-stop(.25, rgba(0, 0, 0, .10)),
+        color-stop(.25, transparent),
+        color-stop(.5, transparent),
+        color-stop(.5, rgba(0, 0, 0, .10)),
+        color-stop(.75, rgba(0, 0, 0, .10)),
+        color-stop(.75, transparent),
+        to(transparent));
+    background-image:
+        -moz-linear-gradient(-45deg,
+            rgba(38, 105, 143, .10) 25%,
+            transparent 25%,
+            transparent 50%, rgba(38, 105, 143, .10) 50%,
+            rgba(38, 105, 143, .10) 75%,
+            transparent 75%, transparent
+        );
+    background-size: 50px 50px;
+    -moz-background-size: 50px 50px;
+    -webkit-background-size: 50px 50px;
+    -webkit-animation: animate-stripes 2s linear infinite;
+}
+#deploy_action.Queued {
 }
 
 .navbar-inner {
