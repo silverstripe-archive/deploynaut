@@ -11,7 +11,7 @@ class DeploynautLogFile {
 	}
 
 	function write($message) {
-		error_log('['.date('Y-m-d H:m:s').'] ' . $message .PHP_EOL, 3, $this->logFile);
+		error_log('['.date('Y-m-d H:i:s').'] ' . $message .PHP_EOL, 3, $this->logFile);
 	}
 
 	function exists() {
