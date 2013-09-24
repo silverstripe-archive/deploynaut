@@ -20,14 +20,14 @@ class CloneGitRepo {
 		}
 		mkdir($path, 0777, true);
 
-		fwrite($fh, '['.date('Y-m-d H:m:s').'] Cloning ' . $repo.' to ' . $path . PHP_EOL);
+		fwrite($fh, '['.date('Y-m-d H:i:s').'] Cloning ' . $repo.' to ' . $path . PHP_EOL);
 		echo "[-] CloneGitRepo starting" . PHP_EOL;
 
 		// using git clone straight via system call since doing it via the
 		// Gitonomy\Git\Admin times out. Silly.
 		$command = sprintf('git clone --bare -q %s %s', $repo, $path);
 
-		fwrite($fh, '['.date('Y-m-d H:m:s').'] Running command: ' . $command . PHP_EOL);
+		fwrite($fh, '['.date('Y-m-d H:i:s').'] Running command: ' . $command . PHP_EOL);
 
 		$process = new \Symfony\Component\Process\Process($command);
 		$process->setEnv($env);
@@ -37,7 +37,7 @@ class CloneGitRepo {
 			throw new RuntimeException($process->getErrorOutput());
 		}
 
-		fwrite($fh, '['.date('Y-m-d H:m:s').'] Cloned ' . $repo . ' to ' . $path . PHP_EOL);
+		fwrite($fh, '['.date('Y-m-d H:i:s').'] Cloned ' . $repo . ' to ' . $path . PHP_EOL);
 	}
 
 	protected function delTree($dir) {
