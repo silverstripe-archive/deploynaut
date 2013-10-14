@@ -304,6 +304,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$sendJSON = (strpos($request->getHeader('Accept'), 'application/json') !== false)
 			|| $request->getExtension() == 'json';
 
+		
+		$content = preg_replace('/(?:(?:\r\n|\r|\n)\s*){2}/s', "\n", $content);
 		if($sendJSON) {
 			$this->response->addHeader("Content-type", "application/json");
 			return json_encode(array(
