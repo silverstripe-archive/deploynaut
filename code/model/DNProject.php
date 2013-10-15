@@ -219,18 +219,32 @@ class DNProject extends DataObject {
 		$fields->fieldByName("Root")->removeByName("Viewers");
 		$fields->fieldByName("Root")->removeByName("Environments");
 		$fields->fieldByName("Root")->removeByName("ReleaseSteps");
+		$fields->fieldByName('Root')->removeByName('LocalCVSPath');
 
-		$nameField = $fields->fieldByName('Root.Main.Name')->performReadonlyTransformation();
-		$fields->replaceField('Name', $nameField);
+		$fields->fieldByName('Root.Main.Name')
+			->setTitle('Project name')
+			->setDescription('Avoid using non alphanumeric characters');
 
-		$cvsField = $fields->fieldByName('Root.Main.LocalCVSPath')->performReadonlyTransformation();
-		$fields->replaceField('LocalCVSPath', $cvsField);
+		$fields->fieldByName('Root.Main.CVSPath')
+			->setTitle('Git repository')
+			->setDescription('E.g. git@github.com:silverstripe/silverstripe-installer.git');
+
+		$workspaceField = new ReadonlyField('LocalWorkspace', 'Git workspace', $this->LocalCVSPath);
+		$workspaceField->setDescription('This is where the GIT repository are located on this server');
+		$fields->insertAfter($workspaceField, 'CVSPath');
+
+		$readAccessGroups = new CheckboxSetField("Viewers", "Project viewers", Group::get()->map());
+		$readAccessGroups->setDescription('These groups can view the project in the front-end.');
+		$fields->addFieldToTab("Root.Main", $readAccessGroups);
 
 		if($environments) {
 			$environments->getConfig()->removeComponentsByType('GridFieldAddNewButton');
 			$environments->getConfig()->removeComponentsByType('GridFieldAddExistingAutocompleter');
 			$environments->getConfig()->removeComponentsByType('GridFieldDeleteAction');
 			$environments->getConfig()->removeComponentsByType('GridFieldPageCount');
+			$addNewRelease = new GridFieldAddNewButton('toolbar-header-right');
+			$addNewRelease->setButtonName('Add');
+			$environments->getConfig()->addComponent($addNewRelease);
 			$fields->addFieldToTab("Root.Main", $environments);
 		}
 
@@ -242,13 +256,8 @@ class DNProject extends DataObject {
 			$addNewRelease = new GridFieldAddNewButton('toolbar-header-right');
 			$addNewRelease->setButtonName('Add');
 			$releaseSteps->getConfig()->addComponent($addNewRelease);
-			$fields->addFieldToTab("Root.Main", $releaseSteps);
+			$fields->addFieldToTab("Root.Release steps", $releaseSteps);
 		}
-
-		$fields->addFieldToTab("Root.Main",
-			new CheckboxSetField("Viewers", "Groups with read access to this project",
-				Group::get()->map()));
-
 		return $fields;
 	}
 
@@ -279,8 +288,12 @@ class DNProject extends DataObject {
 	 */
 	public function onBeforeWrite() {
 		$changedFields = $this->getChangedFields(true, 2);
-		if(isset($changedFields['CVSPath']) && $this->CVSPath) {
-			$this->LocalCVSPath = DEPLOYNAUT_LOCAL_VCS_PATH . '/' . $this->Name;
+		if (!$this->CVSPath) {
+			return;
+		}
+		if (isset($changedFields['CVSPath']) || isset($changedFields['Name'])) {
+			$name = preg_replace("/[^A-Za-z0-9 ]/", '', $this->Name);
+			$this->LocalCVSPath = DEPLOYNAUT_LOCAL_VCS_PATH . '/' . $name;
 			$this->cloneRepo();
 		}
 
