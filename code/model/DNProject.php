@@ -1,62 +1,106 @@
 <?php
 /**
  * DNProject represents a project that relates to a group of target
- * environments, and a has access to specific build tarballs.
+ * environments.
  *
- * For the project to be able to pick up builds, the tarballs need to
- * be stored in similarly named directories, e.g.:
- * deploynaut-resources/envs/ss3/dev.rb
- * deploynaut-resources/builds/ss3/ss3-1.0.3.tar.gz
  */
-
 class DNProject extends DataObject {
+
+	/**
+	 *
+	 * @var array
+	 */
 	public static $db = array(
 		"Name" => "Varchar",
 		"CVSPath" => "Varchar(255)",
 		"LocalCVSPath" => "Varchar(255)",
 	);
+
+	/**
+	 *
+	 * @var array
+	 */
 	public static $has_many = array(
 		"Environments" => "DNEnvironment",
 		"ReleaseSteps" => "DNReleaseStep",
 	);
+
+	/**
+	 *
+	 * @var array
+	 */
 	public static $many_many = array(
 		"Viewers" => "Group",
 	);
 
+	/**
+	 *
+	 * @var array
+	 */
 	public static $summary_fields = array(
 		"Name",
 		"ViewersList",
 	);
+
+	/**
+	 *
+	 * @var array
+	 */
 	public static $searchable_fields = array(
 		"Name",
 	);
 
 	/**
 	 * Display the repository URL on the project page.
+	 *
+	 * @var bool
 	 */
 	private static $show_repository_url = false;
 
+	/**
+	 *
+	 * @var array
+	 */
 	protected static $relation_cache = array();
 
+	/**
+	 *
+	 * @param string $callerClass
+	 * @param string $filter
+	 * @param string $sort
+	 * @param string $join
+	 * @param string $limit
+	 * @param string $containerClass
+	 * @return \DNProjectList
+	 */
 	public static function get($callerClass = null, $filter = "", $sort = "", $join = "", $limit = null,
 			$containerClass = 'DataList') {
 		return new DNProjectList('DNProject');
 	}
 
+	/**
+	 *
+	 * @param string $path
+	 * @return \DNProject
+	 */
 	public static function create_from_path($path) {
-		$p = new DNProject;
-		$p->Name = $path;
-		$p->write();
+		$project = new DNProject;
+		$project->Name = $path;
+		$project->write();
 
 		// add the administrators group as the viewers of the new project
 		$adminGroup = Group::get()->filter('Code', 'administrators')->first();
 		if($adminGroup && $adminGroup->exists()) {
-			$p->Viewers()->add($adminGroup);
+			$project->Viewers()->add($adminGroup);
 		}
-
-		return $p;
+		return $project;
 	}
 
+	/**
+	 *
+	 * @param Member $member
+	 * @return boolean
+	 */
 	public function canView($member = null) {
 		if(!$member) $member = Member::currentUser();
 
@@ -70,7 +114,10 @@ class DNProject extends DataObject {
 
 	/**
 	 * Build an environment variable array to be used with this project.
-	 * Include this with all Gitonomy\Git\Repository, and \Symfony\Component\Process\Processes.
+	 * Include this with all Gitonomy\Git\Repository, and
+	 * \Symfony\Component\Process\Processes.
+	 *
+	 * @return array
 	 */
 	public function getProcessEnv() {
 
@@ -86,10 +133,19 @@ class DNProject extends DataObject {
 
 	}
 
+	/**
+	 *
+	 * @return string
+	 */
+
 	public function getViewersList() {
 		return implode(", ", $this->Viewers()->column("Title"));
 	}
 
+	/**
+	 *
+	 * @return DNData
+	 */
 	public function DNData() {
 		return Injector::inst()->get('DNData');
 	}
@@ -142,10 +198,18 @@ class DNProject extends DataObject {
 		return self::$relation_cache['currentBuilds.'.$this->ID];
 	}
 
-	public function Link() {
+	/**
+	 *
+	 * @return string
+	 */
+	public function link() {
 		return "naut/project/$this->Name";
 	}
 
+	/**
+	 *
+	 * @return FieldList
+	 */
 	public function getCMSFields() {
 		$fields = parent::getCMSFields();
 
@@ -188,10 +252,18 @@ class DNProject extends DataObject {
 		return $fields;
 	}
 
+	/**
+	 *
+	 * @return bool
+	 */
 	public function repoExists() {
 		return file_exists(DEPLOYNAUT_LOCAL_VCS_PATH . '/' . $this->Name);
 	}
 
+	/**
+	 * Setup a resque job to clone a git repository
+	 *
+	 */
 	public function cloneRepo() {
 		$this->LocalCVSPath = DEPLOYNAUT_LOCAL_VCS_PATH . '/' . $this->Name;
 
