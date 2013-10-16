@@ -1,0 +1,22 @@
+# The server, either a valid hostname or an IP address
+server 'hostname', :web, :db
+
+# Set your application name here, used as the base folder
+set :application, "app"
+
+# The path on the servers we’re going to be deploying the application to.
+set :deploy_to, "/sites/#{application}"
+
+# Set a build script that is run before the code .tar.gz is sent to the server
+set :build_script, "composer install --prefer-dist --no-dev"
+
+# Set the sake path for this project
+set :sake_path, "./framework/sake"
+
+# This will be used to chown the deployed files, make sure that the deploy user is part of this group
+set :webserver_group, "sites"
+
+# Which SSH user will deploynaut use to SSH into the server
+ssh_options[:username] = 'sites'
+# Which SSH port will deploynaut when SSH:ing into the server
+ssh_options[:port] = 2222

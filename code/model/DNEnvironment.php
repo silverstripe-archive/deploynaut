@@ -10,6 +10,17 @@
 class DNEnvironment extends DataObject {
 
 	/**
+	 * If this is set to a full pathfile, it will be used as template
+	 * file when creating a new capistrano environment config file.
+	 * 
+	 * If not set, the default 'environment.template' from the module 
+	 * root is used
+	 *
+	 * @var string
+	 */
+	private static $template_file = '';
+	
+	/**
 	 *
 	 * @var array
 	 */
@@ -243,31 +254,114 @@ class DNEnvironment extends DataObject {
 
 		$fields->fieldByName("Root")->removeByName("Deployers");
 
+		// The Main.ProjectID
 		$projectField = $fields->fieldByName('Root.Main.ProjectID')->performReadonlyTransformation();
-
-		$fields->insertBefore($projectField, 'Filename');
-
+		$fields->insertBefore($projectField, 'Name');
+		
+		// The Main.Name
 		$nameField = $fields->fieldByName('Root.Main.Name');
 		$nameField->setTitle('Environment name');
 		$nameField->setDescription('A descriptive name for this environment, e.g. staging, uat, production');
 		$fields->insertAfter($nameField, 'ProjectID');
 
-		$urlField = $fields->fieldByName('Root.Main.URL');
-		$urlField->setDescription('This url will be used to provide the front-end with a link to this environment');
-		$fields->insertAfter($urlField, 'Name');
-
+		// The Main.Deployers
 		$deployers = new CheckboxSetField("Deployers", "Deployers", $members);
 		$deployers->setDescription('Users who can deploy to this environment');
 		$fields->insertAfter($deployers, 'URL');
 
-		$fields->makeFieldReadonly('Filename');
-
-		$fields->fieldByName('Root.Main.GraphiteServers')
-			->setDescription(
-				'Find the relevant graphite servers at '.
-				'<a href="http://graphite.silverstripe.com/" target="_blank">graphite.silverstripe.com</a>'.
-				' and enter them one per line, e.g. "server.wgtn.oscar"'
-			);
+		// The Main.DeployConfig
+		if($this->Project()->exists()) {
+			if(!$this->envFileExists()) {
+				$noDeployConfig = new LabelField('noDeployConfig', 'Warning: This environment don\'t have deployment configuration.');
+				$noDeployConfig->addExtraClass('message warning');
+				$fields->insertBefore($noDeployConfig, 'Name');
+				$createConfigField = new CheckboxField('CreateEnvConfig', 'Create Config');
+				$createConfigField->setDescription('Would you like to create the capistrano deploy configuration?');
+				$fields->insertAfter($createConfigField, 'Name');
+			} else {
+				$deployConfig = new TextareaField('DeployConfig', 'Deploy config', $this->getEnvironmentConfig());
+				$deployConfig->setRows(40);
+				$fields->insertAfter($deployConfig, 'Deployers');
+			}
+		}
+		
+		// The Extra.URL field
+		$urlField = $fields->fieldByName('Root.Main.URL');
+		$urlField->setTitle('Server URL');
+		$fields->removeByName('Root.Main.URL');
+		$urlField->setDescription('This url will be used to provide the front-end with a link to this environment');
+		$fields->addFieldToTab('Root.Extra', $urlField);
+		
+		// The Extra.GraphiteServers
+		$graphiteServerField = $fields->fieldByName('Root.Main.GraphiteServers');
+		$fields->removeByName('Root.Main.GraphiteServers');
+		$graphiteServerField->setDescription(
+			'Find the relevant graphite servers at '.
+			'<a href="http://graphite.silverstripe.com/" target="_blank">graphite.silverstripe.com</a>'.
+			' and enter them one per line, e.g. "server.wgtn.oscar"'
+		);
+		$fields->addFieldToTab('Root.Extra', $graphiteServerField);
+		
+		
 		return $fields;
+	}
+	
+	/**
+	 * 
+	 */
+	public function onBeforeWrite() {
+		parent::onBeforeWrite();
+		if($this->Name && $this->Name != $this->Filename) {
+			$this->Filename = $this->Name;
+		}
+		
+		// Create a basic new environment config from a template
+		if(!$this->envFileExists() && $this->Filename && $this->CreateEnvConfig) {
+			if(self::$template_file) {
+				$templateFile = self::$template_file;
+			} else {
+				$templateFile = BASE_PATH.'/deploynaut/environment.template';
+			}
+			file_put_contents($this->getConfigFilename(), file_get_contents($templateFile));
+		} else if($this->envFileExists() && $this->DeployConfig) {
+			file_put_contents($this->getConfigFilename(), $this->DeployConfig);
+		}
+	}
+	
+	/**
+	 * 
+	 * @return string
+	 */
+	public function getEnvironmentConfig() {
+		if(!$this->envFileExists()) {
+			return '';
+		}
+		
+		return file_get_contents($this->getConfigFilename());
+	}
+	
+	/**
+	 * 
+	 * @return boolean
+	 */
+	protected function envFileExists() {
+		if(!$this->getConfigFilename()) {
+			return false;
+		}
+		return file_exists($this->getConfigFilename());
+	}
+	
+	/**
+	 * 
+	 * @return boolean
+	 */
+	public function getConfigFilename() {
+		if(!$this->Project()->exists()) {
+			return '';
+		}
+		if(!$this->Filename) {
+			return '';
+		}
+		return DEPLOYNAUT_ENV_ROOT.$this->Project()->Name.'/'.$this->Filename.'.rb';
 	}
 }

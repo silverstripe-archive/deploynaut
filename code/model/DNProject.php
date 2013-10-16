@@ -223,8 +223,24 @@ class DNProject extends DataObject {
 
 		$fields->fieldByName('Root.Main.Name')
 			->setTitle('Project name')
-			->setDescription('Avoid using non alphanumeric characters');
+			->setDescription('Changing the name will <strong>reset</strong> the deploy configuration and avoid using non alphanumeric characters');
 
+		// Check if the capistrano project folder exists
+		if($this->Name) {
+			if(!file_exists(DEPLOYNAUT_ENV_ROOT.'/'.$this->Name)){
+				$createFolderNotice = new LabelField('CreateEnvFolderNotice',
+					'Warning: No Capistrano project folder exists'
+				);
+				$createFolderNotice->addExtraClass('message warning');
+				$fields->insertBefore($createFolderNotice, 'Name');
+				
+				$createFolderField = new CheckboxField('CreateEnvFolder', 'Create folder');
+				$createFolderField->setDescription('Would you like to create the capistrano project folder?');
+				$fields->insertAfter($createFolderField, 'CreateEnvFolderNotice');
+			}
+		}
+		
+		
 		$fields->fieldByName('Root.Main.CVSPath')
 			->setTitle('Git repository')
 			->setDescription('E.g. git@github.com:silverstripe/silverstripe-installer.git');
@@ -287,6 +303,13 @@ class DNProject extends DataObject {
 	 *
 	 */
 	public function onBeforeWrite() {
+		parent::onBeforeWrite();
+		
+		// Create the project capistrano folder
+		if($this->CreateEnvFolder && !file_exists(DEPLOYNAUT_ENV_ROOT.'/'.$this->Name)) {
+			mkdir(DEPLOYNAUT_ENV_ROOT.'/'.$this->Name);
+		}
+		
 		$changedFields = $this->getChangedFields(true, 2);
 		if (!$this->CVSPath) {
 			return;
@@ -296,8 +319,6 @@ class DNProject extends DataObject {
 			$this->LocalCVSPath = DEPLOYNAUT_LOCAL_VCS_PATH . '/' . $name;
 			$this->cloneRepo();
 		}
-
-		parent::onBeforeWrite();
 	}
 
 	/**
