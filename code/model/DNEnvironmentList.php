@@ -3,11 +3,11 @@
 class DNEnvironmentList extends DataList {
 	protected $projectID;
 
-	function setProjectID($projectID) {
+	public function setProjectID($projectID) {
 		$this->projectID = $projectID;
 		return $this;
 	}
-	
+
 	/**
 	 * Sync the in-db project list with a list of file paths
 	 * @param array $paths Array of pathnames

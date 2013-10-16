@@ -1,7 +1,7 @@
 <?php
 
 class SyncProjectsAndEnvironments extends BuildTask {
-	function run($request = null) {
+	public function run($request = null) {
 		// should syncing remove obsolete records?
 		$remove = ($request && $request->requestVar('remove') !== NULL) ? (bool) $request->requestVar('remove') : true;
 		$data = Injector::inst()->get('DNData');

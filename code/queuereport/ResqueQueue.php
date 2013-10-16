@@ -1,7 +1,7 @@
 <?php
 
 class ResqueQueue extends ViewableData {
-	
+
 	/**
 	 *
 	 * @var array
@@ -9,7 +9,7 @@ class ResqueQueue extends ViewableData {
 	protected $record = array();
 
 	/**
-	 * 
+	 *
 	 * @param array $data
 	 */
 	public function __construct($data = array()) {
@@ -17,7 +17,7 @@ class ResqueQueue extends ViewableData {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return \FieldList
 	 */
 	public function getCMSFields() {
@@ -35,7 +35,7 @@ class ResqueQueue extends ViewableData {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return string
 	 */
 	public function i18n_singular_name() {
@@ -44,7 +44,7 @@ class ResqueQueue extends ViewableData {
 
 	protected function getJobs() {
 		$jobs = new ArrayList();
-		
+
 		$resqueJobs = Resque::redis()->lrange('queue:' . $this->Name, 0, -1);
 		if(!$resqueJobs) {
 			$jobs->push(new ResqueJob(array(
@@ -67,12 +67,12 @@ class ResqueQueue extends ViewableData {
 				)));
 			}
 		}
-		
+
 		return $jobs;
 	}
 
 	/**
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public function canView() {
@@ -80,7 +80,7 @@ class ResqueQueue extends ViewableData {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function canEdit() {
@@ -88,7 +88,7 @@ class ResqueQueue extends ViewableData {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function candelete() {
@@ -96,7 +96,7 @@ class ResqueQueue extends ViewableData {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function cancreate() {
@@ -104,7 +104,7 @@ class ResqueQueue extends ViewableData {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param string $property
 	 * @return mixed
 	 */

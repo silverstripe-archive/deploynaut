@@ -1,6 +1,5 @@
 <?php
 
-
 class DNBranch extends ViewableData {
 
 	/**
@@ -16,7 +15,7 @@ class DNBranch extends ViewableData {
 	protected $name = null;
 
 	protected $references = null;
-	
+
 	/**
 	 *
 	 * @param Gitonomy\Git\Commit $commit
@@ -44,23 +43,23 @@ class DNBranch extends ViewableData {
 	/**
 	 * Provides a DNBuildList of builds found in this project.
 	 */
-	function DNBuildList() {
+	public function DNBuildList() {
 		$blockBranch = $this->branch->getName() == 'master' ? null : 'master';
 		return new DNReferenceList($this->project, $this->data, $this->branch, $blockBranch);
 	}
 
 	/**
 	 *
-	 * @return SS_Datetime 
+	 * @return SS_Datetime
 	 */
 	public function LastUpdated() {
 		$created = $this->branch->getCommit()->getCommitterDate();
 
-                // gitonomy sets the time to UTC, so now we set the timezone to 
-                // whatever PHP is set to (date.timezone). This will change in the future if each 
-                // deploynaut user has their own timezone  
-                $created->setTimezone(new DateTimeZone(date_default_timezone_get())); 
- 
+                // gitonomy sets the time to UTC, so now we set the timezone to
+                // whatever PHP is set to (date.timezone). This will change in the future if each
+                // deploynaut user has their own timezone
+                $created->setTimezone(new DateTimeZone(date_default_timezone_get()));
+
 		$d = new SS_Datetime();
 		$d->setValue($created->format('Y-m-d H:i:s'));
 		return $d;

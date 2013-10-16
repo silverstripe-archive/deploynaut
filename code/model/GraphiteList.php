@@ -4,7 +4,7 @@ require_once(BASE_PATH . '/dashboard/dashboard-helpers.php');
 
 class GraphiteList extends ArrayList {
 
-	function __construct($servers = array(), $metricList = null) {
+	public function __construct($servers = array(), $metricList = null) {
 		parent::__construct();
 
 		if($metricList === null) {

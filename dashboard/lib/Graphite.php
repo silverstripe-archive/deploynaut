@@ -20,7 +20,7 @@ class Graphite {
     protected $height = 600;
 
     public $deploys = null;
-    
+
     public static function inst() {
         return new Graphite();
     }
@@ -36,11 +36,11 @@ class Graphite {
         if(substr($baseURL,-1) == '/') $baseURL = substr($baseURL, 0, -1);
         $this->base_url = $baseURL;
     }
-    
+
     public function setTime($time) {
         $this->time = $time;
         return $this;
-    } 
+    }
 
     public function setTitle($title) {
         $this->title = $title;
@@ -92,7 +92,7 @@ class Graphite {
         $this->y_max = $y_max;
         return $this;
     }
-    
+
     public function setSize($width, $height) {
         return $this->setWidth($width)->setHeight($height);
     }
@@ -105,7 +105,6 @@ class Graphite {
         return $this;
     }
 
-
     /**
      * Add a metric to the current Graphite object. For Graphite, you can call this
      * method multiple times to stack multiple metrics together in one image.
@@ -115,7 +114,7 @@ class Graphite {
             'target' => $metric,
             'color' => $color,
         );
-        
+
         if ($prepend) {
             array_unshift($this->metrics, $metric);
         } else {
@@ -144,7 +143,7 @@ class Graphite {
     public function getImageURL($width = null, $height = null, $stand_alone = false) {
 			if($width == null) $width = $this->width;
 			if($height == null) $height = $this->height;
-	
+
         $p = array(
             'from' => $this->getTimeParam(),
             'width' => $width,
@@ -204,7 +203,7 @@ class Graphite {
     public function getDashboardHTML($width = null, $height = null, $html_legend = "") {
 			if($width == null) $width = $this->width;
 			if($height == null) $height = $this->height;
-	
+
         return '<span class="graphiteGraph" style="width: ' . $width . 'px;">'
             . '<a href="' . $this->getImageURL(1024, 768, true) . '">'
             . '<img src="' . $this->getImageURL($width, $height) . '" width="' . $width . '" height="' . $height . '">'

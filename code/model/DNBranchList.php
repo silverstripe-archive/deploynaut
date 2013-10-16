@@ -5,7 +5,7 @@ class DNBranchList extends ArrayList {
 	protected static $refs_dir = '';
 
 	protected $loaded = false;
-	
+
 	protected $builds = array();
 
 	public static function set_refs_dir($refsDir) {

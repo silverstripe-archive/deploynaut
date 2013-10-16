@@ -3,31 +3,31 @@
  * DNProject represents a project that relates to a group of target
  * environments, and a has access to specific build tarballs.
  *
- * For the project to be able to pick up builds, the tarballs need to 
+ * For the project to be able to pick up builds, the tarballs need to
  * be stored in similarly named directories, e.g.:
  * deploynaut-resources/envs/ss3/dev.rb
  * deploynaut-resources/builds/ss3/ss3-1.0.3.tar.gz
  */
 
 class DNProject extends DataObject {
-	static $db = array(
+	public static $db = array(
 		"Name" => "Varchar",
 		"CVSPath" => "Varchar(255)",
 		"LocalCVSPath" => "Varchar(255)",
 	);
-	static $has_many = array(
+	public static $has_many = array(
 		"Environments" => "DNEnvironment",
 		"ReleaseSteps" => "DNReleaseStep",
 	);
-	static $many_many = array(
+	public static $many_many = array(
 		"Viewers" => "Group",
 	);
 
-	static $summary_fields = array(
+	public static $summary_fields = array(
 		"Name",
 		"ViewersList",
 	);
-	static $searchable_fields = array(
+	public static $searchable_fields = array(
 		"Name",
 	);
 
@@ -38,12 +38,12 @@ class DNProject extends DataObject {
 
 	protected static $relation_cache = array();
 
-	static function get($callerClass = null, $filter = "", $sort = "", $join = "", $limit = null,
+	public static function get($callerClass = null, $filter = "", $sort = "", $join = "", $limit = null,
 			$containerClass = 'DataList') {
 		return new DNProjectList('DNProject');
 	}
 
-	static function create_from_path($path) {
+	public static function create_from_path($path) {
 		$p = new DNProject;
 		$p->Name = $path;
 		$p->write();
@@ -86,25 +86,25 @@ class DNProject extends DataObject {
 
 	}
 
-	function getViewersList() {
+	public function getViewersList() {
 		return implode(", ", $this->Viewers()->column("Title"));
 	}
 
-	function DNData() {
+	public function DNData() {
 		return Injector::inst()->get('DNData');
 	}
 
 	/**
 	 * Provides a DNBuildList of builds found in this project.
 	 */
-	function DNBuildList() {
+	public function DNBuildList() {
 		return new DNReferenceList($this, $this->DNData());
 	}
 
 	/**
 	 * Provides a list of the branches in this project.
 	 */
-	function DNBranchList() {
+	public function DNBranchList() {
 		if($this->CVSPath && !$this->repoExists()) {
 			$this->cloneRepo();
 		}
@@ -114,7 +114,7 @@ class DNProject extends DataObject {
 	/**
 	 * Provides a list of the tags in this project.
 	 */
-	function DNTagList() {
+	public function DNTagList() {
 		if($this->CVSPath && !$this->repoExists()) {
 			$this->cloneRepo();
 		}
@@ -142,8 +142,6 @@ class DNProject extends DataObject {
 		return self::$relation_cache['currentBuilds.'.$this->ID];
 	}
 
-
-
 	public function Link() {
 		return "naut/project/$this->Name";
 	}
@@ -160,7 +158,6 @@ class DNProject extends DataObject {
 
 		$nameField = $fields->fieldByName('Root.Main.Name')->performReadonlyTransformation();
 		$fields->replaceField('Name', $nameField);
-
 
 		$cvsField = $fields->fieldByName('Root.Main.LocalCVSPath')->performReadonlyTransformation();
 		$fields->replaceField('LocalCVSPath', $cvsField);
@@ -206,7 +203,7 @@ class DNProject extends DataObject {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public function onBeforeWrite() {
 		$changedFields = $this->getChangedFields(true, 2);

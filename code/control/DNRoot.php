@@ -2,7 +2,7 @@
 
 class DNRoot extends Controller implements PermissionProvider, TemplateGlobalProvider {
 
-	static $allowed_actions = array(
+	public static $allowed_actions = array(
 		'projects',
 		'update',
 		'project',
@@ -16,7 +16,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * URL handlers pretending that we have a deep URL structure.
 	 */
-	static $url_handlers = array(
+	public static $url_handlers = array(
 		'project/$Project/environment/$Environment/DeployForm' => 'getDeployForm',
 		'project/$Project/environment/$Environment/metrics' => 'metrics',
 		'project/$Project/environment/$Environment/deploy/$Identifier/log' => 'deploylog',
@@ -35,7 +35,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	protected $data;
 
 	/**
-	 * 
+	 *
 	 */
 	public function init() {
 		parent::init();
@@ -51,21 +51,21 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				THIRDPARTY_DIR . '/jquery/jquery.js',
 				'deploynaut/javascript/bootstrap.js',
 				'deploynaut/javascript/deploynaut.js',
-				
+
 			)
 		);
 
 		Requirements::css(FRAMEWORK_ADMIN_DIR .'/thirdparty/chosen/chosen/chosen.css');
 	}
-	
+
 	/**
 	 *
-	 * @return string 
+	 * @return string
 	 */
 	public function Link() {
 		return "naut/";
 	}
-	
+
 	/**
 	 * Actions.
 	 */
@@ -114,7 +114,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		return $env->customise(array(
-			'DeployForm' => $this->getDeployForm($request)			
+			'DeployForm' => $this->getDeployForm($request)
 		))->renderWith(array('DNRoot_environment', 'DNRoot'));
 	}
 
@@ -134,7 +134,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 	/**
 	 * Get the DNData object.
-	 * 
+	 *
 	 * @return DNData
 	 */
 	public function DNData() {
@@ -188,7 +188,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			}
 		}
 
-
 		$releaseMethods = array(
 			new SelectionGroup_Item(
 				'Tag',
@@ -211,13 +210,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				'Deploy a specific SHA'
 			),
 		);
-		 
+
 	 	$field = new SelectionGroup('SelectRelease', $releaseMethods);
 	 	$field->setValue('Tag');
-	 
 
 		//new GroupedDropdownField("BuildName", "Build", $branches)
-		
+
 		$form = new Form($this, 'DeployForm', new FieldList(
 			$field
 		), new FieldList(
@@ -254,11 +252,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		$this->redirect($d->Link());
 	}
-	
+
 	/**
 	 * Do the actual deploy
 	 *
-	 * @param SS_HTTPRequest $request 
+	 * @param SS_HTTPRequest $request
 	 */
 	public function deploy(SS_HTTPRequest $request) {
 		$params = $request->params();
@@ -277,7 +275,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'Deployment' => $deployment,
 		)))->renderWith('DNRoot_deploy');
 	}
-	
+
 	/**
 	 * Get the latest deploy log
 	 *
@@ -295,7 +293,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		if($environment->Name != $params['Environment']) throw new LogicException("Environment in URL doesn't match this deploy");
 		if($project->Name != $params['Project']) throw new LogicException("Project in URL doesn't match this deploy");
-
 
 		$log = $deployment->log();
 		if($log->exists()) {

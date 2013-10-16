@@ -9,7 +9,7 @@ class DNReferenceList extends ArrayList {
 	protected $reference = null;
 
 	protected $blockBranch;
-	
+
 	protected $builds = array();
 
 	protected $limit = 10;
@@ -120,7 +120,7 @@ class DNReferenceList extends ArrayList {
 
 	public function Count() {
 		$this->getIterator();
-		return parent::Count();	
+		return parent::Count();
 	}
 
 	/**

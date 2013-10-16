@@ -1,7 +1,7 @@
 <?php
 
 class CapistranoDeploymentBackend implements DeploymentBackend {
-	
+
 	/**
 	 * Return information about the current build on the given environment.
 	 * Returns a map with keys:
@@ -10,7 +10,7 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 	 */
 	public function currentBuild($environment) {
 		$file = DEPLOYNAUT_LOG_PATH . '/' . $environment . ".deploy-history.txt";
-		
+
 		if(file_exists($file)) {
 			$lines = file($file);
 			$lastLine = array_pop($lines);
@@ -68,7 +68,7 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 			array('<config root>', '<ssh key>', '<base path>'),
 			array(DEPLOYNAUT_ENV_ROOT, DEPLOYNAUT_SSH_KEY, BASE_PATH),
 			$capTemplate);
-		
+
 		if(defined('DEPLOYNAUT_CAPFILE')) {
 			$capFile = DEPLOYNAUT_CAPFILE;
 		} else {
@@ -97,7 +97,7 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 	public function deployHistory($environment) {
 		$file = DEPLOYNAUT_LOG_PATH . '/' . $environment . ".deploy-history.txt";
 		$CLI_file = escapeshellarg($file);
-		
+
 		$history = array();
 		if(file_exists($file)) {
 			$lines = explode("\n", file_get_contents($file));
@@ -109,14 +109,14 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 		}
 		return array_reverse($history);
 	}
-	
+
 	/**
 	 * @return  array
 	 */
 	protected function convertLine($line) {
 		if(!trim($line)) return null;
 		if(!strpos($line, "=>")) return null;
-		
+
 		list($datetime, $buildname) = explode("=>", $line, 2);
 		return array(
 			'buildname' => trim($buildname),

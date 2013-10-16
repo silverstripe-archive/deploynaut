@@ -14,7 +14,7 @@ class DNData {
 	 * Path where the environment configurations can be found.
 	 */
 	protected static $environment_dir = '';
-	
+
 	/**
 	 * Path where the keys are stored.
 	 */
@@ -24,18 +24,18 @@ class DNData {
 	 * A prebuilt DNProjectList.
 	 */
 	protected $projectList;
-	
+
 	/**
 	 *
 	 * @var DeploymentBackend
 	 */
 	protected $backend;
-	
+
 	/**
 	 *
 	 * @param string $buildPath
 	 * @param array $environmentNames
-	 * @param DeploymentBackend $backend 
+	 * @param DeploymentBackend $backend
 	 */
 	public function __construct($buildDir, $environmentDir, $keyDir) {
 		$this->backend = Injector::inst()->get('DeploymentBackend');
@@ -70,15 +70,15 @@ class DNData {
 
 	/**
 	 *
-	 * @return DNBuildList 
+	 * @return DNBuildList
 	 */
 	public function DNProjectList() {
 		return DNProject::get();
 	}
-	
+
 	/**
 	 *
-	 * @return DeploymentBackend 
+	 * @return DeploymentBackend
 	 */
 	public function Backend() {
 		return $this->backend;

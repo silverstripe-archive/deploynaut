@@ -9,18 +9,18 @@ class GraphiteDeploymentNotifier {
 	/**
 	 * Config set in the .yml file
 	 */
-	static $graphite_host = null;
-	static $graphite_port = null;
+	public static $graphite_host = null;
+	public static $graphite_port = null;
 
 	/**
 	 * Notify Graphite of the start of a deployment.
-	 * 
+	 *
 	 * @param  string $environment Environment, in the form "project:environment"
 	 * @param  string $buildname   Name of the build
 	 * @param  string $buildFile   Filename of the build
 	 * @return void
 	 */
-	static function notify_start($environment, $buildname, $buildFile, DNProject $project) {
+	public static function notify_start($environment, $buildname, $buildFile, DNProject $project) {
 		$projectName = $project->Name;
 		$graphiteKey = "deploys.$projectName.$environment.start";
 		$graphiteValue = self::buildname_to_counter($buildname, $project);
@@ -31,13 +31,13 @@ class GraphiteDeploymentNotifier {
 
 	/**
 	 * Notify Graphite of the end of a deployment.
-	 * 
+	 *
 	 * @param  string $environment Environment, in the form "project:environment"
 	 * @param  string $buildname   Name of the build
 	 * @param  string $buildFile   Filename of the build
 	 * @return void
 	 */
-	static function notify_end($environment, $buildname, $buildFile, DNProject $project) {
+	public static function notify_end($environment, $buildname, $buildFile, DNProject $project) {
 		$projectName = $project->Name;
 		$graphiteKey = "deploys.$projectName.$environment.end";
 		$graphiteValue = self::buildname_to_counter($buildname, $project);

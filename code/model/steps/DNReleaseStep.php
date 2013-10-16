@@ -1,26 +1,26 @@
 <?php
 
 class DNReleaseStep extends DataObject {
-	static $db = array(
+	public static $db = array(
 		"Name" => "Varchar",
 		"Sort" => "Int",
 	);
 
-	static $has_one = array(
+	public static $has_one = array(
 		"Project" => "DNProject",
 	);
 
-	static $default_sort = "Sort";
+	public static $default_sort = "Sort";
 
-	function getReleaseStatus(DNCommit $commit, $sha) {
+	public function getReleaseStatus(DNCommit $commit, $sha) {
 		throw new LogicException("getReleaseStatus must be overridden to make a release step class");
 	}
 
-	function getReleaseLink(DNCommit $commit, $sha) {
+	public function getReleaseLink(DNCommit $commit, $sha) {
 		throw new LogicException("getReleaseLink must be overridden to make a release step class");
 	}
 
-	function getCMSFields() {
+	public function getCMSFields() {
 		$fields = parent::getCMSFields();
 
 		$classes = ClassInfo::subclassesFor('DNReleaseStep');

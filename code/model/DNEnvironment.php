@@ -1,36 +1,36 @@
 <?php
 
 class DNEnvironment extends DataObject {
-	static $db = array(
+	public static $db = array(
 		"Filename" => "Varchar(255)",
 		"Name" => "Varchar",
 		"URL" => "Varchar",
 		"GraphiteServers" => "Text",
 	);
-	static $has_one = array(
+	public static $has_one = array(
 		"Project" => "DNProject",
 	);
-	static $many_many = array(
+	public static $many_many = array(
 		"Deployers" => "Member",
 	);
 
-	static $summary_fields = array(
+	public static $summary_fields = array(
 		"Name",
 		"URL",
 		"DeployersList",
 	);
-	static $searchable_fields = array(
+	public static $searchable_fields = array(
 		"Name",
 	);
 
 	protected static $relation_cache = array();
 
-	static function get($callerClass = null, $filter = "", $sort = "", $join = "", $limit = null,
+	public static function get($callerClass = null, $filter = "", $sort = "", $join = "", $limit = null,
 			$containerClass = 'DataList') {
 		return new DNEnvironmentList('DNEnvironment');
 	}
 
-	static function create_from_path($path) {
+	public static function create_from_path($path) {
 		$e = new DNEnvironment;
 		$e->Filename = $path;
 		$e->Name = preg_replace('/\.rb$/', '', basename($e->Filename));
@@ -53,24 +53,24 @@ class DNEnvironment extends DataObject {
 		return self::$relation_cache['DNProject.' . $this->ProjectID];
 	}
 
-	function canView($member = null) {
+	public function canView($member = null) {
 		return $this->Project()->canView($member);
 	}
-	function canDeploy($member = null) {
+	public function canDeploy($member = null) {
 		if(!$member) $member = Member::currentUser();
 
 		return (bool)($this->Deployers()->byID($member->ID));
 	}
 
-	function getDeployersList() {
+	public function getDeployersList() {
 		return implode(", ", $this->Deployers()->column("FirstName"));
 	}
 
-	function DNData() {
+	public function DNData() {
 		return Injector::inst()->get('DNData');
 	}
 
-	function CurrentBuild() {
+	public function CurrentBuild() {
 		$buildInfo = $this->DNData()->Backend()->currentBuild($this->Project()->Name.':'.$this->Name);
 		return $buildInfo['buildname'];
 	}
@@ -78,7 +78,7 @@ class DNEnvironment extends DataObject {
 	/**
 	 * A history of all builds deployed to this environment
 	 */
-	function DeployHistory() {
+	public function DeployHistory() {
 		$history = $this->DNData()->Backend()->deployHistory($this->Project()->Name.':'.$this->Name);
 		$output = new ArrayList;
 		foreach($history as $item) {
@@ -90,25 +90,25 @@ class DNEnvironment extends DataObject {
 		return $output;
 	}
 
-	function HasMetrics() {
+	public function HasMetrics() {
 		return trim($this->GraphiteServers) != "";
 	}
 
 	/**
 	 * All graphs
 	 */
-	function Graphs() {
+	public function Graphs() {
 		if(!$this->HasMetrics()) return null;
 
 		$serverList = preg_split('/\s+/', trim($this->GraphiteServers));
-		
+
 		return new GraphiteList($serverList);
 	}
 
 	/**
 	 * Graphs, grouped by server
 	 */
-	function GraphServers() {
+	public function GraphServers() {
 		if(!$this->HasMetrics()) return null;
 
 		$serverList = preg_split('/\s+/', trim($this->GraphiteServers));
@@ -132,8 +132,7 @@ class DNEnvironment extends DataObject {
 		return $output;
 	}
 
-	
-	function Link() {
+	public function Link() {
 		return $this->Project()->Link()."/environment/" . $this->Name;
 	}
 
@@ -153,12 +152,11 @@ class DNEnvironment extends DataObject {
 		$fields->replaceField('Name', $nameField);
 		$projectField = $fields->fieldByName('Root.Main.ProjectID')->performReadonlyTransformation();
 		$fields->replaceField('ProjectID', $projectField);
-		$fields->addFieldToTab("Root.Main", 
-			new CheckboxSetField("Deployers", "Users who can deploy to this environment", 
+		$fields->addFieldToTab("Root.Main",
+			new CheckboxSetField("Deployers", "Users who can deploy to this environment",
 				$members));
 		$fields->makeFieldReadonly('Filename');
-		
-	
+
 		return $fields;
 	}
 }

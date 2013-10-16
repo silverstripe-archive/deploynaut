@@ -1,17 +1,17 @@
 <?php
 
 class GraphiteProxy extends Controller {
-	static $graphite_source = 'http://graphite.silverstripe.com/render';
+	public static $graphite_source = 'http://graphite.silverstripe.com/render';
 
-	static $url_handlers = array(
+	public static $url_handlers = array(
 		'render' => 'renderGraph',
 	);
 
-	static $allowed_actions = array(
+	public static $allowed_actions = array(
 		'renderGraph',
 	);
 
-	function renderGraph() {
+	public function renderGraph() {
 		if(!Member::currentUser()) throw new SS_HTTPResponse_Exception('Please log-in to see graphs', 403);
 
 		$getVars = $this->request->getVars();
@@ -57,13 +57,13 @@ class GraphiteProxy extends Controller {
 			curl_setopt($ch, CURLOPT_POST, 1);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 		} elseif($method == 'PUT') {
-			$put = fopen("php://temp", 'r+');				
+			$put = fopen("php://temp", 'r+');
 			fwrite($put, $data);
-			fseek($put, 0); 
+			fseek($put, 0);
 
 			curl_setopt($ch, CURLOPT_PUT, 1);
 			curl_setopt($ch, CURLOPT_INFILE, $put);
-			curl_setopt($ch, CURLOPT_INFILESIZE, strlen($data)); 
+			curl_setopt($ch, CURLOPT_INFILESIZE, strlen($data));
 		}
 
 		// Follow redirects
@@ -87,10 +87,10 @@ class GraphiteProxy extends Controller {
 		$responseHeaders = explode("\n", trim($responseHeaders));
 		array_shift($responseHeaders);
 
-		$statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE); 			
+		$statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		if($curlError !== '' || $statusCode == 0) $statusCode = 500;
 
-		$response = new SS_HTTPResponse($responseBody, $statusCode);		
+		$response = new SS_HTTPResponse($responseBody, $statusCode);
 		foreach($responseHeaders as $headerLine) {
 			if(strpos($headerLine, ":") !== false) {
 				list($headerName, $headerVal) = explode(":", $headerLine, 2);

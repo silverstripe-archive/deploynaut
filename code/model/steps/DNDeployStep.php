@@ -4,11 +4,11 @@
  * Defines a step that is triggered by deploying to a specific environment
  */
 class DNDeployStep extends DNReleaseStep {
-	static $has_one = array(
+	public static $has_one = array(
 		"Environment" => "DNEnvironment",
 	);
 
-	function getCMSFields() {
+	public function getCMSFields() {
 		$fields = parent::getCMSFields();
 
 		// Limit the environments listed to the ones in this project
@@ -17,11 +17,11 @@ class DNDeployStep extends DNReleaseStep {
 		return $fields;
 	}
 
-	function getReleaseStatus(DNCommit $commit, $sha) {
+	public function getReleaseStatus(DNCommit $commit, $sha) {
 		return $commit->EverDeployedTo($this->Environment()->Name) ? 'success' : null;
 	}
 
-	function getReleaseLink(DNCommit $commit, $sha) {
+	public function getReleaseLink(DNCommit $commit, $sha) {
 		return $this->Environment()->Link();
 	}
 }

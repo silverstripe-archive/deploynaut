@@ -11,7 +11,7 @@ class DNDeployment extends DataObject {
 	);
 	private static $has_one = array(
 		"Environment" => "DNEnvironment",
-		"Deployer" =>"Member", 
+		"Deployer" =>"Member",
 	);
 
 	protected $dnData;
@@ -19,14 +19,14 @@ class DNDeployment extends DataObject {
 	protected $sha;
 	protected $identifier;
 
-	function Link() {
+	public function Link() {
 		return Controller::join_links($this->Environment()->Link(), 'deploy', $this->ID);
 	}
-	function LogLink() {
+	public function LogLink() {
 		return $this->Link() . '/log';
 	}
 
-	function canView($member = null) {
+	public function canView($member = null) {
 		return $this->Environment()->canView($member);
 	}
 
@@ -36,14 +36,14 @@ class DNDeployment extends DataObject {
 		return $project->Name.'.'.$environment->Name.'.'.$this->ID.'.log';
 	}
 
-	function log() {
+	public function log() {
 		return new DeploynautLogFile($this->logfile());
 	}
-	function LogContent() {
+	public function LogContent() {
 		return $this->log()->content();
 	}
 
-	function ResqueStatus() {
+	public function ResqueStatus() {
 		$status = new Resque_Job_Status($this->ResqueToken);
 
 		$remap = array(
@@ -57,7 +57,7 @@ class DNDeployment extends DataObject {
 		return $remap[$status->get()];
 	}
 
-	function start() {
+	public function start() {
 		$environment = $this->Environment();
 		$project = $environment->Project();
 

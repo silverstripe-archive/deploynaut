@@ -4,7 +4,7 @@ ini_set('display_errors', true);
 
 /**
  * Load any required class files. This can absolutely be replaced by
- * a PHP Auto Load routine (php.net/autoload). 
+ * a PHP Auto Load routine (php.net/autoload).
  */
 
 require_once dirname(__FILE__) . '/Config.php';

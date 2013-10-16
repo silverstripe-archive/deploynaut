@@ -14,7 +14,7 @@ class ResqueReport extends LeftAndMain {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param int $id
 	 * @param array $fields
 	 * @return \Form
@@ -53,4 +53,3 @@ class ResqueReport extends LeftAndMain {
 		return $queueList;
 	}
 }
-

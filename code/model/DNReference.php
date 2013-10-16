@@ -16,7 +16,6 @@ class DNReference extends ViewableData {
 		return $this->reference->getName();
 	}
 
-
 	public function FullName() {
 		return $this->reference->getCommitHash();
 	}
@@ -24,5 +23,5 @@ class DNReference extends ViewableData {
 	public function Filename() {
 		return$this->reference->getFullname();
 	}
-	
+
 }

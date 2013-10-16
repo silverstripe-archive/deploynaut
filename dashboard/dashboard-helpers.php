@@ -57,7 +57,7 @@ function getSites() {
 /**
  * Return an array of servers that have the given target metric
  * Eg: getServersWith("server.*.*.mysql.queries.select")
- * 
+ *
  * servers will be "server.<network>.<host>" and sites will be a codename
  */
 function getServersWith($target) {
@@ -123,7 +123,6 @@ function getCommonGraphs($types, $params) {
 	}
 	return $graphs;
 }
-
 
 /**
  * Return a common graph, defined here and shared across dashboards
@@ -225,8 +224,6 @@ function getCommonGraph($type, $params = array()) {
 			->addMetric('alias(scale(divideSeries('.$base.'.apache.'.$site.'.status.http_4xx,'.$base.'.apache.'.$site.'.request.req_per_min),100),"4xx (%)")', '#00cc00')
 			->addMetric('alias(scale(divideSeries('.$base.'.apache.'.$site.'.status.http_5xx,'.$base.'.apache.'.$site.'.request.req_per_min),100),"5xx (%)")', '#0000cc')
 			->setSize($width, $height);
-
-
 
 	}
 }

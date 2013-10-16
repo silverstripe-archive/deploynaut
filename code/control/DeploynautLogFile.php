@@ -6,19 +6,19 @@
 class DeploynautLogFile {
 	protected $logFile;
 
-	function __construct($logFile) {
+	public function __construct($logFile) {
 		$this->logFile = DEPLOYNAUT_LOG_PATH . '/' . $logFile;
 	}
 
-	function write($message) {
+	public function write($message) {
 		error_log('['.date('Y-m-d H:i:s').'] ' . $message .PHP_EOL, 3, $this->logFile);
 	}
 
-	function exists() {
+	public function exists() {
 		return file_exists($this->logFile);
 	}
 
-	function content() {
+	public function content() {
 		return file_get_contents($this->logFile);
 	}
 

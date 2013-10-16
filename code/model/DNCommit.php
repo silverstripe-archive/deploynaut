@@ -7,13 +7,12 @@ class DNCommit extends ViewableData {
 	 */
 	protected $commit = null;
 
-
 	protected $name = null;
 
 	protected $references = null;
-	
+
 	protected $ownerBranchName = null;
-	
+
 	/**
 	 *
 	 * @param Gitonomy\Git\Commit $commit
@@ -36,7 +35,7 @@ class DNCommit extends ViewableData {
 		if($this->name == null) {
 			$this->name = $this->commit->getFixedShortHash(8);
 		}
-		
+
 		return $this->name;
 	}
 
@@ -119,14 +118,14 @@ class DNCommit extends ViewableData {
 		foreach($this->project->currentBuilds() as $envName => $currentBuild) {
 			if($currentBuild == $this->buildname) $envNames[] = $envName;
 		}
-		
+
 		if($envNames) return $this->project->Environments()->filter('Name', $envNames);
 		else return new ArrayList;
 	}
 
 	/**
 	 *
-	 * @param string $environmentName 
+	 * @param string $environmentName
 	 * @return boolean True if this release has ever been deployed to the given environment
 	 */
 	public function EverDeployedTo($environmentName) {
@@ -134,12 +133,11 @@ class DNCommit extends ViewableData {
 
 		$history = $this->data->Backend()->deployHistory($this->project->Name.':'.$environmentName);
 		foreach($history as $item) {
-			if($item['buildname'] == $sha) return true;	
+			if($item['buildname'] == $sha) return true;
 		}
 
 		return false;
 	}
-
 
 	/**
 	 * Release steps of the project and their status for this release
@@ -159,14 +157,14 @@ class DNCommit extends ViewableData {
 	}
 	/**
 	 *
-	 * @return SS_Datetime 
+	 * @return SS_Datetime
 	 */
 	public function Created() {
 		$created = $this->commit->getCommitterDate();
 
 		// gitonomy sets the time to UTC, so now we set the timezone to
 		// whatever PHP is set to (date.timezone). This will change in the future if each
-		// deploynaut user has their own timezone 
+		// deploynaut user has their own timezone
 		$created->setTimezone(new DateTimeZone(date_default_timezone_get()));
 
 		$d = new SS_Datetime();

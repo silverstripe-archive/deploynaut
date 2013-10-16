@@ -45,7 +45,7 @@ class Dashboard {
 }
 
 class Dashboard_UI {
-    static function render($name, $graphs, $selects = array(), $currentValues = array()) {
+    public static function render($name, $graphs, $selects = array(), $currentValues = array()) {
         // Necessary to do unshift-with-a-key
         $selects = array_reverse($selects, true);
         $selects['time'] = Dashboard::getTimes();
@@ -74,7 +74,7 @@ class Dashboard_UI {
         <?php
         foreach($selects as $name => $select) {
             echo "<select name=\"$name\">";
-                foreach($select as $key => $value) { 
+                foreach($select as $key => $value) {
                     echo "<option value=\"$key\"";
                     if ($key == $currentValues[$name]) echo "selected";
                     echo ">$value</option>";

@@ -1,9 +1,9 @@
 <?php
 
 class DNBuildList extends ArrayList {
-	
+
 	/**
-	 * This project's build files directory. 
+	 * This project's build files directory.
 	 * All tarballs sit directly under that path.
 	 */
 	protected $baseDir;
@@ -22,19 +22,19 @@ class DNBuildList extends ArrayList {
 	 * Project this DNBuildList belongs to. Effectively, a has_one-like relatonship.
 	 */
 	protected $project;
-	
-	function __construct($baseDir, $project, DNData $data) {
+
+	public function __construct($baseDir, $project, DNData $data) {
 		$this->baseDir = $baseDir;
 		$this->data = $data;
 		$this->project = $project;
-		
+
 		$builds = $this->getBuilds();
 
 		$this->builds = array();
 		foreach($builds as $build) {
 			$this->builds[$build->FullName()] = $build;
 		}
-		
+
 		parent::__construct($builds);
 	}
 
@@ -44,7 +44,7 @@ class DNBuildList extends ArrayList {
 	 */
 	protected function getBuilds() {
 		$builds = array();
-		
+
 		if(!file_exists($this->baseDir)) {
 			throw new Exception('Build directory '.$this->baseDir.' doesn\'t exist. Create it first.');
 		}
@@ -63,8 +63,8 @@ class DNBuildList extends ArrayList {
 	/**
 	 * Find a build in this set by name.
 	 */
-	function byName($name) {
+	public function byName($name) {
 		return $this->builds[$name];
 	}
-	
+
 }

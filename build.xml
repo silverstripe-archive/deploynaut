@@ -3,7 +3,7 @@
 <project name="deploynaut" default="checkout" basedir=".">
 	<property name="project" value="deploynaut" />
 	<property name="phpsupportDir" value="./buildtools" />
-	
+
 	<mkdir dir="../builds" />
 	<mkdir dir="../logs" />
 	<mkdir dir="../www-keys" />

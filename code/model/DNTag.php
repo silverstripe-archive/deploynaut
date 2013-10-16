@@ -1,13 +1,12 @@
 <?php
 
-
 class DNTag extends ViewableData {
 
 	/**
 	 *
 	 * @var Gitonomy\Git\Reference\Tag
 	 */
-	
+
 	protected $tag = null;
 
 	protected $project = null;
@@ -17,7 +16,7 @@ class DNTag extends ViewableData {
 	protected $name = null;
 
 	protected $references = null;
-	
+
 	/**
 	 *
 	 * @param Gitonomy\Git\Commit $commit
@@ -44,16 +43,16 @@ class DNTag extends ViewableData {
 
 	/**
 	 *
-	 * @return SS_Datetime 
+	 * @return SS_Datetime
 	 */
 	public function Created() {
 		$created = $this->tag->getCommit()->getCommitterDate();
 
-                // gitonomy sets the time to UTC, so now we set the timezone to 
-                // whatever PHP is set to (date.timezone). This will change in the future if each 
-                // deploynaut user has their own timezone  
-                $created->setTimezone(new DateTimeZone(date_default_timezone_get())); 
- 
+                // gitonomy sets the time to UTC, so now we set the timezone to
+                // whatever PHP is set to (date.timezone). This will change in the future if each
+                // deploynaut user has their own timezone
+                $created->setTimezone(new DateTimeZone(date_default_timezone_get()));
+
 		$d = new SS_Datetime();
 		$d->setValue($created->format('Y-m-d H:i:s'));
 		return $d;
