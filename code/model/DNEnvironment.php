@@ -1,35 +1,85 @@
 <?php
 
+/**
+ * DNEnvironment
+ *
+ * This dataobject represents a target environment that source code can be
+ * deployed to.
+ *
+ */
 class DNEnvironment extends DataObject {
+
+	/**
+	 *
+	 * @var array
+	 */
 	public static $db = array(
 		"Filename" => "Varchar(255)",
 		"Name" => "Varchar",
 		"URL" => "Varchar",
 		"GraphiteServers" => "Text",
 	);
+
+	/**
+	 *
+	 * @var array
+	 */
 	public static $has_one = array(
 		"Project" => "DNProject",
 	);
+
+	/**
+	 *
+	 * @var array
+	 */
 	public static $many_many = array(
 		"Deployers" => "Member",
 	);
 
+	/**
+	 *
+	 * @var array
+	 */
 	public static $summary_fields = array(
 		"Name",
 		"URL",
 		"DeployersList",
 	);
+
+	/**
+	 *
+	 * @var array
+	 */
 	public static $searchable_fields = array(
 		"Name",
 	);
 
+	/**
+	 *
+	 * @var array
+	 */
 	protected static $relation_cache = array();
 
+	/**
+	 *
+	 * @param string $callerClass
+	 * @param string $filter
+	 * @param string $sort
+	 * @param string $join
+	 * @param string $limit
+	 * @param string $containerClass
+	 * @return \DNEnvironmentList
+	 */
 	public static function get($callerClass = null, $filter = "", $sort = "", $join = "", $limit = null,
 			$containerClass = 'DataList') {
 		return new DNEnvironmentList('DNEnvironment');
 	}
 
+	/**
+	 *
+	 * @param string $path
+	 * @return \DNEnvironment
+	 */
 	public static function create_from_path($path) {
 		$e = new DNEnvironment;
 		$e->Filename = $path;
@@ -42,10 +92,13 @@ class DNEnvironment extends DataObject {
 				$e->Deployers()->add($member);
 			}
 		}
-
 		return $e;
 	}
 
+	/**
+	 *
+	 * @return DNProject
+	 */
 	public function Project() {
 		if(!isset(self::$relation_cache['DNProject.' . $this->ProjectID])) {
 			self::$relation_cache['DNProject.' . $this->ProjectID] = $this->getComponent('Project');
@@ -53,23 +106,46 @@ class DNEnvironment extends DataObject {
 		return self::$relation_cache['DNProject.' . $this->ProjectID];
 	}
 
+	/**
+	 *
+	 * @param Member $member
+	 * @return boolean
+	 */
 	public function canView($member = null) {
 		return $this->Project()->canView($member);
 	}
+
+	/**
+	 *
+	 * @param Member $member
+	 * @return boolean
+	 */
 	public function canDeploy($member = null) {
 		if(!$member) $member = Member::currentUser();
 
 		return (bool)($this->Deployers()->byID($member->ID));
 	}
 
+	/**
+	 *
+	 * @return string
+	 */
 	public function getDeployersList() {
 		return implode(", ", $this->Deployers()->column("FirstName"));
 	}
 
+	/**
+	 *
+	 * @return DNData
+	 */
 	public function DNData() {
 		return Injector::inst()->get('DNData');
 	}
 
+	/**
+	 *
+	 * @return string
+	 */
 	public function CurrentBuild() {
 		$buildInfo = $this->DNData()->Backend()->currentBuild($this->Project()->Name.':'.$this->Name);
 		return $buildInfo['buildname'];
@@ -77,6 +153,8 @@ class DNEnvironment extends DataObject {
 
 	/**
 	 * A history of all builds deployed to this environment
+	 *
+	 * @return ArrayList
 	 */
 	public function DeployHistory() {
 		$history = $this->DNData()->Backend()->deployHistory($this->Project()->Name.':'.$this->Name);
@@ -90,12 +168,18 @@ class DNEnvironment extends DataObject {
 		return $output;
 	}
 
+	/**
+	 *
+	 * @return string
+	 */
 	public function HasMetrics() {
 		return trim($this->GraphiteServers) != "";
 	}
 
 	/**
 	 * All graphs
+	 *
+	 * @return GraphiteList
 	 */
 	public function Graphs() {
 		if(!$this->HasMetrics()) return null;
@@ -107,6 +191,8 @@ class DNEnvironment extends DataObject {
 
 	/**
 	 * Graphs, grouped by server
+	 *
+	 * @return ArrayList
 	 */
 	public function GraphServers() {
 		if(!$this->HasMetrics()) return null;
@@ -132,10 +218,18 @@ class DNEnvironment extends DataObject {
 		return $output;
 	}
 
+	/**
+	 *
+	 * @return string
+	 */
 	public function Link() {
 		return $this->Project()->Link()."/environment/" . $this->Name;
 	}
 
+	/**
+	 *
+	 * @return FieldList
+	 */
 	public function getCMSFields() {
 		$fields = parent::getCMSFields();
 
