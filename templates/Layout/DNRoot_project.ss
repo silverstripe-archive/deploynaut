@@ -33,7 +33,7 @@
 	<% end_loop %>
 	<% else %>
 		<tr>
-			<td colspan="3">No environments available yet!</td>
+			<td colspan="5">No environments available yet!</td>
 		</tr>
 	<% end_if %>
 	</tbody>
