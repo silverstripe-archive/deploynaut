@@ -242,15 +242,32 @@ class DNEnvironment extends DataObject {
 		asort($members);
 
 		$fields->fieldByName("Root")->removeByName("Deployers");
-		$nameField = $fields->fieldByName('Root.Main.Name')->performReadonlyTransformation();
-		$fields->replaceField('Name', $nameField);
+
 		$projectField = $fields->fieldByName('Root.Main.ProjectID')->performReadonlyTransformation();
-		$fields->replaceField('ProjectID', $projectField);
-		$fields->addFieldToTab("Root.Main",
-			new CheckboxSetField("Deployers", "Users who can deploy to this environment",
-				$members));
+
+		$fields->insertBefore($projectField, 'Filename');
+
+		$nameField = $fields->fieldByName('Root.Main.Name');
+		$nameField->setTitle('Environment name');
+		$nameField->setDescription('A descriptive name for this environment, e.g. staging, uat, production');
+		$fields->insertAfter($nameField, 'ProjectID');
+
+		$urlField = $fields->fieldByName('Root.Main.URL');
+		$urlField->setDescription('This url will be used to provide the front-end with a link to this environment');
+		$fields->insertAfter($urlField, 'Name');
+
+		$deployers = new CheckboxSetField("Deployers", "Deployers", $members);
+		$deployers->setDescription('Users who can deploy to this environment');
+		$fields->insertAfter($deployers, 'URL');
+
 		$fields->makeFieldReadonly('Filename');
 
+		$fields->fieldByName('Root.Main.GraphiteServers')
+			->setDescription(
+				'Find the relevant graphite servers at '.
+				'<a href="http://graphite.silverstripe.com/" target="_blank">graphite.silverstripe.com</a>'.
+				' and enter them one per line, e.g. "server.wgtn.oscar"'
+			);
 		return $fields;
 	}
 }
