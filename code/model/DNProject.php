@@ -231,22 +231,6 @@ class DNProject extends DataObject {
 			->setTitle('Project name')
 			->setDescription('Changing the name will <strong>reset</strong> the deploy configuration and avoid using non alphanumeric characters');
 
-		// Check if the capistrano project folder exists
-		if($this->Name) {
-			if(!file_exists(DEPLOYNAUT_ENV_ROOT.'/'.$this->Name)){
-				$createFolderNotice = new LabelField('CreateEnvFolderNotice',
-					'Warning: No Capistrano project folder exists'
-				);
-				$createFolderNotice->addExtraClass('message warning');
-				$fields->insertBefore($createFolderNotice, 'Name');
-				
-				$createFolderField = new CheckboxField('CreateEnvFolder', 'Create folder');
-				$createFolderField->setDescription('Would you like to create the capistrano project folder?');
-				$fields->insertAfter($createFolderField, 'CreateEnvFolderNotice');
-			}
-		}
-		
-		
 		$fields->fieldByName('Root.Main.CVSPath')
 			->setTitle('Git repository')
 			->setDescription('E.g. git@github.com:silverstripe/silverstripe-installer.git');
@@ -259,28 +243,70 @@ class DNProject extends DataObject {
 		$readAccessGroups->setDescription('These groups can view the project in the front-end.');
 		$fields->addFieldToTab("Root.Main", $readAccessGroups);
 
-		if($environments) {
-			$environments->getConfig()->removeComponentsByType('GridFieldAddNewButton');
-			$environments->getConfig()->removeComponentsByType('GridFieldAddExistingAutocompleter');
-			$environments->getConfig()->removeComponentsByType('GridFieldDeleteAction');
-			$environments->getConfig()->removeComponentsByType('GridFieldPageCount');
-			$addNewRelease = new GridFieldAddNewButton('toolbar-header-right');
-			$addNewRelease->setButtonName('Add');
-			$environments->getConfig()->addComponent($addNewRelease);
-			$fields->addFieldToTab("Root.Main", $environments);
-		}
-
-		if($releaseSteps) {
-			$releaseSteps->getConfig()->addComponent(new GridFieldSortableRows('Sort'));
-			$releaseSteps->getConfig()->removeComponentsByType('GridFieldAddExistingAutocompleter');
-			$releaseSteps->getConfig()->removeComponentsByType('GridFieldAddNewButton');
-			$releaseSteps->getConfig()->removeComponentsByType('GridFieldPageCount');
-			$addNewRelease = new GridFieldAddNewButton('toolbar-header-right');
-			$addNewRelease->setButtonName('Add');
-			$releaseSteps->getConfig()->addComponent($addNewRelease);
-			$fields->addFieldToTab("Root.Release steps", $releaseSteps);
-		}
+		$this->setCreateProjectFolderField($fields);
+		$this->setEnvironmentFields($fields, $environments);
+		$this->setDeployStepsFields($fields, $releaseSteps);
+		
 		return $fields;
+	}
+	
+	/**
+	 * If there isn't a capistrano env project folder, show options to create one
+	 * 
+	 * @param FieldList $fields
+	 */
+	protected function setCreateProjectFolderField(&$fields) {
+		// Check if the capistrano project folder exists
+		if(!$this->Name) {
+			return;
+		}
+		if(file_exists(DEPLOYNAUT_ENV_ROOT.'/'.$this->Name)){
+			return;
+		}
+		$createFolderNotice = new LabelField('CreateEnvFolderNotice', 'Warning: No Capistrano project folder exists');
+		$createFolderNotice->addExtraClass('message warning');
+		$fields->insertBefore($createFolderNotice, 'Name');
+		$createFolderField = new CheckboxField('CreateEnvFolder', 'Create folder');
+		$createFolderField->setDescription('Would you like to create the capistrano project folder?');
+		$fields->insertAfter($createFolderField, 'CreateEnvFolderNotice');
+	}
+	
+	/**
+	 * Setup a gridfield for the environment configs
+	 * 
+	 * @param FieldList $fields
+	 */
+	protected function setEnvironmentFields(&$fields, $environments) {
+		if(!$environments) {
+			return false;
+		}
+		$environments->getConfig()->removeComponentsByType('GridFieldAddNewButton');
+		$environments->getConfig()->removeComponentsByType('GridFieldAddExistingAutocompleter');
+		$environments->getConfig()->removeComponentsByType('GridFieldDeleteAction');
+		$environments->getConfig()->removeComponentsByType('GridFieldPageCount');
+		$addNewRelease = new GridFieldAddNewButton('toolbar-header-right');
+		$addNewRelease->setButtonName('Add');
+		$environments->getConfig()->addComponent($addNewRelease);
+		$fields->addFieldToTab("Root.Main", $environments);
+	}
+	
+	/**
+	 * Setup a gridfield for the deployment steps
+	 * 
+	 * @param FieldList $fields
+	 */
+	protected function setDeployStepsFields(&$fields, $releaseSteps) {
+		if(!$releaseSteps) {
+			return;
+		}
+		$releaseSteps->getConfig()->addComponent(new GridFieldSortableRows('Sort'));
+		$releaseSteps->getConfig()->removeComponentsByType('GridFieldAddExistingAutocompleter');
+		$releaseSteps->getConfig()->removeComponentsByType('GridFieldAddNewButton');
+		$releaseSteps->getConfig()->removeComponentsByType('GridFieldPageCount');
+		$addNewRelease = new GridFieldAddNewButton('toolbar-header-right');
+		$addNewRelease->setButtonName('Add');
+		$releaseSteps->getConfig()->addComponent($addNewRelease);
+		$fields->addFieldToTab("Root.Release steps", $releaseSteps);
 	}
 
 	/**
