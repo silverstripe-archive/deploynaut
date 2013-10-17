@@ -49,6 +49,12 @@ class DNProject extends DataObject {
 	public static $searchable_fields = array(
 		"Name",
 	);
+	
+	/**
+	 *
+	 * @var string 
+	 */
+	private static $default_sort = 'Name';
 
 	/**
 	 * Display the repository URL on the project page.

@@ -64,6 +64,12 @@ class DNEnvironment extends DataObject {
 	public static $searchable_fields = array(
 		"Name",
 	);
+	
+	/**
+	 *
+	 * @var string 
+	 */
+	private static $default_sort = 'Name';
 
 	/**
 	 *
