@@ -72,12 +72,16 @@ class DNEnvironment extends DataObject {
 	private static $default_sort = 'Name';
 
 	/**
+	 * Caches the relation to the Parent Project
 	 *
 	 * @var array
 	 */
 	protected static $relation_cache = array();
 
 	/**
+	 * 
+	 * @todo this should probably be refactored so it don't interfere with the default
+	 * DataObject::get() behaviour.
 	 *
 	 * @param string $callerClass
 	 * @param string $filter
@@ -93,6 +97,7 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
+	 * Used by the sync task
 	 *
 	 * @param string $path
 	 * @return \DNEnvironment
@@ -124,6 +129,7 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
+	 * Environments are only viewable by people that can view the parent project
 	 *
 	 * @param Member $member
 	 * @return boolean
@@ -133,6 +139,7 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
+	 * Allow deploy only to some people.
 	 *
 	 * @param Member $member
 	 * @return boolean
@@ -144,6 +151,7 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
+	 * Get a string of people that are allowed to deploy to this environment
 	 *
 	 * @return string
 	 */
@@ -160,6 +168,7 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
+	 * Get the current deployed build for this environment
 	 *
 	 * @return string
 	 */
@@ -186,6 +195,7 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
+	 * Does this environment have a graphite server configuration
 	 *
 	 * @return string
 	 */
@@ -194,7 +204,7 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
-	 * All graphs
+	 * All graphite graphs
 	 *
 	 * @return GraphiteList
 	 */
@@ -208,6 +218,8 @@ class DNEnvironment extends DataObject {
 
 	/**
 	 * Graphs, grouped by server
+	 * 
+	 * @todo refactor out the hardcoded aa exception
 	 *
 	 * @return ArrayList
 	 */
@@ -338,11 +350,10 @@ class DNEnvironment extends DataObject {
 	 * 
 	 * @return string
 	 */
-	public function getEnvironmentConfig() {
+	protected function getEnvironmentConfig() {
 		if(!$this->envFileExists()) {
 			return '';
 		}
-		
 		return file_get_contents($this->getConfigFilename());
 	}
 	
@@ -361,7 +372,7 @@ class DNEnvironment extends DataObject {
 	 * 
 	 * @return boolean
 	 */
-	public function getConfigFilename() {
+	protected function getConfigFilename() {
 		if(!$this->Project()->exists()) {
 			return '';
 		}
