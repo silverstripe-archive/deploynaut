@@ -318,7 +318,7 @@ class DNProject extends DataObject {
 	}
 
 	/**
-	 * Setup a resque job to clone a git repository
+	 * Setup a asyncronous resque job to clone a git repository
 	 *
 	 */
 	public function cloneRepo() {
