@@ -64,12 +64,16 @@ class DNProject extends DataObject {
 	private static $show_repository_url = false;
 
 	/**
+	 * In-memory cache for currentBuilds per environment since fetching them from 
+	 * disk is pretty resource hungry.
 	 *
 	 * @var array
 	 */
 	protected static $relation_cache = array();
 
 	/**
+	 * 
+	 * @todo probably refactor this so it don't mess with the SS default DataObject::get()
 	 *
 	 * @param string $callerClass
 	 * @param string $filter
@@ -85,6 +89,7 @@ class DNProject extends DataObject {
 	}
 
 	/**
+	 * Used by the sync task
 	 *
 	 * @param string $path
 	 * @return \DNProject
@@ -103,6 +108,7 @@ class DNProject extends DataObject {
 	}
 
 	/**
+	 * Restrict access to viewing this project
 	 *
 	 * @param Member $member
 	 * @return boolean
@@ -120,6 +126,9 @@ class DNProject extends DataObject {
 
 	/**
 	 * Build an environment variable array to be used with this project.
+	 * 
+	 * This is relevant if every project needs to use an individual SSH pubkey.
+	 * 
 	 * Include this with all Gitonomy\Git\Repository, and
 	 * \Symfony\Component\Process\Processes.
 	 *
@@ -140,6 +149,7 @@ class DNProject extends DataObject {
 	}
 
 	/**
+	 * Get a string of people allowed to view this project
 	 *
 	 * @return string
 	 */
@@ -332,6 +342,7 @@ class DNProject extends DataObject {
 	}
 
 	/**
+	 * Checks for missing folders folder and schedules a git clone if the necessary
 	 *
 	 */
 	public function onBeforeWrite() {
