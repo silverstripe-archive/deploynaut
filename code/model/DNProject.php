@@ -265,14 +265,16 @@ class DNProject extends DataObject {
 	 * 
 	 * @param FieldList $fields
 	 */
-	protected function setCreateProjectFolderField(&$fields) {
+	public function setCreateProjectFolderField(&$fields) {
 		// Check if the capistrano project folder exists
 		if(!$this->Name) {
 			return;
 		}
-		if(file_exists(DEPLOYNAUT_ENV_ROOT.'/'.$this->Name)){
+		
+		if(file_exists($this->DNData()->getEnvironmentDir().'/'.$this->Name)){
 			return;
 		}
+		
 		$createFolderNotice = new LabelField('CreateEnvFolderNotice', 'Warning: No Capistrano project folder exists');
 		$createFolderNotice->addExtraClass('message warning');
 		$fields->insertBefore($createFolderNotice, 'Name');
@@ -349,8 +351,8 @@ class DNProject extends DataObject {
 		parent::onBeforeWrite();
 		
 		// Create the project capistrano folder
-		if($this->CreateEnvFolder && !file_exists(DEPLOYNAUT_ENV_ROOT.'/'.$this->Name)) {
-			mkdir(DEPLOYNAUT_ENV_ROOT.'/'.$this->Name);
+		if($this->CreateEnvFolder && !file_exists($this->DNData()->getEnvironmentDir().'/'.$this->Name)) {
+			mkdir($this->DNData()->getEnvironmentDir().'/'.$this->Name);
 		}
 		
 		$changedFields = $this->getChangedFields(true, 2);
