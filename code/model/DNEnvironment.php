@@ -372,13 +372,13 @@ class DNEnvironment extends DataObject {
 	 * 
 	 * @return boolean
 	 */
-	protected function getConfigFilename() {
+	public function getConfigFilename() {
 		if(!$this->Project()->exists()) {
 			return '';
 		}
 		if(!$this->Filename) {
 			return '';
 		}
-		return DEPLOYNAUT_ENV_ROOT.$this->Project()->Name.'/'.$this->Filename.'.rb';
+		return $this->DNData()->getEnvironmentDir().'/'.$this->Project()->Name.'/'.$this->Filename.'.rb';
 	}
 }
