@@ -1,25 +1,51 @@
 <?php
 
 class SyncProjectsAndEnvironments extends BuildTask {
+	
 	public function run($request = null) {
 		// should syncing remove obsolete records?
-		$remove = ($request && $request->requestVar('remove') !== NULL) ? (bool) $request->requestVar('remove') : true;
+		$remove = true;
+		$dryRun = true;
+		
+		if($request && $request->requestVar('remove') !== NULL) {
+			$remove = (bool) $request->requestVar('remove');
+		}
+		
+		if($request && $request->requestVar('dryrun') !== NULL) {
+			$dryRun = (bool) $request->requestVar('dryrun');
+		}
 		$data = Injector::inst()->get('DNData');
 		$projectPaths = $data->getProjectPaths();
 
 		// Sync projects
 		$projects = DNProject::get();
-		$projects->syncWithPaths($projectPaths, $remove);
-
-		$dryRun = (!empty($_GET['dryrun']));
-
+		if($remove) {
+			$this->echoHeader('Removing obsolete projects');
+			$projects->removeObsolete($projectPaths, $dryRun);
+		}
+		$this->echoHeader('Adding new projects');
+		$projects->syncWithPaths($projectPaths, $dryRun);
+		
+		$this->echoHeader('Syncing environment files');
 		foreach($projects as $project) {
-			echo "<h2>$project->Name</h2>\n";
-
+			$this->echoHeader($project->Name);
 			// Sync environments for each project
 			$environmentPaths = $data->getEnvironmentPaths($project->Name);
-
-			$project->DNEnvironmentList()->syncWithPaths($environmentPaths, $remove, $dryRun);
+			$project->DNEnvironmentList()->removeObsolete($environmentPaths, $dryRun);
+			$project->DNEnvironmentList()->syncWithPaths($environmentPaths, $dryRun);
+			
+		}
+	}
+	
+	/**
+	 * 
+	 * @param string $text
+	 */
+	protected function echoHeader($text) {
+		if(PHP_SAPI !== 'cli') {
+			echo '<h2>'.$text.'</h2>'.PHP_EOL;
+		} else {
+			echo '# '.$text.PHP_EOL;
 		}
 	}
 }

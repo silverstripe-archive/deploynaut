@@ -105,7 +105,7 @@ class DNEnvironment extends DataObject {
 	public static function create_from_path($path) {
 		$e = new DNEnvironment;
 		$e->Filename = $path;
-		$e->Name = preg_replace('/\.rb$/', '', basename($e->Filename));
+		$e->Name = basename($e->Filename, '.rb');
 
 		// add each administrator member as a deployer of the new environment
 		$adminGroup = Group::get()->filter('Code', 'administrators')->first();
@@ -282,6 +282,12 @@ class DNEnvironment extends DataObject {
 		$nameField->setDescription('A descriptive name for this environment, e.g. staging, uat, production');
 		$fields->insertAfter($nameField, 'ProjectID');
 
+		// The Main.Filename
+		$fileNameField = $fields->fieldByName('Root.Main.Filename')->performReadonlyTransformation();
+		$fileNameField->setTitle('Filename');
+		$fileNameField->setDescription('The capistrano environment file name');
+		$fields->insertAfter($fileNameField, 'Name');
+		
 		// The Main.Deployers
 		$deployers = new CheckboxSetField("Deployers", "Deployers", $members);
 		$deployers->setDescription('Users who can deploy to this environment');
@@ -292,10 +298,10 @@ class DNEnvironment extends DataObject {
 			if(!$this->envFileExists()) {
 				$noDeployConfig = new LabelField('noDeployConfig', 'Warning: This environment don\'t have deployment configuration.');
 				$noDeployConfig->addExtraClass('message warning');
-				$fields->insertBefore($noDeployConfig, 'Name');
+				$fields->insertAfter($noDeployConfig, 'Filename');
 				$createConfigField = new CheckboxField('CreateEnvConfig', 'Create Config');
 				$createConfigField->setDescription('Would you like to create the capistrano deploy configuration?');
-				$fields->insertAfter($createConfigField, 'Name');
+				$fields->insertAfter($createConfigField, 'noDeployConfig');
 			} else {
 				$deployConfig = new TextareaField('DeployConfig', 'Deploy config', $this->getEnvironmentConfig());
 				$deployConfig->setRows(40);
@@ -329,8 +335,8 @@ class DNEnvironment extends DataObject {
 	 */
 	public function onBeforeWrite() {
 		parent::onBeforeWrite();
-		if($this->Name && $this->Name != $this->Filename) {
-			$this->Filename = $this->Name;
+		if($this->Name && $this->Name.'.rb' != $this->Filename) {
+			$this->Filename = $this->Name.'.rb';
 		}
 		
 		// Create a basic new environment config from a template
@@ -379,6 +385,6 @@ class DNEnvironment extends DataObject {
 		if(!$this->Filename) {
 			return '';
 		}
-		return $this->DNData()->getEnvironmentDir().'/'.$this->Project()->Name.'/'.$this->Filename.'.rb';
+		return $this->DNData()->getEnvironmentDir().'/'.$this->Project()->Name.'/'.$this->Filename;
 	}
 }

@@ -271,7 +271,7 @@ class DNProject extends DataObject {
 			return;
 		}
 		
-		if(file_exists($this->DNData()->getEnvironmentDir().'/'.$this->Name)){
+		if($this->projectFolderExists()) {
 			return;
 		}
 		
@@ -281,6 +281,17 @@ class DNProject extends DataObject {
 		$createFolderField = new CheckboxField('CreateEnvFolder', 'Create folder');
 		$createFolderField->setDescription('Would you like to create the capistrano project folder?');
 		$fields->insertAfter($createFolderField, 'CreateEnvFolderNotice');
+	}
+	
+	/**
+	 * 
+	 * @return boolean
+	 */
+	public function projectFolderExists() {
+		if(file_exists($this->DNData()->getEnvironmentDir().'/'.$this->Name)){
+			return true;
+		}
+		return false;
 	}
 	
 	/**
