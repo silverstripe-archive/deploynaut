@@ -14,6 +14,15 @@ class SyncProjectsAndEnvironments extends BuildTask {
 		if($request && $request->requestVar('dryrun') !== NULL) {
 			$dryRun = (bool) $request->requestVar('dryrun');
 		}
+		
+		if($dryRun) {
+			echo "Running in dry run mode, no changes commited, ";
+			echo "the output shows a prediction on what will happen.".PHP_EOL;
+			echo "To skip dryrun, run the task like this:".PHP_EOL;
+			echo "./framework/sake dev/tasks/SyncProjectsAndEnvironments dryrun=0".PHP_EOL.PHP_EOL;
+			sleep(3);
+		}
+		
 		$data = Injector::inst()->get('DNData');
 		$projectPaths = $data->getProjectPaths();
 
@@ -33,7 +42,6 @@ class SyncProjectsAndEnvironments extends BuildTask {
 			$environmentPaths = $data->getEnvironmentPaths($project->Name);
 			$project->DNEnvironmentList()->removeObsolete($environmentPaths, $dryRun);
 			$project->DNEnvironmentList()->syncWithPaths($environmentPaths, $dryRun);
-			
 		}
 	}
 	
