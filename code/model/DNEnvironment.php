@@ -302,20 +302,7 @@ class DNEnvironment extends DataObject {
 
 		// The Main.DeployConfig
 		if($this->Project()->exists()) {
-			if(!$this->envFileExists()) {
-				$noDeployConfig = new LabelField('noDeployConfig', 'Warning: This environment don\'t have deployment configuration.');
-				$noDeployConfig->addExtraClass('message warning');
-				$fields->insertAfter($noDeployConfig, 'Filename');
-				if($this->config()->get('allow_web_editing')) {
-					$createConfigField = new CheckboxField('CreateEnvConfig', 'Create Config');
-					$createConfigField->setDescription('Would you like to create the capistrano deploy configuration?');
-					$fields->insertAfter($createConfigField, 'noDeployConfig');
-				}
-			} elseif($this->config()->get('allow_web_editing')) {
-				$deployConfig = new TextareaField('DeployConfig', 'Deploy config', $this->getEnvironmentConfig());
-				$deployConfig->setRows(40);
-				$fields->insertAfter($deployConfig, 'Deployers');
-			}
+			$this->setDeployConfigurationFields($fields);
 		}
 		
 		// The Extra.URL field
@@ -334,9 +321,31 @@ class DNEnvironment extends DataObject {
 			' and enter them one per line, e.g. "server.wgtn.oscar"'
 		);
 		$fields->addFieldToTab('Root.Extra', $graphiteServerField);
-		
-		
 		return $fields;
+	}
+	
+	/**
+	 * 
+	 * @param FieldList $fields
+	 */
+	protected function setDeployConfigurationFields(&$fields) {
+		if(!$this->config()->get('allow_web_editing')) {
+			return;
+		}
+		
+		if($this->envFileExists()) {
+			$deployConfig = new TextareaField('DeployConfig', 'Deploy config', $this->getEnvironmentConfig());
+			$deployConfig->setRows(40);
+			$fields->insertAfter($deployConfig, 'Deployers');
+			return;
+		}
+			
+		$noDeployConfig = new LabelField('noDeployConfig', 'Warning: This environment don\'t have deployment configuration.');
+		$noDeployConfig->addExtraClass('message warning');
+		$fields->insertAfter($noDeployConfig, 'Filename');
+		$createConfigField = new CheckboxField('CreateEnvConfig', 'Create Config');
+		$createConfigField->setDescription('Would you like to create the capistrano deploy configuration?');
+		$fields->insertAfter($createConfigField, 'noDeployConfig');
 	}
 	
 	/**

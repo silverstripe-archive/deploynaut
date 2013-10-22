@@ -307,9 +307,12 @@ class DNProject extends DataObject {
 		$environments->getConfig()->removeComponentsByType('GridFieldAddExistingAutocompleter');
 		$environments->getConfig()->removeComponentsByType('GridFieldDeleteAction');
 		$environments->getConfig()->removeComponentsByType('GridFieldPageCount');
-		$addNewRelease = new GridFieldAddNewButton('toolbar-header-right');
-		$addNewRelease->setButtonName('Add');
-		$environments->getConfig()->addComponent($addNewRelease);
+		if(Config::inst()->get('DNEnvironment', 'allow_web_editing')) {
+			$addNewRelease = new GridFieldAddNewButton('toolbar-header-right');
+			$addNewRelease->setButtonName('Add');
+			$environments->getConfig()->addComponent($addNewRelease);
+		}
+		
 		$fields->addFieldToTab("Root.Main", $environments);
 	}
 	
