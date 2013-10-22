@@ -371,6 +371,17 @@ class DNEnvironment extends DataObject {
 	}
 	
 	/**
+	 * Delete any related config files
+	 */
+	public function onAfterDelete() {
+		parent::onAfterDelete();
+		// Create a basic new environment config from a template
+		if($this->config()->get('allow_web_editing') && $this->envFileExists()) {
+			unlink($this->getConfigFilename());
+		}
+	}
+	
+	/**
 	 * 
 	 * @return string
 	 */

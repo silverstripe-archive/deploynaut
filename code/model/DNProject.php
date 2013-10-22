@@ -365,7 +365,7 @@ class DNProject extends DataObject {
 		parent::onBeforeWrite();
 		
 		// Create the project capistrano folder
-		if($this->CreateEnvFolder && !file_exists($this->DNData()->getEnvironmentDir().'/'.$this->Name)) {
+		if($this->CreateEnvFolder && !file_exists($this->getProjectFolderPath())) {
 			mkdir($this->DNData()->getEnvironmentDir().'/'.$this->Name);
 		}
 		
@@ -377,6 +377,26 @@ class DNProject extends DataObject {
 			$name = preg_replace("/[^A-Za-z0-9 ]/", '', $this->Name);
 			$this->LocalCVSPath = DEPLOYNAUT_LOCAL_VCS_PATH . '/' . $name;
 			$this->cloneRepo();
+		}
+	}
+	
+	/**
+	 * Delete related environments and folders
+	 */
+	public function onAfterDelete() {
+		parent::onAfterDelete();
+		
+		// Delete related environments
+		foreach($this->Environments() as $env) {
+			$env->delete();
+		}
+		
+		if(!file_exists($this->getProjectFolderPath())) {
+			return;
+		}
+		// Create a basic new environment config from a template
+		if(Config::inst()->get('DNEnvironment', 'allow_web_editing')) {
+			FileSystem::removeFolder($this->getProjectFolderPath());
 		}
 	}
 
@@ -398,5 +418,13 @@ class DNProject extends DataObject {
 		if ($showUrl) {
 			return $this->CVSPath;
 		}
+	}
+	
+	/**
+	 * 
+	 * @return string
+	 */
+	protected function getProjectFolderPath() {
+		return $this->DNData()->getEnvironmentDir().'/'.$this->Name;
 	}
 }
