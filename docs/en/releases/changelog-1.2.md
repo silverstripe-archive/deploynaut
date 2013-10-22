@@ -1,11 +1,41 @@
 # Changelog 1.2
 
-## Added features
+## Changes
 
 - Admin users can create and delete projects via the web UI.
 - Admin users can modify the capistrano environment configuration via the web UI
+- Removed unused DNData::getBuildDir() and DNData::setBuildDir()
 
 ## Upgrade migration
+
+### Config
+
+If you have overriden the config/dnroot.yml, remove the first argument to DNData. The reason is 
+that the current version of Deploynaut don't support deploys via tarballs.
+
+So from:
+
+	Injector:
+	    DeploymentBackend:
+	        class: CapistranoDeploymentBackend
+	    DNData:
+	        constructor:
+				0: "../../deploynaut-resources/builds"
+	            1: "../../deploynaut-resources/envs"
+	            2: "../../deploynaut-resources/gitkeys""
+
+To:
+
+	Injector:
+	    DeploymentBackend:
+	        class: CapistranoDeploymentBackend
+	    DNData:
+	        constructor:
+	            0: "../../deploynaut-resources/envs"
+	            1: "../../deploynaut-resources/gitkeys"
+
+
+### Migration script
 
 Run the migration script:
 
@@ -14,7 +44,10 @@ Run the migration script:
 This will convert the DNEnvironment.Filename from "/full/absolute/path/environment.rb" 
 to "environment.rb"
 
-## Fixes
+
+
+
+## Other
 
 ### SyncProjectsAndEnvironments
 

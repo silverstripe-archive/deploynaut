@@ -7,9 +7,8 @@ Injector:
         class: CapistranoDeploymentBackend
     DNData:
         constructor:
-            0: "../deploynaut-resources/builds"
-            1: "../deploynaut-resources/envs"
-            2: "../deploynaut-resources/gitkeys"
+            0: "../deploynaut-resources/envs"
+            1: "../deploynaut-resources/gitkeys"
 ---
 Only:
     environment: live
@@ -25,6 +24,5 @@ Injector:
         class: CapistranoDeploymentBackend
     DNData:
         constructor:
-            0: "../../deploynaut-resources/builds"
-            1: "../../deploynaut-resources/envs"
-            2: "../../deploynaut-resources/gitkeys"
+            0: "../../deploynaut-resources/envs"
+            1: "../../deploynaut-resources/gitkeys"

@@ -6,11 +6,6 @@
 class DNData {
 
 	/**
-	 * Path where the build tarballs can be found.
-	 */
-	protected static $build_dir = '';
-
-	/**
 	 * Path where the environment configurations can be found.
 	 */
 	protected static $environment_dir = '';
@@ -37,19 +32,10 @@ class DNData {
 	 * @param array $environmentNames
 	 * @param DeploymentBackend $backend
 	 */
-	public function __construct($buildDir, $environmentDir, $keyDir) {
+	public function __construct($environmentDir, $keyDir) {
 		$this->backend = Injector::inst()->get('DeploymentBackend');
-		$this->setBuildDir($buildDir);
 		$this->setEnvironmentDir($environmentDir);
 		$this->setKeyDir($keyDir);
-	}
-
-	public function getBuildDir() {
-		return $this->buildDir;
-	}
-	public function setBuildDir($buildDir) {
-		if($buildDir[0] != "/") $buildDir = BASE_PATH . '/' . $buildDir;
-		$this->buildDir = $buildDir;
 	}
 
 	public function getEnvironmentDir() {
