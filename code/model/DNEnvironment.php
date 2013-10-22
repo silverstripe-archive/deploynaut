@@ -21,6 +21,13 @@ class DNEnvironment extends DataObject {
 	private static $template_file = '';
 	
 	/**
+	 * Set this to true to allow editing of the environment files via the web admin
+	 *
+	 * @var bool
+	 */
+	private static $allow_web_editing = false;
+	
+	/**
 	 *
 	 * @var array
 	 */
@@ -299,10 +306,12 @@ class DNEnvironment extends DataObject {
 				$noDeployConfig = new LabelField('noDeployConfig', 'Warning: This environment don\'t have deployment configuration.');
 				$noDeployConfig->addExtraClass('message warning');
 				$fields->insertAfter($noDeployConfig, 'Filename');
-				$createConfigField = new CheckboxField('CreateEnvConfig', 'Create Config');
-				$createConfigField->setDescription('Would you like to create the capistrano deploy configuration?');
-				$fields->insertAfter($createConfigField, 'noDeployConfig');
-			} else {
+				if($this->config()->get('allow_web_editing')) {
+					$createConfigField = new CheckboxField('CreateEnvConfig', 'Create Config');
+					$createConfigField->setDescription('Would you like to create the capistrano deploy configuration?');
+					$fields->insertAfter($createConfigField, 'noDeployConfig');
+				}
+			} elseif($this->config()->get('allow_web_editing')) {
 				$deployConfig = new TextareaField('DeployConfig', 'Deploy config', $this->getEnvironmentConfig());
 				$deployConfig->setRows(40);
 				$fields->insertAfter($deployConfig, 'Deployers');
@@ -340,14 +349,14 @@ class DNEnvironment extends DataObject {
 		}
 		
 		// Create a basic new environment config from a template
-		if(!$this->envFileExists() && $this->Filename && $this->CreateEnvConfig) {
+		if($this->config()->get('allow_web_editing') && !$this->envFileExists() && $this->Filename && $this->CreateEnvConfig) {
 			if(self::$template_file) {
 				$templateFile = self::$template_file;
 			} else {
 				$templateFile = BASE_PATH.'/deploynaut/environment.template';
 			}
 			file_put_contents($this->getConfigFilename(), file_get_contents($templateFile));
-		} else if($this->envFileExists() && $this->DeployConfig) {
+		} else if($this->config()->get('allow_web_editing') && $this->envFileExists() && $this->DeployConfig) {
 			file_put_contents($this->getConfigFilename(), $this->DeployConfig);
 		}
 	}

@@ -1,4 +1,5 @@
 ---
+Name: deploynaut
 Only:
     environment: dev
 ---
@@ -9,7 +10,10 @@ Injector:
         constructor:
             0: "../deploynaut-resources/envs"
             1: "../deploynaut-resources/gitkeys"
+DNEnvironment:
+    allow_web_editing: false
 ---
+Name: deploynaut
 Only:
     environment: live
 ---
@@ -26,3 +30,5 @@ Injector:
         constructor:
             0: "../../deploynaut-resources/envs"
             1: "../../deploynaut-resources/gitkeys"
+DNEnvironment:
+    allow_web_editing: false

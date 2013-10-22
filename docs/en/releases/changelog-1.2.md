@@ -35,6 +35,12 @@ To:
 	            1: "../../deploynaut-resources/gitkeys"
 
 
+To be able to edit the deployment recipies via the CMS UI, you will need to add this to 
+your mysite/_config/config.yml
+
+	DNEnvironment:
+		allow_web_editing: true
+
 ### Migration script
 
 Run the migration script:

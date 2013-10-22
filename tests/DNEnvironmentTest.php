@@ -30,9 +30,8 @@ class DNEnvironmentTest extends SapphireTest {
 		$this->envPath = '/tmp/deploynaut_test/envs';
 		Config::inst()->update('Injector', 'DNData', array(
 			'constructor' => array(
-				0 => '/tmp/deploynaut_test/builds',
-				1 => $this->envPath,
-				2 => '/tmp/deploynaut_test/gitkeys',
+				0 => $this->envPath,
+				1 => '/tmp/deploynaut_test/gitkeys',
 			) 
 		));
 		
