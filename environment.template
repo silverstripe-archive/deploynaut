@@ -1,5 +1,5 @@
-# The server, either a valid hostname or an IP address
-server 'hostname', :web, :db
+# The server, either a valid hostname or an IP address and port number
+server 'hostname:2222', :web, :db
 
 # Set your application name here, used as the base folder
 set :application, "app"
@@ -18,5 +18,3 @@ set :webserver_group, "sites"
 
 # Which SSH user will deploynaut use to SSH into the server
 ssh_options[:username] = 'sites'
-# Which SSH port will deploynaut when SSH:ing into the server
-ssh_options[:port] = 2222
