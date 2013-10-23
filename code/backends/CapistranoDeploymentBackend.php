@@ -42,6 +42,22 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 
 		GraphiteDeploymentNotifier::notify_end($environment, $sha, null, $project);
 	}
+	
+	/**
+	 * Deploy the given build to the given environment.
+	 * 
+	 * @param DNProject $environment
+	 * @param string $environment
+	 */
+	public function ping($environment, $log, DNProject $project) {
+		$projectName  = $project->Name;
+		$env = $project->getProcessEnv();
+		$command = $this->getPingCommand($projectName.':'.$environment, $env, $log);
+		$command->run(function ($type, $buffer) use($log) {
+			$log->write($buffer);
+			echo $buffer;
+		});
+	}
 
 	/**
 	 *
@@ -86,6 +102,41 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 		$process = new \Symfony\Component\Process\Process($command);
 		// Capistrano doesn't like it - see comment above.
 		//$process->setEnv($env);
+		$process->setTimeout(3600);
+		return $process;
+	}
+	
+	public function getPingCommand($environment, $env, $log) {
+		// Inject env string directly into the command.
+		// Capistrano doesn't like the $process->setEnv($env) we'd normally do below.
+		$envString = '';
+		if (!empty($env)) {
+			$envString .= 'env ';
+			foreach ($env as $key => $value) {
+				$envString .= "$key=\"$value\" ";
+			}
+		}
+
+		// Generate a capfile from a template
+		$capTemplate = file_get_contents(BASE_PATH.'/deploynaut/Capfile.template');
+		$cap = str_replace(
+			array('<config root>', '<ssh key>', '<base path>'),
+			array(DEPLOYNAUT_ENV_ROOT, DEPLOYNAUT_SSH_KEY, BASE_PATH),
+			$capTemplate);
+
+		if(defined('DEPLOYNAUT_CAPFILE')) {
+			$capFile = DEPLOYNAUT_CAPFILE;
+		} else {
+			$capFile = BASE_PATH.'/assets/Capfile';
+		}
+		file_put_contents($capFile, $cap);
+
+		$command = "{$envString}cap -f " . escapeshellarg($capFile) . " -vv $environment deploy:check";
+		$command.= ' -s history_path='.realpath(DEPLOYNAUT_LOG_PATH.'/');
+
+		//$log->write("Running command: $command");
+
+		$process = new \Symfony\Component\Process\Process($command);
 		$process->setTimeout(3600);
 		return $process;
 	}

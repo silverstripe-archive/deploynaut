@@ -321,6 +321,14 @@ class DNEnvironment extends DataObject {
 			' and enter them one per line, e.g. "server.wgtn.oscar"'
 		);
 		$fields->addFieldToTab('Root.Extra', $graphiteServerField);
+		
+		Requirements::javascript('deploynaut/javascript/environment.js');
+		
+		// Add actions
+		$action = new FormAction('check', 'Check Connection');
+		$action->setUseButtonTag(true);
+		$action->setAttribute('data-url', Director::absoluteBaseURL().'naut/api/'.$this->Project()->Name.'/'.$this->Name.'/ping');
+		$fields->insertBefore($action, 'Name');
 		return $fields;
 	}
 	

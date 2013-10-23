@@ -5,6 +5,8 @@ After: 'rootroutes'
 Director:
   rules:
     '': '->naut'
+    'naut/api//$Project/$Environment/$OtherID': 'DeploynautAPI'
     'naut': 'DNRoot'
     'metrics': 'MetricDashboard'
     'graphite': 'GraphiteProxy'
+    
