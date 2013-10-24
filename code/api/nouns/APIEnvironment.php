@@ -121,13 +121,17 @@ class APIEnvironment extends APINoun {
 		$ping->EnvironmentID = $this->record->ID;
 		$ping->write();
 		$ping->start();
-		
+
+		$location = Director::absoluteBaseURL().$this->Link().'/ping/'.$ping->ID;
 		$output = array(
 			'message' => 'Ping queued as job ' . $ping->ResqueToken,
-			'logurl' => Director::absoluteBaseURL().$this->Link().'/ping/'.$ping->ID,
+			'logurl' => $location,
 		);
 		
-		return $this->getAPIResponse($output);
+		$response = $this->getAPIResponse($output);
+		$response->setStatusCode(201);
+		$response->addHeader('Location', $location);
+		return $response;
 	}
 	
 	/**
@@ -172,12 +176,16 @@ class APIEnvironment extends APINoun {
 		$deploy->SHA = $reqBody['release'];
 		$deploy->write();
 		$deploy->start();
+		$location = Director::absoluteBaseURL().$this->Link().'/deploy/'.$deploy->ID;
 		$output = array(
 			'message' => 'Deploy queued as job ' . $deploy->ResqueToken,
-			'logurl' => Director::absoluteBaseURL().$this->Link().'/deploy/'.$deploy->ID,
+			'location' => $location,
 		);
-		return $this->getAPIResponse($output);
-	}
+		$response = $this->getAPIResponse($output);
+		$response->setStatusCode(201);
+		$response->addHeader('Location', $location);
+		return $response;
+}
 	
 	/**
 	 * 
