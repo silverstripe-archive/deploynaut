@@ -1,6 +1,6 @@
 <?php
 
-require_once(BASE_PATH . '/dashboard/dashboard-helpers.php');
+require_once(BASE_PATH . '/deploynaut/dashboard/dashboard-helpers.php');
 
 class GraphiteList extends ArrayList {
 

@@ -15,11 +15,11 @@
 <h3><a href="naut/project/$Project.Name">$Project.Name</a>:<a href="naut/project/$Project.Name/environment/$Name">$Name</a></h3>
 <h4>Metric dashboard</h4>
 
-<% control GraphServers %>
+<% loop GraphServers %>
 	<div class="span12 graphgroup">
 	<h4>$ServerName<h4>
-	<% control Graphs %>
+	<% loop Graphs %>
 		$Graph
-	<% end_control %>
+	<% end_loop %>
 	</div>
-<% end_control %>
+<% end_loop %>
