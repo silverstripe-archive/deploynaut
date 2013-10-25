@@ -284,18 +284,17 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		} else {
 			throw new LogicException("Bad release selection method '{$data['SelectRelease']}'");
 		}
-
 		$project = $this->getCurrentProject();
-		$environment = $this->getCurrentProject();
+		$environment = $this->getCurrentEnvironment($project);
 		$sha = $project->DNBuildList()->byName($buildName);
 
-		$d = new DNDeployment;
-		$d->EnvironmentID = $environment->ID;
-		$d->SHA = $sha->FullName();
-		$d->write();
-		$d->start();
-
-		$this->redirect($d->Link());
+		$deployment = new DNDeployment;
+		$deployment->EnvironmentID = $environment->ID;
+		$deployment->SHA = $sha->FullName();
+		$deployment->write();
+		$deployment->start();
+		
+		$this->redirect($deployment->Link());
 	}
 
 	/**
