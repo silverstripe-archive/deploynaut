@@ -298,7 +298,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 * Do the actual deploy
+	 * Action - Do the actual deploy
 	 *
 	 * @param SS_HTTPRequest $request
 	 */
@@ -321,7 +321,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 * Get the latest deploy log
+	 * Action - Get the latest deploy log
 	 *
 	 * @return string
 	 */
