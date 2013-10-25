@@ -181,9 +181,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * Construct the deployment form
 	 * 
+	 * @param SS_HTTPRequest $request
 	 * @return Form
 	 */
-	public function getDeployForm($request) {
+	public function getDeployForm(SS_HTTPRequest $request) {
 		$project = $this->getCurrentProject();
 		$environment = $this->getCurrentEnvironment($project);
 
@@ -192,7 +193,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 		
 		if(!$project->repoExists()) {
-			return false;
+			$literalField = new LiteralField('noRepoWarning', '<strong>The GIT repository is for the time being not available.</strong>');
+			return Form::create($this, 'DeployForm', new FieldList($literalField), new FieldList());
 		}
 
 		$branches = array();
