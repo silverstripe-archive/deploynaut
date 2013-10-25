@@ -216,36 +216,44 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$redeploy = array();
 		foreach($project->DNEnvironmentList() as $dnEnvironment) {
 			$envName = $dnEnvironment->Name;
-			$redeploy[$envName] = array();
 			foreach($dnEnvironment->DeployHistory() as $deploy) {
 				$sha = $deploy->BuildName;
+				if(!isset($redeploy[$envName])) {
+					$redeploy[$envName] = array();
+				}
 				if(!isset($redeploy[$envName][$sha])) {
 					$redeploy[$envName][$sha] = substr($sha,0,8) . ' (deployed ' . $deploy->DateTime->Ago() . ')';
 				}
 			}
 		}
 
-		$releaseMethods = array(
-			new SelectionGroup_Item(
+		$releaseMethods = array();
+		if($tags) {
+			$releaseMethods[] = new SelectionGroup_Item(
 				'Tag',
 				new DropdownField('Tag', '', $tags),
 				'Deploy a tagged release'
-			),
-			new SelectionGroup_Item(
+			);
+		}
+		if($branches) {
+			$releaseMethods[] = new SelectionGroup_Item(
 				'Branch',
 				new DropdownField('Branch', '', $branches),
 				'Deploy the latest version of a branch'
-			),
-			new SelectionGroup_Item(
+			);
+		}
+		if($redeploy) {
+			$releaseMethods[] = new SelectionGroup_Item(
 				'Redeploy',
 				new GroupedDropdownField('Redeploy', '', $redeploy),
 				'Redeploy a release that was previously deployed (to any environment)'
-			),
-			new SelectionGroup_Item(
-				'SHA',
-				new Textfield('SHA', 'Please specify the full SHA'),
-				'Deploy a specific SHA'
-			),
+			);
+		}
+		
+		$releaseMethods[] = new SelectionGroup_Item(
+			'SHA',
+			new Textfield('SHA', 'Please specify the full SHA'),
+			'Deploy a specific SHA'
 		);
 
 	 	$field = new SelectionGroup('SelectRelease', $releaseMethods);
