@@ -95,7 +95,7 @@ class DNProject extends DataObject {
 	 * @return \DNProject
 	 */
 	public static function create_from_path($path) {
-		$project = new DNProject;
+		$project = new DNProject();
 		$project->Name = $path;
 		$project->write();
 
@@ -295,47 +295,6 @@ class DNProject extends DataObject {
 	}
 	
 	/**
-	 * Setup a gridfield for the environment configs
-	 * 
-	 * @param FieldList $fields
-	 */
-	protected function setEnvironmentFields(&$fields, $environments) {
-		if(!$environments) {
-			return false;
-		}
-		$environments->getConfig()->removeComponentsByType('GridFieldAddNewButton');
-		$environments->getConfig()->removeComponentsByType('GridFieldAddExistingAutocompleter');
-		$environments->getConfig()->removeComponentsByType('GridFieldDeleteAction');
-		$environments->getConfig()->removeComponentsByType('GridFieldPageCount');
-		if(Config::inst()->get('DNEnvironment', 'allow_web_editing')) {
-			$addNewRelease = new GridFieldAddNewButton('toolbar-header-right');
-			$addNewRelease->setButtonName('Add');
-			$environments->getConfig()->addComponent($addNewRelease);
-		}
-		
-		$fields->addFieldToTab("Root.Main", $environments);
-	}
-	
-	/**
-	 * Setup a gridfield for the deployment steps
-	 * 
-	 * @param FieldList $fields
-	 */
-	protected function setDeployStepsFields(&$fields, $releaseSteps) {
-		if(!$releaseSteps) {
-			return;
-		}
-		$releaseSteps->getConfig()->addComponent(new GridFieldSortableRows('Sort'));
-		$releaseSteps->getConfig()->removeComponentsByType('GridFieldAddExistingAutocompleter');
-		$releaseSteps->getConfig()->removeComponentsByType('GridFieldAddNewButton');
-		$releaseSteps->getConfig()->removeComponentsByType('GridFieldPageCount');
-		$addNewRelease = new GridFieldAddNewButton('toolbar-header-right');
-		$addNewRelease->setButtonName('Add');
-		$releaseSteps->getConfig()->addComponent($addNewRelease);
-		$fields->addFieldToTab("Root.Release steps", $releaseSteps);
-	}
-
-	/**
 	 *
 	 * @return bool
 	 */
@@ -408,6 +367,47 @@ class DNProject extends DataObject {
 		if (file_exists("$keyDir/$this->Name/$this->Name")) {
 			return file_get_contents("$keyDir/$this->Name/$this->Name.pub");
 		}
+	}
+	
+	/**
+	 * Setup a gridfield for the environment configs
+	 * 
+	 * @param FieldList $fields
+	 */
+	protected function setEnvironmentFields(&$fields, $environments) {
+		if(!$environments) {
+			return false;
+		}
+		$environments->getConfig()->removeComponentsByType('GridFieldAddNewButton');
+		$environments->getConfig()->removeComponentsByType('GridFieldAddExistingAutocompleter');
+		$environments->getConfig()->removeComponentsByType('GridFieldDeleteAction');
+		$environments->getConfig()->removeComponentsByType('GridFieldPageCount');
+		if(Config::inst()->get('DNEnvironment', 'allow_web_editing')) {
+			$addNewRelease = new GridFieldAddNewButton('toolbar-header-right');
+			$addNewRelease->setButtonName('Add');
+			$environments->getConfig()->addComponent($addNewRelease);
+		}
+		
+		$fields->addFieldToTab("Root.Main", $environments);
+	}
+	
+	/**
+	 * Setup a gridfield for the deployment steps
+	 * 
+	 * @param FieldList $fields
+	 */
+	protected function setDeployStepsFields(&$fields, $releaseSteps) {
+		if(!$releaseSteps) {
+			return;
+		}
+		$releaseSteps->getConfig()->addComponent(new GridFieldSortableRows('Sort'));
+		$releaseSteps->getConfig()->removeComponentsByType('GridFieldAddExistingAutocompleter');
+		$releaseSteps->getConfig()->removeComponentsByType('GridFieldAddNewButton');
+		$releaseSteps->getConfig()->removeComponentsByType('GridFieldPageCount');
+		$addNewRelease = new GridFieldAddNewButton('toolbar-header-right');
+		$addNewRelease->setButtonName('Add');
+		$releaseSteps->getConfig()->addComponent($addNewRelease);
+		$fields->addFieldToTab("Root.Release steps", $releaseSteps);
 	}
 
 	/**
