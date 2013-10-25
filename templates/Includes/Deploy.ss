@@ -1,5 +1,5 @@
 <% with Deployment %>
-<h3>Deploying to $Project.Name:$Environment.Name</h3>
+<h3>Deploying to <a href="$Environment.Project.Link">$Environment.Project.Name</a>:<a href="$Environment.Link">$Environment.Name</a></h3>
 <div>Deploying <em>$SHA</em></div>
 
 <h5>Status:</h5>
