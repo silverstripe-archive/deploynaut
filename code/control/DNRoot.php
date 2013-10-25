@@ -129,7 +129,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
 		}
 
-		$env = $this->getCurrentEnvironment();
+		$env = $this->getCurrentEnvironment($project);
 		if(!$env) {
 			return new SS_HTTPResponse("Environment '" . $request->latestParam('Environment') . "' not found.", 404);
 		}
@@ -150,7 +150,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
 		}
 
-		$env = $this->getCurrentEnvironment();
+		$env = $this->getCurrentEnvironment($project);
 		if(!$env) {
 			return new SS_HTTPResponse("Environment '" . $request->latestParam('Environment') . "' not found.", 404);
 		}
@@ -185,15 +185,20 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function getDeployForm($request) {
 		$project = $this->getCurrentProject();
-		$environment = $this->getCurrentEnvironment();
+		$environment = $this->getCurrentEnvironment($project);
 
-		if(!$environment->canDeploy()) return null;
+		if(!$environment->canDeploy()) {
+			return null;
+		}
+		
+		if(!$project->repoExists()) {
+			return false;
+		}
 
 		$branches = array();
 		foreach($project->DNBranchList() as $branch) {
 			$sha = $branch->SHA();
 			$name = $branch->Name();
-
 			$branches[$sha] = $name . ' (' . substr($sha,0,8) . ', ' . $branch->LastUpdated()->TimeDiff() . ' old)';
 		}
 
@@ -407,9 +412,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	
 	/**
 	 * 
+	 * @param DNProject $project
 	 * @return DNEnvironment
 	 */
-	protected function getCurrentEnvironment() {
+	protected function getCurrentEnvironment($project) {
 		return $project->DNEnvironmentList()->filter('Name', $this->getRequest()->latestParam('Environment'))->First();
 	}
 }
