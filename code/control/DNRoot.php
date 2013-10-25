@@ -2,6 +2,10 @@
 
 class DNRoot extends Controller implements PermissionProvider, TemplateGlobalProvider {
 
+	/**
+	 *
+	 * @var array
+	 */
 	public static $allowed_actions = array(
 		'projects',
 		'update',
@@ -67,13 +71,20 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 * Actions.
+	 * Actions
+	 * 
+	 * @return \SS_HTTPResponse
 	 */
-	public function index() {
+	public function index(SS_HTTPRequest $request) {
 		return $this->redirect($this->Link() . 'projects/');
 	}
 
-	public function projects() {
+	/**
+	 * Action
+	 * 
+	 * @return string - HTML
+	 */
+	public function projects(SS_HTTPRequest $request) {
 		return $this->customise(array('Title' => 'Projects'))->renderWith(array('DNRoot_projects', 'DNRoot'));
 	}
 
@@ -94,7 +105,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		return true;
 	}
 
-	public function project($request) {
+	/**
+	 * 
+	 * @param SS_HTTPRequest $request
+	 * @return \SS_HTTPResponse
+	 */
+	public function project(SS_HTTPRequest $request) {
 		$project = $this->DNProjectList()->filter('Name', $request->latestParam('Project'))->First();
 		if(!$project) {
 			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
@@ -102,7 +118,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		return $project->renderWith(array('DNRoot_project', 'DNRoot'));
 	}
 
-	public function environment($request) {
+	/**
+	 * 
+	 * @param SS_HTTPRequest $request
+	 * @return \SS_HTTPResponse
+	 */
+	public function environment(SS_HTTPRequest $request) {
 		$project = $this->DNProjectList()->filter('Name', $request->latestParam('Project'))->First();
 		if(!$project) {
 			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
@@ -118,6 +139,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		))->renderWith(array('DNRoot_environment', 'DNRoot'));
 	}
 
+	/**
+	 * 
+	 * @param SS_HTTPRequest $request
+	 * @return \SS_HTTPResponse
+	 */
 	public function metrics($request) {
 		$project = $this->DNProjectList()->filter('Name', $request->latestParam('Project'))->First();
 		if(!$project) {
@@ -143,6 +169,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 	/**
 	 * Provide DNProjectList (with all projects enumerated within).
+	 * 
+	 * @return DataList
 	 */
 	public function DNProjectList() {
 		return DataObject::get('DNProject')->filterByCallback(function($record) {
@@ -151,7 +179,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 * Construct the deployment form.
+	 * Construct the deployment form
+	 * 
+	 * @return Form
 	 */
 	public function getDeployForm($request) {
 		$project = $this->DNProjectList()->filter('Name', $request->latestParam('Project'))->First();
@@ -214,8 +244,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 	$field = new SelectionGroup('SelectRelease', $releaseMethods);
 	 	$field->setValue('Tag');
 
-		//new GroupedDropdownField("BuildName", "Build", $branches)
-
 		$form = new Form($this, 'DeployForm', new FieldList(
 			$field
 		), new FieldList(
@@ -232,6 +260,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * Deployment form submission handler.
 	 *
 	 * Initiate a DNDeployment record and redirect to it for status polling
+	 * 
+	 * @return \SS_HTTPResponse
 	 */
 	public function doDeploy($data, $form) {
 		if(in_array($data['SelectRelease'], array('Tag','Branch','Redeploy','SHA'))) {
@@ -320,6 +350,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 	}
 
+	/**
+	 * 
+	 * @return array
+	 */
 	public static function get_template_global_variables() {
 		return array(
 			'RedisUnavailable' => 'RedisUnavailable',
