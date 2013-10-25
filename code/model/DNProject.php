@@ -13,7 +13,6 @@ class DNProject extends DataObject {
 	public static $db = array(
 		"Name" => "Varchar",
 		"CVSPath" => "Varchar(255)",
-		"LocalCVSPath" => "Varchar(255)",
 	);
 
 	/**
@@ -235,7 +234,6 @@ class DNProject extends DataObject {
 		$fields->fieldByName("Root")->removeByName("Viewers");
 		$fields->fieldByName("Root")->removeByName("Environments");
 		$fields->fieldByName("Root")->removeByName("ReleaseSteps");
-		$fields->fieldByName('Root')->removeByName('LocalCVSPath');
 
 		$fields->fieldByName('Root.Main.Name')
 			->setTitle('Project name')
@@ -245,7 +243,7 @@ class DNProject extends DataObject {
 			->setTitle('Git repository')
 			->setDescription('E.g. git@github.com:silverstripe/silverstripe-installer.git');
 
-		$workspaceField = new ReadonlyField('LocalWorkspace', 'Git workspace', $this->LocalCVSPath);
+		$workspaceField = new ReadonlyField('LocalWorkspace', 'Git workspace', $this->getLocalCVSPath());
 		$workspaceField->setDescription('This is where the GIT repository are located on this server');
 		$fields->insertAfter($workspaceField, 'CVSPath');
 
@@ -299,7 +297,7 @@ class DNProject extends DataObject {
 	 * @return bool
 	 */
 	public function repoExists() {
-		return file_exists(DEPLOYNAUT_LOCAL_VCS_PATH . '/' . $this->Name);
+		return file_exists(DEPLOYNAUT_LOCAL_VCS_PATH . '/' . $this->Name.'/HEAD');
 	}
 
 	/**
@@ -307,13 +305,19 @@ class DNProject extends DataObject {
 	 *
 	 */
 	public function cloneRepo() {
-		$this->LocalCVSPath = DEPLOYNAUT_LOCAL_VCS_PATH . '/' . $this->Name;
-
 		Resque::enqueue('git', 'CloneGitRepo', array(
 			'repo' => $this->CVSPath,
-			'path' => $this->LocalCVSPath,
+			'path' => $this->getLocalCVSPath(),
 			'env' => $this->getProcessEnv()
 		));
+	}
+	
+	/**
+	 * 
+	 * @return string
+	 */
+	public function getLocalCVSPath() {
+		return DEPLOYNAUT_LOCAL_VCS_PATH . '/' . $this->Name;
 	}
 
 	/**
@@ -334,7 +338,6 @@ class DNProject extends DataObject {
 		}
 		if (isset($changedFields['CVSPath']) || isset($changedFields['Name'])) {
 			$name = preg_replace("/[^A-Za-z0-9 ]/", '', $this->Name);
-			$this->LocalCVSPath = DEPLOYNAUT_LOCAL_VCS_PATH . '/' . $name;
 			$this->cloneRepo();
 		}
 	}
