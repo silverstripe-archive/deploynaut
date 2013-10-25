@@ -111,7 +111,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return \SS_HTTPResponse
 	 */
 	public function project(SS_HTTPRequest $request) {
-		$project = $this->DNProjectList()->filter('Name', $request->latestParam('Project'))->First();
+		$project = $this->getCurrentProject();
 		if(!$project) {
 			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
 		}
@@ -124,12 +124,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return \SS_HTTPResponse
 	 */
 	public function environment(SS_HTTPRequest $request) {
-		$project = $this->DNProjectList()->filter('Name', $request->latestParam('Project'))->First();
+		$project = $this->getCurrentProject();
 		if(!$project) {
 			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
 		}
 
-		$env = $project->DNEnvironmentList()->filter('Name', $request->latestParam('Environment'))->First();
+		$env = $this->getCurrentEnvironment();
 		if(!$env) {
 			return new SS_HTTPResponse("Environment '" . $request->latestParam('Environment') . "' not found.", 404);
 		}
@@ -145,12 +145,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return \SS_HTTPResponse
 	 */
 	public function metrics($request) {
-		$project = $this->DNProjectList()->filter('Name', $request->latestParam('Project'))->First();
+		$project = $this->getCurrentProject();
 		if(!$project) {
 			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
 		}
 
-		$env = $project->DNEnvironmentList()->filter('Name', $request->latestParam('Environment'))->First();
+		$env = $this->getCurrentEnvironment();
 		if(!$env) {
 			return new SS_HTTPResponse("Environment '" . $request->latestParam('Environment') . "' not found.", 404);
 		}
@@ -184,8 +184,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return Form
 	 */
 	public function getDeployForm($request) {
-		$project = $this->DNProjectList()->filter('Name', $request->latestParam('Project'))->First();
-		$environment = $project->DNEnvironmentList()->filter('Name', $request->latestParam('Environment'))->First();
+		$project = $this->getCurrentProject();
+		$environment = $this->getCurrentEnvironment();
 
 		if(!$environment->canDeploy()) return null;
 
@@ -270,8 +270,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			throw new LogicException("Bad release selection method '{$data['SelectRelease']}'");
 		}
 
-		$project = $this->DNProjectList()->filter('Name', $form->request->latestParam('Project'))->First();
-		$environment = $project->DNEnvironmentList()->filter('Name', $form->request->latestParam('Environment'))->First();
+		$project = $this->getCurrentProject();
+		$environment = $this->getCurrentProject();
 		$sha = $project->DNBuildList()->byName($buildName);
 
 		$d = new DNDeployment;
@@ -395,5 +395,21 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				'category' => "Deploynaut",
 			),
 		);
+	}
+	
+	/**
+	 * 
+	 * @return DNProject
+	 */
+	protected function getCurrentProject() {
+		return $this->DNProjectList()->filter('Name', $this->getRequest()->latestParam('Project'))->First();
+	}
+	
+	/**
+	 * 
+	 * @return DNEnvironment
+	 */
+	protected function getCurrentEnvironment() {
+		return $project->DNEnvironmentList()->filter('Name', $this->getRequest()->latestParam('Environment'))->First();
 	}
 }
