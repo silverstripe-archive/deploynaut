@@ -116,11 +116,17 @@ class DNCommit extends ViewableData {
 	public function CurrentlyDeployedTo() {
 		$envNames = array();
 		foreach($this->project->currentBuilds() as $envName => $currentBuild) {
-			if($currentBuild == $this->buildname) $envNames[] = $envName;
+			if(!$currentBuild || $currentBuild->Hash != $this->buildname) {
+				continue;
+			}
+			$envNames[] = $envName;
 		}
 
-		if($envNames) return $this->project->Environments()->filter('Name', $envNames);
-		else return new ArrayList;
+		if($envNames) {
+			return $this->project->Environments()->filter('Name', $envNames);
+		} else {
+			return new ArrayList;
+		}
 	}
 
 	/**

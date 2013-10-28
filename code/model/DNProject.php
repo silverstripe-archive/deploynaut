@@ -191,6 +191,17 @@ class DNProject extends DataObject {
 		}
 		return new DNReferenceList($this, $this->DNData(), null, null, true);
 	}
+	
+	/**
+	 * 
+	 * @return Gitonomy\Git\Repository 
+	 */
+	public function getRepository() {
+		if(!$this->repoExists()) {
+			return false;
+		}
+		return new Gitonomy\Git\Repository($this->LocalCVSPath);
+	}
 
 	/**
 	 * Provides a DNEnvironmentList of environments found in this project.

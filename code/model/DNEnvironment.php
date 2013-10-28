@@ -181,7 +181,17 @@ class DNEnvironment extends DataObject {
 	 */
 	public function CurrentBuild() {
 		$buildInfo = $this->DNData()->Backend()->currentBuild($this->Project()->Name.':'.$this->Name);
-		return $buildInfo['buildname'];
+		if(!$buildInfo) {
+			return;
+		}
+		$commit = new \Gitonomy\Git\Commit($this->Project()->getRepository(), $buildInfo['buildname']);
+		return new ArrayData(array(
+			'AuthorName' => (string)$commit->getAuthorName(),
+			'AuthorEmail' => (string)$commit->getAuthorEmail(),
+			'Message' => (string)$commit->getMessage(),
+			'ShortHash' => $commit->getFixedShortHash(8),
+			'Hash' => $commit->getHash(),
+		));
 	}
 
 	/**
@@ -193,9 +203,15 @@ class DNEnvironment extends DataObject {
 		$history = $this->DNData()->Backend()->deployHistory($this->Project()->Name.':'.$this->Name);
 		$output = new ArrayList;
 		foreach($history as $item) {
+			$commit = new \Gitonomy\Git\Commit($this->Project()->getRepository(), $item['buildname']);
 			$output->push(new ArrayData(array(
 				'BuildName' => $item['buildname'],
 				'DateTime' => DBField::create_field('SS_Datetime', $item['datetime']),
+				'AuthorName' => (string)$commit->getAuthorName(),
+				'AuthorEmail' => (string)$commit->getAuthorEmail(),
+				'Message' => (string)$commit->getMessage(),
+				'ShortHash' => $commit->getFixedShortHash(8),
+				'Hash' => $commit->getHash(),
 			)));
 		}
 		return $output;

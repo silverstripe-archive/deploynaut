@@ -2,8 +2,13 @@
 <% if URL %>
 <h4><a href="$URL">$URL</a></h4>
 <% end_if %>
-<% if CurrentBuild %>
-<p><strong>$Project.Name:$Name</strong> is currently running build <strong>$CurrentBuild</strong>.</p>
+<% if $CurrentBuild %>
+<p>
+	This environment is currently running build
+	<span class="tooltip-hint" data-toggle="tooltip" title="$CurrentBuild.Message - $CurrentBuild.AuthorName" data-original-title="$CurrentBuild.Message">
+		$CurrentBuild.Hash
+	</span>
+</p>
 <% else %>
 <p>New environment - deploy your first build.</p>
 <% end_if %>
@@ -28,13 +33,20 @@
 <p>Below builds have previous been deployed to this environment, ordered by deploy date descending.</p>
 <table class="table-striped table table-bordered">
 	<thead>
-		<tr><th>Build</th><th>Date deployed</th></tr>
+		<tr>
+			<th>Date deployed</th>
+			<th>Build</th>
+			<th>Commit message</th>
+			<th>Author</th>
+		</tr>
 	</thead>
 	<tbody>
 	<% loop DeployHistory %>
 		<tr>
-			<td>$BuildName</td>
 			<td>$DateTime.Rfc2822</td>
+			<td>$BuildName</td>
+			<td>$Message</td>
+			<td>$AuthorName</td>
 		</tr>
 	<% end_loop %>
 	</tbody>

@@ -15,7 +15,13 @@
 		<tr>
 			<td><% if CanDeploy %><a href="$Link">$Name</a><% else %>$Name<% end_if %></td>
 			<td><a href="$URL">$URL</a></td>
-			<td>$CurrentBuild</td>
+			<td>
+				<% if $CurrentBuild %>
+				<span class="tooltip-hint" data-toggle="tooltip" title="$CurrentBuild.Message - $CurrentBuild.AuthorName" data-original-title="$CurrentBuild.Message">
+						$CurrentBuild.Hash
+				</span>
+				<% end_if %>
+			</td>
 			<td>
 			<% if CanDeploy %><span class="good">Yes</span>
 			<% else_if DeployersList %>
@@ -71,7 +77,7 @@
 	<thead>
 		<tr>
 			<th>Release</th>
-			<th>Message</th>
+			<th>Commit message</th>
 			<th>Currently on</th>
 			<th>Date created</th>
 			<% if Top.ReleaseSteps %>
@@ -82,8 +88,7 @@
 	<tbody>
 	<% loop DNBuildList %>
 		<tr>
-			<td
-				>$Name
+			<td>$FullName
 				<% loop $References %>
 				<span class="label <% if $Type = Tag %>label-info<% end_if %>" title="$Type">$Name</span>
 				<% end_loop %>
