@@ -234,6 +234,7 @@ class DNProject extends DataObject {
 		$fields->fieldByName("Root")->removeByName("Viewers");
 		$fields->fieldByName("Root")->removeByName("Environments");
 		$fields->fieldByName("Root")->removeByName("ReleaseSteps");
+		$fields->fieldByName("Root")->removeByName("LocalCVSPath");
 
 		$fields->fieldByName('Root.Main.Name')
 			->setTitle('Project name')
