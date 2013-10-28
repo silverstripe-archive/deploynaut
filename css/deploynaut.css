@@ -140,3 +140,8 @@
 	border-radius: 3px;
 	padding-right: 4px;
 }
+
+.tooltip-hint {
+	color: #0088cc;
+	border-bottom: 1px #0088cc dotted;
+}

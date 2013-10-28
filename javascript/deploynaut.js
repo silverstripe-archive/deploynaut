@@ -60,7 +60,11 @@
 			$.get($(this).attr('href'), function(data){
 				location.reload();
 			});
-			
+		});
+		
+		$('.tooltip-hint').tooltip({
+			placement: "top",
+			trigger: 'hover'
 		});
 	});
 }(jQuery));
