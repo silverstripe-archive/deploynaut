@@ -25,10 +25,12 @@ class DNReferenceList extends ArrayList {
 	}
 
 	/**
-	 *
-	 * @param string $buildFolder - name of buildfolder inside of $builds_dir
+	 * 
 	 * @param DNProject $project
 	 * @param DNData $data
+	 * @param Gitonomy\Git\Reference $reference
+	 * @param string $blockBranch
+	 * @param bool $getTags
 	 */
 	public function __construct(DNProject $project, DNData $data, Gitonomy\Git\Reference $reference = null, $blockBranch = null, $getTags = false) {
 		$this->project = $project;
