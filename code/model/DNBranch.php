@@ -8,13 +8,17 @@ class DNBranch extends ViewableData {
 	 */
 	protected $branch = null;
 
+	/**
+	 *
+	 * @var DNProject 
+	 */
 	protected $project = null;
 
+	/**
+	 *
+	 * @var DNData
+	 */
 	protected $data = null;
-
-	protected $name = null;
-
-	protected $references = null;
 
 	/**
 	 *
@@ -30,12 +34,16 @@ class DNBranch extends ViewableData {
 
 	/**
 	 *
-	 * @return type
+	 * @return string
 	 */
 	public function Name() {
 		return $this->branch->getName();
 	}
 
+	/**
+	 * 
+	 * @return string
+	 */
 	public function SHA() {
 		return $this->branch->getCommit()->getHash();
 	}
@@ -54,17 +62,20 @@ class DNBranch extends ViewableData {
 	 */
 	public function LastUpdated() {
 		$created = $this->branch->getCommit()->getCommitterDate();
-
-                // gitonomy sets the time to UTC, so now we set the timezone to
-                // whatever PHP is set to (date.timezone). This will change in the future if each
-                // deploynaut user has their own timezone
-                $created->setTimezone(new DateTimeZone(date_default_timezone_get()));
+		// gitonomy sets the time to UTC, so now we set the timezone to
+		// whatever PHP is set to (date.timezone). This will change in the future if each
+		// deploynaut user has their own timezone
+		$created->setTimezone(new DateTimeZone(date_default_timezone_get()));
 
 		$d = new SS_Datetime();
 		$d->setValue($created->format('Y-m-d H:i:s'));
 		return $d;
 	}
 
+	/**
+	 * 
+	 * @return string
+	 */
 	public function IsOpenByDefault() {
 		if($this->Name() == 'master') return " open";
 		else return "";
