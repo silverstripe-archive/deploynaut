@@ -125,7 +125,7 @@ class APIEnvironment extends APINoun {
 		$location = Director::absoluteBaseURL().$this->Link().'/ping/'.$ping->ID;
 		$output = array(
 			'message' => 'Ping queued as job ' . $ping->ResqueToken,
-			'logurl' => $location,
+			'location' => $location,
 		);
 		
 		$response = $this->getAPIResponse($output);

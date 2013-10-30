@@ -2,9 +2,13 @@
 
 ## Changes
 
-- Admin users can create and delete projects via the web UI.
-- Admin users can modify the capistrano environment configuration via the web UI
+- Admin users can create and delete projects via the web UI (configurable).
+- Admin users can modify the capistrano environment configuration via the web UI (configurable).
 - Removed unused DNData::getBuildDir() and DNData::setBuildDir()
+- REST:ish API for deployments and checking connectivity
+- Admin users can check capistrano connectivity and folder setup via UI
+- Adding commit author and message on some locations where a SHA is shown
+- the CLI command to syncronize projects and explicitly needs dryrun=0 to actually do anything
 
 ## Upgrade migration
 
@@ -13,7 +17,7 @@
 If you have overriden the config/dnroot.yml, remove the first argument to DNData. The reason is 
 that the current version of Deploynaut don't support deploys via tarballs.
 
-So from:
+From:
 
 	Injector:
 	    DeploymentBackend:
@@ -50,9 +54,6 @@ Run the migration script:
 This will convert the DNEnvironment.Filename from "/full/absolute/path/environment.rb" 
 to "environment.rb"
 
-
-
-
 ## Other
 
 ### SyncProjectsAndEnvironments
@@ -67,3 +68,7 @@ saved to the database.
 To execute the sync script, run the following:
 
 	./framework/sake dev/tasks/SyncProjectsAndEnvironments dryrun=0
+
+### REST API
+
+See docs/en/rest-api.md
