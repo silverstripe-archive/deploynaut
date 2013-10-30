@@ -25,7 +25,7 @@
 						});
 						
 						// Setup the refresh of the log
-						self._setupPinging(modal, data.logurl);
+						self._setupPinging(modal, data.location);
 					},
 					dataType: 'json'
 				  });
