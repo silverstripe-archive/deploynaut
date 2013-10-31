@@ -184,14 +184,10 @@ class DNEnvironment extends DataObject {
 		if(!$buildInfo) {
 			return;
 		}
-		$commit = new \Gitonomy\Git\Commit($this->Project()->getRepository(), $buildInfo['buildname']);
-		return new ArrayData(array(
-			'AuthorName' => (string)$commit->getAuthorName(),
-			'AuthorEmail' => (string)$commit->getAuthorEmail(),
-			'Message' => (string)$commit->getMessage(),
-			'ShortHash' => $commit->getFixedShortHash(8),
-			'Hash' => $commit->getHash(),
-		));
+		$commitData = $this->getCommitData($buildInfo['buildname']);
+		$commitData['BuildName'] = $buildInfo['buildname'];
+		$commitData['DateTime'] = DBField::create_field('SS_Datetime', $buildInfo['datetime']);
+		return new ArrayData($commitData);
 	}
 
 	/**
@@ -203,18 +199,39 @@ class DNEnvironment extends DataObject {
 		$history = $this->DNData()->Backend()->deployHistory($this->Project()->Name.':'.$this->Name);
 		$output = new ArrayList;
 		foreach($history as $item) {
-			$commit = new \Gitonomy\Git\Commit($this->Project()->getRepository(), $item['buildname']);
-			$output->push(new ArrayData(array(
-				'BuildName' => $item['buildname'],
-				'DateTime' => DBField::create_field('SS_Datetime', $item['datetime']),
-				'AuthorName' => (string)$commit->getAuthorName(),
-				'AuthorEmail' => (string)$commit->getAuthorEmail(),
-				'Message' => (string)$commit->getMessage(),
-				'ShortHash' => $commit->getFixedShortHash(8),
-				'Hash' => $commit->getHash(),
-			)));
+			$commitData = $this->getCommitData($item['buildname']);
+			$commitData['BuildName'] = $item['buildname'];
+			$commitData['DateTime'] = DBField::create_field('SS_Datetime', $item['datetime']);
+			$output->push(new ArrayData($commitData));
 		}
 		return $output;
+	}
+	
+	/**
+	 * 
+	 * @param string $sha
+	 * @return array
+	 */
+	protected function getCommitData($sha) {
+		try {
+			$commit = new \Gitonomy\Git\Commit($this->Project()->getRepository(), $sha);
+		} catch(\Gitonomy\Git\Exception\ReferenceNotFoundException $exc) {
+			return array(
+				'AuthorName' => '(unknown)',
+				'AuthorEmail' => '(unknown)',
+				'Message' => '(unknown)',
+				'ShortHash' => $sha,
+				'Hash' => '(unknown)',
+			);
+		}
+		
+		return array(
+			'AuthorName' => (string)$commit->getAuthorName(),
+			'AuthorEmail' => (string)$commit->getAuthorEmail(),
+			'Message' => (string)$commit->getMessage(),
+			'ShortHash' => $commit->getFixedShortHash(8),
+			'Hash' => $commit->getHash()
+		);
 	}
 
 	/**
