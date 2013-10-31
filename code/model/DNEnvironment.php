@@ -215,7 +215,7 @@ class DNEnvironment extends DataObject {
 	protected function getCommitData($sha) {
 		try {
 			$commit = new \Gitonomy\Git\Commit($this->Project()->getRepository(), $sha);
-		} catch(\Gitonomy\Git\Exception\ReferenceNotFoundException $exc) {
+		} catch(Gitonomy\Git\Exception\ReferenceNotFoundException $exc) {
 			return array(
 				'AuthorName' => '(unknown)',
 				'AuthorEmail' => '(unknown)',
