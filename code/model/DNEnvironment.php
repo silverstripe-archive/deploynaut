@@ -207,7 +207,7 @@ class DNEnvironment extends DataObject {
 		return $output;
 	}
 	
-	/**
+	/** 
 	 * 
 	 * @param string $sha
 	 * @return array
@@ -215,24 +215,23 @@ class DNEnvironment extends DataObject {
 	protected function getCommitData($sha) {
 		try {
 			$commit = new \Gitonomy\Git\Commit($this->Project()->getRepository(), $sha);
-		} catch(Gitonomy\Git\Exception\ReferenceNotFoundException $exc) {
+			return array(
+				'AuthorName' => (string)$commit->getAuthorName(),
+				'AuthorEmail' => (string)$commit->getAuthorEmail(),
+				'Message' => (string)$commit->getMessage(),
+				'ShortHash' => $commit->getFixedShortHash(8),
+				'Hash' => $commit->getHash()
+			);  
+		} catch(\Gitonomy\Git\Exception\ReferenceNotFoundException $exc) {
 			return array(
 				'AuthorName' => '(unknown)',
 				'AuthorEmail' => '(unknown)',
 				'Message' => '(unknown)',
 				'ShortHash' => $sha,
 				'Hash' => '(unknown)',
-			);
-		}
-		
-		return array(
-			'AuthorName' => (string)$commit->getAuthorName(),
-			'AuthorEmail' => (string)$commit->getAuthorEmail(),
-			'Message' => (string)$commit->getMessage(),
-			'ShortHash' => $commit->getFixedShortHash(8),
-			'Hash' => $commit->getHash()
-		);
-	}
+			);  
+		}   
+	} 
 
 	/**
 	 * Does this environment have a graphite server configuration
