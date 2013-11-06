@@ -78,11 +78,12 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 			}
 		}
 
+		$data = Injector::inst()->get('DNData');
 		// Generate a capfile from a template
 		$capTemplate = file_get_contents(BASE_PATH.'/deploynaut/Capfile.template');
 		$cap = str_replace(
 			array('<config root>', '<ssh key>', '<base path>'),
-			array(DEPLOYNAUT_ENV_ROOT, DEPLOYNAUT_SSH_KEY, BASE_PATH),
+			array($data->getEnvironmentDir(), DEPLOYNAUT_SSH_KEY, BASE_PATH),
 			$capTemplate);
 
 		if(defined('DEPLOYNAUT_CAPFILE')) {
@@ -117,12 +118,14 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 			}
 		}
 
+		$data = Injector::inst()->get('DNData');
 		// Generate a capfile from a template
 		$capTemplate = file_get_contents(BASE_PATH.'/deploynaut/Capfile.template');
 		$cap = str_replace(
 			array('<config root>', '<ssh key>', '<base path>'),
-			array(DEPLOYNAUT_ENV_ROOT, DEPLOYNAUT_SSH_KEY, BASE_PATH),
-			$capTemplate);
+			array($data->getEnvironmentDir(), DEPLOYNAUT_SSH_KEY, BASE_PATH),
+			$capTemplate
+		);
 
 		if(defined('DEPLOYNAUT_CAPFILE')) {
 			$capFile = DEPLOYNAUT_CAPFILE;
