@@ -12,6 +12,7 @@ class DeploynautLogFile {
 
 	public function write($message) {
 		error_log('['.date('Y-m-d H:i:s').'] ' . $message .PHP_EOL, 3, $this->logFile);
+		chmod($this->logFile, 0666);
 	}
 
 	public function exists() {
