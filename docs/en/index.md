@@ -8,11 +8,11 @@ Originally it has been written to support the deployments of Rails applications.
 
 Capistrano is written in ruby, and often deployed as a ruby gem. So the first requirement is to Installing it system wide (without supporting ri and docs) is done by:
 
-	$ sudo gem install capistrano --no-ri --no-rdoc --verbose
+	$ sudo gem install capistrano --no-ri --no-rdoc --verbose -v 2.15.5
 
 Our implementation relies on capistrano-multiconfig extension which provides us with the ability to have multiple projects, each with serveral configurations (stages):
 
-	$ sudo gem install capistrano-multiconfig --no-ri --no-rdoc --verbose
+	$ sudo gem install capistrano-multiconfig --no-ri --no-rdoc --verbose -v 0.0.4
 
 ## Deploynaut installation
 
