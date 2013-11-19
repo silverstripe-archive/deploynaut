@@ -3,8 +3,6 @@
 (function($) {
 	"use strict";
 	
-	window._deploy_refresh = window._deploy_refresh || null;
-	
 	var deploy = {
 		showlog: function ($status, $content, logLink) {
 			var self = this;
@@ -32,7 +30,7 @@
 			var self = this;
 			window._deploy_refresh = window.setInterval(function() {
 				self.showlog($("#deploy_action"), $("#deploy_log"), $('#deploy_log').data('loglink'));
-			}, 500);
+			}, 3000);
 		},
 
 		/**
