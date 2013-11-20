@@ -82,11 +82,6 @@
 				url: $(this).data('api-url'),
 				dataType: 'json',
 				success: function(data) {
-					$('#gitFetchModal').modal('show');
-					$('#gitFetchModal').on('hidden', function() {
-						location.reload();
-					});
-
 					window.fetchInterval = window.setInterval(function() {
 						$.ajax({
 							type: "GET",
@@ -95,8 +90,11 @@
 							success: function(log_data) {
 								$('#gitFetchModal .modal-body').html('<pre>' + log_data.message + '</pre>');
 								$('#gitFetchModal .modal-footer').html('Status: ' + log_data.status);
-								if (log_data.status === 'Failed' || log_data.status === 'Success') {
+								if(log_data.status === 'Failed' || log_data.status === 'Complete') {
 									clearInterval(window.fetchInterval);
+								}
+								if(log_data.status === 'Complete') {
+									location.reload();
 								}
 							}
 						});
