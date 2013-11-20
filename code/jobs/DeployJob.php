@@ -5,33 +5,65 @@
  */
 class DeployJob {
 
+	/**
+	 *
+	 * @var array
+	 */
 	public $args;
 
+	/**
+	 * 
+	 */
 	public function setUp() {
-		global $databaseConfig;
-		DB::connect($databaseConfig);
+		$this->updateStatus('Started');
 		chdir(BASE_PATH);
 	}
-
-	public function DNData() {
-		return Injector::inst()->get('DNData');
+	
+	/**
+	 * 
+	 * @global array $databaseConfig
+	 */
+	public function tearDown() {
+		$this->updateStatus('Finished');
+		chdir(BASE_PATH);
 	}
-
+	
+	/**
+	 * 
+	 */
 	public function perform() {
 		echo "[-] DeployJob starting" . PHP_EOL;
-
 		$log = new DeploynautLogFile($this->args['logfile']);
-
-		$env = $this->args['env'];
-
 		$DNProject = $this->DNData()->DNProjectList()->filter('Name', $this->args['projectName'])->First();
-
-		$this->DNData()->Backend()->deploy(
-			$this->args['environment'],
-			$this->args['sha'],
-			$log,
-			$DNProject
-		);
+		// This is a bit icky, but there is no easy way of capturing a failed deploy by using the PHP Resque 
+		try {
+			$this->DNData()->Backend()->deploy($this->args['environment'], $this->args['sha'], $log, $DNProject);
+		} catch(RuntimeException $exc) {
+			$this->updateStatus('Failed');
+			echo "[-] DeployJob failed" . PHP_EOL;
+			throw $exc;
+		}
+		echo "[-] DeployJob finished" . PHP_EOL;
+	}
+	
+	/**
+	 * 
+	 * @param string $status
+	 * @global array $databaseConfig
+	 */
+	protected function updateStatus($status) {
+		global $databaseConfig;
+		DB::connect($databaseConfig);
+		$dnDeployment = DNDeployment::get()->byID($this->args['deploymentID']);
+		$dnDeployment->Status = $status;
+		$dnDeployment->write();
 	}
 
+	/**
+	 * 
+	 * @return DNData
+	 */
+	protected function DNData() {
+		return Injector::inst()->get('DNData');
+	}
 }

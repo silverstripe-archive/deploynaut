@@ -180,14 +180,11 @@ class DNEnvironment extends DataObject {
 	 * @return string
 	 */
 	public function CurrentBuild() {
-		$buildInfo = $this->DNData()->Backend()->currentBuild($this->Project()->Name.':'.$this->Name);
-		if(!$buildInfo) {
-			return;
+		$history = $this->DeployHistory()->filter('Status', 'Finished');
+		if(!$history->count()) {
+			return false;
 		}
-		$commitData = $this->getCommitData($buildInfo['buildname']);
-		$commitData['BuildName'] = $buildInfo['buildname'];
-		$commitData['DateTime'] = DBField::create_field('SS_Datetime', $buildInfo['datetime']);
-		return new ArrayData($commitData);
+		return $history->first();
 	}
 
 	/**
@@ -196,15 +193,26 @@ class DNEnvironment extends DataObject {
 	 * @return ArrayList
 	 */
 	public function DeployHistory() {
-		$history = $this->DNData()->Backend()->deployHistory($this->Project()->Name.':'.$this->Name);
-		$output = new ArrayList;
-		foreach($history as $item) {
-			$commitData = $this->getCommitData($item['buildname']);
-			$commitData['BuildName'] = $item['buildname'];
-			$commitData['DateTime'] = DBField::create_field('SS_Datetime', $item['datetime']);
-			$output->push(new ArrayData($commitData));
+		$history = DNDeployment::get()->filter('EnvironmentID', $this->ID)->sort('LastEdited DESC');
+		$repo = $this->Project()->getRepository();
+		if(!$repo){
+			return $history;
 		}
-		return $output;
+		
+		$ammendedHistory = new ArrayList();
+		foreach($history as $deploy) {
+			if(!$deploy->SHA) {
+				continue;
+			}
+			$commit = $repo->getCommit($deploy->SHA);
+			if(!$commit) {
+				continue;
+			}
+			$deploy->Message = $commit->getMessage();
+			$ammendedHistory->push($deploy);
+		}
+		
+		return $ammendedHistory;
 	}
 	
 	/** 

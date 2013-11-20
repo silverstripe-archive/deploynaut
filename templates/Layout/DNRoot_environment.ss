@@ -5,8 +5,8 @@
 <% if $CurrentBuild %>
 <p>
 	This environment is currently running build
-	<span class="tooltip-hint" data-toggle="tooltip" title="$CurrentBuild.Message - $CurrentBuild.AuthorName" data-original-title="$CurrentBuild.Message">
-		$CurrentBuild.Hash
+	<span class="tooltip-hint" data-toggle="tooltip" title="$CurrentBuild.Message" data-original-title="$CurrentBuild.Message">
+		$CurrentBuild.SHA
 	</span>
 </p>
 <% else %>
@@ -36,17 +36,17 @@
 		<tr>
 			<th>Date deployed</th>
 			<th>Build</th>
-			<th>Commit message</th>
-			<th>Author</th>
+			<th>Deployer</th>
+			<th>Status</th>
 		</tr>
 	</thead>
 	<tbody>
 	<% loop DeployHistory %>
 		<tr>
-			<td>$DateTime.Rfc2822</td>
-			<td>$BuildName</td>
-			<td>$Message</td>
-			<td>$AuthorName</td>
+			<td>$LastEdited.Rfc2822</td>
+			<td><span class="tooltip-hint" data-toggle="tooltip" title="$Message" data-original-title="$Message">$SHA</span></td>
+			<td>$Deployer.Name <% if $Deployer.Email %>&lt;$Deployer.Email&gt; <% end_if %><></td>
+			<td><% if $LogLink %><a href="$LogLink"><% end_if %>$Status<% if $LogLink %></a><% end_if %></td>
 		</tr>
 	<% end_loop %>
 	</tbody>

@@ -17,8 +17,8 @@
 			<td><a href="$URL">$URL</a></td>
 			<td>
 				<% if $CurrentBuild %>
-				<span class="tooltip-hint" data-toggle="tooltip" title="$CurrentBuild.Message - $CurrentBuild.AuthorName" data-original-title="$CurrentBuild.Message">
-						$CurrentBuild.Hash
+				<span class="tooltip-hint" data-toggle="tooltip" title="$CurrentBuild.Message" data-original-title="$CurrentBuild.Message">
+					$CurrentBuild.SHA
 				</span>
 				<% end_if %>
 			</td>

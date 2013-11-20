@@ -17,12 +17,4 @@ interface DeploymentBackend {
 	 */
 	public function currentBuild($environment);
 
-	/**
-	 * Return a complete deployment history, as an array of maps.
-	 * Each map matches the format returned by {@link getCurrentBuild()}, and are returned oldest first
-	 *
-	 * @param string $environment env name, including project name.
-	 */
-	public function deployHistory($environment);
-
 }

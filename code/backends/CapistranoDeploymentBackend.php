@@ -137,45 +137,8 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 		$command = "{$envString}cap -f " . escapeshellarg($capFile) . " -vv $environment deploy:check";
 		$command.= ' -s history_path='.realpath(DEPLOYNAUT_LOG_PATH.'/');
 
-		//$log->write("Running command: $command");
-
 		$process = new \Symfony\Component\Process\Process($command);
 		$process->setTimeout(3600);
 		return $process;
 	}
-
-	/**
-	 * Return a complete deployment history, as an array of maps.
-	 * Each map matches the format returned by {@link getCurrentBuild()}, and are returned oldest first
-	 */
-	public function deployHistory($environment) {
-		$file = DEPLOYNAUT_LOG_PATH . '/' . $environment . ".deploy-history.txt";
-		$CLI_file = escapeshellarg($file);
-
-		$history = array();
-		if(file_exists($file)) {
-			$lines = explode("\n", file_get_contents($file));
-			foreach($lines as $line) {
-				if($converted = $this->convertLine($line)) {
-					$history[] = $converted;
-				}
-			}
-		}
-		return array_reverse($history);
-	}
-
-	/**
-	 * @return  array
-	 */
-	protected function convertLine($line) {
-		if(!trim($line)) return null;
-		if(!strpos($line, "=>")) return null;
-
-		list($datetime, $buildname) = explode("=>", $line, 2);
-		return array(
-			'buildname' => trim($buildname),
-			'datetime' => trim($datetime),
-		);
-	}
-
 }

@@ -5,14 +5,42 @@
  */
 class DNDeployment extends DataObject {
 
+	/**
+	 *
+	 * @var array
+	 */
 	private static $db = array(
 		"SHA" => "Varchar(255)",
 		"ResqueToken" => "Varchar(255)",
+		// Observe that this is not the same as Resque status, since ResqueStatus is not persistent
+		// It's used for finding successful deployments and displaying that in history views in the frontend
+		"Status" => "Enum('Queued, Started, Finished, Failed', 'Queued')",
 	);
+	
+	/**
+	 *
+	 * @var array
+	 */
 	private static $has_one = array(
 		"Environment" => "DNEnvironment",
 		"Deployer" =>"Member",
 	);
+	
+	/**
+	 * 
+	 * @param int $int
+	 * @return string
+	 */
+	public static function map_resque_status($int) {
+		$remap = array(
+			Resque_Job_Status::STATUS_WAITING => "Queued",
+			Resque_Job_Status::STATUS_RUNNING => "Running",
+			Resque_Job_Status::STATUS_FAILED => "Failed",
+			Resque_Job_Status::STATUS_COMPLETE => "Complete",
+			false => "Invalid",
+		);
+		return $remap[$int];
+	}
 
 	protected $dnData;
 	protected $environment;
@@ -45,16 +73,7 @@ class DNDeployment extends DataObject {
 
 	public function ResqueStatus() {
 		$status = new Resque_Job_Status($this->ResqueToken);
-
-		$remap = array(
-			Resque_Job_Status::STATUS_WAITING => "Queued",
-			Resque_Job_Status::STATUS_RUNNING => "Running",
-			Resque_Job_Status::STATUS_FAILED => "Failed",
-			Resque_Job_Status::STATUS_COMPLETE => "Complete",
-			false => "Invalid",
-		);
-
-		return $remap[$status->get()];
+		return self::map_resque_status($status->get());
 	}
 
 	public function start() {
@@ -67,7 +86,8 @@ class DNDeployment extends DataObject {
 			'repository' => $project->LocalCVSPath,
 			'logfile' => $this->logfile(),
 			'projectName' => $project->Name,
-			'env' => $project->getProcessEnv()
+			'env' => $project->getProcessEnv(),
+			'deploymentID' => $this->ID,
 		);
 
 		$log = $this->log();
