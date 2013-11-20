@@ -11,7 +11,7 @@
 				$status.text(data.status);
 				$content.text(data.content);
 				$status.attr('class', data.status);
-				$('title').text('Deployment is ' + data.status);
+				$('title').text(data.status + " | Deploynaut");
 				if (data.status === 'Complete') {
 					self._clearInterval();
 				}
