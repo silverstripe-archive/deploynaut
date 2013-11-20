@@ -4,6 +4,16 @@ class FetchJob {
 
 	public $args;
 
+	/**
+	 * 
+	 * @global array $databaseConfig
+	 */
+	public function setUp() {
+		global $databaseConfig;
+		DB::connect($databaseConfig);
+		chdir(BASE_PATH);
+	}
+	
 	public function perform() {
 		set_time_limit(0);
 		
