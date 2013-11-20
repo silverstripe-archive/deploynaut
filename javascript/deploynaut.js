@@ -42,9 +42,11 @@
 	};
 
 	$(document).ready(function(){
+		
 		if($('#Form_DeployForm_BuildName').val() === '') {
 			$('#Form_DeployForm_action_doDeploy').attr('disabled', true);
 		}
+		
 		$('#Form_DeployForm_BuildName').change(function(){
 			if($('#Form_DeployForm_BuildName').val() === '') {
 				$('#Form_DeployForm_action_doDeploy').attr('disabled', true);
@@ -52,6 +54,7 @@
 			}
 			$('#Form_DeployForm_action_doDeploy').attr('disabled', false);
 		});
+		
 		$('#Form_DeployForm_action_doDeploy').click(function() {
 			return confirm('Are you sure that you want to deploy?');
 		});
@@ -76,8 +79,22 @@
 			$(this).attr('disabled', 'disabled');
 			$(this).html('Fetching');
 			$(this).toggleClass('loading');
-			$.get($(this).attr('href'), function(){
-				location.reload();
+			
+			$.post($(this).data('api-url')+'.json', function(data){
+				$('#gitFetchModal').modal('show');
+				$('#gitFetchModal').on('hidden', function () {
+					location.reload();
+				});
+			
+				window.fetchInterval = window.setInterval(function() {
+					$.get(data.location+'.json', function(log_data){
+						$('#gitFetchModal .modal-body').html('<pre>'+log_data.message+'</pre>');
+						$('#gitFetchModal .modal-footer').html('Status: '+log_data.status);
+						if(log_data.status === 'Failed' || log_data.status === 'Success' ) {
+							clearInterval(window.fetchInterval);
+						}
+					});
+				}, 2000);
 			});
 		});
 		

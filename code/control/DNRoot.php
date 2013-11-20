@@ -89,23 +89,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 * Updates (fetches) the latest changes from the git origin
-	 *
-	 * @return \SS_HTTPResponse
-	 */
-	public function update(SS_HTTPRequest $request) {
-		$project = $this->DNProjectList()->filter('Name', $request->latestParam('Project'))->First();
-		if(!$project) {
-			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
-		}
-		$repository = new Gitonomy\Git\Repository($project->LocalCVSPath, array(
-			'environment_variables' => $project->getProcessEnv()
-		));
-		$repository->run('fetch', array('-p', 'origin', '+refs/heads/*:refs/heads/*', '--tags'));
-		return true;
-	}
-
-	/**
 	 * 
 	 * @param SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse

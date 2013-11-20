@@ -94,22 +94,6 @@ class APIEnvironment extends APINoun {
 	}
 	
 	/**
-	 * Return a simple response with a message 
-	 * 
-	 * @param string $message
-	 * @param int $statusCode
-	 * @return SS_HTTPResponse
-	 */
-	protected function message($message, $statusCode) {
-		$response =  $this->getAPIResponse(array(
-			'message' => $message,
-			'statusCode' => $statusCode
-		));
-		$response->setStatusCode($statusCode);
-		return $response;
-	}
-	
-	/**
 	 * 
 	 * @return SS_HTTPResponse
 	 */
@@ -203,44 +187,5 @@ class APIEnvironment extends APINoun {
 		);
 		
 		return $this->getAPIResponse($output);
-	}
-	
-	/**
-	 * 
-	 * @return bool
-	 */
-	protected function getAPIResponse($output) {
-		$response = $this->getResponse();
-		if($this->respondWithJSON()) {
-			$body = Convert::raw2json($output);
-			$response->addHeader('Content-Type', 'text/json');
-		} else {
-			$body = print_r($output, true);  
-			$response->addHeader('Content-Type', 'text/text');
-		}
-		$response->setBody($body);
-		return $response;
-	}
-	
-	/**
-	 * 
-	 * @return boolean
-	 */
-	protected function respondWithJSON() {
-		if($this->getRequest()->getExtension() == 'json') {
-			return true;
-		}
-		if(strpos($this->getRequest()->getHeader('Accept'), 'application/json') !== false) {
-			return true;
-		}
-		return false;
-	}
-	
-	/**
-	 * 
-	 * @return array|null
-	 */
-	protected function getRequestBody() {
-		return Convert::json2array($this->getRequest()->getBody());
 	}
 }

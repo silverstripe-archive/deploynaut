@@ -50,10 +50,19 @@
 	<pre>$getRepositoryURL</pre>
 <% end_if %>
 <% if repoExists %>
-	<a href="{$Link}/update" class="btn update-repository">Fetch latest changes</a>
+	<a href="#gitFetchModal" class="btn update-repository" data-api-url="$APILink(fetch)">Fetch latest changes</a>
 <% else %>
 	<p>Getting latest changes from your repository. You may refresh this page at will.</p>
 <% end_if %>
+
+<div id="gitFetchModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Updating GIT repository</h3>
+  </div>
+  <div class="modal-body"></div>
+  <div class="modal-footer"></div>
+</div>
 
 <% if getPublicKey %>
 	<h3>Public key</h3>

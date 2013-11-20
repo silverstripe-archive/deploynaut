@@ -16,8 +16,9 @@ class DeploynautAPI extends Controller {
 	 * Default URL handlers - (Action)/(ID)//(OtherID)
 	 */
 	private static $url_handlers = array(
+		'$Project//fetch' => 'project',
 		'$Project/$Environment!' => 'environment',
-		'$Project/' => 'project',	
+		'$Project/' => 'project',
 	);
 	
 	/**
@@ -41,7 +42,7 @@ class DeploynautAPI extends Controller {
 	 * @return string
 	 */
 	public function index(SS_HTTPRequest $request) {
-		return 'adsad this is the base.';
+		return 'This is the base.';
 	}
 	
 	/**
@@ -55,7 +56,7 @@ class DeploynautAPI extends Controller {
 		if(!$project) {
 			return new SS_HTTPResponse('Project "' . $request->latestParam('Project') . '" not found.', 404);
 		}
-		return 'project';
+		return new APIProject($this, $project);
 	}
 	
 	/**
@@ -70,11 +71,11 @@ class DeploynautAPI extends Controller {
 			return new SS_HTTPResponse('Project "' . $request->latestParam('Project') . '" not found.', 404);
 		}
 		
-		$env = $this->getEnvironment();
-		if(!$env) {
+		$environment = $this->getEnvironment();
+		if(!$environment) {
 			return new SS_HTTPResponse('Environment "' . $request->latestParam('Environment') . '" not found.', 404);
 		}
-		return new APIEnvironment($this, $env);
+		return new APIEnvironment($this, $environment);
 	}
 	
 	/**
