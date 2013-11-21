@@ -112,21 +112,23 @@ class DNCommit extends ViewableData {
 	 *
 	 * @return ArrayList
 	 */
-
 	public function CurrentlyDeployedTo() {
-		$envNames = array();
-		foreach($this->project->currentBuilds() as $envName => $currentBuild) {
-			if(!$currentBuild || $currentBuild->Hash != $this->buildname) {
+		$environments = $this->project->Environments();
+		$envList = new ArrayList();
+		foreach($environments as $environment) {
+			$deployments = DNDeployment::get()
+				->filter('Status', 'Finished')
+				->filter('EnvironmentID', $environment->ID)
+				->sort('LastEdited DESC');
+			if(!$deployments->count()) {
 				continue;
 			}
-			$envNames[] = $envName;
+			$latest = $deployments->first();
+			if($latest->SHA === $this->commit->getHash()) {
+				$envList->push($environment);
+			}
 		}
-
-		if($envNames) {
-			return $this->project->Environments()->filter('Name', $envNames);
-		} else {
-			return new ArrayList;
-		}
+		return $envList;
 	}
 
 	/**
@@ -135,13 +137,21 @@ class DNCommit extends ViewableData {
 	 * @return boolean True if this release has ever been deployed to the given environment
 	 */
 	public function EverDeployedTo($environmentName) {
-		$sha = $this->commit->getHash();
-
-		$history = $this->data->Backend()->deployHistory($this->project->Name.':'.$environmentName);
-		foreach($history as $item) {
-			if($item['buildname'] == $sha) return true;
+		$environments = $this->project->Environments()->filter('Name', $environmentName);
+		if(!$environments->count()) {
+			return false;
 		}
-
+		
+		$environment = $environments->first();
+		
+		$deployments = DNDeployment::get()
+				->filter('Status', 'Finished')
+				->filter('EnvironmentID', $environment->ID);
+		
+		if($deployments->count()) {
+			return true;
+		}
+		
 		return false;
 	}
 

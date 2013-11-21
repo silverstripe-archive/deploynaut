@@ -105,7 +105,7 @@
 			<td title="$SubjectMessage $BodyMessage">$SubjectMessage</td>
 			<td>
 				<% loop CurrentlyDeployedTo %>
-				<a href="{$Link}">$Name</a><% if not $Last %>,<% end_if %>
+				<a href="{$Link}">$Title</a><% if not $Last %>,<% end_if %>
 				<% end_loop %>
 			</td>
 			<td class="nowrap">$Created.Nice ($Created.Ago)</td>
