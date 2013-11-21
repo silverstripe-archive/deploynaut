@@ -45,7 +45,7 @@
 		<tr>
 			<td>$LastEdited.Rfc2822</td>
 			<td><span class="tooltip-hint" data-toggle="tooltip" title="$Message" data-original-title="$Message">$SHA</span></td>
-			<td>$Deployer.Name <% if $Deployer.Email %>&lt;$Deployer.Email&gt; <% end_if %><></td>
+			<td>$Deployer.Name <% if $Deployer.Email %>&lt;$Deployer.Email&gt; <% end_if %></td>
 			<td><% if $LogLink %><a href="$LogLink"><% end_if %>$Status<% if $LogLink %></a><% end_if %></td>
 		</tr>
 	<% end_loop %>
