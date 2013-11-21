@@ -204,11 +204,13 @@ class DNEnvironment extends DataObject {
 			if(!$deploy->SHA) {
 				continue;
 			}
-			$commit = $repo->getCommit($deploy->SHA);
-			if(!$commit) {
-				continue;
-			}
-			$deploy->Message = $commit->getMessage();
+			try {
+				$commit = $repo->getCommit($deploy->SHA);
+				if($commit) {
+					$deploy->Message = $commit->getMessage();
+				}
+				// We can't find this SHA, so we ignore adding a commit message to the deployment
+			} catch (Gitonomy\Git\Exception\ReferenceNotFoundException $ex) { }
 			$ammendedHistory->push($deploy);
 		}
 		
