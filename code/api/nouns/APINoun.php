@@ -60,16 +60,17 @@ class APINoun extends Controller {
 	
 	/**
 	 * 
-	 * @return bool
+	 * @return SS_HTTPResponse
 	 */
 	protected function getAPIResponse($output) {
 		$response = $this->getResponse();
-		if($this->respondWithJSON()) {
-			$body = Convert::raw2json($output);
-			$response->addHeader('Content-Type', 'text/json');
-		} else {
+		if($this->respondWithText()) {
 			$body = print_r($output, true);  
 			$response->addHeader('Content-Type', 'text/text');
+		} else {
+			$body = Convert::raw2json($output);
+			$response->addHeader('Content-Type', 'text/json');
+			
 		}
 		$response->setBody($body);
 		return $response;
@@ -84,6 +85,20 @@ class APINoun extends Controller {
 			return true;
 		}
 		if(strpos($this->getRequest()->getHeader('Accept'), 'application/json') !== false) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * 
+	 * @return boolean
+	 */
+	protected function respondWithText() {
+		if($this->getRequest()->getExtension() == 'txt') {
+			return true;
+		}
+		if(strpos($this->getRequest()->getHeader('Accept'), 'text/plain') !== false) {
 			return true;
 		}
 		return false;

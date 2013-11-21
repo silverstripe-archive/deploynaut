@@ -145,9 +145,15 @@ Example:
 
 ## Response types
 
-By appending .json to the API you will recieve a JSON formatted body.
+By default the response is formated as JSON.
 
-Without an extension you will recieve a simple text mimetype
+### JSON 
+
+By appending .json to the URL or setting the Accept header to text/json
+
+### Plain text 
+
+By appending .txt to the URL or setting the Accept header to text/plain
 
 ## Authentication
 
