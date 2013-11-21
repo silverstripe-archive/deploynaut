@@ -14,7 +14,7 @@ class DNDeployment extends DataObject {
 		"ResqueToken" => "Varchar(255)",
 		// Observe that this is not the same as Resque status, since ResqueStatus is not persistent
 		// It's used for finding successful deployments and displaying that in history views in the frontend
-		"Status" => "Enum('Queued, Started, Finished, Failed', 'Queued')",
+		"Status" => "Enum('Queued, Started, Finished, Failed, n/a', 'n/a')",
 	);
 	
 	/**
@@ -108,6 +108,7 @@ class DNDeployment extends DataObject {
 
 		$token = Resque::enqueue('deploy', 'DeployJob', $args, true);
 		$this->ResqueToken = $token;
+		$this->Status = 'Queued';
 		$this->write();
 
 		$message = 'Deploy queued as job ' . $token;
