@@ -56,7 +56,7 @@ class DNData {
 
 	/**
 	 *
-	 * @return DNBuildList
+	 * @return DNProjectList
 	 */
 	public function DNProjectList() {
 		return DNProject::get();
