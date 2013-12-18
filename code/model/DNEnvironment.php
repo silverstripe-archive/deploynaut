@@ -305,12 +305,12 @@ class DNEnvironment extends DataObject {
 			$this->setDeployConfigurationFields($fields);
 		}
 		
-		// The Extra.URL field
+		// The Main.URL field
 		$urlField = $fields->fieldByName('Root.Main.URL');
 		$urlField->setTitle('Server URL');
 		$fields->removeByName('Root.Main.URL');
 		$urlField->setDescription('This url will be used to provide the front-end with a link to this environment');
-		$fields->addFieldToTab('Root.Extra', $urlField);
+		$fields->insertAfter($urlField, 'Name');
 		
 		// The Extra.GraphiteServers
 		$graphiteServerField = $fields->fieldByName('Root.Main.GraphiteServers');
