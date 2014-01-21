@@ -134,8 +134,11 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 		}
 		file_put_contents($capFile, $cap);
 
+
 		$command = "{$envString}cap -f " . escapeshellarg($capFile) . " -vv $environment deploy:check";
 		$command.= ' -s history_path='.realpath(DEPLOYNAUT_LOG_PATH.'/');
+
+		$log->write("Running command: $command");
 
 		$process = new \Symfony\Component\Process\Process($command);
 		$process->setTimeout(3600);
