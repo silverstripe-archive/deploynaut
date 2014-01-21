@@ -12,7 +12,7 @@ For this example I'm going to create a fictional stage that will be deployed to:
 ## Create a project
 
  1) Login to the Project admin at http://site//admin/naut/
- 2) Click the big green "Add D N Project" button.
+ 2) Click the big green "Add Project" button.
  3) Fill in the required fields:
 
     * Project name

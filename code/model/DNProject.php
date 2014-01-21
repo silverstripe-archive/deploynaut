@@ -48,6 +48,10 @@ class DNProject extends DataObject {
 	public static $searchable_fields = array(
 		"Name",
 	);
+
+	private static $singular_name = 'Project';
+
+	private static $plural_name = 'Projects';
 	
 	/**
 	 *
