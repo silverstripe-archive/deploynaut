@@ -18,3 +18,6 @@ set :webserver_group, "sites"
 
 # Which SSH user will deploynaut use to SSH into the server
 ssh_options[:username] = 'sites'
+
+# Enable SSH debugging
+#ssh_options[:verbose] = :debug 
