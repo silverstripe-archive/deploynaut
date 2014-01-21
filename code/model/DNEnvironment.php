@@ -406,6 +406,12 @@ class DNEnvironment extends DataObject {
 		if($this->Name && $this->Name.'.rb' != $this->Filename) {
 			$this->Filename = $this->Name.'.rb';
 		}
+
+		// Create folder if it doesn't exist
+		$configDir = dirname($this->getConfigFilename());
+		if(!file_exists($configDir)) {
+			mkdir($configDir, 0777, true);
+		}
 		
 		// Create a basic new environment config from a template
 		if($this->config()->get('allow_web_editing') && !$this->envFileExists() && $this->Filename && $this->CreateEnvConfig) {
