@@ -6,10 +6,10 @@ namespace :data do
 		Assumption: This task will run against the webserver, so that it's able to fetch the database credentials
 		from _ss_environment.php
 
+		Example command: cap -f '/sites/deploynaut/www/assets/Capfile' project1:env1 data:getdb -s data_path=/tmp
+
 		Required arguments to the cap command:
 		data_path - Output the SQL dump to this path on the deploynaut server
-
-		Example command: cap -f '/sites/deploynaut/www/assets/Capfile' project1:env1 data:getdb -s data_path=/tmp
 	DESC
 	task :getdb do
 		database_name = getdatabasename
@@ -31,8 +31,18 @@ namespace :data do
 		end
 	end
 
+	desc <<-DESC
+		Download assets directory off target server and place them into a path on the deploynaut server.
+
+		Example command: cap -f '/sites/deploynaut/www/assets/Capfile' project1:env1 data:getassets -s data_path=/tmp
+
+		Required arguments to the cap command:
+		data_path - Output the assets dump to this path on the deploynaut server
+	DESC
 	task :getassets do
-		# todo
+		download(shared_path + "/assets", data_path + "/assets-dump-" + Time.now.to_i.to_s, :recursive => true, :via => :scp) do |channel, name, sent, total|
+			puts name
+		end
 	end
 
 	def getdatabasename
