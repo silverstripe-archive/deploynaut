@@ -15,6 +15,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'getDeployForm',
 		'deploy',
 		'deploylog',
+		'getDataTransferForm',
+		'transfer',
 	);
 
 	/**
@@ -22,9 +24,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public static $url_handlers = array(
 		'project/$Project/environment/$Environment/DeployForm' => 'getDeployForm',
+		'project/$Project/environment/$Environment/DataTransferForm' => 'getDataTransferForm',
 		'project/$Project/environment/$Environment/metrics' => 'metrics',
 		'project/$Project/environment/$Environment/deploy/$Identifier/log' => 'deploylog',
 		'project/$Project/environment/$Environment/deploy/$Identifier' => 'deploy',
+		'project/$Project/environment/$Environment/transfer/$Identifier' => 'transfer',
 		'project/$Project/environment/$Environment' => 'environment',
 		'project/$Project/build/$Build' => 'build',
 		'project/$Project/update' => 'update',
@@ -118,7 +122,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		return $env->customise(array(
-			'DeployForm' => $this->getDeployForm($request)
+			'DeployForm' => $this->getDeployForm($request),
+			'DataTransferForm' => $this->getDataTransferForm($request)
 		))->renderWith(array('DNRoot_environment', 'DNRoot'));
 	}
 
@@ -348,6 +353,65 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
+	 * @return Form
+	 */
+	public function getDataTransferForm($request) {
+		$envs = $this->getCurrentProject()->DNEnvironmentList()
+			->exclude('ID', $this->getCurrentEnvironment()->ID)
+			->filterByCallback(function($item) {return $item->canDeploy();});
+
+		$modesMap = array(
+			'all' => 'Database and Assets',
+			'database' => 'Database only',
+			'assets' => 'Assets only',
+		);
+
+		$form = new Form(
+			$this,
+			'DataTransferForm',
+			new FieldList(
+				new DropdownField('EnvironmentID', 'Environment', $envs->map()),
+				new DropdownField('Mode', 'Transfer', $modesMap)
+			),
+			new FieldList(
+				FormAction::create('doDataTransfer', 'Transfer')->addExtraClass('btn')
+			)
+		);
+		$form->setFormAction($request->getURL().'/DataTransferForm');
+
+		return $form;
+	}
+
+	public function doDataTransfer($data, $form) {
+		$project = $this->getCurrentProject();
+		$environment = $this->getCurrentEnvironment($project);
+		$member = Member::currentUser();
+		
+		$validEnvs = $this->getCurrentProject()->DNEnvironmentList()
+			->exclude('ID', $this->getCurrentEnvironment()->ID)
+			->filterByCallback(function($item) {return $item->canDeploy();});
+
+		if(!$validEnvs->find('ID', $data['EnvironmentID'])) {
+			throw new LogicException('Invalid environment');
+		}
+
+		$job = new DNDataTransfer;
+		$job->EnvironmentID = $environment->ID;
+		$job->Direction = 'get';
+		$job->Mode = $data['Mode'];
+		$job->write();
+		$job->start();
+		
+		$this->redirect($job->Link());
+	}
+
+	public function transfer($request) {
+		return $this->customise(new ArrayData(array(
+			// TODO
+		)))->renderWith('DNRoot_transfer');
+	}
+
+	/**
 	 * 
 	 * @return array
 	 */
@@ -407,7 +471,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @param DNProject $project
 	 * @return DNEnvironment
 	 */
-	protected function getCurrentEnvironment($project) {
+	protected function getCurrentEnvironment($project = null) {
+		if(!$project) $project = $this->getCurrentProject();
 		return $project->DNEnvironmentList()->filter('Name', $this->getRequest()->latestParam('Environment'))->First();
 	}
 }

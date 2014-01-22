@@ -50,6 +50,7 @@ class DNDeployment extends DataObject {
 	public function Link() {
 		return Controller::join_links($this->Environment()->Link(), 'deploy', $this->ID);
 	}
+	
 	public function LogLink() {
 		return $this->Link() . '/log';
 	}

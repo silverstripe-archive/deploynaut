@@ -50,6 +50,14 @@ class DNEnvironment extends DataObject {
 	 *
 	 * @var array
 	 */
+	public static $has_many = array(
+		"DataArchives" => "DNDataArchive",
+	);
+
+	/**
+	 *
+	 * @var array
+	 */
 	public static $many_many = array(
 		"Deployers" => "Member",
 	);
@@ -122,6 +130,13 @@ class DNEnvironment extends DataObject {
 			}
 		}
 		return $e;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getFullName() {
+		return $this->Project()->Name . ':' . $this->Name;
 	}
 
 	/**
