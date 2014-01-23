@@ -25,6 +25,7 @@ class DNProjectTest extends SapphireTest {
 			'constructor' => array(
 				0 => $this->envPath,
 				1 => '/tmp/deploynaut_test/gitkeys',
+				2 => '/tmp/deploynaut_test/transfers',
 			) 
 		));
 		

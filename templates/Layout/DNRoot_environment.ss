@@ -29,17 +29,6 @@
 <% end_with %>
 <% end_if %>
 
-<h4>Backup environment data</h4>
-<p>Backs up the database and/or assets into a file which can be downloaded or used for later restores.</p>
-
-<% with DataTransferForm %>
-<form $FormAttributes class='form-inline'>
-	<% loop VisibleFields %>$FieldHolder<% end_loop %>
-	$Actions
-	$HiddenFields
-</form>
-<% end_with %>
-
 
 <h4>Deploy history</h4>
 <p>Below builds have previous been deployed to this environment, ordered by deploy date descending.</p>

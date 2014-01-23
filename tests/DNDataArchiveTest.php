@@ -1,5 +1,6 @@
 <?php
 class DNDataArchiveTest extends SapphireTest {
+
 	protected static $fixture_file = 'DNDataArchiveTest.yml';
 
 	public function setUp() {
@@ -8,6 +9,7 @@ class DNDataArchiveTest extends SapphireTest {
 			'constructor' => array(
 				0 => $this->envPath,
 				1 => '/tmp/deploynaut_test/gitkeys',
+				1 => '/tmp/deploynaut_test/datatransfer',
 			)
 		));
 
@@ -49,5 +51,27 @@ class DNDataArchiveTest extends SapphireTest {
 		$this->assertFalse($project2->Environments()->filter('Name', 'uat')->First()->canDownloadArchive($sarah));
 		$this->assertFalse($project2->Environments()->filter('Name', 'live')->First()->canUploadArchive($sarah));
 		$this->assertFalse($project2->Environments()->filter('Name', 'live')->First()->canDownloadArchive($sarah));
+	}
+
+	public function testGenerateFilePath() {
+		// SS_Datetime::mock_now('2010-01-01 23:23:23');
+		$project1 = $this->objFromFixture('DNProject', 'project1');
+		$project1uatEnv = $this->objFromFixture('DNEnvironment', 'project1-uat');
+
+		$dataTransfer = new DNDataTransfer();
+		$dataTransfer->Direction = 'get';
+		$dataTransfer->Mode = 'all';
+		$dataTransfer->write();
+
+		$archive = new DNDataArchive();
+		$archive->EnvironmentID = $project1uatEnv->ID;
+		$archive->write();
+
+		$filepath1 = $archive->generateFilepath($dataTransfer);
+		$this->assertNotNull($filepath1);
+		$this->assertContains('project_1', $filepath1);
+		$this->assertContains('uat', $filepath1);
+		$this->assertContains('transfer-' . $dataTransfer->ID, $filepath1);
+
 	}
 }

@@ -8,6 +8,16 @@ interface DeploymentBackend {
 	public function deploy($environment, $sha, DeploynautLogFile $log, DNProject $project);
 
 	/**
+	 * Transfer data from an environment to a local file, or from a local file
+	 * back into an environment. See {@link DNDataTransfer} for details.
+	 *
+	 * @param DNEnvironment $environment
+	 * @param DNDataTransfer $dataTransfer
+	 * @param DeploynautLogFile $log
+	 */
+	public function dataTransfer(DNDataTransfer $dataTransfer, DeploynautLogFile $log);
+
+	/**
 	 * Return information about the current build on the given environment.
 	 * Returns a map with keys:
 	 * - 'buildname' - the non-simplified name of the build deployed

@@ -21,7 +21,7 @@
 				<% include Header %>
 			</div>
 			<% include RedisStatus %>
-			TODO
+			<% include Transfer %>
 		</div>
 	</body>
 </html>

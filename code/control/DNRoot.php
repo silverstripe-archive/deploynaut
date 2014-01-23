@@ -17,6 +17,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'deploylog',
 		'getDataTransferForm',
 		'transfer',
+		'transferlog',
 	);
 
 	/**
@@ -24,11 +25,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public static $url_handlers = array(
 		'project/$Project/environment/$Environment/DeployForm' => 'getDeployForm',
-		'project/$Project/environment/$Environment/DataTransferForm' => 'getDataTransferForm',
+		'project/$Project/DataTransferForm' => 'getDataTransferForm',
 		'project/$Project/environment/$Environment/metrics' => 'metrics',
 		'project/$Project/environment/$Environment/deploy/$Identifier/log' => 'deploylog',
 		'project/$Project/environment/$Environment/deploy/$Identifier' => 'deploy',
-		'project/$Project/environment/$Environment/transfer/$Identifier' => 'transfer',
+		'project/$Project/transfer/$Identifier/log' => 'transferlog',
+		'project/$Project/transfer/$Identifier' => 'transfer',
 		'project/$Project/environment/$Environment' => 'environment',
 		'project/$Project/build/$Build' => 'build',
 		'project/$Project/update' => 'update',
@@ -102,7 +104,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		if(!$project) {
 			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
 		}
-		return $project->renderWith(array('DNRoot_project', 'DNRoot'));
+		return $project->customise(array(
+			'DataTransferForm' => $this->getDataTransferForm($request)
+		))->renderWith(array('DNRoot_project', 'DNRoot'));
 	}
 
 	/**
@@ -123,7 +127,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		return $env->customise(array(
 			'DeployForm' => $this->getDeployForm($request),
-			'DataTransferForm' => $this->getDataTransferForm($request)
 		))->renderWith(array('DNRoot_environment', 'DNRoot'));
 	}
 
@@ -330,7 +333,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		if($log->exists()) {
 			$content = $log->content();
 		} else {
-			$content = 'Waiting for deployment to start';
+			$content = 'Waiting for action to start';
 		}
 
 		$sendJSON = (strpos($request->getHeader('Accept'), 'application/json') !== false)
@@ -357,12 +360,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function getDataTransferForm($request) {
 		$envs = $this->getCurrentProject()->DNEnvironmentList()
-			->exclude('ID', $this->getCurrentEnvironment()->ID)
 			->filterByCallback(function($item) {return $item->canDeploy();});
 
 		$modesMap = array(
 			'all' => 'Database and Assets',
-			'database' => 'Database only',
+			'db' => 'Database only',
 			'assets' => 'Assets only',
 		);
 
@@ -384,14 +386,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 	public function doDataTransfer($data, $form) {
 		$project = $this->getCurrentProject();
-		$environment = $this->getCurrentEnvironment($project);
 		$member = Member::currentUser();
 		
 		$validEnvs = $this->getCurrentProject()->DNEnvironmentList()
-			->exclude('ID', $this->getCurrentEnvironment()->ID)
 			->filterByCallback(function($item) {return $item->canDeploy();});
 
-		if(!$validEnvs->find('ID', $data['EnvironmentID'])) {
+		$environment = $validEnvs->find('ID', $data['EnvironmentID']);
+		if(!$environment) {
 			throw new LogicException('Invalid environment');
 		}
 
@@ -405,10 +406,67 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$this->redirect($job->Link());
 	}
 
+	/**
+	 * View into the log for a {@link DNDataTransfer}.
+	 */
 	public function transfer($request) {
+		$params = $request->params();
+		$transfer = DNDataTransfer::get()->byId($params['Identifier']);
+
+		if(!$transfer || !$transfer->ID) throw new SS_HTTPResponse_Exception('Transfer not found', 404);
+		if(!$transfer->canView()) return Security::permissionFailure();
+
+		$environment = $transfer->Environment();
+		$project = $environment->Project();
+
+		if($project->Name != $params['Project']) throw new LogicException("Project in URL doesn't match this deploy");
+
 		return $this->customise(new ArrayData(array(
-			// TODO
+			'Transfer' => $transfer,
 		)))->renderWith('DNRoot_transfer');
+	}
+
+	/**
+	 * Action - Get the latest deploy log
+	 *
+	 * @return string
+	 */
+	public function transferlog(SS_HTTPRequest $request) {
+		$params = $request->params();
+		$transfer = DNDataTransfer::get()->byId($params['Identifier']);
+
+		if(!$transfer || !$transfer->ID) throw new SS_HTTPResponse_Exception('Transfer not found', 404);
+		if(!$transfer->canView()) return Security::permissionFailure();
+
+		$environment = $transfer->Environment();
+		$project = $environment->Project();
+
+		if($project->Name != $params['Project']) throw new LogicException("Project in URL doesn't match this deploy");
+
+		$log = $transfer->log();
+		if($log->exists()) {
+			$content = $log->content();
+		} else {
+			$content = 'Waiting for action to start';
+		}
+
+		$sendJSON = (strpos($request->getHeader('Accept'), 'application/json') !== false)
+			|| $request->getExtension() == 'json';
+
+		
+		$content = preg_replace('/(?:(?:\r\n|\r|\n)\s*){2}/s', "\n", $content);
+		if($sendJSON) {
+			$this->response->addHeader("Content-type", "application/json");
+			return json_encode(array(
+				'status' => $transfer->ResqueStatus(),
+				'content' => $content,
+			));
+
+		} else {
+			$this->response->addHeader("Content-type", "text/plain");
+			return $content;
+		}
+
 	}
 
 	/**

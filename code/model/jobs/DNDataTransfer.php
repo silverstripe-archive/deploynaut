@@ -21,16 +21,21 @@ class DNDataTransfer extends DataObject {
 		// Observe that this is not the same as Resque status, since ResqueStatus is not persistent.
 		"Status" => "Enum('Queued, Started, Finished, Failed, n/a', 'n/a')",
 		"Direction" => "Enum('get, push', 'get')",
-		"Mode" => "Enum('all, assets, database', '')",
+		"Mode" => "Enum('all, assets, db', '')",
 	);
 	
 	private static $has_one = array(
 		"Environment" => "DNEnvironment",
 		"Author" => "Member",
+		"DataArchive" => "DNDataArchive",
 	);
 
 	public function Link() {
-		return Controller::join_links($this->Environment()->Link(), 'transfer', $this->ID);
+		return Controller::join_links($this->Environment()->Project()->Link(), 'transfer', $this->ID);
+	}
+
+	public function LogLink() {
+		return $this->Link() . '/log';
 	}
 
 	/**
@@ -42,8 +47,9 @@ class DNDataTransfer extends DataObject {
 
 		$args = array(
 			'projectName' => $project->Name,
+			'environmentName' => $env->Name,
+			'dataTransferID' => $this->ID,
 			'logfile' => $this->logfile(),
-			'env' => $env->Name,
 			'direction' => $this->Direction,
 			'mode' => $this->Mode
 		);
@@ -95,8 +101,9 @@ class DNDataTransfer extends DataObject {
 	 * @return string
 	 */
 	protected function logfile() {
+		$environment = $this->Environment();
 		$project = $this->Environment()->Project();
-		return $project->Name.'.datatransfer.'.$this->ID.'.log';
+		return $project->Name.'.'.$environment->Name.'.datatransfer.'.$this->ID.'.log';
 	}
 
 	/**
@@ -113,6 +120,25 @@ class DNDataTransfer extends DataObject {
 	 */
 	public function LogContent() {
 		return $this->log()->content();
+	}
+
+	public function getDescription() {
+		$envName = $this->Environment()->FullName;
+		if($this->Direction == 'get') {
+			$description = 'Backup ' . $this->getModeNice() . ' from ' . $envName;
+		} else {
+			$description = 'Restore ' . $this->getModeNice() . ' to ' . $envName;
+		}
+		
+		return $description;
+	}
+
+	public function getModeNice() {
+		if($this->Mode == 'all') {
+			return 'database and assets';
+		} else {
+			return $this->Mode;
+		}
 	}
 
 	/**

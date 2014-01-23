@@ -29,6 +29,13 @@ class DemoDeploymentBackend implements DeploymentBackend {
 	}
 
 	/**
+	 * @inheritdoc
+	 */
+	public function dataTransfer(DNDataTransfer $dataTransfer, DeploynautLogFile $log) {
+		die('Not implemented');
+	}
+
+	/**
 	 * Return information about the current build on the given environment.
 	 * Returns a map with keys:
 	 * - 'buildname' - the non-simplified name of the build deployed

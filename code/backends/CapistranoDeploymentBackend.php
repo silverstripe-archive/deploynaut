@@ -64,6 +64,109 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 	}
 
 	/**
+	 * @inheritdoc
+	 */
+	public function dataTransfer(DNDataTransfer $dataTransfer, DeploynautLogFile $log) {
+		$environmentObj = $dataTransfer->Environment();
+		$project = $environmentObj->Project();
+		$projectName = $project->Name;
+		$environmentName = $environmentObj->Name;
+		$env = $project->getProcessEnv();
+		$project = DNProject::get()->filter('Name', $projectName)->first();
+
+		// TODO Refactor into methods
+
+		if($dataTransfer->Direction == 'get') {
+			// Associate a new archive with the transfer.
+			// Doesn't retrieve a filepath just yet, need to generate the files first.
+			$dataArchive = new DNDataArchive();
+			$dataArchive->EnvironmentID = $dataTransfer->Environment()->ID;
+
+			// Generate directory structure with strict permissions (contains very sensitive data)
+			$filepathBase = $dataArchive->generateFilepath($dataTransfer);
+			mkdir($filepathBase, 0700, true);
+
+			// Backup database
+			// TODO Pass in file name
+			if(in_array($dataTransfer->Mode, array('all', 'db'))) {
+				$log->write('Backup of database from "'.$projectName.':'.$environmentName.'" started');
+				$args = array(
+					'data_path' => "{$filepathBase}/database.sql"
+				);
+				$command = $this->getCommand("data:getdb", $projectName.':'.$environmentName, $args, $env, $log);
+				$command->run(function ($type, $buffer) use($log) {
+					$log->write($buffer);
+				});
+				if(!$command->isSuccessful()) {
+					throw new RuntimeException($command->getErrorOutput());
+				}
+				$log->write('Backup of database from "'.$projectName.':'.$environmentName.'" done');
+			}
+			
+			// Backup assets
+			if(in_array($dataTransfer->Mode, array('all', 'assets'))) {
+				$log->write('Backup of assets from "'.$projectName.':'.$environmentName.'" started');
+				$args = array(
+					'data_path' => $filepathBase
+				);
+				$command = $this->getCommand("data:getassets", $projectName.':'.$environmentName, $args, $env, $log);
+				$command->run(function ($type, $buffer) use($log) {
+					$log->write($buffer);
+				});
+				if(!$command->isSuccessful()) {
+					throw new RuntimeException($command->getErrorOutput());
+				}
+				$log->write('Backup of assets from "'.$projectName.':'.$environmentName.'" done');
+			}	
+
+			// TODO Combine into PAK
+			// TODO Create DNDataArchive and associate with DNDataTransfer
+			// TODO Delete temporary files
+			
+			// $dataTransfer->Filepath = $filepathPak;
+			// $dataTransfer->write();
+		} else {
+			// TODO Unbundle PAK
+
+			// Restore database
+			// TODO Pass in file name
+			if(in_array($dataTransfer->Mode, array('all', 'db'))) {
+				$log->write('Restore of database to "'.$projectName.':'.$environmentName.'" started');
+				$args = array(
+					'data_path' => '' // TODO associate with DNDataTransfer
+				);
+				$command = "data:pushdb";
+				$command = $this->getCommand($command, $projectName.':'.$environmentName, $args, $env, $log);
+				$command->run(function ($type, $buffer) use($log) {
+					$log->write($buffer);
+				});
+				if(!$command->isSuccessful()) {
+					throw new RuntimeException($command->getErrorOutput());
+				}
+				$log->write('Restore of database to "'.$projectName.':'.$environmentName.'" done');
+			}
+			
+			// Restore assets
+			// TODO Pass in file name
+			if(in_array($dataTransfer->Mode, array('all', 'assets'))) {
+				$log->write('Restore of assets to "'.$projectName.':'.$environmentName.'" started');
+				$args = array(
+					'data_path' => '' // TODO associate with DNDataTransfer
+				);
+				$command = "data:pushassets";
+				$command = $this->getCommand($command, $projectName.':'.$environmentName, $args, $env, $log);
+				$command->run(function ($type, $buffer) use($log) {
+					$log->write($buffer);
+				});
+				if(!$command->isSuccessful()) {
+					throw new RuntimeException($command->getErrorOutput());
+				}
+				$log->write('Restore of assets to "'.$projectName.':'.$environmentName.'" done');
+			}
+		}
+	}
+
+	/**
 	 * @param string $action Capistrano action to be executed
 	 * @param string $environment Capistrano identifier for the environment (see capistrano-multiconfig)
 	 * @param array $args Additional arguments for process

@@ -1,5 +1,5 @@
-#deploy_log,
-#deploy_action {
+#queue_log,
+#queue_action {
 	background-color: #333;
 	padding: 10px;
 	border: #000 1px solid;
@@ -17,19 +17,19 @@
 	box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, rgba(0, 0, 0, 0.8) 0 1px 7px 0px inset;
 }
 
-#deploy_action.Complete {
+#queue_action.Complete {
 	background-color: #558655;
 	-webkit-box-shadow: rgba(65, 114, 65, 0.1) 0 1px 0, rgba(65, 114, 65, 0.8) 0 1px 7px 0px inset;
 	-moz-box-shadow: rgba(65, 114, 65, 0.1) 0 1px 0, rgba(65, 114, 65, 0.8) 0 1px 7px 0px inset;
 	box-shadow: rgba(65, 114, 65, 0.1) 0 1px 0, rgba(65, 114, 65, 0.8) 0 1px 7px 0px inset;
 }
-#deploy_action.Invalid, #deploy_action.Failed {
+#queue_action.Invalid, #queue_action.Failed {
 	background-color: #b94a48;
 	-webkit-box-shadow: rgba(120, 60, 60, 0.1) 0 1px 0, rgba(120, 60, 60, 0.8) 0 1px 7px 0px inset;
 	-moz-box-shadow: rgba(120, 60, 60, 0.1) 0 1px 0, rgba(120, 60, 60, 0.8) 0 1px 7px 0px inset;
 	box-shadow: rgba(120, 60, 60, 0.1) 0 1px 0, rgba(120, 60, 60, 0.8) 0 1px 7px 0px inset;
 }
-#deploy_action.Running {
+#queue_action.Running {
 	background-color: #3a87ad;
 	-webkit-box-shadow: rgba(38, 105, 143, 0.1) 0 1px 0, rgba(38, 105, 143, 0.8) 0 1px 7px 0px inset;
 	-moz-box-shadow: rgba(38, 105, 143, 0.1) 0 1px 0, rgba(38, 105, 143, 0.8) 0 1px 7px 0px inset;
@@ -55,7 +55,7 @@
     -webkit-background-size: 50px 50px;
     -webkit-animation: animate-stripes 2s linear infinite;
 }
-#deploy_action.Queued {
+#queue_action.Queued {
 }
 
 .navbar-inner {

@@ -8,12 +8,17 @@ class DNData {
 	/**
 	 * Path where the environment configurations can be found.
 	 */
-	protected static $environment_dir = '';
+	protected $environmentDir = '';
 
 	/**
 	 * Path where the keys are stored.
 	 */
-	protected static $key_dir = '';
+	protected $keyDir = '';
+
+	/**
+	 * Path where data transfers are stored.
+	 */
+	protected $dataTransferDir = '';
 
 	/**
 	 * A prebuilt DNProjectList.
@@ -26,21 +31,16 @@ class DNData {
 	 */
 	protected $backend;
 
-	/**
-	 *
-	 * @param string $buildPath
-	 * @param array $environmentNames
-	 * @param DeploymentBackend $backend
-	 */
-	public function __construct($environmentDir, $keyDir) {
+	public function __construct($environmentDir, $keyDir, $dataTransferDir) {
 		$this->backend = Injector::inst()->get('DeploymentBackend');
 		$this->setEnvironmentDir($environmentDir);
-		$this->setKeyDir($keyDir);
+		$this->setDataTransferDir($dataTransferDir);
 	}
 
 	public function getEnvironmentDir() {
 		return $this->environmentDir;
 	}
+
 	public function setEnvironmentDir($environmentDir) {
 		if($environmentDir[0] != "/") $environmentDir = BASE_PATH . '/' . $environmentDir;
 		$this->environmentDir = $environmentDir;
@@ -49,9 +49,19 @@ class DNData {
 	public function getKeyDir() {
 		return $this->keyDir;
 	}
+	
 	public function setKeyDir($keyDir) {
 		if($keyDir[0] != "/") $keyDir = BASE_PATH . '/' . $keyDir;
 		$this->keyDir = $keyDir;
+	}
+
+	public function getDataTransferDir() {
+		return $this->dataTransferDir;
+	}
+
+	public function setDataTransferDir($dir) {
+		if($dir[0] != "/") $dir = BASE_PATH . '/' . $dir;
+		$this->dataTransferDir = $dir;
 	}
 
 	/**

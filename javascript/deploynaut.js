@@ -3,7 +3,7 @@
 (function($) {
 	"use strict";
 
-	var deploy = {
+	var queue = {
 		showlog: function($status, $content, logLink) {
 			var self = this;
 			$.getJSON(logLink, {randval: Math.random()},
@@ -26,15 +26,15 @@
 		 */
 		_setupPinging: function() {
 			var self = this;
-			window._deploy_refresh = window.setInterval(function() {
-				self.showlog($("#deploy_action"), $("#deploy_log"), $('#deploy_log').data('loglink'));
+			window._queue_refresh = window.setInterval(function() {
+				self.showlog($("#queue_action"), $("#queue_log"), $('#queue_log').data('loglink'));
 			}, 3000);
 		},
 		/**
 		 * Will remove the pinging and refresh of the application list
 		 */
 		_clearInterval: function() {
-			window.clearInterval(window._deploy_refresh);
+			window.clearInterval(window._queue_refresh);
 		}
 	};
 
@@ -57,8 +57,8 @@
 		});
 
 		// Deployment screen
-		if ($('#deploy_log').length) {
-			deploy.start();
+		if ($('#queue_log').length) {
+			queue.start();
 		}
 
 		$('.project-branch > h3').click(function() {
