@@ -15,7 +15,7 @@ namespace :data do
 		database_name = getdatabasename
 
 		# todo: output to gzip and stream that back instead of the raw data.
-		run "mysqldump --add-drop-table #{mysql_options} -p" do |channel, stream, data|
+		run "mysqldump --skip-opt --add-drop-table --extended-insert --create-options --quick --set-charset --default-character-set=utf8 #{mysql_options} -p" do |channel, stream, data|
 			if data =~ /^Enter password: /
 				channel.send_data "#{getmysqlpassword}\n"
 			end
