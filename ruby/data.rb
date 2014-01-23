@@ -31,6 +31,10 @@ namespace :data do
 		end
 	end
 
+	task :putdb do
+		#todo
+	end
+
 	desc <<-DESC
 		Download assets directory off target server and place them into a path on the deploynaut server.
 
@@ -43,6 +47,10 @@ namespace :data do
 		download(shared_path + "/assets", data_path + "/assets-dump-" + Time.now.to_i.to_s, :recursive => true, :via => :scp) do |channel, name, sent, total|
 			puts name
 		end
+	end
+
+	task :putassets do
+		#todo
 	end
 
 	def getdatabasename
