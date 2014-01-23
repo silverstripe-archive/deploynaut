@@ -244,8 +244,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'Deploy a specific SHA'
 		);
 
-	 	$field = new SelectionGroup('SelectRelease', $releaseMethods);
-	 	$field->setValue('Tag');
+		$field = new SelectionGroup('SelectRelease', $releaseMethods);
+		$field->setValue('Tag');
 
 		$form = new Form($this, 'DeployForm', new FieldList(
 			$field
