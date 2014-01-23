@@ -82,7 +82,7 @@ class DNDeployment extends DataObject {
 		$project = $environment->Project();
 
 		$args = array(
-			'environment' => $environment->Name,
+			'environmentName' => $environment->Name,
 			'sha' => $this->SHA,
 			'repository' => $project->LocalCVSPath,
 			'logfile' => $this->logfile(),
@@ -92,7 +92,7 @@ class DNDeployment extends DataObject {
 		);
 
 		$log = $this->log();
-		$log->write('Deploying "'.$args['sha'].'" to "'.$args['projectName'].':'.$args['environment'].'"');
+		$log->write('Deploying "'.$args['sha'].'" to "'.$args['projectName'].':'.$args['environmentName'].'"');
 
 		if(!$this->DeployerID) $this->DeployerID = Member::currentUserID();
 		if($this->DeployerID) {
@@ -100,7 +100,7 @@ class DNDeployment extends DataObject {
 			$message = sprintf(
 				'Deploy to %s:%s initiated by %s (%s)',
 				$args['projectName'],
-				$args['environment'],
+				$args['environmentName'],
 				$deployer->getName(),
 				$deployer->Email
 			);

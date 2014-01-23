@@ -37,7 +37,7 @@ class DeployJob {
 		$DNProject = $this->DNData()->DNProjectList()->filter('Name', $this->args['projectName'])->First();
 		// This is a bit icky, but there is no easy way of capturing a failed deploy by using the PHP Resque 
 		try {
-			$this->DNData()->Backend()->deploy($this->args['environment'], $this->args['sha'], $log, $DNProject);
+			$this->DNData()->Backend()->deploy($this->args['environmentName'], $this->args['sha'], $log, $DNProject);
 		} catch(RuntimeException $exc) {
 			$this->updateStatus('Failed');
 			echo "[-] DeployJob failed" . PHP_EOL;
