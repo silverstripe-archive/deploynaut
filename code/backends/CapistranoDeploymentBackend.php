@@ -21,7 +21,7 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 	/**
 	 * Deploy the given build to the given environment.
 	 */
-	public function deploy($environment, $sha, $log, DNProject $project) {
+	public function deploy($environment, $sha, DeploynautLogFile $log, DNProject $project) {
 		$repository = $project->LocalCVSPath;
 		$projectName = $project->Name;
 		$env = $project->getProcessEnv();
@@ -31,7 +31,11 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 
 		$log->write('Deploying "'.$sha.'" to "'.$projectName.':'.$environment.'"');
 
-		$command = $this->getCommand($projectName.':'.$environment, $repository, $sha, $env, $log);
+		$args = array(
+			'branch' => $sha,
+			'repository' => $repository
+		);
+		$command = $this->getCommand('deploy', $projectName.':'.$environment, $args, $env, $log);
 		$command->run(function ($type, $buffer) use($log) {
 			$log->write($buffer);
 		});
@@ -49,10 +53,10 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 	 * @param DNProject $environment
 	 * @param string $environment
 	 */
-	public function ping($environment, $log, DNProject $project) {
+	public function ping($environment, DeploynautLogFile $log, DNProject $project) {
 		$projectName  = $project->Name;
 		$env = $project->getProcessEnv();
-		$command = $this->getPingCommand($projectName.':'.$environment, $env, $log);
+		$command = $this->getCommand('deploy:check', $projectName.':'.$environment, null, $env, $log);
 		$command->run(function ($type, $buffer) use($log) {
 			$log->write($buffer);
 			echo $buffer;
@@ -60,54 +64,17 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 	}
 
 	/**
-	 *
-	 * @param string $environment
-	 * @param string $repository
-	 * @param string $sha
-	 * @param string $logfile
+	 * @param string $action Capistrano action to be executed
+	 * @param string $environment Capistrano identifier for the environment (see capistrano-multiconfig)
+	 * @param array $args Additional arguments for process
+	 * @param string $env Additional environment variables
+	 * @param DeploynautLogFile $log
 	 * @return \Symfony\Component\Process\Process
 	 */
-	protected function getCommand($environment, $repository, $sha, $env, $log) {
-		// Inject env string directly into the command.
-		// Capistrano doesn't like the $process->setEnv($env) we'd normally do below.
-		$envString = '';
-		if (!empty($env)) {
-			$envString .= 'env ';
-			foreach ($env as $key => $value) {
-				$envString .= "$key=\"$value\" ";
-			}
-		}
+	protected function getCommand($action, $environment, $args = null, $env = null, DeploynautLogFile $log) {
+		if(!$args) $args = array();
+		$args['history_path'] = realpath(DEPLOYNAUT_LOG_PATH.'/');
 
-		$data = Injector::inst()->get('DNData');
-		// Generate a capfile from a template
-		$capTemplate = file_get_contents(BASE_PATH.'/deploynaut/Capfile.template');
-		$cap = str_replace(
-			array('<config root>', '<ssh key>', '<base path>'),
-			array($data->getEnvironmentDir(), DEPLOYNAUT_SSH_KEY, BASE_PATH),
-			$capTemplate);
-
-		if(defined('DEPLOYNAUT_CAPFILE')) {
-			$capFile = DEPLOYNAUT_CAPFILE;
-		} else {
-			$capFile = BASE_PATH.'/assets/Capfile';
-		}
-		file_put_contents($capFile, $cap);
-
-		$command = "{$envString}cap -f " . escapeshellarg($capFile) . " -vv $environment deploy";
-		$command.= ' -s repository='.$repository;
-		$command.= ' -s branch='.$sha;
-		$command.= ' -s history_path='.realpath(DEPLOYNAUT_LOG_PATH.'/');
-
-		$log->write("Running command: $command");
-
-		$process = new \Symfony\Component\Process\Process($command);
-		// Capistrano doesn't like it - see comment above.
-		//$process->setEnv($env);
-		$process->setTimeout(3600);
-		return $process;
-	}
-	
-	public function getPingCommand($environment, $env, $log) {
 		// Inject env string directly into the command.
 		// Capistrano doesn't like the $process->setEnv($env) we'd normally do below.
 		$envString = '';
@@ -134,14 +101,18 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 		}
 		file_put_contents($capFile, $cap);
 
-
-		$command = "{$envString}cap -f " . escapeshellarg($capFile) . " -vv $environment deploy:check";
-		$command.= ' -s history_path='.realpath(DEPLOYNAUT_LOG_PATH.'/');
+		$command = "{$envString}cap -f " . escapeshellarg($capFile) . " -vv $environment $action";
+		foreach($args as $argName => $argVal) {
+			$command .= ' -s ' . escapeshellarg($argName) . '=' . escapeshellarg($argVal);
+		}
 
 		$log->write("Running command: $command");
 
 		$process = new \Symfony\Component\Process\Process($command);
+		// Capistrano doesn't like it - see comment above.
+		//$process->setEnv($env);
 		$process->setTimeout(3600);
 		return $process;
 	}
+
 }
