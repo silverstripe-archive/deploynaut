@@ -31,6 +31,16 @@ namespace :data do
 		end
 	end
 
+	desc <<-DESC
+		Upload a database to the target server, and overwrite the existing database that exists.
+		TODO: Support a gzipped database as well.
+		TODO: Needs to be tested.
+
+		Example command: cap -f '/sites/deploynaut/www/assets/Capfile' project1:env1 data:putdb -s data_path=/tmp/mydatabase.sql
+
+		Required arguments to the cap command:
+		data_path - Absolute path to the database on deploynaut server to be imported
+	DESC
 	task :putdb do
 		#todo
 	end
@@ -50,8 +60,21 @@ namespace :data do
 		end
 	end
 
+	desc <<-DESC
+		Upload assets directory to the target server, into the target's shared path directory replacing the existing assets.
+		NOTE: This does NOT do any backups of the original assets.
+
+		Example command: cap -f '/sites/deploynaut/www/assets/Capfile' project1:evn1 data:putdb -s data_path=/sites/mysite/www/assets
+
+		Required arguments to the cap command:
+		data_path - Absolute path to where the assets that should be uploaded reside
+	DESC
 	task :putassets do
-		#todo
+		run "rm -rf #{shared_path}/assets"
+
+		upload(data_path, shared_path, :recursive => true, :via => :scp) do |channel, name, sent, total|
+			puts name
+		end
 	end
 
 	def getdatabasename
