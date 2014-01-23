@@ -424,7 +424,7 @@ class DNEnvironment extends DataObject {
 
 		// Create folder if it doesn't exist
 		$configDir = dirname($this->getConfigFilename());
-		if(!file_exists($configDir)) {
+		if(!file_exists($configDir) && $configDir) {
 			mkdir($configDir, 0777, true);
 		}
 		
