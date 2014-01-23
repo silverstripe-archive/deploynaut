@@ -6,10 +6,10 @@ namespace :data do
 		Assumption: This task will run against the webserver, so that it's able to fetch the database credentials
 		from _ss_environment.php
 
-		Example command: cap -f '/sites/deploynaut/www/assets/Capfile' project1:env1 data:getdb -s data_path=/tmp
+		Example command: cap -f '/sites/deploynaut/www/assets/Capfile' project1:env1 data:getdb -s data_path=/tmp/mydatabase.sql
 
 		Required arguments to the cap command:
-		data_path - Output the SQL dump to this path on the deploynaut server
+		data_path - Absolute path (including filename) of where the exported database should be placed, e.g. /tmp/my_database.sql
 	DESC
 	task :getdb do
 		database_name = getdatabasename
@@ -21,7 +21,7 @@ namespace :data do
 			end
 
 			begin
-				file = File.open(data_path + "/#{database_name}-" + Time.now.to_i.to_s + ".sql", "a")
+				file = File.open(data_path, "a")
 				file.write(data)
 			rescue IOError => e
 				# error writing the file.
@@ -41,10 +41,11 @@ namespace :data do
 		Example command: cap -f '/sites/deploynaut/www/assets/Capfile' project1:env1 data:getassets -s data_path=/tmp
 
 		Required arguments to the cap command:
-		data_path - Output the assets dump to this path on the deploynaut server
+		data_path - Absolute path to where the assets should be placed, this will create an assets directory relative to that
+		e.g. setting this to /tmp/mysite will place assets at /tmp/mysite/assets
 	DESC
 	task :getassets do
-		download(shared_path + "/assets", data_path + "/assets-dump-" + Time.now.to_i.to_s, :recursive => true, :via => :scp) do |channel, name, sent, total|
+		download(shared_path + "/assets", data_path, :recursive => true, :via => :scp) do |channel, name, sent, total|
 			puts name
 		end
 	end
