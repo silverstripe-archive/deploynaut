@@ -23,4 +23,38 @@ class DNDataArchive extends DataObject {
 		// TODO Figure out storage location
 	}
 
+	/**
+	 * Calculates and returns a human-readable size of this archive file. If the file exists, it will determine
+	 * whether to display the output in bytes, kilobytes, megabytes, gigabytes, terabytes or petabytes.
+	 * 
+	 * @return string The human-readable size of this archive file
+	 */
+	public function FileSize() {
+		if($this->Filepath && file_exists($this->Filepath) && is_readable($this->Filepath)) {
+			$size = filesize($this->Filepath);
+
+			$suffix = 'BKMGTP'; // byes, kilobytes, megabytes, gigabytes, terabytes, petabytes
+			$factor = floor((strlen($size) - 1) / 3); // Are we dealing with a size in bytes, KB, MB, GB etc.
+			return sprintf("%d %s", ($size / pow(1024, $factor)), substr($suffix, $factor, 1));
+		} else {
+			return "N/A";
+		}
+	}
+
+	/**
+	 * @param Member|null $member The {@link Member} object to test against.
+	 * @return true if $member (or the currently logged in member if null) can upload this archive
+	 */
+	public function canUpload($member = null) {
+		return $this->Environment()->canUploadArchive($member);
+	}
+
+	/**
+	 * @param Member|null $member The {@link Member} object to test against.
+	 * @return true if $member (or the currently logged in member if null) can download this archive
+	 */
+	public function canDownload($member = null) {
+		return $this->Environment()->canDownloadArchive($member);
+	}
+
 }

@@ -502,4 +502,34 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			}
 		}
 	}
+
+	/**
+	 * @return ArrayList The list of all archive files that can be accessed by the currently logged-in {@link Member}
+	 */
+	public function ArchiveList() {
+		$projects = $this->DNProjectList();
+		if(!$projects) return null;
+
+		foreach($projects as $project) {
+			$environments = $project->DNEnvironmentList()->filterByCallback(function($record) {
+				return $record->canDownloadArchive() || $record->canUploadArchive();
+			});
+
+			if(!$environments) return null;
+
+			$archives = new ArrayList();
+
+			foreach($environments as $env) {
+				if($env->DataArchives()->count() > 0) {
+					foreach($env->DataArchives() as $pak) {
+						$archives->push($pak);
+					}
+				}
+			}
+
+			return $archives;
+		}
+
+		return null;
+	}
 }
