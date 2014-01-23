@@ -60,6 +60,8 @@ class DNEnvironment extends DataObject {
 	 */
 	public static $many_many = array(
 		"Deployers" => "Member",
+		"ArchiveUploaders" => "Member", // Who can upload archive files to this environment
+		"ArchiveDownloaders" => "Member" // Who can download archive files from this environment
 	);
 
 	/**
@@ -70,6 +72,8 @@ class DNEnvironment extends DataObject {
 		"Name",
 		"URL",
 		"DeployersList",
+		"ArchiveUploadersList",
+		"ArchiveDownloadersList"
 	);
 
 	/**
@@ -173,12 +177,57 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
-	 * Get a string of people that are allowed to deploy to this environment
+	 * Allow only selected {@link Member} objects to upload archives to this {@link DNEnvironment}.
+	 *
+	 * @param Member $member
+	 * @return boolean true if $member can upload archives to this environment
+	 */
+	public function canUploadArchive($member = null) {
+		if(!$member) $member = Member::currentUser();
+
+		return (bool)($this->ArchiveUploaders()->byID($member->ID));
+	}
+
+	/**
+	 * Allow only selected {@link Member} objects to download archives from this {@link DNEnvironment}.
+	 *
+	 * @param Member $member
+	 * @return boolean true if $member can download archives from this environment
+	 */
+	public function canDownloadArchive($member = null) {
+		if(!$member) $member = Member::currentUser();
+
+		return (bool)($this->ArchiveDownloaders()->byID($member->ID));
+	}
+
+	/**
+	 * Get a string of people that are allowed to deploy to this environment.
+	 * Used in DNRoot_project.ss to list {@link Member}s who has permission to perform this action.
 	 *
 	 * @return string
 	 */
 	public function getDeployersList() {
 		return implode(", ", $this->Deployers()->column("FirstName"));
+	}
+
+	/**
+	 * Get a string of people that are allowed to upload archives to this environment.
+	 * Used in DNRoot_project.ss to list {@link Member}s who has permission to perform this action.
+	 *
+	 * @return string
+	 */
+	public function getArchiveUploadersList() {
+		return implode(", ", $this->ArchiveUploaders()->column("FirstName"));
+	}
+
+	/**
+	 * Get a string of people that are allowed to download archives from this environment.
+	 * Used in DNRoot_project.ss to list {@link Member}s who has permission to perform this action.
+	 *
+	 * @return string
+	 */
+	public function getArchiveDownloadersList() {
+		return implode(", ", $this->ArchiveDownloaders()->column("FirstName"));
 	}
 
 	/**
@@ -335,6 +384,8 @@ class DNEnvironment extends DataObject {
 		asort($members);
 
 		$fields->fieldByName("Root")->removeByName("Deployers");
+		$fields->fieldByName("Root")->removeByName("ArchiveUploaders");
+		$fields->fieldByName("Root")->removeByName("ArchiveDownloaders");
 
 		// The Main.ProjectID
 		$projectField = $fields->fieldByName('Root.Main.ProjectID')->performReadonlyTransformation();
@@ -356,6 +407,16 @@ class DNEnvironment extends DataObject {
 		$deployers = new CheckboxSetField("Deployers", "Deployers", $members);
 		$deployers->setDescription('Users who can deploy to this environment');
 		$fields->insertAfter($deployers, 'URL');
+
+		// The Main.ArchiveUploaders
+		$archiveUploaders = new CheckboxSetField('ArchiveUploaders', 'Uploaders', $members);
+		$archiveUploaders->setDescription('Users who can upload archives to this environment');
+		$fields->insertAfter($archiveUploaders, 'Deployers');
+
+		// The Main.ArchiveDownloaders
+		$archiveDownloaders = new CheckboxSetField('ArchiveDownloaders', 'Downloaders', $members);
+		$archiveDownloaders->setDescription('Users who can download archives from this environment');
+		$fields->insertAfter($archiveDownloaders, 'ArchiveUploaders');
 
 		// The Main.DeployConfig
 		if($this->Project()->exists()) {
@@ -401,7 +462,7 @@ class DNEnvironment extends DataObject {
 		if($this->envFileExists()) {
 			$deployConfig = new TextareaField('DeployConfig', 'Deploy config', $this->getEnvironmentConfig());
 			$deployConfig->setRows(40);
-			$fields->insertAfter($deployConfig, 'Deployers');
+			$fields->insertAfter($deployConfig, 'ArchiveDownloaders');
 			return;
 		}
 			

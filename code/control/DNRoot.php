@@ -475,4 +475,31 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		if(!$project) $project = $this->getCurrentProject();
 		return $project->DNEnvironmentList()->filter('Name', $this->getRequest()->latestParam('Environment'))->First();
 	}
+
+	/**
+	 * Helper method to allow templates to know whether they should show the 'Archive List' include or not.
+	 * The actual permissions are set on a per-environment level, so we need to find out if this $member can upload to
+	 * or download from *any* {@link DNEnvironment} that (s)he has access to.
+	 *
+	 * TODO To be replaced with a method that just returns the list of archives this {@link Member} has access to.
+	 *
+	 * @param Member $member The {@link Member} to check (or null to check the currently logged in Member)
+	 * @return boolean true if $member has access to upload or download to at least one {@link DNEnvironment}.
+	 */
+	public function CanUploadOrDownloadArchives(Member $member = null) {
+		if(!$member) $member = Member::currentUser();
+
+		$allProjects = $this->DNProjectList();
+		if(!$allProjects) return false;
+
+		foreach($allProjects as $project) {
+			if($project->Environments()) {
+				foreach($project->Environments() as $environment) {
+					if($environment->canUploadArchive($member) || $environment->canDownloadArchive($member)) {
+						return true; // We can return early as we only need to know that we can access one environment
+					}
+				}
+			}
+		}
+	}
 }

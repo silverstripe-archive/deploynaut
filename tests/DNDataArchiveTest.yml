@@ -1,0 +1,36 @@
+Group:
+  project1-admins:
+    Title: Project 1 Admins
+  project2-admins:
+    Title: Project 2 Admins
+Member:
+  project1-samantha:
+    FirstName: Samantha
+    Surname: Smith
+    Groups: =>Group.project1-admins
+  project1-sarah:
+    FirstName: Sarah
+    Surname: Smith
+    Groups: =>Group.project1-admins
+DNProject:
+  project1:
+    Name: Project 1
+    Viewers: =>Group.project1-admins
+  project2:
+    Name: Project 2
+    Viewers: =>Group.project2-admins
+DNEnvironment:
+  project1-uat:
+    Name: uat
+    Project: =>DNProject.project1
+    ArchiveUploaders: =>Member.project1-samantha,=>Member.project1-sarah
+    ArchiveDownloaders: =>Member.project1-samantha
+  project1-live:
+    Name: live
+    Project: =>DNProject.project1
+  project2-uat:
+    Name: uat
+    Project: =>DNProject.project2
+  project2-live:
+    Name: live
+    Project: =>DNProject.project2

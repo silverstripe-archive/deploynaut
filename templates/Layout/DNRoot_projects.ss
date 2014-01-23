@@ -20,3 +20,4 @@
 	</tbody>
 </table>
 
+<% include ArchiveList %>
