@@ -62,7 +62,20 @@ class DNDataArchive extends DataObject {
 	}
 
 	/**
-	 * Returns a path unique to a specific transfer, including project/environment/timestamp details.
+	 * Returns a unique filename, including project/environment/timestamp details.
+	 * @return string
+	 */
+	public function generateFilename(DNDataTransfer $dataTransfer) {
+		$generator = new RandomGenerator();
+		$sanitizeRegex = array('/\s+/', '/[^a-zA-Z0-9-_\.]/');
+		$sanitizeReplace = array('/_/', '');
+		$projectName = strtolower(preg_replace($sanitizeRegex, $sanitizeReplace, $this->Environment()->Project()->Name));
+		$envName = strtolower(preg_replace($sanitizeRegex, $sanitizeReplace, $this->Environment()->Name));
+		return sprintf('%s-%s-%s-%s-%s', $projectName, $envName, $dataTransfer->Mode, date('Ymd'), sha1($generator->generateEntropy()));
+	}
+
+	/**
+	 * Returns a path unique to a specific transfer, including project/environment details.
 	 * Does not create the path on the filesystem. Can be used to store files related to this transfer.
 	 *
 	 * @param DNDataTransfer

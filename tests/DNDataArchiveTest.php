@@ -72,6 +72,26 @@ class DNDataArchiveTest extends SapphireTest {
 		$this->assertContains('project_1', $filepath1);
 		$this->assertContains('uat', $filepath1);
 		$this->assertContains('transfer-' . $dataTransfer->ID, $filepath1);
-
 	}
+
+	public function testGenerateFileName() {
+		$project1 = $this->objFromFixture('DNProject', 'project1');
+		$project1uatEnv = $this->objFromFixture('DNEnvironment', 'project1-uat');
+
+		$dataTransfer = new DNDataTransfer();
+		$dataTransfer->Direction = 'get';
+		$dataTransfer->Mode = 'all';
+		$dataTransfer->write();
+
+		$archive = new DNDataArchive();
+		$archive->EnvironmentID = $project1uatEnv->ID;
+		$archive->write();
+
+		$filename = $archive->generateFilename($dataTransfer);
+		$this->assertNotNull($filename);
+		$this->assertContains('project_1', $filename);
+		$this->assertContains('uat', $filename);
+		$this->assertContains('all', $filename);
+	}
+
 }
