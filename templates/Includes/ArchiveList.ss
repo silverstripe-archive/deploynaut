@@ -18,7 +18,7 @@
 				<% loop $ArchiveList %>
 					<tr>
 						<td>$Created.Nice</td>
-						<td>$Filepath.XML</td>
+						<td>$ArchiveFile.Filename.XML</td>
 						<td>$FileSize</td>
 						<td>$UploadToken.XML</td>
 						<td><% if $CanDownload %>Download link<% end_if %></td>

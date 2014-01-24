@@ -9,7 +9,7 @@
  * - Restore: Transfer data from a local file into an environment, extract assets and/or restore a database
  *
  * The choice of database and/or assets is represented in the "Mode".
- * There's always one file archive involved (stored in "Filepath") on the local Deploynaut environment.
+ * There's always one file archive involved (stored as the has_one "ArchiveFile") on the local Deploynaut environment.
  *
  * Each transfer is executed by a Resque job, so the model also contains
  * a reference to a Resque token (which might still be in progress).

@@ -15,13 +15,12 @@
 class DNDataArchive extends DataObject {
 
 	private static $db = array(
-		// Relative file path to the data which was backed up or used for a restore.
-		"Filepath" => 'Varchar(1024)',
 		'UploadToken' => 'Varchar(8)',
 	);
 
 	private static $has_one = array(
 		'Environment' => 'DNEnvironment',
+		'ArchiveFile' => 'File'
 	);
 
 	private static $has_many = array(
@@ -34,17 +33,13 @@ class DNDataArchive extends DataObject {
 
 	/**
 	 * Calculates and returns a human-readable size of this archive file. If the file exists, it will determine
-	 * whether to display the output in bytes, kilobytes, megabytes, gigabytes, terabytes or petabytes.
+	 * whether to display the output in bytes, kilobytes, megabytes, or gigabytes.
 	 * 
 	 * @return string The human-readable size of this archive file
 	 */
 	public function FileSize() {
-		if($this->Filepath && file_exists($this->Filepath) && is_readable($this->Filepath)) {
-			$size = filesize($this->Filepath);
-
-			$suffix = 'BKMGTP'; // byes, kilobytes, megabytes, gigabytes, terabytes, petabytes
-			$factor = floor((strlen($size) - 1) / 3); // Are we dealing with a size in bytes, KB, MB, GB etc.
-			return sprintf("%d %s", ($size / pow(1024, $factor)), substr($suffix, $factor, 1));
+		if($this->ArchiveFile()->exists()) {
+			return $this->ArchiveFile()->getSize();
 		} else {
 			return "N/A";
 		}
