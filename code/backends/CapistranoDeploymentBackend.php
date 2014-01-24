@@ -87,12 +87,14 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 			$filepathBase = $dataArchive->generateFilepath($dataTransfer);
 			mkdir($filepathBase, 0700, true);
 
+			$databasePath = "{$filepathBase}/database.sql";
+
 			// Backup database
 			// TODO Pass in file name
 			if(in_array($dataTransfer->Mode, array('all', 'db'))) {
 				$log->write('Backup of database from "' . $name . '" started');
 				$args = array(
-					'data_path' => "{$filepathBase}/database.sql"
+					'data_path' => $databasePath
 				);
 				$command = $this->getCommand("data:getdb", $name, $args, $env, $log);
 				$command->run(function ($type, $buffer) use($log) {
@@ -118,14 +120,40 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 					throw new RuntimeException($command->getErrorOutput());
 				}
 				$log->write('Backup of assets from "' . $name . '" done');
-			}	
+			}
 
-			// TODO Combine into PAK
-			// TODO Create DNDataArchive and associate with DNDataTransfer
-			// TODO Delete temporary files
+			// todo: change the name of the sspak file if necessary (probably to be more meaningful to the user)
+			$sspakFilename = sprintf('%s.sspak', $dataArchive->generateFilename());
+			$sspakCmd = sprintf('cd %s && sspak saveexisting %s ', $filepathBase, $sspakFilename);
+			if($dataTransfer->Mode == 'db') {
+				$sspakCmd .= sprintf(' --db=%s', $databasePath);
+			} elseif($dataTransfer->Mode == 'assets') {
+				$sspakCmd .= sprintf(' --assets=%s/assets', $filepathBase);
+			} else {
+				$sspakCmd .= sprintf(' --db=%s --assets=%s/assets', $databasePath, $filepathBase);
+			}
+
+			exec($sspakCmd, $output, $return_var);
+			if($return_var != '0') {
+				throw new RuntimeException('SSpak command failed. Output: %s', var_export($output, true));
+			}
+
+			$file = new File();
+			$file->Name = $sspakFilename;
+			$file->Filename = $filepathBase . '/' . $sspakFilename;
+			$file->write();
+
+			$dataTransfer->write();
+
+			$dataArchive->ArchiveFileID = $file->ID;
+			$dataArchive->DataTransfers()->add($dataTransfer);
+			$dataArchive->write();
+
+			// remove any assets and db files lying around, they're not longer needed as they're now part
+			// of the sspak file we just generated.
+			exec(sprintf('rm -rf %s/assets', $filepathBase));
+			exec(sprintf('rm %s', $databasePath));
 			
-			// $dataTransfer->Filepath = $filepathPak;
-			// $dataTransfer->write();
 		} else {
 			// TODO Unbundle PAK
 
