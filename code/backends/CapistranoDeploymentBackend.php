@@ -73,6 +73,7 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 		$environmentName = $environmentObj->Name;
 		$env = $project->getProcessEnv();
 		$project = DNProject::get()->filter('Name', $projectName)->first();
+		$name = $projectName . ':' . $environmentName;
 
 		// TODO Refactor into methods
 
@@ -89,34 +90,34 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 			// Backup database
 			// TODO Pass in file name
 			if(in_array($dataTransfer->Mode, array('all', 'db'))) {
-				$log->write('Backup of database from "'.$projectName.':'.$environmentName.'" started');
+				$log->write('Backup of database from "' . $name . '" started');
 				$args = array(
 					'data_path' => "{$filepathBase}/database.sql"
 				);
-				$command = $this->getCommand("data:getdb", $projectName.':'.$environmentName, $args, $env, $log);
+				$command = $this->getCommand("data:getdb", $name, $args, $env, $log);
 				$command->run(function ($type, $buffer) use($log) {
 					$log->write($buffer);
 				});
 				if(!$command->isSuccessful()) {
 					throw new RuntimeException($command->getErrorOutput());
 				}
-				$log->write('Backup of database from "'.$projectName.':'.$environmentName.'" done');
+				$log->write('Backup of database from "' . $name . '" done');
 			}
 			
 			// Backup assets
 			if(in_array($dataTransfer->Mode, array('all', 'assets'))) {
-				$log->write('Backup of assets from "'.$projectName.':'.$environmentName.'" started');
+				$log->write('Backup of assets from "' . $name . '" started');
 				$args = array(
 					'data_path' => $filepathBase
 				);
-				$command = $this->getCommand("data:getassets", $projectName.':'.$environmentName, $args, $env, $log);
+				$command = $this->getCommand("data:getassets", $name, $args, $env, $log);
 				$command->run(function ($type, $buffer) use($log) {
 					$log->write($buffer);
 				});
 				if(!$command->isSuccessful()) {
 					throw new RuntimeException($command->getErrorOutput());
 				}
-				$log->write('Backup of assets from "'.$projectName.':'.$environmentName.'" done');
+				$log->write('Backup of assets from "' . $name . '" done');
 			}	
 
 			// TODO Combine into PAK
@@ -131,37 +132,37 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 			// Restore database
 			// TODO Pass in file name
 			if(in_array($dataTransfer->Mode, array('all', 'db'))) {
-				$log->write('Restore of database to "'.$projectName.':'.$environmentName.'" started');
+				$log->write('Restore of database to "' . $name . '" started');
 				$args = array(
 					'data_path' => '' // TODO associate with DNDataTransfer
 				);
 				$command = "data:pushdb";
-				$command = $this->getCommand($command, $projectName.':'.$environmentName, $args, $env, $log);
+				$command = $this->getCommand($command, $name, $args, $env, $log);
 				$command->run(function ($type, $buffer) use($log) {
 					$log->write($buffer);
 				});
 				if(!$command->isSuccessful()) {
 					throw new RuntimeException($command->getErrorOutput());
 				}
-				$log->write('Restore of database to "'.$projectName.':'.$environmentName.'" done');
+				$log->write('Restore of database to "' . $name . '" done');
 			}
 			
 			// Restore assets
 			// TODO Pass in file name
 			if(in_array($dataTransfer->Mode, array('all', 'assets'))) {
-				$log->write('Restore of assets to "'.$projectName.':'.$environmentName.'" started');
+				$log->write('Restore of assets to "' . $name . '" started');
 				$args = array(
 					'data_path' => '' // TODO associate with DNDataTransfer
 				);
 				$command = "data:pushassets";
-				$command = $this->getCommand($command, $projectName.':'.$environmentName, $args, $env, $log);
+				$command = $this->getCommand($command, $name, $args, $env, $log);
 				$command->run(function ($type, $buffer) use($log) {
 					$log->write($buffer);
 				});
 				if(!$command->isSuccessful()) {
 					throw new RuntimeException($command->getErrorOutput());
 				}
-				$log->write('Restore of assets to "'.$projectName.':'.$environmentName.'" done');
+				$log->write('Restore of assets to "' . $name . '" done');
 			}
 		}
 	}
