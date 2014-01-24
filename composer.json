@@ -7,7 +7,6 @@
 		"silverstripe/framework": "3.1.1",
 		"stojg/silverstripe-resque": "1.1.*",
 		"gitonomy/gitlib": "dev-master",
-		"undefinedoffset/sortablegridfield": "*",
-		"silverstripe/secureassets": "dev-master"
+		"undefinedoffset/sortablegridfield": "*"
 	}
 }
