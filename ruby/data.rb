@@ -57,7 +57,8 @@ namespace :data do
 	DESC
 	task :getassets do
 		download(shared_path + "/assets", data_path, :recursive => true, :via => :scp) do |channel, name, sent, total|
-			puts name
+			# TODO Less noisy progress indication
+			#puts name
 		end
 	end
 
