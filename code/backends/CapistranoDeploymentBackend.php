@@ -123,7 +123,7 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 			}
 
 			// todo: change the name of the sspak file if necessary (probably to be more meaningful to the user)
-			$sspakFilename = sprintf('%s.sspak', $dataArchive->generateFilename());
+			$sspakFilename = sprintf('%s.sspak', $dataArchive->generateFilename($dataTransfer));
 			$sspakCmd = sprintf('cd %s && sspak saveexisting %s ', $filepathBase, $sspakFilename);
 			if($dataTransfer->Mode == 'db') {
 				$sspakCmd .= sprintf(' --db=%s', $databasePath);
