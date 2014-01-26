@@ -18,21 +18,23 @@ namespace :data do
 		run "mysqldump --skip-opt --add-drop-table --extended-insert --create-options --quick --set-charset --default-character-set=utf8 #{mysql_options} -p" do |channel, stream, data|
 			if data =~ /^Enter password: /
 				channel.send_data "#{getmysqlpassword}\n"
-			end
-
-			begin
-				file = File.open(data_path, "a")
-				file.write(data)
-			rescue IOError => e
-				# error writing the file.
-			ensure
-				file.close unless file == nil
+			else
+				begin
+					file = File.open(data_path, "a")
+					file.write(data)
+				rescue IOError => e
+					# error writing the file.
+				ensure
+					file.close unless file == nil
+				end
 			end
 		end
 	end
 
 	desc <<-DESC
 		Upload a database to the target server, and overwrite the existing database that exists.
+		Works with a normal .sql file, as well as a compress .sql.gz file.
+
 		TODO: No backups yet. (needs to run getdb prior to this so we have a copy of the db that can be restored in case of an error)
 		TODO: On rollback, restore database backup made before trying to import.
 		TODO: Needs to be tested.
@@ -42,8 +44,28 @@ namespace :data do
 		Required arguments to the cap command:
 		data_path - Absolute path to the database on deploynaut server to be imported
 	DESC
-	task :putdb do
-		#todo
+	task :pushdb do
+		dump_command = ""
+		database_file = File.basename(data_path)
+		tmpdir = "/tmp/dbupload-" + Time.now.to_i.to_s
+
+		run "mkdir #{tmpdir}"
+
+		upload(data_path, tmpdir, :via => :scp)
+
+		if File.extname(data_path) == ".gz"
+			dump_command = "gunzip -c #{tmpdir}/#{database_file} | mysql --default-character-set=utf8 #{mysql_options} -p"
+		else
+			dump_command = "mysql --default-character-set=utf8 #{mysql_options} -p < #{tmpdir}/#{database_file}"
+		end
+
+		run dump_command do |channel, stream, data|
+			if data =~ /^Enter password: /
+				channel.send_data "#{getmysqlpassword}\n"
+			end
+		end
+
+		run "rm -rf #{tmpdir}"
 	end
 
 	desc <<-DESC
@@ -73,7 +95,7 @@ namespace :data do
 		Required arguments to the cap command:
 		data_path - Absolute path to where the assets that should be uploaded reside
 	DESC
-	task :putassets do
+	task :pushassets do
 		run "rm -rf #{shared_path}/assets"
 
 		upload(data_path, shared_path, :recursive => true, :via => :scp) do |channel, name, sent, total|
