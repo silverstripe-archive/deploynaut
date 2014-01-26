@@ -14,6 +14,14 @@ Our implementation relies on capistrano-multiconfig extension which provides us 
 
 	$ sudo gem install capistrano-multiconfig --no-ri --no-rdoc --verbose -v 0.0.4
 
+## SSPak Installation
+
+The [SSPak](https://github.com/sminnee/sspak) tool is required to create
+archives of the database/assets for a specific environment into an `*.sspak` file.
+This file can be used for backups, restores, and setting up local development environments.
+
+	$ curl -sS http://sminnee.github.io/sspak/install | php -- /usr/local/bin
+
 ## Deploynaut installation
 
 First get the base code for the project
