@@ -1,4 +1,5 @@
 <?php
+use \Symfony\Component\Process\Process;
 
 class CapistranoDeploymentBackend implements DeploymentBackend {
 
@@ -150,11 +151,15 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 			$dataArchive->DataTransfers()->add($dataTransfer);
 			$dataArchive->write();
 
-			// remove any assets and db files lying around, they're not longer needed as they're now part
-			// of the sspak file we just generated.
-			exec(sprintf('rm -rf %s/assets', $filepathBase));
-			exec(sprintf('rm %s', $databasePath));
-			
+			// Remove any assets and db files lying around, they're not longer needed as they're now part
+			// of the sspak file we just generated. Use --force to avoid errors when files don't exist,
+			// e.g. when just an assets backup has been requested and no database.sql exists.
+			$process = new Process(sprintf('rm -rf %s/assets && rm -f %s', $filepathBase, $databasePath));
+			$process->run();
+			if(!$process->isSuccessful()) {
+				throw new RuntimeException($process->getErrorOutput());
+				$this->log('Could not delete temporary files');
+			}			
 		} else {
 			// TODO Unbundle PAK
 
@@ -241,7 +246,7 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 
 		$log->write("Running command: $command");
 
-		$process = new \Symfony\Component\Process\Process($command);
+		$process = new Process($command);
 		// Capistrano doesn't like it - see comment above.
 		//$process->setEnv($env);
 		$process->setTimeout(3600);
