@@ -49,8 +49,6 @@ namespace :data do
 		database_file = File.basename(data_path)
 		tmpdir = "/tmp/dbupload-" + Time.now.to_i.to_s
 
-		run "mkdir #{tmpdir}"
-
 		upload(data_path, tmpdir, :via => :scp)
 
 		if File.extname(data_path) == ".gz"
