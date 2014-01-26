@@ -36,8 +36,6 @@ namespace :data do
 		Works with a normal .sql file, as well as a compress .sql.gz file.
 
 		TODO: No backups yet. (needs to run getdb prior to this so we have a copy of the db that can be restored in case of an error)
-		TODO: On rollback, restore database backup made before trying to import.
-		TODO: Needs to be tested.
 
 		Example command: cap -f '/sites/deploynaut/www/assets/Capfile' project1:env1 data:putdb -s data_path=/tmp/mydatabase.sql
 
@@ -84,9 +82,8 @@ namespace :data do
 
 	desc <<-DESC
 		Upload assets directory to the target server, into the target's shared path directory replacing the existing assets.
+
 		TODO: No backups yet. (needs to run getassets prior to this so we have a copy of the assets that can be restored in case of an error)
-		TODO: On rollback, restore backed up assets.
-		TODO: Needs to be tested.
 
 		Example command: cap -f '/sites/deploynaut/www/assets/Capfile' project1:evn1 data:putdb -s data_path=/sites/mysite/www/assets
 
@@ -97,7 +94,8 @@ namespace :data do
 		run "rm -rf #{shared_path}/assets"
 
 		upload(data_path, shared_path, :recursive => true, :via => :scp) do |channel, name, sent, total|
-			puts name
+			# TODO Less noisy progress indication
+			#puts name
 		end
 	end
 
