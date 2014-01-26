@@ -7,6 +7,13 @@
 		"silverstripe/framework": "3.1.1",
 		"stojg/silverstripe-resque": "1.1.*",
 		"gitonomy/gitlib": "dev-master",
-		"undefinedoffset/sortablegridfield": "*"
-	}
+		"undefinedoffset/sortablegridfield": "*",
+		"silverstripe/secureassets": "dev-pulls/canViewSecured"
+	},
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "git@github.com:madmatt/silverstripe-secureassets.git"
+		}
+	]
 }
