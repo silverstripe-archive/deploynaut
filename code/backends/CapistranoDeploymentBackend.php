@@ -122,9 +122,8 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 				$log->write('Backup of assets from "' . $name . '" done');
 			}
 
-			// todo: change the name of the sspak file if necessary (probably to be more meaningful to the user)
 			$sspakFilename = sprintf('%s.sspak', $dataArchive->generateFilename($dataTransfer));
-			$sspakCmd = sprintf('cd %s && sspak saveexisting %s ', $filepathBase, $sspakFilename);
+			$sspakCmd = sprintf('cd %s && sspak saveexisting %s 2>&1', $filepathBase, $sspakFilename);
 			if($dataTransfer->Mode == 'db') {
 				$sspakCmd .= sprintf(' --db=%s', $databasePath);
 			} elseif($dataTransfer->Mode == 'assets') {
@@ -133,9 +132,11 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 				$sspakCmd .= sprintf(' --db=%s --assets=%s/assets', $databasePath, $filepathBase);
 			}
 
-			exec($sspakCmd, $output, $return_var);
-			if($return_var != '0') {
-				throw new RuntimeException('SSpak command failed. Output: %s', var_export($output, true));
+			exec($sspakCmd, $output, $returnVar);
+			if($returnVar != '0') {
+				$sspakMsg = sprintf('SSpak command failed. Output: %s', implode("\n", $output));
+				$log->write($sspakMsg);
+				throw new RuntimeException($sspakMsg);
 			}
 
 			$file = new File();
