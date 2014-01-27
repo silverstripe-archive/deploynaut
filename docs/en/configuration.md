@@ -11,7 +11,7 @@ Most of the configurations takes place in the ´mysite/config/dnroot´, here is 
 	        constructor:
 	            0: "../../deploynaut-resources/envs"
 	            1: "../../deploynaut-resources/gitkeys"
-	            2: "../../deploynaut-resources/transfers"
+	            2: "assets/transfers"
 	DNEnvironment:
 		allow_web_editing: false
 
@@ -23,7 +23,7 @@ The constructor arguments of `DNData` are the important directives of the config
 1. The first one tells deploynaut where to find the configuration for the projects 
    and environments.
 2. The second one tells deploynaut where to find SSH keys to do a checkout.
-3. The third one tells deploynaut where to store data transfers (backups of db and/or assets)
+3. The third one tells deploynaut where to store data transfers (backups of db and/or asset files)
 
 The `DNEnvironment.allow_web_editing` disable / enables the possibility to CRUD the projects 
 and environments via the CMS ui.

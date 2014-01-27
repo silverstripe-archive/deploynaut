@@ -88,10 +88,9 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 			$filepathBase = $dataArchive->generateFilepath($dataTransfer);
 			mkdir($filepathBase, 0700, true);
 
-			$databasePath = "{$filepathBase}/database.sql";
+			$databasePath = $filepathBase . DIRECTORY_SEPARATOR . 'database.sql';
 
 			// Backup database
-			// TODO Pass in file name
 			if(in_array($dataTransfer->Mode, array('all', 'db'))) {
 				$log->write('Backup of database from "' . $name . '" started');
 				$args = array(
@@ -123,6 +122,7 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 				$log->write('Backup of assets from "' . $name . '" done');
 			}
 
+			$log->write('Creating *.sspak file');
 			$sspakFilename = sprintf('%s.sspak', $dataArchive->generateFilename($dataTransfer));
 			$sspakCmd = sprintf('cd %s && sspak saveexisting %s 2>&1', $filepathBase, $sspakFilename);
 			if($dataTransfer->Mode == 'db') {
@@ -133,18 +133,27 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 				$sspakCmd .= sprintf(' --db=%s --assets=%s/assets', $databasePath, $filepathBase);
 			}
 
-			exec($sspakCmd, $output, $returnVar);
-			if($returnVar != '0') {
-				$sspakMsg = sprintf('SSpak command failed. Output: %s', implode("\n", $output));
-				$log->write($sspakMsg);
-				throw new RuntimeException($sspakMsg);
+			$process = new Process($sspakCmd);
+			$process->setTimeout(3600);
+			$process->run();
+			if(!$process->isSuccessful()) {
+				$log->write('Could not package the backup via sspak');
+				throw new RuntimeException($process->getErrorOutput());
 			}
 
+			// HACK: find_or_make() expects path relative to assets/
+			$sspakFilepath = ltrim(
+				str_replace(ASSETS_PATH, '', $filepathBase . DIRECTORY_SEPARATOR . $sspakFilename), 
+				DIRECTORY_SEPARATOR
+			);
+			$folder = Folder::find_or_make(dirname($sspakFilepath));
 			$file = new File();
 			$file->Name = $sspakFilename;
-			$file->Filename = $filepathBase . '/' . $sspakFilename;
+			$file->Filename = $sspakFilepath;
+			$file->ParentID = $folder->ID;
 			$file->write();
 
+			// "Status" will be updated by the job execution
 			$dataTransfer->write();
 
 			$dataArchive->ArchiveFileID = $file->ID;
@@ -157,9 +166,14 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 			$process = new Process(sprintf('rm -rf %s/assets && rm -f %s', $filepathBase, $databasePath));
 			$process->run();
 			if(!$process->isSuccessful()) {
+				$log->write('Could not delete temporary files');
 				throw new RuntimeException($process->getErrorOutput());
-				$this->log('Could not delete temporary files');
-			}			
+			}
+
+			$log->write(sprintf(
+				'Creating *.sspak file done: %s',
+				$file->getAbsoluteURL()
+			));
 		} else {
 			// TODO Unbundle PAK
 

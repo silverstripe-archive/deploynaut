@@ -17,6 +17,9 @@ class DNData {
 
 	/**
 	 * Path where data transfers are stored.
+	 * Needs to be relative to webroot, and start with assets/
+	 * since all files are also referenced in the SilverStripe database
+	 * through {@link File}.
 	 */
 	protected $dataTransferDir = '';
 

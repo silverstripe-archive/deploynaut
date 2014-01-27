@@ -79,7 +79,7 @@ class DNDataArchive extends DataObject {
 	 * Does not create the path on the filesystem. Can be used to store files related to this transfer.
 	 *
 	 * @param DNDataTransfer
-	 * @return String Relative file path
+	 * @return String Absolute file path
 	 */
 	public function generateFilepath(DNDataTransfer $dataTransfer) {
 		$filepath = null;

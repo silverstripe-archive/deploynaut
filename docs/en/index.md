@@ -67,6 +67,15 @@ First add an _ss_environment.php file, here is a sample:
 	define('SS_DEFAULT_ADMIN_PASSWORD', 'password');
 	$_FILE_TO_URL_MAPPING['/path/to/deploynaut'] = 'http://localhost/';
 
+## Backups and Restores
+
+Deploynaut provides the ability to backup database and/or assets from a specific environment
+and store them as an [SSPak](http://sminnee.github.io/sspak/) archive on the Deploynaut filesystem.
+These backups can be used to restore data onto an environment, or transfer it to a different environment.
+
+All backups are stored within the deploynaut webroot under the `assets/` folder.
+If you give users the permission to create backups, please ensure you have sufficient filesystem space available for this purpose.
+
 ## Troubleshooting
 
 *Q: The deployment script log is not showing up, and the "Executing:" is not showing the command.*

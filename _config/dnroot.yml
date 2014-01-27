@@ -10,7 +10,7 @@ Injector:
         constructor:
             0: "../deploynaut-resources/envs"
             1: "../deploynaut-resources/gitkeys"
-            2: "../deploynaut-resources/transfers"
+            2: "assets/transfers"
 DNEnvironment:
     allow_web_editing: false
 ---
@@ -31,6 +31,6 @@ Injector:
         constructor:
             0: "../../deploynaut-resources/envs"
             1: "../../deploynaut-resources/gitkeys"
-            2: "../../deploynaut-resources/transfers"
+            2: "../assets/transfers"
 DNEnvironment:
     allow_web_editing: false
