@@ -37,31 +37,36 @@ namespace :data do
 
 		TODO: No backups yet. (needs to run getdb prior to this so we have a copy of the db that can be restored in case of an error)
 
-		Example command: cap -f '/sites/deploynaut/www/assets/Capfile' project1:env1 data:putdb -s data_path=/tmp/mydatabase.sql
+		Example command: cap -f '/sites/deploynaut/www/assets/Capfile' project1:env1 data:pushdb -s data_path=/tmp/mydatabase.sql
 
 		Required arguments to the cap command:
 		data_path - Absolute path to the database on deploynaut server to be imported
 	DESC
 	task :pushdb do
-		dump_command = ""
-		database_file = File.basename(data_path)
-		tmpdir = "/tmp/dbupload-" + Time.now.to_i.to_s
+		begin
+			dump_command = ""
+			database_file = File.basename(data_path)
+			tmpdir = "/tmp/dbupload-" + Time.now.to_i.to_s
 
-		upload(data_path, tmpdir, :via => :scp)
+			upload(data_path, tmpdir, :via => :scp)
 
-		if File.extname(data_path) == ".gz"
-			dump_command = "gunzip -c #{tmpdir}/#{database_file} | mysql --default-character-set=utf8 #{mysql_options} -p"
-		else
-			dump_command = "mysql --default-character-set=utf8 #{mysql_options} -p < #{tmpdir}/#{database_file}"
-		end
-
-		run dump_command do |channel, stream, data|
-			if data =~ /^Enter password: /
-				channel.send_data "#{getmysqlpassword}\n"
+			if File.extname(data_path) == ".gz"
+				dump_command = "gunzip -c #{tmpdir}/#{database_file} | mysql --default-character-set=utf8 #{mysql_options} -p"
+			else
+				dump_command = "mysql --default-character-set=utf8 #{mysql_options} -p < #{tmpdir}/#{database_file}"
 			end
-		end
 
-		run "rm -rf #{tmpdir}"
+			run dump_command do |channel, stream, data|
+				if data =~ /^Enter password: /
+					channel.send_data "#{getmysqlpassword}\n"
+				end
+			end
+
+			run "rm -rf #{tmpdir}"
+		rescue Exception => e
+			run "rm -rf #{tmpdir}"
+			raise e
+		end
 	end
 
 	desc <<-DESC
