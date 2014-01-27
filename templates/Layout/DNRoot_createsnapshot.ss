@@ -1,15 +1,17 @@
 <h2>$Project.Title</h2>
 
-<ul class="nav nav-pills pull-right">
-	<li class="active"><a href="$CurrentProject.Link('createsnapshot')">Create</a></li>
-	<li><a href="$CurrentProject.Link('uploadsnapshot')">Upload</a></li>
-	<li><a href="$CurrentProject.Link('snapshotslog')">Log</a></li>
-</ul>
-
 <h3>$Title</h3>
 
 <p>Back up the database and/or assets into a file and transfer it to deploynaut. From there it can be 
 downloaded or used for later restores</p>
+
+<div class="button-nav">
+	<ul class="pull-right">
+		<li><a class="btn active" href="$CurrentProject.Link('createsnapshot')">Create Snapshot</a></li>
+		<li><a class="btn" href="$CurrentProject.Link('uploadsnapshot')">Upload Files</a></li>
+		<li><a class="btn" href="$CurrentProject.Link('snapshotslog')">Log</a></li>
+	</ul>
+</div>
 
 <% with DataTransferForm %>
 <form $FormAttributes class='form-inline'>

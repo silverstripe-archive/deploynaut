@@ -1,14 +1,16 @@
 <h2>$Project.Title</h2>
 
-<ul class="nav nav-pills pull-right">
-	<li><a href="$CurrentProject.Link('createsnapshot')">Create</a></li>
-	<li class="active"><a href="$CurrentProject.Link('uploadsnapshot')">Upload</a></li>
-	<li><a href="$CurrentProject.Link('snapshotslog')">Log</a></li>
-</ul>
-
 <h3>$Title</h3>
 
 <p>Either choose a local file to transfer to deploynaut or the option to post a DVD of your files and have the CWP team upload them for you</p>
+
+<div class="button-nav">
+	<ul class="pull-right">
+		<li><a class="btn" href="$CurrentProject.Link('createsnapshot')">Create Snapshot</a></li>
+		<li><a class="btn active" href="$CurrentProject.Link('uploadsnapshot')">Upload Files</a></li>
+		<li><a class="btn" href="$CurrentProject.Link('snapshotslog')">Log</a></li>
+	</ul>
+</div>
 
 <div class="upload-form">
 	<div id="UploadFile" class="field file">

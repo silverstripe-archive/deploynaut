@@ -13,19 +13,21 @@
 			</thead>
 
 			<tbody>
-				<% loop $DataArchives %>
+				<% loop $DataArchives.Sort("Created", "DESC") %>
 					<tr>
 						<td><span class="tooltip-hint" data-toggle="tooltip" data-original-title="$Created.Nice">$Created.Date</span></td>
 						<td>$Author.FirstName $Author.Surname</td>
 						<td>$Environment.Name</td>
 						<td>$ModeNice</td>
 						<td>$FileSize</td>
-						<td>
+						<td class="action">
 							<% if $CanDownload && ArchiveFile %>
 							<a href="$ArchiveFile.Link">
 								Download
 							</a>
 							<% end_if %>
+						</td>
+						<td class="action">
 							<% if ArchiveFile %>
 							<a href="$Top.CurrentProject.Link/restoresnapshot/$ID" class="extended-trigger" data-extended-target="#archive-list-extended-$ID" data-extended-container="#archive-list-extended-container-$ID">
 								Restore
@@ -34,7 +36,7 @@
 						</td>
 					</tr>
 					<tr class="extended" id="archive-list-extended-container-$ID">
-						<td colspan="6">
+						<td colspan="7">
 							<div id="archive-list-extended-$ID"></div>
 						</td>
 					</tr>
@@ -42,8 +44,12 @@
 			</tbody>
 		</table>
 	<% else %>
-		<p class="text-error">There are currently no archive files</p>
+		<div class="alert">
+			There are currently no archived files
+		</div>
 	<% end_if %>
 <% else %>
-	<p class="text-error">There are currently no archive files that you can access</p>
+	<div class="alert">
+		There are currently no archived files that you can access
+	</div>
 <% end_if %>

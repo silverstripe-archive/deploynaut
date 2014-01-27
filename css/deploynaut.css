@@ -170,6 +170,23 @@ form.userswitcher select {
 	white-space: nowrap;
 }
 
+.table-bordered th,
+.table-bordered td {
+	border-left: 0;
+}
+.table-bordered {
+	border-left: 1px solid #ddd;
+}
+
+.table td.action {
+	width: 50px;
+}
+
+.table form,
+.table form .field {
+	margin-bottom: 0;
+}
+
 .release-process a {
 	border-radius: 3px 10px 10px 3px;
 	padding-right: 10px;
@@ -180,10 +197,21 @@ form.userswitcher select {
 }
 
 .tooltip-hint {
-	color: #0088cc;
-	border-bottom: 1px #0088cc dotted;
+	color: #333;
+	border-bottom: 1px #333 dotted;
 }
 
-.nav.nav-pills.pull-right {
-	margin-bottom: 0;
+.button-nav {
+	overflow: hidden;
+	margin-bottom: 10px;
+}
+
+.button-nav li {
+	float: left;
+	list-style: none;
+	margin-left: 15px;
+}
+
+.button-nav li.active {
+	background-color: #c5c5c5;
 }

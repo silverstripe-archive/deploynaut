@@ -738,4 +738,25 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		return $archives;
 	}
+
+	public function DataTransferLogs() {
+		$transfers = DNDataTransfer::get()->filterByCallback(function($record) {
+			return $record->Environment()->canUploadArchive() && $record->Environment()->canDownloadArchive();
+		});
+
+		return $transfers;
+
+		// $archives = $this->DataArchives(); // Gets all {@link DNDataArchive} objects we can access
+		// $transfers = new ArrayList();
+
+		// if($archives) {
+		// 	foreach($archives as $pak) {
+		// 		foreach($pak->DataTransfers() as $t) {
+		// 			$transfers->push($t);
+		// 		}
+		// 	}
+		// }
+
+		// return $transfers;
+	}
 }
