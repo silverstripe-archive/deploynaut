@@ -29,6 +29,7 @@ class DNDataArchive extends DataObject {
 	private static $db = array(
 		'UploadToken' => 'Varchar(8)',
 		'Mode' => "Enum('all, assets, db', '')",
+		'ArchiveFileHash' => 'Varchar(32)',
 	);
 
 	private static $has_one = array(
@@ -40,10 +41,6 @@ class DNDataArchive extends DataObject {
 	private static $has_many = array(
 		'DataTransfers' => 'DNDataTransfer',
 	);
-
-	public function getAbsolutePath() {
-		// TODO Figure out storage location
-	}
 
 	/**
 	 * Calculates and returns a human-readable size of this archive file. If the file exists, it will determine

@@ -222,6 +222,11 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 		// "Status" will be updated by the job execution
 		$dataTransfer->write();
 
+
+		// Get file hash to ensure consistency.
+		// Only do this when first associating the file since hashing large files is expensive.
+		$dataArchive->ArchiveFileHash = md5_file($file->FullPath);
+		
 		$dataArchive->ArchiveFileID = $file->ID;
 		$dataArchive->DataTransfers()->add($dataTransfer);
 		$dataArchive->write();
