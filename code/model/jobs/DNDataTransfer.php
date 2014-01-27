@@ -13,6 +13,8 @@
  *
  * Each transfer is executed by a Resque job, so the model also contains
  * a reference to a Resque token (which might still be in progress).
+ *
+ * The "Environment" points to the source or target involved.
  */
 class DNDataTransfer extends DataObject {
 
@@ -22,6 +24,7 @@ class DNDataTransfer extends DataObject {
 		"Status" => "Enum('Queued, Started, Finished, Failed, n/a', 'n/a')",
 		"Direction" => "Enum('get, push', 'get')",
 		"Mode" => "Enum('all, assets, db', '')",
+		"Origin" => "Enum('EnvironmentTransfer,ManualUpload', 'EnvironmentTransfer')",
 	);
 	
 	private static $has_one = array(

@@ -146,6 +146,7 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 		// Associate a new archive with the transfer.
 		// Doesn't retrieve a filepath just yet, need to generate the files first.
 		$dataArchive = new DNDataArchive();
+		$dataArchive->AuthorID = Member::currentUserID();
 		$dataArchive->EnvironmentID = $dataTransfer->Environment()->ID;
 
 		// Generate directory structure with strict permissions (contains very sensitive data)
@@ -255,7 +256,7 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 		$env = $project->getProcessEnv();
 		$project = DNProject::get()->filter('Name', $projectName)->first();
 		$name = $projectName . ':' . $environmentName;
-		
+
 		// Restore database
 		// TODO Pass in file name
 		if(in_array($dataTransfer->Mode, array('all', 'db'))) {

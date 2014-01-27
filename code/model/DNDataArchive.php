@@ -6,11 +6,20 @@
  * The model can also represent a request to upload a file later,
  * through offline processes like mailing a DVD. In order to associate
  * and authenticate those requests easily, an upload token is generated for every archive.
+ * 
+ * The "Environment" points to original source of this archive
+ * (the one it was backed up from). In case this archive was created
+ * from an offline process (see above), it denotes the target environment
+ * which the file will eventually be restored to. View and download
+ * permission on archives are based on environments, so this relationship is mandatory.
  *
  * The archive can have associations to {@link DNDataTransfer}:
  * - Zero transfers if a manual upload was requested, but not fulfilled yet
  * - One transfer with Direction=get for a backup from an environment
  * - One or more transfers with Direction=push for a restore to an environment
+ *
+ * The "Author" is either the person creating the archive through a "backup" operation,
+ * the person uploading through a web form, or the person requesting a manual upload.
  */
 class DNDataArchive extends DataObject {
 
@@ -19,6 +28,7 @@ class DNDataArchive extends DataObject {
 	);
 
 	private static $has_one = array(
+		'Author' => 'Member',
 		'Environment' => 'DNEnvironment',
 		'ArchiveFile' => 'File'
 	);
