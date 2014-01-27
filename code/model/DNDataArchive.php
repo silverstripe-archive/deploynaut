@@ -42,6 +42,17 @@ class DNDataArchive extends DataObject {
 		'DataTransfers' => 'DNDataTransfer',
 	);
 
+	private static $singular_name = 'Data Archive';
+
+	private static $plural_name = 'Data Archives';
+
+	private static $summary_fields = array(
+		'Created' => 'Created',
+		'Author.Title' => 'Author',
+		'Environment.Name' => 'Environment',
+		'ArchiveFile.Name' => 'File',
+	);
+
 	/**
 	 * Calculates and returns a human-readable size of this archive file. If the file exists, it will determine
 	 * whether to display the output in bytes, kilobytes, megabytes, or gigabytes.

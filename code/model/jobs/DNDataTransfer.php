@@ -33,6 +33,10 @@ class DNDataTransfer extends DataObject {
 		"DataArchive" => "DNDataArchive",
 	);
 
+	private static $singular_name = 'Data Transfer';
+
+	private static $plural_name = 'Data Transfers';
+
 	public function Link() {
 		return Controller::join_links($this->Environment()->Project()->Link(), 'transfer', $this->ID);
 	}
