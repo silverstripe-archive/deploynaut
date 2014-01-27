@@ -4,6 +4,22 @@ The deploynaut is a blend of a SS Website and [Capistrano](https://github.com/ca
 
 Originally it has been written to support the deployments of Rails applications. We reuse a lot of the original code, but some of it has to be customised to fit with our infrastructure.
 
+## System Requirements
+
+You'll need a few system tools on the Deploynaut host to get started:
+
+ * git
+ * tar
+ * [SSPak](http://sminnee.github.io/sspak/) (see below)
+
+We also assume that each Deploynaut target has the following tools installed
+and available in the user's `$PATH`:
+
+ * tar
+ * gunzip
+ * php
+ * mysqldump
+
 ## Capistrano Installation
 
 Capistrano is written in ruby, and often deployed as a ruby gem. So the first requirement is to Installing it system wide (without supporting ri and docs) is done by:
