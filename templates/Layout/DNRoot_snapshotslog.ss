@@ -4,10 +4,10 @@
 <p>This is an advanced view of all snapshot transfers</p>
 
 <div class="button-nav">
-	<ul class="pull-right">
-		<li><a class="btn" href="$CurrentProject.Link('createsnapshot')">Create Snapshot</a></li>
-		<li><a class="btn" href="$CurrentProject.Link('uploadsnapshot')">Upload Files</a></li>
-		<li><a class="btn active" href="$CurrentProject.Link('snapshotslog')">Log</a></li>
+	<ul class="nav nav-pills pull-right">
+		<li><a href="$CurrentProject.Link('createsnapshot')">Create Snapshot</a></li>
+		<li><a href="$CurrentProject.Link('uploadsnapshot')">Upload Files</a></li>
+		<li class="active"><a href="$CurrentProject.Link('snapshotslog')">Log</a></li>
 	</ul>
 </div>
 

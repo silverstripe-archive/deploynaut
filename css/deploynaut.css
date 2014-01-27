@@ -161,6 +161,10 @@ form.userswitcher select {
 
 /* end custom form styling */
 
+.help {
+	margin: 40px 0 80px;
+}
+
 .table-data-archives {}
 	.table-data-archives .extended {
 		display: none; /* Gets shown through deploynaut.js */
@@ -203,6 +207,10 @@ form.userswitcher select {
 
 .button-nav {
 	overflow: hidden;
+	width: 100%;
+}
+
+.button-nav ul {
 	margin-bottom: 10px;
 }
 
@@ -210,8 +218,15 @@ form.userswitcher select {
 	float: left;
 	list-style: none;
 	margin-left: 15px;
+	color: #333;
 }
 
-.button-nav li.active {
+.button-nav li.active a,
+.button-nav li.active a:hover {
+	color: #333;
+}
+
+.button-nav li.active a:hover,
+.button-nav li.active a {
 	background-color: #c5c5c5;
 }

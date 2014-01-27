@@ -5,10 +5,10 @@
 <p>Either choose a local file to transfer to deploynaut or the option to post a DVD of your files and have the CWP team upload them for you</p>
 
 <div class="button-nav">
-	<ul class="pull-right">
-		<li><a class="btn" href="$CurrentProject.Link('createsnapshot')">Create Snapshot</a></li>
-		<li><a class="btn active" href="$CurrentProject.Link('uploadsnapshot')">Upload Files</a></li>
-		<li><a class="btn" href="$CurrentProject.Link('snapshotslog')">Log</a></li>
+	<ul class="nav nav-pills pull-right">
+		<li><a href="$CurrentProject.Link('createsnapshot')">Create Snapshot</a></li>
+		<li class="active"><a href="$CurrentProject.Link('uploadsnapshot')">Upload Files</a></li>
+		<li><a href="$CurrentProject.Link('snapshotslog')">Log</a></li>
 	</ul>
 </div>
 
@@ -46,23 +46,25 @@
 	</div>
 </div>
 
-<br>
+<div class="help">
 
-<h4>Instructions to create a sspak file</h4>
+	<h4>Instructions to create a sspak file</h4>
 
-<p>Databases and assets snapshots are stored in deploynaut using the <a href="https://github.com/sminnee/sspak">sspak</a></a> format.</p>
+	<p>Databases and assets snapshots are stored in deploynaut using the <a href="https://github.com/sminnee/sspak">sspak</a></a> format.</p>
 
-<p>You will need to install sspak onto your local machine if you wish to work with these snapshots.</p>
+	<p>You will need to install sspak onto your local machine if you wish to work with these snapshots.</p>
 
-<p>If you want to upload database and assets from your local environment to a deploynaut environment, you will need to
-create an sspak file using one of the following ways:</p>
+	<p>If you want to upload database and assets from your local environment to a deploynaut environment, you will need to
+	create an sspak file using one of the following ways:</p>
 
-<p>Create an sspak file from your existing local site:</p>
+	<p>Create an sspak file from your existing local site:</p>
 
-<pre>sspak save /path/to/my/local/site mysite.sspak</pre>
+	<pre>sspak save /path/to/my/local/site mysite.sspak</pre>
 
-<p>Create an sspak file from existing SQL database and assets. Does not require an existing site:</p>
-<pre>sspak saveexisting mysite.sspak --db=/path/to/database/dump.sql --assets=/path/to/assets</pre>
+	<p>Create an sspak file from existing SQL database and assets. Does not require an existing site:</p>
+	<pre>sspak saveexisting mysite.sspak --db=/path/to/database/dump.sql --assets=/path/to/assets</pre>
 
-<p>You can then upload the output the newly created sspak file to deploynaut and use it to restore the database and assets onto an
-environment.</p>
+	<p>You can then upload the output the newly created sspak file to deploynaut and use it to restore the database and assets onto an
+	environment.</p>
+
+</div>
