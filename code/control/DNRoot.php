@@ -22,6 +22,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'createsnapshot',
 		'snapshotslog',
 		'uploadsnapshot',
+		'getDataTransferRestoreForm',
+		'restoresnapshot',
 	);
 
 	/**
@@ -30,6 +32,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	public static $url_handlers = array(
 		'project/$Project/environment/$Environment/DeployForm' => 'getDeployForm',
 		'project/$Project/createsnapshot/DataTransferForm' => 'getDataTransferForm',
+		'project/$Project/DataTransferForm' => 'getDataTransferForm',
+		'project/$Project/DataTransferRestoreForm' => 'getDataTransferRestoreForm',
 		'project/$Project/environment/$Environment/metrics' => 'metrics',
 		'project/$Project/environment/$Environment/deploy/$Identifier/log' => 'deploylog',
 		'project/$Project/environment/$Environment/deploy/$Identifier' => 'deploy',
@@ -37,6 +41,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'project/$Project/transfer/$Identifier' => 'transfer',
 		'project/$Project/environment/$Environment' => 'environment',
 		'project/$Project/build/$Build' => 'build',
+		'project/$Project/restoresnapshot/$DataArchiveID' => 'restoresnapshot',
 		'project/$Project/update' => 'update',
 		'project/$Project/snapshots' => 'snapshots',
 		'project/$Project/createsnapshot' => 'createsnapshot',
@@ -181,7 +186,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		if(!$project) {
 			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
 		}
-		return $project->customise(array(
+		return $this->customise(array(
+			'Project' => $project,
 			'DataTransferForm' => $this->getDataTransferForm($request)
 		))->renderWith(array('DNRoot_project', 'DNRoot'));
 	}
@@ -449,6 +455,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			$this,
 			'DataTransferForm',
 			new FieldList(
+				new HiddenField('Direction', false, 'get'),
 				new DropdownField('EnvironmentID', 'Environment', $envs->map()),
 				new DropdownField('Mode', 'Transfer', $modesMap)
 			),
@@ -464,7 +471,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	public function doDataTransfer($data, $form) {
 		$project = $this->getCurrentProject();
 		$member = Member::currentUser();
-		
+		$dataArchive = null;
 		$validEnvs = $this->getCurrentProject()->DNEnvironmentList()
 			->filterByCallback(function($item) {return $item->canDeploy();});
 
@@ -473,10 +480,23 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			throw new LogicException('Invalid environment');
 		}
 
+		// Only 'push' direction is allowed an association with an existing archive.
+		if(
+			$data['Direction'] == 'push'
+			&& isset($data['DataArchiveID']) 
+			&& is_numeric($data['DataArchiveID'])
+		) {
+			$dataArchive = $environment->DataArchives()->byId($data['DataArchiveID']);
+			if(!$dataArchive) {
+				throw new LogicException('Invalid data archive');
+			}
+		}
+
 		$job = new DNDataTransfer;
 		$job->EnvironmentID = $environment->ID;
-		$job->Direction = 'get';
+		$job->Direction = $data['Direction'];
 		$job->Mode = $data['Mode'];
+		$job->DataArchiveID = $dataArchive ? $dataArchive->ID : null;
 		$job->write();
 		$job->start();
 		
@@ -544,6 +564,72 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return $content;
 		}
 
+	}
+
+	/**
+	 * Note: Submits to the same action as {@link getDataTransferForm()},
+	 * but with a Direction=push and an archive reference.
+	 * 
+	 * @param  SS_HTTPRequest $request
+	 * @param  DNDataArchive $dataArchive Only set when method is called manually in {@link restore()},
+	 *                            otherwise the state is inferred from the request data.
+	 * @return Form
+	 */
+	public function getDataTransferRestoreForm($request, $dataArchive = null) {
+		$dataArchive = $dataArchive ? $dataArchive : DNDataArchive::get()->byId($request->requestVar('DataArchiveID'));
+		$project = $this->getCurrentProject();
+		$envs = $project->DNEnvironmentList()
+			->filterByCallback(function($item) {return $item->canDeploy();});
+
+		$modesMap = array();
+		if($dataArchive->Mode == 'all') {
+			$modesMap['all'] = 'Database and Assets';
+		};
+		if($dataArchive->Mode == 'db') {
+			$modesMap['db'] = 'Database only';
+		};
+		if($dataArchive->Mode == 'assets') {
+			$modesMap['assets'] = 'Assets only';
+		};
+
+		$form = new Form(
+			$this,
+			'DataTransferRestoreForm',
+			new FieldList(
+				new HiddenField('DataArchiveID', false, $dataArchive->ID),
+				new HiddenField('Direction', false, 'push'),
+				new DropdownField('EnvironmentID', 'Environment', $envs->map()),
+				new DropdownField('Mode', 'Transfer', $modesMap)
+			),
+			new FieldList(
+				FormAction::create('doDataTransfer', 'Transfer')->addExtraClass('btn')
+			)
+		);
+		$form->setFormAction($project->Link() . '/DataTransferRestoreForm');
+
+		return $form;
+	}
+
+	/**
+	 * View a form to restore a specific {@link DataArchive}.
+	 * Permission checks are handled in {@link DataArchives()}.
+	 * Submissions are handled through {@link doDataTransfer()}, same as backup operations.
+	 */
+	public function restoresnapshot($request) {
+		$dataArchive = DNDataArchive::get()->byId($request->param('DataArchiveID'));
+		
+		if(!$dataArchive) {
+			throw new SS_HTTPResponse_Exception('Archive not found', 404);
+		}
+
+		if(!$dataArchive->canUpload()) {
+			throw new LogicException('Not allowed to restore archive');
+		}
+
+		$form = $this->getDataTransferRestoreForm($this->request, $dataArchive);
+
+		// View currently only available via ajax
+		return $form->forTemplate();
 	}
 
 	/**
@@ -641,30 +727,15 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * @return ArrayList The list of all archive files that can be accessed by the currently logged-in {@link Member}
 	 */
-	public function ArchiveList() {
-		$projects = $this->DNProjectList();
-		if(!$projects) return null;
-
-		foreach($projects as $project) {
-			$environments = $project->DNEnvironmentList()->filterByCallback(function($record) {
-				return $record->canDownloadArchive() || $record->canUploadArchive();
-			});
-
-			if(!$environments) return null;
-
-			$archives = new ArrayList();
-
-			foreach($environments as $env) {
-				if($env->DataArchives()->count() > 0) {
-					foreach($env->DataArchives() as $pak) {
-						$archives->push($pak);
-					}
-				}
+	public function DataArchives() {
+		$project = $this->getCurrentProject();
+		$archives = new ArrayList();
+		foreach($project->DNEnvironmentList() as $env) {
+			foreach($env->DataArchives() as $archive) {
+				if($archive->canView()) $archives->push($archive);
 			}
-
-			return $archives;
 		}
 
-		return null;
+		return $archives;
 	}
 }

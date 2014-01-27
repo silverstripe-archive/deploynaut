@@ -107,5 +107,24 @@
 			placement: "top",
 			trigger: 'hover'
 		});
+
+		/**
+		 * Extend a specific target
+		 */
+		$('.extended-trigger').click(function(e) {
+			var $el = $($(this).data('extendedTarget')), $container = $($(this).data('extendedContainer'));
+			if($el.is(':empty')) {
+				$el.load($(this).attr('href'), function() {
+					$container.removeClass('loading');
+				});
+				$container.addClass('loading');
+				$container.show();
+			} else {
+				$el.empty();
+				$container.hide();
+			}
+			
+			e.preventDefault();
+		});
 	});
 }(jQuery));

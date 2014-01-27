@@ -30,6 +30,7 @@ class DNDataArchive extends DataObject {
 		'UploadToken' => 'Varchar(8)',
 		'Mode' => "Enum('all, assets, db', '')",
 		'ArchiveFileHash' => 'Varchar(32)',
+		"Mode" => "Enum('all, assets, db', '')",
 	);
 
 	private static $has_one = array(
@@ -73,6 +74,15 @@ class DNDataArchive extends DataObject {
 		} else {
 			return $this->Mode;
 		}
+	}
+
+	/**
+	 * Inferred from both restore and backup permissions.
+	 *
+	 * @param Member|null $member The {@link Member} object to test against.
+	 */
+	public function canView($member = null) {
+		return ($this->canUpload($member) || $this->canDownload($member));
 	}
 
 	/**

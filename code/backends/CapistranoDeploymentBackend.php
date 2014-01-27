@@ -146,6 +146,7 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 		// Associate a new archive with the transfer.
 		// Doesn't retrieve a filepath just yet, need to generate the files first.
 		$dataArchive = new DNDataArchive();
+		$dataArchive->Mode = $dataTransfer->Mode;
 		$dataArchive->AuthorID = Member::currentUserID();
 		$dataArchive->EnvironmentID = $dataTransfer->Environment()->ID;
 		$dataArchive->Mode = $dataTransfer->Mode;
@@ -262,13 +263,37 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 		$env = $project->getProcessEnv();
 		$project = DNProject::get()->filter('Name', $projectName)->first();
 		$name = $projectName . ':' . $environmentName;
+		$tempPath = TEMP_FOLDER . DIRECTORY_SEPARATOR . 'deploynaut-transfer-' . $dataTransfer->ID;
+		mkdir($tempPath, 0700, true);
+
+		$cleanupFn = function() use ($tempPath) {
+			$process = new Process('rm -rf ' . escapeshellarg($tempPath));
+			$process->run(); 
+		};
+
+		// Extract *.sspak to a temporary location
+		$log->write('Extracting *.sspak file');
+		$sspakFilename = $dataTransfer->DataArchive()->ArchiveFile()->FullPath;
+		$sspakCmd = sprintf('sspak extract %s %s', escapeshellarg($sspakFilename), escapeshellarg($tempPath));
+		$log->write($sspakCmd);
+		$process = new Process($sspakCmd);
+		$process->setTimeout(3600);
+		$process->run();
+		if(!$process->isSuccessful()) {
+			$log->write('Could not extract the *.sspak file: ' . $process->getErrorOutput());
+			$cleanupFn();
+			throw new RuntimeException($process->getErrorOutput());
+		}
+
+
+		// TODO Validate that file actually contains the desired modes
 
 		// Restore database
-		// TODO Pass in file name
 		if(in_array($dataTransfer->Mode, array('all', 'db'))) {
+			// Upload into target environment
 			$log->write('Restore of database to "' . $name . '" started');
 			$args = array(
-				'data_path' => '' // TODO associate with DNDataTransfer
+				'data_path' => $tempPath . DIRECTORY_SEPARATOR . 'database.sql.gz'
 			);
 			$command = "data:pushdb";
 			$command = $this->getCommand($command, $name, $args, $env, $log);
@@ -276,17 +301,31 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 				$log->write($buffer);
 			});
 			if(!$command->isSuccessful()) {
+				$cleanupFn();
+				$log->write('Restore of database to "' . $name . '" failed: ' . $command->getErrorOutput());
 				throw new RuntimeException($command->getErrorOutput());
 			}
 			$log->write('Restore of database to "' . $name . '" done');
 		}
 		
 		// Restore assets
-		// TODO Pass in file name
 		if(in_array($dataTransfer->Mode, array('all', 'assets'))) {
+			// Extract assets.tar.gz into assets/
+			$gunzipCmd = 'gunzip ' . escapeshellarg($tempPath . DIRECTORY_SEPARATOR . 'assets.tar.gz');
+			$log->write($gunzipCmd);
+			$process = new Process($gunzipCmd);
+			$process->setTimeout(3600);
+			$process->run();
+			if(!$process->isSuccessful()) {
+				$log->write('Could not extract the assets archive');
+				$cleanupFn();
+				throw new RuntimeException($process->getErrorOutput());
+			}
+
+			// Upload into target environment
 			$log->write('Restore of assets to "' . $name . '" started');
 			$args = array(
-				'data_path' => '' // TODO associate with DNDataTransfer
+				'data_path' => $tempPath . DIRECTORY_SEPARATOR . 'assets'
 			);
 			$command = "data:pushassets";
 			$command = $this->getCommand($command, $name, $args, $env, $log);
@@ -294,10 +333,14 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 				$log->write($buffer);
 			});
 			if(!$command->isSuccessful()) {
+				$cleanupFn();
+				$log->write('Restore of assets to "' . $name . '" failed: ' . $command->getErrorOutput());
 				throw new RuntimeException($command->getErrorOutput());
 			}
 			$log->write('Restore of assets to "' . $name . '" done');
 		}
+
+		$cleanupFn();
 	}
 
 }

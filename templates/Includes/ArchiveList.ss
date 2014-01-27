@@ -1,6 +1,6 @@
 <% if $CanUploadOrDownloadArchives %>
-	<% if $ArchiveList %>
-		<table class="table table-bordered table-striped">
+	<% if $DataArchives %>
+		<table class="table table-bordered table-striped table-data-archives">
 			<thead>
 				<tr>
 					<th>Date Created</th>
@@ -13,15 +13,30 @@
 			</thead>
 
 			<tbody>
-				<% loop $ArchiveList %>
+				<% loop $DataArchives %>
 					<tr>
 						<td><span class="tooltip-hint" data-toggle="tooltip" data-original-title="$Created.Nice">$Created.Date</span></td>
 						<td>$Author.FirstName $Author.Surname</td>
 						<td>$Environment.Name</td>
 						<td>$ModeNice</td>
 						<td>$FileSize</td>
-						<td><% if $CanDownload %><a href="$ArchiveFile.Link">Download</a><% end_if %></td>
-						<td><% if $CanUpload %><a href="#">Restore</a><% end_if %></td>
+						<td>
+							<% if $CanDownload && ArchiveFile %>
+							<a href="$ArchiveFile.Link">
+								Download
+							</a>
+							<% end_if %>
+							<% if ArchiveFile %>
+							<a href="$Top.CurrentProject.Link/restoresnapshot/$ID" class="extended-trigger" data-extended-target="#archive-list-extended-$ID" data-extended-container="#archive-list-extended-container-$ID">
+								Restore
+							</a>
+							<% end_if %>
+						</td>
+					</tr>
+					<tr class="extended" id="archive-list-extended-container-$ID">
+						<td colspan="6">
+							<div id="archive-list-extended-$ID"></div>
+						</td>
 					</tr>
 				<% end_loop %>
 			</tbody>

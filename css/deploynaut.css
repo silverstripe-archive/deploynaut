@@ -161,6 +161,11 @@ form.userswitcher select {
 
 /* end custom form styling */
 
+.table-data-archives {}
+	.table-data-archives .extended {
+		display: none; /* Gets shown through deploynaut.js */
+	}
+
 .table th, .table td.nowrap {
 	white-space: nowrap;
 }
