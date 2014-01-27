@@ -68,150 +68,10 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 	 * @inheritdoc
 	 */
 	public function dataTransfer(DNDataTransfer $dataTransfer, DeploynautLogFile $log) {
-		$environmentObj = $dataTransfer->Environment();
-		$project = $environmentObj->Project();
-		$projectName = $project->Name;
-		$environmentName = $environmentObj->Name;
-		$env = $project->getProcessEnv();
-		$project = DNProject::get()->filter('Name', $projectName)->first();
-		$name = $projectName . ':' . $environmentName;
-
-		// TODO Refactor into methods
-
 		if($dataTransfer->Direction == 'get') {
-			// Associate a new archive with the transfer.
-			// Doesn't retrieve a filepath just yet, need to generate the files first.
-			$dataArchive = new DNDataArchive();
-			$dataArchive->EnvironmentID = $dataTransfer->Environment()->ID;
-
-			// Generate directory structure with strict permissions (contains very sensitive data)
-			$filepathBase = $dataArchive->generateFilepath($dataTransfer);
-			mkdir($filepathBase, 0700, true);
-
-			$databasePath = $filepathBase . DIRECTORY_SEPARATOR . 'database.sql';
-
-			// Backup database
-			if(in_array($dataTransfer->Mode, array('all', 'db'))) {
-				$log->write('Backup of database from "' . $name . '" started');
-				$args = array(
-					'data_path' => $databasePath
-				);
-				$command = $this->getCommand("data:getdb", $name, $args, $env, $log);
-				$command->run(function ($type, $buffer) use($log) {
-					$log->write($buffer);
-				});
-				if(!$command->isSuccessful()) {
-					throw new RuntimeException($command->getErrorOutput());
-				}
-				$log->write('Backup of database from "' . $name . '" done');
-			}
-			
-			// Backup assets
-			if(in_array($dataTransfer->Mode, array('all', 'assets'))) {
-				$log->write('Backup of assets from "' . $name . '" started');
-				$args = array(
-					'data_path' => $filepathBase
-				);
-				$command = $this->getCommand("data:getassets", $name, $args, $env, $log);
-				$command->run(function ($type, $buffer) use($log) {
-					$log->write($buffer);
-				});
-				if(!$command->isSuccessful()) {
-					throw new RuntimeException($command->getErrorOutput());
-				}
-				$log->write('Backup of assets from "' . $name . '" done');
-			}
-
-			$log->write('Creating *.sspak file');
-			$sspakFilename = sprintf('%s.sspak', $dataArchive->generateFilename($dataTransfer));
-			$sspakCmd = sprintf('cd %s && sspak saveexisting %s 2>&1', $filepathBase, $sspakFilename);
-			if($dataTransfer->Mode == 'db') {
-				$sspakCmd .= sprintf(' --db=%s', $databasePath);
-			} elseif($dataTransfer->Mode == 'assets') {
-				$sspakCmd .= sprintf(' --assets=%s/assets', $filepathBase);
-			} else {
-				$sspakCmd .= sprintf(' --db=%s --assets=%s/assets', $databasePath, $filepathBase);
-			}
-
-			$process = new Process($sspakCmd);
-			$process->setTimeout(3600);
-			$process->run();
-			if(!$process->isSuccessful()) {
-				$log->write('Could not package the backup via sspak');
-				throw new RuntimeException($process->getErrorOutput());
-			}
-
-			// HACK: find_or_make() expects path relative to assets/
-			$sspakFilepath = ltrim(
-				str_replace(ASSETS_PATH, '', $filepathBase . DIRECTORY_SEPARATOR . $sspakFilename), 
-				DIRECTORY_SEPARATOR
-			);
-			$folder = Folder::find_or_make(dirname($sspakFilepath));
-			$file = new File();
-			$file->Name = $sspakFilename;
-			$file->Filename = $sspakFilepath;
-			$file->ParentID = $folder->ID;
-			$file->write();
-
-			// "Status" will be updated by the job execution
-			$dataTransfer->write();
-
-			$dataArchive->ArchiveFileID = $file->ID;
-			$dataArchive->DataTransfers()->add($dataTransfer);
-			$dataArchive->write();
-
-			// Remove any assets and db files lying around, they're not longer needed as they're now part
-			// of the sspak file we just generated. Use --force to avoid errors when files don't exist,
-			// e.g. when just an assets backup has been requested and no database.sql exists.
-			$process = new Process(sprintf('rm -rf %s/assets && rm -f %s', $filepathBase, $databasePath));
-			$process->run();
-			if(!$process->isSuccessful()) {
-				$log->write('Could not delete temporary files');
-				throw new RuntimeException($process->getErrorOutput());
-			}
-
-			$log->write(sprintf(
-				'Creating *.sspak file done: %s',
-				$file->getAbsoluteURL()
-			));
+			$this->dataTransferBackup($dataTransfer, $log);
 		} else {
-			// TODO Unbundle PAK
-
-			// Restore database
-			// TODO Pass in file name
-			if(in_array($dataTransfer->Mode, array('all', 'db'))) {
-				$log->write('Restore of database to "' . $name . '" started');
-				$args = array(
-					'data_path' => '' // TODO associate with DNDataTransfer
-				);
-				$command = "data:pushdb";
-				$command = $this->getCommand($command, $name, $args, $env, $log);
-				$command->run(function ($type, $buffer) use($log) {
-					$log->write($buffer);
-				});
-				if(!$command->isSuccessful()) {
-					throw new RuntimeException($command->getErrorOutput());
-				}
-				$log->write('Restore of database to "' . $name . '" done');
-			}
-			
-			// Restore assets
-			// TODO Pass in file name
-			if(in_array($dataTransfer->Mode, array('all', 'assets'))) {
-				$log->write('Restore of assets to "' . $name . '" started');
-				$args = array(
-					'data_path' => '' // TODO associate with DNDataTransfer
-				);
-				$command = "data:pushassets";
-				$command = $this->getCommand($command, $name, $args, $env, $log);
-				$command->run(function ($type, $buffer) use($log) {
-					$log->write($buffer);
-				});
-				if(!$command->isSuccessful()) {
-					throw new RuntimeException($command->getErrorOutput());
-				}
-				$log->write('Restore of assets to "' . $name . '" done');
-			}
+			$this->dataTransferRestore($dataTransfer, $log);
 		}
 	}
 
@@ -265,6 +125,172 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 		//$process->setEnv($env);
 		$process->setTimeout(3600);
 		return $process;
+	}
+
+	/**
+	 * Backs up database and/or assets to a designated folder,
+	 * and packs up the files into a single sspak.
+	 * 
+	 * @param  DNDataTransfer    $dataTransfer
+	 * @param  DeploynautLogFile $log         
+	 */
+	protected function dataTransferBackup(DNDataTransfer $dataTransfer, DeploynautLogFile $log) {
+		$environmentObj = $dataTransfer->Environment();
+		$project = $environmentObj->Project();
+		$projectName = $project->Name;
+		$environmentName = $environmentObj->Name;
+		$env = $project->getProcessEnv();
+		$project = DNProject::get()->filter('Name', $projectName)->first();
+		$name = $projectName . ':' . $environmentName;
+
+		// Associate a new archive with the transfer.
+		// Doesn't retrieve a filepath just yet, need to generate the files first.
+		$dataArchive = new DNDataArchive();
+		$dataArchive->EnvironmentID = $dataTransfer->Environment()->ID;
+
+		// Generate directory structure with strict permissions (contains very sensitive data)
+		$filepathBase = $dataArchive->generateFilepath($dataTransfer);
+		mkdir($filepathBase, 0700, true);
+
+		$databasePath = $filepathBase . DIRECTORY_SEPARATOR . 'database.sql';
+
+		// Backup database
+		if(in_array($dataTransfer->Mode, array('all', 'db'))) {
+			$log->write('Backup of database from "' . $name . '" started');
+			$args = array(
+				'data_path' => $databasePath
+			);
+			$command = $this->getCommand("data:getdb", $name, $args, $env, $log);
+			$command->run(function ($type, $buffer) use($log) {
+				$log->write($buffer);
+			});
+			if(!$command->isSuccessful()) {
+				throw new RuntimeException($command->getErrorOutput());
+			}
+			$log->write('Backup of database from "' . $name . '" done');
+		}
+		
+		// Backup assets
+		if(in_array($dataTransfer->Mode, array('all', 'assets'))) {
+			$log->write('Backup of assets from "' . $name . '" started');
+			$args = array(
+				'data_path' => $filepathBase
+			);
+			$command = $this->getCommand("data:getassets", $name, $args, $env, $log);
+			$command->run(function ($type, $buffer) use($log) {
+				$log->write($buffer);
+			});
+			if(!$command->isSuccessful()) {
+				throw new RuntimeException($command->getErrorOutput());
+			}
+			$log->write('Backup of assets from "' . $name . '" done');
+		}
+
+		$log->write('Creating *.sspak file');
+		$sspakFilename = sprintf('%s.sspak', $dataArchive->generateFilename($dataTransfer));
+		$sspakCmd = sprintf('cd %s && sspak saveexisting %s 2>&1', $filepathBase, $sspakFilename);
+		if($dataTransfer->Mode == 'db') {
+			$sspakCmd .= sprintf(' --db=%s', $databasePath);
+		} elseif($dataTransfer->Mode == 'assets') {
+			$sspakCmd .= sprintf(' --assets=%s/assets', $filepathBase);
+		} else {
+			$sspakCmd .= sprintf(' --db=%s --assets=%s/assets', $databasePath, $filepathBase);
+		}
+
+		$process = new Process($sspakCmd);
+		$process->setTimeout(3600);
+		$process->run();
+		if(!$process->isSuccessful()) {
+			$log->write('Could not package the backup via sspak');
+			throw new RuntimeException($process->getErrorOutput());
+		}
+
+		// HACK: find_or_make() expects path relative to assets/
+		$sspakFilepath = ltrim(
+			str_replace(ASSETS_PATH, '', $filepathBase . DIRECTORY_SEPARATOR . $sspakFilename), 
+			DIRECTORY_SEPARATOR
+		);
+		$folder = Folder::find_or_make(dirname($sspakFilepath));
+		$file = new File();
+		$file->Name = $sspakFilename;
+		$file->Filename = $sspakFilepath;
+		$file->ParentID = $folder->ID;
+		$file->write();
+
+		// "Status" will be updated by the job execution
+		$dataTransfer->write();
+
+		$dataArchive->ArchiveFileID = $file->ID;
+		$dataArchive->DataTransfers()->add($dataTransfer);
+		$dataArchive->write();
+
+		// Remove any assets and db files lying around, they're not longer needed as they're now part
+		// of the sspak file we just generated. Use --force to avoid errors when files don't exist,
+		// e.g. when just an assets backup has been requested and no database.sql exists.
+		$process = new Process(sprintf('rm -rf %s/assets && rm -f %s', $filepathBase, $databasePath));
+		$process->run();
+		if(!$process->isSuccessful()) {
+			$log->write('Could not delete temporary files');
+			throw new RuntimeException($process->getErrorOutput());
+		}
+
+		$log->write(sprintf(
+			'Creating *.sspak file done: %s',
+			$file->getAbsoluteURL()
+		));
+	}
+
+	/**
+	 * Extracts a *.sspak file referenced through the passed in $dataTransfer
+	 * and pushes it to the environment referenced in $dataTransfer.
+	 * 
+	 * @param  DNDataTransfer    $dataTransfer
+	 * @param  DeploynautLogFile $log         
+	 */
+	protected function dataTransferRestore(DNDataTransfer $dataTransfer, DeploynautLogFile $log) {
+		$environmentObj = $dataTransfer->Environment();
+		$project = $environmentObj->Project();
+		$projectName = $project->Name;
+		$environmentName = $environmentObj->Name;
+		$env = $project->getProcessEnv();
+		$project = DNProject::get()->filter('Name', $projectName)->first();
+		$name = $projectName . ':' . $environmentName;
+		
+		// Restore database
+		// TODO Pass in file name
+		if(in_array($dataTransfer->Mode, array('all', 'db'))) {
+			$log->write('Restore of database to "' . $name . '" started');
+			$args = array(
+				'data_path' => '' // TODO associate with DNDataTransfer
+			);
+			$command = "data:pushdb";
+			$command = $this->getCommand($command, $name, $args, $env, $log);
+			$command->run(function ($type, $buffer) use($log) {
+				$log->write($buffer);
+			});
+			if(!$command->isSuccessful()) {
+				throw new RuntimeException($command->getErrorOutput());
+			}
+			$log->write('Restore of database to "' . $name . '" done');
+		}
+		
+		// Restore assets
+		// TODO Pass in file name
+		if(in_array($dataTransfer->Mode, array('all', 'assets'))) {
+			$log->write('Restore of assets to "' . $name . '" started');
+			$args = array(
+				'data_path' => '' // TODO associate with DNDataTransfer
+			);
+			$command = "data:pushassets";
+			$command = $this->getCommand($command, $name, $args, $env, $log);
+			$command->run(function ($type, $buffer) use($log) {
+				$log->write($buffer);
+			});
+			if(!$command->isSuccessful()) {
+				throw new RuntimeException($command->getErrorOutput());
+			}
+			$log->write('Restore of assets to "' . $name . '" done');
+		}
 	}
 
 }
