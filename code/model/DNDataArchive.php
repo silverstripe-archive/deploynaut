@@ -20,11 +20,15 @@
  *
  * The "Author" is either the person creating the archive through a "backup" operation,
  * the person uploading through a web form, or the person requesting a manual upload.
+ * 
+ * The "Mode" is what the "Author" said the file includes (either 'only assets', 'only 
+ * database', or both). This is used in the ArchiveList.ss template.
  */
 class DNDataArchive extends DataObject {
 
 	private static $db = array(
 		'UploadToken' => 'Varchar(8)',
+		'Mode' => "Enum('all, assets, db', '')",
 	);
 
 	private static $has_one = array(
@@ -52,6 +56,14 @@ class DNDataArchive extends DataObject {
 			return $this->ArchiveFile()->getSize();
 		} else {
 			return "N/A";
+		}
+	}
+
+	public function getModeNice() {
+		if($this->Mode == 'all') {
+			return 'database and assets';
+		} else {
+			return $this->Mode;
 		}
 	}
 

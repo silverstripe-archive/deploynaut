@@ -19,5 +19,3 @@
 	<% end_if %>
 	</tbody>
 </table>
-
-<% include ArchiveList %>

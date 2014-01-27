@@ -18,6 +18,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'getDataTransferForm',
 		'transfer',
 		'transferlog',
+		'snapshots',
+		'createsnapshot',
+		'snapshotslog',
+		'uploadsnapshot',
 	);
 
 	/**
@@ -25,7 +29,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public static $url_handlers = array(
 		'project/$Project/environment/$Environment/DeployForm' => 'getDeployForm',
-		'project/$Project/DataTransferForm' => 'getDataTransferForm',
+		'project/$Project/createsnapshot/DataTransferForm' => 'getDataTransferForm',
 		'project/$Project/environment/$Environment/metrics' => 'metrics',
 		'project/$Project/environment/$Environment/deploy/$Identifier/log' => 'deploylog',
 		'project/$Project/environment/$Environment/deploy/$Identifier' => 'deploy',
@@ -34,6 +38,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'project/$Project/environment/$Environment' => 'environment',
 		'project/$Project/build/$Build' => 'build',
 		'project/$Project/update' => 'update',
+		'project/$Project/snapshots' => 'snapshots',
+		'project/$Project/createsnapshot' => 'createsnapshot',
+		'project/$Project/uploadsnapshot' => 'uploadsnapshot',
+		'project/$Project/snapshotslog' => 'snapshotslog',
 		'project/$Project' => 'project',
 		'projects' => 'projects',
 	);
@@ -91,7 +99,76 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return string - HTML
 	 */
 	public function projects(SS_HTTPRequest $request) {
-		return $this->customise(array('Title' => 'Projects'))->renderWith(array('DNRoot_projects', 'DNRoot'));
+		return $this->customise(array(
+			'Title' => 'Projects',
+			'Project' => $this->getCurrentProject(),
+		))->renderWith(array('DNRoot_projects', 'DNRoot'));
+	}
+
+	/**
+	 * Action
+	 * 
+	 * @return string - HTML
+	 */
+	public function snapshots(SS_HTTPRequest $request) {
+		$project = $this->getCurrentProject();
+		if(!$project) {
+			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
+		}
+		return $this->customise(array(
+			'Title' => 'Snapshots',
+			'Project' => $project,
+		))->renderWith(array('DNRoot_snapshots', 'DNRoot'));
+	}
+
+	/**
+	 * Action
+	 * 
+	 * @return string - HTML
+	 */
+	public function createsnapshot(SS_HTTPRequest $request) {
+		$project = $this->getCurrentProject();
+		if(!$project) {
+			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
+		}
+		return $this->customise(array(
+			'Title' => 'Create Snapshot',
+			'Project' => $project,
+			'DataTransferForm' => $this->getDataTransferForm($request)
+		))->renderWith(array('DNRoot_createsnapshot', 'DNRoot'));
+	}
+
+	/**
+	 * Action
+	 * 
+	 * @return string - HTML
+	 */
+	public function uploadsnapshot(SS_HTTPRequest $request) {
+		$project = $this->getCurrentProject();
+		if(!$project) {
+			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
+		}
+		return $this->customise(array(
+			'Title' => 'Upload Snapshot',
+			'Project' => $project,
+			'DataTransferForm' => $this->getDataTransferForm($request)
+		))->renderWith(array('DNRoot_uploadsnapshot', 'DNRoot'));
+	}
+
+	/**
+	 * Action
+	 * 
+	 * @return string - HTML
+	 */
+	public function snapshotslog(SS_HTTPRequest $request) {
+		$project = $this->getCurrentProject();
+		if(!$project) {
+			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
+		}
+		return $this->customise(array(
+			'Title' => 'Snapshots Log',
+			'Project' => $project,
+		))->renderWith(array('DNRoot_snapshotslog', 'DNRoot'));
 	}
 
 	/**

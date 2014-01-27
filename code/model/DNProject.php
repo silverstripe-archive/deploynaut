@@ -232,8 +232,8 @@ class DNProject extends DataObject {
 	 *
 	 * @return string
 	 */
-	public function link($action='') {
-		return Controller::join_links("naut", "project", $this->Name);
+	public function Link($action='') {
+		return Controller::join_links("naut", "project", $this->Name, $action);
 	}
 	
 	/**

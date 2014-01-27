@@ -1,3 +1,5 @@
+<h2>$Title</h2>
+
 <h3>Environments</h3>
 <table class="table-striped table table-bordered">
 	<thead>
@@ -130,14 +132,3 @@
 </div>
 <% end_if %>
 <% end_loop %>
-
-<h4>Backup environment data</h4>
-<p>Backs up the database and/or assets into a file which can be downloaded or used for later restores.</p>
-
-<% with DataTransferForm %>
-<form $FormAttributes class='form-inline'>
-	<% loop VisibleFields %>$FieldHolder<% end_loop %>
-	$Actions
-	$HiddenFields
-</form>
-<% end_with %>

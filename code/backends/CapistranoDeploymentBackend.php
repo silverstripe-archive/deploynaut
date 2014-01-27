@@ -148,6 +148,7 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 		$dataArchive = new DNDataArchive();
 		$dataArchive->AuthorID = Member::currentUserID();
 		$dataArchive->EnvironmentID = $dataTransfer->Environment()->ID;
+		$dataArchive->Mode = $dataTransfer->Mode;
 
 		// Generate directory structure with strict permissions (contains very sensitive data)
 		$filepathBase = $dataArchive->generateFilepath($dataTransfer);

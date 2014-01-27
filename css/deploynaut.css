@@ -124,9 +124,42 @@
 		display: inline;
 	}	
 
+/* start custom form styling */
+.field {
+	margin-bottom: 15px;
+}
+.field label.left {
+	float: left;
+	width: 160px;
+	padding-top: 5px;
+	text-align: left;
+}
+.field.file input {
+	background-color: #eee;
+	border: 1px solid #cccccc;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+.upload-form .text-center {
+	text-align: center;
+	border-top: 1px solid #eee;
+	border-bottom: 1px solid #eee;
+	padding: 8px 0;
+}
 #Form_DeployForm select, #Form_DeployForm input[type=text] {
 	width: 450px;
 }
+
+form.userswitcher label.left {
+	width: auto;
+	padding-top: 0;
+}
+form.userswitcher select {
+	margin-bottom: 0;
+}
+
+/* end custom form styling */
 
 .table th, .table td.nowrap {
 	white-space: nowrap;
@@ -144,4 +177,8 @@
 .tooltip-hint {
 	color: #0088cc;
 	border-bottom: 1px #0088cc dotted;
+}
+
+.nav.nav-pills.pull-right {
+	margin-bottom: 0;
 }
