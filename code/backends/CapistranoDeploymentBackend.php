@@ -213,24 +213,28 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 			str_replace(ASSETS_PATH, '', $filepathBase . DIRECTORY_SEPARATOR . $sspakFilename), 
 			DIRECTORY_SEPARATOR
 		);
-		$folder = Folder::find_or_make(dirname($sspakFilepath));
-		$file = new File();
-		$file->Name = $sspakFilename;
-		$file->Filename = $sspakFilepath;
-		$file->ParentID = $folder->ID;
-		$file->write();
 
-		// "Status" will be updated by the job execution
-		$dataTransfer->write();
+		try {
+			$folder = Folder::find_or_make(dirname($sspakFilepath));
+			$file = new File();
+			$file->Name = $sspakFilename;
+			$file->Filename = $sspakFilepath;
+			$file->ParentID = $folder->ID;
+			$file->write();
 
+			// "Status" will be updated by the job execution
+			$dataTransfer->write();
 
-		// Get file hash to ensure consistency.
-		// Only do this when first associating the file since hashing large files is expensive.
-		$dataArchive->ArchiveFileHash = md5_file($file->FullPath);
-		
-		$dataArchive->ArchiveFileID = $file->ID;
-		$dataArchive->DataTransfers()->add($dataTransfer);
-		$dataArchive->write();
+			// Get file hash to ensure consistency.
+			// Only do this when first associating the file since hashing large files is expensive.
+			$dataArchive->ArchiveFileHash = md5_file($file->FullPath);
+			$dataArchive->ArchiveFileID = $file->ID;
+			$dataArchive->DataTransfers()->add($dataTransfer);
+			$dataArchive->write();
+		} catch (Exception $e) {
+			$log->write('Failed to add sspak file: ' . $e->getMessage());
+			throw new RuntimeException($e->getMessage());
+		}
 
 		// Remove any assets and db files lying around, they're not longer needed as they're now part
 		// of the sspak file we just generated. Use --force to avoid errors when files don't exist,
