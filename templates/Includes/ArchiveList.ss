@@ -21,7 +21,7 @@
 						<td>$ArchiveFile.Filename.XML</td>
 						<td>$FileSize</td>
 						<td>$UploadToken.XML</td>
-						<td><% if $CanDownload %>Download link<% end_if %></td>
+						<td><% if $CanDownload %><a href="$ArchiveFile.Link">Download link</a><% end_if %></td>
 						<td><% if $CanUpload %>Upload link<% end_if %></td>
 					</tr>
 				<% end_loop %>
