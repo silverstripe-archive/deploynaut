@@ -598,13 +598,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			->filterByCallback(function($item) {return $item->canRestore();});
 
 		$modesMap = array();
-		if($dataArchive->Mode == 'all') {
+		if(in_array($dataArchive->Mode, array('all'))) {
 			$modesMap['all'] = 'Database and Assets';
 		};
-		if($dataArchive->Mode == 'db') {
+		if(in_array($dataArchive->Mode, array('all', 'db'))) {
 			$modesMap['db'] = 'Database only';
 		};
-		if($dataArchive->Mode == 'assets') {
+		if(in_array($dataArchive->Mode, array('all', 'assets'))) {
 			$modesMap['assets'] = 'Assets only';
 		};
 
