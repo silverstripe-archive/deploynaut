@@ -167,9 +167,21 @@ class DNDataArchive extends DataObject {
 		$generator = new RandomGenerator();
 		$sanitizeRegex = array('/\s+/', '/[^a-zA-Z0-9-_\.]/');
 		$sanitizeReplace = array('/_/', '');
-		$projectName = strtolower(preg_replace($sanitizeRegex, $sanitizeReplace, $this->Environment()->Project()->Name));
 		$envName = strtolower(preg_replace($sanitizeRegex, $sanitizeReplace, $this->Environment()->Name));
-		return sprintf('%s-%s-%s-%s-%s', $projectName, $envName, $dataTransfer->Mode, date('Ymd'), sha1($generator->generateEntropy()));
+		$projectName = strtolower(preg_replace(
+			$sanitizeRegex,
+			$sanitizeReplace,
+			$this->Environment()->Project()->Name
+		));
+
+		return sprintf(
+			'%s-%s-%s-%s-%s',
+			$projectName,
+			$envName,
+			$dataTransfer->Mode,
+			date('Ymd'),
+			sha1($generator->generateEntropy())
+		);
 	}
 
 	/**
