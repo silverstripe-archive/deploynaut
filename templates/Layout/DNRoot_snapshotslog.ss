@@ -32,7 +32,13 @@
 						<td>$Author.FirstName $Author.Surname</td>
 						<td>$Description</td>
 						<td>$Environment.Name</td>
-						<td>$Status</td>
+						<td>
+						<% if $Status = 'Queued' %><span class="label label-info">Queued</span><% end_if %>
+						<% if $Status = 'Started' %><span class="label label-info">Started</span><% end_if %>
+						<% if $Status = 'Finished' %><span class="label label-success">Finished</span><% end_if %>
+						<% if $Status = 'Failed' %><span class="label label-important">Failed</span><% end_if %>
+						<% if $Status = 'n/a' %><span class="label label-inverse">n/a</span><% end_if %>
+						</td>
 						<td><a href="$LogLink">Details</a></td>
 					</tr>
 				<% end_loop %>

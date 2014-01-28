@@ -106,7 +106,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	public function projects(SS_HTTPRequest $request) {
 		return $this->customise(array(
 			'Title' => 'Projects',
-			'Project' => $this->getCurrentProject(),
+			'CurrentProject' => $this->getCurrentProject(),
 		))->renderWith(array('DNRoot_projects', 'DNRoot'));
 	}
 
@@ -123,6 +123,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		return $this->customise(array(
 			'Title' => 'Snapshots',
 			'Project' => $project,
+			'CurrentProject' => $project,
+			'SnapshotsSection' => 1,
 		))->renderWith(array('DNRoot_snapshots', 'DNRoot'));
 	}
 
@@ -139,6 +141,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		return $this->customise(array(
 			'Title' => 'Create Snapshot',
 			'Project' => $project,
+			'CurrentProject' => $project,
+			'SnapshotsSection' => 1,
 			'DataTransferForm' => $this->getDataTransferForm($request)
 		))->renderWith(array('DNRoot_createsnapshot', 'DNRoot'));
 	}
@@ -156,6 +160,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		return $this->customise(array(
 			'Title' => 'Upload Snapshot',
 			'Project' => $project,
+			'CurrentProject' => $project,
+			'SnapshotsSection' => 1,
 			'DataTransferForm' => $this->getDataTransferForm($request)
 		))->renderWith(array('DNRoot_uploadsnapshot', 'DNRoot'));
 	}
@@ -173,6 +179,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		return $this->customise(array(
 			'Title' => 'Snapshots Log',
 			'Project' => $project,
+			'CurrentProject' => $project,
+			'SnapshotsSection' => 1,
 		))->renderWith(array('DNRoot_snapshotslog', 'DNRoot'));
 	}
 
@@ -188,6 +196,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 		return $this->customise(array(
 			'Project' => $project,
+			'CurrentProject' => $project,
+			'ProjectOverview' => 1,
 			'DataTransferForm' => $this->getDataTransferForm($request)
 		))->renderWith(array('DNRoot_project', 'DNRoot'));
 	}
@@ -210,6 +220,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		return $env->customise(array(
 			'DeployForm' => $this->getDeployForm($request),
+			'CurrentProject' => $project,
+			// Project comes from DNEnvironment, which is the current project already
 		))->renderWith(array('DNRoot_environment', 'DNRoot'));
 	}
 
@@ -229,7 +241,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return new SS_HTTPResponse("Environment '" . $request->latestParam('Environment') . "' not found.", 404);
 		}
 
-		return $env->renderWith(array('DNRoot_metrics', 'DNRoot'));
+		return $env->customise(array(
+			'Project' => $project,
+			'CurrentProject' => $project,
+		))->renderWith(array('DNRoot_metrics', 'DNRoot'));
 	}
 
 	/**
@@ -520,6 +535,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		return $this->customise(new ArrayData(array(
 			'Transfer' => $transfer,
+			'SnapshotsSection' => 1,
 		)))->renderWith('DNRoot_transfer');
 	}
 

@@ -1,3 +1,12 @@
+.navbar .navbar-inner .nav > li.active > a {
+	color: #2c5b87;
+	text-shadow: 0 1px 0 #e5e5e5;
+}
+.navbar .divider-vertical {
+	border-right: 1px solid #999;
+	border-left: 1px solid #666;
+}
+
 #queue_log,
 #queue_action {
 	background-color: #333;
@@ -68,6 +77,10 @@
 	color: green;
 	font-weight :bold;
 }
+.bad {
+	color: #b94a48;
+	font-weight :bold;
+}
 
 .btn.loading {
     background-image: -webkit-gradient(linear, 0 0, 100% 100%,
@@ -125,7 +138,7 @@
 		cursor: pointer;
 	}
 	.project-branch.open > h3 .open-icon {
-		display: inline;
+		display: inline-block;
 	}
 	.project-branch.open > h3 .closed-icon {
 		display: none;
@@ -134,8 +147,25 @@
 		display: none;
 	}
 	.project-branch > h3 .closed-icon {
-		display: inline;
-	}	
+		display: inline-block;
+	}
+
+.open-icon,
+.closed-icon {
+	display: inline-block;
+	background-color: #eee;
+	width: 15px;
+	height: 17px;
+	border: 1px solid #ddd;
+	margin-right: 11px;
+	line-height: 0.5em;
+	padding: 5px;
+	border-radius: 5px;
+	color: #000;
+	position: relative;
+	top: -3px;
+	text-align: center;
+}
 
 /** start custom form styling **/
 .field {
