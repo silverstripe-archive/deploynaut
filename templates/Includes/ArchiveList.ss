@@ -13,7 +13,7 @@
 			</thead>
 
 			<tbody>
-				<% loop $DataArchives.Sort("Created", "DESC") %>
+				<% loop $DataArchives %>
 					<tr>
 						<td><span class="tooltip-hint" data-toggle="tooltip" data-original-title="$Created.Nice">$Created.Date</span></td>
 						<td>$Author.FirstName $Author.Surname</td>
@@ -44,6 +44,30 @@
 				<% end_loop %>
 			</tbody>
 		</table>
+
+		<% if $DataArchives.MoreThanOnePage %>
+		<div class="pagination">
+			<ul>
+		    <% if $DataArchives.NotFirstPage %>
+		        <li><a class="prev" href="$DataArchives.PrevLink">Prev</a></li>
+		    <% end_if %>
+		    <% loop $DataArchives.Pages %>
+		        <% if $CurrentBool %>
+		            <li class="disabled"><a href="#">$PageNum</a></li>
+		        <% else %>
+		            <% if $Link %>
+		                <li><a href="$Link">$PageNum</a></li>
+		            <% else %>
+		                <li class="disabled"><a href="#">...</a></li>
+		            <% end_if %>
+		        <% end_if %>
+		        <% end_loop %>
+		    <% if $DataArchives.NotLastPage %>
+		        <li><a class="next" href="$DataArchives.NextLink">Next</a></li>
+		    <% end_if %>
+		    </ul>
+		</div>
+		<% end_if %>
 	<% else %>
 		<div class="alert">
 			There are currently no archived files

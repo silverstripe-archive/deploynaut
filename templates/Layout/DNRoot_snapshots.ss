@@ -9,7 +9,7 @@ files from your computer to a new snapshot, click 'Upload'</p>
 <div class="button-nav">
 	<ul class="nav nav-pills pull-right">
 		<li><a href="$CurrentProject.Link('createsnapshot')">Create Snapshot</a></li>
-		<li><a href="$CurrentProject.Link('uploadsnapshot')">Upload Files</a></li>
+		<!-- <li><a href="$CurrentProject.Link('uploadsnapshot')">Upload Files</a></li> -->
 		<li><a href="$CurrentProject.Link('snapshotslog')">Log</a></li>
 	</ul>
 </div>

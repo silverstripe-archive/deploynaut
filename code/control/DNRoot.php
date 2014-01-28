@@ -758,8 +758,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				if($archive->canView()) $archives->push($archive);
 			}
 		}
-
-		return $archives;
+		return new PaginatedList($archives->sort("Created", "DESC"), $this->request);
 	}
 
 	public function DataTransferLogs() {
@@ -776,6 +775,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				);
 		});
 
-		return $transfers;
+		return new PaginatedList($transfers->sort("Created", "DESC"), $this->request);
 	}
 }
