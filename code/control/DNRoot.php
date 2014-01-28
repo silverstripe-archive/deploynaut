@@ -579,7 +579,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$dataArchive = $dataArchive ? $dataArchive : DNDataArchive::get()->byId($request->requestVar('DataArchiveID'));
 		$project = $this->getCurrentProject();
 		$envs = $project->DNEnvironmentList()
-			->filterByCallback(function($item) {return $item->canDeploy();});
+			->filterByCallback(function($item) {return $item->canRestore();});
 
 		$modesMap = array();
 		if($dataArchive->Mode == 'all') {
@@ -622,7 +622,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			throw new SS_HTTPResponse_Exception('Archive not found', 404);
 		}
 
-		if(!$dataArchive->canUpload()) {
+		if(!$dataArchive->canRestore()) {
 			throw new LogicException('Not allowed to restore archive');
 		}
 
@@ -707,7 +707,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @param Member $member The {@link Member} to check (or null to check the currently logged in Member)
 	 * @return boolean true if $member has access to upload or download to at least one {@link DNEnvironment}.
 	 */
-	public function CanUploadOrDownloadArchives(Member $member = null) {
+	public function CanViewArchives(Member $member = null) {
 		if(!$member) $member = Member::currentUser();
 
 		$allProjects = $this->DNProjectList();
@@ -716,7 +716,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		foreach($allProjects as $project) {
 			if($project->Environments()) {
 				foreach($project->Environments() as $environment) {
-					if($environment->canUploadArchive($member) || $environment->canDownloadArchive($member)) {
+					if(
+						$environment->canRestore($member) ||
+						$environment->canBackup($member) ||
+						$environment->canUploadArchive($member) ||
+						$environment->canDownloadArchive($member)
+					) {
 						return true; // We can return early as we only need to know that we can access one environment
 					}
 				}
@@ -743,7 +748,14 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$project = $this->getCurrentProject();
 
 		$transfers = DNDataTransfer::get()->filterByCallback(function($record) use($project) {
-			return $record->Environment()->canUploadArchive() && $record->Environment()->canDownloadArchive() && $record->Environment()->Project()->ID == $project->ID;
+			return
+				$record->Environment()->Project()->ID == $project->ID && // Ensure only the current Project is shown
+				(
+					$record->Environment()->canRestore() || // Ensure member can perform an action on the transfers env
+					$record->Environment()->canBackup() ||
+					$record->Environment()->canUploadArchive() ||
+					$record->Environment()->canDownloadArchive()
+				);
 		});
 
 		return $transfers;

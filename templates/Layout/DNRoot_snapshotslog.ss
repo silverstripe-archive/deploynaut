@@ -11,7 +11,7 @@
 	</ul>
 </div>
 
-<% if $CanUploadOrDownloadArchives %>	
+<% if $CanViewArchives %>
 	<% if $DataTransferLogs %>
 		<table class="table table-bordered table-striped">
 			<thead>

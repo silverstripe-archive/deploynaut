@@ -82,18 +82,22 @@ class DNDataArchive extends DataObject {
 	 * @param Member|null $member The {@link Member} object to test against.
 	 */
 	public function canView($member = null) {
-		return ($this->canUpload($member) || $this->canDownload($member));
+		return ($this->canRestore($member) || $this->canDownload($member));
 	}
 
 	/**
+	 * Whether a {@link Member} can restore this archive to an environment.
+	 *
 	 * @param Member|null $member The {@link Member} object to test against.
 	 * @return true if $member (or the currently logged in member if null) can upload this archive
 	 */
-	public function canUpload($member = null) {
+	public function canRestore($member = null) {
 		return $this->Environment()->canUploadArchive($member);
 	}
 
 	/**
+	 * Whether a {@link Member} can download this archive to their PC.
+	 *
 	 * @param Member|null $member The {@link Member} object to test against.
 	 * @return true if $member (or the currently logged in member if null) can download this archive
 	 */

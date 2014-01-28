@@ -1,4 +1,4 @@
-<% if $CanUploadOrDownloadArchives %>
+<% if $CanViewArchives %>
 	<% if $DataArchives %>
 		<table class="table table-bordered table-striped table-data-archives">
 			<thead>
