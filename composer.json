@@ -8,6 +8,6 @@
 		"stojg/silverstripe-resque": "1.1.*",
 		"gitonomy/gitlib": "dev-master",
 		"undefinedoffset/sortablegridfield": "*",
-		"silverstripe/secureassets": "dev-pulls/canViewSecured"
+		"silverstripe/secureassets": "dev-master"
 	}
 }
