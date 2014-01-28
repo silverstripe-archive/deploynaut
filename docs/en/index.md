@@ -83,14 +83,37 @@ First add an _ss_environment.php file, here is a sample:
 	define('SS_DEFAULT_ADMIN_PASSWORD', 'password');
 	$_FILE_TO_URL_MAPPING['/path/to/deploynaut'] = 'http://localhost/';
 
-## Backups and Restores
+## Securing Snapshot Downloads
 
 Deploynaut provides the ability to backup database and/or assets from a specific environment
-and store them as an [SSPak](http://sminnee.github.io/sspak/) archive on the Deploynaut filesystem.
+and store them as an [SSPak](http://sminnee.github.io/sspak/) snapshot on the Deploynaut filesystem.
 These backups can be used to restore data onto an environment, or transfer it to a different environment.
 
-All backups are stored within the deploynaut webroot under the `assets/` folder.
-If you give users the permission to create backups, please ensure you have sufficient filesystem space available for this purpose.
+All snapshots are stored within the deploynaut webroot under the `assets/` folder.
+Downloads are secured through the [secureassets](https://github.com/silverstripe-labs/silverstripe-secureassets),
+with permission checks enforced through Apache's mod_rewrite module.
+Please create a file `assets/.htaccess` with the following content:
+
+```
+RewriteEngine On
+RewriteBase /
+RewriteCond %{REQUEST_URI} ^(.*)$
+RewriteRule .* framework/main.php?url=%1 [QSA]
+```
+
+Permissions are granted in the CMS on a per-group basis, separately for the following actions:
+
+ * *Download* an existing snapshot from Deploynaut to your local development environment
+ * *Upload* an snapshot created from your local development environment into Deploynaut
+ * *Backup* an environment into a new snapshot stored on Deploynaut
+ * *Restore* an existing snapshot into an environment (overwriting existing data)
+
+Since we can't rely on the webserver having enough space to create snapshots,
+their data is downloaded into a temporary folder on the Deploynaut filesystem first.
+Please ensure you have sufficient filesystem space available for creating snapshots
+(at least twice the amount of uncompressed data on the environments).
+
+Caution: Backups of databases on dedicated servers (separate from the webserver) are currently not supported.
 
 ## Troubleshooting
 
