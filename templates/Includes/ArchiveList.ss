@@ -37,6 +37,7 @@
 					</tr>
 					<tr class="extended" id="archive-list-extended-container-$ID">
 						<td colspan="7">
+							<p class="text-warning"><strong>Warning:</strong> This restore will overwrite the data on the chosen environment below</p>
 							<div id="archive-list-extended-$ID"></div>
 						</td>
 					</tr>

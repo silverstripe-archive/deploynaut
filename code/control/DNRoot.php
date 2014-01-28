@@ -602,7 +602,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				new DropdownField('Mode', 'Transfer', $modesMap)
 			),
 			new FieldList(
-				FormAction::create('doDataTransfer', 'Transfer')->addExtraClass('btn')
+				FormAction::create('doDataTransfer', 'Restore Data')->addExtraClass('btn')
 			)
 		);
 		$form->setFormAction($project->Link() . '/DataTransferRestoreForm');

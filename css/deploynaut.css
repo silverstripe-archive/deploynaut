@@ -101,6 +101,19 @@
     }
 }
 
+.extended.loading td {
+	background: #fff url(../images/ajax-loader.gif) 45% 45% no-repeat;
+	padding: 30px 0;
+}
+
+.extended td p.text-warning {
+	margin-top: 5px;
+}
+
+.extended.loading td p.text-warning {
+	display: none;
+}
+
 .project-branch > .project-branch-content {
 	display: none;
 }
@@ -124,7 +137,7 @@
 		display: inline;
 	}	
 
-/* start custom form styling */
+/** start custom form styling **/
 .field {
 	margin-bottom: 15px;
 }
@@ -159,7 +172,27 @@ form.userswitcher select {
 	margin-bottom: 0;
 }
 
-/* end custom form styling */
+/* align restore snapshot form fields left */
+#Form_DataTransferRestoreForm fieldset {
+	display: block;
+}
+#Form_DataTransferRestoreForm .field {
+	display: inline-block;
+}
+#Form_DataTransferRestoreForm .Actions,
+#Form_DataTransferRestoreForm fieldset,
+#Form_DataTransferRestoreForm .middleColumn {
+	float: left;
+}
+#Form_DataTransferRestoreForm label {
+	display: inline-block;
+	width: auto;
+}
+#Form_DataTransferRestoreForm .middleColumn {
+	margin: 0 20px;
+}
+
+/** end custom form styling **/
 
 .help {
 	margin: 40px 0 80px;
