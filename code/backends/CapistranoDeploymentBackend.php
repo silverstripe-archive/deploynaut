@@ -313,10 +313,13 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 		
 		// Restore assets
 		if(in_array($dataTransfer->Mode, array('all', 'assets'))) {
+			// Upload into target environment
+			$log->write('Restore of assets to "' . $name . '" started');
+
 			// Extract assets.tar.gz into assets/
-			$gunzipCmd = 'gunzip ' . escapeshellarg($tempPath . DIRECTORY_SEPARATOR . 'assets.tar.gz');
-			$log->write($gunzipCmd);
-			$process = new Process($gunzipCmd);
+			$extractCmd = sprintf('cd %s && tar xzf %s', escapeshellarg($tempPath), escapeshellarg($tempPath . DIRECTORY_SEPARATOR . 'assets.tar.gz'));
+			$log->write($extractCmd);
+			$process = new Process($extractCmd);
 			$process->setTimeout(3600);
 			$process->run();
 			if(!$process->isSuccessful()) {
@@ -325,8 +328,6 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 				throw new RuntimeException($process->getErrorOutput());
 			}
 
-			// Upload into target environment
-			$log->write('Restore of assets to "' . $name . '" started');
 			$args = array(
 				'data_path' => $tempPath . DIRECTORY_SEPARATOR . 'assets'
 			);
