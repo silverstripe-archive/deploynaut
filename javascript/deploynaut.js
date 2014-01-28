@@ -126,5 +126,15 @@
 			
 			e.preventDefault();
 		});
+
+		$('.table-data-archives').on('click', ':input[name=action_doDataTransfer]', function(e) {
+			var form = $(this).closest('form'),
+				envVal = form.find("select[name=EnvironmentID]").val(),
+				envLabel = form.find("select[name=EnvironmentID] option[value=\"" + envVal + '"]').text(),
+				msg = 'Are you sure you want to restore data onto environment ' + envLabel + '?';
+
+			if(!confirm(msg)) e.preventDefault();
+		});
+
 	});
 }(jQuery));
