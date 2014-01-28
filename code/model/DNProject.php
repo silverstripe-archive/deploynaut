@@ -127,6 +127,18 @@ class DNProject extends DataObject {
 		return false;
 	}
 
+	public function canRestore($member = null) {
+		return (bool)$this->Environments()->filterByCallback(function($env) use($member) {
+			return $env->canRestore($member);
+		})->Count();
+	}
+
+	public function canBackup($member = null) {
+		return (bool)$this->Environments()->filterByCallback(function($env) use($member) {
+			return $env->canBackup($member);
+		})->Count();
+	}
+
 	/**
 	 * Build an environment variable array to be used with this project.
 	 * 

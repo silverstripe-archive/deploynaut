@@ -28,7 +28,7 @@
 							<% end_if %>
 						</td>
 						<td class="action">
-							<% if ArchiveFile %>
+							<% if $Environment.canRestore && ArchiveFile %>
 							<a href="$Top.CurrentProject.Link/restoresnapshot/$ID" class="extended-trigger" data-extended-target="#archive-list-extended-$ID" data-extended-container="#archive-list-extended-container-$ID">
 								Restore
 							</a>

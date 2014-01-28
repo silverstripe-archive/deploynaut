@@ -5,7 +5,9 @@
 
 <div class="button-nav">
 	<ul class="nav nav-pills pull-right">
-		<li><a href="$CurrentProject.Link('createsnapshot')">Create Snapshot</a></li>
+		<% if $Project.canBackup %>
+		    <li><a href="$CurrentProject.Link('createsnapshot')">Create Snapshot</a></li>
+		<% end_if %>
 		<!-- <li><a href="$CurrentProject.Link('uploadsnapshot')">Upload Files</a></li> -->
 		<li class="active"><a href="$CurrentProject.Link('snapshotslog')">Log</a></li>
 	</ul>

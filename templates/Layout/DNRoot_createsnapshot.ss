@@ -7,7 +7,9 @@ downloaded or used for later restores</p>
 
 <div class="button-nav">
 	<ul class="nav nav-pills pull-right">
-		<li class="active"><a href="$CurrentProject.Link('createsnapshot')">Create Snapshot</a></li>
+		<% if $Project.canBackup %>
+		    <li class="active"><a href="$CurrentProject.Link('createsnapshot')">Create Snapshot</a></li>
+		<% end_if %>
 		<!-- <li><a href="$CurrentProject.Link('uploadsnapshot')">Upload Files</a></li> -->
 		<li><a href="$CurrentProject.Link('snapshotslog')">Log</a></li>
 	</ul>
