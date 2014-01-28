@@ -18,7 +18,11 @@ class DNAdmin extends ModelAdmin {
 	 *
 	 * @var array 
 	 */
-	public static $managed_models = array('DNProject');
+	public static $managed_models = array(
+		'DNProject' => array('title' => 'Projects'),
+		'DNDataTransfer' => array('title' => 'Transfers'),
+		'DNDataArchive' => array('title' => 'Archives'),
+	);
 	
 	/**
 	 *

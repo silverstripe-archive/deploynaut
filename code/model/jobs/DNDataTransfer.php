@@ -37,12 +37,76 @@ class DNDataTransfer extends DataObject {
 
 	private static $plural_name = 'Data Transfers';
 
+	private static $summary_fields = array(
+		'Created' => 'Created',
+		'Author.Title' => 'Author',
+		'Environment.Project.Name' => 'Project',
+		'Environment.Name' => 'Environment',
+		'Status' => 'Status',
+		'Origin' => 'Origin',
+	);
+
+	private static $searchable_fields = array(
+		'Environment.Project.Name' => array(
+			'title' => 'Project',
+		),
+		'Environment.Name' => array(
+			'title' => 'Environment',
+		),
+		'Status' => array(
+			'title' => 'Status',
+		),
+		'Origin' => array(
+			'title' => 'Origin',
+		),
+		'Mode' => array(
+			'title' => 'Mode',
+		),
+		'Direction' => array(
+			'title' => 'Direction',
+		),
+	);
+
 	public function Link() {
 		return Controller::join_links($this->Environment()->Project()->Link(), 'transfer', $this->ID);
 	}
 
 	public function LogLink() {
 		return $this->Link() . '/log';
+	}
+
+	public function getDefaultSearchContext() {
+		$context = parent::getDefaultSearchContext();
+		$context->getFields()->dataFieldByName('Status')->setHasEmptyDefault(true);
+		$context->getFields()->dataFieldByName('Origin')->setHasEmptyDefault(true);
+
+		return $context;
+	}
+
+	public function getCMSFields() {
+		$fields = parent::getCMSFields();
+		$fields->removeByName('EnvironmentID');
+		$fields->removeByName('ArchiveFile');
+		$fields->addFieldsToTab(
+			'Root.Main',
+			array(
+				new ReadonlyField('ProjectName', 'Project', $this->Environment()->Project()->Name),
+				new ReadonlyField('EnvironmentName', 'Environment', $this->Environment()->Name),
+				new ReadonlyField(
+					'DataArchive', 
+					'Archive File', 
+					sprintf(
+						'<a href="%s">%s</a>',
+						$this->DataArchive()->ArchiveFile()->AbsoluteURL,
+						$this->DataArchive()->ArchiveFile()->Filename	
+					)
+				),
+			)
+		);
+		$linkField->dontEscape = true;
+		$fields = $fields->makeReadonly();
+
+		return $fields;
 	}
 
 	/**

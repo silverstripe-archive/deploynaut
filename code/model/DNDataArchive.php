@@ -50,9 +50,63 @@ class DNDataArchive extends DataObject {
 	private static $summary_fields = array(
 		'Created' => 'Created',
 		'Author.Title' => 'Author',
+		'Environment.Project.Name' => 'Project',
 		'Environment.Name' => 'Environment',
 		'ArchiveFile.Name' => 'File',
 	);
+
+	private static $searchable_fields = array(
+		'Environment.Project.Name' => array(
+			'title' => 'Project',
+		),
+		'Environment.Name' => array(
+			'title' => 'Environment',
+		),
+		'UploadToken' => array(
+			'title' => 'Upload Token',
+		),
+		'Mode' => array(
+			'title' => 'Mode',
+		),
+	);
+
+	public function getCMSFields() {
+		$fields = parent::getCMSFields();
+		$fields->removeByName('EnvironmentID');
+		$fields->removeByName('ArchiveFile');
+		$fields->addFieldsToTab(
+			'Root.Main',
+			array(
+				new ReadonlyField('ProjectName', 'Project', $this->Environment()->Project()->Name),
+				new ReadonlyField('EnvironmentName', 'Environment', $this->Environment()->Name),
+				$linkField = new ReadonlyField(
+					'DataArchive', 
+					'Archive File', 
+					sprintf(
+						'<a href="%s">%s</a>',
+						$this->ArchiveFile()->AbsoluteURL,
+						$this->ArchiveFile()->Filename	
+					)
+				),
+				new GridField(
+					'DataTransfers', 
+					'Transfers', 
+					$this->DataTransfers()
+				),
+			)
+		);
+		$linkField->dontEscape = true;
+		$fields = $fields->makeReadonly();
+
+		return $fields;
+	}
+
+	public function getDefaultSearchContext() {
+		$context = parent::getDefaultSearchContext();
+		$context->getFields()->dataFieldByName('Mode')->setHasEmptyDefault(true);
+
+		return $context;
+	}
 
 	/**
 	 * Calculates and returns a human-readable size of this archive file. If the file exists, it will determine
