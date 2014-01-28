@@ -317,7 +317,12 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 			$log->write('Restore of assets to "' . $name . '" started');
 
 			// Extract assets.tar.gz into assets/
-			$extractCmd = sprintf('cd %s && tar xzf %s', escapeshellarg($tempPath), escapeshellarg($tempPath . DIRECTORY_SEPARATOR . 'assets.tar.gz'));
+			$extractCmd = sprintf(
+				'cd %s && tar xzf %s',
+				escapeshellarg($tempPath),
+				escapeshellarg($tempPath . DIRECTORY_SEPARATOR . 'assets.tar.gz')
+			);
+			
 			$log->write($extractCmd);
 			$process = new Process($extractCmd);
 			$process->setTimeout(3600);
