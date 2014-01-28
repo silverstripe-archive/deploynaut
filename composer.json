@@ -9,11 +9,5 @@
 		"gitonomy/gitlib": "dev-master",
 		"undefinedoffset/sortablegridfield": "*",
 		"silverstripe/secureassets": "dev-pulls/canViewSecured"
-	},
-	"repositories": [
-		{
-			"type": "vcs",
-			"url": "git@github.com:madmatt/silverstripe-secureassets.git"
-		}
-	]
+	}
 }
