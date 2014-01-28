@@ -194,6 +194,8 @@ class DNEnvironment extends DataObject {
 		if(!$member) $member = Member::currentUser();
 		if(!$member) return false; // Must be logged in to check permissions
 
+		if(Permission::checkMember($member, 'ADMIN')) return true;
+
 		return (bool)($this->CanRestoreMembers()->byID($member->ID));
 	}
 
@@ -207,6 +209,8 @@ class DNEnvironment extends DataObject {
 	public function canBackup($member = null) {
 		if(!$member) $member = Member::currentUser();
 		if(!$member) return false; // Must be logged in to check permissions
+
+		if(Permission::checkMember($member, 'ADMIN')) return true;
 
 		return (bool)($this->CanBackupMembers()->byID($member->ID));
 	}
