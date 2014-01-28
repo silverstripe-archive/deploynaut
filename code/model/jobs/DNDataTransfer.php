@@ -79,9 +79,10 @@ class DNDataTransfer extends DataObject {
 		if($this->AuthorID) {
 			$author = $this->Author();
 			$message = sprintf(
-				'Initiated by %s (%s)',
+				'Initiated by %s (%s), with IP Address %s',
 				$author->getName(),
-				$author->Email
+				$author->Email,
+				Controller::curr()->getRequest()->getIP()
 			);
 			$log->write($message);
 		}
