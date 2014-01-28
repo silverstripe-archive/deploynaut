@@ -116,6 +116,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return string - HTML
 	 */
 	public function snapshots(SS_HTTPRequest $request) {
+		// Performs permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
 			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
@@ -134,10 +135,16 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return string - HTML
 	 */
 	public function createsnapshot(SS_HTTPRequest $request) {
+		// Performs permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
 			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
 		}
+
+		if(!$project->canBackup()) {
+			return new SS_HTTPResponse("Not allowed to create snapshots on any environments", 401);
+		}
+
 		return $this->customise(array(
 			'Title' => 'Create Snapshot',
 			'Project' => $project,
@@ -153,6 +160,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return string - HTML
 	 */
 	public function uploadsnapshot(SS_HTTPRequest $request) {
+		// Performs permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
 			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
@@ -172,6 +180,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return string - HTML
 	 */
 	public function snapshotslog(SS_HTTPRequest $request) {
+		// Performs permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
 			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
@@ -190,6 +199,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return \SS_HTTPResponse
 	 */
 	public function project(SS_HTTPRequest $request) {
+		// Performs permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
 			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
@@ -208,6 +218,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return \SS_HTTPResponse
 	 */
 	public function environment(SS_HTTPRequest $request) {
+		// Performs permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
 			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
@@ -231,6 +242,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return \SS_HTTPResponse
 	 */
 	public function metrics($request) {
+		// Performs permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
 			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
@@ -274,6 +286,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return Form
 	 */
 	public function getDeployForm(SS_HTTPRequest $request) {
+		// Performs permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		$environment = $this->getCurrentEnvironment($project);
 
@@ -458,7 +471,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function getDataTransferForm($request) {
 		$envs = $this->getCurrentProject()->DNEnvironmentList()
-			->filterByCallback(function($item) {return $item->canDeploy();});
+			->filterByCallback(function($item) {return $item->canBackup();});
 
 		$modesMap = array(
 			'all' => 'Database and Assets',
@@ -488,7 +501,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$member = Member::currentUser();
 		$dataArchive = null;
 		$validEnvs = $this->getCurrentProject()->DNEnvironmentList()
-			->filterByCallback(function($item) {return $item->canDeploy();});
+			->filterByCallback(function($item) {return $item->canBackup();});
 
 		$environment = $validEnvs->find('ID', $data['EnvironmentID']);
 		if(!$environment) {
