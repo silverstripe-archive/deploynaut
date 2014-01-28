@@ -710,6 +710,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	public function CanViewArchives(Member $member = null) {
 		if(!$member) $member = Member::currentUser();
 
+		if(Permission::checkMember($member, 'ADMIN')) return true;
+
 		$allProjects = $this->DNProjectList();
 		if(!$allProjects) return false;
 

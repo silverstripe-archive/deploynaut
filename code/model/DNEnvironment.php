@@ -178,6 +178,8 @@ class DNEnvironment extends DataObject {
 		if(!$member) $member = Member::currentUser();
 		if(!$member) return false; // Must be logged in to check permissions
 
+		if(Permission::checkMember($member, 'ADMIN')) return true;
+
 		return (bool)($this->Deployers()->byID($member->ID));
 	}
 
@@ -224,6 +226,8 @@ class DNEnvironment extends DataObject {
 		if(!$member) $member = Member::currentUser();
 		if(!$member) return false; // Must be logged in to check permissions
 
+		if(Permission::checkMember($member, 'ADMIN')) return true;
+
 		return (bool)($this->ArchiveUploaders()->byID($member->ID));
 	}
 
@@ -237,6 +241,8 @@ class DNEnvironment extends DataObject {
 	public function canDownloadArchive($member = null) {
 		if(!$member) $member = Member::currentUser();
 		if(!$member) return false; // Must be logged in to check permissions
+
+		if(Permission::checkMember($member, 'ADMIN')) return true;
 
 		return (bool)($this->ArchiveDownloaders()->byID($member->ID));
 	}

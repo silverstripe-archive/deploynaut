@@ -119,7 +119,7 @@ class DNProject extends DataObject {
 	public function canView($member = null) {
 		if(!$member) $member = Member::currentUser();
 
-		if(Permission::checkMember($member, "ADMIN")) return true;
+		if(Permission::checkMember($member, 'ADMIN')) return true;
 
 		foreach($this->Viewers() as $group) {
 			if($group->Members()->byID($member->ID)) return true;
