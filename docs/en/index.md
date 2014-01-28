@@ -11,6 +11,7 @@ You'll need a few system tools on the Deploynaut host to get started:
  * git
  * tar
  * [SSPak](http://sminnee.github.io/sspak/) (see below)
+   * Until changes are merged back, you'll want [halkyon's branch](https://github.com/halkyon/sspak/tree/existing_save)
 
 We also assume that each Deploynaut target has the following tools installed
 and available in the user's `$PATH`:
@@ -22,7 +23,7 @@ and available in the user's `$PATH`:
 
 ## Capistrano Installation
 
-Capistrano is written in ruby, and often deployed as a ruby gem. So the first requirement is to Installing it system wide (without supporting ri and docs) is done by:
+Capistrano is written in ruby, and often deployed as a ruby gem. So the first requirement is to install it system wide (without supporting ri and docs):
 
 	$ sudo gem install capistrano --no-ri --no-rdoc --verbose -v 2.15.5
 
