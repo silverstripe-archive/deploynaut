@@ -1,7 +1,20 @@
 <% with Project %>
 <h2>$Title</h2>
+<% end_with %>
 
-<h3>Environments</h3>
+<% if $CurrentProject %>
+<ul class="nav nav-tabs">
+	<li<% if ProjectOverview %> class="active"<% end_if %>><a href="naut/project/$CurrentProject.Name">Overview</a></li>
+	<li<% if SnapshotsSection %> class="active"<% end_if %>><a href="naut/project/$CurrentProject.Name/snapshots">Snapshots</a></li>
+</ul>
+<ul class="nav level-2">
+	<li><a href="#env">Environments</a></li>
+	<li><a href="#repo">Repository</a></li>
+</ul>
+<% end_if %>
+
+<% with Project %>
+<h3 id="env">Environments</h3>
 <table class="table-striped table table-bordered">
 	<thead>
 		<tr>
@@ -48,7 +61,7 @@
 		</tbody>
 	</table>
 
-	<h3>Repository</h3>
+	<h3 id="repo">Repository</h3>
 	<% if getRepositoryURL %>
 		<pre>$getRepositoryURL</pre>
 	<% end_if %>
@@ -111,7 +124,7 @@
 					<a href="{$Link}">$Title</a><% if not $Last %>,<% end_if %>
 					<% end_loop %>
 				</td>
-				<td class="nowrap">$Created.Nice ($Created.Ago)</td>
+				<td class="nowrap"><span class="tooltip-hint" data-toggle="tooltip" data-original-title="$Created.Nice ($Created.Ago)">$Created.Date</span></td>
 				<% if ReleaseSteps %>
 				<td class="release-process nowrap">
 					<% loop ReleaseSteps %>

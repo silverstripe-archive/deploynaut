@@ -7,6 +7,35 @@
 	border-left: 1px solid #666;
 }
 
+.nav.nav-tabs {
+	margin-bottom: 0;
+}
+.nav.nav-tabs li a:hover {
+	background-color: #fcfcfc;
+	color: #555555;
+}
+.nav.nav-tabs li.active a {
+	background-color: #fcfcfc;
+	cursor: pointer;
+}
+.level-2 {
+	border: 1px solid #ddd;
+	border-top: 0;
+	overflow: hidden;
+	background-color: #fcfcfc;
+}
+.nav.level-2 li {
+	display: block;
+	float: left;
+	padding: 12px;
+}
+.nav.level-2 li.active a {
+	color: #555555;
+}
+.nav.level-2 a:hover {
+	background-color: transparent;
+}
+
 #queue_log,
 #queue_action {
 	background-color: #333;
@@ -266,30 +295,4 @@ form.userswitcher select {
 .tooltip-hint {
 	color: #333;
 	border-bottom: 1px #333 dotted;
-}
-
-.button-nav {
-	overflow: hidden;
-	width: 100%;
-}
-
-.button-nav ul {
-	margin-bottom: 10px;
-}
-
-.button-nav li {
-	float: left;
-	list-style: none;
-	margin-left: 15px;
-	color: #333;
-}
-
-.button-nav li.active a,
-.button-nav li.active a:hover {
-	color: #333;
-}
-
-.button-nav li.active a:hover,
-.button-nav li.active a {
-	background-color: #c5c5c5;
 }

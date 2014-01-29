@@ -122,7 +122,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
 		}
 		return $this->customise(array(
-			'Title' => 'Snapshots',
+			'Title' => 'Data Snapshots',
 			'Project' => $project,
 			'CurrentProject' => $project,
 			'SnapshotsSection' => 1,

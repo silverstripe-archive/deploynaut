@@ -15,7 +15,7 @@
 			<tbody>
 				<% loop $DataArchives %>
 					<tr>
-						<td><span class="tooltip-hint" data-toggle="tooltip" data-original-title="$Created.Nice">$Created.Date</span></td>
+						<td><span class="tooltip-hint" data-toggle="tooltip" data-original-title="$Created.Nice ($Created.Ago)">$Created.Date</span></td>
 						<td>$Author.FirstName $Author.Surname</td>
 						<td>$Environment.Name</td>
 						<td>$ModeNice</td>

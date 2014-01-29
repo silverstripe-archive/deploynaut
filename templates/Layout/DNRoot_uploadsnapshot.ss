@@ -1,18 +1,22 @@
 <h2>$Project.Title</h2>
 
+<% if $CurrentProject %>
+<ul class="nav nav-tabs">
+	<li<% if ProjectOverview %> class="active"<% end_if %>><a href="naut/project/$CurrentProject.Name">Overview</a></li>
+	<li<% if SnapshotsSection %> class="active"<% end_if %>><a href="naut/project/$CurrentProject.Name/snapshots">Snapshots</a></li>
+</ul>
+<ul class="nav level-2">
+	<% if $Project.canBackup %>
+	<li><a href="$CurrentProject.Link('createsnapshot')">Create Snapshot</a></li>
+	<% end_if %>
+	<!-- <li class="active"><a href="$CurrentProject.Link('uploadsnapshot')">Upload Files</a></li> -->
+	<li><a href="$CurrentProject.Link('snapshotslog')">Log</a></li>
+</ul>
+<% end_if %>
+
 <h3>$Title</h3>
 
 <p>Either choose a local file to transfer to deploynaut or the option to post a DVD of your files and have the CWP team upload them for you</p>
-
-<div class="button-nav">
-	<ul class="nav nav-pills pull-right">
-		<% if $Project.canBackup %>
-		    <li><a href="$CurrentProject.Link('createsnapshot')">Create Snapshot</a></li>
-		<% end_if %>
-		<li class="active"><a href="$CurrentProject.Link('uploadsnapshot')">Upload Files</a></li>
-		<li><a href="$CurrentProject.Link('snapshotslog')">Log</a></li>
-	</ul>
-</div>
 
 <div class="upload-form">
 	<div id="UploadFile" class="field file">
