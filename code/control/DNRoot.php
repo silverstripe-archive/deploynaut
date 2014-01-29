@@ -514,7 +514,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			&& isset($data['DataArchiveID']) 
 			&& is_numeric($data['DataArchiveID'])
 		) {
-			$dataArchive = $environment->DataArchives()->byId($data['DataArchiveID']);
+			$dataArchive = DNDataArchive::get()->byId($data['DataArchiveID']);
 			if(!$dataArchive) {
 				throw new LogicException('Invalid data archive');
 			}
