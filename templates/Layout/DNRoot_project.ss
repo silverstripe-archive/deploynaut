@@ -7,13 +7,19 @@
 	<li<% if ProjectOverview %> class="active"<% end_if %>><a href="naut/project/$CurrentProject.Name">Deploy</a></li>
 	<li<% if SnapshotsSection %> class="active"<% end_if %>><a href="naut/project/$CurrentProject.Name/snapshots">Snapshots</a></li>
 </ul>
+<% end_if %>
+<% with Project %>
 <ul class="nav level-2">
+<% if DNEnvironmentList %>
+	<% loop DNEnvironmentList %>
+	<li><% if CanDeploy %><a href="$Link">$Name</a><% else %>$Name<% end_if %></li>
+	<% end_loop %>
+<% else %>
 	<li><a href="#env">Environments</a></li>
 	<li><a href="#repo">Repository</a></li>
-</ul>
 <% end_if %>
+</ul>
 
-<% with Project %>
 <h3 id="env">Environments</h3>
 <p>Choose an environment to start the deployment process</p>
 <table class="table-striped table table-bordered">

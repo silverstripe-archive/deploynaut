@@ -232,6 +232,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		return $env->customise(array(
 			'DeployForm' => $this->getDeployForm($request),
 			'CurrentProject' => $project,
+			'DNEnvironmentList' => $this->getCurrentProject()->DNEnvironmentList()
 			// Project comes from DNEnvironment, which is the current project already
 		))->renderWith(array('DNRoot_environment', 'DNRoot'));
 	}

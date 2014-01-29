@@ -3,6 +3,20 @@
 	<% if URL %><small><a href="$URL">$URL</a></small><% end_if %>
 </h2>
 
+<% if $CurrentProject %>
+<ul class="nav nav-tabs">
+	<li class="active"><a href="naut/project/$CurrentProject.Name">Deploy</a></li>
+	<li><a href="naut/project/$CurrentProject.Name/snapshots">Snapshots</a></li>
+</ul>
+<% end_if %>
+<ul class="nav level-2">
+<% if DNEnvironmentList %>
+	<% loop DNEnvironmentList %>
+	<li<% if $Top.Name = $Name %> class="active"<% end_if %>><% if CanDeploy %><a href="$Link">$Name</a><% else %>$Name<% end_if %></li>
+	<% end_loop %>
+<% end_if %>
+</ul>
+
 <% if $CurrentBuild %>
 <p>
 	This environment is currently running build
