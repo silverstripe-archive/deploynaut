@@ -23,7 +23,8 @@ namespace :data do
 					file = File.open(data_path, "a")
 					file.write(data)
 				rescue IOError => e
-					# error writing the file.
+					logger.debug e.message
+					raise e
 				ensure
 					file.close unless file == nil
 				end
