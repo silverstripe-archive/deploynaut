@@ -2,7 +2,7 @@
 
 <% if $CurrentProject %>
 <ul class="nav nav-tabs">
-	<li<% if ProjectOverview %> class="active"<% end_if %>><a href="naut/project/$CurrentProject.Name">Overview</a></li>
+	<li<% if ProjectOverview %> class="active"<% end_if %>><a href="naut/project/$CurrentProject.Name">Deploy</a></li>
 	<li<% if SnapshotsSection %> class="active"<% end_if %>><a href="naut/project/$CurrentProject.Name/snapshots">Snapshots</a></li>
 </ul>
 <ul class="nav level-2">
@@ -16,9 +16,9 @@
 
 <h3>$Title</h3>
 
-<p>This is an archived list of all assets, databases or zip files containing both that you have access to view. Each item has links so you can download the files to your computer or push the files to a chosen environment.</p>
-<p>If you would like to create a new snapshot from an environment, click 'Create' and if you would like to upload 
-files from your computer to a new snapshot, click 'Upload'</p>
+<p>This is an archived list of all assets, databases or zip files containing both that you have access to view. Each item has links so you can download the files to your computer or restore the files to a chosen environment.</p>
+<p>If you would like to create a new snapshot from an environment, click 'Create Snapshot', the Log displays a list of all snapshot transfers</p>
+<!-- and if you would like to upload files from your computer to a new snapshot, click 'Upload' -->
 
 <% include ArchiveList %>
 

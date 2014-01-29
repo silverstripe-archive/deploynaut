@@ -4,7 +4,7 @@
 
 <% if $CurrentProject %>
 <ul class="nav nav-tabs">
-	<li<% if ProjectOverview %> class="active"<% end_if %>><a href="naut/project/$CurrentProject.Name">Overview</a></li>
+	<li<% if ProjectOverview %> class="active"<% end_if %>><a href="naut/project/$CurrentProject.Name">Deploy</a></li>
 	<li<% if SnapshotsSection %> class="active"<% end_if %>><a href="naut/project/$CurrentProject.Name/snapshots">Snapshots</a></li>
 </ul>
 <ul class="nav level-2">
@@ -15,6 +15,7 @@
 
 <% with Project %>
 <h3 id="env">Environments</h3>
+<p>Choose an environment to start the deployment process</p>
 <table class="table-striped table table-bordered">
 	<thead>
 		<tr>
@@ -62,8 +63,10 @@
 	</table>
 
 	<h3 id="repo">Repository</h3>
+	<p>Click the 'Fetch latest changes' button to update the Repository branches list below. Select the +/- button to hide/show the commits for each branch</p>
+
 	<% if getRepositoryURL %>
-		<pre>$getRepositoryURL</pre>
+		<pre>Repository URL: $getRepositoryURL</pre>
 	<% end_if %>
 	<% if repoExists %>
 		<a href="#gitFetchModal" class="btn update-repository" data-api-url="$APILink(fetch)">Fetch latest changes</a>

@@ -46,7 +46,7 @@
 	<tbody>
 	<% loop DeployHistory %>
 		<tr>
-			<td>$LastEdited.Rfc2822</td>
+			<td><span class="tooltip-hint" data-toggle="tooltip" data-original-title="$LastEdited.Nice ($LastEdited.Ago)">$LastEdited.Date</span></td>
 			<td><span class="tooltip-hint" data-toggle="tooltip" title="$Message" data-original-title="$Message">$SHA</span></td>
 			<td>$Deployer.Name <% if $Deployer.Email %>&lt;$Deployer.Email&gt; <% end_if %></td>
 			<td>
