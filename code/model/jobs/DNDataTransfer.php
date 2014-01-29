@@ -31,6 +31,7 @@ class DNDataTransfer extends DataObject {
 		"Environment" => "DNEnvironment",
 		"Author" => "Member",
 		"DataArchive" => "DNDataArchive",
+		"BackupDataTransfer" => "DNDataTransfer" // denotes an automated backup done for a push of this data transfer
 	);
 
 	private static $singular_name = 'Data Transfer';
@@ -198,6 +199,9 @@ class DNDataTransfer extends DataObject {
 		$envName = $this->Environment()->FullName;
 		if($this->Direction == 'get') {
 			$description = 'Backup ' . $this->getModeNice() . ' from ' . $envName;
+			if($this->IsBackupDataTransfer()) {
+				$description .= ' (automated)';
+			}
 		} else {
 			$description = 'Restore ' . $this->getModeNice() . ' to ' . $envName;
 		}
@@ -211,6 +215,17 @@ class DNDataTransfer extends DataObject {
 		} else {
 			return $this->Mode;
 		}
+	}
+
+	/**
+	 * Is this transfer an automated backup of a push transfer?
+	 * @return boolean
+	 */
+	public function IsBackupDataTransfer() {
+		return DB::query(sprintf(
+			'SELECT COUNT("ID") FROM "DNDataTransfer" WHERE "BackupDataTransferID" = %d',
+			$this->ID
+		))->value();
 	}
 
 	/**

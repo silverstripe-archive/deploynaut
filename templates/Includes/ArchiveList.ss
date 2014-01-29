@@ -18,7 +18,7 @@
 						<td><span class="tooltip-hint" data-toggle="tooltip" data-original-title="$Created.Nice ($Created.Ago)">$Created.Date</span></td>
 						<td>$Author.FirstName $Author.Surname</td>
 						<td>$Environment.Name</td>
-						<td>$ModeNice</td>
+						<td>$ModeNice<% if $DataTransfers.first.IsBackupDataTransfer %> (automated backup)<% end_if %></td>
 						<td>$FileSize</td>
 						<td class="action">
 							<% if $CanDownload && ArchiveFile %>

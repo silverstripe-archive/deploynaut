@@ -21,6 +21,21 @@ class DataTransferJob {
 		$project = $this->DNData()->DNProjectList()->filter('Name', $this->args['projectName'])->First();
 		$dataTransfer = DNDataTransfer::get()->byID($this->args['dataTransferID']);
 		$environment = $dataTransfer->Environment();
+		$backupJob = null;
+
+		if($dataTransfer->Direction == 'push') {
+			$backupJob = new DNDataTransfer();
+			$backupJob->EnvironmentID = $environment->ID;
+			$backupJob->Direction = 'get';
+			$backupJob->Mode = $dataTransfer->Mode;
+			$backupJob->DataArchiveID = null;
+			$backupJob->ResqueToken = $dataTransfer->ResqueToken;
+			$backupJob->AuthorID = $dataTransfer->AuthorID;
+			$backupJob->write();
+
+			$dataTransfer->BackupDataTransferID = $backupJob->ID;
+			$dataTransfer->write();
+		}
 
 		// This is a bit icky, but there is no easy way of capturing a failed run by using the PHP Resque 
 		try {
@@ -38,14 +53,35 @@ class DataTransferJob {
 				));
 			}
 
+			// before we push data to an environment, we'll make a backup first
+			if($backupJob) {
+				$log->write('Backing up existing data');
+				$this->DNData()->Backend()->dataTransfer(
+					$backupJob,
+					$log
+				);
+			}
+
 			$this->DNData()->Backend()->dataTransfer(
 				$dataTransfer,
 				$log
 			);
 		} catch(RuntimeException $exc) {
+			$log->write($exc->getMessage());
+
+			if($backupJob) {
+				$backupJob->Status = 'Failed';
+				$backupJob->write();
+			}
+
 			$this->updateStatus('Failed');
 			echo "[-] DataTransferJob failed" . PHP_EOL;
 			throw $exc;
+		}
+
+		if($backupJob) {
+			$backupJob->Status = 'Finished';
+			$backupJob->write();
 		}
 
 		echo "[-] DataTransferJob finished" . PHP_EOL;
