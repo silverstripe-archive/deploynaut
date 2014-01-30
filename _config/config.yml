@@ -1,0 +1,3 @@
+DNProject:
+  defaults:
+    DiskQuotaMB: "1024"

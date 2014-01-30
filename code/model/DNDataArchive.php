@@ -31,6 +31,7 @@ class DNDataArchive extends DataObject {
 		'Mode' => "Enum('all, assets, db', '')",
 		'ArchiveFileHash' => 'Varchar(32)',
 		"Mode" => "Enum('all, assets, db', '')",
+		"IsBackup" => "Boolean"
 	);
 
 	private static $has_one = array(
