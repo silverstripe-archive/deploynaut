@@ -107,8 +107,9 @@ namespace :data do
 
 	def getdatabasename
 		database_name = ""
-		# todo: if SS_DATABASE_NAME isn't defined, how do we get the database name?
-		run %Q{ php -r "require_once '#{current_path}/../../_ss_environment.php'; echo SS_DATABASE_NAME;" } do |channel, stream, data|
+		base_path = File.dirname(current_path)
+
+		run %Q{ php -r "require_once '#{base_path}/_ss_environment.php'; echo SS_DATABASE_NAME;" } do |channel, stream, data|
 			database_name = data
 		end
 
@@ -117,8 +118,9 @@ namespace :data do
 
 	def getmysqlpassword
 		database_password = ""
+		base_path = File.dirname(current_path)
 
-		run %Q{ php -r "require_once '#{current_path}/../../_ss_environment.php'; echo SS_DATABASE_PASSWORD;" } do |channel, stream, data|
+		run %Q{ php -r "require_once '#{base_path}/_ss_environment.php'; echo SS_DATABASE_PASSWORD;" } do |channel, stream, data|
 			database_password = data
 		end
 
@@ -131,13 +133,13 @@ namespace :data do
 		database_server = ""
 		database_username = ""
 		database_host = ""
+		base_path = File.dirname(current_path)
 
-		# todo: "do |_, _, database_username" doesn't work here, is that possible?
-		run %Q{ php -r "require_once '#{current_path}/../../_ss_environment.php'; echo SS_DATABASE_SERVER;" } do |channel, stream, data|
+		run %Q{ php -r "require_once '#{base_path}/_ss_environment.php'; echo SS_DATABASE_SERVER;" } do |channel, stream, data|
 			database_server = data
 		end
 
-		run %Q{ php -r "require_once '#{current_path}/../../_ss_environment.php'; echo SS_DATABASE_USERNAME;" } do |channel, stream, data|
+		run %Q{ php -r "require_once '#{base_path}/_ss_environment.php'; echo SS_DATABASE_USERNAME;" } do |channel, stream, data|
 			database_username = data
 		end
 
