@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Website down for maintenance</title>
+		<style type="text/css">
+			body {
+				width: 400px;
+				margin: 100px auto;
+				font: 300 120% "OpenSans", "Helvetica Neue", "Helvetica", Arial, Verdana, sans-serif;
+			}
+
+			h1 {
+				font-weight: 300;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Website down for maintenance</h1>
+
+		<p>This website is currently down for maintenance. Please check back shortly.</p>
+	</body>
+</html>
+
