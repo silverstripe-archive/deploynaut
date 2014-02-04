@@ -22,11 +22,11 @@
 
 <% with $CurrentProject %>
 <% if $HasDiskQuota %>
-<% if $HasExceededDiskQuota %>
-	<p class="message bad">You have exceeded the total quota of $DiskQuotaMB MB. You will need to delete old snapshots in order to create new ones.</p>
-<% else %>
-	<p class="message good">You have used $UsedQuotaMB MB out of total quota $DiskQuotaMB MB quota across all environments for this project.</p>
-<% end_if %>
+	<% if $HasExceededDiskQuota %>
+		<p class="message bad">You have exceeded the total quota of $DiskQuotaMB MB. You will need to delete old snapshots in order to create new ones.</p>
+	<% else %>
+		<p class="message good">You have used $UsedQuotaMB MB out of total quota $DiskQuotaMB MB quota across all environments for this project.</p>
+	<% end_if %>
 <% end_if %>
 <% end_with %>
 

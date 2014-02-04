@@ -121,7 +121,7 @@ class DNProject extends DataObject {
 		$size = 0;
 
 		foreach($this->Environments() as $environment) {
-			foreach($environment->DataArchives('"IsBackup" = 0') as $archive) {
+			foreach($environment->DataArchives()->filter('IsBackup', 0) as $archive) {
 				$size += $archive->ArchiveFile()->getAbsoluteSize();
 			}
 		}
@@ -153,7 +153,7 @@ class DNProject extends DataObject {
 	 * @return boolean
 	 */
 	public function HasExceededDiskQuota() {
-		return $this->getUsedQuotaMB(0) > $this->getDiskQuotaMB();
+		return $this->getUsedQuotaMB(0) >= $this->getDiskQuotaMB();
 	}
 
 	/**
