@@ -32,6 +32,8 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 
 		$log->write('Deploying "'.$sha.'" to "'.$projectName.':'.$environment.'"');
 
+		$this->enableMaintenance($environment, $log, $project);
+
 		$args = array(
 			'branch' => $sha,
 			'repository' => $repository
@@ -43,11 +45,48 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 		if(!$command->isSuccessful()) {
 			throw new RuntimeException($command->getErrorOutput());
 		}
+
+		$this->disableMaintenance($environment, $log, $project);
+
 		$log->write('Deploy done "'.$sha.'" to "'.$projectName.':'.$environment.'"');
 
 		GraphiteDeploymentNotifier::notify_end($environment, $sha, null, $project);
 	}
-	
+
+	/**
+	 * Enable a maintenance page for the given environment using the maintenance:enable Capistrano task.
+	 */
+	public function enableMaintenance($environment, DeploynautLogFile $log, DNProject $project) {
+		$projectName = $project->Name;
+		$env = $project->getProcessEnv();
+
+		$command = $this->getCommand('maintenance:enable', $projectName.':'.$environment, null, $env, $log);
+		$command->run(function ($type, $buffer) use($log) {
+			$log->write($buffer);
+		});
+		if(!$command->isSuccessful()) {
+			throw new RuntimeException($command->getErrorOutput());
+		}
+		$log->write('Maintenance page enabled on "' . $projectName.':'.$environment.'"');
+	}
+
+	/**
+	 * Disable the maintenance page for the given environment using the maintenance:disable Capistrano task.
+	 */
+	public function disableMaintenance($environment, DeploynautLogFile $log, DNProject $project) {
+		$projectName = $project->Name;
+		$env = $project->getProcessEnv();
+
+		$command = $this->getCommand('maintenance:disable', $projectName.':'.$environment, null, $env, $log);
+		$command->run(function ($type, $buffer) use($log) {
+			$log->write($buffer);
+		});
+		if(!$command->isSuccessful()) {
+			throw new RuntimeException($command->getErrorOutput());
+		}
+		$log->write('Maintenance page disabled on "' . $projectName.':'.$environment.'"');
+	}
+
 	/**
 	 * Deploy the given build to the given environment.
 	 * 
@@ -71,7 +110,14 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 		if($dataTransfer->Direction == 'get') {
 			$this->dataTransferBackup($dataTransfer, $log);
 		} else {
+			$envObj = $dataTransfer->Environment();
+			$envName = $envObj->Name;
+			$project = $envObj->Project();
+
+			// put up a maintenance page during a restore of db or assets
+			$this->enableMaintenance($envName, $log, $project);
 			$this->dataTransferRestore($dataTransfer, $log);
+			$this->disableMaintenance($envName, $log, $project);
 		}
 	}
 

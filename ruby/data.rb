@@ -44,16 +44,12 @@ namespace :data do
 		data_path - Absolute path to the database on deploynaut server to be imported
 	DESC
 	task :pushdb do
-		on_rollback { maintenance.disable }
-
 		begin
 			dump_command = ""
 			database_file = File.basename(data_path)
 			tmpdir = "/tmp/dbupload-" + Time.now.to_i.to_s
 
 			upload(data_path, tmpdir, :via => :scp)
-
-			maintenance.enable
 
 			if File.extname(data_path) == ".gz"
 				dump_command = "gunzip -c #{tmpdir}/#{database_file} | mysql --default-character-set=utf8 #{mysql_options} -p"
@@ -67,10 +63,8 @@ namespace :data do
 				end
 			end
 
-			maintenance.disable
 			run "rm -rf #{tmpdir}"
 		rescue Exception => e
-			maintenance.disable
 			run "rm -rf #{tmpdir}"
 			raise e
 		end
@@ -103,21 +97,14 @@ namespace :data do
 		data_path - Absolute path to where the assets that should be uploaded reside
 	DESC
 	task :pushassets do
-		on_rollback { maintenance.disable }
-
 		begin
-			maintenance.enable
-
 			run "rm -rf #{shared_path}/assets"
 
 			upload(data_path, shared_path, :recursive => true, :via => :scp) do |channel, name, sent, total|
 				# TODO Less noisy progress indication
 				#puts name
 			end
-
-			maintenance.disable
 		rescue Exception => e
-			maintenance.disable
 			raise e
 		end
 	end
