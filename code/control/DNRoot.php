@@ -22,8 +22,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'createsnapshot',
 		'snapshotslog',
 		'uploadsnapshot',
+		'getUploadSnapshotForm',
+		'getPostSnapshotForm',
 		'getDataTransferRestoreForm',
 		'restoresnapshot',
+		'postsnapshotsuccess',
 	);
 
 	/**
@@ -34,6 +37,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'project/$Project/createsnapshot/DataTransferForm' => 'getDataTransferForm',
 		'project/$Project/DataTransferForm' => 'getDataTransferForm',
 		'project/$Project/DataTransferRestoreForm' => 'getDataTransferRestoreForm',
+		'project/$Project/UploadSnapshotForm' => 'getUploadSnapshotForm',
+		'project/$Project/PostSnapshotForm' => 'getPostSnapshotForm',
 		'project/$Project/environment/$Environment/metrics' => 'metrics',
 		'project/$Project/environment/$Environment/deploy/$Identifier/log' => 'deploylog',
 		'project/$Project/environment/$Environment/deploy/$Identifier' => 'deploy',
@@ -47,6 +52,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'project/$Project/createsnapshot' => 'createsnapshot',
 		'project/$Project/uploadsnapshot' => 'uploadsnapshot',
 		'project/$Project/snapshotslog' => 'snapshotslog',
+		'project/$Project/postsnapshotsuccess/$DataArchiveID' => 'postsnapshotsuccess',
 		'project/$Project' => 'project',
 		'projects' => 'projects',
 	);
@@ -74,6 +80,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				THIRDPARTY_DIR . '/jquery/jquery.js',
 				'deploynaut/javascript/bootstrap.js',
 				'deploynaut/javascript/deploynaut.js',
+				'deploynaut/javascript/bootstrap.file-input.js',
 
 			)
 		);
@@ -165,13 +172,151 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		if(!$project) {
 			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
 		}
+
+		if(!$project->canUploadArchive()) {
+			return new SS_HTTPResponse("Not allowed to upload", 401);	
+		}
+
 		return $this->customise(array(
-			'Title' => 'Upload Snapshot',
 			'Project' => $project,
 			'CurrentProject' => $project,
 			'SnapshotsSection' => 1,
-			'DataTransferForm' => $this->getDataTransferForm($request)
+			'UploadLimit' => $maxSize = File::format_size(min(
+				File::ini2bytes(ini_get('upload_max_filesize')), 
+				File::ini2bytes(ini_get('post_max_size'))
+			)),
+			'UploadSnapshotForm' => $this->getUploadSnapshotForm($request),
+			'PostSnapshotForm' => $this->getPostSnapshotForm($request)
 		))->renderWith(array('DNRoot_uploadsnapshot', 'DNRoot'));
+	}
+
+	/**
+	 * Construct the upload form.
+	 * 
+	 * @param SS_HTTPRequest $request
+	 * @return Form
+	 */
+	public function getUploadSnapshotForm(SS_HTTPRequest $request) {
+		// Performs permission check by limiting visible projects
+		$project = $this->getCurrentProject();
+
+		$envs = $project->DNEnvironmentList()
+			->filterByCallback(function($item) {return $item->canUploadArchive();});
+
+		$maxSize = min(File::ini2bytes(ini_get('upload_max_filesize')), File::ini2bytes(ini_get('post_max_size')));
+		$fileField = DataArchiveFileField::create('File', 'File');
+		$fileField->getValidator()->setAllowedExtensions(array('sspak'));
+		$fileField->getValidator()->setAllowedMaxFileSize(array('*' => $maxSize));
+
+		$form = new Form(
+			$this, 
+			'UploadSnapshotForm', 
+			new FieldList(
+				$fileField,
+				DropdownField::create('Mode', 'What does this file contain?', DNDataArchive::get_mode_map()),
+				DropdownField::create('EnvironmentID', 'Choose an environment this snapshot relates to', $envs->map())
+			), 
+			new FieldList(
+				$action = new FormAction('doUploadSnapshot', "Upload File")
+			),
+			new RequiredFields('File')
+		);
+		$action->addExtraClass('btn');
+		$form->disableSecurityToken();
+		// Tweak the action so it plays well with our fake URL structure.
+		$form->setFormAction($project->Link().'/UploadSnapshotForm');
+
+		return $form;
+	}
+
+	public function doUploadSnapshot($data, $form) {
+		$project = $this->getCurrentProject();
+		if(!$project) {
+			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
+		}
+
+		$validEnvs = $project->DNEnvironmentList()
+			->filterByCallback(function($item) {return $item->canUploadArchive();});
+		$environment = $validEnvs->find('ID', $data['EnvironmentID']);
+		if(!$environment) {
+			throw new LogicException('Invalid environment');
+		}
+
+		$dataArchive = new DNDataArchive();
+		// needs an ID and transfer to determine upload path
+		$dataArchive->write(); 
+		$dataTransfer = new DNDataTransfer(array(
+			'Mode' => $data['Mode'],
+			'Origin' => 'ManualUpload'
+		));
+		$dataTransfer->write();
+		$dataArchive->DataTransfers()->add($dataTransfer);
+		$form->saveInto($dataArchive);
+
+		return $this->customise(array(
+			'Project' => $project,
+			'CurrentProject' => $project,
+			'SnapshotsSection' => 1,
+			'DataArchive' => $dataArchive,
+			'BackURL' => $project->Link('snapshots')
+		))->renderWith(array('DNRoot_uploadsnapshot', 'DNRoot'));
+	}
+
+	/**
+	 * @param SS_HTTPRequest $request
+	 * @return Form
+	 */
+	public function getPostSnapshotForm(SS_HTTPRequest $request) {
+		// Performs permission check by limiting visible projects
+		$project = $this->getCurrentProject();
+
+		$envs = $project->DNEnvironmentList()
+			->filterByCallback(function($item) {return $item->canUploadArchive();});
+
+		$form = new Form(
+			$this, 
+			'PostSnapshotForm', 
+			new FieldList(
+				DropdownField::create('Mode', 'What does this file contain?', DNDataArchive::get_mode_map()),
+				DropdownField::create('EnvironmentID', 'Choose an environment this snapshot relates to', $envs->map())
+			), 
+			new FieldList(
+				$action = new FormAction('doPostSnapshot', "Submit request")
+			),
+			new RequiredFields('File')
+		);
+		$action->addExtraClass('btn');
+		$form->disableSecurityToken();
+		// Tweak the action so it plays well with our fake URL structure.
+		$form->setFormAction($project->Link().'/PostSnapshotForm');
+
+		return $form;
+	}
+
+	public function doPostSnapshot($data, $form) {
+		$project = $this->getCurrentProject();
+		if(!$project) {
+			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
+		}
+
+		$validEnvs = $project->DNEnvironmentList()
+			->filterByCallback(function($item) {return $item->canUploadArchive();});
+		$environment = $validEnvs->find('ID', $data['EnvironmentID']);
+		if(!$environment) {
+			throw new LogicException('Invalid environment');
+		}
+
+		$dataArchive = new DNDataArchive(array(
+			'UploadToken' => DNDataArchive::generate_upload_token(),
+		));
+		$form->saveInto($dataArchive);
+		$dataArchive->write(); 
+
+		return $this->redirect(Controller::join_links(
+			$project->Link(),
+			'postsnapshotsuccess',
+			$dataArchive->ID
+		));
 	}
 
 	/**
@@ -191,6 +336,27 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'CurrentProject' => $project,
 			'SnapshotsSection' => 1,
 		))->renderWith(array('DNRoot_snapshotslog', 'DNRoot'));
+	}
+
+	/**
+	 * @param  SS_HTTPRequest $request [description]
+	 */
+	public function postsnapshotsuccess(SS_HTTPRequest $request) {
+		$project = $this->getCurrentProject();
+
+		$dataArchive = DNDataArchive::get()->byId($request->param('DataArchiveID'));
+		if(!$dataArchive) {
+			return new SS_HTTPResponse("Archive not found.", 404);
+		}
+
+		return $this->customise(array(
+			'Title' => 'How to send us your snapshot by post',
+			'Project' => $project,
+			'CurrentProject' => $project,
+			'DataArchive' => $dataArchive,
+			'Address' => Config::inst()->get('Deploynaut', 'snapshot_post_address'),
+			'BackURL' => $project->Link(),
+		))->renderWith(array('DNRoot_postsnapshotsuccess', 'DNRoot'));
 	}
 
 	/**
@@ -474,19 +640,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$envs = $this->getCurrentProject()->DNEnvironmentList()
 			->filterByCallback(function($item) {return $item->canBackup();});
 
-		$modesMap = array(
-			'all' => 'Database and Assets',
-			'db' => 'Database only',
-			'assets' => 'Assets only',
-		);
-
 		$form = new Form(
 			$this,
 			'DataTransferForm',
 			new FieldList(
 				new HiddenField('Direction', false, 'get'),
 				new DropdownField('EnvironmentID', 'Environment', $envs->map()),
-				new DropdownField('Mode', 'Transfer', $modesMap)
+				new DropdownField('Mode', 'Transfer', DNDataArchive::get_mode_map())
 			),
 			new FieldList(
 				FormAction::create('doDataTransfer', 'Create')->addExtraClass('btn')
@@ -764,12 +924,27 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * @return ArrayList The list of all archive files that can be accessed by the currently logged-in {@link Member}
 	 */
-	public function DataArchives() {
+	public function CompleteDataArchives() {
 		$project = $this->getCurrentProject();
 		$archives = new ArrayList();
 		foreach($project->DNEnvironmentList() as $env) {
 			foreach($env->DataArchives() as $archive) {
-				if($archive->canView()) $archives->push($archive);
+				if($archive->canView() && !$archive->isPending()) $archives->push($archive);
+			}
+		}
+		return new PaginatedList($archives->sort("Created", "DESC"), $this->request);
+	}
+
+	/**
+	 * @return ArrayList The list of "pending" data archives which are waiting for a file
+	 * to be delivered offline by post, and manually uploaded into the system.
+	 */
+	public function PendingDataArchives() {
+		$project = $this->getCurrentProject();
+		$archives = new ArrayList();
+		foreach($project->DNEnvironmentList() as $env) {
+			foreach($env->DataArchives() as $archive) {
+				if($archive->canView() && $archive->isPending()) $archives->push($archive);
 			}
 		}
 		return new PaginatedList($archives->sort("Created", "DESC"), $this->request);

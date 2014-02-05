@@ -71,6 +71,14 @@ class DNDataArchive extends DataObject {
 		),
 	);
 
+	public function onBeforeWrite() {
+		if(!$this->AuthorID) {
+			$this->AuthorID = Member::currentUserID();
+		}
+
+		parent::onBeforeWrite();
+	}
+
 	public function getCMSFields() {
 		$fields = parent::getCMSFields();
 		$fields->removeByName('EnvironmentID');
@@ -129,6 +137,17 @@ class DNDataArchive extends DataObject {
 		} else {
 			return $this->Mode;
 		}
+	}
+
+	/**
+	 * Some archives don't have files attached to them yet,
+	 * because a file has been posted offline and is waiting to be uploaded
+	 * against this "archive placeholder".
+	 * 
+	 * @return boolean
+	 */
+	public function isPending() {
+		return !($this->ArchiveFileID);
 	}
 
 	/**
@@ -208,6 +227,25 @@ class DNDataArchive extends DataObject {
 			$dataTransfer->ID
 		);	
 		
+	}
+
+	public static function get_mode_map() {
+		return array(
+			'all' => 'Database and Assets',
+			'db' => 'Database only',
+			'assets' => 'Assets only',
+		);
+	}
+
+	/**
+	 * Returns a unique token to correlate an offline item (posted DVD)
+	 * with a specific archive placeholder.
+	 * 
+	 * @return String
+	 */
+	public static function generate_upload_token($chars = 8) {
+		$generator = new RandomGenerator();
+		return strtoupper(substr($generator->randomToken(), 0, $chars));
 	}
 
 }

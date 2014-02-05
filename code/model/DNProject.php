@@ -193,6 +193,33 @@ class DNProject extends DataObject {
 		})->Count();
 	}
 
+	public function canUploadArchive($member = null) {
+		return (bool)$this->Environments()->filterByCallback(function($env) use($member) {
+			return $env->canUploadArchive($member);
+		})->Count();
+	}
+
+	public function canDownloadArchive($member = null) {
+		return (bool)$this->Environments()->filterByCallback(function($env) use($member) {
+			return $env->canDownloadArchive($member);
+		})->Count();
+	}
+
+	public function DataArchives() {
+		$envIds = $this->Environments()->column('ID');
+		return DNDataArchive::get()->filter('EnvironmentID', $envIds);
+	}
+
+	/**
+	 * Return all archives which are "manual upload requests",
+	 * meaning they don't have a file attached to them (yet).
+	 * 
+	 * @return ArrayList
+	 */
+	public function PendingManualUploadDataArchives() {
+		return $this->DataArchives()->filter('ArchiveFileID', null);
+	}
+
 	/**
 	 * Build an environment variable array to be used with this project.
 	 * 

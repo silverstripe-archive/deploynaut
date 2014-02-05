@@ -1,5 +1,11 @@
+<h3>Data Snapshots</h3>
+
+<p>This is an archived list of all assets, databases or zip files containing both that you have access to view. Each item has links so you can download the files to your computer or restore the files to a chosen environment.If you would like to create a new snapshot from an environment, click 'Create Snapshot', the Log displays a list of all snapshot transfers.
+If you would like to upload files from your computer to a new snapshot, click 'Upload Snapshot'
+</p>
+
 <% if $CanViewArchives %>
-	<% if $DataArchives %>
+	<% if $CompleteDataArchives %>
 		<table class="table table-bordered table-striped table-data-archives">
 			<thead>
 				<tr>
@@ -13,7 +19,7 @@
 			</thead>
 
 			<tbody>
-				<% loop $DataArchives %>
+				<% loop $CompleteDataArchives %>
 					<tr>
 						<td><span class="tooltip-hint" data-toggle="tooltip" data-original-title="$Created.Nice ($Created.Ago)">$Created.Date</span></td>
 						<td>$Author.FirstName $Author.Surname</td>
@@ -45,13 +51,13 @@
 			</tbody>
 		</table>
 
-		<% if $DataArchives.MoreThanOnePage %>
+		<% if $CompleteDataArchives.MoreThanOnePage %>
 		<div class="pagination">
 			<ul>
-		    <% if $DataArchives.NotFirstPage %>
-		        <li><a class="prev" href="$DataArchives.PrevLink">Prev</a></li>
+		    <% if $CompleteDataArchives.NotFirstPage %>
+		        <li><a class="prev" href="$CompleteDataArchives.PrevLink">Prev</a></li>
 		    <% end_if %>
-		    <% loop $DataArchives.Pages %>
+		    <% loop $CompleteDataArchives.Pages %>
 		        <% if $CurrentBool %>
 		            <li class="disabled"><a href="#">$PageNum</a></li>
 		        <% else %>
@@ -62,8 +68,8 @@
 		            <% end_if %>
 		        <% end_if %>
 		        <% end_loop %>
-		    <% if $DataArchives.NotLastPage %>
-		        <li><a class="next" href="$DataArchives.NextLink">Next</a></li>
+		    <% if $CompleteDataArchives.NotLastPage %>
+		        <li><a class="next" href="$CompleteDataArchives.NextLink">Next</a></li>
 		    <% end_if %>
 		    </ul>
 		</div>

@@ -9,13 +9,14 @@
 	<% if $Project.canBackup %>
 	<li><a href="$CurrentProject.Link('createsnapshot')">Create Snapshot</a></li>
 	<% end_if %>
-	<!-- <li><a href="$CurrentProject.Link('uploadsnapshot')">Upload Files</a></li> -->
+	<% if $Project.canUploadArchive %>
+	<li><a href="$CurrentProject.Link('uploadsnapshot')">Upload Snapshot</a></li>
+	<% end_if %>
 	<li class="active"><a href="$CurrentProject.Link('snapshotslog')">Log</a></li>
 </ul>
 <% end_if %>
 
 <h3>$Title</h3>
-<p>This is an advanced view of all snapshot transfers</p>
 
 <% if $CanViewArchives %>
 	<% if $DataTransferLogs %>

@@ -213,6 +213,10 @@
 	-moz-border-radius: 4px;
 	border-radius: 4px;
 }
+.field .message.required,
+.field .message.validation {
+  color: #b94a48;
+}
 .upload-form .text-center {
 	text-align: center;
 	border-top: 1px solid #eee;

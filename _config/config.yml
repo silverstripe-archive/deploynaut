@@ -1,3 +1,10 @@
 DNProject:
   defaults:
     DiskQuotaMB: "1024"
+Deploynaut:
+  snapshot_post_address: |
+    SilverStripe Ltd
+    c/o John Oppler
+    97-99 Courtenay Place
+    Level 5, Symes de Silva House
+    6011 Wellington

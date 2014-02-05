@@ -9,7 +9,9 @@
 	<% if $Project.canBackup %>
 	<li class="active"><a href="$CurrentProject.Link('createsnapshot')">Create Snapshot</a></li>
 	<% end_if %>
-	<!-- <li><a href="$CurrentProject.Link('uploadsnapshot')">Upload Files</a></li> -->
+	<% if $Project.canUploadArchive %>
+	<li><a href="$CurrentProject.Link('uploadsnapshot')">Upload Snapshot</a></li>
+	<% end_if %>
 	<li><a href="$CurrentProject.Link('snapshotslog')">Log</a></li>
 </ul>
 <% end_if %>
