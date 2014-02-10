@@ -200,8 +200,19 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Performs permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 
-		$envs = $project->DNEnvironmentList()
-			->filterByCallback(function($item) {return $item->canUploadArchive();});
+		// Framing an environment as a "group of people with download access"
+		// makes more sense to the user here, while still allowing us to enforce
+		// environment specific restrictions on downloading the file later on.
+		$envs = $project->DNEnvironmentList()->filterByCallback(function($item) {return $item->canUploadArchive();});
+		$envsMap = array();
+		foreach($envs as $env) {
+			$downloaders = implode(', ', $env->ArchiveDownloaders()->column('FirstName'));
+			$envsMap[$env->ID] = sprintf(
+				'%s (%s)',
+				implode(', ', array_map(function($member) {return $member->Name;}, $env->ArchiveDownloaders()->toArray())),
+				$env->Name
+			);
+		}
 
 		$maxSize = min(File::ini2bytes(ini_get('upload_max_filesize')), File::ini2bytes(ini_get('post_max_size')));
 		$fileField = DataArchiveFileField::create('File', 'File');
@@ -214,7 +225,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			new FieldList(
 				$fileField,
 				DropdownField::create('Mode', 'What does this file contain?', DNDataArchive::get_mode_map()),
-				DropdownField::create('EnvironmentID', 'Choose an environment this snapshot relates to', $envs->map())
+				DropdownField::create('EnvironmentID', 'Choose who can download this file', $envsMap)
 			), 
 			new FieldList(
 				$action = new FormAction('doUploadSnapshot', "Upload File")
@@ -223,6 +234,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		);
 		$action->addExtraClass('btn');
 		$form->disableSecurityToken();
+		$form->addExtraClass('form-fields-wide');
 		// Tweak the action so it plays well with our fake URL structure.
 		$form->setFormAction($project->Link().'/UploadSnapshotForm');
 
@@ -258,6 +270,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'CurrentProject' => $project,
 			'SnapshotsSection' => 1,
 			'DataArchive' => $dataArchive,
+			'DataTransferRestoreForm' => $this->getDataTransferRestoreForm($this->request, $dataArchive),
 			'BackURL' => $project->Link('snapshots')
 		))->renderWith(array('DNRoot_uploadsnapshot', 'DNRoot'));
 	}
@@ -270,15 +283,26 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Performs permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 
-		$envs = $project->DNEnvironmentList()
-			->filterByCallback(function($item) {return $item->canUploadArchive();});
+		// Framing an environment as a "group of people with download access"
+		// makes more sense to the user here, while still allowing us to enforce
+		// environment specific restrictions on downloading the file later on.
+		$envs = $project->DNEnvironmentList()->filterByCallback(function($item) {return $item->canUploadArchive();});
+		$envsMap = array();
+		foreach($envs as $env) {
+			$downloaders = implode(', ', $env->ArchiveDownloaders()->column('FirstName'));
+			$envsMap[$env->ID] = sprintf(
+				'%s (%s)',
+				implode(', ', array_map(function($member) {return $member->Name;}, $env->ArchiveDownloaders()->toArray())),
+				$env->Name
+			);
+		}
 
 		$form = new Form(
 			$this, 
 			'PostSnapshotForm', 
 			new FieldList(
 				DropdownField::create('Mode', 'What does this file contain?', DNDataArchive::get_mode_map()),
-				DropdownField::create('EnvironmentID', 'Choose an environment this snapshot relates to', $envs->map())
+				DropdownField::create('EnvironmentID', 'Choose who can download this file', $envsMap)
 			), 
 			new FieldList(
 				$action = new FormAction('doPostSnapshot', "Submit request")
@@ -287,6 +311,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		);
 		$action->addExtraClass('btn');
 		$form->disableSecurityToken();
+		$form->addExtraClass('form-fields-wide');
 		// Tweak the action so it plays well with our fake URL structure.
 		$form->setFormAction($project->Link().'/PostSnapshotForm');
 

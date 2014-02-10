@@ -3,8 +3,8 @@
 /**
  * DNEnvironment
  *
- * This dataobject represents a target environment that source code can be
- * deployed to.
+ * This dataobject represents a target environment that source code can be deployed to.
+ * Permissions are controlled by environment, see the various many-many relationships.
  *
  */
 class DNEnvironment extends DataObject {
@@ -492,12 +492,18 @@ class DNEnvironment extends DataObject {
 
 		// The Main.ArchiveUploaders
 		$archiveUploaders = new CheckboxSetField('ArchiveUploaders', 'Who can upload?', $members);
-		$archiveUploaders->setDescription('Users who can upload archives linked to this environment into Deploynaut');
+		$archiveUploaders->setDescription(
+			'Users who can upload archives linked to this environment into Deploynaut.<br>' .
+			'Linking them to an environment allows limiting download permissions (see below).'
+		);
 		$fields->insertAfter($archiveUploaders, 'CanBackupMembers');
 
 		// The Main.ArchiveDownloaders
 		$archiveDownloaders = new CheckboxSetField('ArchiveDownloaders', 'Who can download?', $members);
-		$archiveDownloaders->setDescription('Users who can download archives from this environment to their PC');
+		$archiveDownloaders->setDescription(
+			'Users who can download archives from this environment to their computer.<br>' .
+			'Should include all users with upload permissions, otherwise they can\'t download their own uploads.'
+		);
 		$fields->insertAfter($archiveDownloaders, 'ArchiveUploaders');
 
 		// The Main.DeployConfig

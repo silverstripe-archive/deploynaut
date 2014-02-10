@@ -278,6 +278,10 @@ form.userswitcher select {
 	margin-bottom: 0;
 }
 
+form.fields-wide .field label.left {
+	width: 240px;
+}
+
 /* align restore snapshot form fields left */
 #Form_DataTransferRestoreForm fieldset {
 	display: block;
