@@ -16,18 +16,26 @@
 </ul>
 <% end_if %>
 
+<ul class="nav nav-pills switch-tabs">
+    <li class="active"><a href="#tab1" data-toggle="tab">Upload Data Snapshot</a></li>
+    <li class="join"><p>or</p></li>
+    <li><a href="#tab2" data-toggle="tab">Request upload by post</a></li>
+</ul>
+
 <% if DataArchive %>
     <h3>Successfully uploaded your snapshot</h3>
     <p>Your snapshot has been saved in Deploynaut.</p>
     <p>Please view the <a href="$BackURL">snapshots list</a> to restore this snapshot to an environment.</p>
 <% else %>
-	<h3>Upload Snapshot through your browser</h3>
-	<p>Choose a local snapshot file to transfer to deploynaut (up to $UploadLimit). See below how to create this file. Once uploaded, you can choose to restore this file into an actual environment.</p>
-	$UploadSnapshotForm
-
-	<h3>Request Snapshot upload by post</h3>
-	<p>For large files (more than $UploadLimit), you can also choose to send us a DVD, and have us upload the file for you. Submit a request below to start this process.</p>
-	$PostSnapshotForm
-
+<div class="tab-content">
+	<div class="tab-pane active" id="tab1">
+		<p>Choose a local snapshot file to transfer to deploynaut (up to $UploadLimit). See below how to create this file. Once uploaded, you can choose to restore this file into an actual environment.</p>
+		$UploadSnapshotForm
+	</div>
+	<div class="tab-pane" id="tab2">
+		<p>For large files (more than $UploadLimit), you can also choose to send us a DVD, and have us upload the file for you. Submit a request below to start this process.</p>
+		$PostSnapshotForm
+	</div>
+</div>
 	<% include SnapshotCreateInstructions %>
 <% end_if %>

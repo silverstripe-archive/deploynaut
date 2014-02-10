@@ -153,7 +153,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		return $this->customise(array(
-			'Title' => 'Create Snapshot',
+			'Title' => 'Create Data Snapshot',
 			'Project' => $project,
 			'CurrentProject' => $project,
 			'SnapshotsSection' => 1,
@@ -331,7 +331,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
 		}
 		return $this->customise(array(
-			'Title' => 'Snapshots Log',
+			'Title' => 'Data Snapshots Log',
 			'Project' => $project,
 			'CurrentProject' => $project,
 			'SnapshotsSection' => 1,
@@ -350,7 +350,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		return $this->customise(array(
-			'Title' => 'How to send us your snapshot by post',
+			'Title' => 'How to send us your Data Snapshot by post',
 			'Project' => $project,
 			'CurrentProject' => $project,
 			'DataArchive' => $dataArchive,

@@ -4,10 +4,10 @@
 <ul>
 	<li>Create an *.sspak file containing your database and/or assets</li>
 	<li>Store the file on a DVD</li>
-	<li>Label the DVD with "Deploynaut Upload $DataArchive.UploadToken</li>
+	<li>Label the DVD with:
+	<pre>Deploynaut Upload $DataArchive.UploadToken</pre></li>
 	<li>
 		Send the DVD to the following address:
-		<br/>
 		<pre>$Address</pre>
 	</li>
 </ul>

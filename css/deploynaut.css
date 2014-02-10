@@ -36,6 +36,45 @@
 	background-color: transparent;
 }
 
+.nav-pills.switch-tabs {
+	margin-bottom: 0;
+}
+.nav-pills.switch-tabs li {
+	display: block;
+	float: left;
+	width: 45%;
+}
+.nav-pills.switch-tabs li.join {
+	width: 10%;
+}
+.nav-pills.switch-tabs li a {
+	background-color: #fff;
+	border: 1px solid #ddd;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	-webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	-moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+.nav-pills.switch-tabs li a,
+.nav-pills.switch-tabs li p {
+	font-size: 24.5px;
+	font-weight: bold;
+	text-align: center;
+	padding: 25px 15px;
+}
+.nav-pills.switch-tabs li.active a {
+	border: 1px solid #ddd;
+	background-color: #fff;
+	color: #000;
+}
+.nav-pills.switch-tabs li a:hover {
+	background-color: #fcfcfc;
+}
+.nav-pills.switch-tabs li.active a:hover {
+	background-color: #fff;
+	border: 1px solid #ddd;
+	cursor: default;
+}
+
 #queue_log,
 #queue_action {
 	background-color: #333;
@@ -194,6 +233,10 @@
 	position: relative;
 	top: -3px;
 	text-align: center;
+}
+
+ul li pre {
+	margin-top: 8px;
 }
 
 /** start custom form styling **/

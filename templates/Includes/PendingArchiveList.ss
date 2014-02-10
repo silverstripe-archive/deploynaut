@@ -1,6 +1,6 @@
 <% if $CanViewArchives %>
 	<% if $PendingDataArchives %>
-		<h3>Snapshot Upload Requests</h3>
+		<h3>Data Snapshot Upload Requests</h3>
 
 		<p>Lists any requests which are waiting for a file to by posted to Deploynaut staff and processed manually.</p>
 
