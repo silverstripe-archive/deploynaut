@@ -64,6 +64,12 @@ class DNData {
 
 	public function setDataTransferDir($dir) {
 		if($dir[0] != "/") $dir = BASE_PATH . '/' . $dir;
+		if(strpos($dir, ASSETS_PATH) !== 0) {
+			throw new LogicException(sprintf(
+				'DNData::dataTransferDir needs to be located within <webroot>assets/ (location: %s)',
+				$dir
+			));
+		}
 		$this->dataTransferDir = $dir;
 	}
 

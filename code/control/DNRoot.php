@@ -215,7 +215,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		$maxSize = min(File::ini2bytes(ini_get('upload_max_filesize')), File::ini2bytes(ini_get('post_max_size')));
-		$fileField = DataArchiveFileField::create('File', 'File');
+		$fileField = DataArchiveFileField::create('ArchiveFile', 'File');
 		$fileField->getValidator()->setAllowedExtensions(array('sspak'));
 		$fileField->getValidator()->setAllowedMaxFileSize(array('*' => $maxSize));
 
@@ -230,7 +230,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			new FieldList(
 				$action = new FormAction('doUploadSnapshot', "Upload File")
 			),
-			new RequiredFields('File')
+			new RequiredFields('ArchiveFile')
 		);
 		$action->addExtraClass('btn');
 		$form->disableSecurityToken();
@@ -261,11 +261,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$dataArchive->write(); 
 		$dataTransfer = new DNDataTransfer(array(
 			'Mode' => $data['Mode'],
-			'Origin' => 'ManualUpload'
+			'Origin' => 'ManualUpload',
+			'EnvironmentID' => $data['EnvironmentID']
 		));
 		$dataTransfer->write();
 		$dataArchive->DataTransfers()->add($dataTransfer);
 		$form->saveInto($dataArchive);
+		$dataArchive->write();
 
 		return $this->customise(array(
 			'Project' => $project,
