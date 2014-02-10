@@ -23,8 +23,17 @@ class DataArchiveFileField extends FileField {
 
 		$fileClass = File::get_class_for_file_extension(pathinfo($_FILES[$this->name]['name'], PATHINFO_EXTENSION));
 		$file = new $fileClass();
-		$this->upload->loadIntoFile($_FILES[$this->name], $file, $dataArchive->generateFilepath($dataTransfer));
+		// Hack: loadIntoFile assumes paths relative to assets, otherwise it creates the whole structure *within* that folder
+		$absolutePath = $dataArchive->generateFilepath($dataTransfer);
+		$relativePath = preg_replace('#^' . preg_quote(ASSETS_PATH) . '/#', '', $absolutePath);
+		$this->upload->loadIntoFile($_FILES[$this->name], $file, $relativePath);
 		if($this->upload->isError()) return false;
+
+		$file = $this->upload->getFile();
+		if($this->relationAutoSetting) {
+			// save to record
+			$record->{$this->name . 'ID'} = $file->ID;
+		}
 
 		return $this;
 	}

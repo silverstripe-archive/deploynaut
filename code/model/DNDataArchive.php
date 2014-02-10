@@ -28,10 +28,10 @@ class DNDataArchive extends DataObject {
 
 	private static $db = array(
 		'UploadToken' => 'Varchar(8)',
-		'Mode' => "Enum('all, assets, db', '')",
 		'ArchiveFileHash' => 'Varchar(32)',
 		"Mode" => "Enum('all, assets, db', '')",
-		"IsBackup" => "Boolean"
+		"IsBackup" => "Boolean",
+		"IsManualUpload" => "Boolean",
 	);
 
 	private static $has_one = array(
