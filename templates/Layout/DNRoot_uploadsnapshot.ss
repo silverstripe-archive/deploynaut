@@ -16,17 +16,17 @@
 </ul>
 <% end_if %>
 
+<% if DataArchive %>
+    <h3>Successfully uploaded your snapshot</h3>
+    <p>Your snapshot has been saved in Deploynaut.</p>
+    <p>Please view the <a href="$BackURL">snapshots list</a> to restore this snapshot to an environment.</p>
+<% else %>
 <ul class="nav nav-pills switch-tabs">
     <li class="active"><a href="#tab1" data-toggle="tab">Upload Data Snapshot</a></li>
     <li class="join"><p>or</p></li>
     <li><a href="#tab2" data-toggle="tab">Request upload by post</a></li>
 </ul>
 
-<% if DataArchive %>
-    <h3>Successfully uploaded your snapshot</h3>
-    <p>Your snapshot has been saved in Deploynaut.</p>
-    <p>Please view the <a href="$BackURL">snapshots list</a> to restore this snapshot to an environment.</p>
-<% else %>
 <div class="tab-content">
 	<div class="tab-pane active" id="tab1">
 		<p>Choose a local snapshot file to transfer to deploynaut (up to $UploadLimit). See below how to create this file. Once uploaded, you can choose to restore this file into an actual environment.</p>
