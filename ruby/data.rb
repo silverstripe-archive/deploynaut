@@ -36,8 +36,6 @@ namespace :data do
 		Upload a database to the target server, and overwrite the existing database that exists.
 		Works with a normal .sql file, as well as a compress .sql.gz file.
 
-		TODO: No backups yet. (needs to run getdb prior to this so we have a copy of the db that can be restored in case of an error)
-
 		Example command: cap -f '/sites/deploynaut/www/assets/Capfile' project1:env1 data:pushdb -s data_path=/tmp/mydatabase.sql
 
 		Required arguments to the cap command:
@@ -88,8 +86,6 @@ namespace :data do
 
 	desc <<-DESC
 		Upload assets directory to the target server, into the target's shared path directory replacing the existing assets.
-
-		TODO: No backups yet. (needs to run getassets prior to this so we have a copy of the assets that can be restored in case of an error)
 
 		Example command: cap -f '/sites/deploynaut/www/assets/Capfile' project1:evn1 data:putdb -s data_path=/sites/mysite/www/assets
 
