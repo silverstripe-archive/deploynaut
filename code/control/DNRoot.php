@@ -234,7 +234,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		);
 		$action->addExtraClass('btn');
 		$form->disableSecurityToken();
-		$form->addExtraClass('form-fields-wide');
+		$form->addExtraClass('fields-wide');
 		// Tweak the action so it plays well with our fake URL structure.
 		$form->setFormAction($project->Link().'/UploadSnapshotForm');
 
@@ -315,7 +315,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		);
 		$action->addExtraClass('btn');
 		$form->disableSecurityToken();
-		$form->addExtraClass('form-fields-wide');
+		$form->addExtraClass('fields-wide');
 		// Tweak the action so it plays well with our fake URL structure.
 		$form->setFormAction($project->Link().'/PostSnapshotForm');
 
