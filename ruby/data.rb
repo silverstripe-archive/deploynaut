@@ -45,14 +45,15 @@ namespace :data do
 		begin
 			dump_command = ""
 			database_file = File.basename(data_path)
-			tmpdir = "/tmp/dbupload-" + Time.now.to_i.to_s
+			database_ext = File.extname(data_path)
+			tmpfile = "/tmp/dbupload-" + Time.now.to_i.to_s + database_file
 
-			upload(data_path, tmpdir, :via => :scp)
+			upload(data_path, tmpfile, :via => :scp)
 
-			if File.extname(data_path) == ".gz"
-				dump_command = "gunzip -c #{tmpdir}/#{database_file} | mysql --default-character-set=utf8 #{mysql_options} -p"
+			if database_ext == ".gz"
+				dump_command = "gunzip -c #{tmpfile} | mysql --default-character-set=utf8 #{mysql_options} -p"
 			else
-				dump_command = "mysql --default-character-set=utf8 #{mysql_options} -p < #{tmpdir}/#{database_file}"
+				dump_command = "mysql --default-character-set=utf8 #{mysql_options} -p < #{tmpfile}"
 			end
 
 			run dump_command do |channel, stream, data|
@@ -61,9 +62,9 @@ namespace :data do
 				end
 			end
 
-			run "rm -rf #{tmpdir}"
+			run "rm -rf #{tmpfile}"
 		rescue Exception => e
-			run "rm -rf #{tmpdir}"
+			run "rm -rf #{tmpfile}"
 			raise e
 		end
 	end
