@@ -43,6 +43,8 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 			$log->write($buffer);
 		});
 		if(!$command->isSuccessful()) {
+			// disable the maintenance page in the event of a failure
+			$this->disableMaintenance($environment, $log, $project);
 			throw new RuntimeException($command->getErrorOutput());
 		}
 
@@ -116,7 +118,15 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 
 			// put up a maintenance page during a restore of db or assets
 			$this->enableMaintenance($envName, $log, $project);
-			$this->dataTransferRestore($dataTransfer, $log);
+
+			try {
+				$this->dataTransferRestore($dataTransfer, $log);
+			} catch(RuntimeException $e) {
+				// disable the maintenance page in the event of an exception
+				$this->disableMaintenance($envName, $log, $project);
+				throw $e;
+			}
+
 			$this->disableMaintenance($envName, $log, $project);
 		}
 	}
