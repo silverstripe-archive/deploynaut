@@ -31,7 +31,7 @@ class DNEnvironmentTest extends SapphireTest {
 			'constructor' => array(
 				0 => $this->envPath,
 				1 => '/tmp/deploynaut_test/gitkeys',
-				2 => '/tmp/deploynaut_test/transfers',
+				2 => Director::baseFolder() . '/assets/transfers'
 			) 
 		));
 		

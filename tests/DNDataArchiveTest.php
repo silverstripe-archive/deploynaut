@@ -9,7 +9,7 @@ class DNDataArchiveTest extends SapphireTest {
 			'constructor' => array(
 				0 => $this->envPath,
 				1 => '/tmp/deploynaut_test/gitkeys',
-				1 => '/tmp/deploynaut_test/datatransfer',
+				2 => Director::baseFolder() . '/assets/transfers'
 			)
 		));
 
