@@ -842,7 +842,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		if(!$dataArchive->canRestore()) {
-			throw new LogicException('Not allowed to restore archive');
+			throw new SS_HTTPResponse_Exception('Not allowed to restore archive', 403);
 		}
 
 		$form = $this->getDataTransferRestoreForm($this->request, $dataArchive);
