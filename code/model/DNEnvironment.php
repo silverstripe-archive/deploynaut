@@ -230,6 +230,9 @@ class DNEnvironment extends DataObject {
 	 * @return boolean true if $member can upload archives linked to this environment, false if they can't.
 	 */
 	public function canUploadArchive($member = null) {
+		$project = $this->Project();
+		if($project->HasDiskQuota() && $project->HasExceededDiskQuota()) return false;
+
 		if(!$member) $member = Member::currentUser();
 		if(!$member) return false; // Must be logged in to check permissions
 
