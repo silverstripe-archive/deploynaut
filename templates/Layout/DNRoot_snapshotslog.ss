@@ -46,7 +46,7 @@
 						<% if $Status = 'Failed' %><span class="label label-important">Failed</span><% end_if %>
 						<% if $Status = 'n/a' %><span class="label label-inverse">n/a</span><% end_if %>
 						</td>
-						<td><a href="$LogLink">Details</a></td>
+						<td><% if $Origin != 'ManualUpload' %><a href="$LogLink">Details</a><% else %>-<% end_if %></td>
 					</tr>
 				<% end_loop %>
 			</tbody>
