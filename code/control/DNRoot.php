@@ -254,12 +254,14 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			throw new LogicException('Invalid environment');
 		}
 		$dataArchive = new DNDataArchive(array(
+			'AuthorID' => Member::currentUserID(),
 			'EnvironmentID' => $data['EnvironmentID'],
 			'IsManualUpload' => true,
 		));
 		// needs an ID and transfer to determine upload path
 		$dataArchive->write(); 
 		$dataTransfer = new DNDataTransfer(array(
+			'AuthorID' => Member::currentUserID(),
 			'Mode' => $data['Mode'],
 			'Origin' => 'ManualUpload',
 			'EnvironmentID' => $data['EnvironmentID']
