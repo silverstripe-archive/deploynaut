@@ -198,9 +198,12 @@ class DNDataTransfer extends DataObject {
 	public function getDescription() {
 		$envName = $this->Environment()->FullName;
 		if($this->Direction == 'get') {
-			$description = 'Backup ' . $this->getModeNice() . ' from ' . $envName;
-			if($this->IsBackupDataTransfer()) {
-				$description .= ' (automated)';
+			if($this->Origin == 'ManualUpload') {
+				$description = 'Manual upload of ' . $this->getModeNice() . ' to ' . $envName;
+			} elseif($this->IsBackupDataTransfer()) {
+				$description = 'Automated backup of ' . $this->getModeNice() . ' from ' . $envName;
+			} else {
+				$description = 'Backup of ' . $this->getModeNice() . ' to ' . $envName;
 			}
 		} else {
 			$description = 'Restore ' . $this->getModeNice() . ' to ' . $envName;
