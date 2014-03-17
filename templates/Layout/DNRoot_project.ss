@@ -5,9 +5,12 @@
 <% if $CurrentProject %>
 <ul class="nav nav-tabs">
 	<li<% if ProjectOverview %> class="active"<% end_if %>><a href="naut/project/$CurrentProject.Name">Deploy</a></li>
-	<li<% if SnapshotsSection %> class="active"<% end_if %>><a href="naut/project/$CurrentProject.Name/snapshots">Snapshots</a></li>
+	<% if $FlagSnapshotsEnabled %>
+		<li<% if SnapshotsSection %> class="active"<% end_if %>><a href="naut/project/$CurrentProject.Name/snapshots">Snapshots</a></li>
+	<% end_if %>
 </ul>
 <% end_if %>
+
 <% with Project %>
 <ul class="nav level-2">
 <% if DNEnvironmentList %>

@@ -6,7 +6,9 @@
 <% if $CurrentProject %>
 <ul class="nav nav-tabs">
 	<li class="active"><a href="naut/project/$CurrentProject.Name">Deploy</a></li>
-	<li><a href="naut/project/$CurrentProject.Name/snapshots">Snapshots</a></li>
+	<% if $FlagSnapshotsEnabled %>
+		<li><a href="naut/project/$CurrentProject.Name/snapshots">Snapshots</a></li>
+	<% end_if %>
 </ul>
 <% end_if %>
 <ul class="nav level-2">
