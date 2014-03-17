@@ -37,6 +37,7 @@ class DNData {
 	public function __construct($environmentDir, $keyDir, $dataTransferDir) {
 		$this->backend = Injector::inst()->get('DeploymentBackend');
 		$this->setEnvironmentDir($environmentDir);
+		$this->setKeyDir($keyDir);
 		$this->setDataTransferDir($dataTransferDir);
 	}
 
