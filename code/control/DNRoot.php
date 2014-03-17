@@ -25,7 +25,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'getUploadSnapshotForm',
 		'getPostSnapshotForm',
 		'getDataTransferRestoreForm',
+		'getDeleteForm',
 		'restoresnapshot',
+		'deletesnapshot',
 		'postsnapshotsuccess',
 	);
 
@@ -37,6 +39,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'project/$Project/createsnapshot/DataTransferForm' => 'getDataTransferForm',
 		'project/$Project/DataTransferForm' => 'getDataTransferForm',
 		'project/$Project/DataTransferRestoreForm' => 'getDataTransferRestoreForm',
+		'project/$Project/DeleteForm' => 'getDeleteForm',
 		'project/$Project/UploadSnapshotForm' => 'getUploadSnapshotForm',
 		'project/$Project/PostSnapshotForm' => 'getPostSnapshotForm',
 		'project/$Project/environment/$Environment/metrics' => 'metrics',
@@ -47,6 +50,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'project/$Project/environment/$Environment' => 'environment',
 		'project/$Project/build/$Build' => 'build',
 		'project/$Project/restoresnapshot/$DataArchiveID' => 'restoresnapshot',
+		'project/$Project/deletesnapshot/$DataArchiveID' => 'deletesnapshot',
 		'project/$Project/update' => 'update',
 		'project/$Project/snapshots' => 'snapshots',
 		'project/$Project/createsnapshot' => 'createsnapshot',
@@ -819,6 +823,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			new FieldList(
 				new HiddenField('DataArchiveID', false, $dataArchive->ID),
 				new HiddenField('Direction', false, 'push'),
+				new LiteralField('Warning', '<p class="text-warning"><strong>Warning:</strong> This restore will overwrite the data on the chosen environment below</p>'),
 				new DropdownField('EnvironmentID', 'Environment', $envs->map()),
 				new DropdownField('Mode', 'Transfer', $modesMap)
 			),
@@ -851,6 +856,79 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		// View currently only available via ajax
 		return $form->forTemplate();
+	}
+
+	/**
+	 * View a form to delete a specific {@link DataArchive}.
+	 * Permission checks are handled in {@link DataArchives()}.
+	 * Submissions are handled through {@link doDelete()}.
+	 */
+	public function deletesnapshot($request) {
+		$dataArchive = DNDataArchive::get()->byId($request->param('DataArchiveID'));
+		
+		if(!$dataArchive) {
+			throw new SS_HTTPResponse_Exception('Archive not found', 404);
+		}
+
+		if(!$dataArchive->canDelete()) {
+			throw new SS_HTTPResponse_Exception('Not allowed to delete archive', 403);
+		}
+
+		$form = $this->getDeleteForm($this->request, $dataArchive);
+
+		// View currently only available via ajax
+		return $form->forTemplate();
+	}
+
+	/**
+	 * @param  SS_HTTPRequest $request
+	 * @param  DNDataArchive $dataArchive Only set when method is called manually, otherwise the state is inferred from
+	 *	the request data.
+	 * @return Form
+	 */
+	public function getDeleteForm($request, $dataArchive = null) {
+		$dataArchive = $dataArchive ? $dataArchive : DNDataArchive::get()->byId($request->requestVar('DataArchiveID'));
+		$project = $this->getCurrentProject();
+
+		$form = new Form(
+			$this,
+			'DeleteForm',
+			new FieldList(
+				new HiddenField('DataArchiveID', false, $dataArchive->ID),
+				new LiteralField('Warning', '<p class="text-warning">Are you sure you want to permanently delete this snapshot from this archive area?</p>')
+			),
+			new FieldList(
+				FormAction::create('doDelete', 'Delete')->addExtraClass('btn')
+			)
+		);
+		$form->setFormAction($project->Link() . '/DeleteForm');
+
+		return $form;
+	}
+
+	public function doDelete($data, $form) {
+		$project = $this->getCurrentProject();
+		$member = Member::currentUser();
+		$dataArchive = null;
+
+		if(
+			isset($data['DataArchiveID'])
+			&& is_numeric($data['DataArchiveID'])
+		) {
+			$dataArchive = DNDataArchive::get()->byId($data['DataArchiveID']);
+		}
+
+		if(!$dataArchive) {
+			throw new LogicException('Invalid data archive');
+		}
+
+		if(!$dataArchive->canDelete()) {
+			throw new SS_HTTPResponse_Exception('Not allowed to delete archive', 403);
+		}
+
+		$dataArchive->delete();
+
+		$this->redirectBack();
 	}
 
 	/**

@@ -32,25 +32,33 @@ class DNDataArchiveTest extends SapphireTest {
 		// Samantha can upload to & download from project1:uat, but not project1:live
 		$this->assertTrue($project1->Environments()->filter('Name', 'uat')->First()->canUploadArchive($samantha));
 		$this->assertTrue($project1->Environments()->filter('Name', 'uat')->First()->canDownloadArchive($samantha));
+		$this->assertFalse($project1->Environments()->filter('Name', 'uat')->First()->canDeleteArchive($samantha));
 		$this->assertFalse($project1->Environments()->filter('Name', 'live')->First()->canUploadArchive($samantha));
 		$this->assertFalse($project1->Environments()->filter('Name', 'live')->First()->canDownloadArchive($samantha));
+		$this->assertFalse($project1->Environments()->filter('Name', 'live')->First()->canDeleteArchive($samantha));
 
 		// Sarah can upload to but not download from project1:uat, and can't do anything with project1:live
 		$this->assertTrue($project1->Environments()->filter('Name', 'uat')->First()->canUploadArchive($sarah));
 		$this->assertFalse($project1->Environments()->filter('Name', 'uat')->First()->canDownloadArchive($sarah));
+		$this->assertTrue($project1->Environments()->filter('Name', 'uat')->First()->canDeleteArchive($sarah));
 		$this->assertFalse($project1->Environments()->filter('Name', 'live')->First()->canUploadArchive($sarah));
 		$this->assertFalse($project1->Environments()->filter('Name', 'live')->First()->canDownloadArchive($sarah));
+		$this->assertFalse($project1->Environments()->filter('Name', 'live')->First()->canDeleteArchive($sarah));
 
 		// Neither Samantha nor Sarah can do anything with project2:uat or project2:live
 		$this->assertFalse($project2->Environments()->filter('Name', 'uat')->First()->canUploadArchive($samantha));
 		$this->assertFalse($project2->Environments()->filter('Name', 'uat')->First()->canDownloadArchive($samantha));
+		$this->assertFalse($project2->Environments()->filter('Name', 'uat')->First()->canDeleteArchive($samantha));
 		$this->assertFalse($project2->Environments()->filter('Name', 'live')->First()->canUploadArchive($samantha));
 		$this->assertFalse($project2->Environments()->filter('Name', 'live')->First()->canDownloadArchive($samantha));
+		$this->assertFalse($project2->Environments()->filter('Name', 'live')->First()->canDeleteArchive($samantha));
 
 		$this->assertFalse($project2->Environments()->filter('Name', 'uat')->First()->canUploadArchive($sarah));
 		$this->assertFalse($project2->Environments()->filter('Name', 'uat')->First()->canDownloadArchive($sarah));
+		$this->assertFalse($project2->Environments()->filter('Name', 'uat')->First()->canDeleteArchive($sarah));
 		$this->assertFalse($project2->Environments()->filter('Name', 'live')->First()->canUploadArchive($sarah));
 		$this->assertFalse($project2->Environments()->filter('Name', 'live')->First()->canDownloadArchive($sarah));
+		$this->assertFalse($project2->Environments()->filter('Name', 'live')->First()->canDeleteArchive($sarah));
 	}
 
 	public function testGenerateFilePath() {

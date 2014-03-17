@@ -79,6 +79,10 @@ class DNDataArchive extends DataObject {
 		parent::onBeforeWrite();
 	}
 
+	public function onAfterDelete() {
+		$this->ArchiveFile()->delete();
+	}
+
 	public function getCMSFields() {
 		$fields = parent::getCMSFields();
 		$fields->removeByName('EnvironmentID');
@@ -177,6 +181,16 @@ class DNDataArchive extends DataObject {
 	 */
 	public function canDownload($member = null) {
 		return $this->Environment()->canDownloadArchive($member);
+	}
+
+	/**
+	 * Whether a {@link Member} can delete this archive from staging area.
+	 *
+	 * @param Member|null $member The {@link Member} object to test against.
+	 * @return true if $member (or the currently logged in member if null) can delete this archive
+	 */
+	public function canDelete($member = null) {
+		return $this->Environment()->canDeleteArchive($member);
 	}
 
 	/**

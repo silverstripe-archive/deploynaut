@@ -113,7 +113,9 @@
 		 */
 		$('.extended-trigger').click(function(e) {
 			var $el = $($(this).data('extendedTarget')), $container = $($(this).data('extendedContainer'));
+
 			if($el.is(':empty')) {
+				$container.data('href', $(this).attr('href'));
 				$el.load($(this).attr('href'), function() {
 					$container.removeClass('loading');
 				});
@@ -122,6 +124,15 @@
 			} else {
 				$el.empty();
 				$container.hide();
+
+				// Re-enter the click handler if another button has been pressed, so the form re-opens.
+				if ($(this).attr('href')!==$container.data('href')) {
+					$container.data('href', null);
+					$(this).trigger('click');
+				} else {
+					$container.data('href', null);
+				}
+
 			}
 			
 			e.preventDefault();

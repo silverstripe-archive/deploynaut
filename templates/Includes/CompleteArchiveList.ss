@@ -26,24 +26,30 @@ If you would like to upload files from your computer to a new snapshot, click 'U
 						<td>$Environment.Name<% if $IsManualUpload %> (manual upload)<% end_if %></td>
 						<td>$ModeNice<% if $IsBackup %> (automated backup)<% end_if %></td>
 						<td>$FileSize</td>
-						<td class="action">
-							<% if $CanDownload && ArchiveFile %>
-							<a href="$ArchiveFile.Link">
-								Download
-							</a>
-							<% end_if %>
-						</td>
-						<td class="action">
-							<% if $Environment.canRestore && ArchiveFile %>
-							<a href="$Top.CurrentProject.Link/restoresnapshot/$ID" class="extended-trigger" data-extended-target="#archive-list-extended-$ID" data-extended-container="#archive-list-extended-container-$ID">
-								Restore
-							</a>
-							<% end_if %>
-						</td>
+						<% if $CanDelete && ArchiveFile %>
+							<td class="action">
+								<a href="$Top.CurrentProject.Link/deletesnapshot/$ID" class="extended-trigger" data-extended-target="#archive-list-extended-$ID" data-extended-container="#archive-list-extended-container-$ID">
+									Delete
+								</a>
+							</td>
+						<% end_if %>
+						<% if $CanDownload && ArchiveFile %>
+							<td class="action">
+								<a href="$ArchiveFile.Link">
+									Download
+								</a>
+							</td>
+						<% end_if %>
+						<% if $Environment.canRestore && ArchiveFile %>
+							<td class="action">
+								<a href="$Top.CurrentProject.Link/restoresnapshot/$ID" class="extended-trigger" data-extended-target="#archive-list-extended-$ID" data-extended-container="#archive-list-extended-container-$ID">
+									Restore
+								</a>
+							</td>
+						<% end_if %>
 					</tr>
-					<tr class="extended" id="archive-list-extended-container-$ID">
-						<td colspan="7">
-							<p class="text-warning"><strong>Warning:</strong> This restore will overwrite the data on the chosen environment below</p>
+					<tr class="extended archive-list-extended" id="archive-list-extended-container-$ID">
+						<td colspan="8">
 							<div id="archive-list-extended-$ID"></div>
 						</td>
 					</tr>

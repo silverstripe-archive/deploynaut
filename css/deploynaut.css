@@ -283,23 +283,29 @@ form.fields-wide .field label.left {
 }
 
 /* align restore snapshot form fields left */
-#Form_DataTransferRestoreForm fieldset {
+.archive-list-extended form fieldset {
 	display: block;
 }
-#Form_DataTransferRestoreForm .field {
+.archive-list-extended form .field {
 	display: inline-block;
 }
-#Form_DataTransferRestoreForm .Actions,
-#Form_DataTransferRestoreForm fieldset,
-#Form_DataTransferRestoreForm .middleColumn {
+.archive-list-extended form .Actions {
+	float: right;
+}
+.archive-list-extended form fieldset,
+.archive-list-extended form .middleColumn {
 	float: left;
 }
-#Form_DataTransferRestoreForm label {
+.archive-list-extended form .field label {
 	display: inline-block;
 	width: auto;
 }
-#Form_DataTransferRestoreForm .middleColumn {
+.archive-list-extended form .middleColumn {
 	margin: 0 20px;
+}
+
+#Form_DataTransferRestoreForm .Actions {
+	margin-top: 40px;
 }
 
 #Form_DeployForm .SelectionGroup {

@@ -63,7 +63,8 @@ class DNEnvironment extends DataObject {
 		"CanRestoreMembers"  => "Member", // Who can restore archive files to this environment
 		"CanBackupMembers"   => "Member", // Who can backup archive files from this environment
 		"ArchiveUploaders"   => "Member", // Who can upload archive files linked to this environment
-		"ArchiveDownloaders" => "Member"  // Who can download archive files from this environment
+		"ArchiveDownloaders" => "Member",  // Who can download archive files from this environment
+		"ArchiveDeleters" => "Member"  // Who can delete archive files from this environment
 	);
 
 	/**
@@ -77,7 +78,8 @@ class DNEnvironment extends DataObject {
 		"CanRestoreMembersList" => "Can Restore List",
 		"CanBackupMembersList" => "Can Backup List",
 		"ArchiveUploadersList" => "Can Upload List",
-		"ArchiveDownloadersList" => "Can Download List"
+		"ArchiveDownloadersList" => "Can Download List",
+		"ArchiveDeletersList" => "Can Delete List"
 	);
 
 	/**
@@ -258,6 +260,21 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
+	 * Allows only selected {@link Member} objects to delete {@link DNDataArchive} objects from this
+	 * {@link DNEnvironment}.
+	 *
+	 * @param Member|null $member The {@link Member} object to test against. If null, uses Member::currentMember();
+	 * @return boolean true if $member can delete archives from this environment, false if they can't.
+	 */
+	public function canDeleteArchive($member = null) {
+		if(!$member) $member = Member::currentUser();
+		if(!$member) return false; // Must be logged in to check permissions
+
+		if(Permission::checkMember($member, 'ADMIN')) return true;
+
+		return (bool)($this->ArchiveDeleters()->byID($member->ID));
+	}
+	/**
 	 * Get a string of people that are allowed to deploy to this environment.
 	 * Used in DNRoot_project.ss to list {@link Member}s who have permission to perform this action.
 	 *
@@ -301,6 +318,15 @@ class DNEnvironment extends DataObject {
 	 */
 	public function getArchiveDownloadersList() {
 		return implode(", ", $this->ArchiveDownloaders()->column("FirstName"));
+	}
+
+	/**
+	 * Get a string of people that are allowed to delete {@link DNDataArchive} objects from this environment.
+	 *
+	 * @return string
+	 */
+	public function getArchiveDeletersList() {
+		return implode(", ", $this->ArchiveDeleters()->column("FirstName"));
 	}
 
 	/**
@@ -461,6 +487,7 @@ class DNEnvironment extends DataObject {
 		$fields->fieldByName("Root")->removeByName("CanBackupMembers");
 		$fields->fieldByName("Root")->removeByName("ArchiveUploaders");
 		$fields->fieldByName("Root")->removeByName("ArchiveDownloaders");
+		$fields->fieldByName("Root")->removeByName("ArchiveDeleters");
 
 		// The Main.ProjectID
 		$projectField = $fields->fieldByName('Root.Main.ProjectID')->performReadonlyTransformation();
@@ -493,13 +520,20 @@ class DNEnvironment extends DataObject {
 		$canBackupMembers->setDescription('Users who can backup archives from this environment into Deploynaut');
 		$fields->insertAfter($canBackupMembers, 'CanRestoreMembers');
 
+		// The Main.ArchiveDeleters
+		$archiveDeleters = new CheckboxSetField('ArchiveDeleters', 'Who can delete?', $members);
+		$archiveDeleters->setDescription(
+			'Users who can delete archives from this environment\'s staging area.'
+		);
+		$fields->insertAfter($archiveDeleters, 'CanBackupMembers');
+
 		// The Main.ArchiveUploaders
 		$archiveUploaders = new CheckboxSetField('ArchiveUploaders', 'Who can upload?', $members);
 		$archiveUploaders->setDescription(
 			'Users who can upload archives linked to this environment into Deploynaut.<br>' .
 			'Linking them to an environment allows limiting download permissions (see below).'
 		);
-		$fields->insertAfter($archiveUploaders, 'CanBackupMembers');
+		$fields->insertAfter($archiveUploaders, 'ArchiveDeleters');
 
 		// The Main.ArchiveDownloaders
 		$archiveDownloaders = new CheckboxSetField('ArchiveDownloaders', 'Who can download?', $members);
@@ -508,6 +542,7 @@ class DNEnvironment extends DataObject {
 			'Should include all users with upload permissions, otherwise they can\'t download their own uploads.'
 		);
 		$fields->insertAfter($archiveDownloaders, 'ArchiveUploaders');
+
 
 		// The Main.DeployConfig
 		if($this->Project()->exists()) {

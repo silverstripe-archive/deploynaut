@@ -25,6 +25,7 @@ DNEnvironment:
     Project: =>DNProject.project1
     ArchiveUploaders: =>Member.project1-samantha,=>Member.project1-sarah
     ArchiveDownloaders: =>Member.project1-samantha
+    ArchiveDeleters: =>Member.project1-sarah
   project1-live:
     Name: live
     Project: =>DNProject.project1
