@@ -115,6 +115,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return string - HTML
 	 */
 	public function projects(SS_HTTPRequest $request) {
+		// Performs canView permission check by limiting visible projects in DNProjectsList() call.
 		return $this->customise(array(
 			'Title' => 'Projects',
 			'CurrentProject' => $this->getCurrentProject(),
@@ -127,11 +128,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return string - HTML
 	 */
 	public function snapshots(SS_HTTPRequest $request) {
-		// Performs permission check by limiting visible projects
+		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
 			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
 		}
+
 		return $this->customise(array(
 			'Title' => 'Data Snapshots',
 			'Project' => $project,
@@ -146,7 +148,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return string - HTML
 	 */
 	public function createsnapshot(SS_HTTPRequest $request) {
-		// Performs permission check by limiting visible projects
+		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
 			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
@@ -171,14 +173,14 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return string - HTML
 	 */
 	public function uploadsnapshot(SS_HTTPRequest $request) {
-		// Performs permission check by limiting visible projects
+		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
 			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
 		}
 
 		if(!$project->canUploadArchive()) {
-			return new SS_HTTPResponse("Not allowed to upload", 401);	
+			return new SS_HTTPResponse("Not allowed to upload", 401);
 		}
 
 		return $this->customise(array(
@@ -201,8 +203,15 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return Form
 	 */
 	public function getUploadSnapshotForm(SS_HTTPRequest $request) {
-		// Performs permission check by limiting visible projects
+		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
+		if(!$project) {
+			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
+		}
+
+		if(!$project->canUploadArchive()) {
+			return new SS_HTTPResponse("Not allowed to upload", 401);
+		}
 
 		// Framing an environment as a "group of people with download access"
 		// makes more sense to the user here, while still allowing us to enforce
@@ -246,9 +255,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	public function doUploadSnapshot($data, $form) {
+		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
-			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
+			return new SS_HTTPResponse("Project '" . $this->getRequest()->latestParam('Project') . "' not found.", 404);
 		}
 
 		$validEnvs = $project->DNEnvironmentList()
@@ -290,8 +300,15 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return Form
 	 */
 	public function getPostSnapshotForm(SS_HTTPRequest $request) {
-		// Performs permission check by limiting visible projects
+		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
+		if(!$project) {
+			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
+		}
+
+		if(!$project->canUploadArchive()) {
+			return new SS_HTTPResponse("Not allowed to upload", 401);
+		}
 
 		// Framing an environment as a "group of people with download access"
 		// makes more sense to the user here, while still allowing us to enforce
@@ -331,7 +348,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	public function doPostSnapshot($data, $form) {
 		$project = $this->getCurrentProject();
 		if(!$project) {
-			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
+			return new SS_HTTPResponse("Project '" . $this->getRequest()->latestParam('Project') . "' not found.", 404);
 		}
 
 		$validEnvs = $project->DNEnvironmentList()
@@ -360,11 +377,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return string - HTML
 	 */
 	public function snapshotslog(SS_HTTPRequest $request) {
-		// Performs permission check by limiting visible projects
+		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
 			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
 		}
+
 		return $this->customise(array(
 			'Title' => 'Data Snapshots Log',
 			'Project' => $project,
@@ -377,7 +395,15 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @param  SS_HTTPRequest $request [description]
 	 */
 	public function postsnapshotsuccess(SS_HTTPRequest $request) {
+		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
+		if(!$project) {
+			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
+		}
+
+		if(!$project->canUploadArchive()) {
+			return new SS_HTTPResponse("Not allowed to upload", 401);
+		}
 
 		$dataArchive = DNDataArchive::get()->byId($request->param('DataArchiveID'));
 		if(!$dataArchive) {
@@ -400,11 +426,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return \SS_HTTPResponse
 	 */
 	public function project(SS_HTTPRequest $request) {
-		// Performs permission check by limiting visible projects
+		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
 			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
 		}
+
 		return $this->customise(array(
 			'Project' => $project,
 			'CurrentProject' => $project,
@@ -419,12 +446,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return \SS_HTTPResponse
 	 */
 	public function environment(SS_HTTPRequest $request) {
-		// Performs permission check by limiting visible projects
+		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
 			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
 		}
 
+		// Performs canView permission check by limiting visible projects
 		$env = $this->getCurrentEnvironment($project);
 		if(!$env) {
 			return new SS_HTTPResponse("Environment '" . $request->latestParam('Environment') . "' not found.", 404);
@@ -444,12 +472,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return \SS_HTTPResponse
 	 */
 	public function metrics($request) {
-		// Performs permission check by limiting visible projects
+		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
 			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
 		}
 
+		// Performs canView permission check by limiting visible projects
 		$env = $this->getCurrentEnvironment($project);
 		if(!$env) {
 			return new SS_HTTPResponse("Environment '" . $request->latestParam('Environment') . "' not found.", 404);
@@ -488,12 +517,20 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return Form
 	 */
 	public function getDeployForm(SS_HTTPRequest $request) {
-		// Performs permission check by limiting visible projects
+		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
+		if(!$project) {
+			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
+		}
+
+		// Performs canView permission check by limiting visible projects
 		$environment = $this->getCurrentEnvironment($project);
+		if(!$environment) {
+			return new SS_HTTPResponse("Environment '" . $request->latestParam('Environment') . "' not found.", 404);
+		}
 
 		if(!$environment->canDeploy()) {
-			return null;
+			return new SS_HTTPResponse("Not allowed to deploy", 401);
 		}
 		
 		if(!$project->repoExists()) {
@@ -588,8 +625,19 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		} else {
 			throw new LogicException("Bad release selection method '{$data['SelectRelease']}'");
 		}
+
+		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
+		if(!$project) {
+			return new SS_HTTPResponse("Project '" . $this->getRequest()->latestParam('Project') . "' not found.", 404);
+		}
+
+		// Performs canView permission check by limiting visible projects
 		$environment = $this->getCurrentEnvironment($project);
+		if(!$environment) {
+			return new SS_HTTPResponse("Environment '" . $this->getRequest()->latestParam('Environment') . "' not found.", 404);
+		}
+
 		$sha = $project->DNBuildList()->byName($buildName);
 
 		$deployment = new DNDeployment;
@@ -672,8 +720,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return Form
 	 */
 	public function getDataTransferForm($request) {
+		// Performs canView permission check by limiting visible projects
 		$envs = $this->getCurrentProject()->DNEnvironmentList()
 			->filterByCallback(function($item) {return $item->canBackup();});
+		if(!$envs) {
+			return new SS_HTTPResponse("Environment '" . $request->latestParam('Environment') . "' not found.", 404);
+		}
 
 		$form = new Form(
 			$this,
@@ -693,7 +745,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	public function doDataTransfer($data, $form) {
+		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
+		if(!$project) {
+			return new SS_HTTPResponse("Project '" . $this->getRequest()->latestParam('Project') . "' not found.", 404);
+		}
+
 		$member = Member::currentUser();
 		$dataArchive = null;
 		$validEnvs = $this->getCurrentProject()->DNEnvironmentList()
@@ -802,9 +859,14 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function getDataTransferRestoreForm($request, $dataArchive = null) {
 		$dataArchive = $dataArchive ? $dataArchive : DNDataArchive::get()->byId($request->requestVar('DataArchiveID'));
+
+		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		$envs = $project->DNEnvironmentList()
 			->filterByCallback(function($item) {return $item->canRestore();});
+		if(!$envs) {
+			return new SS_HTTPResponse("Environment '" . $request->latestParam('Environment') . "' not found.", 404);
+		}
 
 		$modesMap = array();
 		if(in_array($dataArchive->Mode, array('all'))) {
@@ -888,7 +950,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function getDeleteForm($request, $dataArchive = null) {
 		$dataArchive = $dataArchive ? $dataArchive : DNDataArchive::get()->byId($request->requestVar('DataArchiveID'));
+
+		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
+		if(!$project) {
+			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
+		}
 
 		$form = new Form(
 			$this,
@@ -907,7 +974,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	public function doDelete($data, $form) {
+		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
+		if(!$project) {
+			return new SS_HTTPResponse("Project '" . $this->getRequest()->latestParam('Project') . "' not found.", 404);
+		}
+
 		$member = Member::currentUser();
 		$dataArchive = null;
 
