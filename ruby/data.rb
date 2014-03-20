@@ -95,12 +95,20 @@ namespace :data do
 	DESC
 	task :pushassets do
 		begin
-			run "rm -rf #{shared_path}/assets"
+			# Files under assets are writable by www-data (either owned, or through g+w).
+			run "sudo -u www-data rm -rf #{shared_path}/assets/*"
+			# ... directory though is owned by the ssh user, with chmod 775
+			run "rmdir #{shared_path}/assets"
 
 			upload(data_path, shared_path, :recursive => true, :via => :scp) do |channel, name, sent, total|
 				# TODO Less noisy progress indication
 				#puts name
 			end
+
+			# We cannot give the files to www-data without being root, so we set the group write permission instead.
+			# Also makes the assets directory 775 again.
+			run "chmod g+w -R #{shared_path}/assets"
+
 		rescue Exception => e
 			raise e
 		end
