@@ -263,10 +263,18 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		$validEnvs = $project->DNEnvironmentList()
 			->filterByCallback(function($item) {return $item->canUploadArchive();});
+
+		// Validate $data['EnvironmentID'] by checking against $validEnvs.
 		$environment = $validEnvs->find('ID', $data['EnvironmentID']);
 		if(!$environment) {
 			throw new LogicException('Invalid environment');
 		}
+
+		// Validate mode.
+		if (!in_array($data['Mode'], array('all', 'assets', 'db'))) {
+			throw new LogicException('Invalid mode');
+		}
+
 		$dataArchive = new DNDataArchive(array(
 			'AuthorID' => Member::currentUserID(),
 			'EnvironmentID' => $data['EnvironmentID'],
@@ -353,6 +361,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		$validEnvs = $project->DNEnvironmentList()
 			->filterByCallback(function($item) {return $item->canUploadArchive();});
+
+		// Validate $data['EnvironmentID'] by checking against $validEnvs.
 		$environment = $validEnvs->find('ID', $data['EnvironmentID']);
 		if(!$environment) {
 			throw new LogicException('Invalid environment');
@@ -623,7 +633,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		if(in_array($data['SelectRelease'], array('Tag','Branch','Redeploy','SHA'))) {
 			$buildName = $data[$data['SelectRelease']];
 		} else {
-			throw new LogicException("Bad release selection method '{$data['SelectRelease']}'");
+			throw new LogicException("Bad release selection method " . Convert::raw2xml($data['SelectRelease']));
+		}
+
+		if (!preg_match('/^[a-f0-9]{40}$/', $buildName)) {
+			throw new LogicException("Bad commit SHA");
 		}
 
 		// Performs canView permission check by limiting visible projects
@@ -753,12 +767,27 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		$member = Member::currentUser();
 		$dataArchive = null;
-		$validEnvs = $this->getCurrentProject()->DNEnvironmentList()
-			->filterByCallback(function($item) {return $item->canBackup();});
 
+		// Validate direction.
+		if ($data['Direction']=='get') {
+			$validEnvs = $this->getCurrentProject()->DNEnvironmentList()
+				->filterByCallback(function($item) {return $item->canBackup();});
+		} else if ($data['Direction']=='push') {
+			$validEnvs = $this->getCurrentProject()->DNEnvironmentList()
+				->filterByCallback(function($item) {return $item->canRestore();});
+		} else {
+			throw new LogicException('Invalid direction');
+		}
+
+		// Validate $data['EnvironmentID'] by checking against $validEnvs.
 		$environment = $validEnvs->find('ID', $data['EnvironmentID']);
 		if(!$environment) {
 			throw new LogicException('Invalid environment');
+		}
+
+		// Validate mode.
+		if (!in_array($data['Mode'], array('all', 'assets', 'db'))) {
+			throw new LogicException('Invalid mode');
 		}
 
 		// Only 'push' direction is allowed an association with an existing archive.
