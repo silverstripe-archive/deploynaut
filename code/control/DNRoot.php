@@ -420,6 +420,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return new SS_HTTPResponse("Archive not found.", 404);
 		}
 
+		if(!$dataArchive->canRestore()) {
+			throw new SS_HTTPResponse_Exception('Not allowed to restore archive', 403);
+		}
+
 		return $this->customise(array(
 			'Title' => 'How to send us your Data Snapshot by post',
 			'Project' => $project,
@@ -800,6 +804,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			if(!$dataArchive) {
 				throw new LogicException('Invalid data archive');
 			}
+
+			if(!$dataArchive->canRestore()) {
+				throw new SS_HTTPResponse_Exception('Not allowed to restore archive', 403);
+			}
 		}
 
 		$job = new DNDataTransfer;
@@ -893,6 +901,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$project = $this->getCurrentProject();
 		$envs = $project->DNEnvironmentList()
 			->filterByCallback(function($item) {return $item->canRestore();});
+
 		if(!$envs) {
 			return new SS_HTTPResponse("Environment '" . Convert::raw2xml($request->latestParam('Environment')) . "' not found.", 404);
 		}
