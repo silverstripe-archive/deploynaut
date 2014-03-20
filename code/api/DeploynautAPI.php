@@ -54,7 +54,7 @@ class DeploynautAPI extends Controller {
 	public function project(SS_HTTPRequest $request) {
 		$project = $this->getProject();
 		if(!$project) {
-			return new SS_HTTPResponse('Project "' . $request->latestParam('Project') . '" not found.', 404);
+			return new SS_HTTPResponse('Project "' . Convert::raw2xml($request->latestParam('Project')) . '" not found.', 404);
 		}
 		return new APIProject($this, $project);
 	}
@@ -68,12 +68,12 @@ class DeploynautAPI extends Controller {
 	public function environment(SS_HTTPRequest $request) {
 		$project = $this->getProject();
 		if(!$project) {
-			return new SS_HTTPResponse('Project "' . $request->latestParam('Project') . '" not found.', 404);
+			return new SS_HTTPResponse('Project "' . Convert::raw2xml($request->latestParam('Project')) . '" not found.', 404);
 		}
 		
 		$environment = $this->getEnvironment();
 		if(!$environment) {
-			return new SS_HTTPResponse('Environment "' . $request->latestParam('Environment') . '" not found.', 404);
+			return new SS_HTTPResponse('Environment "' . Convert::raw2xml($request->latestParam('Environment')) . '" not found.', 404);
 		}
 		return new APIEnvironment($this, $environment);
 	}
