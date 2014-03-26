@@ -7,7 +7,10 @@ namespace :maintenance do
 		TODO: Only supports Apache. Doesn't work with nginx... yet.
 	DESC
 	task :enable do
-		on_rollback { run "mv #{current_path}/.htaccess_original #{current_path}/.htaccess; true" }
+		on_rollback {
+			run "if [ -f #{current_path}/.htaccess_original ]; then mv #{current_path}/.htaccess_original #{current_path}/.htaccess; fi"
+			run "if [ -f #{current_path}/maintenance.html ]; then rm #{current_path}/maintenance.html; fi"
+		}
 
 		run "mv #{current_path}/.htaccess #{current_path}/.htaccess_original; true"
 
@@ -29,11 +32,12 @@ namespace :maintenance do
 	end
 
 	desc <<-DESC
-		Disables an existing maintenance page on the deploy target.
+		Disables maintenance page on the deploy target. Safe to run even if maintenance page has never been enabled.
 	DESC
 	task :disable do
-		run "mv #{current_path}/.htaccess_original #{current_path}/.htaccess; true"
-		run "rm #{current_path}/maintenance.html; true"
+		# If deployment has been successful the new release is in place, and the maintenance screen is already gone.
+		run "if [ -f #{current_path}/.htaccess_original ]; then mv #{current_path}/.htaccess_original #{current_path}/.htaccess; fi"
+		run "if [ -f #{current_path}/maintenance.html ]; then rm #{current_path}/maintenance.html; fi"
 	end
 end
 
