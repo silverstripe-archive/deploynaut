@@ -3,7 +3,7 @@
 (function($) {
 	"use strict";
 
-	var deploy = {
+	var queue = {
 		showlog: function($status, $content, logLink) {
 			var self = this;
 			$.getJSON(logLink, {randval: Math.random()},
@@ -26,15 +26,15 @@
 		 */
 		_setupPinging: function() {
 			var self = this;
-			window._deploy_refresh = window.setInterval(function() {
-				self.showlog($("#deploy_action"), $("#deploy_log"), $('#deploy_log').data('loglink'));
+			window._queue_refresh = window.setInterval(function() {
+				self.showlog($("#queue_action"), $("#queue_log"), $('#queue_log').data('loglink'));
 			}, 3000);
 		},
 		/**
 		 * Will remove the pinging and refresh of the application list
 		 */
 		_clearInterval: function() {
-			window.clearInterval(window._deploy_refresh);
+			window.clearInterval(window._queue_refresh);
 		}
 	};
 
@@ -57,8 +57,8 @@
 		});
 
 		// Deployment screen
-		if ($('#deploy_log').length) {
-			deploy.start();
+		if ($('#queue_log').length) {
+			queue.start();
 		}
 
 		$('.project-branch > h3').click(function() {
@@ -107,5 +107,45 @@
 			placement: "top",
 			trigger: 'hover'
 		});
+
+		/**
+		 * Extend a specific target
+		 */
+		$('.extended-trigger').click(function(e) {
+			var $el = $($(this).data('extendedTarget')), $container = $($(this).data('extendedContainer'));
+
+			if($el.is(':empty')) {
+				$container.data('href', $(this).attr('href'));
+				$el.load($(this).attr('href'), function() {
+					$container.removeClass('loading');
+				});
+				$container.addClass('loading');
+				$container.show();
+			} else {
+				$el.empty();
+				$container.hide();
+
+				// Re-enter the click handler if another button has been pressed, so the form re-opens.
+				if ($(this).attr('href')!==$container.data('href')) {
+					$container.data('href', null);
+					$(this).trigger('click');
+				} else {
+					$container.data('href', null);
+				}
+
+			}
+			
+			e.preventDefault();
+		});
+
+		$('.table-data-archives').on('click', ':input[name=action_doDataTransfer]', function(e) {
+			var form = $(this).closest('form'),
+				envVal = form.find("select[name=EnvironmentID]").val(),
+				envLabel = form.find("select[name=EnvironmentID] option[value=\"" + envVal + '"]').text(),
+				msg = 'Are you sure you want to restore data onto environment ' + envLabel + '?';
+
+			if(!confirm(msg)) e.preventDefault();
+		});
+
 	});
 }(jQuery));

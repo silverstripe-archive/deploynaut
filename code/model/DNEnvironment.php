@@ -3,8 +3,8 @@
 /**
  * DNEnvironment
  *
- * This dataobject represents a target environment that source code can be
- * deployed to.
+ * This dataobject represents a target environment that source code can be deployed to.
+ * Permissions are controlled by environment, see the various many-many relationships.
  *
  */
 class DNEnvironment extends DataObject {
@@ -50,8 +50,21 @@ class DNEnvironment extends DataObject {
 	 *
 	 * @var array
 	 */
+	public static $has_many = array(
+		"DataArchives" => "DNDataArchive",
+	);
+
+	/**
+	 *
+	 * @var array
+	 */
 	public static $many_many = array(
-		"Deployers" => "Member",
+		"Deployers"          => "Member", // Who can deploy to this environment
+		"CanRestoreMembers"  => "Member", // Who can restore archive files to this environment
+		"CanBackupMembers"   => "Member", // Who can backup archive files from this environment
+		"ArchiveUploaders"   => "Member", // Who can upload archive files linked to this environment
+		"ArchiveDownloaders" => "Member",  // Who can download archive files from this environment
+		"ArchiveDeleters" => "Member"  // Who can delete archive files from this environment
 	);
 
 	/**
@@ -59,9 +72,14 @@ class DNEnvironment extends DataObject {
 	 * @var array
 	 */
 	public static $summary_fields = array(
-		"Name",
-		"URL",
-		"DeployersList",
+		"Name" => "Environment Name",
+		"URL" => "URL",
+		"DeployersList" => "Can Deploy List",
+		"CanRestoreMembersList" => "Can Restore List",
+		"CanBackupMembersList" => "Can Backup List",
+		"ArchiveUploadersList" => "Can Upload List",
+		"ArchiveDownloadersList" => "Can Download List",
+		"ArchiveDeletersList" => "Can Delete List"
 	);
 
 	/**
@@ -125,6 +143,13 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
+	 * @return string
+	 */
+	public function getFullName() {
+		return $this->Project()->Name . ':' . $this->Name;
+	}
+
+	/**
 	 *
 	 * @return DNProject
 	 */
@@ -153,17 +178,155 @@ class DNEnvironment extends DataObject {
 	 */
 	public function canDeploy($member = null) {
 		if(!$member) $member = Member::currentUser();
+		if(!$member) return false; // Must be logged in to check permissions
+
+		if(Permission::checkMember($member, 'ADMIN')) return true;
 
 		return (bool)($this->Deployers()->byID($member->ID));
 	}
 
 	/**
-	 * Get a string of people that are allowed to deploy to this environment
+	 * Allows only selected {@link Member} objects to restore {@link DNDataArchive} objects into this
+	 * {@link DNEnvironment}.
+	 *
+	 * @param Member|null $member The {@link Member} object to test against. If null, uses Member::currentMember();
+	 * @return boolean true if $member can restore, and false if they can't.
+	 */
+	public function canRestore($member = null) {
+		if(!$member) $member = Member::currentUser();
+		if(!$member) return false; // Must be logged in to check permissions
+
+		if(Permission::checkMember($member, 'ADMIN')) return true;
+
+		return (bool)($this->CanRestoreMembers()->byID($member->ID));
+	}
+
+	/**
+	 * Allows only selected {@link Member} objects to backup this {@link DNEnvironment} to a {@link DNDataArchive}
+	 * file.
+	 *
+	 * @param Member|null $member The {@link Member} object to test against. If null, uses Member::currentMember();
+	 * @return boolean true if $member can backup, and false if they can't.
+	 */
+	public function canBackup($member = null) {
+		$project = $this->Project();
+		if($project->HasDiskQuota() && $project->HasExceededDiskQuota()) return false;
+
+		if(!$member) $member = Member::currentUser();
+		if(!$member) return false; // Must be logged in to check permissions
+
+		if(Permission::checkMember($member, 'ADMIN')) return true;
+
+		return (bool)($this->CanBackupMembers()->byID($member->ID));
+	}
+
+	/**
+	 * Allows only selected {@link Member} objects to upload {@link DNDataArchive} objects linked to this
+	 * {@link DNEnvironment}.
+	 *
+	 * Note: This is not uploading them to the actual environment itself (e.g. uploading to the live site) - it is the
+	 * process of uploading a *.sspak file into Deploynaut for later 'restoring' to an environment. See
+	 * {@link self::canRestore()}.
+	 *
+	 * @param Member|null $member The {@link Member} object to test against. If null, uses Member::currentMember();
+	 * @return boolean true if $member can upload archives linked to this environment, false if they can't.
+	 */
+	public function canUploadArchive($member = null) {
+		$project = $this->Project();
+		if($project->HasDiskQuota() && $project->HasExceededDiskQuota()) return false;
+
+		if(!$member) $member = Member::currentUser();
+		if(!$member) return false; // Must be logged in to check permissions
+
+		if(Permission::checkMember($member, 'ADMIN')) return true;
+
+		return (bool)($this->ArchiveUploaders()->byID($member->ID));
+	}
+
+	/**
+	 * Allows only selected {@link Member} objects to download {@link DNDataArchive} objects from this
+	 * {@link DNEnvironment}.
+	 *
+	 * @param Member|null $member The {@link Member} object to test against. If null, uses Member::currentMember();
+	 * @return boolean true if $member can download archives from this environment, false if they can't.
+	 */
+	public function canDownloadArchive($member = null) {
+		if(!$member) $member = Member::currentUser();
+		if(!$member) return false; // Must be logged in to check permissions
+
+		if(Permission::checkMember($member, 'ADMIN')) return true;
+
+		return (bool)($this->ArchiveDownloaders()->byID($member->ID));
+	}
+
+	/**
+	 * Allows only selected {@link Member} objects to delete {@link DNDataArchive} objects from this
+	 * {@link DNEnvironment}.
+	 *
+	 * @param Member|null $member The {@link Member} object to test against. If null, uses Member::currentMember();
+	 * @return boolean true if $member can delete archives from this environment, false if they can't.
+	 */
+	public function canDeleteArchive($member = null) {
+		if(!$member) $member = Member::currentUser();
+		if(!$member) return false; // Must be logged in to check permissions
+
+		if(Permission::checkMember($member, 'ADMIN')) return true;
+
+		return (bool)($this->ArchiveDeleters()->byID($member->ID));
+	}
+	/**
+	 * Get a string of people that are allowed to deploy to this environment.
+	 * Used in DNRoot_project.ss to list {@link Member}s who have permission to perform this action.
 	 *
 	 * @return string
 	 */
 	public function getDeployersList() {
 		return implode(", ", $this->Deployers()->column("FirstName"));
+	}
+
+	/**
+	 * Get a string of people that are allowed to restore {@link DNDataArchive} objects into this environment.
+	 *
+	 * @return string
+	 */
+	public function getCanRestoreMembersList() {
+		return implode(", ", $this->CanRestoreMembers()->column("FirstName"));
+	}
+
+	/**
+	 * Get a string of people that are allowed to backup {@link DNDataArchive} objects from this environment.
+	 *
+	 * @return string
+	 */
+	public function getCanBackupMembersList() {
+		return implode(", ", $this->CanBackupMembers()->column("FirstName"));
+	}
+
+	/**
+	 * Get a string of people that are allowed to upload {@link DNDataArchive} objects linked to this environment.
+	 *
+	 * @return string
+	 */
+	public function getArchiveUploadersList() {
+		return implode(", ", $this->ArchiveUploaders()->column("FirstName"));
+	}
+
+	/**
+	 * Get a string of people that are allowed to download {@link DNDataArchive} objects from this environment.
+	 *
+	 * @return string
+	 */
+	public function getArchiveDownloadersList() {
+		return implode(", ", $this->ArchiveDownloaders()->column("FirstName"));
+	}
+
+	/**
+	 * Get a string of people that are allowed to delete {@link DNDataArchive} objects from this environment.
+	 *
+	 * @return string
+	 */
+	public function getArchiveDeletersList() {
+		return implode(", ", $this->ArchiveDeleters()->column("FirstName"));
 	}
 
 	/**
@@ -320,6 +483,11 @@ class DNEnvironment extends DataObject {
 		asort($members);
 
 		$fields->fieldByName("Root")->removeByName("Deployers");
+		$fields->fieldByName("Root")->removeByName("CanRestoreMembers");
+		$fields->fieldByName("Root")->removeByName("CanBackupMembers");
+		$fields->fieldByName("Root")->removeByName("ArchiveUploaders");
+		$fields->fieldByName("Root")->removeByName("ArchiveDownloaders");
+		$fields->fieldByName("Root")->removeByName("ArchiveDeleters");
 
 		// The Main.ProjectID
 		$projectField = $fields->fieldByName('Root.Main.ProjectID')->performReadonlyTransformation();
@@ -338,9 +506,43 @@ class DNEnvironment extends DataObject {
 		$fields->insertAfter($fileNameField, 'Name');
 		
 		// The Main.Deployers
-		$deployers = new CheckboxSetField("Deployers", "Deployers", $members);
+		$deployers = new CheckboxSetField("Deployers", "Who can deploy?", $members);
 		$deployers->setDescription('Users who can deploy to this environment');
 		$fields->insertAfter($deployers, 'URL');
+
+		// The Main.CanRestoreMembers
+		$canRestoreMembers = new CheckboxSetField('CanRestoreMembers', 'Who can restore?', $members);
+		$canRestoreMembers->setDescription('Users who can restore archives from Deploynaut into this environment');
+		$fields->insertAfter($canRestoreMembers, 'Deployers');
+
+		// The Main.CanBackupMembers
+		$canBackupMembers = new CheckboxSetField('CanBackupMembers', 'Who can backup?', $members);
+		$canBackupMembers->setDescription('Users who can backup archives from this environment into Deploynaut');
+		$fields->insertAfter($canBackupMembers, 'CanRestoreMembers');
+
+		// The Main.ArchiveDeleters
+		$archiveDeleters = new CheckboxSetField('ArchiveDeleters', 'Who can delete?', $members);
+		$archiveDeleters->setDescription(
+			'Users who can delete archives from this environment\'s staging area.'
+		);
+		$fields->insertAfter($archiveDeleters, 'CanBackupMembers');
+
+		// The Main.ArchiveUploaders
+		$archiveUploaders = new CheckboxSetField('ArchiveUploaders', 'Who can upload?', $members);
+		$archiveUploaders->setDescription(
+			'Users who can upload archives linked to this environment into Deploynaut.<br>' .
+			'Linking them to an environment allows limiting download permissions (see below).'
+		);
+		$fields->insertAfter($archiveUploaders, 'ArchiveDeleters');
+
+		// The Main.ArchiveDownloaders
+		$archiveDownloaders = new CheckboxSetField('ArchiveDownloaders', 'Who can download?', $members);
+		$archiveDownloaders->setDescription(
+			'Users who can download archives from this environment to their computer.<br>' .
+			'Should include all users with upload permissions, otherwise they can\'t download their own uploads.'
+		);
+		$fields->insertAfter($archiveDownloaders, 'ArchiveUploaders');
+
 
 		// The Main.DeployConfig
 		if($this->Project()->exists()) {
@@ -386,7 +588,7 @@ class DNEnvironment extends DataObject {
 		if($this->envFileExists()) {
 			$deployConfig = new TextareaField('DeployConfig', 'Deploy config', $this->getEnvironmentConfig());
 			$deployConfig->setRows(40);
-			$fields->insertAfter($deployConfig, 'Deployers');
+			$fields->insertAfter($deployConfig, 'ArchiveDownloaders');
 			return;
 		}
 			
@@ -405,6 +607,12 @@ class DNEnvironment extends DataObject {
 		parent::onBeforeWrite();
 		if($this->Name && $this->Name.'.rb' != $this->Filename) {
 			$this->Filename = $this->Name.'.rb';
+		}
+
+		// Create folder if it doesn't exist
+		$configDir = dirname($this->getConfigFilename());
+		if(!file_exists($configDir) && $configDir) {
+			mkdir($configDir, 0777, true);
 		}
 		
 		// Create a basic new environment config from a template

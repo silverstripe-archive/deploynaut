@@ -3,8 +3,8 @@
 <div>Deploying <em>$SHA</em></div>
 
 <h5>Status:</h5>
-<pre id="deploy_action" class="$ResqueStatus">$ResqueStatus</pre>
+<pre id="queue_action" class="$ResqueStatus">$ResqueStatus</pre>
 
 <h5>Deploy log:</h5>
-<pre id="deploy_log" data-loglink="$LogLink">$LogContent</pre>
+<pre id="queue_log" data-loglink="$LogLink">$LogContent</pre>
 <% end_with %>

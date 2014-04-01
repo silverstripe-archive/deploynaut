@@ -4,15 +4,40 @@ The deploynaut is a blend of a SS Website and [Capistrano](https://github.com/ca
 
 Originally it has been written to support the deployments of Rails applications. We reuse a lot of the original code, but some of it has to be customised to fit with our infrastructure.
 
+## System Requirements
+
+You'll need a few system tools on the Deploynaut host to get started:
+
+ * git
+ * tar
+ * [SSPak](http://sminnee.github.io/sspak/) (see below)
+   * Until changes are merged back, you'll want [halkyon's branch](https://github.com/halkyon/sspak/tree/existing_save)
+
+We also assume that each Deploynaut target has the following tools installed
+and available in the user's `$PATH`:
+
+ * tar
+ * gunzip
+ * php
+ * mysqldump
+
 ## Capistrano Installation
 
-Capistrano is written in ruby, and often deployed as a ruby gem. So the first requirement is to Installing it system wide (without supporting ri and docs) is done by:
+Capistrano is written in ruby, and often deployed as a ruby gem. So the first requirement is to install it system wide (without supporting ri and docs):
 
 	$ sudo gem install capistrano --no-ri --no-rdoc --verbose -v 2.15.5
 
 Our implementation relies on capistrano-multiconfig extension which provides us with the ability to have multiple projects, each with serveral configurations (stages):
 
 	$ sudo gem install capistrano-multiconfig --no-ri --no-rdoc --verbose -v 0.0.4
+
+## SSPak Installation
+
+The [SSPak](https://github.com/sminnee/sspak) tool is required to create
+archives of the database/assets for a specific environment into an `*.sspak` file.
+This file can be used for backups, restores, and setting up local development environments.
+
+	$ curl -sS http://sminnee.github.io/sspak/install | php -- /usr/local/bin
 
 ## Deploynaut installation
 
@@ -58,6 +83,38 @@ First add an _ss_environment.php file, here is a sample:
 	define('SS_DEFAULT_ADMIN_USERNAME', 'admin');
 	define('SS_DEFAULT_ADMIN_PASSWORD', 'password');
 	$_FILE_TO_URL_MAPPING['/path/to/deploynaut'] = 'http://localhost/';
+
+## Securing Snapshot Downloads
+
+Deploynaut provides the ability to backup database and/or assets from a specific environment
+and store them as an [SSPak](http://sminnee.github.io/sspak/) snapshot on the Deploynaut filesystem.
+These backups can be used to restore data onto an environment, or transfer it to a different environment.
+
+All snapshots are stored within the deploynaut webroot under the `assets/` folder.
+Downloads are secured through the [secureassets](https://github.com/silverstripe-labs/silverstripe-secureassets),
+with permission checks enforced through Apache's mod_rewrite module.
+Please create a file `assets/.htaccess` with the following content:
+
+```
+RewriteEngine On
+RewriteBase /
+RewriteCond %{REQUEST_URI} ^(.*)$
+RewriteRule .* framework/main.php?url=%1 [QSA]
+```
+
+Permissions are granted in the CMS on a per-group basis, separately for the following actions:
+
+ * *Download* an existing snapshot from Deploynaut to your local development environment
+ * *Upload* an snapshot created from your local development environment into Deploynaut
+ * *Backup* an environment into a new snapshot stored on Deploynaut
+ * *Restore* an existing snapshot into an environment (overwriting existing data)
+
+Since we can't rely on the webserver having enough space to create snapshots,
+their data is downloaded into a temporary folder on the Deploynaut filesystem first.
+Please ensure you have sufficient filesystem space available for creating snapshots
+(at least twice the amount of uncompressed data on the environments).
+
+Caution: Backups of databases on dedicated servers (separate from the webserver) are currently not supported.
 
 ## Troubleshooting
 

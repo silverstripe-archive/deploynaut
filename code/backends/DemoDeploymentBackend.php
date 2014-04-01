@@ -8,10 +8,11 @@
  * It's useful for demonstrating how the system works, and how you can write deployment back-ends
  */
 class DemoDeploymentBackend implements DeploymentBackend {
+	
 	/**
 	 * Deploy the given build to the given environment
 	 */
-	public function deploy($environment, $sha, $log, DNProject $project) {
+	public function deploy($environment, $sha, DeploynautLogFile $log, DNProject $project) {
 		GraphiteDeploymentNotifier::notify_start($environment, $sha, null, $project);
 
 		$file = DEPLOYNAUT_LOG_PATH . '/' . $project->Name. ':' .$environment . ".deploy-history.txt";
@@ -25,6 +26,13 @@ class DemoDeploymentBackend implements DeploymentBackend {
 		$log->write("Well, that was a waste of time");
 
 		GraphiteDeploymentNotifier::notify_end($environment, $sha, null, $project);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function dataTransfer(DNDataTransfer $dataTransfer, DeploynautLogFile $log) {
+		die('Not implemented');
 	}
 
 	/**

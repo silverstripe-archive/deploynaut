@@ -13,6 +13,7 @@ class DNProject extends DataObject {
 	public static $db = array(
 		"Name" => "Varchar",
 		"CVSPath" => "Varchar(255)",
+		"DiskQuotaMB" => "Int"
 	);
 
 	/**
@@ -48,6 +49,10 @@ class DNProject extends DataObject {
 	public static $searchable_fields = array(
 		"Name",
 	);
+
+	private static $singular_name = 'Project';
+
+	private static $plural_name = 'Projects';
 	
 	/**
 	 *
@@ -107,6 +112,59 @@ class DNProject extends DataObject {
 	}
 
 	/**
+	 * Return the used quota in MB.
+	 *
+	 * @param mixed $round Number of decimal places to round to
+	 * @return string|int The used quota size in MB
+	 */
+	public function getUsedQuotaMB($round = 2) {
+		$size = 0;
+
+		foreach($this->Environments() as $environment) {
+			foreach($environment->DataArchives()->filter('IsBackup', 0) as $archive) {
+				$size += $archive->ArchiveFile()->getAbsoluteSize();
+			}
+		}
+
+		// convert bytes to megabytes and round
+		return round(($size / 1024) / 1024, $round);
+	}
+
+	/**
+	 * Getter for DiskQuotaMB field to provide a default for existing
+	 * records that have no quota field set, as it will need to default
+	 * to a globally set size.
+	 *
+	 * @return string|int The quota size in MB
+	 */
+	public function getDiskQuotaMB() {
+		$size = $this->getField('DiskQuotaMB');
+
+		if(empty($size)) {
+			$defaults = $this->config()->get('defaults');
+			$size = (isset($defaults['DiskQuotaMB'])) ? $defaults['DiskQuotaMB'] : 0;
+		}
+
+		return $size;
+	}
+
+	/**
+	 * Has the disk quota been exceeded?
+	 * @return boolean
+	 */
+	public function HasExceededDiskQuota() {
+		return $this->getUsedQuotaMB(0) >= $this->getDiskQuotaMB();
+	}
+
+	/**
+	 * Is there a disk quota set for this project?
+	 * @return boolean
+	 */
+	public function HasDiskQuota() {
+		return $this->getDiskQuotaMB() > 0;
+	}
+
+	/**
 	 * Restrict access to viewing this project
 	 *
 	 * @param Member $member
@@ -115,12 +173,51 @@ class DNProject extends DataObject {
 	public function canView($member = null) {
 		if(!$member) $member = Member::currentUser();
 
-		if(Permission::checkMember($member, "ADMIN")) return true;
+		if(Permission::checkMember($member, 'ADMIN')) return true;
 
 		foreach($this->Viewers() as $group) {
 			if($group->Members()->byID($member->ID)) return true;
 		}
 		return false;
+	}
+
+	public function canRestore($member = null) {
+		return (bool)$this->Environments()->filterByCallback(function($env) use($member) {
+			return $env->canRestore($member);
+		})->Count();
+	}
+
+	public function canBackup($member = null) {
+		return (bool)$this->Environments()->filterByCallback(function($env) use($member) {
+			return $env->canBackup($member);
+		})->Count();
+	}
+
+	public function canUploadArchive($member = null) {
+		return (bool)$this->Environments()->filterByCallback(function($env) use($member) {
+			return $env->canUploadArchive($member);
+		})->Count();
+	}
+
+	public function canDownloadArchive($member = null) {
+		return (bool)$this->Environments()->filterByCallback(function($env) use($member) {
+			return $env->canDownloadArchive($member);
+		})->Count();
+	}
+
+	public function DataArchives() {
+		$envIds = $this->Environments()->column('ID');
+		return DNDataArchive::get()->filter('EnvironmentID', $envIds);
+	}
+
+	/**
+	 * Return all archives which are "manual upload requests",
+	 * meaning they don't have a file attached to them (yet).
+	 * 
+	 * @return ArrayList
+	 */
+	public function PendingManualUploadDataArchives() {
+		return $this->DataArchives()->filter('ArchiveFileID', null);
 	}
 
 	/**
@@ -134,7 +231,6 @@ class DNProject extends DataObject {
 	 * @return array
 	 */
 	public function getProcessEnv() {
-
 		if (file_exists($this->DNData()->getKeyDir()."/$this->Name/$this->Name")) {
 			// Key-pair is available, use it.
 			return array(
@@ -228,8 +324,8 @@ class DNProject extends DataObject {
 	 *
 	 * @return string
 	 */
-	public function link($action='') {
-		return Controller::join_links("naut", "project", $this->Name);
+	public function Link($action='') {
+		return Controller::join_links("naut", "project", $this->Name, $action);
 	}
 	
 	/**
@@ -255,6 +351,8 @@ class DNProject extends DataObject {
 		$fields->fieldByName("Root")->removeByName("Environments");
 		$fields->fieldByName("Root")->removeByName("ReleaseSteps");
 		$fields->fieldByName("Root")->removeByName("LocalCVSPath");
+
+		$fields->dataFieldByName('DiskQuotaMB')->setDescription('This is the maximum amount of disk space (in megabytes) that all environments within this project can use for stored snapshots');
 
 		$fields->fieldByName('Root.Main.Name')
 			->setTitle('Project name')

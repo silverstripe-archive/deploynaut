@@ -26,12 +26,12 @@ class DNEnvironmentTest extends SapphireTest {
 	 * 
 	 */
 	public function setUp() {
-		
 		$this->envPath = '/tmp/deploynaut_test/envs';
 		Config::inst()->update('Injector', 'DNData', array(
 			'constructor' => array(
 				0 => $this->envPath,
 				1 => '/tmp/deploynaut_test/gitkeys',
+				2 => Director::baseFolder() . '/assets/transfers'
 			) 
 		));
 		
@@ -44,7 +44,12 @@ class DNEnvironmentTest extends SapphireTest {
 		$this->env->ProjectID = $this->project->ID;
 		$this->env->write();
 	}
-	
+
+	public function tearDown() {
+		parent::tearDown();
+		Filesystem::removeFolder($this->envPath);
+	}
+
 	/**
 	 * 
 	 */

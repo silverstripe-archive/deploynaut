@@ -1,4 +1,4 @@
-<h3>Projects</h3>
+<h2>Projects</h2>
 <table class="table-striped table table-bordered">
 	<thead>
 		<tr>
@@ -19,4 +19,3 @@
 	<% end_if %>
 	</tbody>
 </table>
-

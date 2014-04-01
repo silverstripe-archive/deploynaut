@@ -1,7 +1,24 @@
-<h3><a href="naut/project/$Project.Name">$Project.Name</a>:$Name</h3>
-<% if URL %>
-<h4><a href="$URL">$URL</a></h4>
+<h2>
+	<a href="naut/project/$Project.Name">$Project.Name</a>:$Name
+	<% if URL %><small><a href="$URL">$URL</a></small><% end_if %>
+</h2>
+
+<% if $CurrentProject %>
+<ul class="nav nav-tabs">
+	<li class="active"><a href="naut/project/$CurrentProject.Name">Deploy</a></li>
+	<% if $FlagSnapshotsEnabled %>
+		<li><a href="naut/project/$CurrentProject.Name/snapshots">Snapshots</a></li>
+	<% end_if %>
+</ul>
 <% end_if %>
+<ul class="nav level-2">
+<% if DNEnvironmentList %>
+	<% loop DNEnvironmentList %>
+	<li<% if $Top.Name = $Name %> class="active"<% end_if %>><% if CanDeploy %><a href="$Link">$Name</a><% else %>$Name<% end_if %></li>
+	<% end_loop %>
+<% end_if %>
+</ul>
+
 <% if $CurrentBuild %>
 <p>
 	This environment is currently running build
@@ -17,7 +34,7 @@
 <% end_if %>
 
 <% if DeployForm %>
-<h4>Deploy a new release</h4>
+<h3>Deploy a new release</h3>
 <p>Choose a release below and press the 'Deploy to $Name' button.</p>
 
 <% with DeployForm %>
@@ -29,7 +46,8 @@
 <% end_with %>
 <% end_if %>
 
-<h4>Deploy history</h4>
+
+<h3>Deploy history</h3>
 <p>Below builds have previous been deployed to this environment, ordered by deploy date descending.</p>
 <table class="table-striped table table-bordered">
 	<thead>
@@ -38,15 +56,23 @@
 			<th>Build</th>
 			<th>Deployer</th>
 			<th>Status</th>
+			<th>Actions</th>
 		</tr>
 	</thead>
 	<tbody>
 	<% loop DeployHistory %>
 		<tr>
-			<td>$LastEdited.Rfc2822</td>
+			<td><span class="tooltip-hint" data-toggle="tooltip" data-original-title="$LastEdited.Nice ($LastEdited.Ago)">$LastEdited.Date</span></td>
 			<td><span class="tooltip-hint" data-toggle="tooltip" title="$Message" data-original-title="$Message">$SHA</span></td>
 			<td>$Deployer.Name <% if $Deployer.Email %>&lt;$Deployer.Email&gt; <% end_if %></td>
-			<td><% if $LogLink %><a href="$LogLink"><% end_if %>$Status<% if $LogLink %></a><% end_if %></td>
+			<td>
+			<% if $Status = 'Queued' %><span class="label label-info">Queued</span><% end_if %>
+			<% if $Status = 'Started' %><span class="label label-info">Started</span><% end_if %>
+			<% if $Status = 'Finished' %><span class="label label-success">Finished</span><% end_if %>
+			<% if $Status = 'Failed' %><span class="label label-important">Failed</span><% end_if %>
+			<% if $Status = 'n/a' %><span class="label label-inverse">n/a</span><% end_if %>
+			</td>
+			<td><% if $LogLink %><a href="$LogLink">Details</a><% end_if %></td>
 		</tr>
 	<% end_loop %>
 	</tbody>
