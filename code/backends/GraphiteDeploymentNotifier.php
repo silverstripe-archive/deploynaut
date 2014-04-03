@@ -9,8 +9,8 @@ class GraphiteDeploymentNotifier {
 	/**
 	 * Config set in the .yml file
 	 */
-	public static $graphite_host = null;
-	public static $graphite_port = null;
+	private static $graphite_host = null;
+	private static $graphite_port = null;
 
 	/**
 	 * Notify Graphite of the start of a deployment.
