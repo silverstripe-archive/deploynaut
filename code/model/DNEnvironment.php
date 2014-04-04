@@ -539,6 +539,8 @@ class DNEnvironment extends DataObject {
 		$archiveDownloaders = new CheckboxSetField('ArchiveDownloaders', 'Who can download?', $members);
 		$archiveDownloaders->setDescription(
 			'Users who can download archives from this environment to their computer.<br>' .
+			'Since this implies access to the snapshot, it is also a prerequisite for restores to other environments,' .
+			' alongside the "Who can restore" permission.<br>' .
 			'Should include all users with upload permissions, otherwise they can\'t download their own uploads.'
 		);
 		$fields->insertAfter($archiveDownloaders, 'ArchiveUploaders');

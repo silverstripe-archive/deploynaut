@@ -26,27 +26,27 @@ If you would like to upload files from your computer to a new snapshot, click 'U
 						<td>$Environment.Name<% if $IsManualUpload %> (manual upload)<% end_if %></td>
 						<td>$ModeNice<% if $IsBackup %> (automated backup)<% end_if %></td>
 						<td>$FileSize</td>
-						<% if $CanDelete && ArchiveFile %>
-							<td class="action">
+						<td class="action">
+							<% if $CanDelete && ArchiveFile %>
 								<a href="$Top.CurrentProject.Link/deletesnapshot/$ID" class="extended-trigger" data-extended-target="#archive-list-extended-$ID" data-extended-container="#archive-list-extended-container-$ID">
 									Delete
 								</a>
-							</td>
-						<% end_if %>
-						<% if $CanDownload && ArchiveFile %>
-							<td class="action">
+							<% end_if %>
+						</td>
+						<td class="action">
+							<% if $CanDownload && ArchiveFile %>
 								<a href="$ArchiveFile.Link">
 									Download
 								</a>
-							</td>
-						<% end_if %>
-						<% if $Environment.canRestore && ArchiveFile %>
-							<td class="action">
+							<% end_if %>
+						</td>
+						<td class="action">
+							<% if $CanDownload && ArchiveFile %>
 								<a href="$Top.CurrentProject.Link/restoresnapshot/$ID" class="extended-trigger" data-extended-target="#archive-list-extended-$ID" data-extended-container="#archive-list-extended-container-$ID">
 									Restore
 								</a>
-							</td>
-						<% end_if %>
+							<% end_if %>
+						</td>
 					</tr>
 					<tr class="extended archive-list-extended" id="archive-list-extended-container-$ID">
 						<td colspan="8">

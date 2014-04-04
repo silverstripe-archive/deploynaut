@@ -806,8 +806,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				throw new LogicException('Invalid data archive');
 			}
 
-			if(!$dataArchive->canRestore()) {
-				throw new SS_HTTPResponse_Exception('Not allowed to restore archive', 403);
+			if(!$dataArchive->canDownload()) {
+				throw new SS_HTTPResponse_Exception('Not allowed to access archive', 403);
 			}
 		}
 
@@ -949,8 +949,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			throw new SS_HTTPResponse_Exception('Archive not found', 404);
 		}
 
-		if(!$dataArchive->canRestore()) {
-			throw new SS_HTTPResponse_Exception('Not allowed to restore archive', 403);
+		// We check for canDownload because that implies access to the data.
+		// canRestore is later checked on the actual restore action per environment.
+		if(!$dataArchive->canDownload()) {
+			throw new SS_HTTPResponse_Exception('Not allowed to access archive', 403);
 		}
 
 		$form = $this->getDataTransferRestoreForm($this->request, $dataArchive);
