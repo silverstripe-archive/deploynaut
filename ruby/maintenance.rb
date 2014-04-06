@@ -12,23 +12,36 @@ namespace :maintenance do
 			run "if [ -f #{current_path}/maintenance.html ]; then rm #{current_path}/maintenance.html; fi"
 		}
 
-		run "mv #{current_path}/.htaccess #{current_path}/.htaccess_original; true"
-
-		# if there's an error-503.html file available in assets, use that for the maintenance page
-		custom_maintenance = nil
-		custom_maintenance_path = "#{shared_path}/assets/error-503.html"
-		run "[ -f \"#{custom_maintenance_path}\" ]; then cp #{custom_maintenance_path} #{current_path}/maintenance.html && echo 1; else echo 0; fi" do |_, _, data|
+		# Does the location contain a site?
+		has_htaccess = nil
+		run "if [ -f \"#{current_path}/.htaccess\" ]; then echo 1; else echo 0; fi" do |_, _, data|
 			if data[0] == "1"
-				custom_maintenance = true
+				has_htaccess = true
 			end
 		end
 
-		# if there's no custom maintenance page found above, use a default one supplied with deploynaut
-		if custom_maintenance == nil
-			upload("/sites/deploynaut/www/deploynaut/maintenance.html.template", current_path + "/maintenance.html")
-		end
+		if has_htaccess == nil
+			# Don't try putting maintenance screen on non-standard instances (all SilverStripe sites will have the .htaccess file)
+			logger.debug "Skipping maintenance on missing .htaccess file."
+		else
+			run "mv #{current_path}/.htaccess #{current_path}/.htaccess_original; true"
 
-		upload("/sites/deploynaut/www/deploynaut/maintenance.htaccess.template", current_path + "/.htaccess")
+			# if there's an error-503.html file available in assets, use that for the maintenance page
+			custom_maintenance = nil
+			custom_maintenance_path = "#{shared_path}/assets/error-503.html"
+			run "[ -f \"#{custom_maintenance_path}\" ]; then cp #{custom_maintenance_path} #{current_path}/maintenance.html && echo 1; else echo 0; fi" do |_, _, data|
+				if data[0] == "1"
+					custom_maintenance = true
+				end
+			end
+
+			# if there's no custom maintenance page found above, use a default one supplied with deploynaut
+			if custom_maintenance == nil
+				upload("/sites/deploynaut/www/deploynaut/maintenance.html.template", current_path + "/maintenance.html")
+			end
+
+			upload("/sites/deploynaut/www/deploynaut/maintenance.htaccess.template", current_path + "/.htaccess")
+		end
 	end
 
 	desc <<-DESC
