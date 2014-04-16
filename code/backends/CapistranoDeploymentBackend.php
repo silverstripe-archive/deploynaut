@@ -204,6 +204,7 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 		$dataArchive = new DNDataArchive();
 		$dataArchive->Mode = $dataTransfer->Mode;
 		$dataArchive->AuthorID = $dataTransfer->AuthorID;
+		$dataArchive->OriginalEnvironmentID = $dataTransfer->Environment()->ID;
 		$dataArchive->EnvironmentID = $dataTransfer->Environment()->ID;
 		$dataArchive->IsBackup = $dataTransfer->IsBackupDataTransfer();
 

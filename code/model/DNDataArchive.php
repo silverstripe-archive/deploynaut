@@ -6,12 +6,15 @@
  * The model can also represent a request to upload a file later,
  * through offline processes like mailing a DVD. In order to associate
  * and authenticate those requests easily, an upload token is generated for every archive.
- * 
- * The "Environment" points to original source of this archive
- * (the one it was backed up from). In case this archive was created
- * from an offline process (see above), it denotes the target environment
- * which the file will eventually be restored to. View and download
- * permission on archives are based on environments, so this relationship is mandatory.
+ *
+ * The "OriginalEnvironment" points to original source of this snapshot
+ * (the one it was backed up from). It will be empty if the snapshot has been created with offline process.
+ *
+ * The "Environment" denotes the ownership of the snapshot. It will be initially set to match the
+ * "OriginalEnvironment", but can be changed later. During the offline process the ownership can be set up
+ * arbitrarily.
+ *
+ * When moving snapshots, the file always remains in its initial location.
  *
  * The archive can have associations to {@link DNDataTransfer}:
  * - Zero transfers if a manual upload was requested, but not fulfilled yet
@@ -36,6 +39,7 @@ class DNDataArchive extends DataObject {
 
 	private static $has_one = array(
 		'Author' => 'Member',
+		'OriginalEnvironment' => 'DNEnvironment',
 		'Environment' => 'DNEnvironment',
 		'ArchiveFile' => 'File'
 	);
@@ -52,6 +56,7 @@ class DNDataArchive extends DataObject {
 		'Created' => 'Created',
 		'Author.Title' => 'Author',
 		'Environment.Project.Name' => 'Project',
+		'OriginalEnvironment.Name' => 'Origin',
 		'Environment.Name' => 'Environment',
 		'ArchiveFile.Name' => 'File',
 	);
@@ -59,6 +64,9 @@ class DNDataArchive extends DataObject {
 	private static $searchable_fields = array(
 		'Environment.Project.Name' => array(
 			'title' => 'Project',
+		),
+		'OriginalEnvironment.Name' => array(
+			'title' => 'Origin',
 		),
 		'Environment.Name' => array(
 			'title' => 'Environment',
@@ -85,12 +93,14 @@ class DNDataArchive extends DataObject {
 
 	public function getCMSFields() {
 		$fields = parent::getCMSFields();
+		$fields->removeByName('OriginalEnvironmentID');
 		$fields->removeByName('EnvironmentID');
 		$fields->removeByName('ArchiveFile');
 		$fields->addFieldsToTab(
 			'Root.Main',
 			array(
 				new ReadonlyField('ProjectName', 'Project', $this->Environment()->Project()->Name),
+				new ReadonlyField('OriginalEnvironmentName', 'OriginalEnvironment', $this->OriginalEnvironment()->Name),
 				new ReadonlyField('EnvironmentName', 'Environment', $this->Environment()->Name),
 				$linkField = new ReadonlyField(
 					'DataArchive', 
@@ -194,6 +204,19 @@ class DNDataArchive extends DataObject {
 	}
 
 	/**
+	 * Finds all environments where the archive can be moved to.
+	 */
+	public function moveTargets() {
+		$archive = $this;
+		$envs = $this->Environment()->Project()->DNEnvironmentList()
+			->filterByCallback(function($item) use ($archive) {
+				return $archive->EnvironmentID!=$item->ID && $item->canUploadArchive();
+			});
+
+		return $envs;
+	}
+
+	/**
 	 * Returns a unique filename, including project/environment/timestamp details.
 	 * @return string
 	 */
@@ -201,11 +224,11 @@ class DNDataArchive extends DataObject {
 		$generator = new RandomGenerator();
 		$sanitizeRegex = array('/\s+/', '/[^a-zA-Z0-9-_\.]/');
 		$sanitizeReplace = array('/_/', '');
-		$envName = strtolower(preg_replace($sanitizeRegex, $sanitizeReplace, $this->Environment()->Name));
+		$envName = strtolower(preg_replace($sanitizeRegex, $sanitizeReplace, $this->OriginalEnvironment()->Name));
 		$projectName = strtolower(preg_replace(
 			$sanitizeRegex,
 			$sanitizeReplace,
-			$this->Environment()->Project()->Name
+			$this->OriginalEnvironment()->Project()->Name
 		));
 
 		return sprintf(
@@ -231,8 +254,8 @@ class DNDataArchive extends DataObject {
 		$transferDir = $data->getDataTransferDir();
 		$sanitizeRegex = array('/\s+/', '/[^a-zA-Z0-9-_\.]/');
 		$sanitizeReplace = array('/_/', '');
-		$projectName = strtolower(preg_replace($sanitizeRegex, $sanitizeReplace, $this->Environment()->Project()->Name));
-		$envName = strtolower(preg_replace($sanitizeRegex, $sanitizeReplace, $this->Environment()->Name));
+		$projectName = strtolower(preg_replace($sanitizeRegex, $sanitizeReplace, $this->OriginalEnvironment()->Project()->Name));
+		$envName = strtolower(preg_replace($sanitizeRegex, $sanitizeReplace, $this->OriginalEnvironment()->Name));
 		
 		return sprintf('%s/%s/%s/transfer-%s/',
 			$transferDir,
