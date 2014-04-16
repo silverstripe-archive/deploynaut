@@ -223,12 +223,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$envs = $project->DNEnvironmentList()->filterByCallback(function($item) {return $item->canUploadArchive();});
 		$envsMap = array();
 		foreach($envs as $env) {
-			$downloaders = implode(', ', $env->ArchiveDownloaders()->column('FirstName'));
-			$envsMap[$env->ID] = sprintf(
-				'%s (%s)',
-				implode(', ', array_map(function($member) {return $member->Name;}, $env->ArchiveDownloaders()->toArray())),
-				$env->Name
-			);
+			$envsMap[$env->ID] = $env->Name;
 		}
 
 		$maxSize = min(File::ini2bytes(ini_get('upload_max_filesize')), File::ini2bytes(ini_get('post_max_size')));
@@ -242,7 +237,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			new FieldList(
 				$fileField,
 				DropdownField::create('Mode', 'What does this file contain?', DNDataArchive::get_mode_map()),
-				DropdownField::create('EnvironmentID', 'Choose who can download this file', $envsMap)
+				DropdownField::create('EnvironmentID', 'Initial ownership of the file', $envsMap)
 			), 
 			new FieldList(
 				$action = new FormAction('doUploadSnapshot', "Upload File")
@@ -328,12 +323,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$envs = $project->DNEnvironmentList()->filterByCallback(function($item) {return $item->canUploadArchive();});
 		$envsMap = array();
 		foreach($envs as $env) {
-			$downloaders = implode(', ', $env->ArchiveDownloaders()->column('FirstName'));
-			$envsMap[$env->ID] = sprintf(
-				'%s (%s)',
-				implode(', ', array_map(function($member) {return $member->Name;}, $env->ArchiveDownloaders()->toArray())),
-				$env->Name
-			);
+			$envsMap[$env->ID] = $env->Name;
 		}
 
 		$form = new Form(
@@ -341,7 +331,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'PostSnapshotForm', 
 			new FieldList(
 				DropdownField::create('Mode', 'What does this file contain?', DNDataArchive::get_mode_map()),
-				DropdownField::create('EnvironmentID', 'Choose who can download this file', $envsMap)
+				DropdownField::create('EnvironmentID', 'Initial ownership of the file', $envsMap)
 			), 
 			new FieldList(
 				$action = new FormAction('doPostSnapshot', "Submit request")

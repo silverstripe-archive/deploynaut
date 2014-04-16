@@ -24,7 +24,7 @@
 <ul class="nav nav-pills switch-tabs">
     <li class="active"><a href="#tab1" data-toggle="tab">Upload Data Snapshot</a></li>
     <li class="join"><p>or</p></li>
-    <li><a href="#tab2" data-toggle="tab">Request upload by post</a></li>
+    <li><a href="#tab2" data-toggle="tab">Provide externally</a></li>
 </ul>
 
 <div class="tab-content">
@@ -33,7 +33,7 @@
 		$UploadSnapshotForm
 	</div>
 	<div class="tab-pane" id="tab2">
-		<p>For large files (more than $UploadLimit), you can also choose to send us a DVD, and have us upload the file for you. Submit a request below to start this process.</p>
+		<p>For large files (more than $UploadLimit), you can provide the file to us outside of Deploynaut - we will then upload it on your behalf. Submit a request below to start this process.</p>
 		$PostSnapshotForm
 	</div>
 </div>

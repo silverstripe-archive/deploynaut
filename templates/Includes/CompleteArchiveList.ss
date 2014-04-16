@@ -24,7 +24,7 @@ If you would like to upload files from your computer to a new snapshot, click 'U
 					<tr>
 						<td><span class="tooltip-hint" data-toggle="tooltip" data-original-title="$Created.Nice ($Created.Ago)">$Created.Date</span></td>
 						<td>$Author.FirstName $Author.Surname</td>
-						<td><% if $IsManualUpload %>(upload)<% else %><% if OriginalEnvironment %>$OriginalEnvironment.Name<% else %>?<% end_if %><% end_if %></td>
+						<td><% if $IsManualUpload %>(upload)<% else %><% if OriginalEnvironment %>$OriginalEnvironment.Name<% else %><% end_if %><% end_if %></td>
 						<td>$Environment.Name</td>
 						<td>$ModeNice<% if $IsBackup %> (automated backup)<% end_if %></td>
 						<td>$FileSize</td>
