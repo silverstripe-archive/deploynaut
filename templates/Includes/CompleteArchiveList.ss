@@ -29,7 +29,7 @@ If you would like to upload files from your computer to a new snapshot, click 'U
 						<td>$ModeNice<% if $IsBackup %> (automated backup)<% end_if %></td>
 						<td>$FileSize</td>
 						<td class="action">
-							<% if $CanDownload && $ArchiveFile && $moveTargets.count %>
+							<% if $CanDownload && $ArchiveFile && $validTargetEnvironments.count %>
 								<a href="$Top.CurrentProject.Link/movesnapshot/$ID" class="extended-trigger" data-extended-target="#archive-list-extended-$ID" data-extended-container="#archive-list-extended-container-$ID">
 									Ch-own
 								</a>

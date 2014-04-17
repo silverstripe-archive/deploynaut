@@ -204,13 +204,44 @@ class DNDataArchive extends DataObject {
 	}
 
 	/**
-	 * Finds all environments where the archive can be moved to.
+	 * Check if this member can move archive into the environment.
+	 *
+	 * @param DNEnvironment $targetEnv Environment to check.
+	 * @param Member|null $member The {@link Member} object to test against. If null, uses Member::currentMember();
+	 *
+	 * @return boolean true if $member can upload archives linked to this environment, false if they can't.
 	 */
-	public function moveTargets() {
+	public function canMoveTo($targetEnv, $member = null) {
+		if ($this->Environment()->Project()->ID!=$targetEnv->Project()->ID) {
+			// We don't permit moving snapshots between projects at this stage.
+			return false;
+		}
+
+		if(!$member) $member = Member::currentUser();
+		if(!$member) return false; // Must be logged in to check permissions
+
+		// Admin can always move.
+		if(Permission::checkMember($member, 'ADMIN')) return true;
+
+		// Checks if the user can actually access the archive.
+		if (!$this->canDownload($member)) return false;
+
+		// Hooks into ArchiveUploaders permission to prevent proliferation of permission checkboxes.
+		// Bypasses the quota check - we don't need to check for it as long as we move the snapshot within the project.
+		return (bool)($targetEnv->ArchiveUploaders()->byID($member->ID));
+	}
+
+	/**
+	 * Finds all environments within this project where the archive can be moved to.
+	 * Excludes current environment automatically.
+	 *
+	 * @return ArrayList List of valid environments.
+	 */
+	public function validTargetEnvironments() {
 		$archive = $this;
 		$envs = $this->Environment()->Project()->DNEnvironmentList()
 			->filterByCallback(function($item) use ($archive) {
-				return $archive->EnvironmentID!=$item->ID && $item->canUploadArchive();
+				return $archive->EnvironmentID!=$item->ID && $archive->canMoveTo($item);
 			});
 
 		return $envs;

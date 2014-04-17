@@ -1049,7 +1049,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		// We check for canDownload because that implies access to the data.
-		// canRestore is later checked on the actual restore action per environment.
 		if(!$dataArchive->canDownload()) {
 			throw new SS_HTTPResponse_Exception('Not allowed to access archive', 403);
 		}
@@ -1066,7 +1065,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	public function getMoveForm($request, $dataArchive = null) {
 		$dataArchive = $dataArchive ? $dataArchive : DNDataArchive::get()->byId($request->requestVar('DataArchiveID'));
 
-		$envs = $dataArchive->moveTargets();
+		$envs = $dataArchive->validTargetEnvironments();
 		if(!$envs) {
 			return new SS_HTTPResponse("Environment '" . Convert::raw2xml($request->latestParam('Environment')) . "' not found.", 404);
 		}
@@ -1102,13 +1101,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			throw new LogicException('Invalid data archive');
 		}
 
+		// We check for canDownload because that implies access to the data.
 		if(!$dataArchive->canDownload()) {
 			throw new SS_HTTPResponse_Exception('Not allowed to access archive', 403);
 		}
 
-		$validEnvs = $dataArchive->moveTargets();
-
 		// Validate $data['EnvironmentID'] by checking against $validEnvs.
+		$validEnvs = $dataArchive->validTargetEnvironments();
 		$environment = $validEnvs->find('ID', $data['EnvironmentID']);
 		if(!$environment) {
 			throw new LogicException('Invalid environment');
