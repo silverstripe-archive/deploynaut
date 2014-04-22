@@ -4,6 +4,19 @@
 	$.entwine.warningLevel = $.entwine.WARN_LEVEL_BESTPRACTISE;
 	$.entwine('ss.deploynaut', function($) {
 		
+		$('#Form_ItemEditForm_TickAll input').entwine({
+			onclick: function(evt) {
+				var id = $(evt.target).attr('value');
+				var checked = evt.target.checked;
+				$('#Form_ItemEditForm_Deployers_' + id)[0].checked = checked;
+				$('#Form_ItemEditForm_CanRestoreMembers_' + id)[0].checked = checked;
+				$('#Form_ItemEditForm_CanBackupMembers_' + id)[0].checked = checked;
+				$('#Form_ItemEditForm_ArchiveDeleters_' + id)[0].checked = checked;
+				$('#Form_ItemEditForm_ArchiveUploaders_' + id)[0].checked = checked;
+				$('#Form_ItemEditForm_ArchiveDownloaders_' + id)[0].checked = checked;
+			}
+		});
+
 		var updateLog = null;
 		
 		$('#Form_ItemEditForm_action_check').entwine({

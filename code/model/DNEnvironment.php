@@ -504,6 +504,11 @@ class DNEnvironment extends DataObject {
 		$fileNameField->setTitle('Filename');
 		$fileNameField->setDescription('The capistrano environment file name');
 		$fields->insertAfter($fileNameField, 'Name');
+
+		// A box to tick all boxes.
+		$tickAll = new CheckboxSetField("TickAll", "All permissions", $members);
+		$tickAll->setDescription('UI shortcut to tick all boxes - not written to the database.');
+		$fields->insertAfter($tickAll, 'Filename');
 		
 		// The Main.Deployers
 		$deployers = new CheckboxSetField("Deployers", "Who can deploy?", $members);
