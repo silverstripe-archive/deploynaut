@@ -31,14 +31,6 @@ Our implementation relies on capistrano-multiconfig extension which provides us 
 
 	$ sudo gem install capistrano-multiconfig --no-ri --no-rdoc --verbose -v 0.0.4
 
-## SSPak Installation
-
-The [SSPak](https://github.com/sminnee/sspak) tool is required to create
-archives of the database/assets for a specific environment into an `*.sspak` file.
-This file can be used for backups, restores, and setting up local development environments.
-
-	$ curl -sS http://sminnee.github.io/sspak/install | php -- /usr/local/bin
-
 ## Deploynaut installation
 
 First get the base code for the project
@@ -60,7 +52,56 @@ Within each of these the project folders should be added - these names will be m
 	../deploynaut-resources/builds/ss3
 	../deploynaut-resources/configs/ss3/dev.rb
 
-## Test the Capistrano 
+## Configuring environment
+
+We suggest to set up the following in the `_ss_environment.php` file:
+
+	define('DEPLOYNAUT_LOG_PATH', '/sites/deploynaut/www/assets/_deploynaut_logs');
+
+	// we are using /var/tmp instead of /tmp so that the files are persisted between reboots
+	define('DEPLOYNAUT_LOCAL_VCS_PATH', '/var/tmp/deploynaut_local_vcs');
+	define('DEPLOYNAUT_ADMIN_EMAIL', 'deploy@silverstripe.com');
+	define('DEPLOYNAUT_ERROR_EMAIL', 'deploy@silverstripe.com');
+	define('DEPLOYNAUT_SSH_KEY', '/var/www/.ssh/id_rsa');
+
+	global $_FILE_TO_URL_MAPPING;
+	$_FILE_TO_URL_MAPPING['/sites/deploynaut/www'] = 'http://<your-url>'
+
+## Configuring snapshots
+
+Create `assets/transfers` server-writable directory:
+
+	mkdir assets/transfers
+	chown www-data.www-data assets/transfers
+	chmod 755 assets/transfers
+
+Add `assets/.htaccess` to enable security checks on files:
+
+	RewriteEngine On
+	RewriteBase /
+	RewriteCond %{REQUEST_URI} ^(.*)$
+	RewriteRule .* framework/main.php?url=%1 [QSA]
+
+See below in "Snapshot security" for essential information on securing files.
+
+Add `assets/_combinedfiles/.htaccess` to allow direct serving of combined files:
+
+	RewriteEngine Off
+
+The [SSPak](https://github.com/sminnee/sspak) tool is required to create
+archives of the database/assets for a specific environment into an `*.sspak` file.
+This file can be used for backups, restores, and setting up local development environments.
+
+	wget --no-check-certificate https://raw.github.com/silverstripe/sspak/gh-pages/sspak.phar; sudo cp sspak.phar /usr/local/bin/sspak
+
+Set up feature flags in `_ss_environment.php`:
+
+	// Enable for beta testers.
+	//define('FLAG_SNAPSHOTS_ENABLED_FOR_MEMBERS', 'tester1@somewhere.com;tester2@somewhere.com');
+	// Enable for everyone.
+	define('FLAG_SNAPSHOTS_ENABLED', true);
+
+## Test the Capistrano
 
 Now you should be able to test that capistrano works as intented.
 
@@ -72,19 +113,7 @@ You can see a bunch of tasks that can be run by issuing this
 
 	cap -T
 
-## Testing Deploynaut
-
-First add an _ss_environment.php file, here is a sample:
-
-	define('SS_ENVIRONMENT_TYPE', 'dev');
-	define('SS_DATABASE_SERVER', 'localhost');
-	define('SS_DATABASE_USERNAME', 'deploynaut');
-	define('SS_DATABASE_PASSWORD', 'password');
-	define('SS_DEFAULT_ADMIN_USERNAME', 'admin');
-	define('SS_DEFAULT_ADMIN_PASSWORD', 'password');
-	$_FILE_TO_URL_MAPPING['/path/to/deploynaut'] = 'http://localhost/';
-
-## Securing Snapshot Downloads
+## Snapshot security
 
 Deploynaut provides the ability to backup database and/or assets from a specific environment
 and store them as an [SSPak](http://sminnee.github.io/sspak/) snapshot on the Deploynaut filesystem.
@@ -92,15 +121,13 @@ These backups can be used to restore data onto an environment, or transfer it to
 
 All snapshots are stored within the deploynaut webroot under the `assets/` folder.
 Downloads are secured through the [secureassets](https://github.com/silverstripe-labs/silverstripe-secureassets),
-with permission checks enforced through Apache's mod_rewrite module.
+with permission checks enforced through Apache's `mod_rewrite` module.
 Please create a file `assets/.htaccess` with the following content:
 
-```
-RewriteEngine On
-RewriteBase /
-RewriteCond %{REQUEST_URI} ^(.*)$
-RewriteRule .* framework/main.php?url=%1 [QSA]
-```
+	RewriteEngine On
+	RewriteBase /
+	RewriteCond %{REQUEST_URI} ^(.*)$
+	RewriteRule .* framework/main.php?url=%1 [QSA]
 
 Permissions are granted in the CMS on a per-group basis, separately for the following actions:
 
