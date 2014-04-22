@@ -1075,7 +1075,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'MoveForm',
 			new FieldList(
 				new HiddenField('DataArchiveID', false, $dataArchive->ID),
-				new LiteralField('Warning', '<p class="text-warning"><strong>Warning:</strong> This will make the snapshot available to people with access to the target environment.</p>'),
+				new LiteralField('Warning', '<p class="text-warning"><strong>Warning:</strong> This will make the snapshot available to people with access to the target environment.<br>By pressing "Change ownership" you confirm that you have considered data confidentiality regulations.</p>'),
 				new DropdownField('EnvironmentID', 'Environment', $envs->map())
 			),
 			new FieldList(
