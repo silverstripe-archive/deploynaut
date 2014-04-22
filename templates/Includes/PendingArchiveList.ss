@@ -9,7 +9,7 @@
 				<tr>
 					<th>Date Created</th>
 					<th>Requester</th>
-					<th>Environment</th>
+					<th>Owner</th>
 					<th>Upload Token</th>
 					<th>Status</th>
 				</tr>

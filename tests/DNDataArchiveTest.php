@@ -41,7 +41,7 @@ class DNDataArchiveTest extends SapphireTest {
 		$this->assertTrue($project1->Environments()->filter('Name', 'uat')->First()->canUploadArchive($sarah));
 		$this->assertFalse($project1->Environments()->filter('Name', 'uat')->First()->canDownloadArchive($sarah));
 		$this->assertTrue($project1->Environments()->filter('Name', 'uat')->First()->canDeleteArchive($sarah));
-		$this->assertFalse($project1->Environments()->filter('Name', 'live')->First()->canUploadArchive($sarah));
+		$this->assertTrue($project1->Environments()->filter('Name', 'live')->First()->canUploadArchive($sarah));
 		$this->assertFalse($project1->Environments()->filter('Name', 'live')->First()->canDownloadArchive($sarah));
 		$this->assertFalse($project1->Environments()->filter('Name', 'live')->First()->canDeleteArchive($sarah));
 
@@ -72,7 +72,7 @@ class DNDataArchiveTest extends SapphireTest {
 		$dataTransfer->write();
 
 		$archive = new DNDataArchive();
-		$archive->EnvironmentID = $project1uatEnv->ID;
+		$archive->OriginalEnvironmentID = $project1uatEnv->ID;
 		$archive->write();
 
 		$filepath1 = $archive->generateFilepath($dataTransfer);
@@ -92,7 +92,7 @@ class DNDataArchiveTest extends SapphireTest {
 		$dataTransfer->write();
 
 		$archive = new DNDataArchive();
-		$archive->EnvironmentID = $project1uatEnv->ID;
+		$archive->OriginalEnvironmentID = $project1uatEnv->ID;
 		$archive->write();
 
 		$filename = $archive->generateFilename($dataTransfer);
@@ -102,4 +102,31 @@ class DNDataArchiveTest extends SapphireTest {
 		$this->assertContains('all', $filename);
 	}
 
+	public function testCanMoveTo() {
+		$samantha = $this->objFromFixture('Member', 'project1-samantha');
+		$sarah = $this->objFromFixture('Member', 'project1-sarah');
+		$eva = $this->objFromFixture('Member', 'eva');
+		$uat1 = $this->objFromFixture('DNEnvironment', 'project1-uat');
+		$live1 = $this->objFromFixture('DNEnvironment', 'project1-live');
+		$uat2 = $this->objFromFixture('DNEnvironment', 'project2-uat');
+		$live2 = $this->objFromFixture('DNEnvironment', 'project2-live');
+
+		$archive = new DNDataArchive();
+		$archive->EnvironmentID = $uat1->ID;
+		$archive->write();
+
+		// Samantha doesn't have upload permission to live1.
+		$this->assertFalse($archive->canMoveTo($live1, $samantha));
+		// Cross-project moves are forbidden.
+		$this->assertFalse($archive->canMoveTo($uat2, $samantha));
+
+		// Eva has upload permission to live1.
+		$this->assertTrue($archive->canMoveTo($live1, $eva));
+		// Cross-project moves are forbidden.
+		$this->assertFalse($archive->canMoveTo($uat2, $eva));
+
+		// Sarah has upload permission to live1, but not download to uat1.
+		$this->assertFalse($archive->canMoveTo($live1, $sarah));
+
+	}
 }

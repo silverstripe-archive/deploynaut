@@ -204,6 +204,7 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 		$dataArchive = new DNDataArchive();
 		$dataArchive->Mode = $dataTransfer->Mode;
 		$dataArchive->AuthorID = $dataTransfer->AuthorID;
+		$dataArchive->OriginalEnvironmentID = $dataTransfer->Environment()->ID;
 		$dataArchive->EnvironmentID = $dataTransfer->Environment()->ID;
 		$dataArchive->IsBackup = $dataTransfer->IsBackupDataTransfer();
 
@@ -309,6 +310,22 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 	}
 
 	/**
+	 * Utility function for triggering the db rebuild.
+	 */
+	protected function rebuildDatabase($name, $env, $log) {
+		// Rebuild db and flush.
+		$command = $this->getCommand('data:rebuild', $name, null, $env, $log);
+		$command->run(function ($type, $buffer) use($log) {
+			$log->write($buffer);
+		});
+		if(!$command->isSuccessful()) {
+			$log->write('Rebuild of "' . $name . '" failed: ' . $command->getErrorOutput());
+			throw new RuntimeException($command->getErrorOutput());
+		}
+		$log->write('Rebuild of "' . $name . '" done');
+	}
+
+	/**
 	 * Extracts a *.sspak file referenced through the passed in $dataTransfer
 	 * and pushes it to the environment referenced in $dataTransfer.
 	 * 
@@ -361,6 +378,9 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 				$log->write($buffer);
 			});
 			if(!$command->isSuccessful()) {
+				// Rebuild, maybe we can at least partly recover?
+				$this->rebuildDatabase($name, $env, $log);
+
 				$cleanupFn();
 				$log->write('Restore of database to "' . $name . '" failed: ' . $command->getErrorOutput());
 				throw new RuntimeException($command->getErrorOutput());
@@ -385,6 +405,12 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 			$process->setTimeout(3600);
 			$process->run();
 			if(!$process->isSuccessful()) {
+				// The database might have been restored beforehand - rebuild, maybe we can at least partly recover?
+				if(in_array($dataTransfer->Mode, array('all', 'db'))) {
+					$log->write('Asset restoration failed but DB was restored, so rebuilding anyway.');
+					$this->rebuildDatabase($name, $env, $log);
+				}
+
 				$log->write('Could not extract the assets archive');
 				$cleanupFn();
 				throw new RuntimeException($process->getErrorOutput());
@@ -399,6 +425,12 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 				$log->write($buffer);
 			});
 			if(!$command->isSuccessful()) {
+				// The database might have been restored beforehand - rebuild, maybe we can at least partly recover?
+				if(in_array($dataTransfer->Mode, array('all', 'db'))) {
+					$log->write('Asset restoration failed but DB was restored, so rebuilding anyway.');
+					$this->rebuildDatabase($name, $env, $log);
+				}
+
 				$cleanupFn();
 				$log->write('Restore of assets to "' . $name . '" failed: ' . $command->getErrorOutput());
 				throw new RuntimeException($command->getErrorOutput());
@@ -406,6 +438,8 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 			$log->write('Restore of assets to "' . $name . '" done');
 		}
 
+		$log->write('Rebuilding and cleaning up');
+		$this->rebuildDatabase($name, $env, $log);
 		$cleanupFn();
 	}
 

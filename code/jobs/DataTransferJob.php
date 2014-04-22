@@ -47,7 +47,7 @@ class DataTransferJob {
 			if($runningTransfers->count()) {
 				$runningTransfer = $runningTransfers->First();
 				throw new RuntimeException(sprintf(
-					'Transfer in progress (started at %s by %s)',
+					'[-] Error: another transfer seems to be already in progress (started at %s by %s)',
 					$runningTransfer->dbObject('Created')->Nice(),
 					$runningTransfer->Author()->Title
 				));

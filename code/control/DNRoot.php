@@ -26,8 +26,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'getPostSnapshotForm',
 		'getDataTransferRestoreForm',
 		'getDeleteForm',
+		'getMoveForm',
 		'restoresnapshot',
 		'deletesnapshot',
+		'movesnapshot',
 		'postsnapshotsuccess',
 	);
 
@@ -40,6 +42,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'project/$Project/DataTransferForm' => 'getDataTransferForm',
 		'project/$Project/DataTransferRestoreForm' => 'getDataTransferRestoreForm',
 		'project/$Project/DeleteForm' => 'getDeleteForm',
+		'project/$Project/MoveForm' => 'getMoveForm',
 		'project/$Project/UploadSnapshotForm' => 'getUploadSnapshotForm',
 		'project/$Project/PostSnapshotForm' => 'getPostSnapshotForm',
 		'project/$Project/environment/$Environment/metrics' => 'metrics',
@@ -51,6 +54,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'project/$Project/build/$Build' => 'build',
 		'project/$Project/restoresnapshot/$DataArchiveID' => 'restoresnapshot',
 		'project/$Project/deletesnapshot/$DataArchiveID' => 'deletesnapshot',
+		'project/$Project/movesnapshot/$DataArchiveID' => 'movesnapshot',
 		'project/$Project/update' => 'update',
 		'project/$Project/snapshots' => 'snapshots',
 		'project/$Project/createsnapshot' => 'createsnapshot',
@@ -219,12 +223,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$envs = $project->DNEnvironmentList()->filterByCallback(function($item) {return $item->canUploadArchive();});
 		$envsMap = array();
 		foreach($envs as $env) {
-			$downloaders = implode(', ', $env->ArchiveDownloaders()->column('FirstName'));
-			$envsMap[$env->ID] = sprintf(
-				'%s (%s)',
-				implode(', ', array_map(function($member) {return $member->Name;}, $env->ArchiveDownloaders()->toArray())),
-				$env->Name
-			);
+			$envsMap[$env->ID] = $env->Name;
 		}
 
 		$maxSize = min(File::ini2bytes(ini_get('upload_max_filesize')), File::ini2bytes(ini_get('post_max_size')));
@@ -238,7 +237,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			new FieldList(
 				$fileField,
 				DropdownField::create('Mode', 'What does this file contain?', DNDataArchive::get_mode_map()),
-				DropdownField::create('EnvironmentID', 'Choose who can download this file', $envsMap)
+				DropdownField::create('EnvironmentID', 'Initial ownership of the file', $envsMap)
 			), 
 			new FieldList(
 				$action = new FormAction('doUploadSnapshot', "Upload File")
@@ -324,12 +323,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$envs = $project->DNEnvironmentList()->filterByCallback(function($item) {return $item->canUploadArchive();});
 		$envsMap = array();
 		foreach($envs as $env) {
-			$downloaders = implode(', ', $env->ArchiveDownloaders()->column('FirstName'));
-			$envsMap[$env->ID] = sprintf(
-				'%s (%s)',
-				implode(', ', array_map(function($member) {return $member->Name;}, $env->ArchiveDownloaders()->toArray())),
-				$env->Name
-			);
+			$envsMap[$env->ID] = $env->Name;
 		}
 
 		$form = new Form(
@@ -337,7 +331,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'PostSnapshotForm', 
 			new FieldList(
 				DropdownField::create('Mode', 'What does this file contain?', DNDataArchive::get_mode_map()),
-				DropdownField::create('EnvironmentID', 'Choose who can download this file', $envsMap)
+				DropdownField::create('EnvironmentID', 'Initial ownership of the file', $envsMap)
 			), 
 			new FieldList(
 				$action = new FormAction('doPostSnapshot', "Submit request")
@@ -1040,6 +1034,87 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		$dataArchive->delete();
+
+		$this->redirectBack();
+	}
+
+	/**
+	 * View a form to move a specific {@link DataArchive}.
+	 */
+	public function movesnapshot($request) {
+		$dataArchive = DNDataArchive::get()->byId($request->param('DataArchiveID'));
+		
+		if(!$dataArchive) {
+			throw new SS_HTTPResponse_Exception('Archive not found', 404);
+		}
+
+		// We check for canDownload because that implies access to the data.
+		if(!$dataArchive->canDownload()) {
+			throw new SS_HTTPResponse_Exception('Not allowed to access archive', 403);
+		}
+
+		$form = $this->getMoveForm($this->request, $dataArchive);
+
+		// View currently only available via ajax
+		return $form->forTemplate();
+	}
+
+	/**
+	 * Build snapshot move form.
+	 */
+	public function getMoveForm($request, $dataArchive = null) {
+		$dataArchive = $dataArchive ? $dataArchive : DNDataArchive::get()->byId($request->requestVar('DataArchiveID'));
+
+		$envs = $dataArchive->validTargetEnvironments();
+		if(!$envs) {
+			return new SS_HTTPResponse("Environment '" . Convert::raw2xml($request->latestParam('Environment')) . "' not found.", 404);
+		}
+
+		$form = new Form(
+			$this,
+			'MoveForm',
+			new FieldList(
+				new HiddenField('DataArchiveID', false, $dataArchive->ID),
+				new LiteralField('Warning', '<p class="text-warning"><strong>Warning:</strong> This will make the snapshot available to people with access to the target environment.</p>'),
+				new DropdownField('EnvironmentID', 'Environment', $envs->map())
+			),
+			new FieldList(
+				FormAction::create('doMove', 'Change ownership')->addExtraClass('btn')
+			)
+		);
+		$form->setFormAction($this->getCurrentProject()->Link() . '/MoveForm');
+
+		return $form;
+	}
+
+	public function doMove($data, $form) {
+		// Performs canView permission check by limiting visible projects
+		$project = $this->getCurrentProject();
+		if(!$project) {
+			return new SS_HTTPResponse("Project '" . Convert::raw2xml($this->getRequest()->latestParam('Project')) . "' not found.", 404);
+		}
+
+		$dataArchive = null;
+
+		$dataArchive = DNDataArchive::get()->byId($data['DataArchiveID']);
+		if(!$dataArchive) {
+			throw new LogicException('Invalid data archive');
+		}
+
+		// We check for canDownload because that implies access to the data.
+		if(!$dataArchive->canDownload()) {
+			throw new SS_HTTPResponse_Exception('Not allowed to access archive', 403);
+		}
+
+		// Validate $data['EnvironmentID'] by checking against $validEnvs.
+		$validEnvs = $dataArchive->validTargetEnvironments();
+		$environment = $validEnvs->find('ID', $data['EnvironmentID']);
+		if(!$environment) {
+			throw new LogicException('Invalid environment');
+		}
+
+		$dataArchive->EnvironmentID = $environment->ID;
+		$dataArchive->write();
 
 		$this->redirectBack();
 	}

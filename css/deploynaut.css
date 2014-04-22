@@ -308,6 +308,10 @@ form.fields-wide .field label.left {
 	margin-top: 40px;
 }
 
+#Form_MoveForm .Actions {
+	margin-top: 40px;
+}
+
 #Form_DeployForm .SelectionGroup {
 	overflow: hidden;
 }

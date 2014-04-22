@@ -11,10 +11,11 @@ If you would like to upload files from your computer to a new snapshot, click 'U
 				<tr>
 					<th>Date Created</th>
 					<th>Author</th>
-					<th>Environment</th>
+					<th>Source</th>
+					<th>Owner</th>
 					<th>Mode</th>
 					<th>File Size</th>
-					<th colspan="2">Actions</th>
+					<th colspan="4">Actions</th>
 				</tr>
 			</thead>
 
@@ -23,9 +24,17 @@ If you would like to upload files from your computer to a new snapshot, click 'U
 					<tr>
 						<td><span class="tooltip-hint" data-toggle="tooltip" data-original-title="$Created.Nice ($Created.Ago)">$Created.Date</span></td>
 						<td>$Author.FirstName $Author.Surname</td>
-						<td>$Environment.Name<% if $IsManualUpload %> (manual upload)<% end_if %></td>
+						<td><% if $IsManualUpload %>(upload)<% else %><% if OriginalEnvironment %>$OriginalEnvironment.Name<% else %><% end_if %><% end_if %></td>
+						<td>$Environment.Name</td>
 						<td>$ModeNice<% if $IsBackup %> (automated backup)<% end_if %></td>
 						<td>$FileSize</td>
+						<td class="action">
+							<% if $CanDownload && $ArchiveFile && $validTargetEnvironments.count %>
+								<a href="$Top.CurrentProject.Link/movesnapshot/$ID" class="extended-trigger" data-extended-target="#archive-list-extended-$ID" data-extended-container="#archive-list-extended-container-$ID">
+									Ch-own
+								</a>
+							<% end_if %>
+						</td>
 						<td class="action">
 							<% if $CanDelete && ArchiveFile %>
 								<a href="$Top.CurrentProject.Link/deletesnapshot/$ID" class="extended-trigger" data-extended-target="#archive-list-extended-$ID" data-extended-container="#archive-list-extended-container-$ID">
@@ -49,7 +58,7 @@ If you would like to upload files from your computer to a new snapshot, click 'U
 						</td>
 					</tr>
 					<tr class="extended archive-list-extended" id="archive-list-extended-container-$ID">
-						<td colspan="8">
+						<td colspan="10">
 							<div id="archive-list-extended-$ID"></div>
 						</td>
 					</tr>

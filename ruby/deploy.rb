@@ -15,6 +15,7 @@ namespace :deploy do
 			run "if [ -f \"#{pre_migrate_script}\" ]; then #{pre_migrate_script} && echo \"Pre-migrate script returned $?\"; fi"
 		end
 
+		# Note: similar code is used in data.rb for post-push rebuild.
 		if exists?(:webserver_user)
 			run "sudo -u #{webserver_user} bash #{latest_release}/#{sake_path} dev/build flush=1", :roles => :db
 		else

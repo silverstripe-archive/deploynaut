@@ -12,6 +12,10 @@ Member:
     FirstName: Sarah
     Surname: Smith
     Groups: =>Group.project1-admins
+  eva:
+    FirstName: Eva
+    Surname: Smith
+    Groups: =>Group.project1-admins,=>Group.project2-admins
 DNProject:
   project1:
     Name: Project 1
@@ -23,15 +27,21 @@ DNEnvironment:
   project1-uat:
     Name: uat
     Project: =>DNProject.project1
-    ArchiveUploaders: =>Member.project1-samantha,=>Member.project1-sarah
-    ArchiveDownloaders: =>Member.project1-samantha
-    ArchiveDeleters: =>Member.project1-sarah
+    ArchiveUploaders: =>Member.project1-samantha,=>Member.project1-sarah,=>Member.eva
+    ArchiveDownloaders: =>Member.project1-samantha,=>Member.eva
+    ArchiveDeleters: =>Member.project1-sarah,=>Member.eva
   project1-live:
     Name: live
     Project: =>DNProject.project1
+    ArchiveUploaders: =>Member.eva,=>Member.project1-sarah
+    ArchiveDownloaders: =>Member.eva
+    ArchiveDeleters: =>Member.eva
   project2-uat:
     Name: uat
     Project: =>DNProject.project2
+    ArchiveUploaders: =>Member.eva
+    ArchiveDownloaders: =>Member.eva
+    ArchiveDeleters: =>Member.eva
   project2-live:
     Name: live
     Project: =>DNProject.project2
