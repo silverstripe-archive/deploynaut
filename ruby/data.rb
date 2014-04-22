@@ -114,6 +114,30 @@ namespace :data do
 		end
 	end
 
+	desc <<-DESC
+		Rebuild resources after db/asset push.
+
+		Copied from deploy.rb.
+
+		Example command: cap -f '/sites/deploynaut/www/assets/Capfile' project1:evn1 data:rebuild
+	DESC
+	task :rebuild do
+		begin
+			if exists?(:webserver_user)
+				run "sudo -u #{webserver_user} bash #{latest_release}/#{sake_path} dev/build flush=1", :roles => :db
+			else
+				run "mkdir -p #{latest_release}/silverstripe-cache", :roles => :db
+				run "bash #{latest_release}/#{sake_path} dev/build flush=1", :roles => :db
+				run "rm -rf #{latest_release}/silverstripe-cache", :roles => :db
+			end
+
+			# Initialise the cache, in case dev/build wasn't executed on all hosts
+			if exists?(:webserver_user)
+				run "sudo -u #{webserver_user} bash #{latest_release}/#{sake_path} dev"
+			end
+		end
+	end
+
 	def getdatabasename
 		database_name = ""
 		base_path = File.dirname(current_path)
