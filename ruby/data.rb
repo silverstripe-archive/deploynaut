@@ -95,9 +95,9 @@ namespace :data do
 	DESC
 	task :pushassets do
 		begin
-			# Files under assets are writable by www-data (either owned, or through g+w).
-			run "sudo -u www-data rm -rf #{shared_path}/assets/*"
-			# ... directory though is owned by the ssh user, with chmod 775
+			# Files under assets are writable by www-data (either owned, or through g+w)...
+			run "sudo -u www-data find #{shared_path}/assets -mindepth 1 -delete"
+			# ... but the directory is owned by the ssh user, with chmod 775
 			run "rmdir #{shared_path}/assets"
 
 			upload(data_path, shared_path, :recursive => true, :via => :scp) do |channel, name, sent, total|
