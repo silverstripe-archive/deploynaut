@@ -310,9 +310,10 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 	}
 
 	/**
-	 * Utility function for triggering the db rebuild.
+	 * Utility function for triggering the db rebuild and flush.
+	 * Also cleans up and generates new error pages.
 	 */
-	protected function rebuildDatabase($name, $env, $log) {
+	public function rebuild($name, $env, $log) {
 		// Rebuild db and flush.
 		$command = $this->getCommand('data:rebuild', $name, null, $env, $log);
 		$command->run(function ($type, $buffer) use($log) {
@@ -328,9 +329,9 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 	/**
 	 * Extracts a *.sspak file referenced through the passed in $dataTransfer
 	 * and pushes it to the environment referenced in $dataTransfer.
-	 * 
+	 *
 	 * @param  DNDataTransfer    $dataTransfer
-	 * @param  DeploynautLogFile $log         
+	 * @param  DeploynautLogFile $log
 	 */
 	protected function dataTransferRestore(DNDataTransfer $dataTransfer, DeploynautLogFile $log) {
 		$environmentObj = $dataTransfer->Environment();
@@ -343,9 +344,13 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 		$tempPath = TEMP_FOLDER . DIRECTORY_SEPARATOR . 'deploynaut-transfer-' . $dataTransfer->ID;
 		mkdir($tempPath, 0700, true);
 
-		$cleanupFn = function() use ($tempPath) {
+		$self = $this;
+		$cleanupFn = function() use ($self, $tempPath, $name, $env, $log) {
+			// Rebuild even if failed - maybe we can at least partly recover.
+			$self->rebuild($name, $env, $log);
+
 			$process = new Process('rm -rf ' . escapeshellarg($tempPath));
-			$process->run(); 
+			$process->run();
 		};
 
 		// Extract *.sspak to a temporary location
@@ -378,9 +383,6 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 				$log->write($buffer);
 			});
 			if(!$command->isSuccessful()) {
-				// Rebuild, maybe we can at least partly recover?
-				$this->rebuildDatabase($name, $env, $log);
-
 				$cleanupFn();
 				$log->write('Restore of database to "' . $name . '" failed: ' . $command->getErrorOutput());
 				throw new RuntimeException($command->getErrorOutput());
@@ -405,11 +407,6 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 			$process->setTimeout(3600);
 			$process->run();
 			if(!$process->isSuccessful()) {
-				// The database might have been restored beforehand - rebuild, maybe we can at least partly recover?
-				if(in_array($dataTransfer->Mode, array('all', 'db'))) {
-					$log->write('Asset restoration failed but DB was restored, so rebuilding anyway.');
-					$this->rebuildDatabase($name, $env, $log);
-				}
 
 				$log->write('Could not extract the assets archive');
 				$cleanupFn();
@@ -425,12 +422,6 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 				$log->write($buffer);
 			});
 			if(!$command->isSuccessful()) {
-				// The database might have been restored beforehand - rebuild, maybe we can at least partly recover?
-				if(in_array($dataTransfer->Mode, array('all', 'db'))) {
-					$log->write('Asset restoration failed but DB was restored, so rebuilding anyway.');
-					$this->rebuildDatabase($name, $env, $log);
-				}
-
 				$cleanupFn();
 				$log->write('Restore of assets to "' . $name . '" failed: ' . $command->getErrorOutput());
 				throw new RuntimeException($command->getErrorOutput());
@@ -439,7 +430,6 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 		}
 
 		$log->write('Rebuilding and cleaning up');
-		$this->rebuildDatabase($name, $env, $log);
 		$cleanupFn();
 	}
 
