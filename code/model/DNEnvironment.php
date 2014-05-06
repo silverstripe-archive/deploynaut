@@ -504,21 +504,21 @@ class DNEnvironment extends DataObject {
 		$fileNameField->setTitle('Filename');
 		$fileNameField->setDescription('The capistrano environment file name');
 		$fields->insertAfter($fileNameField, 'Name');
-
-		// A box to tick all boxes.
-		$tickAll = new CheckboxSetField("TickAll", "All permissions", $members);
-		$tickAll->setDescription('UI shortcut to tick all boxes - not written to the database.');
-		$fields->insertAfter($tickAll, 'Filename');
 		
 		// The Main.Deployers
 		$deployers = new CheckboxSetField("Deployers", "Who can deploy?", $members);
 		$deployers->setDescription('Users who can deploy to this environment');
 		$fields->insertAfter($deployers, 'URL');
 
+		// A box to tick all snapshot boxes.
+		$tickAll = new CheckboxSetField("TickAllSnapshot", "<em>All snapshot permissions</em>", $members);
+		$tickAll->setDescription('UI shortcut to tick all snapshot-related boxes - not written to the database.');
+		$fields->insertAfter($tickAll, 'Deployers');
+
 		// The Main.CanRestoreMembers
 		$canRestoreMembers = new CheckboxSetField('CanRestoreMembers', 'Who can restore?', $members);
 		$canRestoreMembers->setDescription('Users who can restore archives from Deploynaut into this environment');
-		$fields->insertAfter($canRestoreMembers, 'Deployers');
+		$fields->insertAfter($canRestoreMembers, 'TickAllSnapshot');
 
 		// The Main.CanBackupMembers
 		$canBackupMembers = new CheckboxSetField('CanBackupMembers', 'Who can backup?', $members);
