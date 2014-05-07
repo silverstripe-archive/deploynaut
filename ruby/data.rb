@@ -15,7 +15,7 @@ namespace :data do
 		database_name = getdatabasename
 
 		# todo: output to gzip and stream that back instead of the raw data.
-		run "mysqldump --skip-opt --add-drop-table --extended-insert --create-options --quick --set-charset --default-character-set=utf8 #{mysql_options} -p" do |channel, stream, data|
+		run "mysqldump --skip-opt --add-drop-table --extended-insert --create-options --quick --set-charset --default-character-set=utf8 #{mysql_options} -p", :roles => :db do |channel, stream, data|
 			if data =~ /^Enter password: /
 				channel.send_data "#{getmysqlpassword}\n"
 			else
@@ -56,15 +56,15 @@ namespace :data do
 				dump_command = "mysql --default-character-set=utf8 #{mysql_options} -p < #{tmpfile}"
 			end
 
-			run dump_command do |channel, stream, data|
+			run dump_command, :roles => :db do |channel, stream, data|
 				if data =~ /^Enter password: /
 					channel.send_data "#{getmysqlpassword}\n"
 				end
 			end
 
-			run "rm -rf #{tmpfile}"
+			run "rm -rf #{tmpfile}", :roles => :db
 		rescue Exception => e
-			run "rm -rf #{tmpfile}"
+			run "rm -rf #{tmpfile}", :roles => :db
 			raise e
 		end
 	end
@@ -147,7 +147,7 @@ namespace :data do
 		database_name = ""
 		base_path = File.dirname(current_path)
 
-		run %Q{ php -r "require_once '#{base_path}/_ss_environment.php'; echo SS_DATABASE_NAME;" } do |channel, stream, data|
+		run %Q{ php -r "require_once '#{base_path}/_ss_environment.php'; echo SS_DATABASE_NAME;" }, :roles => :db do |channel, stream, data|
 			database_name = data
 		end
 
@@ -158,7 +158,7 @@ namespace :data do
 		database_password = ""
 		base_path = File.dirname(current_path)
 
-		run %Q{ php -r "require_once '#{base_path}/_ss_environment.php'; echo SS_DATABASE_PASSWORD;" } do |channel, stream, data|
+		run %Q{ php -r "require_once '#{base_path}/_ss_environment.php'; echo SS_DATABASE_PASSWORD;" }, :roles => :db do |channel, stream, data|
 			database_password = data
 		end
 
@@ -173,11 +173,11 @@ namespace :data do
 		database_host = ""
 		base_path = File.dirname(current_path)
 
-		run %Q{ php -r "require_once '#{base_path}/_ss_environment.php'; echo SS_DATABASE_SERVER;" } do |channel, stream, data|
+		run %Q{ php -r "require_once '#{base_path}/_ss_environment.php'; echo SS_DATABASE_SERVER;" }, :roles => :db do |channel, stream, data|
 			database_server = data
 		end
 
-		run %Q{ php -r "require_once '#{base_path}/_ss_environment.php'; echo SS_DATABASE_USERNAME;" } do |channel, stream, data|
+		run %Q{ php -r "require_once '#{base_path}/_ss_environment.php'; echo SS_DATABASE_USERNAME;" }, :roles => :db do |channel, stream, data|
 			database_username = data
 		end
 
