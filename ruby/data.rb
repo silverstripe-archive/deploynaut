@@ -124,12 +124,13 @@ namespace :data do
 	task :rebuild do
 		begin
 			if exists?(:webserver_user)
-				# Remove error pages so they can be regenerated with correct BaseURL.
+				# Remove automatically generated content that relies on the environment.
 				run "sudo -u #{webserver_user} rm -fr #{shared_path}/assets/error-*.html"
+				run "sudo -u #{webserver_user} rm -fr #{shared_path}/assets/_combinedfiles"
 
 				run "sudo -u #{webserver_user} bash #{latest_release}/#{sake_path} dev/build flush=1", :roles => :db
 			else
-				# TODO Can we remove error pages in this situation?
+				# TODO Can we remove automatically generated content here?
 
 				run "mkdir -p #{latest_release}/silverstripe-cache", :roles => :db
 				run "bash #{latest_release}/#{sake_path} dev/build flush=1", :roles => :db
