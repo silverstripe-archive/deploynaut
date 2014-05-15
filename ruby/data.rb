@@ -44,16 +44,28 @@ namespace :data do
 	task :pushdb do
 		begin
 			dump_command = ""
+			database_name = getdatabasename
 			database_file = File.basename(data_path)
 			database_ext = File.extname(data_path)
+			mysql_options_string = mysql_options
 			tmpfile = "/tmp/dbupload-" + Time.now.to_i.to_s + database_file
 
 			upload(data_path, tmpfile, :via => :scp)
 
+			# Drop and recreate database in case the SQL doesn't have the drop table statements.
+			# Note: We don't set the collation nor charset on the database level to remain consistent with SilverStripe practice to use MySQL defaults.
+			# The sql dump content will determine default charset and collation for tables, and SS will override charsets per column anyway.
+			recreate_command = "echo 'DROP DATABASE IF EXISTS `#{database_name}`; CREATE DATABASE `#{database_name}`;' | mysql --default-character-set=utf8 #{mysql_options_string} -p"
+			run recreate_command, :roles => :db do |channel, stream, data|
+				if data =~ /^Enter password: /
+					channel.send_data "#{getmysqlpassword}\n"
+				end
+			end
+
 			if database_ext == ".gz"
-				dump_command = "gunzip -c #{tmpfile} | mysql --default-character-set=utf8 #{mysql_options} -p"
+				dump_command = "gunzip -c #{tmpfile} | mysql --default-character-set=utf8 #{mysql_options_string} -p"
 			else
-				dump_command = "mysql --default-character-set=utf8 #{mysql_options} -p < #{tmpfile}"
+				dump_command = "mysql --default-character-set=utf8 #{mysql_options_string} -p < #{tmpfile}"
 			end
 
 			run dump_command, :roles => :db do |channel, stream, data|
@@ -171,7 +183,6 @@ namespace :data do
 	def mysql_options
 		database_server = ""
 		database_username = ""
-		database_host = ""
 		base_path = File.dirname(current_path)
 
 		run %Q{ php -r "require_once '#{base_path}/_ss_environment.php'; echo SS_DATABASE_SERVER;" }, :roles => :db do |channel, stream, data|
