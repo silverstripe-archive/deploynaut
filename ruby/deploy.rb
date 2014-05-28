@@ -9,6 +9,18 @@ _cset(:sake_path) { "./framework/sake" }
 # The migrate task takes care of doing the dev/build
 namespace :deploy do
 
+	task :pre_checks do
+		# Abort the deployment if we discover the current site is not using symlinks where it should.
+		if exists?(:shared_children)
+			begin
+				shared_children.each { |child| run "[ -h '#{current_path}/#{child}' ] || ! [ -e '#{current_path}/#{child}' ]" }
+			rescue Exception => e
+				logger.debug "Aborting: one of the shared_children exists and is not a symlink!"
+				raise e
+			end
+		end
+	end
+
 	task :migrate do
 		# Run custom pre-migration script.
 		if exists?(:pre_migrate_script)
@@ -40,5 +52,7 @@ namespace :deploy do
 		logger.debug "Deploy finished."
 	end
 end
+
+before "deploy", "deploy:pre_checks"
 
 after "deploy:finalize_update", "deploy:migrate", "deploy:cleanup"
