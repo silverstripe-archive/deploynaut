@@ -91,6 +91,9 @@ namespace :data do
 		e.g. setting this to /tmp/mysite will place assets at /tmp/mysite/assets
 	DESC
 	task :getassets do
+		# Make sure the assets are actually readable by the ssh user.
+		run "sudo -u #{webserver_user} find #{shared_path}/assets -mindepth 1 -user #{webserver_user} -exec chmod a+r {} +"
+
 		download(shared_path + "/assets", data_path, :recursive => true, :via => :scp) do |channel, name, sent, total|
 			# TODO Less noisy progress indication
 			#puts name
@@ -108,7 +111,7 @@ namespace :data do
 	task :pushassets do
 		begin
 			# Files under assets are writable by www-data (either owned, or through g+w)...
-			run "sudo -u www-data find #{shared_path}/assets -mindepth 1 -delete"
+			run "sudo -u #{webserver_user} find #{shared_path}/assets -mindepth 1 -delete"
 			# ... but the directory is owned by the ssh user, with chmod 775
 			run "rmdir #{shared_path}/assets"
 
@@ -117,12 +120,10 @@ namespace :data do
 				#puts name
 			end
 
+		ensure
 			# We cannot give the files to www-data without being root, so we set the group write permission instead.
 			# Also makes the assets directory 775 again.
-			run "chmod g+w -R #{shared_path}/assets"
-
-		rescue Exception => e
-			raise e
+			run "chmod g+rw -R #{shared_path}/assets"
 		end
 	end
 
