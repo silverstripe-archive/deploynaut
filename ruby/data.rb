@@ -123,7 +123,7 @@ namespace :data do
 		ensure
 			# We cannot give the files to www-data without being root, so we set the group write permission instead.
 			# Also makes the assets directory 775 again.
-			run "chmod g+rw -R #{shared_path}/assets"
+			run "find #{shared_path}/assets -not -user #{webserver_user} -exec chmod g+rw {} +"
 		end
 	end
 
