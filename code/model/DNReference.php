@@ -13,15 +13,15 @@ class DNReference extends ViewableData {
 	}
 
 	public function Name() {
-		return $this->reference->getName();
+		return htmlentities($this->reference->getName());
 	}
 
 	public function FullName() {
-		return $this->reference->getCommitHash();
+		return htmlentities($this->reference->getCommitHash());
 	}
 
 	public function Filename() {
-		return$this->reference->getFullname();
+		return htmlentities($this->reference->getFullname());
 	}
 
 }

@@ -37,7 +37,7 @@ class DNBranch extends ViewableData {
 	 * @return string
 	 */
 	public function Name() {
-		return $this->branch->getName();
+		return htmlentities($this->branch->getName());
 	}
 
 	/**
@@ -45,7 +45,7 @@ class DNBranch extends ViewableData {
 	 * @return string
 	 */
 	public function SHA() {
-		return $this->branch->getCommit()->getHash();
+		return htmlentities($this->branch->getCommit()->getHash());
 	}
 
 	/**
