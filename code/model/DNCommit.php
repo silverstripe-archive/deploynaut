@@ -13,6 +13,17 @@ class DNCommit extends ViewableData {
 
 	protected $ownerBranchName = null;
 
+	private static $casting = array(
+		'Name' => 'Text',
+		'SubjectMessage' => 'Text',
+		'Message' => 'Text',
+		'BodyMessage' => 'Text',
+		'Fullname' => 'Text',
+		'Filename' => 'Text',
+		'References' => 'Text',
+		'ownerBranchName' => 'Text'
+	);
+
 	/**
 	 *
 	 * @param Gitonomy\Git\Commit $commit
@@ -36,7 +47,7 @@ class DNCommit extends ViewableData {
 			$this->name = $this->commit->getFixedShortHash(8);
 		}
 
-		return htmlentities($this->name);
+		return $this->name;
 	}
 
 	/**
@@ -48,7 +59,7 @@ class DNCommit extends ViewableData {
 			$this->subjectMessage = $this->commit->getSubjectMessage();
 		}
 
-		return htmlentities($this->subjectMessage);
+		return $this->subjectMessage;
 	}
 
 	public function BodyMessage() {
@@ -56,7 +67,7 @@ class DNCommit extends ViewableData {
 			$this->bodyMessage = $this->commit->getBodyMessage();
 		}
 
-		return htmlentities($this->bodyMessage);
+		return $this->bodyMessage;
 	}
 
 	/**
@@ -84,7 +95,7 @@ class DNCommit extends ViewableData {
 			if(!$this->ownerBranchName || $branch->getName() != $this->ownerBranchName) {
 				$this->references->push(new ArrayData(array(
 					'Type' =>'OtherBranch',
-					'Name' => $branch->getName(),
+					'Name' => Convert::raw2xml($branch->getName())
 				)));
 			}
 		}
@@ -97,7 +108,7 @@ class DNCommit extends ViewableData {
 	 * @return string
 	 */
 	public function FullName() {
-		return htmlentities($this->commit->getHash());
+		return $this->commit->getHash();
 	}
 
 	/**
@@ -105,7 +116,7 @@ class DNCommit extends ViewableData {
 	 * @return string
 	 */
 	public function Filename() {
-		return htmlentities($this->commit->getHash());
+		return $this->commit->getHash();
 	}
 
 	/**

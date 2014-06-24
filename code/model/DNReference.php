@@ -8,20 +8,26 @@ class DNReference extends ViewableData {
 	 */
 	protected $reference;
 
+	private static $casting = array(
+		'Name' => 'Text',
+		'FullName' => 'Text',
+		'Filename' => 'Text'
+	);
+
 	public function __construct(Gitonomy\Git\Reference $reference) {
 		$this->reference = $reference;
 	}
 
 	public function Name() {
-		return htmlentities($this->reference->getName());
+		return $this->reference->getName();
 	}
 
 	public function FullName() {
-		return htmlentities($this->reference->getCommitHash());
+		return $this->reference->getCommitHash();
 	}
 
 	public function Filename() {
-		return htmlentities($this->reference->getFullname());
+		return $this->reference->getFullname();
 	}
 
 }

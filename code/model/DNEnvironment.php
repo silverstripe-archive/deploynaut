@@ -27,6 +27,10 @@ class DNEnvironment extends DataObject {
 	 */
 	private static $allow_web_editing = false;
 	
+	private static $casting = array(
+		'DeployHistory' => 'Text'
+	);
+
 	/**
 	 *
 	 * @var array
@@ -370,7 +374,7 @@ class DNEnvironment extends DataObject {
 			try {
 				$commit = $repo->getCommit($deploy->SHA);
 				if($commit) {
-					$deploy->Message = $commit->getMessage();
+					$deploy->Message = Convert::raw2xml($commit->getMessage());
 				}
 				// We can't find this SHA, so we ignore adding a commit message to the deployment
 			} catch (Gitonomy\Git\Exception\ReferenceNotFoundException $ex) { }
@@ -389,11 +393,11 @@ class DNEnvironment extends DataObject {
 		try {
 			$commit = new \Gitonomy\Git\Commit($this->Project()->getRepository(), $sha);
 			return array(
-				'AuthorName' => (string)htmlentities($commit->getAuthorName()),
-				'AuthorEmail' => (string)htmlentities($commit->getAuthorEmail()),
-				'Message' => (string)htmlentities($commit->getMessage()),
-				'ShortHash' => htmlentities($commit->getFixedShortHash(8)),
-				'Hash' => htmlentities($commit->getHash())
+				'AuthorName' => (string)Convert::raw2xml($commit->getAuthorName()),
+				'AuthorEmail' => (string)Convert::raw2xml($commit->getAuthorEmail()),
+				'Message' => (string)Convert::raw2xml($commit->getMessage()),
+				'ShortHash' => Convert::raw2xml($commit->getFixedShortHash(8)),
+				'Hash' => Convert::raw2xml($commit->getHash())
 			);  
 		} catch(\Gitonomy\Git\Exception\ReferenceNotFoundException $exc) {
 			return array(

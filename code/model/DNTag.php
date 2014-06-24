@@ -17,6 +17,11 @@ class DNTag extends ViewableData {
 
 	protected $references = null;
 
+	private static $casting = array(
+		'Name' => 'Text',
+		'SHA' => 'Text'
+	);
+
 	/**
 	 *
 	 * @param Gitonomy\Git\Commit $commit
@@ -34,11 +39,11 @@ class DNTag extends ViewableData {
 	 * @return type
 	 */
 	public function Name() {
-		return htmlentities($this->tag->getName());
+		return $this->tag->getName();
 	}
 
 	public function SHA() {
-		return htmlentities($this->tag->getCommitHash());
+		return $this->tag->getCommitHash();
 	}
 
 	/**

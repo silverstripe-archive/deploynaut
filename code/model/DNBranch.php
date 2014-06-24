@@ -20,6 +20,11 @@ class DNBranch extends ViewableData {
 	 */
 	protected $data = null;
 
+	private static $casting = array(
+		'Name' => 'Text',
+		'SHA' => 'Text'
+	);
+
 	/**
 	 *
 	 * @param Gitonomy\Git\Commit $commit
@@ -37,7 +42,7 @@ class DNBranch extends ViewableData {
 	 * @return string
 	 */
 	public function Name() {
-		return htmlentities($this->branch->getName());
+		return $this->branch->getName();
 	}
 
 	/**
@@ -45,7 +50,7 @@ class DNBranch extends ViewableData {
 	 * @return string
 	 */
 	public function SHA() {
-		return htmlentities($this->branch->getCommit()->getHash());
+		return $this->branch->getCommit()->getHash();
 	}
 
 	/**
