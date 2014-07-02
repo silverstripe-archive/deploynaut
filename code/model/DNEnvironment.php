@@ -389,11 +389,11 @@ class DNEnvironment extends DataObject {
 		try {
 			$commit = new \Gitonomy\Git\Commit($this->Project()->getRepository(), $sha);
 			return array(
-				'AuthorName' => (string)$commit->getAuthorName(),
-				'AuthorEmail' => (string)$commit->getAuthorEmail(),
-				'Message' => (string)$commit->getMessage(),
-				'ShortHash' => $commit->getFixedShortHash(8),
-				'Hash' => $commit->getHash()
+				'AuthorName' => (string)htmlentities($commit->getAuthorName()),
+				'AuthorEmail' => (string)htmlentities($commit->getAuthorEmail()),
+				'Message' => (string)htmlentities($commit->getMessage()),
+				'ShortHash' => htmlentities($commit->getFixedShortHash(8)),
+				'Hash' => htmlentities($commit->getHash())
 			);  
 		} catch(\Gitonomy\Git\Exception\ReferenceNotFoundException $exc) {
 			return array(
