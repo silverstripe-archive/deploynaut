@@ -60,8 +60,12 @@ class GraphiteDeploymentNotifier {
 		$graphitePort = Config::inst()->get(get_class(), 'graphite_port');
 		if($graphiteHost && $graphitePort) {
 			$socket = fsockopen($graphiteHost, $graphitePort);
-			fwrite($socket, "$key $value $timestamp\n");
-			fclose($socket);
+			if($socket !== false) {
+				fwrite($socket, "$key $value $timestamp\n");
+				fclose($socket);
+			} else {
+				echo "Unable to connect to {$graphiteHost}:{$graphitePort}\n";
+			}
 		} else {
 			echo "Graphite called but not configured: '$key $value $timestamp'\n";
 		}
