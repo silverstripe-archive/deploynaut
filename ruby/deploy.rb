@@ -51,8 +51,14 @@ namespace :deploy do
 		system "echo \""+Time.now.strftime("%Y-%m-%d %H:%M:%S")+" => #{branch} \" >> #{history_path}/#{config_name}.deploy-history.txt";
 		logger.debug "Deploy finished."
 	end
+
+	task :create_clone_dir do
+		system "mkdir /tmp/#{release_name}"
+	end
 end
 
 before "deploy", "deploy:pre_checks"
+
+before "deploy:update_code", "deploy:create_clone_dir"
 
 after "deploy:finalize_update", "deploy:migrate", "deploy:cleanup"
