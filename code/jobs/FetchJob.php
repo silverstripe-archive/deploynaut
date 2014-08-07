@@ -26,15 +26,25 @@ class FetchJob {
 		
 		$log->write('Starting git fetch for project "' . $project->Name . '"');
 
-		$options = array('environment_variables' => $env);
 		// if an alternate user has been configured for clone, run the command as that user
+		// @todo Gitonomy doesn't seem to have any way to prefix the command properly, if you
+		// set 'sudo -u composer git' as the "command" parameter, it tries to run the whole
+		// thing as a single command and fails
 		$user = Injector::inst()->get('DNData')->getGitUser();
 		if($user) {
-			$options['command'] = sprintf('sudo -u %s git', $user);
+			$command = sprintf('cd %s && sudo -u %s git fetch -p origin +refs/heads/*:refs/heads/* --tags', $path, $user);
+			$process = new \Symfony\Component\Process\Process($command);
+			$process->setEnv($env);
+			$process->setTimeout(3600);
+			$process->run();
+			if(!$process->isSuccessful()) {
+				throw new RuntimeException($process->getErrorOutput());
+			}
+		} else {
+			$repository = new Gitonomy\Git\Repository($path, array('environment_variables' => $env));
+			$repository->run('fetch', array('-p', 'origin', '+refs/heads/*:refs/heads/*', '--tags'));
 		}
 
-		$repository = new Gitonomy\Git\Repository($path, $options);
-		$repository->run('fetch', array('-p', 'origin', '+refs/heads/*:refs/heads/*', '--tags'));
 		$log->write('Git fetch is finished');
 	}
 }
