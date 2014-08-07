@@ -35,7 +35,14 @@ class CloneGitRepo {
 
 		// using git clone straight via system call since doing it via the
 		// Gitonomy\Git\Admin times out. Silly.
-		$command = sprintf('git clone --bare -q %s %s', $repo, $path);
+
+		// if an alternate user has been configured for clone, run the command as that user
+		$user = Injector::inst()->get('DNData')->getGitUser();
+		if($user) {
+			$command = sprintf('sudo -u %s git clone --bare -q %s %s', $user, $repo, $path);
+		} else {
+			$command = sprintf('git clone --bare -q %s %s', $repo, $path);
+		}
 
 		fwrite($fh, '['.date('Y-m-d H:i:s').'] Running command: ' . $command . PHP_EOL);
 

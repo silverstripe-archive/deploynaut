@@ -26,9 +26,14 @@ class FetchJob {
 		
 		$log->write('Starting git fetch for project "' . $project->Name . '"');
 
-		$repository = new Gitonomy\Git\Repository($path, array(
-			'environment_variables' => $env
-		));
+		$options = array('environment_variables' => $env);
+		// if an alternate user has been configured for clone, run the command as that user
+		$user = Injector::inst()->get('DNData')->getGitUser();
+		if($user) {
+			$options['command'] = sprintf('sudo -u %s git', $user);
+		}
+
+		$repository = new Gitonomy\Git\Repository($path, $options);
 		$repository->run('fetch', array('-p', 'origin', '+refs/heads/*:refs/heads/*', '--tags'));
 		$log->write('Git fetch is finished');
 	}
