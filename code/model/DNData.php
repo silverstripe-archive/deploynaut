@@ -29,16 +29,27 @@ class DNData {
 	protected $projectList;
 
 	/**
+	 * If set, this provides an alternate user to the current one
+	 * executing the Git shell commands. e.g. if this is set to
+	 * a user called "composer", any Git commands that Deploynaut
+	 * will perform will be run as "sudo -u composer git ..."
+	 *
+	 * @var string|null
+	 */
+	protected $gitUser = null;
+
+	/**
 	 *
 	 * @var DeploymentBackend
 	 */
 	protected $backend;
 
-	public function __construct($environmentDir, $keyDir, $dataTransferDir) {
+	public function __construct($environmentDir, $keyDir, $dataTransferDir, $gitUser = null) {
 		$this->backend = Injector::inst()->get('DeploymentBackend');
 		$this->setEnvironmentDir($environmentDir);
 		$this->setKeyDir($keyDir);
 		$this->setDataTransferDir($dataTransferDir);
+		$this->setGitUser($gitUser);
 	}
 
 	public function getEnvironmentDir() {
@@ -57,6 +68,14 @@ class DNData {
 	public function setKeyDir($keyDir) {
 		if($keyDir[0] != "/") $keyDir = BASE_PATH . '/' . $keyDir;
 		$this->keyDir = $keyDir;
+	}
+
+	public function getGitUser() {
+		return $this->gitUser;
+	}
+
+	public function setGitUser($user) {
+		$this->gitUser = $user;
 	}
 
 	public function getDataTransferDir() {
