@@ -66,11 +66,10 @@ class APINoun extends Controller {
 		$response = $this->getResponse();
 		if($this->respondWithText()) {
 			$body = print_r($output, true);  
-			$response->addHeader('Content-Type', 'text/text');
+			$response->addHeader('Content-Type', 'text/plain');
 		} else {
 			$body = Convert::raw2json($output);
-			$response->addHeader('Content-Type', 'text/json');
-			
+			$response->addHeader('Content-Type', 'application/json');
 		}
 		$response->setBody($body);
 		return $response;

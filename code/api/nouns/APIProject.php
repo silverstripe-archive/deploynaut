@@ -20,9 +20,25 @@ class APIProject extends APINoun {
 		if(!$this->record->canView($this->getMember())) {
 			return $this->message('You are not authorized to this environment', 403);
 		}
+
 		switch($request->httpMethod()) {
 			case 'GET':
-				return $this->getAPIResponse($this->record->toMap());
+				$response = array(
+					"name" => $this->record->Name,
+					"href" => Director::absoluteURL($this->record->APILink("")),
+					"created" => $this->record->Created,
+					"last-edited" => $this->record->LastEdited,
+					"disk-quota-mb" => $this->record->DiskQuotaMB,
+					"environments" => array(),
+				);
+				foreach($this->record->DNEnvironmentList() as $environment) {
+					$response['environments'][] = array(
+						'name' => $environment->Name,
+						'href' => Director::absoluteURL($this->record->APILink($environment->Name)),
+					);
+				}
+
+				return $this->getAPIResponse($response);
 				break;
 			default:
 				return $this->message('API not found', 404);

@@ -22,7 +22,27 @@ class APIEnvironment extends APINoun {
 		}
 		switch($request->httpMethod()) {
 			case 'GET':
-				return $this->getAPIResponse($this->record->toMap());
+				$href = Director::absoluteURL($this->record->Project()->APILink($this->record->Name));
+				return $this->getAPIResponse(array(
+					"name" => $this->record->Name,
+					"project" => $this->record->Project()->Name,
+					"href" => $href,
+					"created" => $this->record->Created,
+					"last-edited" => $this->record->LastEdited,
+
+					// Stolen from https://github.com/kevinswiber/siren spec
+					"actions" => array(
+						array(
+							"name" => "deploy",
+							"method" =>  "POST",
+							"href" => "$href/deploy",
+							"type" => "application/json",
+							"fields" => array(
+								array( "name" => "release", "type" => "text" ),
+							),
+						)
+					)
+				));
 				break;
 			default:
 				return $this->message('API not found', 404);
@@ -109,7 +129,7 @@ class APIEnvironment extends APINoun {
 		$location = Director::absoluteBaseURL().$this->Link().'/ping/'.$ping->ID;
 		$output = array(
 			'message' => 'Ping queued as job ' . $ping->ResqueToken,
-			'location' => $location,
+			'href' => $location,
 		);
 		
 		$response = $this->getAPIResponse($output);
@@ -163,7 +183,7 @@ class APIEnvironment extends APINoun {
 		$location = Director::absoluteBaseURL().$this->Link().'/deploy/'.$deploy->ID;
 		$output = array(
 			'message' => 'Deploy queued as job ' . $deploy->ResqueToken,
-			'location' => $location,
+			'href' => $location,
 		);
 		$response = $this->getAPIResponse($output);
 		$response->setStatusCode(201);

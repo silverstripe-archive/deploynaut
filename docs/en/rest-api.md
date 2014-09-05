@@ -24,7 +24,7 @@ Response:
 	Array
 	(
 	    [message] => Deploy queued as job 68a09c440579d60415ac40f917a1074b
-	    [location] => http://deploynaut.test.silverstripe.com/naut/api/:projectname/:environmentname/deploy/29
+	    [href] => http://deploynaut.test.silverstripe.com/naut/api/:projectname/:environmentname/deploy/29
 	)
 
 Example:
@@ -70,7 +70,7 @@ Response
 	Array
 	(
 		[message] => Ping queued as job b7aca5172bd0a9734f7e4fa79a4f8c77
-		[location] => http://deploynaut.test.silverstripe.com/naut/api/:projectname/:environmentname/ping/18
+		[href] => http://deploynaut.test.silverstripe.com/naut/api/:projectname/:environmentname/ping/18
 	)
 
 Example

@@ -10,12 +10,13 @@
  * DeploynautAPI > APIProject > APIEnvironment
  * 
  */
-class DeploynautAPI extends Controller {
+class DeploynautAPI extends APINoun {
 	
 	/**
 	 * Default URL handlers - (Action)/(ID)//(OtherID)
 	 */
 	private static $url_handlers = array(
+		'' => 'listProjects',
 		'$Project//fetch' => 'project',
 		'$Project/$Environment!' => 'environment',
 		'$Project/' => 'project',
@@ -27,7 +28,8 @@ class DeploynautAPI extends Controller {
 	 */
 	public static $allowed_actions = array(
 		'project',
-		'environment'
+		'environment',
+		'listProjects'
 	);
 	
 	/**
@@ -41,8 +43,24 @@ class DeploynautAPI extends Controller {
 	 * @param SS_HTTPRequest $request
 	 * @return string
 	 */
-	public function index(SS_HTTPRequest $request) {
-		return 'This is the base.';
+	public function listProjects(SS_HTTPRequest $request) {
+		$response = array(
+			'href' => Director::absoluteURL($this->Link()),
+			'projects' => array(),
+		);
+
+		if($request->httpMethod() != 'GET') return $this->message('API not found', 404);;
+
+		foreach(DNProject::get() as $item) {
+			if($item->canView($this->getMember())) {
+				$response['projects'][] = array(
+					"name" => $item->Name,
+					"href" => Director::absoluteURL($item->APILink("")),
+				);
+			}
+		}
+
+		return $this->getAPIResponse($response);
 	}
 	
 	/**

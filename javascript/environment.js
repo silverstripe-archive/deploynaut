@@ -37,7 +37,7 @@
 						});
 						
 						// Setup the refresh of the log
-						self._setupPinging(modal, data.location);
+						self._setupPinging(modal, data.href);
 					},
 					dataType: 'json'
 				  });

@@ -85,7 +85,7 @@
 					window.fetchInterval = window.setInterval(function() {
 						$.ajax({
 							type: "GET",
-							url: data.location,
+							url: data.href,
 							dataType: 'json',
 							success: function(log_data) {
 								$('#gitFetchModal .modal-body').html('<pre>' + log_data.message + '</pre>');
