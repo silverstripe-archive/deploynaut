@@ -63,10 +63,19 @@
 
 		$('.project-branch > h3').click(function() {
 			var $project = $(this).parent();
+			var $content = $project.find('.project-branch-content');
+
 			if ($project.hasClass('open')) {
 				$project.removeClass('open');
 			} else {
 				$project.addClass('open');
+				// If the content hasn't been loaded yet, load it
+				if($content.html().match(/^\s+$/)) {
+					$content.html("Loading...");
+					$.get($project.data('href'), function(data) {
+						$content.html(data);
+					});
+				}
 			}
 		});
 

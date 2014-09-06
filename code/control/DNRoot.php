@@ -10,6 +10,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'projects',
 		'update',
 		'project',
+		'branch',
 		'environment',
 		'metrics',
 		'getDeployForm',
@@ -51,6 +52,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'project/$Project/transfer/$Identifier/log' => 'transferlog',
 		'project/$Project/transfer/$Identifier' => 'transfer',
 		'project/$Project/environment/$Environment' => 'environment',
+		'project/$Project/branch/$Branch' => 'branch',
 		'project/$Project/build/$Build' => 'build',
 		'project/$Project/restoresnapshot/$DataArchiveID' => 'restoresnapshot',
 		'project/$Project/deletesnapshot/$DataArchiveID' => 'deletesnapshot',
@@ -446,6 +448,24 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'ProjectOverview' => 1,
 			'DataTransferForm' => $this->getDataTransferForm($request)
 		))->renderWith(array('DNRoot_project', 'DNRoot'));
+	}
+
+	/**
+	 * 
+	 * @param SS_HTTPRequest $request
+	 * @return \SS_HTTPResponse
+	 */
+	public function branch(SS_HTTPRequest $request) {
+		$project = $this->getCurrentProject();
+		if(!$project) {
+			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
+		}
+		$branch = $project->DNBranchList()->byName($request->latestParam('Branch'));
+		if(!$branch) {
+			return new SS_HTTPResponse("Branch '" . $request->latestParam('Branch') . "' not found.", 404);
+		}
+
+		return $branch->renderWith(array('DNRoot_branchinfo'));
 	}
 
 	/**

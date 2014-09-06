@@ -41,23 +41,23 @@ class DNBranchList extends ArrayList {
 		$repository = new Gitonomy\Git\Repository($this->project->LocalCVSPath);
 		foreach($repository->getReferences()->getBranches() as $branch) {
 			$obj = new DNBranch($branch, $this->project, $this->data);
-			if($branch->getName() == 'master') $firstBranch = $obj;
-			else $branches[] = $obj;
+			if($branch->getName() == 'master') $firstBranch = array($branch->getName() => $obj);
+			else $branches[$branch->getName()] = $obj;
 		}
-		if($firstBranch) array_unshift($branches, $firstBranch);
+		if($firstBranch) $branches = $firstBranch + $branches;
 
 		return $branches;
 	}
 
 	/**
-	 * Find a build in this set by hash.
+	 * Find a branch in this set by branch name.
 	 */
-	public function byName($hash) {
+	public function byName($name) {
 		if($this->loaded == false) {
-			$this->items = $this->getReferences();
-			$this->loaded = true;
+			$this->getIterator();
 		}
-		return $this->items[$hash];
+
+		return $this->items[$name];
 	}
 
 	/**
