@@ -90,16 +90,6 @@ class DNCommit extends ViewableData {
 			}
 		}
 
-		// Add other branches that this SHA belongs to
-		foreach(GitonomyCache::getIncludingBranches($this->commit) as $branch) {
-			if(!$this->ownerBranchName || $branch->getName() != $this->ownerBranchName) {
-				$this->references->push(new ArrayData(array(
-					'Type' =>'OtherBranch',
-					'Name' => Convert::raw2xml($branch->getName())
-				)));
-			}
-		}
-
 		return $this->references;
 	}
 
