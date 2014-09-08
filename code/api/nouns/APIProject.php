@@ -100,7 +100,7 @@ class APIProject extends APINoun {
 		$location = Director::absoluteBaseURL().$this->Link().'/fetch/'.$fetch->ID;
 		$output = array(
 			'message' => 'Ping queued as job ' . $fetch->ResqueToken,
-			'location' => $location,
+			'href' => $location,
 		);
 		
 		$response = $this->getAPIResponse($output);
