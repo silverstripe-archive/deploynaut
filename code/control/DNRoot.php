@@ -52,7 +52,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'project/$Project/transfer/$Identifier/log' => 'transferlog',
 		'project/$Project/transfer/$Identifier' => 'transfer',
 		'project/$Project/environment/$Environment' => 'environment',
-		'project/$Project/branch/$Branch' => 'branch',
+		'project/$Project/branch' => 'branch',
 		'project/$Project/build/$Build' => 'build',
 		'project/$Project/restoresnapshot/$DataArchiveID' => 'restoresnapshot',
 		'project/$Project/deletesnapshot/$DataArchiveID' => 'deletesnapshot',
@@ -460,9 +460,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		if(!$project) {
 			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
 		}
-		$branch = $project->DNBranchList()->byName($request->latestParam('Branch'));
+
+		$branchName = $request->getVar('name');
+		$branch = $project->DNBranchList()->byName($branchName);
 		if(!$branch) {
-			return new SS_HTTPResponse("Branch '" . $request->latestParam('Branch') . "' not found.", 404);
+			return new SS_HTTPResponse("Branch '" . $branchName . "' not found.", 404);
 		}
 
 		return $branch->renderWith(array('DNRoot_branchinfo'));

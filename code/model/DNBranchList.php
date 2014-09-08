@@ -57,7 +57,7 @@ class DNBranchList extends ArrayList {
 			$this->getIterator();
 		}
 
-		return $this->items[$name];
+		if(isset($this->items[$name])) return $this->items[$name];
 	}
 
 	/**

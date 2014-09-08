@@ -98,7 +98,7 @@
 	<% end_if %>
 
 	<% loop DNBranchList %>
-	<div class="project-branch$IsOpenByDefault" data-href="$Up.Link/branch/$Name">
+	<div class="project-branch$IsOpenByDefault" data-href="$Link">
 	<h3>
 		<span class="open-icon">-</span><span class="closed-icon">+</span>
 		$Name

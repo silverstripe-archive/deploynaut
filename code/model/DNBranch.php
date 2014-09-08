@@ -45,6 +45,11 @@ class DNBranch extends ViewableData {
 		return $this->branch->getName();
 	}
 
+	public function Link() {
+		// Use a get-var for branch so that it can handle unsafe chars better
+		return Controller::join_links($this->project->Link(), 'branch?name='.urlencode($this->Name()));
+	}
+
 	/**
 	 * 
 	 * @return string
