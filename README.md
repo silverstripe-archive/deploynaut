@@ -1,5 +1,7 @@
 # Deploynaut
 
+[![Build Status](https://secure.travis-ci.org/silverstripe/deploynaut.png)](https://travis-ci.org/silverstripe/deploynaut)
+
 A web based front end for deployment of SilverStripe 3.* sites.
 
 ## Overview
