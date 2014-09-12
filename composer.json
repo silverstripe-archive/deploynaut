@@ -4,10 +4,11 @@
 	"description": "The SilverStripe deployment framework - a module",
 	"require": {
 		"php": ">=5.3.2",
-		"silverstripe/framework": "3.1.1",
+		"silverstripe/framework": "~3.1",
 		"stojg/silverstripe-resque": "1.1.*",
 		"gitonomy/gitlib": "dev-master",
 		"undefinedoffset/sortablegridfield": "*",
 		"silverstripe/secureassets": "dev-master"
-	}
+	},
+	"minimum-stability": "dev"
 }
