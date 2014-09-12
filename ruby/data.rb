@@ -141,13 +141,17 @@ namespace :data do
 				run "sudo -u #{webserver_user} rm -fr #{shared_path}/assets/error-*.html"
 				run "sudo -u #{webserver_user} rm -fr #{shared_path}/assets/_combinedfiles"
 
-				run "sudo -u #{webserver_user} bash #{latest_release}/#{sake_path} dev/build flush=1", :roles => :db
+				if (sake_path != false)
+					run "sudo -u #{webserver_user} bash #{latest_release}/#{sake_path} dev/build flush=1", :roles => :db
+				end
 			else
 				# TODO Can we remove automatically generated content here?
 
-				run "mkdir -p #{latest_release}/silverstripe-cache", :roles => :db
-				run "bash #{latest_release}/#{sake_path} dev/build flush=1", :roles => :db
-				run "rm -rf #{latest_release}/silverstripe-cache", :roles => :db
+				if (sake_path != false)
+					run "mkdir -p #{latest_release}/silverstripe-cache", :roles => :db
+					run "bash #{latest_release}/#{sake_path} dev/build flush=1", :roles => :db
+					run "rm -rf #{latest_release}/silverstripe-cache", :roles => :db
+				end
 			end
 
 			# Initialise the cache, in case dev/build wasn't executed on all hosts

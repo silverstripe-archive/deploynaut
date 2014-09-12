@@ -28,12 +28,15 @@ namespace :deploy do
 		end
 
 		# Note: similar code is used in data.rb for post-push rebuild.
-		if exists?(:webserver_user)
-			run "sudo -u #{webserver_user} bash #{latest_release}/#{sake_path} dev/build flush=1", :roles => :db
-		else
-			run "mkdir -p #{latest_release}/silverstripe-cache", :roles => :db
-			run "bash #{latest_release}/#{sake_path} dev/build flush=1", :roles => :db
-			run "rm -rf #{latest_release}/silverstripe-cache", :roles => :db
+		# We allow users to not use sake at all if they set the path to false
+		if (sake_path != false)
+			if exists?(:webserver_user)
+				run "sudo -u #{webserver_user} bash #{latest_release}/#{sake_path} dev/build flush=1", :roles => :db
+			else
+				run "mkdir -p #{latest_release}/silverstripe-cache", :roles => :db
+				run "bash #{latest_release}/#{sake_path} dev/build flush=1", :roles => :db
+				run "rm -rf #{latest_release}/silverstripe-cache", :roles => :db
+			end
 		end
 
 		# Initialise the cache, in case dev/build wasn't executed on all hosts
