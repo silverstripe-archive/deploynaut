@@ -133,7 +133,6 @@ Response:
 		[Filename] => staging.rb
 		[Name] => staging
 		[URL] => http://staging1.nauttest.silverstripe.com
-		[GraphiteServers] => server.wgtn.oscar
 		[ProjectID] => 1
 		[ID] => 2
 		[RecordClassName] => DNEnvironment

@@ -44,7 +44,6 @@ class DNEnvironment extends DataObject {
 		"Filename" => "Varchar(255)",
 		"Name" => "Varchar",
 		"URL" => "Varchar",
-		"GraphiteServers" => "Text"
 	);
 
 	/**
@@ -557,59 +556,6 @@ class DNEnvironment extends DataObject {
 				'Hash' => '(unknown)',
 			);
 		}
-	}
-
-	/**
-	 * Does this environment have a graphite server configuration
-	 *
-	 * @return string
-	 */
-	public function HasMetrics() {
-		return trim($this->GraphiteServers) != "";
-	}
-
-	/**
-	 * All graphite graphs
-	 *
-	 * @return GraphiteList
-	 */
-	public function Graphs() {
-		if(!$this->HasMetrics()) return null;
-
-		$serverList = preg_split('/\s+/', trim($this->GraphiteServers));
-
-		return new GraphiteList($serverList);
-	}
-
-	/**
-	 * Graphs, grouped by server
-	 *
-	 * @todo refactor out the hardcoded aa exception
-	 *
-	 * @return ArrayList
-	 */
-	public function GraphServers() {
-		if(!$this->HasMetrics()) return null;
-
-		$serverList = preg_split('/\s+/', trim($this->GraphiteServers));
-
-		$output = new ArrayList;
-		foreach($serverList as $server) {
-			// Hardcoded reference to db
-			if(strpos($server,'nzaadb') !== false) {
-				$metricList = array("Load average", "CPU Usage", "Memory Free", "Physical Memory Used", "Swapping");
-			} else {
-				$metricList = array("Apache", "Load average", "CPU Usage", "Memory Free", "Physical Memory Used", "Swapping");
-			}
-
-			$output->push(new ArrayData(array(
-				'Server' => $server,
-				'ServerName' => substr($server,strrpos($server,'.')+1),
-				'Graphs' => new GraphiteList(array($server), $metricList),
-			)));
-		}
-
-		return $output;
 	}
 
 	/**

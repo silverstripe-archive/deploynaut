@@ -1,7 +1,7 @@
 <?php
 use \Symfony\Component\Process\Process;
 
-class CapistranoDeploymentBackend implements DeploymentBackend {
+class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 
 	/**
 	 * Return information about the current build on the given environment.
@@ -29,7 +29,8 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 		$env = $project->getProcessEnv();
 
 		$project = DNProject::get()->filter('Name', $projectName)->first();
-		GraphiteDeploymentNotifier::notify_start($environmentName, $sha, null, $project);
+
+		$this->extend('deployStart', $environment, $sha, $log, $project);
 
 		$log->write('Deploying "'.$sha.'" to "'.$projectName.':'.$environmentName.'"');
 
@@ -60,7 +61,7 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 
 		$log->write('Deploy done "'.$sha.'" to "'.$projectName.':'.$environmentName.'"');
 
-		GraphiteDeploymentNotifier::notify_end($environmentName, $sha, null, $project);
+		$this->extend('deployEnd', $environment, $sha, $log, $project);
 	}
 
 	/**
