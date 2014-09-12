@@ -1,0 +1,84 @@
+PipelineConfig:
+  DependsOnProject: "ss3"
+  DependsOnEnvironment: "deploytest"
+  FilteredCommits: "DNFinishedCommits"
+  Description: >
+    In order to deploy to this environment instance manager confirmation is required.<br />
+    Only successful deployments to the test server are permitted to be selected.
+  # Used by both rollback and smoke test
+  Tests:
+    Home:
+      URL: https://github.com/
+      ExpectStatus: 200
+  # Contacts to notify, as well as the author of this pipeline
+  Recipients:
+    Success:
+      - success@example.com
+    Failure:
+      - errors@example.com
+      - abort@example.com
+    Abort:
+      - abort@example.com
+  Messages:
+    # Messages sent to all users (including <requester>)
+    Success: 'Deployment for <project>/<environment> has successfully completed'
+    Failure: 'Deployment for <project>/<environment> has failed'
+    Abort: 'Deployment for <project>/<environment> has been aborted'
+  Subjects:
+    # Subject line for all users
+    Success: 'Deployment for <project>/<environment>: Success'
+    Failure: 'Deployment for <project>/<environment>: Failure'
+    Abort: 'Deployment for <project>/<environment>: Aborted'
+Steps:
+  RequestConfirmationStep:
+    Class: UserConfirmationStep
+    MaxDuration: 604800 # Auto time out after a week
+    Recipients:
+      - admin@example.com
+      - failover@example.com,second@example.com
+      - error@example.com
+    RecipientsDelay: 7200 # 2 hour fallback if no reply 
+    Permissions:
+      # Permissions required to allow deployment. Ensure that the recipients above are assigned this
+      - APPROVE_DEPLOYMENT
+    Messages:
+      # Messages sent to all users (including <requester>)
+      Cancel: 'Deployment for <project>/<environment> has been cancelled'
+      Reject: 'Deployment for <project>/<environment> has been rejected'
+      Approve: 'Deployment for <project>/<environment> has been approved'
+      TimeOut: 'Deployment approval for <project>/<environment> has timed out due to no response'
+      # Messages only sent to requester
+      Request-Requester: 'You requested approval for deployment of <project>/<environment>. Cancel? <abortlink>'
+      # Messages only sent to specified recipients
+      Request-Recipient: 'Deployment for <project>/<environment> requested by <requester>. Approve? <approvelink>'
+    Subjects:
+      # Subject line for all users
+      Cancel: 'Deployment for <project>/<environment>: Cancelled'
+      Reject: 'Deployment for <project>/<environment>: Rejected'
+      Approve: 'Deployment for <project>/<environment>: Approved'
+      TimeOut: 'Deployment for <project>/<environment>: Timeout'
+      Request: 'Deployment for <project>/<environment>: Requested'
+    ServiceArguments:
+      # Additional arguments that make sense to the ConfirmationMessagingService
+      from: admin@silverstripe.com
+      reply-to: noreply@silverstripe.com
+  SmokeTest:
+    Class: SmokeTestPipelineStep
+    MaxDuration: 3600
+    Tests:
+      Videos:
+        URL: http://www.youtube.com/
+        ExpectStatus: 200
+  FailTest:
+    Class: SmokeTestPipelineStep
+    MaxDuration: 3600
+    Tests:
+      BrokenPage:
+        URL: http://bob.bob.bob.bob/
+        ExpectStatus: 200
+  RequestDeploymentStep:
+    Class: TriggerDeployStep
+    MaxDuration: 86400 # Auto time out after a day
+  RollbackWindowStep:
+    Class: EmergencyRollbackStep
+    MaxDuration: 3600 # Auto time out after a hour

@@ -8,24 +8,36 @@
  * It's useful for demonstrating how the system works, and how you can write deployment back-ends
  */
 class DemoDeploymentBackend implements DeploymentBackend {
-	
+
 	/**
 	 * Deploy the given build to the given environment
 	 */
-	public function deploy($environment, $sha, DeploynautLogFile $log, DNProject $project) {
-		GraphiteDeploymentNotifier::notify_start($environment, $sha, null, $project);
+	public function deploy(DNEnvironment $environment, $sha, DeploynautLogFile $log, DNProject $project, $leaveMaintenancePage = false) {
+		GraphiteDeploymentNotifier::notify_start($environment->Name, $sha, null, $project);
 
-		$file = DEPLOYNAUT_LOG_PATH . '/' . $project->Name. ':' .$environment . ".deploy-history.txt";
+		$file = DEPLOYNAUT_LOG_PATH . '/' . $project->Name. ':' .$environment->Name . ".deploy-history.txt";
 		$CLI_file = escapeshellarg($file);
 		$CLI_line = escapeshellarg(date('Y-m-d H:i:s') . " => $sha");
 
+		// Put maintenance page up
+		$this->enableMaintenance($environment, $log, $project);
+
+		// Do the deployment
 		$log->write("Demo deployment: echo $CLI_line >> $CLI_file");
 		`echo $CLI_line >> $CLI_file`;
 		$log->write("Arbitrary pause for 10s");
 		sleep(10);
 		$log->write("Well, that was a waste of time");
 
-		GraphiteDeploymentNotifier::notify_end($environment, $sha, null, $project);
+		// Once the deployment has run it's necessary to update the maintenance page status
+		if($leaveMaintenancePage) {
+			$this->enableMaintenance($environment, $log, $project);
+		} else {
+			// Remove maintenance page if we want it to
+			$this->disableMaintenance($environment, $log, $project);
+		}
+
+		GraphiteDeploymentNotifier::notify_end($environment->Name, $sha, null, $project);
 	}
 
 	/**
@@ -50,4 +62,17 @@ class DemoDeploymentBackend implements DeploymentBackend {
 			return $this->convertLine($lastLine);
 		}
 	}
+
+	public function disableMaintenance(DNEnvironment $environment, \DeploynautLogFile $log, \DNProject $project) {
+		$log->write("Maintenance page disabled on \"{$project->Name}:{$environment->Name}\"");
+	}
+
+	public function enableMaintenance(DNEnvironment $environment, \DeploynautLogFile $log, \DNProject $project) {
+		$log->write("Maintenance page enabled on \"{$project->Name}:{$environment->Name}\"");
+	}
+
+	public function ping(\DNEnvironment $environment, \DeploynautLogFile $log, \DNProject $project) {
+		$log->write("Ping \"{$project->Name}:{$environment->Name}\"");
+	}
+
 }

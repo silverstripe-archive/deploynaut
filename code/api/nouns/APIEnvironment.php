@@ -1,7 +1,7 @@
 <?php
 
 class APIEnvironment extends APINoun {
-	
+
 	/**
 	 *
 	 * @var array
@@ -12,7 +12,7 @@ class APIEnvironment extends APINoun {
 	);
 
 	/**
-	 * 
+	 *
 	 * @param SS_HTTPRequest $request
 	 * @return SS_HTTPResponse
 	 */
@@ -49,9 +49,9 @@ class APIEnvironment extends APINoun {
 				break;
 		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param SS_HTTPRequest $request
 	 * @return SS_HTTPResponse
 	 */
@@ -71,9 +71,9 @@ class APIEnvironment extends APINoun {
 				break;
 		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param SS_HTTPRequest $request
 	 * @return SS_HTTPResponse
 	 */
@@ -93,7 +93,7 @@ class APIEnvironment extends APINoun {
 				break;
 		}
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -104,24 +104,24 @@ class APIEnvironment extends APINoun {
 			$this->record->Name
 		);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return SS_HTTPResponse
 	 */
 	protected function showRecord() {
 		return $this->getAPIResponse($this->record->toMap());
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return SS_HTTPResponse
 	 */
 	protected function createPing() {
 		if(!$this->record->canDeploy($this->getMember())) {
 			return $this->message('You are not authorized to do that on this environment', 403);
 		}
-		$ping = new DNPing();
+		$ping = DNPing::create();
 		$ping->EnvironmentID = $this->record->ID;
 		$ping->write();
 		$ping->start();
@@ -131,15 +131,15 @@ class APIEnvironment extends APINoun {
 			'message' => 'Ping queued as job ' . $ping->ResqueToken,
 			'href' => $location,
 		);
-		
+
 		$response = $this->getAPIResponse($output);
 		$response->setStatusCode(201);
 		$response->addHeader('Location', $location);
 		return $response;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param int $ID
 	 * @return SS_HTTPResponse
 	 */
@@ -152,30 +152,30 @@ class APIEnvironment extends APINoun {
 			'status' => $ping->ResqueStatus(),
 			'message' => $ping->LogContent()
 		);
-		
+
 		return $this->getAPIResponse($output);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return SS_HTTPResponse
 	 */
 	protected function createDeploy() {
 		if(!$this->record->canDeploy($this->getMember())) {
 			return $this->message('You are not authorized to do that on this environment', 403);
 		}
-		
+
 		$reqBody = $this->getRequestBody();
-		
+
 		if($reqBody === null) {
 			return $this->message('the request body did not contain a valid JSON object.', 400);
 		}
-		
+
 		if(empty($reqBody['release'])) {
 			return $this->message('deploy requires a {"release": "sha1"} in the body of the request.', 400);
 		}
-		
-		$deploy = new DNDeployment();
+
+		$deploy = DNDeployment::create();
 		$deploy->EnvironmentID = $this->record->ID;
 		$deploy->SHA = $reqBody['release'];
 		$deploy->write();
@@ -190,9 +190,9 @@ class APIEnvironment extends APINoun {
 		$response->addHeader('Location', $location);
 		return $response;
 }
-	
+
 	/**
-	 * 
+	 *
 	 * @param int $id
 	 * @return SS_HTTPResponse
 	 */
@@ -205,7 +205,7 @@ class APIEnvironment extends APINoun {
 			'status' => $deploy->ResqueStatus(),
 			'message' => $deploy->LogContent()
 		);
-		
+
 		return $this->getAPIResponse($output);
 	}
 }

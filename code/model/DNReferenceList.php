@@ -25,7 +25,7 @@ class DNReferenceList extends ArrayList {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param DNProject $project
 	 * @param DNData $data
 	 * @param Gitonomy\Git\Reference $reference
@@ -91,11 +91,11 @@ class DNReferenceList extends ArrayList {
 			}
 
 			if($this->getTags) {
-				$builds[$reference->getCommitHash()] = new DNTag($reference, $this->project, $this->data);
+				$builds[$reference->getCommitHash()] = DNTag::create($reference, $this->project, $this->data);
 
 			} else {
 				$name = $this->reference ? $this->reference->getName() : '';
-				$builds[$reference->getHash()] = new DNCommit($reference, $this->project, $this->data, $name);
+				$builds[$reference->getHash()] = DNCommit::create($reference, $this->project, $this->data, $name);
 			}
 		}
 		return $builds;
@@ -114,7 +114,7 @@ class DNReferenceList extends ArrayList {
 		if(!isset($this->items[$hash])) {
 			$repository = new Gitonomy\Git\Repository($this->project->LocalCVSPath);
 			$commit = new Gitonomy\Git\Commit($repository, $hash);
-			$this->items[$hash] = new DNCommit($commit, $this->project, $this->data);
+			$this->items[$hash] = DNCommit::create($commit, $this->project, $this->data);
 		};
 
 		return $this->items[$hash];

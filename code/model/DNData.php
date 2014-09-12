@@ -64,7 +64,7 @@ class DNData {
 	public function getKeyDir() {
 		return $this->keyDir;
 	}
-	
+
 	public function setKeyDir($keyDir) {
 		if($keyDir[0] != "/") $keyDir = BASE_PATH . '/' . $keyDir;
 		$this->keyDir = $keyDir;

@@ -1,0 +1,5 @@
+en:
+  UserConfirmationStep:
+    DENYCANCEL: 'You do not have permission to cancel this deployment'
+    DENYAPPROVE: 'You do not have permission to approve this deployment'
+    DENYREJECT: 'You do not have permission to reject this deployment'

@@ -15,6 +15,8 @@
  * a reference to a Resque token (which might still be in progress).
  *
  * The "Environment" points to the source or target involved.
+ * 
+ * @method DNDataArchive DataArchive()
  */
 class DNDataTransfer extends DataObject {
 
@@ -67,6 +69,10 @@ class DNDataTransfer extends DataObject {
 			'title' => 'Direction',
 		),
 	);
+	
+	public function getTitle() {
+		return $this->dbObject('Created')->Nice() . " (Status: {$this->Status})";
+	}
 
 	public function Link() {
 		return Controller::join_links($this->Environment()->Project()->Link(), 'transfer', $this->ID);

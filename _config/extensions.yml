@@ -1,3 +1,6 @@
+---
+Name: deploynautextensions
+---
 File:
   extensions:
     - DeploynautFileExtension

@@ -10,9 +10,9 @@ class APIProject extends APINoun {
 		'index',
 		'fetch'
 	);
-	
+
 	/**
-	 * 
+	 *
 	 * @param SS_HTTPRequest $request
 	 * @return SS_HTTPResponse
 	 */
@@ -46,9 +46,9 @@ class APIProject extends APINoun {
 		}
 		return $this->httpError(404, '404 - These aren\'t the droids you\'re looking for.');
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param SS_HTTPRequest $request
 	 * @return SS_HTTPResponse
 	 */
@@ -68,9 +68,9 @@ class APIProject extends APINoun {
 				break;
 		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param int $ID
 	 * @return SS_HTTPResponse
 	 */
@@ -83,16 +83,16 @@ class APIProject extends APINoun {
 			'status' => $ping->ResqueStatus(),
 			'message' => $ping->LogContent()
 		);
-		
+
 		return $this->getAPIResponse($output);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return SS_HTTPResponse
 	 */
 	protected function createFetch() {
-		$fetch = new DNGitFetch();
+		$fetch = DNGitFetch::create();
 		$fetch->ProjectID = $this->record->ID;
 		$fetch->write();
 		$fetch->start();
@@ -102,13 +102,13 @@ class APIProject extends APINoun {
 			'message' => 'Ping queued as job ' . $fetch->ResqueToken,
 			'href' => $location,
 		);
-		
+
 		$response = $this->getAPIResponse($output);
 		$response->setStatusCode(201);
 		$response->addHeader('Location', $location);
 		return $response;
 	}
-	
+
 	/**
 	 * @return string
 	 */

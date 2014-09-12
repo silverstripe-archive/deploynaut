@@ -1,0 +1,43 @@
+Member:
+  Deployer1:
+    FirstName: Deployer
+    Surname: One 
+    Email: one@deployer.test
+    Password: 1nitialPassword
+    PasswordExpiry: 2030-01-01
+DNProject:
+  Project1:
+    Name: Project 1
+    CVSPath: https://github.com/silverstripe/silverstripe-installer.git
+    DiskQuotaMB: 1024
+DNEnvironment:
+  Env1:
+    Filename: env1.rb
+    Name: env1
+    URL: http://localhost:8001
+    Project: =>DNProject.Project1
+DNDeployment:
+  Queued:
+    SHA: 7f0c016f97275b2451f24cf87f14865e42a0927c
+    ResqueToken: 2ecadad709fb188d5314a69b0ceb0efd
+    Status: Queued
+    Environment: =>DNEnvironment.Env1
+    Deployer: =>Member.Deployer1
+  Started:
+    SHA: 5f0c018f97225b2851f84gf87f64865z42h0527t
+    ResqueToken: 4ecnda570jfb588j5315a68b0cbb0elp
+    Status: Started
+    Environment: =>DNEnvironment.Env1
+    Deployer: =>Member.Deployer1
+  Finished:
+    SHA: 8f0q012f97725b1851n84gk87f34868z42l0524p
+    ResqueToken: 6eccda870xfb528j5375a61b0cmb0eak
+    Status: Finished
+    Environment: =>DNEnvironment.Env1
+    Deployer: =>Member.Deployer1
+  Failed:
+    SHA: 9f0a012e97715b1871n41gk30f34268u12a0029q
+    ResqueToken: 1eccdf870xib538j5775a21b0umb0qaz
+    Status: Failed
+    Environment: =>DNEnvironment.Env1
+    Deployer: =>Member.Deployer1

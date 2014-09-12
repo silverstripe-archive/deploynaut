@@ -23,7 +23,12 @@ namespace :maintenance do
 			# Don't try putting maintenance screen on non-standard instances (all SilverStripe sites will have the .htaccess file)
 			logger.debug "Skipping maintenance on missing .htaccess file."
 		else
-			run "mv #{current_path}/.htaccess #{current_path}/.htaccess_original; true"
+			# In case .htaccess_original exists assume that .htaccess is the maintenance version
+			run "if [ -f \"#{current_path}/.htaccess_original\" ]; then echo 1; else mv #{current_path}/.htaccess #{current_path}/.htaccess_original && echo 0; fi" do |_, _, data|
+				if data[0] == "1"
+					logger.debug "Existing .htaccess_original has been noticed and left untouched."
+				end
+			end
 
 			# if there's an error-503.html file available in assets, use that for the maintenance page
 			custom_maintenance = nil
