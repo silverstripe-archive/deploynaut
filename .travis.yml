@@ -1,0 +1,28 @@
+# See https://github.com/silverstripe-labs/silverstripe-travis-support for setup details
+
+language: php 
+
+php:
+ - 5.4
+
+env:
+  global:
+    - CORE_RELEASE=3.1
+  matrix:
+    - DB=MYSQL
+
+matrix:
+  include:
+    - php: 5.3
+      env: DB=MYSQL
+
+before_script:
+ - composer self-update
+ - phpenv rehash
+ - git clone git://github.com/silverstripe-labs/silverstripe-travis-support.git ~/travis-support
+ - php ~/travis-support/travis_setup.php --source `pwd` --target ~/builds/ss
+ - cd ~/builds/ss
+
+script: 
+  - phpunit deploynaut/tests/
+
