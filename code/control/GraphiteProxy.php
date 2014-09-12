@@ -1,7 +1,7 @@
 <?php
 
 class GraphiteProxy extends Controller {
-	public static $graphite_source = 'http://graphite.silverstripe.com/render';
+	public static $graphite_source;
 
 	public static $url_handlers = array(
 		'render' => 'renderGraph',
@@ -13,6 +13,9 @@ class GraphiteProxy extends Controller {
 
 	public function renderGraph() {
 		if(!Member::currentUser()) throw new SS_HTTPResponse_Exception('Please log-in to see graphs', 403);
+		if (empty($this->graphite_source)) {
+			throw new SS_HTTPResponse_Exception('Graphite not configured');
+		}
 
 		$getVars = $this->request->getVars();
 

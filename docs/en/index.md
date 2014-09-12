@@ -11,7 +11,6 @@ You'll need a few system tools on the Deploynaut host to get started:
  * git
  * tar
  * [SSPak](http://sminnee.github.io/sspak/) (see below)
-   * Until changes are merged back, you'll want [halkyon's branch](https://github.com/halkyon/sspak/tree/existing_save)
 
 We also assume that each Deploynaut target has the following tools installed
 and available in the user's `$PATH`:
@@ -36,7 +35,7 @@ Our implementation relies on capistrano-multiconfig extension which provides us 
 First get the base code for the project
 
 	mkdir deploynaut.dev && cd deploynaut.dev
-	git clone ssh://git@gitorious.silverstripe.com:2222/infrastructure/deploynaut.git www 
+	git clone https://github.com/silverstripe/deploynaut.git www
 
 Now it's time to create folders and checkout dependent silverstripe modules
 
@@ -60,8 +59,8 @@ We suggest to set up the following in the `_ss_environment.php` file:
 
 	// we are using /var/tmp instead of /tmp so that the files are persisted between reboots
 	define('DEPLOYNAUT_LOCAL_VCS_PATH', '/var/tmp/deploynaut_local_vcs');
-	define('DEPLOYNAUT_ADMIN_EMAIL', 'deploy@silverstripe.com');
-	define('DEPLOYNAUT_ERROR_EMAIL', 'deploy@silverstripe.com');
+	define('DEPLOYNAUT_ADMIN_EMAIL', 'deploy@deploynaut');
+	define('DEPLOYNAUT_ERROR_EMAIL', 'deploy@deploynaut');
 	define('DEPLOYNAUT_SSH_KEY', '/var/www/.ssh/id_rsa');
 
 	global $_FILE_TO_URL_MAPPING;

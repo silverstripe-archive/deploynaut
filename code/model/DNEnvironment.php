@@ -571,9 +571,7 @@ class DNEnvironment extends DataObject {
 		$graphiteServerField = $fields->fieldByName('Root.Main.GraphiteServers');
 		$fields->removeByName('Root.Main.GraphiteServers');
 		$graphiteServerField->setDescription(
-			'Find the relevant graphite servers at '.
-			'<a href="http://graphite.silverstripe.com/" target="_blank">graphite.silverstripe.com</a>'.
-			' and enter them one per line, e.g. "server.wgtn.oscar"'
+			'Enter your graphite servers one by line, e.g. "server.wgtn.test"'.
 		);
 		$fields->addFieldToTab('Root.Extra', $graphiteServerField);
 		
