@@ -22,15 +22,16 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 	/**
 	 * Deploy the given build to the given environment.
 	 */
-	public function deploy($environment, $sha, DeploynautLogFile $log, DNProject $project) {
+	public function deploy(DNEnvironment $environment, $sha, DeploynautLogFile $log, DNProject $project, $leaveMaintenancePage = false) {
 		$repository = $project->LocalCVSPath;
 		$projectName = $project->Name;
+		$environmentName = $environment->Name;
 		$env = $project->getProcessEnv();
 
 		$project = DNProject::get()->filter('Name', $projectName)->first();
-		GraphiteDeploymentNotifier::notify_start($environment, $sha, null, $project);
+		GraphiteDeploymentNotifier::notify_start($environmentName, $sha, null, $project);
 
-		$log->write('Deploying "'.$sha.'" to "'.$projectName.':'.$environment.'"');
+		$log->write('Deploying "'.$sha.'" to "'.$projectName.':'.$environmentName.'"');
 
 		$this->enableMaintenance($environment, $log, $project);
 
@@ -38,67 +39,68 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 			'branch' => $sha,
 			'repository' => $repository
 		);
-		$command = $this->getCommand('deploy', $projectName.':'.$environment, $args, $env, $log);
+		$command = $this->getCommand('deploy', $projectName.':'.$environmentName, $args, $env, $log);
 		$command->run(function ($type, $buffer) use($log) {
 			$log->write($buffer);
 		});
+
+		// Once the deployment has run it's necessary to update the maintenance page status
+		if($leaveMaintenancePage) {
+			$this->enableMaintenance($environment, $log, $project);
+		}
+
 		if(!$command->isSuccessful()) {
-			// disable the maintenance page in the event of a failure
-			$this->disableMaintenance($environment, $log, $project);
 			throw new RuntimeException($command->getErrorOutput());
 		}
 
-		$this->disableMaintenance($environment, $log, $project);
+		// Check if maintenance page should be removed
+		if(!$leaveMaintenancePage) {
+			$this->disableMaintenance($environment, $log, $project);
+		}
 
-		$log->write('Deploy done "'.$sha.'" to "'.$projectName.':'.$environment.'"');
+		$log->write('Deploy done "'.$sha.'" to "'.$projectName.':'.$environmentName.'"');
 
-		GraphiteDeploymentNotifier::notify_end($environment, $sha, null, $project);
+		GraphiteDeploymentNotifier::notify_end($environmentName, $sha, null, $project);
 	}
 
 	/**
 	 * Enable a maintenance page for the given environment using the maintenance:enable Capistrano task.
 	 */
-	public function enableMaintenance($environment, DeploynautLogFile $log, DNProject $project) {
-		$projectName = $project->Name;
+	public function enableMaintenance(DNEnvironment $environment, DeploynautLogFile $log, DNProject $project) {
+		// Perform the enabling
 		$env = $project->getProcessEnv();
-
-		$command = $this->getCommand('maintenance:enable', $projectName.':'.$environment, null, $env, $log);
+		$command = $this->getCommand('maintenance:enable', $project->Name.':'.$environment->Name, null, $env, $log);
 		$command->run(function ($type, $buffer) use($log) {
 			$log->write($buffer);
 		});
 		if(!$command->isSuccessful()) {
 			throw new RuntimeException($command->getErrorOutput());
 		}
-		$log->write('Maintenance page enabled on "' . $projectName.':'.$environment.'"');
+		$log->write("Maintenance page enabled on \"{$project->Name}:{$environment->Name}\"");
 	}
 
 	/**
 	 * Disable the maintenance page for the given environment using the maintenance:disable Capistrano task.
 	 */
-	public function disableMaintenance($environment, DeploynautLogFile $log, DNProject $project) {
-		$projectName = $project->Name;
+	public function disableMaintenance(DNEnvironment $environment, DeploynautLogFile $log, DNProject $project) {
+		// Perform the disabling
 		$env = $project->getProcessEnv();
-
-		$command = $this->getCommand('maintenance:disable', $projectName.':'.$environment, null, $env, $log);
+		$command = $this->getCommand('maintenance:disable', $project->Name.':'.$environment->Name, null, $env, $log);
 		$command->run(function ($type, $buffer) use($log) {
 			$log->write($buffer);
 		});
 		if(!$command->isSuccessful()) {
 			throw new RuntimeException($command->getErrorOutput());
 		}
-		$log->write('Maintenance page disabled on "' . $projectName.':'.$environment.'"');
+		$log->write("Maintenance page disabled on \"{$project->Name}:{$environment->Name}\"");
 	}
 
 	/**
-	 * Deploy the given build to the given environment.
-	 * 
-	 * @param DNProject $environment
-	 * @param string $environment
+	 * Check the status using the deploy:check capistrano method
 	 */
-	public function ping($environment, DeploynautLogFile $log, DNProject $project) {
-		$projectName  = $project->Name;
+	public function ping(DNEnvironment $environment, DeploynautLogFile $log, DNProject $project) {
 		$env = $project->getProcessEnv();
-		$command = $this->getCommand('deploy:check', $projectName.':'.$environment, null, $env, $log);
+		$command = $this->getCommand('deploy:check', $project->Name.':'.$environment->Name, null, $env, $log);
 		$command->run(function ($type, $buffer) use($log) {
 			$log->write($buffer);
 			echo $buffer;
@@ -112,22 +114,13 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 		if($dataTransfer->Direction == 'get') {
 			$this->dataTransferBackup($dataTransfer, $log);
 		} else {
-			$envObj = $dataTransfer->Environment();
-			$envName = $envObj->Name;
-			$project = $envObj->Project();
+			$environment = $dataTransfer->Environment();
+			$project = $environment->Project();
 
 			// put up a maintenance page during a restore of db or assets
-			$this->enableMaintenance($envName, $log, $project);
-
-			try {
-				$this->dataTransferRestore($dataTransfer, $log);
-			} catch(RuntimeException $e) {
-				// disable the maintenance page in the event of an exception
-				$this->disableMaintenance($envName, $log, $project);
-				throw $e;
-			}
-
-			$this->disableMaintenance($envName, $log, $project);
+			$this->enableMaintenance($environment, $log, $project);
+			$this->dataTransferRestore($dataTransfer, $log);
+			$this->disableMaintenance($environment, $log, $project);
 		}
 	}
 
@@ -165,7 +158,7 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 		if(defined('DEPLOYNAUT_CAPFILE')) {
 			$capFile = DEPLOYNAUT_CAPFILE;
 		} else {
-			$capFile = BASE_PATH.'/assets/Capfile';
+			$capFile = ASSETS_PATH.'/Capfile';
 		}
 		file_put_contents($capFile, $cap);
 
@@ -186,9 +179,9 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 	/**
 	 * Backs up database and/or assets to a designated folder,
 	 * and packs up the files into a single sspak.
-	 * 
+	 *
 	 * @param  DNDataTransfer    $dataTransfer
-	 * @param  DeploynautLogFile $log         
+	 * @param  DeploynautLogFile $log
 	 */
 	protected function dataTransferBackup(DNDataTransfer $dataTransfer, DeploynautLogFile $log) {
 		$environmentObj = $dataTransfer->Environment();
@@ -201,7 +194,7 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 
 		// Associate a new archive with the transfer.
 		// Doesn't retrieve a filepath just yet, need to generate the files first.
-		$dataArchive = new DNDataArchive();
+		$dataArchive = DNDataArchive::create();
 		$dataArchive->Mode = $dataTransfer->Mode;
 		$dataArchive->AuthorID = $dataTransfer->AuthorID;
 		$dataArchive->OriginalEnvironmentID = $dataTransfer->Environment()->ID;
@@ -229,7 +222,7 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 			}
 			$log->write('Backup of database from "' . $name . '" done');
 		}
-		
+
 		// Backup assets
 		if(in_array($dataTransfer->Mode, array('all', 'assets'))) {
 			$log->write('Backup of assets from "' . $name . '" started');
@@ -267,7 +260,7 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 
 		// HACK: find_or_make() expects path relative to assets/
 		$sspakFilepath = ltrim(
-			str_replace(ASSETS_PATH, '', $filepathBase . DIRECTORY_SEPARATOR . $sspakFilename), 
+			str_replace(ASSETS_PATH, '', $filepathBase . DIRECTORY_SEPARATOR . $sspakFilename),
 			DIRECTORY_SEPARATOR
 		);
 
@@ -389,7 +382,7 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 			}
 			$log->write('Restore of database to "' . $name . '" done');
 		}
-		
+
 		// Restore assets
 		if(in_array($dataTransfer->Mode, array('all', 'assets'))) {
 			// Upload into target environment
@@ -401,7 +394,7 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 				escapeshellarg($tempPath),
 				escapeshellarg($tempPath . DIRECTORY_SEPARATOR . 'assets.tar.gz')
 			);
-			
+
 			$log->write($extractCmd);
 			$process = new Process($extractCmd);
 			$process->setTimeout(3600);

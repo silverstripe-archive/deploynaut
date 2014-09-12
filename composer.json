@@ -10,5 +10,8 @@
 		"undefinedoffset/sortablegridfield": "*",
 		"silverstripe/secureassets": "dev-master"
 	},
+	"require-dev": {
+		"phpunit/PHPUnit": "~3.7@stable"
+	},
 	"minimum-stability": "dev"
 }

@@ -112,7 +112,18 @@ You can see a bunch of tasks that can be run by issuing this
 
 	cap -T
 
-## Snapshot security
+## Pipelines
+For full information, see the [pipelining documentation](pipelines.md).
+
+Pipelines will be used to break down various processes within Deploynaut into individual steps, that are run one after
+the other in a pipeline. This is modelled by the `Pipeline` and `PipelineStep` classes.
+
+A Pipeline is associated with a DNEnvironment, and each environment can contain many pipelines, which contains the
+history of various action within Deploynaut. Each Pipeline then has a set of ordered steps, which are defined
+separately for each environment in a YAML file (see the [pipelines](pipelines.md) docs for details on that format),
+and these are executed in order when a pipeline starts.
+
+## Securing Snapshot Downloads
 
 Deploynaut provides the ability to backup database and/or assets from a specific environment
 and store them as an [SSPak](http://sminnee.github.io/sspak/) snapshot on the Deploynaut filesystem.

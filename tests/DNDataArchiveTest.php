@@ -1,20 +1,8 @@
 <?php
-class DNDataArchiveTest extends SapphireTest {
+
+class DNDataArchiveTest extends DeploynautTest {
 
 	protected static $fixture_file = 'DNDataArchiveTest.yml';
-
-	public function setUp() {
-		$this->envPath = '/tmp/deploynaut_test/envs';
-		Config::inst()->update('Injector', 'DNData', array(
-			'constructor' => array(
-				0 => $this->envPath,
-				1 => '/tmp/deploynaut_test/gitkeys',
-				2 => Director::baseFolder() . '/assets/transfers'
-			)
-		));
-
-		parent::setUp();
-	}
 
 	/**
 	 * We check a number of different conditionals here (see DNDataArchiveTest.yml for relationships):
@@ -66,12 +54,12 @@ class DNDataArchiveTest extends SapphireTest {
 		$project1 = $this->objFromFixture('DNProject', 'project1');
 		$project1uatEnv = $this->objFromFixture('DNEnvironment', 'project1-uat');
 
-		$dataTransfer = new DNDataTransfer();
+		$dataTransfer = DNDataTransfer::create();
 		$dataTransfer->Direction = 'get';
 		$dataTransfer->Mode = 'all';
 		$dataTransfer->write();
 
-		$archive = new DNDataArchive();
+		$archive = DNDataArchive::create();
 		$archive->OriginalEnvironmentID = $project1uatEnv->ID;
 		$archive->write();
 
@@ -86,12 +74,12 @@ class DNDataArchiveTest extends SapphireTest {
 		$project1 = $this->objFromFixture('DNProject', 'project1');
 		$project1uatEnv = $this->objFromFixture('DNEnvironment', 'project1-uat');
 
-		$dataTransfer = new DNDataTransfer();
+		$dataTransfer = DNDataTransfer::create();
 		$dataTransfer->Direction = 'get';
 		$dataTransfer->Mode = 'all';
 		$dataTransfer->write();
 
-		$archive = new DNDataArchive();
+		$archive = DNDataArchive::create();
 		$archive->OriginalEnvironmentID = $project1uatEnv->ID;
 		$archive->write();
 
@@ -111,7 +99,7 @@ class DNDataArchiveTest extends SapphireTest {
 		$uat2 = $this->objFromFixture('DNEnvironment', 'project2-uat');
 		$live2 = $this->objFromFixture('DNEnvironment', 'project2-live');
 
-		$archive = new DNDataArchive();
+		$archive = DNDataArchive::create();
 		$archive->EnvironmentID = $uat1->ID;
 		$archive->write();
 

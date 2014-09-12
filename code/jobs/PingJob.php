@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Runs a capistrano job that will check the connection and that all folders with 
+ * Runs a capistrano job that will check the connection and that all folders with
  * permission are setup correctly
  */
 class PingJob {
@@ -13,7 +13,7 @@ class PingJob {
 	public $args;
 
 	/**
-	 * 
+	 *
 	 * @global array $databaseConfig
 	 */
 	public function setUp() {
@@ -23,7 +23,7 @@ class PingJob {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return DNData
 	 */
 	public function DNData() {
@@ -37,6 +37,7 @@ class PingJob {
 		echo "[-] PingJob starting" . PHP_EOL;
 		$log = new DeploynautLogFile($this->args['logfile']);
 		$DNProject = $this->DNData()->DNProjectList()->filter('Name', $this->args['projectName'])->First();
-		$this->DNData()->Backend()->ping($this->args['environment'], $log, $DNProject);
+		$DNEnvironment = $DNProject->Environments()->filter('Name', $this->args['environmentName'])->First();
+		$this->DNData()->Backend()->ping($DNEnvironment, $log, $DNProject);
 	}
 }

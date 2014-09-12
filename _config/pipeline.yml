@@ -1,0 +1,53 @@
+---
+Name: defaultpipeline
+---
+Pipeline:
+  default_config:
+    PipelineConfig:
+      FilteredCommits: "DNFinishedCommits"
+      Messages:
+        Success: 'Deployment for <project>/<environment> has successfully completed'
+        Failure: 'Deployment for <project>/<environment> has failed'
+        Abort: 'Deployment for <project>/<environment> has been aborted'
+      Subjects:
+        Success: 'Deployment for <project>/<environment>: Success'
+        Failure: 'Deployment for <project>/<environment>: Failure'
+        Abort: 'Deployment for <project>/<environment>: Aborted'
+    RollbackStep1:
+      Class: RollbackStep
+      RestoreDB: true
+      MaxDuration: 3600
+    RollbackStep2:
+      Class: SmokeTestPipelineStep
+      MaxDuration: 3600
+---
+Name: defaultconfirmationstep
+---
+UserConfirmationStep:
+  default_config:
+    MaxDuration: 604800 # Auto time out after a week
+    Permissions:
+      - APPROVE_DEPLOYMENT
+    Messages:
+      # Messages sent to all users (including <requester>)
+      Cancel: 'Deployment for <project>/<environment> has been cancelled'
+      Reject: 'Deployment for <project>/<environment> has been rejected'
+      Approve: 'Deployment for <project>/<environment> has been approved'
+      TimeOut: 'Deployment approval for <project>/<environment> has timed out due to no response'
+      # Messages only sent to requester
+      Request-Requester: 'You requested approval for deployment of <project>/<environment>. Cancel? <abortlink>'
+      # Messages only sent to specified recipients
+      Request-Recipient: 'Deployment for <project>/<environment> requested by <requester>. Approve? <approvelink>'
+    Subjects:
+      # Subject line for all users
+      Cancel: 'Deployment for <project>/<environment>: Cancelled'
+      Reject: 'Deployment for <project>/<environment>: Rejected'
+      Approve: 'Deployment for <project>/<environment>: Approved'
+      TimeOut: 'Deployment for <project>/<environment>: Timeout'
+      Request: 'Deployment for <project>/<environment>: Requested'
+---
+Name: triggerdeploystep
+---
+TriggerDeployStep:
+  default_config:
+    MaxDuration: 604800 # Auto time out after a week

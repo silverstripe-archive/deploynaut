@@ -13,6 +13,8 @@
 				$('#Form_ItemEditForm_ArchiveDeleters_' + id)[0].checked = checked;
 				$('#Form_ItemEditForm_ArchiveUploaders_' + id)[0].checked = checked;
 				$('#Form_ItemEditForm_ArchiveDownloaders_' + id)[0].checked = checked;
+				$('#Form_ItemEditForm_PipelineApprovers_' + id)[0].checked = checked;
+				$('#Form_ItemEditForm_PipelineCancellers_' + id)[0].checked = checked;
 			}
 		});
 

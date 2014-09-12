@@ -1,46 +1,23 @@
 <?php
 
 
-class DNProjectTest extends SapphireTest {
+class DNProjectTest extends DeploynautTest {
 
 	/**
 	 *
 	 * @var DNProject
 	 */
 	protected $project = null;
-	
-	/**
-	 *
-	 * @var type 
-	 */
-	protected $envPath = '';
-	
+
 	public function setUp() {
 		parent::setUp();
-		$this->envPath = '/tmp/deploynaut_test/envs';
-		
-		Filesystem::makeFolder($this->envPath);
 
-		Config::inst()->update('Injector', 'DNData', array(
-			'constructor' => array(
-				0 => $this->envPath,
-				1 => '/tmp/deploynaut_test/gitkeys',
-				2 => Director::baseFolder() . '/assets/transfers'
-			) 
-		));
-		
-		parent::setUp();
-		$this->project = new DNProject();
+		$this->project = DNProject::create();
 		$this->project->Name = 'testproject';
 	}
-	
-	public function tearDown() {
-		parent::tearDown();
-		Filesystem::removeFolder($this->envPath);
-	}
-	
+
 	/**
-	 * 
+	 *
 	 */
 	public function testOnBeforeWriteShouldNotCreateCapFolder() {
 		$this->assertTrue(file_exists($this->envPath));
@@ -48,7 +25,7 @@ class DNProjectTest extends SapphireTest {
 		$this->project->onBeforeWrite();
 		$this->assertFalse(file_exists($this->envPath.'/testproject'), 'Folder should not have been created');
 	}
-	
+
 	public function testOnBeforeWriteShouldCreateCapFolder() {
 		$this->assertTrue(file_exists($this->envPath));
 		$this->assertFalse(file_exists($this->envPath.'/testproject'));
@@ -56,7 +33,7 @@ class DNProjectTest extends SapphireTest {
 		$this->project->onBeforeWrite();
 		$this->assertTrue(file_exists($this->envPath.'/testproject'), 'Folder should have been created');
 	}
-	
+
 	public function testSetCreateProjectFolderFieldNoFolderExists() {
 		$fields = new FieldList();
 		$fields->push(new TextField('Name'));
@@ -64,7 +41,7 @@ class DNProjectTest extends SapphireTest {
 		$this->assertInstanceOf('LabelField', $fields->fieldByName('CreateEnvFolderNotice'));
 		$this->assertInstanceOf('CheckboxField', $fields->fieldByName('CreateEnvFolder'));
 	}
-	
+
 	public function testSetCreateProjectFolderFieldFolderExists() {
 		$this->assertFalse(file_exists($this->envPath.'/'.$this->project->Name), 'project folder shouldnt exist prior to save');
 		$this->project->CreateEnvFolder = true;

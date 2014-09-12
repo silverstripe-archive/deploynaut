@@ -47,7 +47,7 @@ class DNCommit extends ViewableData {
 			$this->name = $this->commit->getFixedShortHash(8);
 		}
 
-		return $this->name;
+		return htmlentities($this->name);
 	}
 
 	/**
@@ -59,7 +59,7 @@ class DNCommit extends ViewableData {
 			$this->subjectMessage = $this->commit->getSubjectMessage();
 		}
 
-		return $this->subjectMessage;
+		return htmlentities($this->subjectMessage);
 	}
 
 	public function BodyMessage() {
@@ -67,7 +67,7 @@ class DNCommit extends ViewableData {
 			$this->bodyMessage = $this->commit->getBodyMessage();
 		}
 
-		return $this->bodyMessage;
+		return htmlentities($this->bodyMessage);
 	}
 
 	/**
@@ -98,7 +98,7 @@ class DNCommit extends ViewableData {
 	 * @return string
 	 */
 	public function FullName() {
-		return $this->commit->getHash();
+		return htmlentities($this->commit->getHash());
 	}
 
 	/**
@@ -106,7 +106,7 @@ class DNCommit extends ViewableData {
 	 * @return string
 	 */
 	public function Filename() {
-		return $this->commit->getHash();
+		return htmlentities($this->commit->getHash());
 	}
 
 	/**
@@ -156,22 +156,6 @@ class DNCommit extends ViewableData {
 		return false;
 	}
 
-	/**
-	 * Release steps of the project and their status for this release
-	 */
-	public function ReleaseSteps() {
-		$output = new ArrayList;
-		$sha = $this->commit->getHash();
-
-		foreach($this->project->ReleaseSteps() as $step) {
-			$output->push($step->customise(array(
-				'Status' => $step->getReleaseStatus($this, $sha),
-				'Link' => $step->getReleaseLink($this, $sha),
-			)));
-		}
-
-		return $output;
-	}
 	/**
 	 *
 	 * @return SS_Datetime

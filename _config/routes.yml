@@ -1,6 +1,7 @@
 ---
-Name: mysiteroutes
-After: 'rootroutes'
+Name: deploynautroutes
+After:
+  - '#rootroutes'
 ---
 Director:
   rules:
