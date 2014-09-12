@@ -344,14 +344,33 @@ class DNEnvironment extends DataObject {
 	/**
 	 * Get the current deployed build for this environment
 	 *
+	 * Dear people of the future: If you are looking to optimize this, simply create a CurrentBuildSHA(), which can be a lot faster.
+	 * I presume you came here because of the Project display template, which only needs a SHA.
+	 *
 	 * @return string
 	 */
 	public function CurrentBuild() {
-		$history = $this->DeployHistory()->filter('Status', 'Finished');
-		if(!$history->count()) {
+		// The DeployHistory function is far too slow to use for this
+		$deploy = DNDeployment::get()->filter(array('EnvironmentID' => $this->ID, 'Status' => 'Finished'))->sort('LastEdited DESC')->first();
+
+		if (!$deploy || (!$deploy->SHA)) {
 			return false;
 		}
-		return $history->first();
+
+		$repo = $this->Project()->getRepository();
+		if (!$repo) {
+			return $deploy;
+		}
+
+		try {
+			$commit = $repo->getCommit($deploy->SHA);
+			if ($commit) {
+				$deploy->Message = Convert::raw2xml($commit->getMessage());
+			}
+			// We can't find this SHA, so we ignore adding a commit message to the deployment
+		} catch (Gitonomy\Git\Exception\ReferenceNotFoundException $ex) { }
+
+		return $deploy;
 	}
 
 	/**
