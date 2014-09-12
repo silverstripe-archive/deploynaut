@@ -1,6 +1,22 @@
 <?php
 
+/**
+ * God controller for the deploynaut interface
+ *
+ * @package deploynaut
+ * @subpackage control
+ */
 class DNRoot extends Controller implements PermissionProvider, TemplateGlobalProvider {
+
+	/**
+	 * Access permission code
+	 */
+	const DEPLOYNAUT_ACCESS = 'DEPLOYNAUT_ACCESS';
+
+	/**
+	 * Bypass pipeline permission code
+	 */
+	const DEPLOYNAUT_BYPASS_PIPELINE = 'DEPLOYNAUT_BYPASS_PIPELINE';
 
 	/**
 	 *
@@ -12,6 +28,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'project',
 		'branch',
 		'environment',
+		'abortpipeline',
+		'pipeline',
+		'pipelinelog',
 		'metrics',
 		'getDeployForm',
 		'deploy',
@@ -47,6 +66,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'project/$Project/UploadSnapshotForm' => 'getUploadSnapshotForm',
 		'project/$Project/PostSnapshotForm' => 'getPostSnapshotForm',
 		'project/$Project/environment/$Environment/metrics' => 'metrics',
+		'project/$Project/environment/$Environment/pipeline/$Identifier//$Action/$ID/$OtherID' => 'pipeline',
 		'project/$Project/environment/$Environment/deploy/$Identifier/log' => 'deploylog',
 		'project/$Project/environment/$Environment/deploy/$Identifier' => 'deploy',
 		'project/$Project/transfer/$Identifier/log' => 'transferlog',
@@ -79,7 +99,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	public function init() {
 		parent::init();
 
-		if(!Permission::check('DEPLOYNAUT_ACCESS')) {
+		if(!Permission::check(self::DEPLOYNAUT_ACCESS)) {
 			return Security::permissionFailure();
 		}
 
@@ -108,7 +128,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 	/**
 	 * Actions
-	 * 
+	 *
 	 * @return \SS_HTTPResponse
 	 */
 	public function index(SS_HTTPRequest $request) {
@@ -117,7 +137,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 	/**
 	 * Action
-	 * 
+	 *
 	 * @return string - HTML
 	 */
 	public function projects(SS_HTTPRequest $request) {
@@ -130,7 +150,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 	/**
 	 * Action
-	 * 
+	 *
 	 * @return string - HTML
 	 */
 	public function snapshots(SS_HTTPRequest $request) {
@@ -150,7 +170,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 	/**
 	 * Action
-	 * 
+	 *
 	 * @return string - HTML
 	 */
 	public function createsnapshot(SS_HTTPRequest $request) {
@@ -175,7 +195,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 	/**
 	 * Action
-	 * 
+	 *
 	 * @return string - HTML
 	 */
 	public function uploadsnapshot(SS_HTTPRequest $request) {
@@ -194,7 +214,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'CurrentProject' => $project,
 			'SnapshotsSection' => 1,
 			'UploadLimit' => $maxSize = File::format_size(min(
-				File::ini2bytes(ini_get('upload_max_filesize')), 
+				File::ini2bytes(ini_get('upload_max_filesize')),
 				File::ini2bytes(ini_get('post_max_size'))
 			)),
 			'UploadSnapshotForm' => $this->getUploadSnapshotForm($request),
@@ -204,7 +224,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 	/**
 	 * Construct the upload form.
-	 * 
+	 *
 	 * @param SS_HTTPRequest $request
 	 * @return Form
 	 */
@@ -234,13 +254,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$fileField->getValidator()->setAllowedMaxFileSize(array('*' => $maxSize));
 
 		$form = new Form(
-			$this, 
-			'UploadSnapshotForm', 
+			$this,
+			'UploadSnapshotForm',
 			new FieldList(
 				$fileField,
 				DropdownField::create('Mode', 'What does this file contain?', DNDataArchive::get_mode_map()),
 				DropdownField::create('EnvironmentID', 'Initial ownership of the file', $envsMap)
-			), 
+			),
 			new FieldList(
 				$action = new FormAction('doUploadSnapshot', "Upload File")
 			),
@@ -276,14 +296,14 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			throw new LogicException('Invalid mode');
 		}
 
-		$dataArchive = new DNDataArchive(array(
+		$dataArchive = DNDataArchive::create(array(
 			'AuthorID' => Member::currentUserID(),
 			'EnvironmentID' => $data['EnvironmentID'],
 			'IsManualUpload' => true,
 		));
 		// needs an ID and transfer to determine upload path
-		$dataArchive->write(); 
-		$dataTransfer = new DNDataTransfer(array(
+		$dataArchive->write();
+		$dataTransfer = DNDataTransfer::create(array(
 			'AuthorID' => Member::currentUserID(),
 			'Mode' => $data['Mode'],
 			'Origin' => 'ManualUpload',
@@ -329,12 +349,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		$form = new Form(
-			$this, 
-			'PostSnapshotForm', 
+			$this,
+			'PostSnapshotForm',
 			new FieldList(
 				DropdownField::create('Mode', 'What does this file contain?', DNDataArchive::get_mode_map()),
 				DropdownField::create('EnvironmentID', 'Initial ownership of the file', $envsMap)
-			), 
+			),
 			new FieldList(
 				$action = new FormAction('doPostSnapshot', "Submit request")
 			),
@@ -364,11 +384,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			throw new LogicException('Invalid environment');
 		}
 
-		$dataArchive = new DNDataArchive(array(
+		$dataArchive = DNDataArchive::create(array(
 			'UploadToken' => DNDataArchive::generate_upload_token(),
 		));
 		$form->saveInto($dataArchive);
-		$dataArchive->write(); 
+		$dataArchive->write();
 
 		return $this->redirect(Controller::join_links(
 			$project->Link(),
@@ -379,7 +399,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 	/**
 	 * Action
-	 * 
+	 *
 	 * @return string - HTML
 	 */
 	public function snapshotslog(SS_HTTPRequest $request) {
@@ -431,7 +451,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 * 
+	 *
 	 * @param SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse
 	 */
@@ -451,7 +471,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 * 
+	 *
 	 * @param SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse
 	 */
@@ -498,7 +518,60 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 * 
+	 * Initiate a pipeline
+	 *
+	 * @param array $data
+	 * @param DeployForm $form
+	 * @return \SS_HTTPResponse
+	 */
+	public function startPipeline($data, $form) {
+		$buildName = $form->getSelectedBuild($data);
+
+		// Performs canView permission check by limiting visible projects
+		$project = $this->getCurrentProject();
+		if(!$project) {
+			return new SS_HTTPResponse("Project '" . Convert::raw2xml($this->getRequest()->latestParam('Project')) . "' not found.", 404);
+		}
+
+		// Performs canView permission check by limiting visible projects
+		$environment = $this->getCurrentEnvironment($project);
+		if(!$environment) {
+			return new SS_HTTPResponse("Environment '" . Convert::raw2xml($this->getRequest()->latestParam('Environment')) . "' not found.", 404);
+		}
+
+		// Initiate the pipeline
+		$sha = $project->DNBuildList()->byName($buildName);
+		$pipeline = Pipeline::create();
+		$pipeline->EnvironmentID = $environment->ID;
+		$pipeline->AuthorID = Member::currentUserID();
+		$pipeline->SHA = $sha->FullName();
+		// Record buid at time of execution
+		if($currentBuild = $environment->CurrentBuild()) {
+			$pipeline->PreviousDeploymentID = $currentBuild->ID;
+		}
+		$pipeline->start(); // start() will call write(), so no need to do it here as well.
+		return $this->redirect($environment->Link());
+	}
+
+	public function pipeline(SS_HTTPRequest $request) {
+		$params = $request->params();
+		$pipeline = Pipeline::get()->byID($params['Identifier']);
+
+		if(!$pipeline || !$pipeline->ID || !$pipeline->Environment()) throw new SS_HTTPResponse_Exception('Pipeline not found', 404);
+		if(!$pipeline->Environment()->canView()) return Security::permissionFailure();
+
+		$environment = $pipeline->Environment();
+		$project = $pipeline->Environment()->Project();
+
+		if($environment->Name != $params['Environment']) throw new LogicException("Environment in URL doesn't match this pipeline");
+		if($project->Name != $params['Project']) throw new LogicException("Project in URL doesn't match this pipeline");
+
+		// Delegate to sub-requesthandler
+		return PipelineController::create($this, $pipeline);
+	}
+
+	/**
+	 *
 	 * @param SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse
 	 */
@@ -532,7 +605,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 	/**
 	 * Provide DNProjectList (with all projects enumerated within).
-	 * 
+	 *
 	 * @return DataList
 	 */
 	public function DNProjectList() {
@@ -543,7 +616,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 	/**
 	 * Construct the deployment form
-	 * 
+	 *
 	 * @param SS_HTTPRequest $request
 	 * @return Form
 	 */
@@ -563,81 +636,15 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		if(!$environment->canDeploy()) {
 			return new SS_HTTPResponse("Not allowed to deploy", 401);
 		}
-		
+
 		if(!$project->repoExists()) {
 			$literalField = new LiteralField('noRepoWarning', '<strong>The GIT repository is for the time being not available.</strong>');
 			return Form::create($this, 'DeployForm', new FieldList($literalField), new FieldList());
 		}
 
-		$branches = array();
-		foreach($project->DNBranchList() as $branch) {
-			$sha = $branch->SHA();
-			$name = $branch->Name();
-			$branches[$sha] = $name . ' (' . substr($sha,0,8) . ', ' . $branch->LastUpdated()->TimeDiff() . ' old)';
-		}
+		// Generate the form
+		$form = new DeployForm($this, 'DeployForm', $environment, $project);
 
-		$tags = array();
-		foreach($project->DNTagList()->setLimit(null) as $tag) {
-			$sha = $tag->SHA();
-			$name = $tag->Name();
-
-			$tags[$sha] = $name . ' (' . substr($sha,0,8) . ', ' . $tag->Created()->TimeDiff() . ' old)';
-		}
-		$tags = array_reverse($tags);
-
-		$redeploy = array();
-		foreach($project->DNEnvironmentList() as $dnEnvironment) {
-			$envName = $dnEnvironment->Name;
-			foreach($dnEnvironment->DeployHistory() as $deploy) {
-				$sha = $deploy->SHA;
-				if(!isset($redeploy[$envName])) {
-					$redeploy[$envName] = array();
-				}
-				if(!isset($redeploy[$envName][$sha])) {
-					$redeploy[$envName][$sha] = substr($sha,0,8) . ' (deployed ' . $deploy->obj('LastEdited')->Ago() . ')';
-				}
-			}
-		}
-
-		$releaseMethods = array();
-		if($tags) {
-			$releaseMethods[] = new SelectionGroup_Item(
-				'Tag',
-				new DropdownField('Tag', '', $tags),
-				'Deploy a tagged release'
-			);
-		}
-		if($branches) {
-			$releaseMethods[] = new SelectionGroup_Item(
-				'Branch',
-				new DropdownField('Branch', '', $branches),
-				'Deploy the latest version of a branch'
-			);
-		}
-		if($redeploy) {
-			$releaseMethods[] = new SelectionGroup_Item(
-				'Redeploy',
-				new GroupedDropdownField('Redeploy', '', $redeploy),
-				'Redeploy a release that was previously deployed (to any environment)'
-			);
-		}
-		
-		$releaseMethods[] = new SelectionGroup_Item(
-			'SHA',
-			new Textfield('SHA', 'Please specify the full SHA'),
-			'Deploy a specific SHA'
-		);
-
-		$field = new SelectionGroup('SelectRelease', $releaseMethods);
-		$field->setValue('Tag');
-
-		$form = new Form($this, 'DeployForm', new FieldList(
-			$field
-		), new FieldList(
-			$deployAction = new FormAction('doDeploy', "Deploy to " . $environment->Name)
-		));
-		$deployAction->addExtraClass('btn');
-		$form->disableSecurityToken();
 		// Tweak the action so it plays well with our fake URL structure.
 		$form->setFormAction($request->getURL().'/DeployForm');
 		return $form;
@@ -647,19 +654,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * Deployment form submission handler.
 	 *
 	 * Initiate a DNDeployment record and redirect to it for status polling
-	 * 
+	 *
+	 * @param array $data
+	 * @param DeployForm $form
 	 * @return \SS_HTTPResponse
 	 */
 	public function doDeploy($data, $form) {
-		if(in_array($data['SelectRelease'], array('Tag','Branch','Redeploy','SHA'))) {
-			$buildName = $data[$data['SelectRelease']];
-		} else {
-			throw new LogicException("Bad release selection method " . Convert::raw2xml($data['SelectRelease']));
-		}
-
-		if (!preg_match('/^[a-f0-9]{40}$/', $buildName)) {
-			throw new LogicException("Bad commit SHA");
-		}
+		$buildName = $form->getSelectedBuild($data);
 
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
@@ -673,15 +674,14 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return new SS_HTTPResponse("Environment '" . Convert::raw2xml($this->getRequest()->latestParam('Environment')) . "' not found.", 404);
 		}
 
+		// Initiate the deployment
 		$sha = $project->DNBuildList()->byName($buildName);
-
-		$deployment = new DNDeployment;
+		$deployment = DNDeployment::create();
 		$deployment->EnvironmentID = $environment->ID;
 		$deployment->SHA = $sha->FullName();
 		$deployment->write();
 		$deployment->start();
-		
-		$this->redirect($deployment->Link());
+		return $this->redirect($deployment->Link());
 	}
 
 	/**
@@ -735,7 +735,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$sendJSON = (strpos($request->getHeader('Accept'), 'application/json') !== false)
 			|| $request->getExtension() == 'json';
 
-		
+
 		$content = preg_replace('/(?:(?:\r\n|\r|\n)\s*){2}/s', "\n", $content);
 		if($sendJSON) {
 			$this->response->addHeader("Content-type", "application/json");
@@ -814,7 +814,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Only 'push' direction is allowed an association with an existing archive.
 		if(
 			$data['Direction'] == 'push'
-			&& isset($data['DataArchiveID']) 
+			&& isset($data['DataArchiveID'])
 			&& is_numeric($data['DataArchiveID'])
 		) {
 			$dataArchive = DNDataArchive::get()->byId($data['DataArchiveID']);
@@ -827,15 +827,15 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			}
 		}
 
-		$job = new DNDataTransfer;
+		$job = DNDataTransfer::create();
 		$job->EnvironmentID = $environment->ID;
 		$job->Direction = $data['Direction'];
 		$job->Mode = $data['Mode'];
 		$job->DataArchiveID = $dataArchive ? $dataArchive->ID : null;
 		$job->write();
 		$job->start();
-		
-		$this->redirect($job->Link());
+
+		return $this->redirect($job->Link());
 	}
 
 	/**
@@ -886,7 +886,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$sendJSON = (strpos($request->getHeader('Accept'), 'application/json') !== false)
 			|| $request->getExtension() == 'json';
 
-		
+
 		$content = preg_replace('/(?:(?:\r\n|\r|\n)\s*){2}/s', "\n", $content);
 		if($sendJSON) {
 			$this->response->addHeader("Content-type", "application/json");
@@ -905,7 +905,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * Note: Submits to the same action as {@link getDataTransferForm()},
 	 * but with a Direction=push and an archive reference.
-	 * 
+	 *
 	 * @param  SS_HTTPRequest $request
 	 * @param  DNDataArchive $dataArchive Only set when method is called manually in {@link restore()},
 	 *                            otherwise the state is inferred from the request data.
@@ -960,7 +960,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function restoresnapshot($request) {
 		$dataArchive = DNDataArchive::get()->byId($request->param('DataArchiveID'));
-		
+
 		if(!$dataArchive) {
 			throw new SS_HTTPResponse_Exception('Archive not found', 404);
 		}
@@ -984,7 +984,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function deletesnapshot($request) {
 		$dataArchive = DNDataArchive::get()->byId($request->param('DataArchiveID'));
-		
+
 		if(!$dataArchive) {
 			throw new SS_HTTPResponse_Exception('Archive not found', 404);
 		}
@@ -1057,7 +1057,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		$dataArchive->delete();
 
-		$this->redirectBack();
+		return $this->redirectBack();
 	}
 
 	/**
@@ -1065,7 +1065,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function movesnapshot($request) {
 		$dataArchive = DNDataArchive::get()->byId($request->param('DataArchiveID'));
-		
+
 		if(!$dataArchive) {
 			throw new SS_HTTPResponse_Exception('Archive not found', 404);
 		}
@@ -1138,11 +1138,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$dataArchive->EnvironmentID = $environment->ID;
 		$dataArchive->write();
 
-		$this->redirectBack();
+		return $this->redirectBack();
 	}
 
 	/**
-	 * 
+	 *
 	 * @return array
 	 */
 	public static function get_template_global_variables() {
@@ -1181,23 +1181,28 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function providePermissions() {
 		return array(
-			"DEPLOYNAUT_ACCESS" => array(
+			self::DEPLOYNAUT_ACCESS => array(
 				'name' => "Access to Deploynaut",
 				'category' => "Deploynaut",
 			),
+			self::DEPLOYNAUT_BYPASS_PIPELINE => array(
+				'name' => "Bypass Pipeline",
+				'category' => "Deploynaut",
+				'help' => "Enables users to directly initiate deployments, bypassing any pipeline",
+			)
 		);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return DNProject
 	 */
 	protected function getCurrentProject() {
 		return $this->DNProjectList()->filter('Name', $this->getRequest()->latestParam('Project'))->First();
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param DNProject $project
 	 * @return DNEnvironment
 	 */

@@ -39,11 +39,11 @@ class DNTag extends ViewableData {
 	 * @return type
 	 */
 	public function Name() {
-		return $this->tag->getName();
+		return htmlentities($this->tag->getName());
 	}
 
 	public function SHA() {
-		return $this->tag->getCommitHash();
+		return htmlentities($this->tag->getCommitHash());
 	}
 
 	/**

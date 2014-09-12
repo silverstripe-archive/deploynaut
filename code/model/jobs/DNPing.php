@@ -11,7 +11,7 @@ class DNPing extends DataObject {
 	private static $db = array(
 		"ResqueToken" => "Varchar(255)",
 	);
-	
+
 	/**
 	 *
 	 * @var array
@@ -23,32 +23,14 @@ class DNPing extends DataObject {
 
 	/**
 	 *
-	 * @var DNData
-	 */
-	protected $dnData;
-	
-	/**
-	 *
-	 * @var type 
-	 */
-	protected $environment;
-	
-	/**
-	 *
-	 * @var type 
-	 */
-	protected $identifier;
-
-	/**
-	 * 
 	 * @return string
 	 */
 	public function Link() {
 		return Controller::join_links($this->Environment()->Link(), 'ping', $this->ID);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return string
 	 */
 	public function LogLink() {
@@ -56,7 +38,7 @@ class DNPing extends DataObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param Member $member
 	 * @return bool
 	 */
@@ -65,7 +47,7 @@ class DNPing extends DataObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return string
 	 */
 	protected function logfile() {
@@ -75,15 +57,15 @@ class DNPing extends DataObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return \DeploynautLogFile
 	 */
 	public function log() {
 		return new DeploynautLogFile($this->logfile());
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return string
 	 */
 	public function LogContent() {
@@ -91,7 +73,7 @@ class DNPing extends DataObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return string
 	 */
 	public function ResqueStatus() {
@@ -110,32 +92,32 @@ class DNPing extends DataObject {
 
 	/**
 	 * Queue a ping job
-	 * 
+	 *
 	 */
 	public function start() {
 		$environment = $this->Environment();
 		$project = $environment->Project();
 
 		$args = array(
-			'environment' => $environment->Name,
+			'environmentName' => $environment->Name,
 			'logfile' => $this->logfile(),
 			'projectName' => $project->Name,
 			'env' => $project->getProcessEnv()
 		);
 
 		$log = $this->log();
-		$log->write('Pinging  "'.$args['projectName'].':'.$args['environment'].'"');
+		$log->write('Pinging  "'.$args['projectName'].':'.$args['environmentName'].'"');
 
 		if(!$this->DeployerID) {
 			$this->DeployerID = Member::currentUserID();
 		}
-		
+
 		if($this->DeployerID) {
 			$deployer = $this->Deployer();
 			$message = sprintf(
 				'Ping to %s:%s initiated by %s (%s)',
 				$args['projectName'],
-				$args['environment'],
+				$args['environmentName'],
 				$deployer->getName(),
 				$deployer->Email
 			);

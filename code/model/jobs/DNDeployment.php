@@ -15,19 +15,33 @@ class DNDeployment extends DataObject {
 		// Observe that this is not the same as Resque status, since ResqueStatus is not persistent
 		// It's used for finding successful deployments and displaying that in history views in the frontend
 		"Status" => "Enum('Queued, Started, Finished, Failed, n/a', 'n/a')",
+		"LeaveMaintenacePage" => "Boolean"
 	);
-	
+
 	/**
 	 *
 	 * @var array
 	 */
 	private static $has_one = array(
 		"Environment" => "DNEnvironment",
-		"Deployer" =>"Member",
+		"Deployer" => "Member",
 	);
-	
+
+	private static $default_sort = '"LastEdited" DESC';
+
+	public function getTitle() {
+		return "#{$this->ID}: {$this->SHA} (Status: {$this->Status})";
+	}
+
+	private static $summary_fields = array(
+		'LastEdited' => 'Last Edited',
+		'SHA' => 'SHA',
+		'Status' => 'Status',
+		'Deployer.Name' => 'Deployer'
+	);
+
 	/**
-	 * 
+	 *
 	 * @param int $int
 	 * @return string
 	 */
@@ -50,7 +64,7 @@ class DNDeployment extends DataObject {
 	public function Link() {
 		return Controller::join_links($this->Environment()->Link(), 'deploy', $this->ID);
 	}
-	
+
 	public function LogLink() {
 		return $this->Link() . '/log';
 	}
@@ -89,6 +103,7 @@ class DNDeployment extends DataObject {
 			'projectName' => $project->Name,
 			'env' => $project->getProcessEnv(),
 			'deploymentID' => $this->ID,
+			'leaveMaintenacePage' => $this->LeaveMaintenacePage
 		);
 
 		$log = $this->log();

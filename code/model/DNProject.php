@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DNProject represents a project that relates to a group of target
  * environments.
@@ -22,7 +23,6 @@ class DNProject extends DataObject {
 	 */
 	public static $has_many = array(
 		"Environments" => "DNEnvironment",
-		"ReleaseSteps" => "DNReleaseStep",
 	);
 
 	/**
@@ -53,10 +53,10 @@ class DNProject extends DataObject {
 	private static $singular_name = 'Project';
 
 	private static $plural_name = 'Projects';
-	
+
 	/**
 	 *
-	 * @var string 
+	 * @var string
 	 */
 	private static $default_sort = 'Name';
 
@@ -68,7 +68,7 @@ class DNProject extends DataObject {
 	private static $show_repository_url = false;
 
 	/**
-	 * In-memory cache for currentBuilds per environment since fetching them from 
+	 * In-memory cache for currentBuilds per environment since fetching them from
 	 * disk is pretty resource hungry.
 	 *
 	 * @var array
@@ -76,7 +76,7 @@ class DNProject extends DataObject {
 	protected static $relation_cache = array();
 
 	/**
-	 * 
+	 *
 	 * @todo probably refactor this so it don't mess with the SS default DataObject::get()
 	 *
 	 * @param string $callerClass
@@ -89,7 +89,7 @@ class DNProject extends DataObject {
 	 */
 	public static function get($callerClass = null, $filter = "", $sort = "", $join = "", $limit = null,
 			$containerClass = 'DataList') {
-		return new DNProjectList('DNProject');
+		return DNProjectList::create('DNProject');
 	}
 
 	/**
@@ -99,7 +99,7 @@ class DNProject extends DataObject {
 	 * @return \DNProject
 	 */
 	public static function create_from_path($path) {
-		$project = new DNProject();
+		$project = DNProject::create();
 		$project->Name = $path;
 		$project->write();
 
@@ -213,7 +213,7 @@ class DNProject extends DataObject {
 	/**
 	 * Return all archives which are "manual upload requests",
 	 * meaning they don't have a file attached to them (yet).
-	 * 
+	 *
 	 * @return ArrayList
 	 */
 	public function PendingManualUploadDataArchives() {
@@ -222,9 +222,9 @@ class DNProject extends DataObject {
 
 	/**
 	 * Build an environment variable array to be used with this project.
-	 * 
+	 *
 	 * This is relevant if every project needs to use an individual SSH pubkey.
-	 * 
+	 *
 	 * Include this with all Gitonomy\Git\Repository, and
 	 * \Symfony\Component\Process\Processes.
 	 *
@@ -265,7 +265,7 @@ class DNProject extends DataObject {
 	 * Provides a DNBuildList of builds found in this project.
 	 */
 	public function DNBuildList() {
-		return new DNReferenceList($this, $this->DNData());
+		return DNReferenceList::create($this, $this->DNData());
 	}
 
 	/**
@@ -275,7 +275,7 @@ class DNProject extends DataObject {
 		if($this->CVSPath && !$this->repoExists()) {
 			$this->cloneRepo();
 		}
-		return new DNBranchList($this, $this->DNData());
+		return DNBranchList::create($this, $this->DNData());
 	}
 
 	/**
@@ -285,12 +285,12 @@ class DNProject extends DataObject {
 		if($this->CVSPath && !$this->repoExists()) {
 			$this->cloneRepo();
 		}
-		return new DNReferenceList($this, $this->DNData(), null, null, true);
+		return DNReferenceList::create($this, $this->DNData(), null, null, true);
 	}
-	
+
 	/**
-	 * 
-	 * @return Gitonomy\Git\Repository 
+	 *
+	 * @return Gitonomy\Git\Repository
 	 */
 	public function getRepository() {
 		if(!$this->repoExists()) {
@@ -327,9 +327,9 @@ class DNProject extends DataObject {
 	public function Link($action='') {
 		return Controller::join_links("naut", "project", $this->Name, $action);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param string $action
 	 * @return string
 	 */
@@ -345,11 +345,9 @@ class DNProject extends DataObject {
 		$fields = parent::getCMSFields();
 
 		$environments = $fields->dataFieldByName("Environments");
-		$releaseSteps = $fields->dataFieldByName('ReleaseSteps');
 
 		$fields->fieldByName("Root")->removeByName("Viewers");
 		$fields->fieldByName("Root")->removeByName("Environments");
-		$fields->fieldByName("Root")->removeByName("ReleaseSteps");
 		$fields->fieldByName("Root")->removeByName("LocalCVSPath");
 
 		$fields->dataFieldByName('DiskQuotaMB')->setDescription('This is the maximum amount of disk space (in megabytes) that all environments within this project can use for stored snapshots');
@@ -372,14 +370,13 @@ class DNProject extends DataObject {
 
 		$this->setCreateProjectFolderField($fields);
 		$this->setEnvironmentFields($fields, $environments);
-		$this->setDeployStepsFields($fields, $releaseSteps);
-		
+
 		return $fields;
 	}
-	
+
 	/**
 	 * If there isn't a capistrano env project folder, show options to create one
-	 * 
+	 *
 	 * @param FieldList $fields
 	 */
 	public function setCreateProjectFolderField(&$fields) {
@@ -387,11 +384,11 @@ class DNProject extends DataObject {
 		if(!$this->Name) {
 			return;
 		}
-		
+
 		if($this->projectFolderExists()) {
 			return;
 		}
-		
+
 		$createFolderNotice = new LabelField('CreateEnvFolderNotice', 'Warning: No Capistrano project folder exists');
 		$createFolderNotice->addExtraClass('message warning');
 		$fields->insertBefore($createFolderNotice, 'Name');
@@ -399,9 +396,9 @@ class DNProject extends DataObject {
 		$createFolderField->setDescription('Would you like to create the capistrano project folder?');
 		$fields->insertAfter($createFolderField, 'CreateEnvFolderNotice');
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public function projectFolderExists() {
@@ -410,7 +407,7 @@ class DNProject extends DataObject {
 		}
 		return false;
 	}
-	
+
 	/**
 	 *
 	 * @return bool
@@ -430,9 +427,9 @@ class DNProject extends DataObject {
 			'env' => $this->getProcessEnv()
 		));
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return string
 	 */
 	public function getLocalCVSPath() {
@@ -445,33 +442,45 @@ class DNProject extends DataObject {
 	 */
 	public function onBeforeWrite() {
 		parent::onBeforeWrite();
-		
+
+		$this->checkProjectPath();
+		$this->checkCVSPath();
+	}
+
+	/**
+	 * Ensure the path for this project has been created
+	 */
+	protected function checkProjectPath() {
 		// Create the project capistrano folder
 		if($this->CreateEnvFolder && !file_exists($this->getProjectFolderPath())) {
 			mkdir($this->DNData()->getEnvironmentDir().'/'.$this->Name);
 		}
-		
+	}
+
+	/**
+	 * Check if the CVSPath has been changed, and if so, ensure the repository has been updated
+	 */
+	protected function checkCVSPath() {
 		$changedFields = $this->getChangedFields(true, 2);
 		if (!$this->CVSPath) {
 			return;
 		}
 		if (isset($changedFields['CVSPath']) || isset($changedFields['Name'])) {
-			$name = preg_replace("/[^A-Za-z0-9 ]/", '', $this->Name);
 			$this->cloneRepo();
 		}
 	}
-	
+
 	/**
 	 * Delete related environments and folders
 	 */
 	public function onAfterDelete() {
 		parent::onAfterDelete();
-		
+
 		// Delete related environments
 		foreach($this->Environments() as $env) {
 			$env->delete();
 		}
-		
+
 		if(!file_exists($this->getProjectFolderPath())) {
 			return;
 		}
@@ -490,10 +499,10 @@ class DNProject extends DataObject {
 			return file_get_contents("$keyDir/$this->Name/$this->Name.pub");
 		}
 	}
-	
+
 	/**
 	 * Setup a gridfield for the environment configs
-	 * 
+	 *
 	 * @param FieldList $fields
 	 */
 	protected function setEnvironmentFields(&$fields, $environments) {
@@ -509,27 +518,8 @@ class DNProject extends DataObject {
 			$addNewRelease->setButtonName('Add');
 			$environments->getConfig()->addComponent($addNewRelease);
 		}
-		
+
 		$fields->addFieldToTab("Root.Main", $environments);
-	}
-	
-	/**
-	 * Setup a gridfield for the deployment steps
-	 * 
-	 * @param FieldList $fields
-	 */
-	protected function setDeployStepsFields(&$fields, $releaseSteps) {
-		if(!$releaseSteps) {
-			return;
-		}
-		$releaseSteps->getConfig()->addComponent(new GridFieldSortableRows('Sort'));
-		$releaseSteps->getConfig()->removeComponentsByType('GridFieldAddExistingAutocompleter');
-		$releaseSteps->getConfig()->removeComponentsByType('GridFieldAddNewButton');
-		$releaseSteps->getConfig()->removeComponentsByType('GridFieldPageCount');
-		$addNewRelease = new GridFieldAddNewButton('toolbar-header-right');
-		$addNewRelease->setButtonName('Add');
-		$releaseSteps->getConfig()->addComponent($addNewRelease);
-		$fields->addFieldToTab("Root.Release steps", $releaseSteps);
 	}
 
 	/**
@@ -541,9 +531,9 @@ class DNProject extends DataObject {
 			return $this->CVSPath;
 		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return string
 	 */
 	protected function getProjectFolderPath() {
