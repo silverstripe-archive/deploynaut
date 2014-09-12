@@ -18,12 +18,6 @@ Name: deploynaut
 Only:
     environment: live
 ---
-GraphiteDeploymentNotifier:
-    graphite_host: localhost
-    graphite_port: 2003
-GraphiteProxy:
-    graphite_source: "http://graphite.silverstripe.com:2080/render"
-
 Injector:
     DeploymentBackend:
         class: CapistranoDeploymentBackend

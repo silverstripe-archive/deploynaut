@@ -34,6 +34,6 @@ and environments via the CMS ui.
 	    graphite_host: localhost
 	    graphite_port: 2003
 	GraphiteProxy:
-	    graphite_source: "http://graphite.silverstripe.com:2080/render"
+	    graphite_source: "http://graphite:2080/render"
 
 When this is setup, deploynaut will send a start / end deploy message to a graphite server.

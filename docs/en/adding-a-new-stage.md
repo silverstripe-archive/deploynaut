@@ -7,11 +7,11 @@ For this example I'm going to create a fictional stage that will be deployed to:
 - Server: 127.0.0.1
 - Docroot: /sites/fictional/www/
 - httpd group: www-data
-- User that does the deploy: silvers
+- User that does the deploy: sites
 
 ## Create a project
 
- 1) Login to the Project admin at http://site//admin/naut/
+ 1) Login to the Project admin at http://deploynaut/admin/naut/
  2) Click the big green "Add Project" button.
  3) Fill in the required fields:
 
@@ -30,7 +30,7 @@ Each environment within each project requires a capistrano config file.
 
 In our case we will create a *fictional* environment in *ss3* project.
 
- 1) Login to the Project admin at http://site//admin/naut/
+ 1) Login to the Project admin at http://deploynaut/admin/naut/
  2) Open the ss3 project
  3) Click the "Add" button on the Environments Gridfield at the bottom
  4) Enter "fictional" in the "Environment name"
@@ -51,7 +51,7 @@ Deploynaut will have created an example config for you in the "Deploy config" te
 	set :webserver_group, "www-data"
 
 	# Which SSH user will deploynaut use to SSH into the server
-	ssh_options[:username] = 'silvers'
+	ssh_options[:username] = 'sites'
 
 9) After you have changed the config, save the environment.
 
@@ -59,12 +59,12 @@ Deploynaut will have created an example config for you in the "Deploy config" te
 
 Click the "Check Connection" button and deploynaut will run a check to see if it can connect and that it has the correct permission to write so folders.
 
-If you're getting permission problems you need to stick the public key `/sites/deploynaut/www-keys/id_rsa.pub` into the `.ssh/authorized_keys` of the user `silvers` that are used for executing commands on the server `127.0.0.1`. This is normally done via sysadmins and puppet scripts to set this up for you.
+If you're getting permission problems you need to stick the public key `/sites/deploynaut/www-keys/id_rsa.pub` into the `.ssh/authorized_keys` of the user `sites` that are used for executing commands on the server `127.0.0.1`. This is normally done via sysadmins and puppet scripts to set this up for you.
 
-_Note:_ The first time you add a new server `ipadress` to the capistrano recipie you need to manually test the connection. Login in as the user running the command. This is how Capistrano logs in to the server. On [deploynaut.silverstripe.com/](http://deploynaut.silverstripe.com/) `www-data` is the user executing the capistrano commands, ssh into deploynaut.silverstripe.com:2222 and issue the following commands:
+_Note:_ The first time you add a new server `ipaddress` to the capistrano recipie you need to manually test the connection. Login in as the user running the command. This is how Capistrano logs in to the server. On most deploynaut installs, `www-data` is the user executing the capistrano commands, ssh into deploynaut and issue the following commands:
 
 	$ sudo su www-data 
-	$ ssh -i /sites/deploynaut/www-keys/id_rsa silvers@127.0.0.1
+	$ ssh -i /sites/deploynaut/www-keys/id_rsa sites@127.0.0.1
 
 ## Setup the apache docroots and stuff (when the environment isn't managed by puppet)
 
@@ -73,7 +73,7 @@ Following commands will be issued as user on the target server with sudo
 	$ sudo mkdir -p /sites/fictional/
 	$ sudo mkdir -p releases/ logs shared/assets
 	$ sudo chmod -R 775 /sites/fictional/
-	$ sudo chown -R silvers:www-data /sites/fictional
+	$ sudo chown -R sites:www-data /sites/fictional
 
 Create a `/sites/fictional/_ss_environment.php` with the neccessary information, beware of these entries:
 
