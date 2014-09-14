@@ -675,6 +675,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		// Initiate the deployment
+		// The extension point should pass in: Project, Environment, SelectRelease, buildName
+		$this->extend('doDeploy', $project, $environment, $buildName, $data);
+
 		$sha = $project->DNBuildList()->byName($buildName);
 		$deployment = DNDeployment::create();
 		$deployment->EnvironmentID = $environment->ID;
