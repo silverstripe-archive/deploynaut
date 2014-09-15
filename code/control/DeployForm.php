@@ -163,7 +163,7 @@ class DeployForm extends Form {
 		foreach($project->DNBranchList() as $branch) {
 			$sha = $branch->SHA();
 			$name = $branch->Name();
-			$branches[$sha] = $name . ' (' . substr($sha,0,8) . ', ' . $branch->LastUpdated()->TimeDiff() . ' old)';
+			$branches[$sha . '-' . $name] = $name . ' (' . substr($sha,0,8) . ', ' . $branch->LastUpdated()->TimeDiff() . ' old)';
 		}
 
 		// Tags
@@ -171,7 +171,7 @@ class DeployForm extends Form {
 		foreach($project->DNTagList()->setLimit(null) as $tag) {
 			$sha = $tag->SHA();
 			$name = $tag->Name();
-			$tags[$sha] = $name . ' (' . substr($sha,0,8) . ', ' . $tag->Created()->TimeDiff() . ' old)';
+			$tags[$sha . '-' . $tag] = $name . ' (' . substr($sha,0,8) . ', ' . $tag->Created()->TimeDiff() . ' old)';
 		}
 		$tags = array_reverse($tags);
 
@@ -268,7 +268,8 @@ class DeployForm extends Form {
 	 */
 	public function getSelectedBuild($data) {
 		if(isset($data['SelectRelease']) && !empty($data[$data['SelectRelease']])) {
-			return $data[$data['SelectRelease']];
+			// Filter out the tag/branch name if required
+			return reset(explode('-', $data[$data['SelectRelease']]));
 		}
 		if(isset($data['FilteredCommits']) && !empty($data['FilteredCommits'])) {
 			return $data['FilteredCommits'];
