@@ -16,6 +16,7 @@ class DNEnvironment extends DataObject {
 	 * If not set, the default 'environment.template' from the module 
 	 * root is used
 	 *
+	 * @config
 	 * @var string
 	 */
 	private static $template_file = '';
@@ -645,8 +646,8 @@ class DNEnvironment extends DataObject {
 		
 		// Create a basic new environment config from a template
 		if($this->config()->get('allow_web_editing') && !$this->envFileExists() && $this->Filename && $this->CreateEnvConfig) {
-			if(self::$template_file) {
-				$templateFile = self::$template_file;
+			if($this->config()->template_file) {
+				$templateFile = $this->config()->template_file;
 			} else {
 				$templateFile = BASE_PATH.'/deploynaut/environment.template';
 			}
