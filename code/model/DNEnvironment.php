@@ -810,6 +810,12 @@ class DNEnvironment extends DataObject {
 	 */
 	public function onBeforeWrite() {
 		parent::onBeforeWrite();
+
+		if (strtoupper(trim($this->Name)) == "TEST") {
+			throw new Exception("Test is not a valid environment name when using Capistrano backend.");
+		}
+
+
 		if($this->Name && $this->Name.'.rb' != $this->Filename) {
 			$this->Filename = $this->Name.'.rb';
 		}
