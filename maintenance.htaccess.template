@@ -1,8 +1,25 @@
-ErrorDocument 503 /maintenance.html
+<IfModule mod_headers.c>
+	# Always issue cache-killing headers - the redirects might be removed at any time.
+	Header always set Cache-Control "no-cache, max-age=0, must-revalidate, no-transform"
+</IfModule>
 
 RewriteEngine On
-RewriteCond %{REQUEST_URI} !\.(css|gif|jpg|png)$
-RewriteCond %{DOCUMENT_ROOT}/maintenance.html -f
-RewriteCond %{SCRIPT_FILENAME} !maintenance.html
-RewriteRule ^.*$  -  [redirect=503,last]
 
+# Temporarily redirect all requests by injecting "website-under-maintenance" string into the URL.
+
+# We can't resend POST requests so we will just send these ones back to homepage.
+RewriteCond %{DOCUMENT_ROOT}/maintenance.html -f
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_URI} !^/website-under-maintenance/
+RewriteCond %{THE_REQUEST} ^POST
+RewriteRule ^.*$  /website-under-maintenance/ [redirect=302,last,ne]
+
+# For all other requests the original URL is preserved and can be used to return the user to the desired location.
+RewriteCond %{DOCUMENT_ROOT}/maintenance.html -f
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_URI} !^/website-under-maintenance/
+RewriteRule ^.*$  /website-under-maintenance%{REQUEST_URI} [qsa,redirect=302,last,ne]
+
+# Finally, serve maintenance page with the 200 code, so that monitoring tools don't report the downtime.
+RewriteCond %{REQUEST_URI} ^/website-under-maintenance/
+RewriteRule ^.*$  maintenance.html  [qsa,last]

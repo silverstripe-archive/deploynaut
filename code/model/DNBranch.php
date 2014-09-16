@@ -10,7 +10,7 @@ class DNBranch extends ViewableData {
 
 	/**
 	 *
-	 * @var DNProject 
+	 * @var DNProject
 	 */
 	protected $project = null;
 
@@ -42,7 +42,7 @@ class DNBranch extends ViewableData {
 	 * @return string
 	 */
 	public function Name() {
-		return $this->branch->getName();
+		return htmlentities($this->branch->getName());
 	}
 
 	public function Link() {
@@ -51,11 +51,11 @@ class DNBranch extends ViewableData {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return string
 	 */
 	public function SHA() {
-		return $this->branch->getCommit()->getHash();
+		return htmlentities($this->branch->getCommit()->getHash());
 	}
 
 	/**
@@ -63,7 +63,7 @@ class DNBranch extends ViewableData {
 	 */
 	public function DNBuildList() {
 		$blockBranch = $this->branch->getName() == 'master' ? null : 'master';
-		return new DNReferenceList($this->project, $this->data, $this->branch, $blockBranch);
+		return DNReferenceList::create($this->project, $this->data, $this->branch, $blockBranch);
 	}
 
 	/**
@@ -83,7 +83,7 @@ class DNBranch extends ViewableData {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return string
 	 */
 	public function IsOpenByDefault() {

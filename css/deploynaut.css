@@ -361,3 +361,49 @@ form.fields-wide .field label.left {
 	color: #333;
 	border-bottom: 1px #333 dotted;
 }
+
+.options .option button {
+	min-width: 140px;
+}
+
+/** progress bar **/
+#deployprogress {
+	background-color: #fcfcfc;
+	border-radius: 3px;
+	margin-left: 0;
+	margin-bottom: 20px;
+	clear: both;
+}
+#deployprogress-actions {
+	margin-top: 10px;
+}
+#deployprogress .progress {
+	height: 26px;
+}
+.deployprogress-step {
+	height: 70px;
+	padding-top: 20px;
+	text-align: center;
+
+	color: #666;
+	font-size: 1.1em;
+	opacity: 0.75;
+}
+.deployprogress-step:nth-child(4n+1) {
+	margin-left: 0;
+}
+.deployprogress-step .progress {
+	width: 80%;
+	margin: 0 auto;
+}
+.deployprogress-step .progress .bar {
+	width: 100%;
+}
+.deployprogress-step-active {
+	color: #3a87ad;
+	background-color: #d9edf7;
+	border-color: #bce8f1;
+	border-radius: 3px;
+	font-weight: bold;
+	opacity: 1.0;
+}

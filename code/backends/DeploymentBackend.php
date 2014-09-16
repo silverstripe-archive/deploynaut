@@ -4,14 +4,19 @@ interface DeploymentBackend {
 
 	/**
 	 * Deploy the given build to the given environment
+	 *
+	 * @param DNEnvironment $environment
+	 * @param string $sha
+	 * @param DeploynautLogFile $log
+	 * @param DNProject $project
+	 * @param type $leaveMaintenancePage
 	 */
-	public function deploy($environment, $sha, DeploynautLogFile $log, DNProject $project);
+	public function deploy(DNEnvironment $environment, $sha, DeploynautLogFile $log, DNProject $project, $leaveMaintenancePage = false);
 
 	/**
 	 * Transfer data from an environment to a local file, or from a local file
 	 * back into an environment. See {@link DNDataTransfer} for details.
 	 *
-	 * @param DNEnvironment $environment
 	 * @param DNDataTransfer $dataTransfer
 	 * @param DeploynautLogFile $log
 	 */
@@ -26,5 +31,32 @@ interface DeploymentBackend {
 	 * @param string $environment env name, including project name.
 	 */
 	public function currentBuild($environment);
+
+	/**
+	 * Put put the maintenance page
+	 *
+	 * @param DNEnvironment $environment
+	 * @param DeploynautLogFile $log
+	 * @param DNProject $project
+	 */
+	public function enableMaintenance(DNEnvironment $environment, DeploynautLogFile $log, DNProject $project);
+
+	/**
+	 * Disable the maintenance page
+	 *
+	 * @param DNEnvironment $environment
+	 * @param DeploynautLogFile $log
+	 * @param DNProject $project
+	 */
+	public function disableMaintenance(DNEnvironment $environment, DeploynautLogFile $log, DNProject $project);
+
+	/**
+	 * Checks the status of the environment
+	 *
+	 * @param DNEnvironment $environment
+	 * @param DeploynautLogFile $log
+	 * @param DNProject $project
+	 */
+	public function ping(DNEnvironment $environment, DeploynautLogFile $log, DNProject $project);
 
 }

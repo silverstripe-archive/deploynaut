@@ -24,5 +24,5 @@ before_script:
  - cd ~/builds/ss
 
 script: 
-  - phpunit deploynaut/tests/
+  - vendor/bin/phpunit deploynaut/tests/
 

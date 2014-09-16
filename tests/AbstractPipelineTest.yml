@@ -1,0 +1,93 @@
+Permission:
+  admin:
+    Code: ADMIN
+  security-admin:
+    Code: CMS_ACCESS_SecurityAdmin
+Group:
+  admingroup:
+    Title: Admin
+    Code: admin
+    Permissions: =>Permission.admin
+Member:
+  Deployer1:
+    FirstName: Deployer
+    Surname: One 
+    Email: one@deployer.test
+    Password: 1nitialPassword
+    PasswordExpiry: 2030-01-01
+  Deployer2:
+    FirstName: Deployer
+    Surname: Two 
+    Email: two@deployer.test
+    Password: 1nitialPassword
+    PasswordExpiry: 2030-01-01
+  Deployer3:
+    FirstName: Deployer
+    Surname: Three
+    Email: three@deployer.test
+    Password: 1nitialPassword
+    PasswordExpiry: 2030-01-01
+    Groups: =>Group.admingroup
+DNProject:
+  Project1:
+    Name: Project 1
+    DiskQuotaMB: 1024
+DNEnvironment:
+  Env1:
+    Filename: env1.rb
+    Name: env1
+    URL: http://localhost:8001
+    Project: =>DNProject.Project1
+  Env2:
+    Filename: env2.rb
+    Name: env2
+    URL: http://localhost:8002
+    Project: =>DNProject.Project1
+Pipeline:
+  Pipe1:
+    Status: Running
+    SHA: 9f0a012e97715b1871n41gk30f34268u12a0029q
+    Author: =>Member.Deployer1
+    Environment: =>DNEnvironment.Env1
+    RollbackSmokeTestStepID: 1 #disable the Rollback smoke test
+  Pipe2:
+    Status: Running
+    SHA: 9f0a012e97715b1871n41gk30f34268u12a0029q
+    Author: =>Member.Deployer1
+    Environment: =>DNEnvironment.Env2
+  FailingPipe:
+    Status: Running
+    SHA: 9f0a012e97715b1871n41gk30f34268u12a0029q
+    Author: =>Member.Deployer1
+    Environment: =>DNEnvironment.Env2
+PipelineStep:
+  Step1:
+    Name: step1
+    Pipeline: =>Pipeline.Pipe1
+    Status: Finished
+    Order: 1
+  Step2:
+    Name: step2
+    Pipeline: =>Pipeline.Pipe1
+    Status: Started
+    Order: 2
+  Step3:
+    Name: step3
+    Pipeline: =>Pipeline.Pipe1
+    Status: Queued
+    Order: 3
+  Step1a:
+    Name: step1
+    Pipeline: =>Pipeline.Pipe2
+    Status: Queued
+    Order: 1
+  Step2a:
+    Name: step2
+    Pipeline: =>Pipeline.Pipe2
+    Status: Queued
+    Order: 2
+  FailedStep:
+    Name: step1
+    Pipeline: =>Pipeline.FailingPipe
+    Status: Failed
+    Order: 1

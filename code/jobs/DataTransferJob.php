@@ -1,15 +1,19 @@
 <?php
+
 /**
  * Starts a capistrano script for either retrieving data from an environment,
  * or pushing data into an environment. Initiated by {@link DNDataTransfer}.
+ *
+ * @package deploynaut
+ * @subpackage jobs
  */
 class DataTransferJob {
-	
+
 	public function setUp() {
 		$this->updateStatus('Started');
 		chdir(BASE_PATH);
 	}
-	
+
 	public function tearDown() {
 		$this->updateStatus('Finished');
 		chdir(BASE_PATH);
@@ -18,13 +22,12 @@ class DataTransferJob {
 	public function perform() {
 		echo "[-] DataTransferJob starting" . PHP_EOL;
 		$log = new DeploynautLogFile($this->args['logfile']);
-		$project = $this->DNData()->DNProjectList()->filter('Name', $this->args['projectName'])->First();
 		$dataTransfer = DNDataTransfer::get()->byID($this->args['dataTransferID']);
 		$environment = $dataTransfer->Environment();
 		$backupJob = null;
 
 		if($dataTransfer->Direction == 'push') {
-			$backupJob = new DNDataTransfer();
+			$backupJob = DNDataTransfer::create();
 			$backupJob->EnvironmentID = $environment->ID;
 			$backupJob->Direction = 'get';
 			$backupJob->Mode = $dataTransfer->Mode;
@@ -37,7 +40,7 @@ class DataTransferJob {
 			$dataTransfer->write();
 		}
 
-		// This is a bit icky, but there is no easy way of capturing a failed run by using the PHP Resque 
+		// This is a bit icky, but there is no easy way of capturing a failed run by using the PHP Resque
 		try {
 			// Disallow concurrent jobs (don't rely on queuing implementation to restrict this)
 			$runningTransfers = DNDataTransfer::get()
@@ -88,7 +91,7 @@ class DataTransferJob {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param string $status
 	 * @global array $databaseConfig
 	 */
@@ -101,7 +104,7 @@ class DataTransferJob {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return DNData
 	 */
 	protected function DNData() {

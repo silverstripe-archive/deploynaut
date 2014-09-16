@@ -15,19 +15,33 @@ class DNDeployment extends DataObject {
 		// Observe that this is not the same as Resque status, since ResqueStatus is not persistent
 		// It's used for finding successful deployments and displaying that in history views in the frontend
 		"Status" => "Enum('Queued, Started, Finished, Failed, n/a', 'n/a')",
+		"LeaveMaintenacePage" => "Boolean"
 	);
-	
+
 	/**
 	 *
 	 * @var array
 	 */
 	private static $has_one = array(
 		"Environment" => "DNEnvironment",
-		"Deployer" =>"Member",
+		"Deployer" => "Member",
 	);
-	
+
+	private static $default_sort = '"LastEdited" DESC';
+
+	public function getTitle() {
+		return "#{$this->ID}: {$this->SHA} (Status: {$this->Status})";
+	}
+
+	private static $summary_fields = array(
+		'LastEdited' => 'Last Edited',
+		'SHA' => 'SHA',
+		'Status' => 'Status',
+		'Deployer.Name' => 'Deployer'
+	);
+
 	/**
-	 * 
+	 *
 	 * @param int $int
 	 * @return string
 	 */
@@ -50,7 +64,7 @@ class DNDeployment extends DataObject {
 	public function Link() {
 		return Controller::join_links($this->Environment()->Link(), 'deploy', $this->ID);
 	}
-	
+
 	public function LogLink() {
 		return $this->Link() . '/log';
 	}
@@ -65,9 +79,13 @@ class DNDeployment extends DataObject {
 		return $project->Name.'.'.$environment->Name.'.'.$this->ID.'.log';
 	}
 
+	/**
+	 * @return DeploynautLogFile
+	 */
 	public function log() {
-		return new DeploynautLogFile($this->logfile());
+		return Injector::inst()->createWithArgs('DeploynautLogFile', array($this->logfile()));
 	}
+	
 	public function LogContent() {
 		return $this->log()->content();
 	}
@@ -77,7 +95,12 @@ class DNDeployment extends DataObject {
 		return self::map_resque_status($status->get());
 	}
 
-	public function start() {
+	/**
+	 * Start a resque job for this deployment
+	 *
+	 * @return string Resque token
+	 */
+	protected function enqueueDeployment() {
 		$environment = $this->Environment();
 		$project = $environment->Project();
 
@@ -89,6 +112,7 @@ class DNDeployment extends DataObject {
 			'projectName' => $project->Name,
 			'env' => $project->getProcessEnv(),
 			'deploymentID' => $this->ID,
+			'leaveMaintenacePage' => $this->LeaveMaintenacePage
 		);
 
 		$log = $this->log();
@@ -107,7 +131,12 @@ class DNDeployment extends DataObject {
 			$log->write($message);
 		}
 
-		$token = Resque::enqueue('deploy', 'DeployJob', $args, true);
+		return Resque::enqueue('deploy', 'DeployJob', $args, true);
+	}
+
+	public function start() {
+		$log = $this->log();
+		$token = $this->enqueueDeployment();
 		$this->ResqueToken = $token;
 		$this->Status = 'Queued';
 		$this->write();

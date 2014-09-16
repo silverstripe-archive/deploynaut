@@ -40,7 +40,7 @@ class DNBranchList extends ArrayList {
 
 		$repository = new Gitonomy\Git\Repository($this->project->LocalCVSPath);
 		foreach($repository->getReferences()->getBranches() as $branch) {
-			$obj = new DNBranch($branch, $this->project, $this->data);
+			$obj = DNBranch::create($branch, $this->project, $this->data);
 			if($branch->getName() == 'master') $firstBranch = array($branch->getName() => $obj);
 			else $branches[$branch->getName()] = $obj;
 		}
