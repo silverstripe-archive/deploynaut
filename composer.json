@@ -1,7 +1,9 @@
 {
 	"name": "silverstripe/deploynaut",
 	"type": "silverstripe-module",
-	"description": "The SilverStripe deployment framework - a module",
+	"description": "The SilverStripe deployment framework based on Capistrano",
+	"license": "BSD-3-Clause",
+	"keywords": ["silverstripe", "capistrano", "deploy"],
 	"require": {
 		"php": ">=5.3.2",
 		"silverstripe/framework": "~3.1",
@@ -12,6 +14,11 @@
 	},
 	"require-dev": {
 		"phpunit/PHPUnit": "~3.7@stable"
+	},
+	"extra": {
+		"branch-alias": {
+			"dev-master": "1.1.x-dev"
+		}
 	},
 	"minimum-stability": "dev"
 }
