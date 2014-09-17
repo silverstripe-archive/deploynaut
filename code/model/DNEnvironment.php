@@ -1014,4 +1014,14 @@ class DNEnvironment extends DataObject {
 			->disableMaintenance($this, $log, $this->Project());
 	}
 
+	protected function validate() {
+		$result = parent::validate();
+
+		if(strcasecmp('test', $this->Name) === 0) {
+			$result->error('"test" is not a valid environment name when using Capistrano backend.');
+		}
+		
+		return $result;
+	}
+
 }
