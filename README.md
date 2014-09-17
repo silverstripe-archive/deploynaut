@@ -2,7 +2,7 @@
 
 [![Build Status](https://secure.travis-ci.org/silverstripe/deploynaut.png)](https://travis-ci.org/silverstripe/deploynaut)
 
-A web based front end for deployment of SilverStripe 3.* sites.
+A web based front end for deployment of SilverStripe sites.
 
 ## Overview
 
@@ -12,6 +12,10 @@ The main design considerations have been:
 
  - Easy and carefree deployments for non-technical (and technical) people
  - Easy configuration and setup of new environments via a web ui
+
+## Installation and configuration
+
+See [docs](docs/en/index.md).
 
 ## Screenshots
 
