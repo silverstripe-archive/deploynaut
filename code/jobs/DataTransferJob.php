@@ -108,6 +108,6 @@ class DataTransferJob {
 	 * @return DNData
 	 */
 	protected function DNData() {
-		return Injector::inst()->get('DNData');
+		return DNData::inst();
 	}
 }

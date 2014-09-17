@@ -280,8 +280,7 @@ class DNDataArchive extends DataObject {
 	 * @return String Absolute file path
 	 */
 	public function generateFilepath(DNDataTransfer $dataTransfer) {
-		$filepath = null;
-		$data = Injector::inst()->get('DNData');
+		$data = DNData::inst();
 		$transferDir = $data->getDataTransferDir();
 		$sanitizeRegex = array('/\s+/', '/[^a-zA-Z0-9-_\.]/');
 		$sanitizeReplace = array('/_/', '');

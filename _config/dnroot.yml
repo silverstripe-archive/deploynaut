@@ -1,30 +1,16 @@
 ---
 Name: deploynaut
-Only:
-    environment: dev
 ---
 Injector:
-    DeploymentBackend:
-        class: CapistranoDeploymentBackend
-    DNData:
-        constructor:
-            0: "../deploynaut-resources/envs"
-            1: "../deploynaut-resources/gitkeys"
-            2: "assets/transfers"
-DNEnvironment:
-    allow_web_editing: false
----
-Name: deploynaut
-Only:
-    environment: live
----
-Injector:
-    DeploymentBackend:
-        class: CapistranoDeploymentBackend
-    DNData:
-        constructor:
-            0: "../../deploynaut-resources/envs"
-            1: "../../deploynaut-resources/gitkeys"
-            2: "../assets/transfers"
-DNEnvironment:
-    allow_web_editing: false
+  DeploymentBackend:
+    class: CapistranoDeploymentBackend
+  DNData:
+    properties:
+      Backend: '%$DeploymentBackend'
+      # Set EnvironmentDir and KeyDir to absolute paths in your live project
+      EnvironmentDir: "../deploynaut-resources/envs"
+      KeyDir: "../deploynaut-resources/gitkeys"
+      # Set to an absolute path, or a relative path to append to BASE_PATH
+      DataTransferDir: "assets/transfers"
+      # User to run commands as locally
+      GitUser: ''

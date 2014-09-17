@@ -26,7 +26,7 @@ class CloneGitRepo {
 		}
 
 		// if an alternate user has been configured for clone, run the command as that user
-		$user = Injector::inst()->get('DNData')->getGitUser();
+		$user = DNData::inst()->getGitUser();
 
 		if(file_exists($path)) {
 			if($user) {

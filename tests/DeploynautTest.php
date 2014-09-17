@@ -16,12 +16,15 @@ abstract class DeploynautTest extends SapphireTest {
 	protected function setTemporaryPath($path) {
 		$this->envPath = $path;
 		Filesystem::makeFolder($this->envPath);
+		$this->envPath = realpath($this->envPath);
 		Injector::inst()->load(array(
 			'DNData' => array(
-				'constructor' => array(
-					0 => $this->envPath,
-					1 => TEMP_FOLDER .'/deploynaut_test/gitkeys',
-					2 => Director::baseFolder() . '/assets/transfers'
+				'properties' => array(
+					'Backend' => '%$DeploymentBackend',
+					'EnvironmentDir' => $this->envPath,
+					'KeyDir' => TEMP_FOLDER .'/deploynaut_test/gitkeys',
+					'DataTransferDir' => Director::baseFolder() . '/assets/transfers',
+					'GitUser' => ''
 				)
 			)
 		));

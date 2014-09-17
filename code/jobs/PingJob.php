@@ -27,7 +27,7 @@ class PingJob {
 	 * @return DNData
 	 */
 	public function DNData() {
-		return Injector::inst()->get('DNData');
+		return DNData::inst();
 	}
 
 	/**

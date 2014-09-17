@@ -30,7 +30,7 @@ class FetchJob {
 		// @todo Gitonomy doesn't seem to have any way to prefix the command properly, if you
 		// set 'sudo -u composer git' as the "command" parameter, it tries to run the whole
 		// thing as a single command and fails
-		$user = Injector::inst()->get('DNData')->getGitUser();
+		$user = DNData::inst()->getGitUser();
 		if($user) {
 			$command = sprintf('cd %s && sudo -u %s git fetch -p origin +refs/heads/*:refs/heads/* --tags', $path, $user);
 			$process = new \Symfony\Component\Process\Process($command);
