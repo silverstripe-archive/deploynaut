@@ -3,15 +3,19 @@
 /**
  * Parent class for managing a set of Deploynaut data
  */
-class DNData {
+class DNData extends ViewableData {
 
 	/**
 	 * Path where the environment configurations can be found.
+	 *
+	 * @var string
 	 */
 	protected $environmentDir = '';
 
 	/**
 	 * Path where the keys are stored.
+	 *
+	 * @var string
 	 */
 	protected $keyDir = '';
 
@@ -20,13 +24,10 @@ class DNData {
 	 * Needs to be relative to webroot, and start with assets/
 	 * since all files are also referenced in the SilverStripe database
 	 * through {@link File}.
+	 *
+	 * @var string
 	 */
 	protected $dataTransferDir = '';
-
-	/**
-	 * A prebuilt DNProjectList.
-	 */
-	protected $projectList;
 
 	/**
 	 * If set, this provides an alternate user to the current one
@@ -39,58 +40,116 @@ class DNData {
 	protected $gitUser = null;
 
 	/**
+	 * Gets the DNData singleton
 	 *
+	 * @return DNData
+	 */
+	public static function inst() {
+		return Injector::inst()->get('DNData');
+	}
+
+	/**
 	 * @var DeploymentBackend
 	 */
 	protected $backend;
 
-	public function __construct($environmentDir, $keyDir, $dataTransferDir, $gitUser = null) {
-		$this->backend = Injector::inst()->get('DeploymentBackend');
+	public function __construct($environmentDir = null, $keyDir = null, $dataTransferDir = null, $gitUser = null) {
+		parent::__construct();
+
+		// Better to use injector to set these
+		if(func_num_args() == 0) return;
+		Deprecation::notice(
+			'1.2.0',
+			"Don't construct DNData with parameters. Assign settings via properties instead"
+		);
 		$this->setEnvironmentDir($environmentDir);
 		$this->setKeyDir($keyDir);
 		$this->setDataTransferDir($dataTransferDir);
 		$this->setGitUser($gitUser);
 	}
 
+	/**
+	 * Get the directory environment code is saved
+	 *
+	 * @return string
+	 */
 	public function getEnvironmentDir() {
 		return $this->environmentDir;
 	}
 
+	/**
+	 * Set the directory environment code is saved
+	 *
+	 * @param string $environmentDir
+	 */
 	public function setEnvironmentDir($environmentDir) {
 		if($environmentDir[0] != "/") $environmentDir = BASE_PATH . '/' . $environmentDir;
-		$this->environmentDir = $environmentDir;
+		$this->environmentDir = realpath($environmentDir) ?: $environmentDir;
 	}
 
+	/**
+	 * Get the directory where ssh are stored
+	 *
+	 * @return string
+	 */
 	public function getKeyDir() {
 		return $this->keyDir;
 	}
 
+	/**
+	 * Set the directory where ssh are stored
+	 *
+	 * @param string $keyDir
+	 */
 	public function setKeyDir($keyDir) {
 		if($keyDir[0] != "/") $keyDir = BASE_PATH . '/' . $keyDir;
-		$this->keyDir = $keyDir;
+		$this->keyDir = realpath($keyDir) ?: $keyDir;
 	}
 
+	/**
+	 * Get the username that git commands should be run as
+	 *
+	 * @return string
+	 */
 	public function getGitUser() {
 		return $this->gitUser;
 	}
 
+	/**
+	 * Get the username that git commands should be run as
+	 *
+	 * @param string $user
+	 */
 	public function setGitUser($user) {
 		$this->gitUser = $user;
 	}
 
+	/**
+	 * Get the directory where data transfers should be saved
+	 *
+	 * @return string
+	 */
 	public function getDataTransferDir() {
 		return $this->dataTransferDir;
 	}
 
-	public function setDataTransferDir($dir) {
-		if($dir[0] != "/") $dir = BASE_PATH . '/' . $dir;
-		if(strpos($dir, ASSETS_PATH) !== 0) {
+	/**
+	 * Set the directory where data transfers should be saved
+	 *
+	 * This should either be an absolute path (beginning with /) or a path that can
+	 * be appended to the web root safely
+	 *
+	 * @param string $transferDir
+	 */
+	public function setDataTransferDir($transferDir) {
+		if($transferDir[0] != "/") $transferDir = BASE_PATH . '/' . $transferDir;
+		if(strpos($transferDir, ASSETS_PATH) === false) {
 			throw new LogicException(sprintf(
 				'DNData::dataTransferDir needs to be located within <webroot>assets/ (location: %s)',
-				$dir
+				$transferDir
 			));
 		}
-		$this->dataTransferDir = $dir;
+		$this->dataTransferDir = realpath($transferDir) ?: $transferDir;
 	}
 
 	/**
@@ -110,9 +169,20 @@ class DNData {
 	}
 
 	/**
+	 * Sets the backend
+	 *
+	 * @param DeploymentBackend $backend
+	 */
+	public function setBackend(DeploymentBackend $backend) {
+		$this->backend = $backend;
+	}
+
+	/**
 	 * Grabs a list of projects from the env directory. The projects
 	 * in the builds directory alone will not be picked up.
  	 * Returns an array of paths
+	 *
+	 * @return array
  	 */
 	public function getProjectPaths() {
 		$paths = array();

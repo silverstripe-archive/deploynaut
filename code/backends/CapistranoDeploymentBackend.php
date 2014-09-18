@@ -146,7 +146,7 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 			}
 		}
 
-		$data = Injector::inst()->get('DNData');
+		$data = DNData::inst();
 		// Generate a capfile from a template
 		$capTemplate = file_get_contents(BASE_PATH.'/deploynaut/Capfile.template');
 		$cap = str_replace(

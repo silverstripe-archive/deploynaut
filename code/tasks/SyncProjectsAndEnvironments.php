@@ -23,7 +23,7 @@ class SyncProjectsAndEnvironments extends BuildTask {
 			sleep(3);
 		}
 		
-		$data = Injector::inst()->get('DNData');
+		$data = DNData::inst();
 		$projectPaths = $data->getProjectPaths();
 
 		// Sync projects

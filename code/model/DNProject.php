@@ -258,7 +258,7 @@ class DNProject extends DataObject {
 	 * @return DNData
 	 */
 	public function DNData() {
-		return Injector::inst()->get('DNData');
+		return DNData::inst();
 	}
 
 	/**
