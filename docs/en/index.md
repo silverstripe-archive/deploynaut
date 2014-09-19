@@ -45,6 +45,7 @@ An init.d script is included that allows start and stop of the queue service, an
 
 	sudo cp /sites/deploynaut/www/deploynaut/.scripts/deploynaut-php-resque /etc/init.d/deploynaut-php-resque
 	sudo chown root:root /etc/init.d/deploynaut-php-resque
+	sudo update-rc.d deploynaut-php-resque defaults
 
 Note that if you installed Deploynaut into a directory other than `/sites/deploynaut/www`, the above file will need
 to be modified so that the `ROOT` variable points to the site.
