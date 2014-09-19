@@ -152,6 +152,17 @@ Once you're done, hit "Save".
 
 To test that Capistrano is able to remotely connect to the machine, click "Check Connection" button.
 
+The first time you deploy may fail due to Capistrano can't find the server in the known host file for the user deploying.
+
+	# The authenticity of host 'server.com (192.168.1.1)' can't be established.
+	# RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.
+	# Are you sure you want to continue connecting (yes/no)?
+
+To fix this, change to the deploy user and connect to the machine and answer yes
+
+	sudo su - www-data
+	ssh -p 2222 sites@192.168.0.1
+
 ## Configuring snapshots
 
 Create `assets/transfers` server-writable directory:
