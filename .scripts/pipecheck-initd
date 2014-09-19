@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ### BEGIN INIT INFO
-# Provides:          Deploynaut Pipeline status check
+# Provides:          deploynaut-pipeline
 # Required-Start:    $local_fs $remote_fs $syslog
 # Required-Stop:     $local_fs $remote_fs $syslog
 # Default-Start:     2 3 4 5
