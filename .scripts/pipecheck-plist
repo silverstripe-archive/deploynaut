@@ -2,12 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>Label</key>
-    <string>deploynaut.pipecheck</string>
-    <key>ProgramArguments</key>
-    <array>
-        <string>/sites/deploynaut/www/.scripts/pipecheck</string>
-    </array>
+	<key>Label</key>
+	<string>deploynaut.pipecheck</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/sites/deploynaut/www/deploynaut/.scripts/pipecheck</string>
+	</array>
 	<key>StandardOutPath</key>
 	<string>/var/log/pipecheck.log</string>
 	<key>RunAtLoad</key>
