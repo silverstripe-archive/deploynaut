@@ -19,7 +19,7 @@
 PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/bin
 DESC="Deploynaut Pipeline Status"
 NAME=pipecheck
-DAEMON="/sites/deploynaut/www/.scripts/pipecheck"
+DAEMON="/sites/deploynaut/www/deploynaut/.scripts/pipecheck"
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 USERNAME=www-data

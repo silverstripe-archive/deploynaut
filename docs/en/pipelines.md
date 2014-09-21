@@ -1,123 +1,91 @@
-# Introduction
-See docs/en/index.md for an overview of the Pipelining system.
+# Pipelines
 
-# Running the CheckPipelineStatus command
-The CheckPipelineStatus command should be run continuously to ensure that pipeline requests proceed as quickly as they
-can. This is currently achieved using a daemon process, installed at /etc/init.d/pipecheck. The code for this can be
-found in /path/to/webroot/deploynaut/.scripts/pipecheck-initd. It should be renamed to /etc/init.d/pipecheck to load.
+## Introduction
 
-Note: For OSX you can use the copy the pipecheck-plist template into /Library/LaunchDaemons/deploynaut.pipecheck.plist
-and initialise it with "sudo launchctl load /Library/LaunchDaemons/deploynaut.pipecheck.plist"
+Pipelines will be used to break down various processes within Deploynaut into individual steps, that are run one after
+the other in a pipeline. This is modelled by the `Pipeline` and `PipelineStep` classes.
 
-Prior to installing, you'll want to double-check the webroots in both script files. It currently assumes that the
-webroot is /sites/deploynaut/www, and therefore that the pipecheck script that loops forever is at
-/sites/deploynaut/www/deploynaut/.scripts/pipecheck. Both scripts need to be modified slightly (in the config sections
-only) if that's not the case.
+A Pipeline is associated with a DNEnvironment, and each environment can contain many pipelines, which contains the
+history of various action within Deploynaut. Each Pipeline then has a set of ordered steps, which are defined
+separately for each environment in a YAML file, and these are executed in order when a pipeline starts.
 
-Once this is in place, you can run the pipeline
-checker like this:
-	$> sudo /etc/init.d/pipecheck start
-	$> sudo /etc/init.d/pipecheck status
+## Setting up CheckPipelineStatus daemon
+
+The `CheckPipelineStatus` command should be run continuously to ensure that pipeline requests proceed as quickly as they
+can. This can be installed as a daemon process.
+
+### Debian Linux
+
+	sudo cp /sites/deploynaut/www/deploynaut/.scripts/pipecheck-initd /etc/init.d/pipecheck
+	sudo chown root:root /etc/init.d/pipecheck
+	sudo update-rc.d pipecheck defaults
+
+Once this is in place, you can run the pipeline checker like this:
+
+	sudo /etc/init.d/pipecheck start
+	sudo /etc/init.d/pipecheck status
 
 The pipeline checker can be stopped with the `stop` command:
-	$> sudo /etc/init.d/pipecheck stop
-	$> sudo /etc/init.d/pipecheck status
 
-# A typical request would be something like:
-    1. Pipeline created based on a .yml file (see below).
-    2. Pipeline::start() called, which in turn:
-        1. Sets up all steps that need to be created for this pipeline, based on the .yml file
-        2. Sets $this->Status = 'Running' (on the Pipeline object).
-    3. Each PipelineStep should have a start() and finish() method, and asynchronous steps should have a process()
-       method.
-        1. start() should set up the step for processing (e.g. at a minimum, set $this->Status = 'Started').
-            a. For synchronous steps, the start() method will perform the actual step required.
-            b. For asynchronous steps, the start() method should create a job, enqueue it using Resque::enqueue() and
-               call the 'perform()' method on the `PipelineStep` object.
-        2. The finish() method will either be called by start() for synchronous steps, or perform() by asynchronous
-           steps.
-    4. When a Pipeline Step completes, it will be picked up by the CheckPipelineStatus controller. This controller is
-       run via the command-line (either via cron, a daemon, or by continually enqueueing itself into php-resque - yet
-       to be determined how this works. Whenever the controller runs, it will:
-        1. Check to ensure it's being run from the command line.
-        2. Find all Pipeline objects with a Status of 'Running', it will call `Pipeline::checkPipelineStatus()`, which:
-            1. If the pipeline's current step is marked as 'Finished', and the next step is not 'Started', then start
-               that next step.
-            2. If the current step is marked as 'Finished', and there are no more steps, then update the Pipeline to
-               mark it as completed.
-            3. If the current step is marked as 'Failed' and the pipeline is not also marked as 'Failed', then leave a
-               warning message in the logs, and mark the pipeline as 'Failed' too.
+	sudo /etc/init.d/pipecheck stop
+	sudo /etc/init.d/pipecheck status
 
-# YML file configuration
+### OS X
+
+	sudo cp /sites/deploynaut/www/deploynaut/.scripts/deploynaut.pipecheck.plist /Library/LaunchDaemons/deploynaut.pipecheck.plist
+	sudo launchctl load /Library/LaunchDaemons/deploynaut.pipecheck.plist
+
+Note: The provided scripts have a webroot hardcoded to `/sites/deploynaut/www`. Please change that if you have
+installed Deploynaut into a different location.
+
+## How it works
+
+When a deploy is initiated and there is a configured YAML for that environment, `Pipeline::start()` is called, which
+takes the configured YAML file for the given environment and sets up the configured steps from that configuration.
+
+Each step is defined as a subclass of `PipelineStep`, and each step class should contain a `start()` and a `finish()`
+method. `start()` should set up the step for processing, at a minimum set `$this->Status = 'Started'`. When a step
+finishes, it should call `finish()` so the step is marked as completed.
+
+## YML file configuration
+
 Pipelines are created by editing YML files to define the steps and their execution order, as well as various
-configuration settings. A few sample YML files are below. These currently rely on the environment names being
-unchanged, which isn't ideal and would be good to tidy up.
+configuration settings.
 
-The Config.DependsOnEnvironment variable is how steps like the SmokeTestPipelineTest know which environment to perform
+YAML files are configured in the Deploynaut admin interface under a specific project's environment in the
+"Pipeline Template" tab while editing that environment..
+
+This simple example checks that the site is accessible after a deployment has completed.
+
+``yml
+PipelineConfig:
+  DependsOnProject: myproject
+  Description: >
+    Subsequent deployments to this environment that pass the smoke test will be eligible
+    for deployment to the live instance.
+  ServiceArguments:
+    from: somewhere@mysite.com
+    reply-to: somewhere@mysite.com
+  # Global smoketests used both by the forward and rollback deployments
+  Tests:
+    Home:
+      URL: http://mysite.com/
+      ExpectStatus: 200
+    Admin:
+      URL: http://mysite.com/admin
+      ExpectStatus: 302
+Steps:
+  # Deploy the given code
+  Deployment:
+    Class: DeploymentPipelineStep
+    MaxDuration: 3600
+  # Test that the deployment works. Uses the Pipeline.Tests config above.
+  SmokeTest:
+    Class: SmokeTestPipelineStep
+``
+
+The `Config.DependsOnEnvironment` variable is how steps like the SmokeTestPipelineTest know which environment to perform
 their checks on.
 
-```yml
-## Live site (project1-live.yml)
-PipelineConfig:
-	OnSuccessNotify: <instance-manager>,<requester>,ops@silverstripe.com
-	OnFailureNotify: <instance-manager>,<requester>,ops@silverstripe.com
-	DependsOnProject: "project1"
-	DependsOnEnvironment: "uat"
-	FilteredCommits: "DNFinishedCommits"
-Steps:
-	SmokeTestPipelineStepBefore:
-		Class: SmokeTestPipelineStep
-		PerformTestOn: 'DependentEnvironment'
-	TxtConfirmationPipelineStep:
-		Class: TxtConfirmationPipelineStep
-		Recipients: <instance-manager>,<requester>,021971373,mattpeel@silverstripe.com
-	ShowMaintenancePipelineStep:
-		Class: ShowMaintenancePipelineStep
-	DeploymentPipelineStep:
-		Class: DeploymentPipelineStep
-	SmokeTestPipelineStepAfter:
-		Class: SmokeTestPipelineStep
-		PerformTestOn: 'ThisEnvironment'
-	HideMaintenancePipelineStep:
-		Class: HideMaintenancePipelineStep
-    
+Note: All config files inherit from https://github.com/silverstripe/deploynaut/blob/master/_config/pipeline.yml
 
-## UAT Site (project1-uat.yml)
-PipelineConfig:
-	OnSuccessNotify: <instance-manager>,<requester>,ops@silverstripe.com
-	OnFailureNotify: <instance-manager>,<requester>,ops@silverstripe.com
-	DependsOnProject: "project1"
-	DependsOnEnvironment: "dev"
-Steps:
-	SmokeTestPipelineStepBefore:
-		Class: SmokeTestPipelineStep
-		PerformTestOn: 'DependentEnvironment'
-	ShowMaintenancePipelineStep:
-		Class: ShowMaintenancePipelineStep
-	DeploymentPipelineStep:
-		Class: DeploymentPipelineStep
-	SmokeTestPipelineStepAfter:
-		Class: SmokeTestPipelineStep
-		PerformTestOn: 'ThisEnvironment'
-	HideMaintenancePipelineStep:
-		Class: HideMaintenancePipelineStep
-
-
-## Dev site (project1-dev.yml)
-PipelineConfig:
-	OnSuccessNotify: <instance-manager>,<requester>,ops@silverstripe.com
-	OnFailureNotify: <instance-manager>,<requester>,ops@silverstripe.com
-	# Note: No DependsOnEnvironment set, meaning that there are no barriers to deployment.
-	# For example, you can't run a SmokeTestPipelineStep with a 'PerformTestOn' of 'DependentEnvironment' as there is
-	# none to test it on.
-Steps:
-	ShowMaintenancePipelineStep:
-		Class: ShowMaintenancePipelineStep
-	DeploymentPipelineStep:
-		Class: DeploymentPipelineStep
-	SmokeTestPipelineStepAfter:
-		Class: SmokeTestPipelineStep
-		PerformTestOn: 'ThisEnvironment'
-	HideMaintenancePipelineStep:
-		Class: HideMaintenancePipelineStep
-```
