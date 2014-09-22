@@ -31,10 +31,12 @@ namespace :deploy do
 		# We allow users to not use sake at all if they set the path to false
 		if (sake_path != false)
 			if exists?(:webserver_user)
-				run "sudo -u #{webserver_user} bash #{latest_release}/#{sake_path} dev/build flush=1", :roles => :db
+				run "sudo -u #{webserver_user} bash #{latest_release}/#{sake_path} dev flush=1", :roles => :db
+				run "sudo -u #{webserver_user} bash #{latest_release}/#{sake_path} dev/build", :roles => :db, :once => true
 			else
 				run "mkdir -p #{latest_release}/silverstripe-cache", :roles => :db
-				run "bash #{latest_release}/#{sake_path} dev/build flush=1", :roles => :db
+				run "bash #{latest_release}/#{sake_path} dev flush=1", :roles => :db
+				run "bash #{latest_release}/#{sake_path} dev/build", :roles => :db, :once => true
 				run "rm -rf #{latest_release}/silverstripe-cache", :roles => :db
 			end
 		end
