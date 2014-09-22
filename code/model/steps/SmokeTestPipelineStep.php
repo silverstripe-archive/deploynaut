@@ -109,6 +109,12 @@ class SmokeTestPipelineStep extends PipelineStep {
 			}
 
 			$contents = curl_exec($ch);
+			if(curl_errno($ch)) {
+				$this->log(sprintf('Curl error: %s', curl_error($ch)));
+				$failed = true;
+				continue;
+			}
+
 			$info =	curl_getinfo($ch);
 
 			// if an expected response time is specified, check that against the results

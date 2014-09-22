@@ -43,7 +43,7 @@ class SmokeTestPipelineStepTest extends PipelineTest {
 		$step = $this->getDummySmokeTestStep('FailTest');
 		$this->assertFalse($step->start());
 		$this->assertHasLog('Starting smoke test "BrokenPage" to URL http://bob.bob.bob.bob/');
-		$this->assertHasLog('Smoke test "BrokenPage" to URL http://bob.bob.bob.bob/ failed');
+		$this->assertHasLog('Curl error: ');
 		$this->assertHasLog('Starting smoke test "Home" to URL https://github.com/');
 		$this->assertHasLog('Smoke test "Home" to URL https://github.com/ successful');
 		$this->assertEquals('Failed', $step->Status);
