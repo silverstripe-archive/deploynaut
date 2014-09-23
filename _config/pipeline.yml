@@ -9,10 +9,16 @@ Pipeline:
         Success: 'Deployment for <project>/<environment> has successfully completed'
         Failure: 'Deployment for <project>/<environment> has failed'
         Abort: 'Deployment for <project>/<environment> has been aborted'
+        RollbackStarted: 'Deployment failed, rollback for <project>/<environment> has begun.'
+        RollbackSuccess: 'Rollback for <project>/<environment> has successfully completed.'
+        RollbackFailure: 'Rollback for <project>/<environment> has failed.'
       Subjects:
         Success: 'Deployment for <project>/<environment>: Success'
         Failure: 'Deployment for <project>/<environment>: Failure'
         Abort: 'Deployment for <project>/<environment>: Aborted'
+        RollbackStarted: 'Deployment failed, rollback for <project>/<environment> has begun.'
+        RollbackSuccess: 'Rollback for <project>/<environment> has successfully completed.'
+        RollbackFailure: 'Rollback for <project>/<environment> has failed.'
     RollbackStep1:
       Class: RollbackStep
       RestoreDB: true
