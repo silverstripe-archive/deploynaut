@@ -260,7 +260,11 @@ class CapistranoDeploymentBackend implements DeploymentBackend {
 
 		// HACK: find_or_make() expects path relative to assets/
 		$sspakFilepath = ltrim(
-			str_replace(ASSETS_PATH, '', $filepathBase . DIRECTORY_SEPARATOR . $sspakFilename),
+			str_replace(
+				array(ASSETS_PATH, realpath(ASSETS_PATH)),
+				'',
+				$filepathBase . DIRECTORY_SEPARATOR . $sspakFilename
+			),
 			DIRECTORY_SEPARATOR
 		);
 
