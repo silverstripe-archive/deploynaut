@@ -28,6 +28,9 @@ a password in order to deploy. It will also need to be able to `git clone` your 
 
 ## Installation
 
+If you are setting up deploynaut for development, there's a module [`deploynaut-vagrant`](https://github.com/silverstripe-labs/deploynaut-vagrant)
+that help with creation of virtual machines with the software necessary to run deploynaut.
+
 ### Capistrano
 
 Capistrano is written in ruby, and often deployed as a ruby gem. So the first requirement is to install it system wide:
