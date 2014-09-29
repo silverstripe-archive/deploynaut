@@ -175,10 +175,7 @@ class DNProject extends DataObject {
 
 		if(Permission::checkMember($member, 'ADMIN')) return true;
 
-		foreach($this->Viewers() as $group) {
-			if($group->Members()->byID($member->ID)) return true;
-		}
-		return false;
+		return $member->inGroups($this->Viewers());
 	}
 
 	public function canRestore($member = null) {
@@ -364,8 +361,9 @@ class DNProject extends DataObject {
 		$workspaceField->setDescription('This is where the GIT repository are located on this server');
 		$fields->insertAfter($workspaceField, 'CVSPath');
 
-		$readAccessGroups = new CheckboxSetField("Viewers", "Project viewers", Group::get()->map());
-		$readAccessGroups->setDescription('These groups can view the project in the front-end.');
+		$readAccessGroups = ListboxField::create('Viewers', 'Project viewers', Group::get()->map()->toArray())
+			->setMultiple(true)
+			->setDescription('These groups can view the project in the front-end.');
 		$fields->addFieldToTab("Root.Main", $readAccessGroups);
 
 		$this->setCreateProjectFolderField($fields);
