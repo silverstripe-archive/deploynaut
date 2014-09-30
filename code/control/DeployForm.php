@@ -147,6 +147,7 @@ class DeployForm extends Form {
 					)
 			);
 		}
+
 		parent::__construct($controller, $name, new FieldList($field), $actions, $validator);
 	}
 
