@@ -228,7 +228,8 @@ class DNDataArchive extends DataObject {
 
 		// Hooks into ArchiveUploaders permission to prevent proliferation of permission checkboxes.
 		// Bypasses the quota check - we don't need to check for it as long as we move the snapshot within the project.
-		return (bool)($targetEnv->ArchiveUploaders()->byID($member->ID));
+		return $targetEnv->ArchiveUploaders()->byID($member->ID)
+			|| $member->inGroups($targetEnv->ArchiveUploaderGroups());
 	}
 
 	/**

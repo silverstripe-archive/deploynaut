@@ -1,0 +1,81 @@
+Member:
+  deployer:
+    Email: deployer@example.com
+  deployerbygroup:
+    Email: deployer2@example.com
+  restorer:
+    Email: restorer@example.com
+  restorerbygroup:
+    Email: restorer2@example.com
+  backup:
+    Email: backup@example.com
+  backupbygroup:
+    Email: backup2@example.com
+  uploader:
+    Email: uploader@example.com
+  uploaderbygroup:
+    Email: uploader2@example.com
+  downloader:
+    Email: downloader@example.com
+  downloaderbygroup:
+    Email: downloader2@example.com
+  deleter:
+    Email: deleter@example.com
+  deleterbygroup:
+    Email: deleter2@example.com
+  approver:
+    Email: approver@example.com
+  approverbygroup:
+    Email: approver2@example.com
+  canceller:
+    Email: canceller@example.com
+  cancellerbygroup:
+    Email: canceller2@example.com
+Group:
+  deployer:
+    Title: deployers
+    Members: =>Member.deployerbygroup
+  restorer:
+    Title: restorers
+    Members: =>Member.restorerbygroup
+  backup:
+    Title: backup
+    Members: =>Member.backupbygroup
+  uploader:
+    Title: uploaders
+    Members: =>Member.uploaderbygroup
+  downloader:
+    Title: downloader
+    Members: =>Member.downloaderbygroup
+  deleter:
+    Title: deleters
+    Members: =>Member.deleterbygroup
+  approver:
+    Title: approver
+    Members: =>Member.approverbygroup
+  canceller:
+    Title: cancellers
+    Members: =>Member.cancellerbygroup
+DNProject:
+  testproject:
+    Name: 'testproject'
+DNEnvironment:
+  uat:
+    Name: uat
+    Project: =>DNProject.testproject
+    Deployers: =>Member.deployer
+    DeployerGroups: =>Group.deployer
+    CanRestoreMembers: =>Member.restorer
+    CanRestoreGroups: =>Group.restorer
+    CanBackupMembers: =>Member.backup
+    CanBackupGroups: =>Group.backup
+    ArchiveUploaders: =>Member.uploader
+    ArchiveUploaderGroups: =>Group.uploader
+    ArchiveDownloaders: =>Member.downloader
+    ArchiveDownloaderGroups: =>Group.downloader
+    ArchiveDeleters: =>Member.deleter
+    ArchiveDeleterGroups: =>Group.deleter
+    PipelineApprovers: =>Member.approver
+    PipelineApproverGroups: =>Group.approver
+    PipelineCancellers: =>Member.canceller
+    PipelineCancellerGroups: =>Group.canceller

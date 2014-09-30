@@ -4,35 +4,90 @@
  */
 class DNEnvironmentTest extends DeploynautTest {
 
-	/**
-	 *
-	 * @var DNEnvironment
-	 */
-	protected $env = null;
+	protected static $fixture_file = 'DNEnvironmentTest.yml';
 
 	/**
-	 *
-	 * @var DNProject
+	 * @return DNEnvironment
 	 */
-	protected $project = null;
-
-	public function setUp() {
-		parent::setUp();
-
-		// Create mock objects
-		$this->env = DNEnvironment::create();
-		$this->env->Name = 'uat';
-		$this->env->write();
-		$this->project = $this->env->Project();
-		$this->project->Name = 'testproject';
-		$this->project->write();
+	protected function getEnvironment() {
+		return $this->objFromFixture('DNEnvironment', 'uat');
 	}
 
 	/**
 	 *
 	 */
 	public function testGetConfigFilename() {
+		$environment = $this->getEnvironment();
 		$expected = $this->envPath.'/testproject/uat.rb';
-		$this->assertEquals($expected, $this->env->getConfigFilename());
+		$this->assertEquals($expected, $environment->getConfigFilename());
+	}
+
+	public function testPermissions() {
+		$environment = $this->getEnvironment();
+
+		// Check deployer / restorer permissions
+		$deployer = $this->objFromFixture('Member', 'deployer');
+		$deployerbygroup = $this->objFromFixture('Member', 'deployerbygroup');
+		$restorer = $this->objFromFixture('Member', 'restorer');
+		$restorerbygroup = $this->objFromFixture('Member', 'restorerbygroup');
+
+		$this->assertTrue($environment->canDeploy($deployer));
+		$this->assertTrue($environment->canDeploy($deployerbygroup));
+		$this->assertFalse($environment->canDeploy($restorer));
+		$this->assertFalse($environment->canDeploy($restorerbygroup));
+
+		$this->assertFalse($environment->canRestore($deployer));
+		$this->assertFalse($environment->canRestore($deployerbygroup));
+		$this->assertTrue($environment->canRestore($restorer));
+		$this->assertTrue($environment->canRestore($restorerbygroup));
+
+		// Check backup / uploader permissions
+		$backup = $this->objFromFixture('Member', 'backup');
+		$backupbygroup = $this->objFromFixture('Member', 'backupbygroup');
+		$uploader = $this->objFromFixture('Member', 'uploader');
+		$uploaderbygroup = $this->objFromFixture('Member', 'uploaderbygroup');
+
+		$this->assertTrue($environment->canBackup($backup));
+		$this->assertTrue($environment->canBackup($backupbygroup));
+		$this->assertFalse($environment->canBackup($uploader));
+		$this->assertFalse($environment->canBackup($uploaderbygroup));
+
+		$this->assertFalse($environment->canUploadArchive($backup));
+		$this->assertFalse($environment->canUploadArchive($backupbygroup));
+		$this->assertTrue($environment->canUploadArchive($uploader));
+		$this->assertTrue($environment->canUploadArchive($uploaderbygroup));
+
+		// Check downloader / deleters permissions
+		$downloader = $this->objFromFixture('Member', 'downloader');
+		$downloaderbygroup = $this->objFromFixture('Member', 'downloaderbygroup');
+		$deleter = $this->objFromFixture('Member', 'deleter');
+		$deleterbygroup = $this->objFromFixture('Member', 'deleterbygroup');
+
+		$this->assertTrue($environment->canDownloadArchive($downloader));
+		$this->assertTrue($environment->canDownloadArchive($downloaderbygroup));
+		$this->assertFalse($environment->canDownloadArchive($deleter));
+		$this->assertFalse($environment->canDownloadArchive($deleterbygroup));
+
+		$this->assertFalse($environment->canDeleteArchive($downloader));
+		$this->assertFalse($environment->canDeleteArchive($downloaderbygroup));
+		$this->assertTrue($environment->canDeleteArchive($deleter));
+		$this->assertTrue($environment->canDeleteArchive($deleterbygroup));
+
+		// Pipeline permissions
+		$approver = $this->objFromFixture('Member', 'approver');
+		$approverbygroup = $this->objFromFixture('Member', 'approverbygroup');
+		$canceller = $this->objFromFixture('Member', 'canceller');
+		$cancellerbygroup = $this->objFromFixture('Member', 'cancellerbygroup');
+
+		$this->assertTrue($environment->canApprove($approver));
+		$this->assertTrue($environment->canApprove($approverbygroup));
+		$this->assertFalse($environment->canApprove($canceller));
+		$this->assertFalse($environment->canApprove($cancellerbygroup));
+
+		$this->assertFalse($environment->canAbort($approver));
+		$this->assertFalse($environment->canAbort($approverbygroup));
+		$this->assertTrue($environment->canAbort($canceller));
+		$this->assertTrue($environment->canAbort($cancellerbygroup));
+
 	}
 }

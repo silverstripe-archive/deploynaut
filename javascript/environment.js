@@ -4,17 +4,65 @@
 	$.entwine.warningLevel = $.entwine.WARN_LEVEL_BESTPRACTISE;
 	$.entwine('ss.deploynaut', function($) {
 		
-		$('#Form_ItemEditForm_TickAllSnapshot input').entwine({
-			onclick: function(evt) {
-				var id = $(evt.target).attr('value');
-				var checked = evt.target.checked;
-				$('#Form_ItemEditForm_CanRestoreMembers_' + id)[0].checked = checked;
-				$('#Form_ItemEditForm_CanBackupMembers_' + id)[0].checked = checked;
-				$('#Form_ItemEditForm_ArchiveDeleters_' + id)[0].checked = checked;
-				$('#Form_ItemEditForm_ArchiveUploaders_' + id)[0].checked = checked;
-				$('#Form_ItemEditForm_ArchiveDownloaders_' + id)[0].checked = checked;
-				$('#Form_ItemEditForm_PipelineApprovers_' + id)[0].checked = checked;
-				$('#Form_ItemEditForm_PipelineCancellers_' + id)[0].checked = checked;
+		$('.tickall select').entwine({
+			IDs: [],
+			targets: function() {
+				return [];
+			},
+			onchange: function() {
+				var 
+					oldVal = this.getIDs() || [],
+					newVal = this.val() || [],
+					targets = this.targets();
+				// Update each list
+				$.each(targets, function(targetIndex, target) {
+					var targetFiltered = target.val() || [];
+					// Deselect removed items
+					targetFiltered = $.grep(targetFiltered, function(targetItem) {
+						var keep = !($.inArray(targetItem, oldVal) > -1) // Wasn't in old list, could not have been removed
+							|| ($.inArray(targetItem, newVal) > -1); // Either added or already selected
+						return keep;
+					});
+					
+					// Select newly added items
+					$.each(newVal, function(newItemIndex, newItem) {
+						if(!($.inArray(newItem, targetFiltered) > -1) && !($.inArray(newItem, oldVal) > -1)) {
+							targetFiltered.push(newItem);
+						}
+					});
+					// Update item
+					target
+						.val(targetFiltered)
+						.trigger('liszt:updated')
+						.trigger('change')
+						.chosen();
+				});
+				// Update list
+				this.setIDs(newVal);
+			}
+		});
+		
+		$('.tickall select#Form_ItemEditForm_TickAllSnapshotGroups').entwine({
+			targets: function() {
+				return [
+					$('#Form_ItemEditForm_CanRestoreGroups'),
+					$('#Form_ItemEditForm_CanBackupGroups'),
+					$('#Form_ItemEditForm_ArchiveDeleterGroups'),
+					$('#Form_ItemEditForm_ArchiveUploaderGroups'),
+					$('#Form_ItemEditForm_ArchiveDownloaderGroups')
+				];
+			}
+		});
+		
+		$('.tickall select#Form_ItemEditForm_TickAllSnapshot').entwine({
+			targets: function() {
+				return [
+					$('#Form_ItemEditForm_CanRestoreMembers'),
+					$('#Form_ItemEditForm_CanBackupMembers'),
+					$('#Form_ItemEditForm_ArchiveDeleters'),
+					$('#Form_ItemEditForm_ArchiveUploaders'),
+					$('#Form_ItemEditForm_ArchiveDownloaders')
+				];
 			}
 		});
 
