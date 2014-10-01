@@ -161,6 +161,9 @@ class UserConfirmationStepTest extends PipelineTest {
 		$this->assertEquals('Failed', $step->Status);
 		$this->assertEquals('Rejected', $step->Approval);
 		$this->assertHasLog('TestConfirmStep has been rejected');
+		$this->assertNotSentMessage('Deployment for testproject/uat has failed', 'test@example.com');
+		$this->assertNotSentMessage('Deployment for testproject/uat has failed', 'abort@example.com');
+		$this->assertNotSentMessage('Deployment for testproject/uat has failed', 'errors@example.com');
 		$this->assertSentMessage('Deployment for testproject/uat has been rejected', 'test@example.com');
 		$this->assertSentMessage('Deployment for testproject/uat has been rejected', 'admin@example.com');
 	}

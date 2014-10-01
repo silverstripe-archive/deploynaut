@@ -131,6 +131,8 @@ class EmergencyRollbackStep extends LongRunningPipelineStep {
 		$this->log(_t('EmergencyRollbackStep.BEGINROLLBACKWINDOW',
 			"{$this->Title} is beginning a rollback window..."));
 		$this->write();
+		// Message author that the deployment is complete
+		$this->Pipeline()->sendMessage(Pipeline::ALERT_SUCCESS);
 		return true;
 	}
 

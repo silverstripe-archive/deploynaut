@@ -112,7 +112,8 @@ class Pipeline extends DataObject {
 	private static $db = array(
 		'Status' => 'Enum("Running,Complete,Failed,Aborted,Rollback,Queued","Queued")',
 		'Config' => 'Text', // serialized array of configuration for this pipeline
-		'SHA' => 'Varchar(255)'
+		'SHA' => 'Varchar(255)',
+		'LastMessageSent' => 'Varchar(255)' // ID of last message sent
 	);
 
 	/**
@@ -205,10 +206,12 @@ class Pipeline extends DataObject {
 		$environment = $this->Environment();
 		return array(
 			'<abortlink>' => Director::absoluteURL($this->Environment()->Link()),
+			'<pipelinelink>' => Director::absoluteURL($this->Link()),
 			'<requester>' => $author->Title,
 			'<requester-email>' => $author->Email,
 			'<environment>' => $environment->Name,
-			'<project>' => $environment->Project()->Name
+			'<project>' => $environment->Project()->Name,
+			'<commitsha>' => $this->SHA
 		);
 	}
 
@@ -539,7 +542,10 @@ class Pipeline extends DataObject {
 		$this->Status = "Complete";
 		$this->log("Pipeline completed successfully.");
 		$this->write();
-		$this->sendMessage(self::ALERT_SUCCESS);
+		// Some steps may pre-emptively send a success message before the pipeline itself has completed
+		if($this->LastMessageSent !== self::ALERT_SUCCESS) {
+			$this->sendMessage(self::ALERT_SUCCESS);
+		}
 	}
 
 	/**
@@ -652,8 +658,10 @@ class Pipeline extends DataObject {
 	 * Notify Pipeline that a step has failed and failure processing should kick in. If rollback steps are present
 	 * the pipeline will be put into 'Rollback' state. After rollback is complete, regardless of the rollback result,
 	 * the pipeline will be failed.
+	 *
+	 * @param bool $notify Set to false to disable notifications for this failure
 	 */
-	public function markFailed() {
+	public function markFailed($notify = true) {
 		// Abort all running or queued steps.
 		$steps = $this->Steps();
 		foreach($steps as $step) {
@@ -669,7 +677,7 @@ class Pipeline extends DataObject {
 			$this->Status = 'Failed';
 			$this->log("Pipeline failed, not running rollback (not configured or not applicable yet).");
 			$this->write();
-			$this->sendMessage(self::ALERT_FAILURE);
+			if($notify) $this->sendMessage(self::ALERT_FAILURE);
 		}
 	}
 
@@ -754,16 +762,22 @@ class Pipeline extends DataObject {
 	/**
 	 * Sends a specific message to all marked recipients, including the author of this pipeline
 	 *
-	 * @param string $messageID Message ID. One of 'Abort', 'Success', or 'Failure'
+	 * @param string $messageID Message ID. One of 'Abort', 'Success', or 'Failure', or some custom message
 	 * @return boolean True if successful
 	 */
-	protected function sendMessage($messageID) {
+	public function sendMessage($messageID) {
 		// Check message, subject, and additional arguments to include
 		list($subject, $message) = $this->generateMessageTemplate($messageID);
 		if(empty($subject) || empty($message)) {
 			$this->log("Skipping sending message. None configured for $messageID");
 			return true;
 		}
+
+		// Save last sent message
+		$this->LastMessageSent = $messageID;
+		$this->write();
+
+		// Setup messaging arguments
 		$arguments = array_merge(
 			$this->getConfigSetting('PipelineConfig', 'ServiceArguments') ?: array(),
 			array('subject' => $subject)
