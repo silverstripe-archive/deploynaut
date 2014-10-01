@@ -141,6 +141,13 @@ class DNEnvironment extends DataObject {
 	private static $default_sort = 'Name';
 
 	/**
+	 * Which deployment backend does this environment use.
+	 *
+	 * @var string
+	 */
+	protected $deploymentBackend = "CapistranoDeploymentBackend";
+
+	/**
 	 *
 	 * @todo this should probably be refactored so it don't interfere with the default
 	 * DataObject::get() behaviour.
@@ -173,6 +180,15 @@ class DNEnvironment extends DataObject {
 		$adminGroup = Group::get()->filter('Code', 'administrators')->first();
 		$e->DeployerGroups()->add($adminGroup);
 		return $e;
+	}
+
+	/**
+	 * Get the deployment backend used for this environment
+	 *
+	 * @return DeploymentBackend
+	 */
+	public function Backend() {
+		return Object::create_from_string($this->deploymentBackend);
 	}
 
 	/**
@@ -1144,9 +1160,7 @@ PHP
 	 * @param DeploynautLogFile $log
 	 */
 	public function enableMaintenace($log) {
-		$this
-			->DNData()
-			->Backend()
+		$this->Backend()
 			->enableMaintenance($this, $log, $this->Project());
 	}
 
@@ -1156,9 +1170,7 @@ PHP
 	 * @param DeploynautLogFile $log
 	 */
 	public function disableMaintenance($log) {
-		$this
-			->DNData()
-			->Backend()
+		$this->Backend()
 			->disableMaintenance($this, $log, $this->Project());
 	}
 

@@ -213,3 +213,14 @@ class PipelineTest_DNDataTransfer extends DNDataTransfer implements TestOnly {
 		return $this->Status === 'Finished' ? 'Complete' : $this->Status;
 	}
 }
+
+class PipelineTest_Environment extends DNEnvironment implements TestOnly {
+
+	/**
+	 * Use the demo backend
+	 *
+	 * @var string
+	 */
+	protected $deploymentBackend = "DemoDeploymentBackend";
+
+}

@@ -507,11 +507,15 @@ class DNProject extends DataObject {
 	 * Setup a gridfield for the environment configs
 	 *
 	 * @param FieldList $fields
+	 * @param $environments
+	 * @return void
 	 */
 	protected function setEnvironmentFields(&$fields, $environments) {
 		if(!$environments) {
-			return false;
+			return;
 		}
+
+		$environments->getConfig()->addComponent(new GridFieldAddNewMultiClass());
 		$environments->getConfig()->removeComponentsByType('GridFieldAddNewButton');
 		$environments->getConfig()->removeComponentsByType('GridFieldAddExistingAutocompleter');
 		$environments->getConfig()->removeComponentsByType('GridFieldDeleteAction');

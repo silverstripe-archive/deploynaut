@@ -20,7 +20,6 @@ abstract class DeploynautTest extends SapphireTest {
 		Injector::inst()->load(array(
 			'DNData' => array(
 				'properties' => array(
-					'Backend' => '%$DeploymentBackend',
 					'EnvironmentDir' => $this->envPath,
 					'KeyDir' => TEMP_FOLDER .'/deploynaut_test/gitkeys',
 					'DataTransferDir' => Director::baseFolder() . '/assets/transfers',
@@ -36,7 +35,6 @@ abstract class DeploynautTest extends SapphireTest {
 		Injector::nest();
 		Injector::inst()->load(array(
 			'DNProject' => 'DeploynautTest_Project',
-			'DeploymentBackend' => 'DemoDeploymentBackend'
 		));
 
 		// Set temp location

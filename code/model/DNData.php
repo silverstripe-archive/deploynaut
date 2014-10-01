@@ -48,11 +48,6 @@ class DNData extends ViewableData {
 		return Injector::inst()->get('DNData');
 	}
 
-	/**
-	 * @var DeploymentBackend
-	 */
-	protected $backend;
-
 	public function __construct($environmentDir = null, $keyDir = null, $dataTransferDir = null, $gitUser = null) {
 		parent::__construct();
 
@@ -158,23 +153,6 @@ class DNData extends ViewableData {
 	 */
 	public function DNProjectList() {
 		return DNProject::get();
-	}
-
-	/**
-	 *
-	 * @return DeploymentBackend
-	 */
-	public function Backend() {
-		return $this->backend;
-	}
-
-	/**
-	 * Sets the backend
-	 *
-	 * @param DeploymentBackend $backend
-	 */
-	public function setBackend(DeploymentBackend $backend) {
-		$this->backend = $backend;
 	}
 
 	/**

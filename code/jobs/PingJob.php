@@ -38,6 +38,6 @@ class PingJob {
 		$log = new DeploynautLogFile($this->args['logfile']);
 		$DNProject = $this->DNData()->DNProjectList()->filter('Name', $this->args['projectName'])->First();
 		$DNEnvironment = $DNProject->Environments()->filter('Name', $this->args['environmentName'])->First();
-		$this->DNData()->Backend()->ping($DNEnvironment, $log, $DNProject);
+		$DNEnvironment->Backend()->ping($DNEnvironment, $log, $DNProject);
 	}
 }

@@ -2,11 +2,8 @@
 Name: deploynaut
 ---
 Injector:
-  DeploymentBackend:
-    class: CapistranoDeploymentBackend
   DNData:
     properties:
-      Backend: '%$DeploymentBackend'
       # Set EnvironmentDir and KeyDir to absolute paths in your live project
       EnvironmentDir: "../deploynaut-resources/envs"
       KeyDir: "../deploynaut-resources/gitkeys"
