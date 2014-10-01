@@ -7,13 +7,13 @@
  *
  * It's useful for demonstrating how the system works, and how you can write deployment back-ends
  */
-class DemoDeploymentBackend implements DeploymentBackend {
-
+class DemoDeploymentBackend extends Object implements DeploymentBackend {
+	
 	/**
 	 * Deploy the given build to the given environment
 	 */
 	public function deploy(DNEnvironment $environment, $sha, DeploynautLogFile $log, DNProject $project, $leaveMaintenancePage = false) {
-		GraphiteDeploymentNotifier::notify_start($environment->Name, $sha, null, $project);
+		$this->extend('deployStart', $environment, $sha, $log, $project);
 
 		$file = DEPLOYNAUT_LOG_PATH . '/' . $project->Name. ':' .$environment->Name . ".deploy-history.txt";
 		$CLI_file = escapeshellarg($file);
@@ -37,7 +37,7 @@ class DemoDeploymentBackend implements DeploymentBackend {
 			$this->disableMaintenance($environment, $log, $project);
 		}
 
-		GraphiteDeploymentNotifier::notify_end($environment->Name, $sha, null, $project);
+		$this->extend('deployEnd', $environment, $sha, $log, $project);
 	}
 
 	/**

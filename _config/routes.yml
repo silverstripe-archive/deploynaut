@@ -8,4 +8,3 @@ Director:
     '': '->naut'
     'naut/api//$Project/$Environment/$OtherID': 'DeploynautAPI'
     'naut': 'DNRoot'
-    'graphite': 'GraphiteProxy'
