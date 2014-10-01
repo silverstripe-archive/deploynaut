@@ -38,6 +38,9 @@ class DeployJob {
 		$DNEnvironment = $DNProject->Environments()->filter('Name', $this->args['environmentName'])->First();
 		// This is a bit icky, but there is no easy way of capturing a failed deploy by using the PHP Resque
 		try {
+			if (!empty($this->args['deploymentBackend']) && class_exists($this->args['deploymentBackend'])) {
+				$this->DNData()->setBackend(new $this->args['deploymentBackend']);
+			}
 			$this->DNData()->Backend()->deploy(
 				$DNEnvironment,
 				$this->args['sha'],

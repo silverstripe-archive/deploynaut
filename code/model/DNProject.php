@@ -14,7 +14,8 @@ class DNProject extends DataObject {
 	public static $db = array(
 		"Name" => "Varchar",
 		"CVSPath" => "Varchar(255)",
-		"DiskQuotaMB" => "Int"
+		"DiskQuotaMB" => "Int",
+		"Backend" => "Varchar",
 	);
 
 	/**
@@ -371,6 +372,22 @@ class DNProject extends DataObject {
 			->setDescription('These groups can view the project in the front-end.');
 		$fields->addFieldToTab("Root.Main", $readAccessGroups);
 
+		// Configure the backend
+		$fields->removeByName("Backend");
+		// Get the list of backends
+		$backends = ClassInfo::implementorsOf('DeploymentBackend');
+		// Set the value properly
+		$backends = array_combine($backends, $backends); // ensure $key == $value
+
+		// Select a default if applicable
+		if (!($this->dbObject('Backend') != false) || !(class_exists($this->dbObject('Backend')))) {
+			$defaultBackend = get_class(DNData::inst()->Backend());
+			$backend = DropdownField::create('Backend', 'Please choose a backend', $backends, $defaultBackend);
+		} else {
+			$backend = DropdownField::create('Backend', 'Please choose a backend', $backends);
+		}
+		$fields->addFieldToTab("Root.Main", $backend);
+
 		$this->setCreateProjectFolderField($fields);
 		$this->setEnvironmentFields($fields, $environments);
 
@@ -541,5 +558,16 @@ class DNProject extends DataObject {
 	 */
 	protected function getProjectFolderPath() {
 		return $this->DNData()->getEnvironmentDir().'/'.$this->Name;
+	}
+
+	protected function validate() {
+		$result = parent::validate();
+
+		// Ensure that the backend is actually a class that allows deployments
+		if (!ClassInfo::classImplements($this->Backend, 'DeploymentBackend')) {
+			$result->error('"' . $this->Backend . '" is not a valid Backend.');
+		}
+
+		return $result;
 	}
 }

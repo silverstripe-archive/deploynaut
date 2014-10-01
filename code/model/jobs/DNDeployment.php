@@ -112,7 +112,8 @@ class DNDeployment extends DataObject {
 			'projectName' => $project->Name,
 			'env' => $project->getProcessEnv(),
 			'deploymentID' => $this->ID,
-			'leaveMaintenacePage' => $this->LeaveMaintenacePage
+			'leaveMaintenacePage' => $this->LeaveMaintenacePage,
+			'deploymentBackend' => $project->Backend,
 		);
 
 		$log = $this->log();
