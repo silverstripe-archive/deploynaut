@@ -746,19 +746,21 @@ class DNEnvironment extends DataObject {
 	public function getCMSFields() {
 		$fields = new FieldList(new TabSet('Root'));
 
-		$groups = $this
-			->Project()
-			->Viewers()
-			->sort('Title')
-			->map()
-			->toArray();
-		$members = array();
-		foreach($this->Project()->Viewers() as $group) {
-			foreach($group->Members()->map() as $k => $v) {
-				$members[$k] = $v;
+		$project = $this->Project();
+		if($project && $project->exists()) {
+			$viewerGroups = $project->Viewers();
+			$groups = $viewerGroups->sort('Title')->map()->toArray();
+			$members = array();
+			foreach($viewerGroups as $group) {
+				foreach($group->Members()->map() as $k => $v) {
+					$members[$k] = $v;
+				}
 			}
+			asort($members);
+		} else {
+			$groups = array();
+			$members = array();
 		}
-		asort($members);
 
 		// Main tab
 		$fields->addFieldsToTab('Root.Main', array(
