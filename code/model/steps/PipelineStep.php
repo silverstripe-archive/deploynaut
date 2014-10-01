@@ -70,13 +70,14 @@ class PipelineStep extends DataObject {
 	}
 
 	public function getNiceName() {
-		$NiceName = $this->getConfigSetting('NiceName') ?: $this->getTitle();
+		$niceName = $this->getConfigSetting('NiceName')
+			?: ucwords(trim(strtolower(preg_replace('/_?([A-Z])/', ' $1', $this->getTitle()))));
 		
 		if($this->isFinished()) {
-			$NiceName = $this->getConfigSetting('NiceDone') ?: $NiceName;
+			$niceName = $this->getConfigSetting('NiceDone') ?: $niceName;
 		}
 
-		return $NiceName;
+		return $niceName;
 	}
 
 	/**

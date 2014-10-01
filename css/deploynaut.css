@@ -407,3 +407,6 @@ form.fields-wide .field label.left {
 	font-weight: bold;
 	opacity: 1.0;
 }
+.running-description {
+	clear: both;
+}
