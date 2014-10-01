@@ -26,10 +26,19 @@ class DNEnvironmentTest extends DeploynautTest {
 		$environment = $this->getEnvironment();
 
 		// Check deployer / restorer permissions
+		$viewer = $this->objFromFixture('Member', 'viewer');
+		$viewerbygroup = $this->objFromFixture('Member', 'viewerbygroup');
 		$deployer = $this->objFromFixture('Member', 'deployer');
 		$deployerbygroup = $this->objFromFixture('Member', 'deployerbygroup');
 		$restorer = $this->objFromFixture('Member', 'restorer');
 		$restorerbygroup = $this->objFromFixture('Member', 'restorerbygroup');
+
+		$random = new Member(array('Email' => 'random@example.com'));
+		$random->write();
+
+		$this->assertFalse($environment->canView($random));
+		$this->assertTrue($environment->canView($viewer));
+		$this->assertTrue($environment->canView($viewerbygroup));
 
 		$this->assertTrue($environment->canDeploy($deployer));
 		$this->assertTrue($environment->canDeploy($deployerbygroup));
@@ -88,6 +97,17 @@ class DNEnvironmentTest extends DeploynautTest {
 		$this->assertFalse($environment->canAbort($approverbygroup));
 		$this->assertTrue($environment->canAbort($canceller));
 		$this->assertTrue($environment->canAbort($cancellerbygroup));
-
 	}
+
+	public function testViewerPermissionInheritedFromProjectIfNotConfigured() {
+		$environment = $this->objFromFixture('DNEnvironment', 'dev');
+		$viewerbygroup = $this->objFromFixture('Member', 'viewerbygroup');
+
+		$random = new Member(array('Email' => 'random@example.com'));
+		$random->write();
+
+		$this->assertFalse($environment->canView($random));
+		$this->assertTrue($environment->canView($viewerbygroup));
+	}
+
 }

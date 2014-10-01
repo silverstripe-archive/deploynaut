@@ -1,4 +1,8 @@
 Member:
+  viewer:
+    Email: viewer@example.com
+  viewerbygroup:
+    Email: viewer2@example.com
   deployer:
     Email: deployer@example.com
   deployerbygroup:
@@ -32,6 +36,9 @@ Member:
   cancellerbygroup:
     Email: canceller2@example.com
 Group:
+  viewer:
+    Title: Viewers
+    Members: =>Member.viewerbygroup
   deployer:
     Title: deployers
     Members: =>Member.deployerbygroup
@@ -59,10 +66,13 @@ Group:
 DNProject:
   testproject:
     Name: 'testproject'
+    Viewers: =>Group.viewer
 DNEnvironment:
   uat:
     Name: uat
     Project: =>DNProject.testproject
+    Viewers: =>Member.viewer
+    ViewerGroups: =>Group.viewer
     Deployers: =>Member.deployer
     DeployerGroups: =>Group.deployer
     CanRestoreMembers: =>Member.restorer
@@ -79,3 +89,6 @@ DNEnvironment:
     PipelineApproverGroups: =>Group.approver
     PipelineCancellers: =>Member.canceller
     PipelineCancellerGroups: =>Group.canceller
+  dev:
+    Name: dev
+    Project: =>DNProject.testproject

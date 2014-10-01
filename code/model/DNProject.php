@@ -300,7 +300,12 @@ class DNProject extends DataObject {
 	 * Provides a DNEnvironmentList of environments found in this project.
 	 */
 	public function DNEnvironmentList() {
-		return DNEnvironment::get()->filter('ProjectID', $this->ID)->setProjectID($this->ID);
+		return DNEnvironment::get()
+			->filter('ProjectID', $this->ID)
+			->setProjectID($this->ID)
+			->filterByCallBack(function($item) {
+				return $item->canView();
+			});
 	}
 
 	/**
