@@ -122,13 +122,6 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 		return $this->messagingService;
 	}
 	
-	public function __isset($property) {
-		// Workaround fixed in https://github.com/silverstripe/silverstripe-framework/pull/3201
-		// Remove this once we update to a version of framework which supports this
-		if($property === 'MessagingService') return !empty($this->messagingService);
-		return parent::__isset($property);
-	}
-	
 	/**
 	 * Determine if the confirmation has been responded to (ether with acceptance, rejection, or cancelled)
 	 * 
@@ -218,7 +211,7 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 		$this->Approval = 'Rejected';
 		$this->log("{$this->Title} has been rejected");
 		$this->ResponderID = Member::currentUserID();
-		$this->markFailed();
+		$this->markFailed(false);
 		$this->sendMessage(self::ALERT_REJECT);
 		return true;
 	}

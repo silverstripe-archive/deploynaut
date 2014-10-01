@@ -7,7 +7,7 @@ Pipeline:
       FilteredCommits: "DNFinishedCommits"
       Messages:
         Success: 'Deployment for <project>/<environment> has successfully completed'
-        Failure: 'Deployment for <project>/<environment> has failed'
+        Failure: 'Deployment for <project>/<environment> has failed. See <pipelinelink>'
         Abort: 'Deployment for <project>/<environment> has been aborted'
         RollbackStarted: 'Deployment failed, rollback for <project>/<environment> has begun.'
         RollbackSuccess: 'Rollback for <project>/<environment> has successfully completed.'
@@ -43,7 +43,7 @@ UserConfirmationStep:
       # Messages only sent to requester
       Request-Requester: 'You requested approval for deployment of <project>/<environment>. Cancel? <abortlink>'
       # Messages only sent to specified recipients
-      Request-Recipient: 'Deployment for <project>/<environment> requested by <requester>. Approve? <approvelink>'
+      Request-Recipient: 'Deployment for <project>/<environment> requested by <requester>. Login to approve at <approvelink>'
     Subjects:
       # Subject line for all users
       Cancel: 'Deployment for <project>/<environment>: Cancelled'

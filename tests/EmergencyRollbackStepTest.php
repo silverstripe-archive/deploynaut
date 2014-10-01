@@ -114,6 +114,9 @@ class EmergencyRollbackStepTest extends PipelineTest {
 
 		$this->logInWithPermission('APPLY_ROLES');
 		$this->assertTrue($step->beginRollbackWindow());
+
+		// Check that the message is sent
+		$this->assertSentMessage('Deployment for testproject/uat has successfully completed', 'test@example.com');
 	}
 
 	public function testRunningConfiguration() {
@@ -131,5 +134,8 @@ class EmergencyRollbackStepTest extends PipelineTest {
 		$step->Status = 'Failed';
 
 		$this->assertFalse($step->start());
+
+		// Check that the message is sent
+		$this->assertNotSentMessage('Deployment for testproject/uat has successfully completed', 'test@example.com');
 	}
 }

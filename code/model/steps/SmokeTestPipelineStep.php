@@ -169,13 +169,13 @@ class SmokeTestPipelineStep extends PipelineStep {
 		}
 	}
 
-	public function markFailed() {
+	public function markFailed($notify = true) {
 		// Put up maintenance page after this fails
 		$this->log("Smoke testing failed: Putting up emergency maintenance page");
 		$this->Pipeline()->Environment()->enableMaintenace($this->Pipeline()->getLogger());
 
 		// Mark pipeline and step failed
-		parent::markFailed();
+		parent::markFailed($notify);
 	}
 
 }

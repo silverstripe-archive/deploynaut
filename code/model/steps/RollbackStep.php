@@ -82,6 +82,7 @@ class RollbackStep extends LongRunningPipelineStep {
 		$deployment->LeaveMaintenacePage = $this->doRestoreDB();
 		$deployment->EnvironmentID = $pipeline->EnvironmentID;
 		$deployment->SHA = $previous->SHA;
+		$deployment->DeployerID = $pipeline->AuthorID;
 		$deployment->write();
 		$deployment->start();
 		$this->RollbackDeploymentID = $deployment->ID;

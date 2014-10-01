@@ -48,7 +48,7 @@ class PipelineStep extends DataObject {
 		'Status',
 		'LastEdited'
 	);
-
+	
 	/**
 	 * Cached of config merged with defaults
 	 *
@@ -136,11 +136,16 @@ class PipelineStep extends DataObject {
 		$this->write();
 	}
 
-	public function markFailed() {
+	/**
+	 * Fail this pipeline step
+	 *
+	 * @param bool $notify Set to false to disable notifications for this failure
+	 */
+	public function markFailed($notify = true) {
 		$this->Status = 'Failed';
 		$this->log('Marking pipeline step as failed. See earlier log messages to determine cause.');
 		$this->write();
-		$this->Pipeline()->markFailed();
+		$this->Pipeline()->markFailed($notify);
 	}
 
 	/**
