@@ -162,25 +162,11 @@ namespace :data do
 	end
 
 	def getdatabasename
-		database_name = ""
-		base_path = File.dirname(current_path)
-
-		run %Q{ php -r "require_once '#{base_path}/_ss_environment.php'; echo SS_DATABASE_NAME;" }, :roles => :db do |channel, stream, data|
-			database_name = data
-		end
-
-		database_name
+		return run_php_as_silverstripe_code("echo $databaseConfig['database'];")
 	end
 
 	def getmysqlpassword
-		database_password = ""
-		base_path = File.dirname(current_path)
-
-		run %Q{ php -r "require_once '#{base_path}/_ss_environment.php'; echo SS_DATABASE_PASSWORD;" }, :roles => :db do |channel, stream, data|
-			database_password = data
-		end
-
-		database_password
+		return run_php_as_silverstripe_code("echo $databaseConfig['password'];")
 	end
 
 	# return a string with mysql options, e.g. "-u user -h hostname SS_mysite"
@@ -188,16 +174,44 @@ namespace :data do
 	def mysql_options
 		database_server = ""
 		database_username = ""
-		base_path = File.dirname(current_path)
 
-		run %Q{ php -r "require_once '#{base_path}/_ss_environment.php'; echo SS_DATABASE_SERVER;" }, :roles => :db do |channel, stream, data|
-			database_server = data
-		end
-
-		run %Q{ php -r "require_once '#{base_path}/_ss_environment.php'; echo SS_DATABASE_USERNAME;" }, :roles => :db do |channel, stream, data|
-			database_username = data
-		end
+		database_server = run_php_as_silverstripe_code("echo $databaseConfig['server'];")
+		database_username = run_php_as_silverstripe_code("echo $databaseConfig['username'];")
 
 		"-u #{database_username} -h #{database_server} #{getdatabasename}"
+	end
+
+	# Runs PHP code once silverstripe is spinning, then return the output
+	def run_php_as_silverstripe_code(phpcode)
+		if "true" == capture("if [ -e '#{current_path}/framework/core/Core.php' ]; then echo 'true'; fi").strip
+			# It's a SilverStripe 3 install, and it works!
+			core_file = "#{current_path}/framework/core/Core.php"
+		elsif "true" == capture("if [ -e '#{current_path}/sapphire/core/Core.php' ]; then echo 'true'; fi").strip
+			# It's a SilverStripe 2 install, and it works!
+			core_file = "#{current_path}/sapphire/core/Core.php"
+		else
+			raise "No SilverStripe installation detected"
+		end
+
+		code = "<?php
+		define('BASE_PATH', '#{current_path}');
+		define('BASE_URL', '/');
+		$_SERVER['HTTP_HOST'] = 'localhost';
+		chdir(BASE_PATH);
+		require_once '#{core_file}';
+		#{phpcode} ; "
+
+		filename = "/tmp/deploynaut-sniffer-" + rand(36**8).to_s(36) + ".php"
+
+		put code, filename, :roles => :db
+
+		output = ''
+		run "php #{filename}", :roles => :db do |channel, stream, data|
+			output = data
+		end
+
+		run "rm -rf #{filename}"
+
+		output
 	end
 end
