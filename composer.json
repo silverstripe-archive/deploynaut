@@ -21,7 +21,7 @@
 		}
 	},
 	"suggest": {
-		"ss23/deploynaut-graphite": "Graphite intergration"
+		"silverstripe/deploynaut-graphite": "Graphite intergration"
 	},
 	"minimum-stability": "dev"
 }
