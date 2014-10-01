@@ -59,13 +59,13 @@ class DataTransferJob {
 			// before we push data to an environment, we'll make a backup first
 			if($backupJob) {
 				$log->write('Backing up existing data');
-				$this->DNData()->Backend()->dataTransfer(
+				$environment->Backend()->dataTransfer(
 					$backupJob,
 					$log
 				);
 			}
 
-			$this->DNData()->Backend()->dataTransfer(
+			$environment->Backend()->dataTransfer(
 				$dataTransfer,
 				$log
 			);

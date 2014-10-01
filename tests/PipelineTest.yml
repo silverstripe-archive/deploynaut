@@ -14,7 +14,7 @@ Member:
 DNProject:
   testproject:
     Name: 'testproject'
-DNEnvironment:
+PipelineTest_Environment:
   uat:
     Name: uat
     Project: =>DNProject.testproject
@@ -22,11 +22,11 @@ DNEnvironment:
 Pipeline:
   testpipesmoketest:
     Author: =>Member.author
-    Environment: =>DNEnvironment.uat
+    Environment: =>PipelineTest_Environment.uat
     SHA: '9ae502821345ab39b04d46ce6bb822ccdd7f7414'
   testpipe:
     Author: =>Member.author
-    Environment: =>DNEnvironment.uat
+    Environment: =>PipelineTest_Environment.uat
     SHA: '9ae502821345ab39b04d46ce6bb822ccdd7f7414'
     RollbackStep1ID: 1
 UserConfirmationStep:
