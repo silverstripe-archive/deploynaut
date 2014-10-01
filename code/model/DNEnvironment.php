@@ -12,6 +12,8 @@
  * @method DNProject Project()
  * @method DataList Deployments()
  *
+ * @method ManyManyList Viewers()
+ * @method ManyManyList ViewerGroups()
  * @method ManyManyList Deployers()
  * @method ManyManyList DeployerGroups()
  * @method ManyManyList CanRestoreMembers()
@@ -87,6 +89,8 @@ class DNEnvironment extends DataObject {
 	 * @var array
 	 */
 	public static $many_many = array(
+		"Viewers"            => "Member", // Who can view this environment
+		"ViewerGroups"       => "Group",
 		"Deployers"          => "Member", // Who can deploy to this environment
 		"DeployerGroups" => "Group",
 		"CanRestoreMembers"  => "Member", // Who can restore archive files to this environment
@@ -268,12 +272,23 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
-	 * Environments are only viewable by people that can view the parent project
+	 * Environments are only viewable by people that can view the environment.
 	 *
 	 * @param Member $member
 	 * @return boolean
 	 */
 	public function canView($member = null) {
+		if(!$member) $member = Member::currentUser();
+		if(!$member) return false; // Must be logged in to check permissions
+
+		if(Permission::checkMember($member, 'ADMIN')) return true;
+
+		// if no Viewers or ViewerGroups defined, fallback to DNProject::canView permissions
+		if($this->Viewers()->exists() || $this->ViewerGroups()->exists()) {
+			return $this->Viewers()->byID($member->ID)
+				|| $member->inGroups($this->ViewerGroups());
+		}
+
 		return $this->Project()->canView($member);
 	}
 
@@ -767,6 +782,12 @@ class DNEnvironment extends DataObject {
 		));
 
 		$fields->addFieldsToTab('Root.UserPermissions', array(
+			// The viewers of the environment
+			$this
+				->buildPermissionField('ViewerGroups', 'Viewers', $groups, $members)
+				->setTitle('Who can view this environment?')
+				->setDescription('Groups or Users who can view this environment'),
+
 			// The Main.Deployers
 			$this
 				->buildPermissionField('DeployerGroups', 'Deployers', $groups, $members)
