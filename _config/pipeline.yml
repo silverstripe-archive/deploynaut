@@ -37,20 +37,21 @@ UserConfirmationStep:
     Messages:
       # Messages sent to all users (including <requester>)
       Cancel: 'Deployment for <project>/<environment> has been cancelled'
-      Reject: 'Deployment for <project>/<environment> has been rejected'
-      Approve: 'Deployment for <project>/<environment> has been approved'
       TimeOut: 'Deployment approval for <project>/<environment> has timed out due to no response'
       # Messages only sent to requester
+      Approve-Requester: 'Deployment for <project>/<environment> has been approved'
+      Reject-Requester: 'Deployment for <project>/<environment> has been rejected'
       Request-Requester: 'You requested approval for deployment of <project>/<environment>. Cancel? <abortlink>'
       # Messages only sent to specified recipients
       Request-Recipient: 'Deployment for <project>/<environment> requested by <requester>. Login to approve at <approvelink>'
     Subjects:
       # Subject line for all users
       Cancel: 'Deployment for <project>/<environment>: Cancelled'
-      Reject: 'Deployment for <project>/<environment>: Rejected'
-      Approve: 'Deployment for <project>/<environment>: Approved'
       TimeOut: 'Deployment for <project>/<environment>: Timeout'
       Request: 'Deployment for <project>/<environment>: Requested'
+      # Messages only sent to requester
+      Approve-Requester: 'Deployment for <project>/<environment>: Approved'
+      Reject-Requester: 'Deployment for <project>/<environment>: Rejected'
 ---
 Name: triggerdeploystep
 ---

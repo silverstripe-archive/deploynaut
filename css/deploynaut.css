@@ -381,13 +381,16 @@ form.fields-wide .field label.left {
 	height: 26px;
 }
 .deployprogress-step {
-	height: 70px;
+	height: 80px;
 	padding-top: 20px;
 	text-align: center;
 
 	color: #666;
 	font-size: 1.1em;
 	opacity: 0.75;
+}
+.deployprogress-step p {
+	line-height: 1.1;
 }
 .deployprogress-step:nth-child(4n+1) {
 	margin-left: 0;
