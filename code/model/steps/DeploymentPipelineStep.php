@@ -78,6 +78,13 @@ class DeploymentPipelineStep extends LongRunningPipelineStep {
 			return false;
 		}
 
+		// Skip deployment for dry run
+		if($this->Pipeline()->DryRun) {
+			$this->log("[Skipped] Create DNDeployment for SHA ".$pipeline->SHA);
+			$this->write();
+			return true;
+		}
+
 		// Initialise deployment
 		$deployment = DNDeployment::create();
 		$deployment->EnvironmentID = $environment->ID;
@@ -104,6 +111,13 @@ class DeploymentPipelineStep extends LongRunningPipelineStep {
 		$this->Status = 'Started';
 		$this->Doing = 'Snapshot';
 		$this->log("{$this->Title} creating snapshot of database");
+		$this->write();
+
+		// Skip deployment for dry run
+		if($this->Pipeline()->DryRun) {
+			$this->log("[Skipped] Create DNDataTransfer backup");
+			return true;
+		}
 		
 		// create a snapshot
 		$pipeline = $this->Pipeline();
@@ -119,7 +133,6 @@ class DeploymentPipelineStep extends LongRunningPipelineStep {
 		$pipeline->PreviousSnapshotID = $job->ID;
 		$pipeline->write();
 
-		$this->write();
 		return true;
 	}
 	
@@ -128,6 +141,12 @@ class DeploymentPipelineStep extends LongRunningPipelineStep {
 	 */
 	protected function continueSnapshot() {
 		$this->log("Checking status of {$this->Title}...");
+
+		// Skip snapshot for dry run
+		if($this->Pipeline()->DryRun) {
+			$this->log("[Skipped] Checking progress of snapshot backup");
+			return $this->startDeploy();
+		}
 		
 		// Get related snapshot
 		$snapshot = $this->Pipeline()->PreviousSnapshot();
@@ -152,6 +171,13 @@ class DeploymentPipelineStep extends LongRunningPipelineStep {
 	 */
 	protected function continueDeploy() {
 		$this->log("Checking status of {$this->Title}...");
+
+		// Skip deployment for dry run
+		if($this->Pipeline()->DryRun) {
+			$this->log("[Skipped] Checking progress of deployment");
+			$this->finish();
+			return !$this->isFailed();
+		}
 		
 		// Get related deployment
 		$deployment = $this->Pipeline()->CurrentDeployment();

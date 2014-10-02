@@ -5,7 +5,7 @@ class DeploymentPipelineStepTest extends PipelineTest {
 	protected static $fixture_file = 'PipelineTest.yml';
 
 	/**
-	 * Makse the dummy deployment step
+	 * Makes the dummy deployment step
 	 *
 	 * @return DeploymentPipelineStep
 	 */

@@ -16,7 +16,7 @@ class EmailMessagingService implements ConfirmationMessagingService {
 	 * @config
 	 * @var string
 	 */
-	private static $default_subject = 'Confirmation required for deployment';
+	private static $default_subject = 'Deploynaut notification';
 
 	public function sendMessage($source, $message, $recipients, $arguments = array()) {
 		$from = empty($arguments['from'])
@@ -90,8 +90,12 @@ class EmailMessagingService implements ConfirmationMessagingService {
 	 */
 	protected function sendViaEmail($source, $from, $to, $subject, $body) {
 		$email = new Email($from, $to, $subject, $body);
-		$email->sendPlain();
-		$source->log("Sent message to $to (subject: $subject)");
+		if($source->getDryRun()) {
+			$source->log("[Skipped] Sent message to $to (subject: $subject)");
+		} else {
+			$email->sendPlain();
+			$source->log("Sent message to $to (subject: $subject)");
+		}
 	}
 
 }

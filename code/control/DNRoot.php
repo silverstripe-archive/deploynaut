@@ -19,6 +19,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	const DEPLOYNAUT_BYPASS_PIPELINE = 'DEPLOYNAUT_BYPASS_PIPELINE';
 
 	/**
+	 * Allow dryrun of pipelines
+	 */
+	const DEPLOYNAUT_DRYRUN_PIPELINE = 'DEPLOYNAUT_DRYRUN_PIPELINE';
+
+	/**
 	 *
 	 * @var array
 	 */
@@ -518,6 +523,16 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
+	 * Initiate a pipeline dry run
+	 *
+	 * @param type $data
+	 * @param type $form
+	 */
+	public function doDryRun($data, $form) {
+		return $this->beginPipeline($data, $form, true);
+	}
+
+	/**
 	 * Initiate a pipeline
 	 *
 	 * @param array $data
@@ -525,6 +540,18 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return \SS_HTTPResponse
 	 */
 	public function startPipeline($data, $form) {
+		return $this->beginPipeline($data, $form);
+	}
+
+	/**
+	 * Start a pipeline
+	 *
+	 * @param array $data
+	 * @param DeployForm $form
+	 * @param bool $isDryRun
+	 * @return \SS_HTTPResponse
+	 */
+	protected function beginPipeline($data, $form, $isDryRun = false) {
 		$buildName = $form->getSelectedBuild($data);
 
 		// Performs canView permission check by limiting visible projects
@@ -539,9 +566,14 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return new SS_HTTPResponse("Environment '" . Convert::raw2xml($this->getRequest()->latestParam('Environment')) . "' not found.", 404);
 		}
 
+		if(!$environment->DryRunEnabled && $isDryRun) {
+			return new SS_HTTPResponse("Dry-run for pipelines is not enabled for this environment", 404);
+		}
+
 		// Initiate the pipeline
 		$sha = $project->DNBuildList()->byName($buildName);
 		$pipeline = Pipeline::create();
+		$pipeline->DryRun = $isDryRun;
 		$pipeline->EnvironmentID = $environment->ID;
 		$pipeline->AuthorID = Member::currentUserID();
 		$pipeline->SHA = $sha->FullName();
@@ -1189,6 +1221,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				'name' => "Bypass Pipeline",
 				'category' => "Deploynaut",
 				'help' => "Enables users to directly initiate deployments, bypassing any pipeline",
+			),
+			self::DEPLOYNAUT_DRYRUN_PIPELINE => array(
+				'name' => 'Dry-run Pipeline',
+				'category' => 'Deploynaut',
+				'help' => 'Enable dry-run execution of pipelines for testing'
 			)
 		);
 	}
