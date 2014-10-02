@@ -9,6 +9,7 @@
  * @property string $URL URL Of this environment
  * @property string $Name
  * @property string $GraphiteServers
+ * @property bool $DryRunEnabled
  * @method DNProject Project()
  * @method DataList Deployments()
  *
@@ -63,6 +64,7 @@ class DNEnvironment extends DataObject {
 		"Filename" => "Varchar(255)",
 		"Name" => "Varchar",
 		"URL" => "Varchar",
+		"DryRunEnabled" => "Boolean" // True if the dry run button should be enabled on the frontend
 	);
 
 	/**
@@ -914,7 +916,16 @@ PHP
 				"No pipeline is configured for this environment. Saving content here will generate a new template."
 			);
 		}
-		$fields->addFieldToTab('Root.PipelineTemplate', $deployConfig);
+		$fields->addFieldsToTab('Root.PipelineSettings', array(
+			FieldGroup::create(
+				CheckboxField::create('DryRunEnabled', 'Enable dry-run?')
+			)
+				->setTitle('Pipeline Options')
+				->setDescription(
+					"Allows admins to run simulated pipelines without triggering deployments or notifications."
+				),
+			$deployConfig
+		));
 	}
 
 	/**

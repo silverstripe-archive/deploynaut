@@ -89,3 +89,25 @@ their checks on.
 
 Note: All config files inherit from https://github.com/silverstripe/deploynaut/blob/master/_config/pipeline.yml
 
+## Testing
+
+When setup on a server, a dry-run of a complete pipeline can be initiated by a user with the appropriate permission,
+(or logged in as admin). To enable dry-running of pipelines for any environment, edit the environment in the CMS,
+and check the "Enable dry run?" option under the "Pipeline Settings" tab.
+
+This will enable a new deployment option on the front end, with the label "Dry-run release process".
+
+This process differs from the normal pipeline execution in the following ways:
+
+* Messages are not sent to users
+* Capistrano commands will not execute
+* Deployments or snapshots will not be initiated
+
+Whenever an action would normally be taken, the subsequent log message will be prefixed with "[Skipped]" to denote
+an action skipped by the dry-run.
+
+These actions are taken as per normal:
+
+* Smoke tests
+* User front-end actions
+* Logging

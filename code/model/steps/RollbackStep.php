@@ -67,6 +67,13 @@ class RollbackStep extends LongRunningPipelineStep {
 		$this->Doing = 'Deployment';
 		$this->log("{$this->Title} starting revert deployment");
 
+		// Skip deployment for dry run
+		if($this->Pipeline()->DryRun) {
+			$this->log("[Skipped] Create DNDeployment");
+			$this->write();
+			return true;
+		}
+
 		// Get old deployment from pipeline
 		$pipeline = $this->Pipeline();
 		$previous = $pipeline->PreviousDeployment();
@@ -102,6 +109,13 @@ class RollbackStep extends LongRunningPipelineStep {
 		$this->Doing = 'Snapshot';
 		$this->log("{$this->Title} reverting database from snapshot");
 
+		// Skip deployment for dry run
+		if($this->Pipeline()->DryRun) {
+			$this->write();
+			$this->log("[Skipped] Create DNDataTransfer restore");
+			return true;
+		}
+
 		// Get snapshot
 		$pipeline = $this->Pipeline();
 		$backup = $pipeline->PreviousSnapshot();
@@ -134,6 +148,12 @@ class RollbackStep extends LongRunningPipelineStep {
 	protected function continueRevertDatabase() {
 		$this->log("Checking status of {$this->Title}...");
 
+		// Skip snapshot for dry run
+		if($this->Pipeline()->DryRun) {
+			$this->log("[Skipped] Checking progress of snapshot restore");
+			return $this->finish();
+		}
+
 		// Get related snapshot
 		$transfer = $this->RollbackDatabase();
 		if(empty($transfer) || !$transfer->exists()) {
@@ -160,6 +180,17 @@ class RollbackStep extends LongRunningPipelineStep {
 	 */
 	protected function continueRevertDeploy() {
 		$this->log("Checking status of {$this->Title}...");
+
+		// Skip deployment for dry run
+		if($this->Pipeline()->DryRun) {
+			$this->log("[Skipped] Checking progress of deployment");
+			if($this->getConfigSetting('RestoreDB')) {
+				return $this->startRevertDatabase();
+			} else {
+				$this->finish();
+				return true;
+			}
+		}
 
 		// Get related deployment
 		$deployment = $this->RollbackDeployment();

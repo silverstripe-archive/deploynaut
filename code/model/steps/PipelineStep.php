@@ -17,7 +17,7 @@
  * @package deploynaut
  * @subpackage pipeline
  */
-class PipelineStep extends DataObject {
+class PipelineStep extends DataObject implements PipelineData {
 
 	/**
 	 * @var array
@@ -277,5 +277,9 @@ class PipelineStep extends DataObject {
 	public function allowedActions() {
 		return array();
 	}
-}
 
+	public function getDryRun() {
+		return $this->Pipeline()->DryRun;
+	}
+
+}

@@ -89,8 +89,13 @@
  * @method Member Author()
  * @method PipelineStep CurrentStep()
  * @method DataList Steps()
+ * @property string $Status
+ * @property string $Config
+ * @property string $SHA
+ * @property bool $DryRun
+ * @property string $LastMessageSent
  */
-class Pipeline extends DataObject {
+class Pipeline extends DataObject implements PipelineData {
 
 	/**
 	 * Messages
@@ -113,6 +118,7 @@ class Pipeline extends DataObject {
 		'Status' => 'Enum("Running,Complete,Failed,Aborted,Rollback,Queued","Queued")',
 		'Config' => 'Text', // serialized array of configuration for this pipeline
 		'SHA' => 'Varchar(255)',
+		'DryRun' => 'Boolean', // Try if this deployment is a test dryrun
 		'LastMessageSent' => 'Varchar(255)' // ID of last message sent
 	);
 
@@ -646,6 +652,9 @@ class Pipeline extends DataObject {
 		// Rollbacks must be configured.
 		if (!$this->getConfigSetting('RollbackStep1')) return false;
 
+		// On dryrun let rollback run
+		if($this->DryRun) return true;
+
 		// Pipeline must have ran a deployment to be able to rollback.
 		$deploy = $this->CurrentDeployment();
 		$previous = $this->PreviousDeployment();
@@ -997,6 +1006,10 @@ class Pipeline extends DataObject {
 		$filename = sprintf("%s.%s.%s.%d.log", $project->Name, $environment->Name, 'pipeline', $this->ID);
 
 		return Injector::inst()->createWithArgs('DeploynautLogFile', array($filename));
+	}
+
+	public function getDryRun() {
+		return $this->getField('DryRun');
 	}
 
 	public function Link($action = null) {

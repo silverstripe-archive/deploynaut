@@ -104,6 +104,7 @@ class DeployForm extends Form {
 		if($environment->HasPipelineSupport()) {
 			// Determine if commits are filtered
 			$canBypass = Permission::check(DNRoot::DEPLOYNAUT_BYPASS_PIPELINE);
+			$canDryrun = $environment->DryRunEnabled && Permission::check(DNRoot::DEPLOYNAUT_DRYRUN_PIPELINE);
 			$commits = $environment->getDependentFilteredCommits();
 			if(empty($commits)) {
 				// There are no filtered commits, so show all commits
@@ -125,6 +126,18 @@ class DeployForm extends Form {
 					->addExtraClass('btn btn-primary')
 					->setAttribute('onclick', "return confirm('This will begin a release pipeline. Continue?');")
 			);
+			if($canDryrun) {
+				$actions->push(
+					FormAction::create('doDryRun', "Dry-run release process")
+						->addExtraClass('btn btn-info')
+						->setAttribute('onclick',
+							"return confirm('This will begin a release pipeline, but with the following exclusions:\\n" .
+							" - No messages will be sent\\n" .
+							" - No capistrano actions will be invoked\\n".
+							" - No deployments or snapshots will be created.');"
+						)
+				);
+			}
 			if($canBypass) {
 				$actions->push(
 					FormAction::create('doDeploy', "Direct deployment (bypass pipeline)")

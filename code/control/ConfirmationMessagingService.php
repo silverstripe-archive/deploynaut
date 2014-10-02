@@ -9,7 +9,7 @@ interface ConfirmationMessagingService {
 	/**
 	 * Sends a message to the specified user
 	 * 
-	 * @param PipelineStep $source Source client step
+	 * @param PipelineData $source Source client step
 	 * @param string $message Plain text message
 	 * @param mixed $recipients Either a Member object, string, or array of strings or Member objects
 	 * @param array $arguments Additional arguments that may be configured
