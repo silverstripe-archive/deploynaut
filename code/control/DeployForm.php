@@ -282,7 +282,8 @@ class DeployForm extends Form {
 	public function getSelectedBuild($data) {
 		if(isset($data['SelectRelease']) && !empty($data[$data['SelectRelease']])) {
 			// Filter out the tag/branch name if required
-			return reset(explode('-', $data[$data['SelectRelease']]));
+			$array = explode('-', $data[$data['SelectRelease']]);
+			return reset($array);
 		}
 		if(isset($data['FilteredCommits']) && !empty($data['FilteredCommits'])) {
 			return $data['FilteredCommits'];
