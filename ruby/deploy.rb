@@ -30,20 +30,21 @@ namespace :deploy do
 		# Note: similar code is used in data.rb for post-push rebuild.
 		# We allow users to not use sake at all if they set the path to false
 		if (sake_path != false)
-			if exists?(:webserver_user)
-				run "sudo -u #{webserver_user} bash #{latest_release}/#{sake_path} dev flush=1", :roles => :db
-				run "sudo -u #{webserver_user} bash #{latest_release}/#{sake_path} dev/build", :roles => :db, :once => true
-			else
-				run "mkdir -p #{latest_release}/silverstripe-cache", :roles => :db
-				run "bash #{latest_release}/#{sake_path} dev flush=1", :roles => :db
-				run "bash #{latest_release}/#{sake_path} dev/build", :roles => :db, :once => true
-				run "rm -rf #{latest_release}/silverstripe-cache", :roles => :db
-			end
-		end
-
-		# Initialise the cache, in case dev/build wasn't executed on all hosts
-		if exists?(:webserver_user)
-			run "sudo -u #{webserver_user} bash #{latest_release}/#{sake_path} dev"
+			bash = if exists?(:webserver_user) then "sudo -u #{webserver_user} bash" else "bash" end
+			sake = "#{bash} #{latest_release}/#{sake_path}";
+			
+			# Prepare temporary cache
+			unless exists?(:webserver_user) then run "mkdir -p #{latest_release}/silverstripe-cache", :roles => :web end
+			
+			# Flush and build database
+			run "#{sake} dev flush=1", :roles => :web # Flush all servers
+			run "#{sake} dev/build", :roles => :web, :once => true # Limit DB operations to a single node
+			
+			# Cleanup temporary cache
+			unless exists?(:webserver_user) then run "rm -rf #{latest_release}/silverstripe-cache", :roles => :web end
+			
+			# Initialise the cache, in case dev/build wasn't executed on all hosts
+			run "#{sake} dev", :roles => :web
 		end
 
 		# Run custom post-migration script.
