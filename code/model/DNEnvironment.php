@@ -974,8 +974,14 @@ PHP
 	 * Write the pipeline config file to filesystem
 	 */
 	protected function writePipelineFile() {
-		if($this->config()->get('allow_web_editing') && $this->PipelineConfig) {
-			file_put_contents($this->getPipelineFilename(), $this->PipelineConfig);
+		if(!$this->config()->get('allow_web_editing')) return;
+		$path = $this->getPipelineFilename();
+		if($this->PipelineConfig) {
+			// Update file
+			file_put_contents($path, $this->PipelineConfig);
+		} elseif($this->isChanged('PipelineConfig') && file_exists($path)) {
+			// Remove file if deleted
+			unlink($path);
 		}
 	}
 
