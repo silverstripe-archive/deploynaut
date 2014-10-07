@@ -92,12 +92,13 @@ namespace :data do
 	DESC
 	task :getassets do
 		# Make sure the assets are actually readable by the ssh user.
-		run "sudo -u #{webserver_user} find #{shared_path}/assets -mindepth 1 -user #{webserver_user} -exec chmod a+r {} +"
-
-		download(shared_path + "/assets", data_path, :recursive => true, :via => :scp) do |channel, name, sent, total|
-			# TODO Less noisy progress indication
-			#puts name
+		if exists?(:webserver_user)
+			run "sudo -u #{webserver_user} find #{shared_path}/assets -mindepth 1 -user #{webserver_user} -exec chmod a+r {} +"
+		else
+			run "find #{shared_path}/assets -mindepth 1 -exec chmod a+r {} +"
 		end
+
+		download(shared_path + "/assets", data_path, :recursive => true, :via => :scp)
 	end
 
 	desc <<-DESC
@@ -111,19 +112,21 @@ namespace :data do
 	task :pushassets do
 		begin
 			# Files under assets are writable by www-data (either owned, or through g+w)...
-			run "sudo -u #{webserver_user} find #{shared_path}/assets -mindepth 1 -delete"
+			pre = if exists?(:webserver_user) then "sudo -u #{webserver_user}" else "" end
+			run "#{pre} find #{shared_path}/assets -mindepth 1 -delete"
 			# ... but the directory is owned by the ssh user, with chmod 775
 			run "rmdir #{shared_path}/assets"
 
-			upload(data_path, shared_path, :recursive => true, :via => :scp) do |channel, name, sent, total|
-				# TODO Less noisy progress indication
-				#puts name
-			end
+			upload(data_path, shared_path, :recursive => true, :via => :scp)
 
 		ensure
 			# We cannot give the files to www-data without being root, so we set the group write permission instead.
 			# Also makes the assets directory 775 again.
-			run "find #{shared_path}/assets -not -user #{webserver_user} -exec chmod g+rw {} +"
+			if exists?(:webserver_user)
+				run "find #{shared_path}/assets -not -user #{webserver_user} -exec chmod g+rw {} +"
+			else
+				run "find #{shared_path}/assets -exec chmod g+rw {} +"
+			end
 		end
 	end
 
