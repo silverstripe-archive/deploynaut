@@ -34,17 +34,17 @@ namespace :deploy do
 			sake = "#{bash} #{latest_release}/#{sake_path}";
 			
 			# Prepare temporary cache
-			unless exists?(:webserver_user) then run "mkdir -p #{latest_release}/silverstripe-cache", :roles => :web end
+			unless exists?(:webserver_user) then run "mkdir -p #{latest_release}/silverstripe-cache" end
 			
 			# Flush and build database
-			run "#{sake} dev flush=1", :roles => :web # Flush all servers
-			run "#{sake} dev/build", :roles => :web, :once => true # Limit DB operations to a single node
+			run "#{sake} dev flush=1" # Flush all servers
+			run "#{sake} dev/build", :once => true # Limit DB operations to a single node
 			
 			# Cleanup temporary cache
-			unless exists?(:webserver_user) then run "rm -rf #{latest_release}/silverstripe-cache", :roles => :web end
+			unless exists?(:webserver_user) then run "rm -rf #{latest_release}/silverstripe-cache" end
 			
 			# Initialise the cache, in case dev/build wasn't executed on all hosts
-			run "#{sake} dev", :roles => :web
+			run "#{sake} dev"
 		end
 
 		# Run custom post-migration script.
@@ -54,7 +54,7 @@ namespace :deploy do
 	end
 
 	task :restart do
-		system "echo \""+Time.now.strftime("%Y-%m-%d %H:%M:%S")+" => #{branch} \" >> #{history_path}/#{config_name}.deploy-history.txt";
+		system "echo \""+Time.now.strftime("%Y-%m-%d %H:%M:%S")+" => #{branch} \" >> #{history_path}/#{config_name}.deploy-history.txt"
 		logger.debug "Deploy finished."
 	end
 

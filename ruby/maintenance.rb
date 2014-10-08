@@ -41,10 +41,10 @@ namespace :maintenance do
 
 			# if there's no custom maintenance page found above, use a default one supplied with deploynaut
 			if custom_maintenance == nil
-				upload(File.expand_path("../maintenance.html.template", File.dirname(__FILE__)), current_path + "/maintenance.html")
+				upload File.expand_path("../maintenance.html.template", File.dirname(__FILE__)), current_path + "/maintenance.html"
 			end
 
-			upload(File.expand_path("../maintenance.htaccess.template", File.dirname(__FILE__)), current_path + "/.htaccess")
+			upload File.expand_path("../maintenance.htaccess.template", File.dirname(__FILE__)), current_path + "/.htaccess"
 		end
 	end
 
