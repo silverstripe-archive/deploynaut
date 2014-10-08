@@ -14,7 +14,7 @@ namespace :maintenance do
 		# Does the location contain a site?
 		has_htaccess = nil
 		run "if [ -f \"#{current_path}/.htaccess\" ]; then echo 1; else echo 0; fi" do |_, _, data|
-			if data[0] == "1"
+			if data.chars.first == "1"
 				has_htaccess = true
 			end
 		end
