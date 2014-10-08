@@ -62,8 +62,8 @@ class DNEnvironment extends DataObject {
 	 */
 	public static $db = array(
 		"Filename" => "Varchar(255)",
-		"Name" => "Varchar",
-		"URL" => "Varchar",
+		"Name" => "Varchar(255)",
+		"URL" => "Varchar(255)",
 		"DryRunEnabled" => "Boolean" // True if the dry run button should be enabled on the frontend
 	);
 
