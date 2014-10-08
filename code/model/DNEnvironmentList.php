@@ -83,4 +83,27 @@ class DNEnvironmentList extends DataList {
 		}
 		echo ' - '.$text.PHP_EOL;
 	}
+
+	/**
+	 * Overloads {@link DataList::filterByCallback()} to ensure that the resulting output
+	 * is created as an {@link DNEnvironmentList} and not an {@link ArrayList}
+	 *
+	 * @example $list = $list->filterByCallback(function($item, $list) { return $item->Age == 9; })
+	 * @param callable $callback
+	 * @return ArrayList (this may change in future implementations)
+	 */
+	public function filterByCallback($callback) {
+		if(!is_callable($callback)) {
+			throw new LogicException(sprintf(
+				"SS_Filterable::filterByCallback() passed callback must be callable, '%s' given",
+				gettype($callback)
+			));
+		}
+		$output = DNEnvironmentList::create();
+		foreach($this as $item) {
+			if(call_user_func($callback, $item, $this)) $output->push($item);
+		}
+		return $output;
+	}
+
 }
