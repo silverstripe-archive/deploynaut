@@ -76,23 +76,6 @@ class DNProject extends DataObject {
 	protected static $relation_cache = array();
 
 	/**
-	 *
-	 * @todo probably refactor this so it don't mess with the SS default DataObject::get()
-	 *
-	 * @param string $callerClass
-	 * @param string $filter
-	 * @param string $sort
-	 * @param string $join
-	 * @param string $limit
-	 * @param string $containerClass
-	 * @return \DNProjectList
-	 */
-	public static function get($callerClass = null, $filter = "", $sort = "", $join = "", $limit = null,
-			$containerClass = 'DataList') {
-		return DNProjectList::create('DNProject');
-	}
-
-	/**
 	 * Used by the sync task
 	 *
 	 * @param string $path
@@ -297,12 +280,13 @@ class DNProject extends DataObject {
 	}
 
 	/**
-	 * Provides a DNEnvironmentList of environments found in this project.
+	 * Provides a list of environments found in this project.
+	 * CAUTION: filterByCallback will change this into an ArrayList!
+	 *
+	 * @return ArrayList
 	 */
 	public function DNEnvironmentList() {
-		return DNEnvironment::get()
-			->filter('ProjectID', $this->ID)
-			->setProjectID($this->ID)
+		return $this->Environments()
 			->filterByCallBack(function($item) {
 				return $item->canView();
 			});

@@ -149,24 +149,6 @@ class DNEnvironment extends DataObject {
 	protected $deploymentBackend = "CapistranoDeploymentBackend";
 
 	/**
-	 *
-	 * @todo this should probably be refactored so it don't interfere with the default
-	 * DataObject::get() behaviour.
-	 *
-	 * @param string $callerClass
-	 * @param string $filter
-	 * @param string $sort
-	 * @param string $join
-	 * @param string $limit
-	 * @param string $containerClass
-	 * @return \DNEnvironmentList
-	 */
-	public static function get($callerClass = null, $filter = "", $sort = "", $join = "", $limit = null,
-			$containerClass = 'DataList') {
-		return DNEnvironmentList::create('DNEnvironment');
-	}
-
-	/**
 	 * Used by the sync task
 	 *
 	 * @param string $path
