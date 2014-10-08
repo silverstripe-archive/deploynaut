@@ -148,8 +148,8 @@ class DNData extends ViewableData {
 	}
 
 	/**
-	 *
-	 * @return DNProjectList
+	 * Provide a list of all projects.
+	 * @return DataList
 	 */
 	public function DNProjectList() {
 		return DNProject::get();

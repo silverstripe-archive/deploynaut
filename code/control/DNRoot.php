@@ -636,12 +636,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 * Provide DNProjectList (with all projects enumerated within).
+	 * Provide a list of all projects.
+	 * CAUTION: filterByCallback will change this into an ArrayList!
 	 *
-	 * @return DataList
+	 * @return ArrayList
 	 */
 	public function DNProjectList() {
-		return DataObject::get('DNProject')->filterByCallback(function($record) {
+		return DNProject::get()->filterByCallback(function($record) {
 			return $record->canView();
 		});
 	}
