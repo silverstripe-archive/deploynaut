@@ -130,40 +130,6 @@ namespace :data do
 		end
 	end
 
-	desc <<-DESC
-		Rebuild resources after db/asset push.
-
-		Copied from deploy.rb.
-
-		Example command: cap -f '/sites/deploynaut/www/assets/Capfile' project1:evn1 data:rebuild
-	DESC
-	task :rebuild do
-		begin
-			if exists?(:webserver_user)
-				# Remove automatically generated content that relies on the environment.
-				run "sudo -u #{webserver_user} rm -fr #{shared_path}/assets/error-*.html"
-				run "sudo -u #{webserver_user} rm -fr #{shared_path}/assets/_combinedfiles"
-
-				if (sake_path != false)
-					run "sudo -u #{webserver_user} bash #{latest_release}/#{sake_path} dev/build flush=1", :roles => :db
-				end
-			else
-				# TODO Can we remove automatically generated content here?
-
-				if (sake_path != false)
-					run "mkdir -p #{latest_release}/silverstripe-cache", :roles => :db
-					run "bash #{latest_release}/#{sake_path} dev/build flush=1", :roles => :db
-					run "rm -rf #{latest_release}/silverstripe-cache", :roles => :db
-				end
-			end
-
-			# Initialise the cache, in case dev/build wasn't executed on all hosts
-			if exists?(:webserver_user)
-				run "sudo -u #{webserver_user} bash #{latest_release}/#{sake_path} dev"
-			end
-		end
-	end
-
 	def getdatabasename
 		return run_php_as_silverstripe_code("echo $databaseConfig['database'];")
 	end

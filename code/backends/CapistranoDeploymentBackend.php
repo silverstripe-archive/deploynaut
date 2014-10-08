@@ -313,7 +313,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	 */
 	public function rebuild($name, $env, $log) {
 		// Rebuild db and flush.
-		$command = $this->getCommand('data:rebuild', $name, null, $env, $log);
+		$command = $this->getCommand('deploy:migrate', $name, null, $env, $log);
 		$command->run(function ($type, $buffer) use($log) {
 			$log->write($buffer);
 		});
