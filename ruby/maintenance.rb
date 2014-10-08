@@ -14,7 +14,7 @@ namespace :maintenance do
 		# Does the location contain a site?
 		has_htaccess = nil
 		run "if [ -f \"#{current_path}/.htaccess\" ]; then echo 1; else echo 0; fi" do |_, _, data|
-			if data[0] == "1"
+			if data.chars.first == "1"
 				has_htaccess = true
 			end
 		end
@@ -41,10 +41,10 @@ namespace :maintenance do
 
 			# if there's no custom maintenance page found above, use a default one supplied with deploynaut
 			if custom_maintenance == nil
-				upload(File.expand_path("../maintenance.html.template", File.dirname(__FILE__)), current_path + "/maintenance.html")
+				upload File.expand_path("../maintenance.html.template", File.dirname(__FILE__)), current_path + "/maintenance.html"
 			end
 
-			upload(File.expand_path("../maintenance.htaccess.template", File.dirname(__FILE__)), current_path + "/.htaccess")
+			upload File.expand_path("../maintenance.htaccess.template", File.dirname(__FILE__)), current_path + "/.htaccess"
 		end
 	end
 

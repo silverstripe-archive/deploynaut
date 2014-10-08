@@ -12,10 +12,8 @@ namespace :data do
 		data_path - Absolute path (including filename) of where the exported database should be placed, e.g. /tmp/my_database.sql
 	DESC
 	task :getdb do
-		database_name = getdatabasename
-
 		# todo: output to gzip and stream that back instead of the raw data.
-		run "mysqldump --skip-opt --add-drop-table --extended-insert --create-options --quick --set-charset --default-character-set=utf8 #{mysql_options} -p", :roles => :db do |channel, stream, data|
+		run "mysqldump --skip-opt --add-drop-table --extended-insert --create-options --quick --set-charset --default-character-set=utf8 #{mysql_options} -p", :once => true do |channel, stream, data|
 			if data =~ /^Enter password: /
 				channel.send_data "#{getmysqlpassword}\n"
 			else
@@ -50,13 +48,13 @@ namespace :data do
 			mysql_options_string = mysql_options
 			tmpfile = "/tmp/dbupload-" + Time.now.to_i.to_s + database_file
 
-			upload(data_path, tmpfile, :via => :scp)
+			upload data_path, tmpfile, :via => :scp, :once => true
 
 			# Drop and recreate database in case the SQL doesn't have the drop table statements.
 			# Note: We don't set the collation nor charset on the database level to remain consistent with SilverStripe practice to use MySQL defaults.
 			# The sql dump content will determine default charset and collation for tables, and SS will override charsets per column anyway.
 			recreate_command = "echo 'DROP DATABASE IF EXISTS `#{database_name}`; CREATE DATABASE `#{database_name}`;' | mysql --default-character-set=utf8 #{mysql_options_string} -p"
-			run recreate_command, :roles => :db do |channel, stream, data|
+			run recreate_command, :once => true do |channel, stream, data|
 				if data =~ /^Enter password: /
 					channel.send_data "#{getmysqlpassword}\n"
 				end
@@ -68,15 +66,15 @@ namespace :data do
 				dump_command = "mysql --default-character-set=utf8 #{mysql_options_string} -p < #{tmpfile}"
 			end
 
-			run dump_command, :roles => :db do |channel, stream, data|
+			run dump_command, :once => true do |channel, stream, data|
 				if data =~ /^Enter password: /
 					channel.send_data "#{getmysqlpassword}\n"
 				end
 			end
 
-			run "rm -rf #{tmpfile}", :roles => :db
+			run "rm -rf #{tmpfile}", :once => true
 		rescue Exception => e
-			run "rm -rf #{tmpfile}", :roles => :db
+			run "rm -rf #{tmpfile}", :once => true
 			raise e
 		end
 	end
@@ -93,12 +91,12 @@ namespace :data do
 	task :getassets do
 		# Make sure the assets are actually readable by the ssh user.
 		if exists?(:webserver_user)
-			run "sudo -u #{webserver_user} find #{shared_path}/assets -mindepth 1 -user #{webserver_user} -exec chmod a+r {} +"
+			run "sudo -u #{webserver_user} find #{shared_path}/assets -mindepth 1 -user #{webserver_user} -exec chmod a+r {} +", :once => true
 		else
-			run "find #{shared_path}/assets -mindepth 1 -exec chmod a+r {} +"
+			run "find #{shared_path}/assets -mindepth 1 -exec chmod a+r {} +", :once => true
 		end
 
-		download(shared_path + "/assets", data_path, :recursive => true, :via => :scp)
+		download shared_path + "/assets", data_path, :recursive => true, :via => :scp, :once => true
 	end
 
 	desc <<-DESC
@@ -117,7 +115,7 @@ namespace :data do
 			# ... but the directory is owned by the ssh user, with chmod 775
 			run "rmdir #{shared_path}/assets"
 
-			upload(data_path, shared_path, :recursive => true, :via => :scp)
+			upload data_path, shared_path, :recursive => true, :via => :scp
 
 		ensure
 			# We cannot give the files to www-data without being root, so we set the group write permission instead.
@@ -126,40 +124,6 @@ namespace :data do
 				run "find #{shared_path}/assets -not -user #{webserver_user} -exec chmod g+rw {} +"
 			else
 				run "find #{shared_path}/assets -exec chmod g+rw {} +"
-			end
-		end
-	end
-
-	desc <<-DESC
-		Rebuild resources after db/asset push.
-
-		Copied from deploy.rb.
-
-		Example command: cap -f '/sites/deploynaut/www/assets/Capfile' project1:evn1 data:rebuild
-	DESC
-	task :rebuild do
-		begin
-			if exists?(:webserver_user)
-				# Remove automatically generated content that relies on the environment.
-				run "sudo -u #{webserver_user} rm -fr #{shared_path}/assets/error-*.html"
-				run "sudo -u #{webserver_user} rm -fr #{shared_path}/assets/_combinedfiles"
-
-				if (sake_path != false)
-					run "sudo -u #{webserver_user} bash #{latest_release}/#{sake_path} dev/build flush=1", :roles => :db
-				end
-			else
-				# TODO Can we remove automatically generated content here?
-
-				if (sake_path != false)
-					run "mkdir -p #{latest_release}/silverstripe-cache", :roles => :db
-					run "bash #{latest_release}/#{sake_path} dev/build flush=1", :roles => :db
-					run "rm -rf #{latest_release}/silverstripe-cache", :roles => :db
-				end
-			end
-
-			# Initialise the cache, in case dev/build wasn't executed on all hosts
-			if exists?(:webserver_user)
-				run "sudo -u #{webserver_user} bash #{latest_release}/#{sake_path} dev"
 			end
 		end
 	end
@@ -206,15 +170,16 @@ namespace :data do
 
 		filename = "/tmp/deploynaut-sniffer-" + rand(36**8).to_s(36) + ".php"
 
-		put code, filename, :roles => :db
+		put code, filename, :once => true
 
 		output = ''
-		run "php #{filename}", :roles => :db do |channel, stream, data|
+		run "php #{filename}", :once => true do |channel, stream, data|
 			output = data
 		end
 
-		run "rm -rf #{filename}"
+		run "rm -rf #{filename}", :once => true
 
 		output
 	end
 end
+

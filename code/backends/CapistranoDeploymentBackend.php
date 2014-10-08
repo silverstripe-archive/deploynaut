@@ -40,7 +40,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			'branch' => $sha,
 			'repository' => $repository
 		);
-		$command = $this->getCommand('deploy', $projectName.':'.$environmentName, $args, $env, $log);
+		$command = $this->getCommand('deploy', 'web', $projectName.':'.$environmentName, $args, $env, $log);
 		$command->run(function ($type, $buffer) use($log) {
 			$log->write($buffer);
 		});
@@ -70,7 +70,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	public function enableMaintenance(DNEnvironment $environment, DeploynautLogFile $log, DNProject $project) {
 		// Perform the enabling
 		$env = $project->getProcessEnv();
-		$command = $this->getCommand('maintenance:enable', $project->Name.':'.$environment->Name, null, $env, $log);
+		$command = $this->getCommand('maintenance:enable', 'web', $project->Name.':'.$environment->Name, null, $env, $log);
 		$command->run(function ($type, $buffer) use($log) {
 			$log->write($buffer);
 		});
@@ -86,7 +86,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	public function disableMaintenance(DNEnvironment $environment, DeploynautLogFile $log, DNProject $project) {
 		// Perform the disabling
 		$env = $project->getProcessEnv();
-		$command = $this->getCommand('maintenance:disable', $project->Name.':'.$environment->Name, null, $env, $log);
+		$command = $this->getCommand('maintenance:disable', 'web', $project->Name.':'.$environment->Name, null, $env, $log);
 		$command->run(function ($type, $buffer) use($log) {
 			$log->write($buffer);
 		});
@@ -101,7 +101,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	 */
 	public function ping(DNEnvironment $environment, DeploynautLogFile $log, DNProject $project) {
 		$env = $project->getProcessEnv();
-		$command = $this->getCommand('deploy:check', $project->Name.':'.$environment->Name, null, $env, $log);
+		$command = $this->getCommand('deploy:check', 'web', $project->Name.':'.$environment->Name, null, $env, $log);
 		$command->run(function ($type, $buffer) use($log) {
 			$log->write($buffer);
 			echo $buffer;
@@ -127,13 +127,14 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 
 	/**
 	 * @param string $action Capistrano action to be executed
+	 * @param string $roles Defining a server role is required to target only the required servers.
 	 * @param string $environment Capistrano identifier for the environment (see capistrano-multiconfig)
 	 * @param array $args Additional arguments for process
 	 * @param string $env Additional environment variables
 	 * @param DeploynautLogFile $log
 	 * @return \Symfony\Component\Process\Process
 	 */
-	protected function getCommand($action, $environment, $args = null, $env = null, DeploynautLogFile $log) {
+	protected function getCommand($action, $roles, $environment, $args = null, $env = null, DeploynautLogFile $log) {
 		if(!$args) $args = array();
 		$args['history_path'] = realpath(DEPLOYNAUT_LOG_PATH.'/');
 
@@ -163,7 +164,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		}
 		file_put_contents($capFile, $cap);
 
-		$command = "{$envString}cap -f " . escapeshellarg($capFile) . " -vv $environment $action";
+		$command = "{$envString}cap -f " . escapeshellarg($capFile) . " -vv $environment $action ROLES=$roles";
 		foreach($args as $argName => $argVal) {
 			$command .= ' -s ' . escapeshellarg($argName) . '=' . escapeshellarg($argVal);
 		}
@@ -214,7 +215,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			$args = array(
 				'data_path' => $databasePath
 			);
-			$command = $this->getCommand("data:getdb", $name, $args, $env, $log);
+			$command = $this->getCommand("data:getdb", 'db', $name, $args, $env, $log);
 			$command->run(function ($type, $buffer) use($log) {
 				$log->write($buffer);
 			});
@@ -230,7 +231,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			$args = array(
 				'data_path' => $filepathBase
 			);
-			$command = $this->getCommand("data:getassets", $name, $args, $env, $log);
+			$command = $this->getCommand("data:getassets", 'web', $name, $args, $env, $log);
 			$command->run(function ($type, $buffer) use($log) {
 				$log->write($buffer);
 			});
@@ -313,7 +314,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	 */
 	public function rebuild($name, $env, $log) {
 		// Rebuild db and flush.
-		$command = $this->getCommand('data:rebuild', $name, null, $env, $log);
+		$command = $this->getCommand('deploy:migrate', 'web', $name, null, $env, $log);
 		$command->run(function ($type, $buffer) use($log) {
 			$log->write($buffer);
 		});
@@ -375,8 +376,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			$args = array(
 				'data_path' => $tempPath . DIRECTORY_SEPARATOR . 'database.sql.gz'
 			);
-			$command = "data:pushdb";
-			$command = $this->getCommand($command, $name, $args, $env, $log);
+			$command = $this->getCommand('data:pushdb', 'db', $name, $args, $env, $log);
 			$command->run(function ($type, $buffer) use($log) {
 				$log->write($buffer);
 			});
@@ -414,8 +414,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			$args = array(
 				'data_path' => $tempPath . DIRECTORY_SEPARATOR . 'assets'
 			);
-			$command = "data:pushassets";
-			$command = $this->getCommand($command, $name, $args, $env, $log);
+			$command = $this->getCommand('data:pushassets', 'web', $name, $args, $env, $log);
 			$command->run(function ($type, $buffer) use($log) {
 				$log->write($buffer);
 			});

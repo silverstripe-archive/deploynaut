@@ -167,6 +167,21 @@ To fix this, change to the deploy user and connect to the machine and answer yes
 	sudo su - www-data
 	ssh -p 2222 sites@192.168.0.1
 
+## Capistrano roles
+
+The following deploy targets are used:
+
+ * :web - target for deploy, asset transfer and maintenance tasks. 
+ * :db - target for db transfers.
+
+Servers with other roles will not be operated on.
+
+Please note that original capistrano tasks only rely on a `no_release` flag, and roles are not respected for tasks such
+as [`deploy:update_code`](https://github.com/capistrano/capistrano/blob/v2.14.2/lib/capistrano/recipes/deploy.rb#L246).
+To make capistrano respect the roles we have added the `ROLES` variable to cap command line invocations in the
+`CapistranoDeploymentBackend` (the targets might still be further limited in the specific tasks using `:once` or
+`:except` within the tasks).
+
 ## Configuring snapshots
 
 Create `assets/transfers` server-writable directory:
