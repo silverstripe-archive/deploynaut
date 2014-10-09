@@ -41,7 +41,7 @@ namespace :deploy do
 			run "#{sake} dev/build", :once => true # Limit DB operations to a single node
 
 			# Check whether we need to run Solr_Configure
-			if (solr_configure == true)
+			if exists?(:solr_configure)
 				run "#{sake} dev/tasks/Solr_Configure", :once => true
 			end
 			
