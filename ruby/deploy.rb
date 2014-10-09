@@ -39,6 +39,11 @@ namespace :deploy do
 			# Flush and build database
 			run "#{sake} dev flush=1" # Flush all servers
 			run "#{sake} dev/build", :once => true # Limit DB operations to a single node
+
+			# Check whether we need to run Solr_Configure
+			if (solr_configure == true)
+				run "#{sake} dev/tasks/Solr_Configure", :once => true
+			end
 			
 			# Cleanup temporary cache
 			unless exists?(:webserver_user) then run "rm -rf #{latest_release}/silverstripe-cache" end
