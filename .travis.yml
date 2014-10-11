@@ -22,6 +22,9 @@ before_script:
  - git clone git://github.com/silverstripe-labs/silverstripe-travis-support.git ~/travis-support
  - php ~/travis-support/travis_setup.php --source `pwd` --target ~/builds/ss
  - cd ~/builds/ss
+ - git config --global user.email "travis@example.com"
+ - git config --global user.name "Travis test-runner"
+
 
 script: 
   - vendor/bin/phpunit deploynaut/tests/

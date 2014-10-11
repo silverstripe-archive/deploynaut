@@ -7,6 +7,12 @@ Most of the configurations takes place in the ´mysite/config/dnroot´, here is 
 	Injector:
 	    DeploymentBackend:
 	        class: CapistranoDeploymentBackend
+	        properties:
+	        	PackageGenerator: %$DefaultPackageGenerator
+	    DefaultPackageGenerator:
+	    	class: SimplePackageGenerator
+	    	properties:
+	    		BuildScript: "composer install --prefer-dist --no-dev"
 	    DNData:
 	        constructor:
 	            0: "../../deploynaut-resources/envs"
@@ -33,12 +39,23 @@ and environments via the CMS ui.
 If you want to have multiple backends, use the Injector to configure them, and then specify the list of backends on DNEnvironment.allowed_backends:
 
 	Injector:
-	    DeploymentBackend:
-	        class: CapistranoDeploymentBackend
-	    AWSBackend:
-	        class: AWSBackendDeploymentBackend
-	        params:
+		DeploymentBackend:
+			class: CapistranoDeploymentBackend
+			properties:
+				PackageGenerator: %$DefaultPackageGenerator
+		DefaultPackageGenerator:
+			class: SimplePackageGenerator
+			properties:
+				BuildScript: "composer install --prefer-dist --no-dev"
+				Cache: %$PackageCache
+		PackageCache:
+			class: SizeRestrictedPackageCache
+			properties: 
+				BaseDir: "../deploynaut-resources/build-cache"
+				CacheSize: 5
+		AWSBackend:
+			class: AWSBackendDeploymentBackend
 	DNEnvironment:
-	    allowed_backends:
-	        DeploymentBackend: "Default"
-	        AWSBackend: "AWS"
+		allowed_backends:
+			DeploymentBackend: "Default"
+			AWSBackend: "AWS"
