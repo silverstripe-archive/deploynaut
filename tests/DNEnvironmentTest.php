@@ -110,4 +110,28 @@ class DNEnvironmentTest extends DeploynautTest {
 		$this->assertTrue($environment->canView($viewerbygroup));
 	}
 
+	public function testBackendIdentifierField() {
+		// Two backends means that there will be a dropdown field
+		$backends = array(
+			'BackendOne' => 'One',
+			'BackendTwo' => 'Two',
+		);
+
+		Config::inst()->remove('DNEnvironment', 'allowed_backends');
+		Config::inst()->update('DNEnvironment', 'allowed_backends', $backends);
+
+		$environment = $this->objFromFixture('DNEnvironment', 'dev');
+		$fields = $environment->getCMSFields();
+		$this->assertEquals($backends, $fields->dataFieldByName('BackendIdentifier')->getSource());
+
+
+		// One backend means that there won't
+		Config::inst()->remove('DNEnvironment', 'allowed_backends');
+		Config::inst()->update('DNEnvironment', 'allowed_backends', array('BackendOne' => 'One'));
+
+		$fields = $environment->getCMSFields();
+		$this->assertNull($fields->dataFieldByName('BackendIdentifier'));
+
+	}
+
 }

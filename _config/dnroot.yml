@@ -11,3 +11,6 @@ Injector:
       DataTransferDir: "assets/transfers"
       # User to run commands as locally
       GitUser: ''
+  # Default deployment backend; we expect that this will be overridden by a specific project
+  DeploymentBackend:
+    class: CapistranoDeploymentBackend

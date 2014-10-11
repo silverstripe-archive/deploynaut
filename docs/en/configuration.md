@@ -28,3 +28,17 @@ The constructor arguments of `DNData` are the important directives of the config
 The `DNEnvironment.allow_web_editing` disable / enables the possibility to CRUD the projects 
 and environments via the CMS ui.
 
+## Multiple backends
+
+If you want to have multiple backends, use the Injector to configure them, and then specify the list of backends on DNEnvironment.allowed_backends:
+
+	Injector:
+	    DeploymentBackend:
+	        class: CapistranoDeploymentBackend
+	    AWSBackend:
+	        class: AWSBackendDeploymentBackend
+	        params:
+	DNEnvironment:
+	    allowed_backends:
+	        DeploymentBackend: "Default"
+	        AWSBackend: "AWS"
