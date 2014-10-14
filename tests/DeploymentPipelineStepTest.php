@@ -41,7 +41,9 @@ class DeploymentPipelineStepTest extends PipelineTest {
 		$this->assertTrue(PipelineTest_MockLog::has_message('TestDeployStep:Deployment starting deployment'));
 
 		// Mark the service as completed and check result
+		$author = $this->objFromFixture('Member', 'author');
 		$deployment = $step->Pipeline()->CurrentDeployment();
+		$this->assertEquals($deployment->DeployerID, $author->ID);
 		$deployment->markFinished();
 
 		// Retry step

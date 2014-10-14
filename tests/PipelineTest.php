@@ -142,6 +142,21 @@ class PipelineTest_RecordingMessageSender extends EmailMessagingService implemen
  */
 class PipelineTest_DNDeployment extends DNDeployment implements TestOnly {
 
+	public function __construct($record = null, $isSingleton = false, $model = null) {
+		// Set the fields data.
+		if(!$record) {
+			$record = array(
+				'ID' => 0,
+				'ClassName' => 'DNDeployment',
+				'RecordClassName' => 'DNDeployment'
+			);
+		}
+
+		parent::__construct($record, $isSingleton, $model);
+
+		$this->class = 'DNDeployment';
+	}
+
 	protected function enqueueDeployment() {
 		// Mock behaviour of enqueue without actually enqueuing anything
 		$environment = $this->Environment();
@@ -193,6 +208,21 @@ class PipelineTest_DNDeployment extends DNDeployment implements TestOnly {
 }
 
 class PipelineTest_DNDataTransfer extends DNDataTransfer implements TestOnly {
+
+	public function __construct($record = null, $isSingleton = false, $model = null) {
+		// Set the fields data.
+		if(!$record) {
+			$record = array(
+				'ID' => 0,
+				'ClassName' => 'DNDataTransfer',
+				'RecordClassName' => 'DNDataTransfer'
+			);
+		}
+
+		parent::__construct($record, $isSingleton, $model);
+
+		$this->class = 'DNDataTransfer';
+	}
 
 	public function start() {
 		$this->Status = 'Queued';

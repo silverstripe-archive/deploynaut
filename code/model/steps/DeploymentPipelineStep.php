@@ -89,9 +89,10 @@ class DeploymentPipelineStep extends LongRunningPipelineStep {
 		$deployment = DNDeployment::create();
 		$deployment->EnvironmentID = $environment->ID;
 		$deployment->SHA = $pipeline->SHA;
-		if($previous = $pipeline->findPreviousStep()) {
-			$deployment->DeployerID = $previous->ResponderID ?: $pipeline->AuthorID;
-		}
+		$previousStep = $pipeline->findPreviousStep();
+		$deployment->DeployerID = ($previousStep && $previousStep->ResponderID)
+			? $previousStep->ResponderID
+			: $pipeline->AuthorID;
 		$deployment->write();
 		$deployment->start();
 		$pipeline->CurrentDeploymentID = $deployment->ID;
