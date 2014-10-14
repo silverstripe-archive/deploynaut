@@ -40,7 +40,7 @@
 		<% loop DNEnvironmentList %>
 		<tr>
 			<td><% if CanDeploy %><a href="$Link">$Name</a><% else %>$Name<% end_if %></td>
-			<td><a href="$URL.URL">$URL.URL</a></td>
+			<td><% if $URL %><a href="$URL.URL">$URL.URL</a><% else %>&nbsp;<% end_if %></td>
 			<td>
 				<% if $CurrentBuild %>
 				<span class="tooltip-hint" data-toggle="tooltip" title="$CurrentBuild.Message" data-original-title="$CurrentBuild.Message">
