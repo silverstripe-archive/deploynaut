@@ -37,12 +37,16 @@ class DNBranch extends ViewableData {
 		$this->data = $data;
 	}
 
+	public function __toString() {
+		return $this->Name();
+	}
+
 	/**
 	 *
 	 * @return string
 	 */
 	public function Name() {
-		return htmlentities($this->branch->getName());
+		return (string)htmlentities($this->branch->getName());
 	}
 
 	public function Link() {
@@ -55,7 +59,7 @@ class DNBranch extends ViewableData {
 	 * @return string
 	 */
 	public function SHA() {
-		return htmlentities($this->branch->getCommit()->getHash());
+		return (string)htmlentities($this->branch->getCommit()->getHash());
 	}
 
 	/**
