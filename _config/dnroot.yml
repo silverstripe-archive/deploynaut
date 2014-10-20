@@ -11,3 +11,23 @@ Injector:
       DataTransferDir: "assets/transfers"
       # User to run commands as locally
       GitUser: ''
+
+  # Default deployment backend; we expect that this will be overridden by a specific project
+  DeploymentBackend:
+    class: CapistranoDeploymentBackend
+
+  # This backend is available for people to pull into their own configurations
+  CapistranoWithPackageGenerationBackend:
+    class: CapistranoDeploymentBackend
+    properties:
+      PackageGenerator: %$DefaultGenerator
+  DefaultGenerator:
+    class: SimplePackageGenerator
+    properties: 
+      BuildScript: "composer install --prefer-dist --no-dev && echo 'hi' > test.txt"
+      Cache: %$PackageCache
+  PackageCache:
+    class: SizeRestrictedPackageCache
+    properties: 
+      BaseDir: "../deploynaut-resources/build-cache"
+      CacheSize: 5

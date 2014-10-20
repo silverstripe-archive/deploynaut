@@ -3,6 +3,16 @@ use \Symfony\Component\Process\Process;
 
 class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 
+	protected $packageGenerator;
+
+	public function getPackageGenerator() {
+		return $this->packageGenerator;
+	}
+
+	public function setPackageGenerator(PackageGenerator $packageGenerator) {
+		$this->packageGenerator = $packageGenerator;
+	}
+
 	/**
 	 * Return information about the current build on the given environment.
 	 * Returns a map with keys:
@@ -38,8 +48,17 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 
 		$args = array(
 			'branch' => $sha,
-			'repository' => $repository
+			'repository' => $repository,
 		);
+
+		// Use a package generator if specified, otherwise run a direct deploy (which is the default behaviour
+		// if build_filename isn't specified
+		if($this->packageGenerator) {
+			$args['build_filename'] =
+				$this->packageGenerator->getPackageFilename($project->Name, $sha, $repository, $log);
+			if(!$args['build_filename']) throw new \LogicException("Couldn't generate package");
+		}
+
 		$command = $this->getCommand('deploy', 'web', $projectName.':'.$environmentName, $args, $env, $log);
 		$command->run(function ($type, $buffer) use($log) {
 			$log->write($buffer);

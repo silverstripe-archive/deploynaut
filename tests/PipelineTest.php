@@ -221,6 +221,8 @@ class PipelineTest_Environment extends DNEnvironment implements TestOnly {
 	 *
 	 * @var string
 	 */
-	protected $deploymentBackend = "DemoDeploymentBackend";
+	function Backend() {
+		return new DemoDeploymentBackend;
+	}
 
 }

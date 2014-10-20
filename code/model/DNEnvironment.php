@@ -57,6 +57,12 @@ class DNEnvironment extends DataObject {
 	);
 
 	/**
+	 * Allowed backends. A map of Injector identifier to human-readable label.
+	 * @config
+	 */
+	private static $allowed_backends = array();
+
+	/**
 	 *
 	 * @var array
 	 */
@@ -64,6 +70,7 @@ class DNEnvironment extends DataObject {
 		"Filename" => "Varchar(255)",
 		"Name" => "Varchar(255)",
 		"URL" => "Varchar(255)",
+		"BackendIdentifier" => "Varchar(255)", // Injector identifier of the DeploymentBackend
 		"DryRunEnabled" => "Boolean" // True if the dry run button should be enabled on the frontend
 	);
 
@@ -142,13 +149,6 @@ class DNEnvironment extends DataObject {
 	private static $default_sort = 'Name';
 
 	/**
-	 * Which deployment backend does this environment use.
-	 *
-	 * @var string
-	 */
-	protected $deploymentBackend = "CapistranoDeploymentBackend";
-
-	/**
 	 * Used by the sync task
 	 *
 	 * @param string $path
@@ -166,12 +166,32 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
-	 * Get the deployment backend used for this environment
+	 * Get the deployment backend used for this environment.
+	 * Enforces compliance with the allowed_backends setting; if the DNEnvironment.BackendIdentifier value is
+	 * illegal then that value is ignored.
 	 *
 	 * @return DeploymentBackend
 	 */
 	public function Backend() {
-		return Object::create_from_string($this->deploymentBackend);
+		$backends = $this->config()->get('allowed_backends', Config::FIRST_SET);
+		switch(sizeof($backends)) {
+		// Nothing allowed, use the default value "DeploymentBackend"
+		case 0:
+			$backend = "DeploymentBackend";
+			break;
+
+		// Only 1 thing allowed, use that
+		case 1:
+			$backend = $backends[0];
+			break;
+
+		// Multiple choices, use our choice if it's legal, otherwise default to the first item on the list
+		default:
+			$backend = $this->BackendIdentifier;
+			if(!in_array($backend, $backends)) $backend = $backends[0];
+		}
+
+		return Injector::inst()->get($backend);
 	}
 
 	/**
@@ -726,8 +746,17 @@ class DNEnvironment extends DataObject {
 			// The Main.Filename
 			TextField::create('Filename')
 				->setDescription('The capistrano environment file name')
-				->performReadonlyTransformation()
+				->performReadonlyTransformation(),
 		));
+
+		// Backend identifier - pick from a named list of configurations specified in YML config
+		$backends = $this->config()->get('allowed_backends', Config::FIRST_SET);
+		// If there's only 1 backend, then user selection isn't needed
+		if(sizeof($backends) > 1) {
+			$fields->addFieldToTab('Root.Main', DropdownField::create('BackendIdentifier', 'Deployment backend')
+				->setSource($backends)
+				->setDescription('What kind of deployment system should be used to deploy to this environment'));
+		}
 
 		$fields->addFieldsToTab('Root.UserPermissions', array(
 			// The viewers of the environment

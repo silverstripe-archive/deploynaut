@@ -58,6 +58,35 @@ namespace :deploy do
 		end
 	end
 
+	# Overriden so we are using our code_deploy strategy with tar.gz uploading
+	task :update_code, :except => { :no_release => true } do
+		on_rollback { run "rm -rf #{release_path}; true" }
+
+		if exists?(:build_filename)
+			deploy_code_from_file!
+		else
+			strategy.deploy!
+		end
+
+		finalize_update
+	end
+
+	# distribute the tar.gz and unpack it on the target servers
+	task :deploy_code_from_file! do
+		# Determine the build name by removing the file extension from the file
+		build_name = /([^\/]+).tar.gz$/.match("#{build_filename}")[1]
+		set :deploy_timestamped, false
+		set :release_name, build_name
+
+		# Dont upload and unpack the release if it's been deployed previously
+		unless releases.include?(build_name)
+			# Sftp the file up
+			top.upload build_filename, "#{release_path}.tar.gz"
+			run "tar -C #{releases_path} -xzf #{release_path}.tar.gz"
+			run "rm #{release_path}.tar.gz"
+		end
+	end
+
 	task :restart do
 		system "echo \""+Time.now.strftime("%Y-%m-%d %H:%M:%S")+" => #{branch} \" >> #{history_path}/#{config_name}.deploy-history.txt"
 		logger.debug "Deploy finished."
