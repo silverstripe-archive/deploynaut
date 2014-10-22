@@ -212,18 +212,18 @@ class DeployForm extends Form {
 				'Deploy a commit prepared for this pipeline'
 			);
 		}
-		if($tags) {
-			$releaseMethods[] = new SelectionGroup_Item(
-				'Tag',
-				new DropdownField('Tag', '', $tags),
-				'Deploy a tagged release'
-			);
-		}
 		if($branches) {
 			$releaseMethods[] = new SelectionGroup_Item(
 				'Branch',
 				new DropdownField('Branch', '', $branches),
 				'Deploy the latest version of a branch'
+			);
+		}
+		if($tags) {
+			$releaseMethods[] = new SelectionGroup_Item(
+				'Tag',
+				new DropdownField('Tag', '', $tags),
+				'Deploy a tagged release'
 			);
 		}
 		if($redeploy) {
