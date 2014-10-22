@@ -165,6 +165,7 @@ namespace :data do
 		define('BASE_URL', '/');
 		$_SERVER['HTTP_HOST'] = 'localhost';
 		chdir(BASE_PATH);
+		$_GET['flush'] = 1;
 		require_once '#{core_file}';
 		#{phpcode} ; "
 
