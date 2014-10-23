@@ -21,16 +21,20 @@
  *     Videos:
  *       URL: http://www.mysite.com/videos/
  *       ExpectStatus: 200
+ *       Attempts: 1 # This test should only be attempted once
  * Steps:
  *   SmokeTest:
  *     Class: SmokeTestPipelineStep
  *     MaxDuration: 3600
+ *     RequestTimeout: 13
+ *     Attempts: 2 # Tests get 2 attempts each
  *     Tests: # Tests only used by deployment smoketest
  *       ExtraTest:
  *         URL: http://www.mysite.com/another/
  *         ExpectStatus: 200
  * RollbackStep2:
  *   Class: SmokeTestPipelineStep
+ *   Attempts: 3 # Allow more attempts on rollback
  *   Tests: # Tests only used by rollback smoketest
  *     RollbackTest:
  *       URL: http://www.mysite.com/check-status/
@@ -43,78 +47,105 @@
 class SmokeTestPipelineStep extends PipelineStep {
 
 	/**
+	 * Default config setting
+	 *
+	 * @var array
+	 * @config
+	 */
+	private static $default_config = array(
+		'RequestTimeout' => 20, // Seconds to allow for each request
+		'Attempts' => 1, // Number of attempts allowed
+		'AttemptDelay' => 10 // Timeout between requests
+	);
+
+	/**
 	 * Get all tests to be run by this smoketest
 	 *
 	 * @return array List of tests
 	 */
 	protected function getTests() {
+		// Get core tests
 		$tests = $this->getConfigSetting('Tests');
+
+		// Merge with default tests
 		$defaultTests = $this->Pipeline()->getConfigSetting('PipelineConfig', 'Tests');
-		if(!$tests) return $defaultTests;
-
-		// If we have both tests and defaults merge them
-		if($defaultTests) Config::merge_array_low_into_high($tests, $defaultTests);
-		return $tests;
-	}
-
-	public function start() {
-		$this->Status = 'Started';
-		$this->log("Starting {$this->Title}...");
-		$this->write();
-
-		$tests = $this->getTests();
+		if($tests && $defaultTests) {
+			Config::merge_array_low_into_high($tests, $defaultTests);
+		} elseif(!$tests && $defaultTests) {
+			$tests = $defaultTests;
+		}
+		if($tests) return $tests;
 
 		// if there's no tests to check for, fallback to trying to find the
 		// site's homepage by looking at the DNEnvironment fields.
-		if(!($tests && count($tests) > 0)) {
-
-			// determine which environment to test from configuration
-			$environment = $this->getDependentEnvironment();
-
-			$url = $environment->URL;
-
-			if(!$url) {
-				$this->log(sprintf(
-					'Smoke test failed. Could not find a website URL in environment "%s"',
-					$environment->Name
-				));
-				$this->markFailed();
-				return false;
-			}
-
-			$tests['default'] = array(
-				'URL' => $url,
-				'ExpectStatus' => 200
+		$environment = $this->getDependentEnvironment();
+		$url = $environment->URL;
+		if($url) {
+			return array(
+				'default' => array(
+					'URL' => $url,
+					'ExpectStatus' => 200
+				)
 			);
 		}
+	}
 
-		// work through each of the configured tests and perform a web request and check the result
-		$ch = curl_init();
-		$failed = false;
+	/**
+	 * Initialiase curl handle
+	 *
+	 * @return resource Curl handle
+	 */
+	protected function initCurl() {
+		$handle = curl_init();
+		
+		// avoid curl_exec pushing out the response to the screen
+		$timeout = $this->getConfigSetting('RequestTimeout');
+		curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($handle, CURLOPT_TIMEOUT, $timeout);
+		// don't allow this to run for more than 10 seconds to avoid tying up webserver processes.
 
-		foreach($tests as $name => $test) {
-			$this->log(sprintf('Starting smoke test "%s" to URL %s', $name, $test['URL']));
+		// if we need to use a proxy, ensure that is configured
+		if(defined('SS_OUTBOUND_PROXY')) {
+			curl_setopt($handle, CURLOPT_PROXY, SS_OUTBOUND_PROXY);
+			curl_setopt($handle, CURLOPT_PROXYPORT, SS_OUTBOUND_PROXY_PORT);
+		}
+		return $handle;
+	}
 
-			curl_setopt($ch, CURLOPT_URL, $test['URL']);
+	/**
+	 * Run a single test
+	 *
+	 * @param resource $ch Curl resource
+	 * @param string $name Test name
+	 * @param array $test Test data
+	 * @return bool success
+	 */
+	public function runTest($ch, $name, $test) {
+		$this->log(sprintf('Starting smoke test "%s" to URL %s', $name, $test['URL']));
+		curl_setopt($ch, CURLOPT_URL, $test['URL']);
 
-			// avoid curl_exec pushing out the response to the screen
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		// Allow individual tests to override number of attempts
+		$attempts = (int)$this->getConfigSetting('Attempts');
+		if(!empty($test['Attempts'])) $attempts = $test['Attempts'];
 
-			curl_setopt($ch, CURLOPT_TIMEOUT, 10); // don't allow this to run for more than 10 seconds to avoid tying up webserver processes.
+		// Run through each attempt
+		for($i = 0; $i < $attempts; $i++) {
+			if($i > 0) {
+				$this->log("Request failed, performing reattempt (#{$i})");
 
-			// if we need to use a proxy, ensure that is configured
-			if(defined('SS_OUTBOUND_PROXY')) {
-				curl_setopt($ch, CURLOPT_PROXY, SS_OUTBOUND_PROXY);
-				curl_setopt($ch, CURLOPT_PROXYPORT, SS_OUTBOUND_PROXY_PORT);
+				// Ensure a non-zero delay between each request
+				$delay = $this->getConfigSetting('AttemptDelay');
+				sleep($delay);
 			}
 
+			// Perform request
 			$contents = curl_exec($ch);
 			if(curl_errno($ch)) {
 				$this->log(sprintf('Curl error: %s', curl_error($ch)));
-				$failed = true;
 				continue;
 			}
 
+			// Check response
 			$info =	curl_getinfo($ch);
 
 			// if an expected response time is specified, check that against the results
@@ -127,11 +158,11 @@ class SmokeTestPipelineStep extends PipelineStep {
 						$test['ExpectResponse'],
 						$info['total_time']
 					));
-					$failed = true;
 					continue;
 				}
 			}
 
+			// Check response code
 			if($info['http_code'] != $test['ExpectStatus']) {
 				$this->log("=================================================================");
 				$this->log(sprintf(
@@ -150,23 +181,48 @@ class SmokeTestPipelineStep extends PipelineStep {
 					$test['ExpectStatus'],
 					$info['http_code']
 				));
-				$failed = true;
 				continue;
 			}
 
 			$this->log(sprintf('Smoke test "%s" to URL %s successful', $name, $test['URL']));
-		}
-
-		curl_close($ch);
-
-		if($failed) {
-			// At least one test failed, so mark the test as failed
-			$this->markFailed();
-			return false;
-		} else {
-			$this->finish();
 			return true;
 		}
+
+		// Run out of re-attempts
+		if($attempts > 1) $this->log("Failed after {$attempts} attempts");
+ 		return false;
+	}
+
+	public function start() {
+		$this->Status = 'Started';
+		$this->log("Starting {$this->Title}...");
+		$this->write();
+
+		// Get tests to run
+		$tests = $this->getTests();
+		if(empty($tests)) {
+			$this->log('No smoke tests available. Aborting');
+			$this->markFailed();
+			return false;
+		}
+
+		// work through each of the configured tests and perform a web request and check the result
+		$ch = $this->initCurl();
+		$success = true;
+		foreach($tests as $name => $test) {
+			$testSuccess = $this->runTest($ch, $name, $test);
+			$success = $testSuccess && $success;
+		}
+		curl_close($ch);
+
+		// Check result
+		if($success) {
+			$this->finish();
+		} else {
+			// At least one test failed, so mark the test as failed
+			$this->markFailed();
+		}
+		return $success;
 	}
 
 	public function markFailed($notify = true) {

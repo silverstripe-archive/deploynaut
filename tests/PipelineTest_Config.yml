@@ -76,6 +76,15 @@ Steps:
       BrokenPage:
         URL: http://bob.bob.bob.bob/
         ExpectStatus: 200
+  RepeatTest:
+    Class: SmokeTestPipelineStep
+    MaxDuration: 3600
+    Attempts: 3
+    AttemptDelay: 1
+    Tests:
+      BrokenPage:
+        URL: http://bob.bob.bob.bob/
+        ExpectStatus: 200
   RequestDeploymentStep:
     Class: TriggerDeployStep
     MaxDuration: 86400 # Auto time out after a day
