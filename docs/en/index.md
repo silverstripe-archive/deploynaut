@@ -69,6 +69,9 @@ the Deploynaut module into the codebase using composer. The cms module is remove
 	composer remove silverstripe/cms
 	composer require "silverstripe/deploynaut:*"
 
+Now open `mysite/_config.yml` and remove the `SSViewer.theme` config entry. Also, make sure the `mysite/_config.php`
+has the `$database` variable defined to a database name. You may want to set this to `deploynaut`, for example.
+
 You will then need to setup your Apache virtual host with a document root to `/sites/deploynaut/www`.
 
 In addition to the [standard environment management setup](http://doc.silverstripe.org/framework/en/topics/environment-management) containing database credentials etc, you'll need to add some Deploynaut-specific enviroment configuration to your `_ss_environment.php` file. Typically
