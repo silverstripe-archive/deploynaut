@@ -173,7 +173,7 @@ class DNEnvironment extends DataObject {
 	 * @return DeploymentBackend
 	 */
 	public function Backend() {
-		$backends = $this->config()->get('allowed_backends', Config::FIRST_SET);
+		$backends = array_keys($this->config()->get('allowed_backends', Config::FIRST_SET));
 		switch(sizeof($backends)) {
 		// Nothing allowed, use the default value "DeploymentBackend"
 		case 0:
