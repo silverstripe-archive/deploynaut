@@ -11,7 +11,7 @@
 		"gitonomy/gitlib": "dev-master",
 		"undefinedoffset/sortablegridfield": "*",
 		"silverstripe/secureassets": "dev-master",
-		"ajshort/silverstripe-gridfieldextensions": "dev-master"
+		"silverstripe-australia/gridfieldextensions": "dev-master"
 	},
 	"require-dev": {
 		"phpunit/PHPUnit": "~3.7@stable"
