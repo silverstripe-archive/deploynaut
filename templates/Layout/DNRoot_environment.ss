@@ -1,6 +1,6 @@
 <h2>
 	<a href="naut/project/$Project.Name">$Project.Name</a>:$Name
-	<% if URL %><small><a href="$URL">$URL</a></small><% end_if %>
+	<% if URL %><small><a href="$URL.URL">$URL.URL</a></small><% end_if %>
 </h2>
 
 <% if $CurrentProject %>
