@@ -43,14 +43,24 @@ class DataTransferJob {
 		// This is a bit icky, but there is no easy way of capturing a failed run by using the PHP Resque
 		try {
 			// Disallow concurrent jobs (don't rely on queuing implementation to restrict this)
+			// Only consider data transfers started in the last 30 minutes (older jobs probably got stuck)
 			$runningTransfers = DNDataTransfer::get()
-				->filter(array('EnvironmentID' => $environment->ID, 'Status' => array('Queued', 'Started')))
+				->filter(array(
+					'EnvironmentID' => $environment->ID,
+					'Status' => array('Queued', 'Started'),
+					'Created:GreaterThan' => strtotime('-30 minutes')
+				))
 				->exclude('ID', $dataTransfer->ID);
 
 			if($runningTransfers->count()) {
-				$runningTransfer = $runningTransfers->First();
+				$runningTransfer = $runningTransfers->first();
+				$log->write(sprintf(
+					'[-] Error: another transfer is in progress (started at %s by %s)',
+					$runningTransfer->dbObject('Created')->Nice(),
+					$runningTransfer->Author()->Title
+				));
 				throw new RuntimeException(sprintf(
-					'[-] Error: another transfer seems to be already in progress (started at %s by %s)',
+					'Another transfer is in progress (started at %s by %s)',
 					$runningTransfer->dbObject('Created')->Nice(),
 					$runningTransfer->Author()->Title
 				));
