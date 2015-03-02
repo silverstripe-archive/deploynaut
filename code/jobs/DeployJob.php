@@ -38,6 +38,30 @@ class DeployJob {
 		$DNEnvironment = $DNProject->Environments()->filter('Name', $this->args['environmentName'])->First();
 		// This is a bit icky, but there is no easy way of capturing a failed deploy by using the PHP Resque
 		try {
+			// Disallow concurrent deployments (don't rely on queuing implementation to restrict this)
+			// Only consider deployments started in the last 30 minutes (older jobs probably got stuck)
+			$runningDeployments = DNDeployment::get()
+				->filter(array(
+					'EnvironmentID' => $DNEnvironment->ID,
+					'Status' => array('Queued', 'Started'),
+					'Created:GreaterThan' => strtotime('-30 minutes')
+				))
+				->exclude('ID', $this->args['deploymentID']);
+
+			if($runningDeployments->count()) {
+				$runningDeployment = $runningDeployments->first();
+				$log->write(sprintf(
+					'[-] Error: another deployment is in progress (started at %s by %s)',
+					$runningDeployment->dbObject('Created')->Nice(),
+					$runningDeployment->Deployer()->Title
+				));
+				throw new RuntimeException(sprintf(
+					'Another deployment is in progress (started at %s by %s)',
+					$runningDeployment->dbObject('Created')->Nice(),
+					$runningDeployment->Deployer()->Title
+				));
+			}
+
 			$DNEnvironment->Backend()->deploy(
 				$DNEnvironment,
 				$this->args['sha'],
