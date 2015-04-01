@@ -97,24 +97,15 @@ class DNEnvironment extends DataObject {
 	 * @var array
 	 */
 	public static $many_many = array(
-		"Viewers"            => "Member", // Who can view this environment
-		"ViewerGroups"       => "Group",
-		"Deployers"          => "Member", // Who can deploy to this environment
-		"DeployerGroups" => "Group",
-		"CanRestoreMembers"  => "Member", // Who can restore archive files to this environment
-		"CanRestoreGroups"  => "Group",
-		"CanBackupMembers"   => "Member", // Who can backup archive files from this environment
-		"CanBackupGroups"   => "Group",
-		"ArchiveUploaders"   => "Member", // Who can upload archive files linked to this environment
-		"ArchiveUploaderGroups" => "Group",
-		"ArchiveDownloaders" => "Member",  // Who can download archive files from this environment
-		"ArchiveDownloaderGroups" => "Group",
-		"ArchiveDeleters"    => "Member",  // Who can delete archive files from this environment,
-		"ArchiveDeleterGroups" => "Group",
-		"PipelineApprovers"  => "Member", // Who can approve / reject pipelines from this environment
-		"PipelineApproverGroups" => "Group",
-		"PipelineCancellers"   => "Member", // Who can abort pipelines
-		"PipelineCancellerGroups" => "Group"
+		"ViewerGroups"						=> "Group",
+		"DeployerGroups"					=> "Group",
+		"CanRestoreGroups"					=> "Group",
+		"CanBackupGroups"					=> "Group",
+		"ArchiveUploaderGroups" 			=> "Group",
+		"ArchiveDownloaderGroups" 			=> "Group",
+		"ArchiveDeleterGroups"				=> "Group",
+		"PipelineApproverGroups"			=> "Group",
+		"PipelineCancellerGroups"			=> "Group"
 	);
 
 	/**
@@ -323,8 +314,7 @@ class DNEnvironment extends DataObject {
 
 		if(Permission::checkMember($member, 'ADMIN')) return true;
 
-		return $this->Deployers()->byID($member->ID)
-			|| $member->inGroups($this->DeployerGroups());
+		return $member->inGroups($this->DeployerGroups());
 	}
 
 	/**
@@ -340,8 +330,7 @@ class DNEnvironment extends DataObject {
 
 		if(Permission::checkMember($member, 'ADMIN')) return true;
 
-		return $this->CanRestoreMembers()->byID($member->ID)
-			|| $member->inGroups($this->CanRestoreGroups());
+		return $member->inGroups($this->DeployerGroups());
 	}
 
 	/**
@@ -360,8 +349,7 @@ class DNEnvironment extends DataObject {
 
 		if(Permission::checkMember($member, 'ADMIN')) return true;
 
-		return $this->CanBackupMembers()->byID($member->ID)
-			|| $member->inGroups($this->CanBackupGroups());
+		return $member->inGroups($this->DeployerGroups());
 	}
 
 	/**
@@ -384,8 +372,7 @@ class DNEnvironment extends DataObject {
 
 		if(Permission::checkMember($member, 'ADMIN')) return true;
 
-		return $this->ArchiveUploaders()->byID($member->ID)
-			|| $member->inGroups($this->ArchiveUploaderGroups());
+		return $member->inGroups($this->DeployerGroups());
 	}
 
 	/**
@@ -401,8 +388,7 @@ class DNEnvironment extends DataObject {
 
 		if(Permission::checkMember($member, 'ADMIN')) return true;
 
-		return $this->ArchiveDownloaders()->byID($member->ID)
-			|| $member->inGroups($this->ArchiveDownloaderGroups());
+		return $member->inGroups($this->DeployerGroups());
 	}
 
 	/**
@@ -416,9 +402,9 @@ class DNEnvironment extends DataObject {
 		if(!$member) return false;
 
 		if(Permission::checkMember($member, 'ADMIN')) return true;
-		
-		return $this->PipelineCancellers()->byID($member->ID)
-			|| $member->inGroups($this->PipelineCancellerGroups());
+	
+
+		return $member->inGroups($this->DeployerGroups());
 	}
 
 	/**
@@ -432,8 +418,8 @@ class DNEnvironment extends DataObject {
 		if(!$member) return false;
 
 		if(Permission::checkMember($member, 'ADMIN')) return true;
-		return $this->PipelineApprovers()->byID($member->ID)
-			|| $member->inGroups($this->PipelineApproverGroups());
+
+		return $member->inGroups($this->DeployerGroups());
 	}
 
 	/**
@@ -449,8 +435,7 @@ class DNEnvironment extends DataObject {
 
 		if(Permission::checkMember($member, 'ADMIN')) return true;
 
-		return $this->ArchiveDeleters()->byID($member->ID)
-			|| $member->inGroups($this->ArchiveDeleterGroups());
+		return $member->inGroups($this->DeployerGroups());
 	}
 	/**
 	 * Get a string of groups/people that are allowed to deploy to this environment.
@@ -459,13 +444,17 @@ class DNEnvironment extends DataObject {
 	 * @return string
 	 */
 	public function getDeployersList() {
-		return implode(
-			", ",
-			array_merge(
-				$this->DeployerGroups()->column("Title"),
-				$this->Deployers()->column("FirstName")
-			)
-		);
+		$list = array();
+
+		foreach ($this->DeployerGroups() as $group) {
+			foreach ($group->Members() as $member) {
+				if ($this->canDeploy($member)) {
+					$list[] = $member->FirstName.' '.$member->Surname;
+				}
+			}
+		}
+
+		return implode(", ",$list);
 	}
 
 	/**
@@ -474,13 +463,17 @@ class DNEnvironment extends DataObject {
 	 * @return string
 	 */
 	public function getCanRestoreMembersList() {
-		return implode(
-			", ",
-			array_merge(
-				$this->CanRestoreGroups()->column("Title"),
-				$this->CanRestoreMembers()->column("FirstName")
-			)
-		);
+		$list = array();
+
+		foreach ($this->DeployerGroups() as $group) {
+			foreach ($group->Members() as $member) {
+				if ($this->canRestore($member)) {
+					$list[] = $member->FirstName.' '.$member->Surname;
+				}
+			}
+		}
+
+		return implode(", ",$list);
 	}
 
 	/**
@@ -489,13 +482,17 @@ class DNEnvironment extends DataObject {
 	 * @return string
 	 */
 	public function getCanBackupMembersList() {
-		return implode(
-			", ",
-			array_merge(
-				$this->CanBackupGroups()->column("Title"),
-				$this->CanBackupMembers()->column("FirstName")
-			)
-		);
+		$list = array();
+
+		foreach ($this->DeployerGroups() as $group) {
+			foreach ($group->Members() as $member) {
+				if ($this->canBackup($member)) {
+					$list[] = $member->FirstName.' '.$member->Surname;
+				}
+			}
+		}
+
+		return implode(", ",$list);
 	}
 
 	/**
@@ -504,13 +501,17 @@ class DNEnvironment extends DataObject {
 	 * @return string
 	 */
 	public function getArchiveUploadersList() {
-		return implode(
-			", ",
-			array_merge(
-				$this->ArchiveUploaderGroups()->column("Title"),
-				$this->ArchiveUploaders()->column("FirstName")
-			)
-		);
+		$list = array();
+
+		foreach ($this->DeployerGroups() as $group) {
+			foreach ($group->Members() as $member) {
+				if ($this->canUploadArchive($member)) {
+					$list[] = $member->FirstName.' '.$member->Surname;
+				}
+			}
+		}
+
+		return implode(", ",$list);
 	}
 
 	/**
@@ -519,13 +520,17 @@ class DNEnvironment extends DataObject {
 	 * @return string
 	 */
 	public function getArchiveDownloadersList() {
-		return implode(
-			", ",
-			array_merge(
-				$this->ArchiveDownloaderGroups()->column("Title"),
-				$this->ArchiveDownloaders()->column("FirstName")
-			)
-		);
+		$list = array();
+
+		foreach ($this->DeployerGroups() as $group) {
+			foreach ($group->Members() as $member) {
+				if ($this->canDownloadArchive($member)) {
+					$list[] = $member->FirstName.' '.$member->Surname;
+				}
+			}
+		}
+
+		return implode(", ",$list);
 	}
 
 	/**
@@ -534,13 +539,17 @@ class DNEnvironment extends DataObject {
 	 * @return string
 	 */
 	public function getArchiveDeletersList() {
-		return implode(
-			", ",
-			array_merge(
-				$this->ArchiveDeleterGroups()->column("Title"),
-				$this->ArchiveDeleters()->column("FirstName")
-			)
-		);
+		$list = array();
+
+		foreach ($this->DeployerGroups() as $group) {
+			foreach ($group->Members() as $member) {
+				if ($this->canDeleteArchive($member)) {
+					$list[] = $member->FirstName.' '.$member->Surname;
+				}
+			}
+		}
+
+		return implode(", ",$list);
 	}
 
 	/**
@@ -549,13 +558,17 @@ class DNEnvironment extends DataObject {
 	 * @return string
 	 */
 	public function getPipelineApproversList() {
-		return implode(
-			", ",
-			array_merge(
-				$this->PipelineApproverGroups()->column("Title"),
-				$this->PipelineApprovers()->column("FirstName")
-			)
-		);
+		$list = array();
+
+		foreach ($this->DeployerGroups() as $group) {
+			foreach ($group->Members() as $member) {
+				if ($this->canApprove($member)) {
+					$list[] = $member->FirstName.' '.$member->Surname;
+				}
+			}
+		}
+
+		return implode(", ",$list);
 	}
 
 	/**
@@ -564,13 +577,17 @@ class DNEnvironment extends DataObject {
 	 * @return string
 	 */
 	public function getPipelineCancellersList() {
-		return implode(
-			", ",
-			array_merge(
-				$this->PipelineCancellerGroups()->column("Title"),
-				$this->PipelineCancellers()->column("FirstName")
-			)
-		);
+		$list = array();
+
+		foreach ($this->DeployerGroups() as $group) {
+			foreach ($group->Members() as $member) {
+				if ($this->canAbort($member)) {
+					$list[] = $member->FirstName.' '.$member->Surname;
+				}
+			}
+		}
+
+		return implode(", ",$list);
 	}
 
 	/**
@@ -679,32 +696,6 @@ class DNEnvironment extends DataObject {
 		return $this->Project()->Link()."/environment/" . $this->Name;
 	}
 
-
-	/**
-	 * Build a set of multi-select fields for assigning permissions to a pair of group and member many_many relations
-	 *
-	 * @param string $groupField Group field name
-	 * @param string $memberField Member field name
-	 * @param array $groups List of groups
-	 * @param array $members List of members
-	 * @return FieldGroup
-	 */
-	protected function buildPermissionField($groupField, $memberField, $groups, $members) {
-		return FieldGroup::create(
-			ListboxField::create($groupField, false, $groups)
-				->setMultiple(true)
-				->setAttribute('data-placeholder', 'Groups')
-				->setAttribute('placeholder', 'Groups')
-				->setAttribute('style', 'width: 400px;'),
-
-			ListboxField::create($memberField, false, $members)
-				->setMultiple(true)
-				->setAttribute('data-placeholder', 'Members')
-				->setAttribute('placeholder', 'Members')
-				->setAttribute('style', 'width: 400px;')
-		);
-	}
-
 	/**
 	 *
 	 * @return FieldList
@@ -712,20 +703,16 @@ class DNEnvironment extends DataObject {
 	public function getCMSFields() {
 		$fields = new FieldList(new TabSet('Root'));
 
+		$groups = array();
+
 		$project = $this->Project();
+
 		if($project && $project->exists()) {
-			$viewerGroups = $project->Viewers();
-			$groups = $viewerGroups->sort('Title')->map()->toArray();
-			$members = array();
-			foreach($viewerGroups as $group) {
-				foreach($group->Members()->map() as $k => $v) {
-					$members[$k] = $v;
+			foreach ($project->Viewers() as $viewerGroup) {
+				foreach ($viewerGroup->Groups()->sort('Title') as $group) {
+					$groups[$group->ID] = $group->Title;
 				}
-			}
-			asort($members);
-		} else {
-			$groups = array();
-			$members = array();
+			} 
 		}
 
 		// Main tab
@@ -760,45 +747,66 @@ class DNEnvironment extends DataObject {
 
 		$fields->addFieldsToTab('Root.UserPermissions', array(
 			// The viewers of the environment
-			$this
-				->buildPermissionField('ViewerGroups', 'Viewers', $groups, $members)
+			ListboxField::create('ViewerGroups', false, $groups)
+				->setMultiple(true)
+				->setAttribute('data-placeholder', 'Groups')
+				->setAttribute('placeholder', 'Groups')
+				->setAttribute('style', 'width: 400px;')
 				->setTitle('Who can view this environment?')
 				->setDescription('Groups or Users who can view this environment'),
 
 			// The Main.Deployers
-			$this
-				->buildPermissionField('DeployerGroups', 'Deployers', $groups, $members)
+			ListboxField::create('DeployerGroups', false, $groups)
+				->setMultiple(true)
+				->setAttribute('data-placeholder', 'Groups')
+				->setAttribute('placeholder', 'Groups')
+				->setAttribute('style', 'width: 400px;')
 				->setTitle('Who can deploy?')
 				->setDescription('Groups or Users who can deploy to this environment'),
 
 			// A box to select all snapshot options.
-			$this
-				->buildPermissionField('TickAllSnapshotGroups', 'TickAllSnapshot', $groups, $members)
+			ListboxField::create('TickAllSnapshotGroups', false, $groups)
+				->setMultiple(true)
+				->setAttribute('data-placeholder', 'Groups')
+				->setAttribute('placeholder', 'Groups')
+				->setAttribute('style', 'width: 400px;')
 				->setTitle("<em>All snapshot permissions</em>")
 				->addExtraClass('tickall')
 				->setDescription('UI shortcut to select all snapshot-related options - not written to the database.'),
 
-			// The Main.CanRestoreMembers
-			$this
-				->buildPermissionField('CanRestoreGroups', 'CanRestoreMembers', $groups, $members)
+			// The Main.CanRestoreroles
+			ListboxField::create('CanRestoreGroups', false, $groups)
+				->setMultiple(true)
+				->setAttribute('data-placeholder', 'Groups')
+				->setAttribute('placeholder', 'Groups')
+				->setAttribute('style', 'width: 400px;')
 				->setTitle('Who can restore?')
 				->setDescription('Groups or Users who can restore archives from Deploynaut into this environment'),
 
-			// The Main.CanBackupMembers
-			$this
-				->buildPermissionField('CanBackupGroups', 'CanBackupMembers', $groups, $members)
+			// The Main.CanBackuproles
+			ListboxField::create('CanBackupGroups', false, $groups)
+				->setMultiple(true)
+				->setAttribute('data-placeholder', 'Groups')
+				->setAttribute('placeholder', 'Groups')
+				->setAttribute('style', 'width: 400px;')
 				->setTitle('Who can backup?')
 				->setDescription('Groups or Users who can backup archives from this environment into Deploynaut'),
 
 			// The Main.ArchiveDeleters
-			$this
-				->buildPermissionField('ArchiveDeleterGroups', 'ArchiveDeleters', $groups, $members)
+			ListboxField::create('ArchiveDeleterGroups', false, $groups)
+				->setMultiple(true)
+				->setAttribute('data-placeholder', 'Groups')
+				->setAttribute('placeholder', 'Groups')
+				->setAttribute('style', 'width: 400px;')
 				->setTitle('Who can delete?')
 				->setDescription("Groups or Users who can delete archives from this environment's staging area."),
 
 			// The Main.ArchiveUploaders
-			$this
-				->buildPermissionField('ArchiveUploaderGroups', 'ArchiveUploaders', $groups, $members)
+			ListboxField::create('ArchiveUploaderGroups', false, $groups)
+				->setMultiple(true)
+				->setAttribute('data-placeholder', 'Groups')
+				->setAttribute('placeholder', 'Groups')
+				->setAttribute('style', 'width: 400px;')
 				->setTitle('Who can upload?')
 				->setDescription(
 					'Users who can upload archives linked to this environment into Deploynaut.<br />' .
@@ -806,8 +814,11 @@ class DNEnvironment extends DataObject {
 				),
 
 			// The Main.ArchiveDownloaders
-			$this
-				->buildPermissionField('ArchiveDownloaderGroups', 'ArchiveDownloaders', $groups, $members)
+			ListboxField::create('ArchiveDownloaderGroups', false, $groups)
+				->setMultiple(true)
+				->setAttribute('data-placeholder', 'Groups')
+				->setAttribute('placeholder', 'Groups')
+				->setAttribute('style', 'width: 400px;')
 				->setTitle('Who can download?')
 				->setDescription(<<<PHP
 Users who can download archives from this environment to their computer.<br />
@@ -819,14 +830,20 @@ PHP
 				),
 
 			// The Main.PipelineApprovers
-			$this
-				->buildPermissionField('PipelineApproverGroups', 'PipelineApprovers', $groups, $members)
+			ListboxField::create('PipelineApproverGroups', false, $groups)
+				->setMultiple(true)
+				->setAttribute('data-placeholder', 'Groups')
+				->setAttribute('placeholder', 'Groups')
+				->setAttribute('style', 'width: 400px;')
 				->setTitle('Who can approve pipelines?')
 				->setDescription('Users who can approve waiting deployment pipelines.'),
 
 			// The Main.PipelineCancellers
-			$this
-				->buildPermissionField('PipelineCancellerGroups', 'PipelineCancellers', $groups, $members)
+			ListboxField::create('PipelineCancellerGroups', false, $groups)
+				->setMultiple(true)
+				->setAttribute('data-placeholder', 'Groups')
+				->setAttribute('placeholder', 'Groups')
+				->setAttribute('style', 'width: 400px;')
 				->setTitle('Who can cancel pipelines?')
 				->setDescription('Users who can cancel in-progess deployment pipelines.')
 		));
