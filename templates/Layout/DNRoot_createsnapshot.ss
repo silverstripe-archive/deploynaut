@@ -2,8 +2,9 @@
 
 <% if $CurrentProject %>
 <ul class="nav nav-tabs">
-	<li<% if $ProjectOverview %> class="active"<% end_if %>><a href="naut/project/$CurrentProject.Name">Deploy</a></li>
-	<li<% if $SnapshotsSection %> class="active"<% end_if %>><a href="naut/project/$CurrentProject.Name/snapshots">Snapshots</a></li>
+	<% loop $CurrentProject.Menu %>
+	<li<% if $IsActive %> class="active"<% end_if %>><a href="$Link">$Title</a></li>
+	<% end_loop %>
 </ul>
 <ul class="nav level-2">
 	<% if $Project.canBackup %>

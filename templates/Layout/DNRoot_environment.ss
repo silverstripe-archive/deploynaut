@@ -5,10 +5,9 @@
 
 <% if $CurrentProject %>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="naut/project/$CurrentProject.Name">Deploy</a></li>
-		<% if $FlagSnapshotsEnabled %>
-			<li><a href="naut/project/$CurrentProject.Name/snapshots">Snapshots</a></li>
-		<% end_if %>
+		<% loop $CurrentProject.Menu %>
+		<li<% if $IsActive %> class="active"<% end_if %>><a href="$Link">$Title</a></li>
+		<% end_loop %>
 	</ul>
 <% end_if %>
 <ul class="nav level-2">
