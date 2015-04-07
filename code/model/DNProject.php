@@ -148,6 +148,33 @@ class DNProject extends DataObject {
 	}
 
 	/**
+	 * Get the menu to be shown on projects
+	 *
+	 * @return ArrayList
+	 */
+	public function Menu() {
+		$list = new ArrayList();
+
+		$list->push(new ArrayData(array(
+			'Link' => sprintf('naut/project/%s', $this->Name),
+			'Title' => 'Deploy',
+			'IsActive' => Controller::curr()->getAction() == 'project'
+		)));
+
+		if(Controller::curr()->FlagSnapshotsEnabled()) {
+			$list->push(new ArrayData(array(
+				'Link' => sprintf('naut/project/%s/snapshots', $this->Name),
+				'Title' => 'Snapshots',
+				'IsActive' => Controller::curr()->getAction() == 'snapshots'
+			)));
+		}
+
+		$this->extend('updateMenu', $list);
+
+		return $list;
+	}
+
+	/**
 	 * Restrict access to viewing this project
 	 *
 	 * @param Member $member
