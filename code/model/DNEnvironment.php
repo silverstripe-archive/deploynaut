@@ -905,7 +905,7 @@ PHP
 			return;
 		}
 
-		$noDeployConfig = new LabelField('noDeployConfig', 'Warning: This environment don\'t have deployment configuration.');
+		$noDeployConfig = new LabelField('noDeployConfig', 'Warning: This environment doesn\'t have deployment configuration.');
 		$noDeployConfig->addExtraClass('message warning');
 		$fields->insertAfter($noDeployConfig, 'Filename');
 		$createConfigField = new CheckboxField('CreateEnvConfig', 'Create Config');
