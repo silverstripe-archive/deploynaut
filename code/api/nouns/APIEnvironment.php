@@ -18,7 +18,7 @@ class APIEnvironment extends APINoun {
 	 */
 	public function index(SS_HTTPRequest $request) {
 		if(!$this->record->canView($this->getMember())) {
-			return $this->message('You are not authorized to this environment', 403);
+			return $this->message('You are not authorized to view this environment', 403);
 		}
 		switch($request->httpMethod()) {
 			case 'GET':
