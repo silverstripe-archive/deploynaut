@@ -142,7 +142,7 @@ Here's an example of what the configuration might look like:
 	set :copy_remote_dir, "/var/tmp/deployremote"
 	
 	# Set a build script that is run before the code .tar.gz is sent to the server
-	set :build_script, "composer install --prefer-dist --no-dev"
+	set :build_script, "composer install --prefer-dist --no-dev --no-progress"
 	
 	# Set the sake path for this project
 	set :sake_path, "./framework/sake"
