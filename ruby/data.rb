@@ -89,13 +89,7 @@ namespace :data do
 		e.g. setting this to /tmp/mysite will place assets at /tmp/mysite/assets
 	DESC
 	task :getassets do
-		# Make sure the assets are actually readable by the ssh user.
-		if exists?(:webserver_user)
-			run "sudo -u #{webserver_user} find #{shared_path}/assets -mindepth 1 -user #{webserver_user} -exec chmod a+r {} +", :once => true
-		else
-			run "find #{shared_path}/assets -mindepth 1 -exec chmod a+r {} +", :once => true
-		end
-
+		normalise_assets(:once => true)
 		download shared_path + "/assets", data_path, :recursive => true, :via => :scp, :once => true
 	end
 
@@ -109,22 +103,58 @@ namespace :data do
 	DESC
 	task :pushassets do
 		begin
-			# Files under assets are writable by www-data (either owned, or through g+w)...
+			normalise_assets
+
+			# Files under assets should be by definition deletable by www-data (either owned, or through g+w)...
 			pre = if exists?(:webserver_user) then "sudo -u #{webserver_user}" else "" end
 			run "#{pre} find #{shared_path}/assets -mindepth 1 -delete"
-			# ... but the directory is owned by the ssh user, with chmod 775
+			# ... but the webserver user may not have the write permission to the ".." directory.
 			run "rmdir #{shared_path}/assets"
 
 			upload data_path, shared_path, :recursive => true, :via => :scp
 
 		ensure
-			# We cannot give the files to www-data without being root, so we set the group write permission instead.
-			# Also makes the assets directory 775 again.
-			if exists?(:webserver_user)
-				run "find #{shared_path}/assets -not -user #{webserver_user} -exec chmod g+rw {} +"
-			else
-				run "find #{shared_path}/assets -exec chmod g+rw {} +"
-			end
+			# Now that we have uploaded new files we need to make sure they are readable by the webserver_user.
+			normalise_assets
+		end
+	end
+
+	# Apply permissions that will allow us to push and pull assets. This can only fix permissions on files owned
+	# by either the ssh user or the webserver user - if any other files are present, and they are unreadable, this
+	# will result in failed transfers.
+	#
+	# If webserver_user is not set, then we assume the webserver user is the same as the ssh user.
+	#
+	# Our desired state after the normalisation has the following qualities:
+	# - asset directory must exist.
+	# - all files within assets must be readable, writable and deletable by the webserver user.
+	# - all files within assets must be readable by the ssh user.
+	# - root directory must be deletable by the ssh user.
+	#
+	# To accomplish our goals, the system must be set up such that:
+	# - webserver user is in the default group used by the ssh user.
+	# - root asset directory is owned by the ssh user and group.
+	# - parent directory for the asset root is writable by the ssh user (so that the asset dir can be deleted)
+	# - no files in assets are owned by users other than ssh or webserver user.
+	#
+	# TODO this can be speeded up by adding specific conditions to find (so it doesn't modify files unnecessarily).
+	#
+	def normalise_assets(params = {})
+		if exists?(:webserver_user)
+			# Make sure asset directory exists.
+			run "if [ ! -e #{shared_path}/assets ]; then mkdir #{shared_path}/assets; fi", params
+			# Webserver-owned files, just fix permissions.
+			run "sudo -u #{webserver_user} find #{shared_path}/assets -type d -user #{webserver_user} -exec chmod 2755 {} \\;", params
+			run "sudo -u #{webserver_user} find #{shared_path}/assets -type f -user #{webserver_user} -exec chmod 0644 {} +", params
+			# Ssh-user owned files, must be writable by the webserver user.
+			# We cannot give files to webserver_user without being root, so we set the group write permission instead.
+			run "find #{shared_path}/assets -maxdepth 1 -type d -user `whoami` -exec chmod 0775 {} \\;", params
+			run "find #{shared_path}/assets -mindepth 1 -type d -user `whoami` -exec chmod 2775 {} \\;", params
+			run "find #{shared_path}/assets -type f -user `whoami` -exec chmod 0664 {} +", params
+		else
+			run "if [ ! -e #{shared_path}/assets ]; then mkdir #{shared_path}/assets; fi", params
+			run "find #{shared_path}/assets -type d -exec chmod 2755 {} \\;", params
+			run "find #{shared_path}/assets -type f -exec chmod 0644 {} +", params
 		end
 	end
 
