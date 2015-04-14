@@ -90,9 +90,12 @@ namespace :data do
 	DESC
 	task :getassets do
 		# Make sure the assets are actually readable by the ssh user.
+		# This includes creating assets directory, if missing.
 		if exists?(:webserver_user)
+			run "sudo -u #{webserver_user} bash -c \"if [ ! -e #{shared_path}/assets ]; then mkdir #{shared_path}/assets; fi \"", :once => true
 			run "sudo -u #{webserver_user} find #{shared_path}/assets -mindepth 1 -user #{webserver_user} -exec chmod a+r {} +", :once => true
 		else
+			run "if [ ! -e #{shared_path}/assets ]; then mkdir #{shared_path}/assets; fi ", :once => true
 			run "find #{shared_path}/assets -mindepth 1 -exec chmod a+r {} +", :once => true
 		end
 
