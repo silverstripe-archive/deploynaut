@@ -16,6 +16,12 @@ class EmailMessagingService implements ConfirmationMessagingService {
 	 * @config
 	 * @var string
 	 */
+	private static $ops_to = 'ops@silverstripe.com';
+
+	/**
+	 * @config
+	 * @var string
+	 */
 	private static $default_subject = 'Deploynaut notification';
 
 	public function sendMessage($source, $message, $recipients, $arguments = array()) {
