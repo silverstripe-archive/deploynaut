@@ -37,6 +37,11 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		$projectName = $project->Name;
 		$environmentName = $environment->Name;
 		$env = $project->getProcessEnv();
+		$args = array(
+			'branch' => $sha,
+			'repository' => $repository,
+		);
+
 
 		$project = DNProject::get()->filter('Name', $projectName)->first();
 
@@ -45,11 +50,6 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		$log->write('Deploying "'.$sha.'" to "'.$projectName.':'.$environmentName.'"');
 
 		$this->enableMaintenance($environment, $log, $project);
-
-		$args = array(
-			'branch' => $sha,
-			'repository' => $repository,
-		);
 
 		// Use a package generator if specified, otherwise run a direct deploy (which is the default behaviour
 		// if build_filename isn't specified
@@ -64,12 +64,52 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			$log->write($buffer);
 		});
 
+		// Deployment cleanup. We assume it is always safe to run this at the end, regardless of the outcome.
+		$self = $this;
+		$cleanupFn = function() use ($self, $projectName, $environmentName, $args, $env, $log) {
+			$command = $self->getCommand('deploy:cleanup', 'web', $projectName.':'.$environmentName, $args, $env, $log);
+			$command->run(function ($type, $buffer) use($log) {
+				$log->write($buffer);
+			});
+			if(!$command->isSuccessful()) {
+
+				// Notify ops via email, if possible.
+				$to = Config::inst()->get('DNRoot', 'alerts_to');
+				if (!$to) {
+					$log->write('Warning: cleanup has failed, but fine to continue. Needs manual cleanup sometime.');
+					return;
+				} else {
+					$log->write('Warning: cleanup has failed, but fine to continue. Alert email sent.');
+				}
+
+				$subject = "[Deploynaut] Cleanup failure on $projectName:$environmentName";
+				$email = new Email(null, $to, $subject);
+				$email->setTemplate('CapistranoDeploymentBackend_cleanup');
+
+				// Grab the last 3k characters, starting on a linebreak.
+				$breakpoint = strrpos($log->content(), "\n", -3000);
+				if ($breakpoint===false) {
+					$content = $log->content();
+				} else {
+					$content = "[... log has been trimmed ...]\n" . substr($log->content(), $breakpoint+1);
+				}
+				$email->populateTemplate(array(
+					'ProjectName' => $projectName,
+					'EnvironmentName' => $environmentName,
+					'Log' => $content
+				));
+
+				$email->send();
+			}
+		};
+
 		// Once the deployment has run it's necessary to update the maintenance page status
 		if($leaveMaintenancePage) {
 			$this->enableMaintenance($environment, $log, $project);
 		}
 
 		if(!$command->isSuccessful()) {
+			$cleanupFn();
 			throw new RuntimeException($command->getErrorOutput());
 		}
 
@@ -77,6 +117,8 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		if(!$leaveMaintenancePage) {
 			$this->disableMaintenance($environment, $log, $project);
 		}
+
+		$cleanupFn();
 
 		$log->write('Deploy done "'.$sha.'" to "'.$projectName.':'.$environmentName.'"');
 
@@ -158,7 +200,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	 * @param DeploynautLogFile $log
 	 * @return \Symfony\Component\Process\Process
 	 */
-	protected function getCommand($action, $roles, $environment, $args = null, $env = null, DeploynautLogFile $log) {
+	public function getCommand($action, $roles, $environment, $args = null, $env = null, DeploynautLogFile $log) {
 		if(!$args) $args = array();
 		$args['history_path'] = realpath(DEPLOYNAUT_LOG_PATH.'/');
 
