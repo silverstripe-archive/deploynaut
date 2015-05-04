@@ -101,4 +101,4 @@ before "deploy", "deploy:pre_checks"
 
 before "deploy:update_code", "deploy:create_clone_dir"
 
-after "deploy:finalize_update", "deploy:migrate", "deploy:cleanup"
+after "deploy:finalize_update", "deploy:migrate"

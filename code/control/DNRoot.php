@@ -24,6 +24,15 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	const DEPLOYNAUT_DRYRUN_PIPELINE = 'DEPLOYNAUT_DRYRUN_PIPELINE';
 
 	/**
+	 * Optional email to use to alert about things that need some action to be performed,
+	 * such as cleanup after a failed task.
+	 *
+	 * @config
+	 * @var string
+	 */
+	private static $alerts_to;
+
+	/**
 	 *
 	 * @var array
 	 */
