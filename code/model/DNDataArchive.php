@@ -79,6 +79,10 @@ class DNDataArchive extends DataObject {
 		),
 	);
 
+	private static $_cache_can_restore = array();
+
+	private static $_cache_can_download = array();
+
 	public function onBeforeWrite() {
 		if(!$this->AuthorID) {
 			$this->AuthorID = Member::currentUserID();
@@ -180,7 +184,12 @@ class DNDataArchive extends DataObject {
 	 * @return true if $member (or the currently logged in member if null) can upload this archive
 	 */
 	public function canRestore($member = null) {
-		return $this->Environment()->canUploadArchive($member);
+		$key = is_object($member) ? $member->ID : $member;
+		if(!isset(self::$_cache_can_restore[$key])) {
+			self::$_cache_can_restore[$key] = $this->Environment()->canUploadArchive($member);
+		}
+
+		return self::$_cache_can_restore[$key];
 	}
 
 	/**
@@ -190,7 +199,11 @@ class DNDataArchive extends DataObject {
 	 * @return true if $member (or the currently logged in member if null) can download this archive
 	 */
 	public function canDownload($member = null) {
-		return $this->Environment()->canDownloadArchive($member);
+		$key = is_object($member) ? $member->ID : $member;
+		if(!isset(self::$_cache_can_download[$key])) {
+			self::$_cache_can_download[$key] = $this->Environment()->canDownloadArchive($member);
+		}
+		return self::$_cache_can_download[$key];
 	}
 
 	/**
