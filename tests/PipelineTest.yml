@@ -11,14 +11,23 @@ Member:
     Email: test3@example.com
     FirstName: Jacob
     Surname: Marley
-DNProject:
+PipelineTest_Project:
   testproject:
     Name: 'testproject'
 PipelineTest_Environment:
   uat:
     Name: uat
-    Project: =>DNProject.testproject
+    Project: =>PipelineTest_Project.testproject
     Deployers: =>Member.deployer,=>Member.author
+  newenvironment:
+    Name: uat-new
+    Project: =>PipelineTest_Project.testproject
+    Deployers: =>Member.deployer,=>Member.author
+DNDeployment:
+  deploy-uat:
+    SHA: '123'
+    Status: 'Finished'
+    Environment: =>PipelineTest_Environment.uat
 Pipeline:
   testpipesmoketest:
     Author: =>Member.author

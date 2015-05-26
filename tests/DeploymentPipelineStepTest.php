@@ -9,11 +9,17 @@ class DeploymentPipelineStepTest extends PipelineTest {
 	 *
 	 * @return DeploymentPipelineStep
 	 */
-	public function getDummyDeployment() {
+	public function getDummyDeployment($newEnv = false) {
 		$deployStep = $this->objFromFixture('DeploymentPipelineStep', 'testdeploy');
 		$deployStep->Config = serialize(array('MaxDuration' => '3600'));
 		$deployStep->write();
 		$pipeline = $deployStep->Pipeline();
+
+		// simulates a new environment that hasn't got any current build
+		if($newEnv) {
+			$pipeline->EnvironmentID = $this->idFromFixture('PipelineTest_Environment', 'newenvironment');
+		}
+
 		$pipeline->Config = serialize(array());
 		$pipeline->write();
 		return $deployStep;
@@ -76,6 +82,23 @@ class DeploymentPipelineStepTest extends PipelineTest {
 		$this->assertEquals('Failed', $step->Status);
 		$this->assertTrue(PipelineTest_MockLog::has_message('Checking status of TestDeployStep:Snapshot...'));
 		$this->assertTrue(PipelineTest_MockLog::has_message('TestDeployStep:Snapshot failed with task status Failed'));
+	}
+
+	/**
+	 * Test snapshot is skipped when environment has no build
+	 */
+	public function testSnapshotSkipped() {
+		$step = $this->getDummyDeployment(true);
+		$step->start();
+
+		// Assert not error at startup
+		$this->assertEquals('Started', $step->Status);
+		$this->assertEquals('Snapshot', $step->Doing);
+		$this->assertTrue(PipelineTest_MockLog::has_message('[Skipped] No current build, skipping snapshot'));
+
+		// Mark the service as completed and check result
+		$snapshot = $step->Pipeline()->PreviousSnapshot();
+		$this->assertFalse($snapshot->exists(), 'No snapshot was created');
 	}
 
 	/**
