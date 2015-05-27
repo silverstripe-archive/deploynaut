@@ -244,6 +244,14 @@ class PipelineTest_DNDataTransfer extends DNDataTransfer implements TestOnly {
 	}
 }
 
+class PipelineTest_Project extends DNProject implements TestOnly {
+
+	public function repoExists() {
+		return false;
+	}
+
+}
+
 class PipelineTest_Environment extends DNEnvironment implements TestOnly {
 
 	/**

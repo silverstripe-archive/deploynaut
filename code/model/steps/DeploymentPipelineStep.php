@@ -104,7 +104,6 @@ class DeploymentPipelineStep extends LongRunningPipelineStep {
 	
 	/**
 	 * Create a snapshot of the db and store the ID on the Pipline
-	 * 
 	 * @return bool True if success
 	 */
 	protected function createSnapshot() {
@@ -119,7 +118,13 @@ class DeploymentPipelineStep extends LongRunningPipelineStep {
 			$this->log("[Skipped] Create DNDataTransfer backup");
 			return true;
 		}
-		
+
+		// Skip snapshot for environments with no build
+		if(!$this->Pipeline()->Environment()->CurrentBuild()) {
+			$this->log('[Skipped] No current build, skipping snapshot');
+			return true;
+		}
+
 		// create a snapshot
 		$pipeline = $this->Pipeline();
 		$job = DNDataTransfer::create();
@@ -148,7 +153,12 @@ class DeploymentPipelineStep extends LongRunningPipelineStep {
 			$this->log("[Skipped] Checking progress of snapshot backup");
 			return $this->startDeploy();
 		}
-		
+
+		// Skip snapshot for environments with no build
+		if(!$this->Pipeline()->Environment()->CurrentBuild()) {
+			return $this->startDeploy();
+		}
+
 		// Get related snapshot
 		$snapshot = $this->Pipeline()->PreviousSnapshot();
 		if(empty($snapshot) || !$snapshot->exists()) {
