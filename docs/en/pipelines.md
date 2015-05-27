@@ -18,6 +18,7 @@ can. This can be installed as a daemon process.
 
 	sudo cp /sites/deploynaut/www/deploynaut/.scripts/pipecheck-initd /etc/init.d/pipecheck
 	sudo chown root:root /etc/init.d/pipecheck
+	sudo chmod +x /etc/init.d/pipecheck
 	sudo update-rc.d pipecheck defaults
 
 Once this is in place, you can run the pipeline checker like this:
@@ -57,32 +58,30 @@ YAML files are configured in the Deploynaut admin interface under a specific pro
 
 This simple example checks that the site is accessible after a deployment has completed.
 
-``yml
-PipelineConfig:
-  DependsOnProject: myproject
-  Description: >
-    Subsequent deployments to this environment that pass the smoke test will be eligible
-    for deployment to the live instance.
-  ServiceArguments:
-    from: somewhere@mysite.com
-    reply-to: somewhere@mysite.com
-  # Global smoketests used both by the forward and rollback deployments
-  Tests:
-    Home:
-      URL: http://mysite.com/
-      ExpectStatus: 200
-    Admin:
-      URL: http://mysite.com/admin
-      ExpectStatus: 302
-Steps:
-  # Deploy the given code
-  Deployment:
-    Class: DeploymentPipelineStep
-    MaxDuration: 3600
-  # Test that the deployment works. Uses the Pipeline.Tests config above.
-  SmokeTest:
-    Class: SmokeTestPipelineStep
-``
+	PipelineConfig:
+	  DependsOnProject: myproject
+	  Description: >
+	    Subsequent deployments to this environment that pass the smoke test will be eligible
+	    for deployment to the live instance.
+	  ServiceArguments:
+	    from: somewhere@mysite.com
+	    reply-to: somewhere@mysite.com
+	  # Global smoketests used both by the forward and rollback deployments
+	  Tests:
+	    Home:
+	      URL: http://mysite.com/
+	      ExpectStatus: 200
+	    Admin:
+	      URL: http://mysite.com/admin
+	      ExpectStatus: 302
+	Steps:
+	  # Deploy the given code
+	  Deployment:
+	    Class: DeploymentPipelineStep
+	    MaxDuration: 3600
+	  # Test that the deployment works. Uses the Pipeline.Tests config above.
+	  SmokeTest:
+	    Class: SmokeTestPipelineStep
 
 The `Config.DependsOnEnvironment` variable is how steps like the SmokeTestPipelineTest know which environment to perform
 their checks on.
