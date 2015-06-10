@@ -1,11 +1,9 @@
 <?php
 /**
- * Deploynaut doesn't have the CMS. Surface Filesystem::sync() as a dev task.
+ * Surface Filesystem::sync() as a dev task in case CMS has not been included.
  */
-class FilesystemSyncTask extends BuildTask {
-	
+class CMSFilesystemSyncTask extends BuildTask {
 	public function run($request = null) {
 		Filesystem::sync();
 	}
 }
-
