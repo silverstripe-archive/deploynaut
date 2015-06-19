@@ -181,8 +181,11 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 
 			$workingDir = TEMP_FOLDER . DIRECTORY_SEPARATOR . 'deploynaut-transfer-' . $dataTransfer->ID;
 
-			// Prepare for the actual data transfer.
-			$this->dataTransferRestorePreflight($workingDir, $dataTransfer, $log);
+			// Validate and fix any problems with the archive before performing the transfer
+			$valid = $dataTransfer->DataArchive()->validateAndFixArchiveFile($log, $workingDir, $dataTransfer->Mode);
+			if(!$valid) {
+				throw new RuntimeException('Invalid archive, transfer aborted.');
+			}
 
 			// Put up a maintenance page during a restore of db or assets.
 			$this->enableMaintenance($environment, $log, $project);
@@ -389,125 +392,6 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			throw new RuntimeException($command->getErrorOutput());
 		}
 		$log->write('Rebuild of "' . $name . '" done');
-	}
-
-	/**
-	 * Utility function to recursively fix the permissions to readable-writable for untarred files.
-	 * Normally, command line tar will use permissions found in the archive, but will substract the user's umask from
-	 * them. This has a potential to create unreadable files e.g. cygwin on Windows will pack files with mode 000.
-	 *
-	 * @param string $path Root path to fix. Can be a dir or a file.
-	 * @param DeploynautLogFile $log Log file to write to.
-	 * @param $errorOutput Out-variable for collecting and passing back the error output.
-	 */
-	protected function fixPermissions($path, DeploynautLogFile $log, &$errorOutput) {
-		$fixCmds = array(
-			// The directories need to have permissions changed one by one (hence the ; instead of +),
-			// otherwise we might end up having no +x access to a directory deeper down.
-			sprintf('find %s -type d -exec chmod 755 {} \;', escapeshellarg($path)),
-			sprintf('find %s -type f -exec chmod 644 {} +', escapeshellarg($path))
-		);
-
-		foreach ($fixCmds as $cmd) {
-			$log->write($cmd);
-			$process = new Process($cmd);
-			$process->setTimeout(3600);
-			$process->run();
-			if(!$process->isSuccessful()) {
-				$log->write('Could not reset permissions on the unpacked files: ' . $process->getErrorOutput());
-				throw new RuntimeException('Failed resetting permissions on the sspak contents.');
-			}
-		}
-	}
-
-	/**
-	 * Perform pre-flight preparation for the data restore. This does not touch the instance at all.
-	 *
-	 * @param string $workingDir Directory for the unpacked files.
-	 * @param DNDataTransfer $dataTransfer Data structure describing this transfer.
-	 * @param DeploynautLogFile $log Log file to write to.
-	 *
-	 * @throws Exception The deployment should be aborted if pre-flight fails for any reason.
-	 */
-	protected function dataTransferRestorePreflight($workingDir, DNDataTransfer $dataTransfer, DeploynautLogFile $log) {
-
-		// Rollback cleanup.
-		$self = $this;
-		$cleanupFn = function() use ($self, $workingDir) {
-			$process = new Process('rm -rf ' . escapeshellarg($workingDir));
-			$process->run();
-		};
-
-		// Create target temp dir.
-		mkdir($workingDir, 0700, true);
-
-		// Extract *.sspak to a temporary location
-		$log->write('Extracting *.sspak file');
-		$sspakFilename = $dataTransfer->DataArchive()->ArchiveFile()->FullPath;
-		$sspakCmd = sprintf('sspak extract %s %s', escapeshellarg($sspakFilename), escapeshellarg($workingDir));
-		$log->write($sspakCmd);
-		$process = new Process($sspakCmd);
-		$process->setTimeout(3600);
-		$process->run();
-		if(!$process->isSuccessful()) {
-			$cleanupFn();
-			$log->write('Could not extract the sspak file: ' . $process->getErrorOutput());
-			throw new RuntimeException('Invalid sspak, transfer aborted.');
-		}
-
-		$this->fixPermissions($workingDir, $log, $errorOutput);
-
-		// Make sure the sspak archive contains legitimate data: check for db...
-		if (
-			in_array($dataTransfer->Mode, array('all', 'db'))
-			&& !is_file($workingDir . DIRECTORY_SEPARATOR . 'database.sql.gz')
-		) {
-			$cleanupFn();
-			$log->write("Cannot restore in `$dataTransfer->Mode` mode: database dump not found in this sspak.");
-			throw new RuntimeException('Invalid sspak, transfer aborted.');
-		}
-
-		// Database is stored as database.sql.gz. We don't care about the permissions of the database.sql, because
-		// it's never unpacked as a file - it's piped directly into mysql in data.rb.
-
-		// ... check for assets.
-		if (in_array($dataTransfer->Mode, array('all', 'assets'))) {
-
-			if (!is_file($workingDir . DIRECTORY_SEPARATOR . 'assets.tar.gz')) {
-				$cleanupFn();
-				$log->write("Cannot restore in `$dataTransfer->Mode` mode: asset dump not found in this sspak.");
-				throw new RuntimeException('Invalid sspak, transfer aborted.');
-			}
-
-			// Extract assets.tar.gz into assets/
-			$extractCmd = sprintf(
-				'cd %s && tar xzf %s',
-				escapeshellarg($workingDir),
-				escapeshellarg($workingDir . DIRECTORY_SEPARATOR . 'assets.tar.gz')
-			);
-
-			$log->write($extractCmd);
-			$process = new Process($extractCmd);
-			$process->setTimeout(3600);
-			$process->run();
-			if(!$process->isSuccessful()) {
-				$cleanupFn();
-				$log->write('Could not extract the assets archive: ' . $process->getErrorOutput());
-				throw new RuntimeException('Invalid sspak, transfer aborted.');
-			}
-
-			// Fix permissions again - we have just extracted the assets.tar.gz. This will help with cleanup.
-			$this->fixPermissions($workingDir, $log, $errorOutput);
-
-			// Check inside the assets.
-			if (!is_dir($workingDir . DIRECTORY_SEPARATOR . 'assets')) {
-				$cleanupFn();
-				$log->write("Cannot restore in `$dataTransfer->Mode` mode: asset directory not found in asset dump.");
-				throw new RuntimeException('Invalid sspak, transfer aborted.');
-			}
-
-		}
-
 	}
 
 	/**
