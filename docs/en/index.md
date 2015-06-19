@@ -191,8 +191,8 @@ To make capistrano respect the roles we have added the `ROLES` variable to cap c
 Create `assets/transfers` server-writable directory:
 
 	mkdir assets/transfers
-	chown www-data.www-data assets/transfers
-	chmod 755 assets/transfers
+	sudo chown www-data:www-data assets/transfers
+	sudo chmod 755 assets/transfers
 
 Add `assets/.htaccess` to enable security checks on files:
 
