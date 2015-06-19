@@ -1,4 +1,6 @@
 <?php
+use \Symfony\Component\Process\Process;
+
 /**
  * Represents a file archive of database and/or assets extracted from
  * a specific Deploynaut environment.
@@ -306,8 +308,134 @@ class DNDataArchive extends DataObject {
 			$projectName,
 			$envName,
 			$dataTransfer->ID
-		);	
-		
+		);
+	}
+
+	/**
+	 * Inspect the archive and ensure permissions of contained files are correct.
+	 *
+	 * @param DeploynautLogFile $log
+	 * @param string $workingDir Optional: The working directory of where the archive will be
+	 *					extracted. Defaults to temp/deploynaut-archive-{ID}
+	 * @param string $mode Optional: Defaults to this archive's declared "Mode" field, but useful
+	 *					to specify if you want to validate the archive for another mode, such as
+	 *					the one from a DNDataTransfer.
+	 * @param bool
+	 */
+	public function validateAndFixArchiveFile(DeploynautLogFile $log, $workingDir = null, $mode = null) {
+		$mode = $mode ?: $this->Mode;
+
+		if(!$workingDir) {
+			$workingDir = TEMP_FOLDER . DIRECTORY_SEPARATOR . 'deploynaut-archive-' . $this->ID;
+		}
+
+		// Rollback cleanup.
+		$self = $this;
+		$cleanupFn = function() use ($self, $workingDir) {
+			$process = new Process('rm -rf ' . escapeshellarg($workingDir));
+			$process->run();
+		};
+
+		// Create target temp dir.
+		mkdir($workingDir, 0700, true);
+
+		// Extract *.sspak to a temporary location
+		$log->write('Extracting *.sspak file');
+		$sspakFilename = $this->ArchiveFile()->FullPath;
+		$sspakCmd = sprintf('sspak extract %s %s', escapeshellarg($sspakFilename), escapeshellarg($workingDir));
+		$log->write($sspakCmd);
+		$process = new Process($sspakCmd);
+		$process->setTimeout(3600);
+		$process->run();
+		if(!$process->isSuccessful()) {
+			$cleanupFn();
+			$log->write(sprintf('Could not extract the sspak file: %s', $process->getErrorOutput()));
+			return false;
+		}
+
+		$this->fixArchivePermissions($workingDir, $log);
+
+		// Make sure the sspak archive contains legitimate data: check for db...
+		if(
+			in_array($mode, array('all', 'db'))
+			&& !is_file($workingDir . DIRECTORY_SEPARATOR . 'database.sql.gz')
+		) {
+			$cleanupFn();
+			$log->write(sprintf('Cannot restore in \'%s\' mode: database dump not found in this sspak.', $mode));
+			return false;
+		}
+
+		// Database is stored as database.sql.gz. We don't care about the permissions of the database.sql, because
+		// it's never unpacked as a file - it's piped directly into mysql in data.rb.
+
+		// ... check for assets.
+		if(in_array($mode, array('all', 'assets'))) {
+			if(!is_file($workingDir . DIRECTORY_SEPARATOR . 'assets.tar.gz')) {
+				$cleanupFn();
+				$log->write(sprintf('Cannot restore in \'%s\' mode: asset dump not found in this sspak.', $mode));
+				return false;
+			}
+
+			// Extract assets.tar.gz into assets/
+			$extractCmd = sprintf(
+				'cd %s && tar xzf %s',
+				escapeshellarg($workingDir),
+				escapeshellarg($workingDir . DIRECTORY_SEPARATOR . 'assets.tar.gz')
+			);
+
+			$log->write($extractCmd);
+			$process = new Process($extractCmd);
+			$process->setTimeout(3600);
+			$process->run();
+			if(!$process->isSuccessful()) {
+				$cleanupFn();
+				$log->write(sprintf('Could not extract the assets archive: %s', $process->getErrorOutput()));
+				return false;
+			}
+
+			// Fix permissions again - we have just extracted the assets.tar.gz. This will help with cleanup.
+			$this->fixArchivePermissions($workingDir, $log);
+
+			// Check inside the assets.
+			if(!is_dir($workingDir . DIRECTORY_SEPARATOR . 'assets')) {
+				$cleanupFn();
+				$log->write(sprintf('Cannot restore in \'%s\' mode: asset directory not found in asset dump.', $mode));
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Utility function to recursively fix the permissions to readable-writable for untarred files.
+	 * Normally, command line tar will use permissions found in the archive, but will substract the user's umask from
+	 * them. This has a potential to create unreadable files e.g. cygwin on Windows will pack files with mode 000.
+	 *
+	 * @param string $path Root path to fix. Can be a dir or a file.
+	 * @param DeploynautLogFile $log Log file to write to.
+	 * @return boolean
+	 */
+	protected function fixArchivePermissions($path, DeploynautLogFile $log) {
+		$fixCmds = array(
+			// The directories need to have permissions changed one by one (hence the ; instead of +),
+			// otherwise we might end up having no +x access to a directory deeper down.
+			sprintf('find %s -type d -exec chmod 755 {} \;', escapeshellarg($path)),
+			sprintf('find %s -type f -exec chmod 644 {} +', escapeshellarg($path))
+		);
+
+		foreach($fixCmds as $cmd) {
+			$log->write($cmd);
+			$process = new Process($cmd);
+			$process->setTimeout(3600);
+			$process->run();
+			if(!$process->isSuccessful()) {
+				$log->write(sprintf('Could not reset permissions on the unpacked files: %s', $process->getErrorOutput()));
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	public static function get_mode_map() {
