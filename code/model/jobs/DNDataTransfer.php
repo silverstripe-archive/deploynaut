@@ -117,7 +117,7 @@ class DNDataTransfer extends DataObject {
 	}
 
 	/**
-	 * Queue a tramsfer job
+	 * Queue a transfer job
 	 */
 	public function start() {
 		$env = $this->Environment();
@@ -162,7 +162,7 @@ class DNDataTransfer extends DataObject {
 		$this->ResqueToken = $token;
 		$this->write();
 
-		$message = 'job queued as ' . $token;
+		$message = sprintf('Data transfer queued as job %s', $token);
 		$log->write($message);
 	}
 	

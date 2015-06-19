@@ -33,69 +33,67 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	 * Deploy the given build to the given environment.
 	 */
 	public function deploy(DNEnvironment $environment, $sha, DeploynautLogFile $log, DNProject $project, $leaveMaintenancePage = false) {
+		$name = $environment->getFullName();
 		$repository = $project->LocalCVSPath;
-		$projectName = $project->Name;
-		$environmentName = $environment->Name;
-		$env = $project->getProcessEnv();
+
 		$args = array(
 			'branch' => $sha,
 			'repository' => $repository,
 		);
 
-
-		$project = DNProject::get()->filter('Name', $projectName)->first();
-
 		$this->extend('deployStart', $environment, $sha, $log, $project);
 
-		$log->write('Deploying "'.$sha.'" to "'.$projectName.':'.$environmentName.'"');
+		$log->write(sprintf('Deploying "%s" to "%s"', $sha, $name));
 
 		$this->enableMaintenance($environment, $log, $project);
 
-		// Use a package generator if specified, otherwise run a direct deploy (which is the default behaviour
+		// Use a package generator if specified, otherwise run a direct deploy, which is the default behaviour
 		// if build_filename isn't specified
 		if($this->packageGenerator) {
-			$args['build_filename'] =
-				$this->packageGenerator->getPackageFilename($project->Name, $sha, $repository, $log);
-			if(!$args['build_filename']) throw new \LogicException("Couldn't generate package");
+			$args['build_filename'] = $this->packageGenerator->getPackageFilename($project->Name, $sha, $repository, $log);
+			if(empty($args['build_filename'])) {
+				throw new RuntimeException('Failed to generate package.');
+			}
 		}
 
-		$command = $this->getCommand('deploy', 'web', $projectName.':'.$environmentName, $args, $env, $log);
-		$command->run(function ($type, $buffer) use($log) {
+		$command = $this->getCommand('deploy', 'web', $environment, $args, $log);
+		$command->run(function($type, $buffer) use($log) {
 			$log->write($buffer);
 		});
 
 		// Deployment cleanup. We assume it is always safe to run this at the end, regardless of the outcome.
 		$self = $this;
-		$cleanupFn = function() use ($self, $projectName, $environmentName, $args, $env, $log) {
-			$command = $self->getCommand('deploy:cleanup', 'web', $projectName.':'.$environmentName, $args, $env, $log);
-			$command->run(function ($type, $buffer) use($log) {
+		$cleanupFn = function() use($self, $environment, $args, $log) {
+			$command = $self->getCommand('deploy:cleanup', 'web', $environment, $args, $log);
+			$command->run(function($type, $buffer) use($log) {
 				$log->write($buffer);
 			});
-			if(!$command->isSuccessful()) {
 
+			if(!$command->isSuccessful()) {
 				// Notify ops via email, if possible.
 				$to = Config::inst()->get('DNRoot', 'alerts_to');
-				if (!$to) {
+				if(!$to) {
 					$log->write('Warning: cleanup has failed, but fine to continue. Needs manual cleanup sometime.');
 					return;
 				} else {
 					$log->write('Warning: cleanup has failed, but fine to continue. Alert email sent.');
 				}
 
-				$subject = "[Deploynaut] Cleanup failure on $projectName:$environmentName";
+				$subject = sprintf('[Deploynaut] Cleanup failure on %s', $name);
 				$email = new Email(null, $to, $subject);
 				$email->setTemplate('CapistranoDeploymentBackend_cleanup');
 
 				// Grab the last 3k characters, starting on a linebreak.
 				$breakpoint = strrpos($log->content(), "\n", -3000);
-				if ($breakpoint===false) {
+				if($breakpoint === false) {
 					$content = $log->content();
 				} else {
 					$content = "[... log has been trimmed ...]\n" . substr($log->content(), $breakpoint+1);
 				}
+
 				$email->populateTemplate(array(
-					'ProjectName' => $projectName,
-					'EnvironmentName' => $environmentName,
+					'ProjectName' => $project->Name,
+					'EnvironmentName' => $environment->Name,
 					'Log' => $content
 				));
 
@@ -120,7 +118,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 
 		$cleanupFn();
 
-		$log->write('Deploy done "'.$sha.'" to "'.$projectName.':'.$environmentName.'"');
+		$log->write(sprintf('Deploy of "%s" to "%s" finished', $sha, $name));
 
 		$this->extend('deployEnd', $environment, $sha, $log, $project);
 	}
@@ -129,41 +127,38 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	 * Enable a maintenance page for the given environment using the maintenance:enable Capistrano task.
 	 */
 	public function enableMaintenance(DNEnvironment $environment, DeploynautLogFile $log, DNProject $project) {
-		// Perform the enabling
-		$env = $project->getProcessEnv();
-		$command = $this->getCommand('maintenance:enable', 'web', $project->Name.':'.$environment->Name, null, $env, $log);
-		$command->run(function ($type, $buffer) use($log) {
+		$name = $environment->getFullName();
+		$command = $this->getCommand('maintenance:enable', 'web', $environment, null, $log);
+		$command->run(function($type, $buffer) use($log) {
 			$log->write($buffer);
 		});
 		if(!$command->isSuccessful()) {
 			throw new RuntimeException($command->getErrorOutput());
 		}
-		$log->write("Maintenance page enabled on \"{$project->Name}:{$environment->Name}\"");
+		$log->write(sprintf('Maintenance page enabled on "%s"', $name));
 	}
 
 	/**
 	 * Disable the maintenance page for the given environment using the maintenance:disable Capistrano task.
 	 */
 	public function disableMaintenance(DNEnvironment $environment, DeploynautLogFile $log, DNProject $project) {
-		// Perform the disabling
-		$env = $project->getProcessEnv();
-		$command = $this->getCommand('maintenance:disable', 'web', $project->Name.':'.$environment->Name, null, $env, $log);
-		$command->run(function ($type, $buffer) use($log) {
+		$name = $environment->getFullName();
+		$command = $this->getCommand('maintenance:disable', 'web', $environment, null, $log);
+		$command->run(function($type, $buffer) use($log) {
 			$log->write($buffer);
 		});
 		if(!$command->isSuccessful()) {
 			throw new RuntimeException($command->getErrorOutput());
 		}
-		$log->write("Maintenance page disabled on \"{$project->Name}:{$environment->Name}\"");
+		$log->write(sprintf('Maintenance page disabled on "%s"', $name));
 	}
 
 	/**
 	 * Check the status using the deploy:check capistrano method
 	 */
 	public function ping(DNEnvironment $environment, DeploynautLogFile $log, DNProject $project) {
-		$env = $project->getProcessEnv();
-		$command = $this->getCommand('deploy:check', 'web', $project->Name.':'.$environment->Name, null, $env, $log);
-		$command->run(function ($type, $buffer) use($log) {
+		$command = $this->getCommand('deploy:check', 'web', $environment, null, $log);
+		$command->run(function($type, $buffer) use($log) {
 			$log->write($buffer);
 			echo $buffer;
 		});
@@ -197,22 +192,24 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	/**
 	 * @param string $action Capistrano action to be executed
 	 * @param string $roles Defining a server role is required to target only the required servers.
-	 * @param string $environment Capistrano identifier for the environment (see capistrano-multiconfig)
+	 * @param DNEnvironment $environment
 	 * @param array $args Additional arguments for process
-	 * @param string $env Additional environment variables
 	 * @param DeploynautLogFile $log
 	 * @return \Symfony\Component\Process\Process
 	 */
-	public function getCommand($action, $roles, $environment, $args = null, $env = null, DeploynautLogFile $log) {
+	public function getCommand($action, $roles, DNEnvironment $environment, $args = null, DeploynautLogFile $log) {
+		$name = $environment->getFullName();
+		$env = $environment->Project()->getProcessEnv();
+
 		if(!$args) $args = array();
 		$args['history_path'] = realpath(DEPLOYNAUT_LOG_PATH.'/');
 
 		// Inject env string directly into the command.
 		// Capistrano doesn't like the $process->setEnv($env) we'd normally do below.
 		$envString = '';
-		if (!empty($env)) {
+		if(!empty($env)) {
 			$envString .= 'env ';
-			foreach ($env as $key => $value) {
+			foreach($env as $key => $value) {
 				$envString .= "$key=\"$value\" ";
 			}
 		}
@@ -233,12 +230,12 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		}
 		file_put_contents($capFile, $cap);
 
-		$command = "{$envString}cap -f " . escapeshellarg($capFile) . " -vv $environment $action ROLES=$roles";
+		$command = "{$envString}cap -f " . escapeshellarg($capFile) . " -vv $name $action ROLES=$roles";
 		foreach($args as $argName => $argVal) {
 			$command .= ' -s ' . escapeshellarg($argName) . '=' . escapeshellarg($argVal);
 		}
 
-		$log->write("Running command: $command");
+		$log->write(sprintf('Running command: %s', $command));
 
 		$process = new Process($command);
 		// Capistrano doesn't like it - see comment above.
@@ -255,21 +252,16 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	 * @param  DeploynautLogFile $log
 	 */
 	protected function dataTransferBackup(DNDataTransfer $dataTransfer, DeploynautLogFile $log) {
-		$environmentObj = $dataTransfer->Environment();
-		$project = $environmentObj->Project();
-		$projectName = $project->Name;
-		$environmentName = $environmentObj->Name;
-		$env = $project->getProcessEnv();
-		$project = DNProject::get()->filter('Name', $projectName)->first();
-		$name = $projectName . ':' . $environmentName;
+		$environment = $dataTransfer->Environment();
+		$name = $environment->getFullName();
 
 		// Associate a new archive with the transfer.
 		// Doesn't retrieve a filepath just yet, need to generate the files first.
 		$dataArchive = DNDataArchive::create();
 		$dataArchive->Mode = $dataTransfer->Mode;
 		$dataArchive->AuthorID = $dataTransfer->AuthorID;
-		$dataArchive->OriginalEnvironmentID = $dataTransfer->Environment()->ID;
-		$dataArchive->EnvironmentID = $dataTransfer->Environment()->ID;
+		$dataArchive->OriginalEnvironmentID = $environment->ID;
+		$dataArchive->EnvironmentID = $environment->ID;
 		$dataArchive->IsBackup = $dataTransfer->IsBackupDataTransfer();
 
 		// Generate directory structure with strict permissions (contains very sensitive data)
@@ -280,34 +272,28 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 
 		// Backup database
 		if(in_array($dataTransfer->Mode, array('all', 'db'))) {
-			$log->write('Backup of database from "' . $name . '" started');
-			$args = array(
-				'data_path' => $databasePath
-			);
-			$command = $this->getCommand("data:getdb", 'db', $name, $args, $env, $log);
-			$command->run(function ($type, $buffer) use($log) {
+			$log->write(sprintf('Backup of database from "%s" started', $name));
+			$command = $this->getCommand('data:getdb', 'db', $environment, array('data_path' => $databasePath), $log);
+			$command->run(function($type, $buffer) use($log) {
 				$log->write($buffer);
 			});
 			if(!$command->isSuccessful()) {
 				throw new RuntimeException($command->getErrorOutput());
 			}
-			$log->write('Backup of database from "' . $name . '" done');
+			$log->write(sprintf('Backup of database from "%s" done', $name));
 		}
 
 		// Backup assets
 		if(in_array($dataTransfer->Mode, array('all', 'assets'))) {
-			$log->write('Backup of assets from "' . $name . '" started');
-			$args = array(
-				'data_path' => $filepathBase
-			);
-			$command = $this->getCommand("data:getassets", 'web', $name, $args, $env, $log);
-			$command->run(function ($type, $buffer) use($log) {
+			$log->write(sprintf('Backup of assets from "%s" started', $name));
+			$command = $this->getCommand('data:getassets', 'web', $environment, array('data_path' => $filepathBase), $log);
+			$command->run(function($type, $buffer) use($log) {
 				$log->write($buffer);
 			});
 			if(!$command->isSuccessful()) {
 				throw new RuntimeException($command->getErrorOutput());
 			}
-			$log->write('Backup of assets from "' . $name . '" done');
+			$log->write(sprintf('Backup of assets from "%s" done', $name));
 		}
 
 		$log->write('Creating *.sspak file');
@@ -356,8 +342,8 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			$dataArchive->ArchiveFileID = $file->ID;
 			$dataArchive->DataTransfers()->add($dataTransfer);
 			$dataArchive->write();
-		} catch (Exception $e) {
-			$log->write('Failed to add sspak file: ' . $e->getMessage());
+		} catch(Exception $e) {
+			$log->write(sprintf('Failed to add sspak file: %s', $e->getMessage()));
 			throw new RuntimeException($e->getMessage());
 		}
 
@@ -371,27 +357,24 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			throw new RuntimeException($process->getErrorOutput());
 		}
 
-		$log->write(sprintf(
-			'Creating *.sspak file done: %s',
-			$file->getAbsoluteURL()
-		));
+		$log->write(sprintf('Creating *.sspak file done: %s', $file->getAbsoluteURL()));
 	}
 
 	/**
 	 * Utility function for triggering the db rebuild and flush.
 	 * Also cleans up and generates new error pages.
 	 */
-	public function rebuild($name, $env, $log) {
-		// Rebuild db and flush.
-		$command = $this->getCommand('deploy:migrate', 'web', $name, null, $env, $log);
-		$command->run(function ($type, $buffer) use($log) {
+	public function rebuild(DNEnvironment $environment, $log) {
+		$name = $environment->getFullName();
+		$command = $this->getCommand('deploy:migrate', 'web', $environment, null, $log);
+		$command->run(function($type, $buffer) use($log) {
 			$log->write($buffer);
 		});
 		if(!$command->isSuccessful()) {
-			$log->write('Rebuild of "' . $name . '" failed: ' . $command->getErrorOutput());
+			$log->write(sprintf('Rebuild of "%s" failed: %s', $name, $command->getErrorOutput()));
 			throw new RuntimeException($command->getErrorOutput());
 		}
-		$log->write('Rebuild of "' . $name . '" done');
+		$log->write(sprintf('Rebuild of "%s" done', $name));
 	}
 
 	/**
@@ -403,61 +386,48 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	 * @param  DeploynautLogFile $log
 	 */
 	protected function dataTransferRestore($workingDir, DNDataTransfer $dataTransfer, DeploynautLogFile $log) {
-		$environmentObj = $dataTransfer->Environment();
-		$project = $environmentObj->Project();
-		$projectName = $project->Name;
-		$environmentName = $environmentObj->Name;
-		$env = $project->getProcessEnv();
-		$project = DNProject::get()->filter('Name', $projectName)->first();
-		$name = $projectName . ':' . $environmentName;
+		$environment = $dataTransfer->Environment();
+		$name = $environment->getFullName();
 
 		// Rollback cleanup.
 		$self = $this;
-		$cleanupFn = function() use ($self, $workingDir, $name, $env, $log) {
+		$cleanupFn = function() use($self, $workingDir, $environment, $log) {
 			// Rebuild makes sense even if failed - maybe we can at least partly recover.
-			$self->rebuild($name, $env, $log);
-
+			$self->rebuild($environment, $log);
 			$process = new Process('rm -rf ' . escapeshellarg($workingDir));
 			$process->run();
 		};
 
-		// Restore database
+		// Restore database into target environment
 		if(in_array($dataTransfer->Mode, array('all', 'db'))) {
-			// Upload into target environment
-			$log->write('Restore of database to "' . $name . '" started');
-			$args = array(
-				'data_path' => $workingDir . DIRECTORY_SEPARATOR . 'database.sql.gz'
-			);
-			$command = $this->getCommand('data:pushdb', 'db', $name, $args, $env, $log);
-			$command->run(function ($type, $buffer) use($log) {
+			$log->write(sprintf('Restore of database to "%s" started', $name));
+			$args = array('data_path' => $workingDir . DIRECTORY_SEPARATOR . 'database.sql.gz');
+			$command = $this->getCommand('data:pushdb', 'db', $environment, $args, $log);
+			$command->run(function($type, $buffer) use($log) {
 				$log->write($buffer);
 			});
 			if(!$command->isSuccessful()) {
 				$cleanupFn();
-				$log->write('Restore of database to "' . $name . '" failed: ' . $command->getErrorOutput());
+				$log->write(sprintf('Restore of database to "%s" failed: %s', $name, $command->getErrorOutput()));
 				throw new RuntimeException($command->getErrorOutput());
 			}
-			$log->write('Restore of database to "' . $name . '" done');
+			$log->write(sprintf('Restore of database to "%s" done', $name));
 		}
 
-		// Restore assets
+		// Restore assets into target environment
 		if(in_array($dataTransfer->Mode, array('all', 'assets'))) {
-			// Upload into target environment
-			$log->write('Restore of assets to "' . $name . '" started');
-
-			$args = array(
-				'data_path' => $workingDir . DIRECTORY_SEPARATOR . 'assets'
-			);
-			$command = $this->getCommand('data:pushassets', 'web', $name, $args, $env, $log);
-			$command->run(function ($type, $buffer) use($log) {
+			$log->write(sprintf('Restore of assets to "%s" started', $name));
+			$args = array('data_path' => $workingDir . DIRECTORY_SEPARATOR . 'assets');
+			$command = $this->getCommand('data:pushassets', 'web', $environment, $args, $log);
+			$command->run(function($type, $buffer) use($log) {
 				$log->write($buffer);
 			});
 			if(!$command->isSuccessful()) {
 				$cleanupFn();
-				$log->write('Restore of assets to "' . $name . '" failed: ' . $command->getErrorOutput());
+				$log->write(sprintf('Restore of assets to "%s" failed: %s', $name, $command->getErrorOutput()));
 				throw new RuntimeException($command->getErrorOutput());
 			}
-			$log->write('Restore of assets to "' . $name . '" done');
+			$log->write(sprintf('Restore of assets to "%s" done', $name));
 		}
 
 		$log->write('Rebuilding and cleaning up');
