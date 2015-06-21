@@ -66,12 +66,15 @@ class DNGitFetch extends DataObject {
 	}
 
 	/**
-	 * 
+	 * Return a path to the log file.
 	 * @return string
 	 */
 	protected function logfile() {
-		$project = $this->Project();
-		return $project->Name.'.fetch.'.$this->ID.'.log';
+		return sprintf(
+			'%s.fetch.%s.log',
+			$this->Project()->Name,
+			$this->ID
+		);
 	}
 
 	/**

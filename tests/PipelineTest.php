@@ -163,9 +163,12 @@ class PipelineTest_DNDeployment extends DNDeployment implements TestOnly {
 		$project = $environment->Project();
 
 		$log = $this->log();
-		$log->write('Deploying "'.$this->SHA.'" to "'.$project->Name.':'.$environment->Name.'"');
+		$log->write(sprintf('Deploying "%s" to "%s"', $this->SHA, $environment->getFullName()));
 
-		if(!$this->DeployerID) $this->DeployerID = Member::currentUserID();
+		if(!$this->DeployerID) {
+			$this->DeployerID = Member::currentUserID();
+		}
+
 		if($this->DeployerID) {
 			$deployer = $this->Deployer();
 			$message = sprintf(

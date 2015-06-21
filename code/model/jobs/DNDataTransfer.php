@@ -176,13 +176,15 @@ class DNDataTransfer extends DataObject {
 	}
 
 	/**
-	 * 
+	 * Return a path to the log file.
 	 * @return string
 	 */
 	protected function logfile() {
-		$environment = $this->Environment();
-		$project = $this->Environment()->Project();
-		return $project->Name.'.'.$environment->Name.'.datatransfer.'.$this->ID.'.log';
+		return sprintf(
+			'%s.datatransfer.%s.log',
+			$this->Environment()->getFullName('.'),
+			$this->ID
+		);
 	}
 
 	/**

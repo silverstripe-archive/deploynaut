@@ -195,10 +195,13 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
+	 * Return a name for this environment.
+	 *
+	 * @param string $separator The string used when concatenating project with env name
 	 * @return string
 	 */
-	public function getFullName() {
-		return $this->Project()->Name . ':' . $this->Name;
+	public function getFullName($separator = ':') {
+		return sprintf('%s%s%s', $this->Project()->Name, $separator, $this->Name);
 	}
 
 	/**
