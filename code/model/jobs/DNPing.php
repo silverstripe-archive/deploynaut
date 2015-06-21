@@ -106,7 +106,7 @@ class DNPing extends DataObject {
 		);
 
 		$log = $this->log();
-		$log->write('Pinging  "'.$args['projectName'].':'.$args['environmentName'].'"');
+		$log->write(sprintf('Pinging "%s"', $environment->getFullName()));
 
 		if(!$this->DeployerID) {
 			$this->DeployerID = Member::currentUserID();
@@ -128,7 +128,7 @@ class DNPing extends DataObject {
 		$this->ResqueToken = $token;
 		$this->write();
 
-		$message = 'Ping queued as job ' . $token;
+		$message = sprintf('Ping queued as job %s', $token);
 		$log->write($message);
 	}
 }

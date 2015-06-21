@@ -21,7 +21,6 @@ class DNGitFetch extends DataObject {
 	
 	/**
 	 * Queue a fetch job
-	 * 
 	 */
 	public function start() {
 		$project = $this->Project();
@@ -33,7 +32,7 @@ class DNGitFetch extends DataObject {
 		);
 
 		$log = $this->log();
-		$log->write('Creating a job to update the git repository for project "'.$args['projectName'].'"');
+		$log->write(sprintf('Creating a job to update the git repository for project %s', $args['projectName']));
 
 		if(!$this->DeployerID) {
 			$this->DeployerID = Member::currentUserID();
@@ -53,7 +52,7 @@ class DNGitFetch extends DataObject {
 		$this->ResqueToken = $token;
 		$this->write();
 
-		$message = 'job queued as ' . $token;
+		$message = sprintf('Fetch queued as job %s', $token);
 		$log->write($message);
 	}
 	

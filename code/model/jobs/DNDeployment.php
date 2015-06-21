@@ -116,9 +116,12 @@ class DNDeployment extends DataObject {
 		);
 
 		$log = $this->log();
-		$log->write('Deploying "'.$args['sha'].'" to "'.$args['projectName'].':'.$args['environmentName'].'"');
+		$log->write(sprintf('Deploying %s to "%s"', $args['sha'], $environment->getFullName()));
 
-		if(!$this->DeployerID) $this->DeployerID = Member::currentUserID();
+		if(!$this->DeployerID) {
+			$this->DeployerID = Member::currentUserID();
+		}
+
 		if($this->DeployerID) {
 			$deployer = $this->Deployer();
 			$message = sprintf(
@@ -141,7 +144,7 @@ class DNDeployment extends DataObject {
 		$this->Status = 'Queued';
 		$this->write();
 
-		$message = 'Deploy queued as job ' . $token;
+		$message = sprintf('Deploy queued as job %s', $token);
 		$log->write($message);
 	}
 }
