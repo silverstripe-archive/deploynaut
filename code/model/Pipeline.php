@@ -713,8 +713,8 @@ class Pipeline extends DataObject implements PipelineData {
 		$this->Status = 'Aborted';
 		$logMessage = sprintf(
 			"Pipeline processing aborted. %s (%s) aborted the pipeline",
-			Member::CurrentUser()->Name,
-			Member::CurrentUser()->Email
+			Member::currentUser()->Name,
+			Member::currentUser()->Email
 		);
 		$this->log($logMessage);
 		$this->write();
@@ -1003,7 +1003,7 @@ class Pipeline extends DataObject implements PipelineData {
 
 		$environment = $this->Environment();
 		$project = $this->Environment()->Project();
-		$filename = sprintf("%s.%s.%s.%d.log", $project->Name, $environment->Name, 'pipeline', $this->ID);
+		$filename = sprintf('%s.pipeline.%d.log', $environment->getFullName('.'), $this->ID);
 
 		return Injector::inst()->createWithArgs('DeploynautLogFile', array($filename));
 	}

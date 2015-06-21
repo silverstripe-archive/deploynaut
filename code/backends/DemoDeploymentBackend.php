@@ -15,7 +15,7 @@ class DemoDeploymentBackend extends Object implements DeploymentBackend {
 	public function deploy(DNEnvironment $environment, $sha, DeploynautLogFile $log, DNProject $project, $leaveMaintenancePage = false) {
 		$this->extend('deployStart', $environment, $sha, $log, $project);
 
-		$file = DEPLOYNAUT_LOG_PATH . '/' . $project->Name. ':' .$environment->Name . ".deploy-history.txt";
+		$file = sprintf('%s/%s.deploy-history.txt', DEPLOYNAUT_LOG_PATH, $environment->getFullName());
 		$CLI_file = escapeshellarg($file);
 		$CLI_line = escapeshellarg(date('Y-m-d H:i:s') . " => $sha");
 
@@ -47,32 +47,16 @@ class DemoDeploymentBackend extends Object implements DeploymentBackend {
 		die('Not implemented');
 	}
 
-	/**
-	 * Return information about the current build on the given environment.
-	 * Returns a map with keys:
-	 * - 'buildname' - the non-simplified name of the build deployed
-	 * - 'datetime' - the datetime when the deployment occurred, in 'Y-m-d H:i:s' format
-	 */
-	public function currentBuild($environment) {
-		$file = DEPLOYNAUT_LOG_PATH . '/' . $environment . ".deploy-history.txt";
-		if(file_exists($file)) {
-			$CLI_file = escapeshellarg($file);
-			$lastLine = trim(`tail -n 1 $$CLI_file`);
-
-			return $this->convertLine($lastLine);
-		}
+	public function enableMaintenance(DNEnvironment $environment, \DeploynautLogFile $log, DNProject $project) {
+		$log->write(sprintf('Maintenance page enabled on "%s"', $environment->getFullName()));
 	}
 
-	public function disableMaintenance(DNEnvironment $environment, \DeploynautLogFile $log, \DNProject $project) {
-		$log->write("Maintenance page disabled on \"{$project->Name}:{$environment->Name}\"");
+	public function disableMaintenance(DNEnvironment $environment, DeploynautLogFile $log, DNProject $project) {
+		$log->write(sprintf('Maintenance page disabled on "%s"', $environment->getFullName()));
 	}
 
-	public function enableMaintenance(DNEnvironment $environment, \DeploynautLogFile $log, \DNProject $project) {
-		$log->write("Maintenance page enabled on \"{$project->Name}:{$environment->Name}\"");
-	}
-
-	public function ping(\DNEnvironment $environment, \DeploynautLogFile $log, \DNProject $project) {
-		$log->write("Ping \"{$project->Name}:{$environment->Name}\"");
+	public function ping(\DNEnvironment $environment, DeploynautLogFile $log, DNProject $project) {
+		$log->write(sprintf('Ping "%s"', $environment->getFullName()));
 	}
 
 }

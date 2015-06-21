@@ -601,7 +601,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$pipeline->EnvironmentID = $environment->ID;
 		$pipeline->AuthorID = Member::currentUserID();
 		$pipeline->SHA = $sha->FullName();
-		// Record buid at time of execution
+		// Record build at time of execution
 		if($currentBuild = $environment->CurrentBuild()) {
 			$pipeline->PreviousDeploymentID = $currentBuild->ID;
 		}

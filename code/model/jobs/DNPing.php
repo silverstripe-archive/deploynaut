@@ -47,13 +47,15 @@ class DNPing extends DataObject {
 	}
 
 	/**
-	 *
+	 * Return a path to the log file.
 	 * @return string
 	 */
 	protected function logfile() {
-		$environment = $this->Environment();
-		$project = $environment->Project();
-		return $project->Name.'.'.$environment->Name.'.ping.'.$this->ID.'.log';
+		return sprintf(
+			'%s.ping.%s.log',
+			$this->Environment()->getFullName('.'),
+			$this->ID
+		);
 	}
 
 	/**

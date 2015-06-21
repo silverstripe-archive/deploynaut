@@ -56,10 +56,6 @@ class DNDeployment extends DataObject {
 		return $remap[$int];
 	}
 
-	protected $dnData;
-	protected $environment;
-	protected $sha;
-	protected $identifier;
 
 	public function Link() {
 		return Controller::join_links($this->Environment()->Link(), 'deploy', $this->ID);
@@ -73,10 +69,16 @@ class DNDeployment extends DataObject {
 		return $this->Environment()->canView($member);
 	}
 
+	/**
+	 * Return a path to the log file.
+	 * @return string
+	 */
 	protected function logfile() {
-		$environment = $this->Environment();
-		$project = $environment->Project();
-		return $project->Name.'.'.$environment->Name.'.'.$this->ID.'.log';
+		return sprintf(
+			'%s.%s.log',
+			$this->Environment()->getFullName('.'),
+			$this->ID
+		);
 	}
 
 	/**

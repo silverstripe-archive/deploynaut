@@ -14,22 +14,6 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	}
 
 	/**
-	 * Return information about the current build on the given environment.
-	 * Returns a map with keys:
-	 * - 'buildname' - the non-simplified name of the build deployed
-	 * - 'datetime' - the datetime when the deployment occurred, in 'Y-m-d H:i:s' format
-	 */
-	public function currentBuild($environment) {
-		$file = DEPLOYNAUT_LOG_PATH . '/' . $environment . ".deploy-history.txt";
-
-		if(file_exists($file)) {
-			$lines = file($file);
-			$lastLine = array_pop($lines);
-			return $this->convertLine($lastLine);
-		}
-	}
-
-	/**
 	 * Deploy the given build to the given environment.
 	 */
 	public function deploy(DNEnvironment $environment, $sha, DeploynautLogFile $log, DNProject $project, $leaveMaintenancePage = false) {
