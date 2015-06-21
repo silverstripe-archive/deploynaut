@@ -24,19 +24,19 @@ class DataTransferJob {
 		$log = new DeploynautLogFile($this->args['logfile']);
 		$dataTransfer = DNDataTransfer::get()->byID($this->args['dataTransferID']);
 		$environment = $dataTransfer->Environment();
-		$backupJob = null;
+		$backupDataTransfer = null;
 
 		if($dataTransfer->Direction == 'push') {
-			$backupJob = DNDataTransfer::create();
-			$backupJob->EnvironmentID = $environment->ID;
-			$backupJob->Direction = 'get';
-			$backupJob->Mode = $dataTransfer->Mode;
-			$backupJob->DataArchiveID = null;
-			$backupJob->ResqueToken = $dataTransfer->ResqueToken;
-			$backupJob->AuthorID = $dataTransfer->AuthorID;
-			$backupJob->write();
+			$backupDataTransfer = DNDataTransfer::create();
+			$backupDataTransfer->EnvironmentID = $environment->ID;
+			$backupDataTransfer->Direction = 'get';
+			$backupDataTransfer->Mode = $dataTransfer->Mode;
+			$backupDataTransfer->DataArchiveID = null;
+			$backupDataTransfer->ResqueToken = $dataTransfer->ResqueToken;
+			$backupDataTransfer->AuthorID = $dataTransfer->AuthorID;
+			$backupDataTransfer->write();
 
-			$dataTransfer->BackupDataTransferID = $backupJob->ID;
+			$dataTransfer->BackupDataTransferID = $backupDataTransfer->ID;
 			$dataTransfer->write();
 		}
 
@@ -66,11 +66,12 @@ class DataTransferJob {
 				));
 			}
 
+
 			// before we push data to an environment, we'll make a backup first
-			if($backupJob) {
+			if($backupDataTransfer) {
 				$log->write('Backing up existing data');
 				$environment->Backend()->dataTransfer(
-					$backupJob,
+					$backupDataTransfer,
 					$log
 				);
 			}
@@ -82,9 +83,9 @@ class DataTransferJob {
 		} catch(RuntimeException $exc) {
 			$log->write($exc->getMessage());
 
-			if($backupJob) {
-				$backupJob->Status = 'Failed';
-				$backupJob->write();
+			if($backupDataTransfer) {
+				$backupDataTransfer->Status = 'Failed';
+				$backupDataTransfer->write();
 			}
 
 			$this->updateStatus('Failed');
@@ -92,9 +93,9 @@ class DataTransferJob {
 			throw $exc;
 		}
 
-		if($backupJob) {
-			$backupJob->Status = 'Finished';
-			$backupJob->write();
+		if($backupDataTransfer) {
+			$backupDataTransfer->Status = 'Finished';
+			$backupDataTransfer->write();
 		}
 
 		echo "[-] DataTransferJob finished" . PHP_EOL;
