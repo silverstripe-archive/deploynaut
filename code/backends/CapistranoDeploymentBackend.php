@@ -299,36 +299,10 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			throw new RuntimeException($process->getErrorOutput());
 		}
 
-		// HACK: find_or_make() expects path relative to assets/
-		$sspakFilepath = ltrim(
-			str_replace(
-				array(ASSETS_PATH, realpath(ASSETS_PATH)),
-				'',
-				$filepathBase . DIRECTORY_SEPARATOR . $sspakFilename
-			),
-			DIRECTORY_SEPARATOR
-		);
-
-		try {
-			$folder = Folder::find_or_make(dirname($sspakFilepath));
-			$file = new File();
-			$file->Name = $sspakFilename;
-			$file->Filename = $sspakFilepath;
-			$file->ParentID = $folder->ID;
-			$file->write();
-
-			// "Status" will be updated by the job execution
-			$dataTransfer->write();
-
-			// Get file hash to ensure consistency.
-			// Only do this when first associating the file since hashing large files is expensive.
-			$dataArchive->ArchiveFileHash = md5_file($file->FullPath);
-			$dataArchive->ArchiveFileID = $file->ID;
-			$dataArchive->DataTransfers()->add($dataTransfer);
-			$dataArchive->write();
-		} catch(Exception $e) {
-			$log->write(sprintf('Failed to add sspak file: %s', $e->getMessage()));
-			throw new RuntimeException($e->getMessage());
+		$sspakFilepath = $filepathBase . DIRECTORY_SEPARATOR . $sspakFilename;
+		$result = $dataArchive->attachFile($sspakFilepath, $dataTransfer, $log);
+		if(!$result) {
+			throw new RuntimeException(sprintf('Failed to add sspak file: %s', $sspakFilepath));
 		}
 
 		// Remove any assets and db files lying around, they're not longer needed as they're now part
@@ -341,7 +315,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			throw new RuntimeException($process->getErrorOutput());
 		}
 
-		$log->write(sprintf('Creating *.sspak file done: %s', $file->getAbsoluteURL()));
+		$log->write(sprintf('Creating *.sspak file done: %s', $dataArchive->ArchiveFile()->getAbsoluteURL()));
 	}
 
 	/**
