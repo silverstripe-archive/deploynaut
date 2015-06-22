@@ -85,6 +85,25 @@ class DNDataArchive extends DataObject {
 
 	private static $_cache_can_download = array();
 
+	public static function get_mode_map() {
+		return array(
+			'all' => 'Database and Assets',
+			'db' => 'Database only',
+			'assets' => 'Assets only',
+		);
+	}
+
+	/**
+	 * Returns a unique token to correlate an offline item (posted DVD)
+	 * with a specific archive placeholder.
+	 *
+	 * @return String
+	 */
+	public static function generate_upload_token($chars = 8) {
+		$generator = new RandomGenerator();
+		return strtoupper(substr($generator->randomToken(), 0, $chars));
+	}
+
 	public function onBeforeWrite() {
 		if(!$this->AuthorID) {
 			$this->AuthorID = Member::currentUserID();
@@ -350,95 +369,57 @@ class DNDataArchive extends DataObject {
 	}
 
 	/**
-	 * Inspect the archive and ensure permissions of contained files are correct.
+	 * Extract the current sspak contents into the given working directory.
+	 * This also extracts the assets and database and puts them into
+	 * <workingdir>/database.sql and <workingdir>/assets, respectively.
 	 *
-	 * @param DeploynautLogFile $log
-	 * @param string $workingDir Optional: The working directory of where the archive will be
-	 *					extracted. Defaults to temp/deploynaut-archive-{ID}
-	 * @param string $mode Optional: Defaults to this archive's declared "Mode" field, but useful
-	 *					to specify if you want to validate the archive for another mode, such as
-	 *					the one from a DNDataTransfer.
-	 * @param bool
+	 * @param string|null $workingDir The path to extract to
+	 * @throws RuntimeException
+	 * @return bool
 	 */
-	public function validateAndFixArchiveFile(DeploynautLogFile $log, $workingDir = null, $mode = null) {
-		$mode = $mode ?: $this->Mode;
-
-		if(!$workingDir) {
-			$workingDir = TEMP_FOLDER . DIRECTORY_SEPARATOR . 'deploynaut-archive-' . $this->ID;
+	public function extractArchive($workingDir = null) {
+		if(!is_dir($workingDir)) {
+			mkdir($workingDir, 0700, true);
 		}
 
-		// Rollback cleanup.
-		$self = $this;
-		$cleanupFn = function() use ($self, $workingDir) {
-			$process = new Process('rm -rf ' . escapeshellarg($workingDir));
+		$cleanupFn = function() use($workingDir) {
+			$process = new Process(sprintf('rm -rf %s', escapeshellarg($workingDir)));
 			$process->run();
 		};
 
-		// Create target temp dir.
-		mkdir($workingDir, 0700, true);
-
 		// Extract *.sspak to a temporary location
-		$log->write('Extracting *.sspak file');
 		$sspakFilename = $this->ArchiveFile()->FullPath;
-		$sspakCmd = sprintf('sspak extract %s %s', escapeshellarg($sspakFilename), escapeshellarg($workingDir));
-		$log->write($sspakCmd);
-		$process = new Process($sspakCmd);
+		$process = new Process(sprintf(
+			'sspak extract %s %s',
+			escapeshellarg($sspakFilename),
+			escapeshellarg($workingDir)
+		));
 		$process->setTimeout(3600);
 		$process->run();
 		if(!$process->isSuccessful()) {
 			$cleanupFn();
-			$log->write(sprintf('Could not extract the sspak file: %s', $process->getErrorOutput()));
-			return false;
+			throw new RuntimeException(sprintf('Could not extract the sspak file: %s', $process->getErrorOutput()));
 		}
 
-		$this->fixArchivePermissions($workingDir, $log);
-
-		// Make sure the sspak archive contains legitimate data: check for db...
-		if(
-			in_array($mode, array('all', 'db'))
-			&& !is_file($workingDir . DIRECTORY_SEPARATOR . 'database.sql.gz')
-		) {
-			$cleanupFn();
-			$log->write(sprintf('Cannot restore in \'%s\' mode: database dump not found in this sspak.', $mode));
-			return false;
-		}
-
-		// Database is stored as database.sql.gz. We don't care about the permissions of the database.sql, because
-		// it's never unpacked as a file - it's piped directly into mysql in data.rb.
-
-		// ... check for assets.
-		if(in_array($mode, array('all', 'assets'))) {
-			if(!is_file($workingDir . DIRECTORY_SEPARATOR . 'assets.tar.gz')) {
-				$cleanupFn();
-				$log->write(sprintf('Cannot restore in \'%s\' mode: asset dump not found in this sspak.', $mode));
-				return false;
-			}
-
-			// Extract assets.tar.gz into assets/
-			$extractCmd = sprintf(
-				'cd %s && tar xzf %s',
-				escapeshellarg($workingDir),
-				escapeshellarg($workingDir . DIRECTORY_SEPARATOR . 'assets.tar.gz')
-			);
-
-			$log->write($extractCmd);
-			$process = new Process($extractCmd);
+		// Extract database.sql.gz to <workingdir>/database.sql
+		if(file_exists($workingDir . DIRECTORY_SEPARATOR . 'database.sql.gz')) {
+			$process = new Process('gunzip database.sql.gz', $workingDir);
 			$process->setTimeout(3600);
 			$process->run();
 			if(!$process->isSuccessful()) {
 				$cleanupFn();
-				$log->write(sprintf('Could not extract the assets archive: %s', $process->getErrorOutput()));
-				return false;
+				throw new RuntimeException(sprintf('Could not extract the db archive: %s', $process->getErrorOutput()));
 			}
+		}
 
-			// Fix permissions again - we have just extracted the assets.tar.gz. This will help with cleanup.
-			$this->fixArchivePermissions($workingDir, $log);
-
-			// Check inside the assets.
-			if(!is_dir($workingDir . DIRECTORY_SEPARATOR . 'assets')) {
+		// Extract assets.tar.gz to <workingdir>/assets/
+		if(file_exists($workingDir . DIRECTORY_SEPARATOR . 'assets.tar.gz')) {
+			$process = new Process('tar xzf assets.tar.gz', $workingDir);
+			$process->setTimeout(3600);
+			$process->run();
+			if(!$process->isSuccessful()) {
 				$cleanupFn();
-				$log->write(sprintf('Cannot restore in \'%s\' mode: asset directory not found in asset dump.', $mode));
-				return false;
+				throw new RuntimeException(sprintf('Could not extract the assets archive: %s', $process->getErrorOutput()));
 			}
 		}
 
@@ -446,53 +427,91 @@ class DNDataArchive extends DataObject {
 	}
 
 	/**
-	 * Utility function to recursively fix the permissions to readable-writable for untarred files.
-	 * Normally, command line tar will use permissions found in the archive, but will substract the user's umask from
-	 * them. This has a potential to create unreadable files e.g. cygwin on Windows will pack files with mode 000.
+	 * Validate that an sspak contains the correct content.
 	 *
-	 * @param string $path Root path to fix. Can be a dir or a file.
-	 * @param DeploynautLogFile $log Log file to write to.
-	 * @return boolean
+	 * For example, if the user uploaded an sspak containing just the db, but declared in the form
+	 * that it contained db+assets, then the archive is not valid.
+	 *
+	 * @param string $workingDir The path the contents will be extracted to during validation
+	 * @param string $mode "db", "assets", or "all". This is the content we're checking for. Default to the archive setting
+	 * @return ValidationResult
 	 */
-	protected function fixArchivePermissions($path, DeploynautLogFile $log) {
+	public function validateArchiveContents($workingDir, $mode = null) {
+		$mode = $mode ?: $this->Mode;
+		$result = new ValidationResult();
+
+		if(in_array($mode, array('all', 'db')) && !is_file($workingDir . DIRECTORY_SEPARATOR . 'database.sql')) {
+			$result->error('The snapshot is missing the database.');
+			return $result;
+		}
+
+		if(in_array($mode, array('all', 'assets')) && !is_dir($workingDir . DIRECTORY_SEPARATOR . 'assets')) {
+			$result->error('The snapshot is missing assets.');
+			return $result;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Given a path that already exists and contains an extracted sspak, including
+	 * the assets, fix all of the file permissions so they're in a state ready to
+	 * be pushed to remote servers.
+	 *
+	 * Normally, command line tar will use permissions found in the archive, but will
+	 * substract the user's umask from them. This has a potential to create unreadable
+	 * files, e.g. cygwin on Windows will pack files with mode 000, hence why this fix
+	 * is necessary.
+	 *
+	 * @param string|null $workingDir The path of where the sspak has been extracted to
+	 * @throws RuntimeException
+	 * @return bool
+	 */
+	public function fixArchivePermissions($workingDir) {
 		$fixCmds = array(
 			// The directories need to have permissions changed one by one (hence the ; instead of +),
 			// otherwise we might end up having no +x access to a directory deeper down.
-			sprintf('find %s -type d -exec chmod 755 {} \;', escapeshellarg($path)),
-			sprintf('find %s -type f -exec chmod 644 {} +', escapeshellarg($path))
+			sprintf('find %s -type d -exec chmod 755 {} \;', escapeshellarg($workingDir)),
+			sprintf('find %s -type f -exec chmod 644 {} +', escapeshellarg($workingDir))
 		);
 
 		foreach($fixCmds as $cmd) {
-			$log->write($cmd);
 			$process = new Process($cmd);
 			$process->setTimeout(3600);
 			$process->run();
 			if(!$process->isSuccessful()) {
-				$log->write(sprintf('Could not reset permissions on the unpacked files: %s', $process->getErrorOutput()));
-				return false;
+				throw new RuntimeException($process->getErrorOutput());
 			}
 		}
 
 		return true;
 	}
 
-	public static function get_mode_map() {
-		return array(
-			'all' => 'Database and Assets',
-			'db' => 'Database only',
-			'assets' => 'Assets only',
-		);
-	}
-
 	/**
-	 * Returns a unique token to correlate an offline item (posted DVD)
-	 * with a specific archive placeholder.
-	 * 
-	 * @return String
+	 * Given extracted sspak contents, create an sspak from it
+	 * and overwrite the current ArchiveFile with it's contents.
+	 *
+	 * @param string|null $workingDir The path of where the sspak has been extracted to
+	 * @return bool
 	 */
-	public static function generate_upload_token($chars = 8) {
-		$generator = new RandomGenerator();
-		return strtoupper(substr($generator->randomToken(), 0, $chars));
+	public function setArchiveFromFiles($workingDir) {
+		$command = sprintf('sspak saveexisting %s 2>&1', $this->ArchiveFile()->FullPath);
+		if($this->Mode == 'db') {
+			$command .= sprintf(' --db=%s/database.sql', $workingDir);
+		} elseif($this->Mode == 'assets') {
+			$command .= sprintf(' --assets=%s/assets', $workingDir);
+		} else {
+			$command .= sprintf(' --db=%s/database.sql --assets=%s/assets', $workingDir, $workingDir);
+		}
+
+		$process = new Process($command, $workingDir);
+		$process->setTimeout(3600);
+		$process->run();
+		if(!$process->isSuccessful()) {
+			throw new RuntimeException($process->getErrorOutput());
+		}
+
+		return true;
 	}
 
 }

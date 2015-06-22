@@ -157,13 +157,27 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		} else {
 			$environment = $dataTransfer->Environment();
 			$project = $environment->Project();
-
 			$workingDir = TEMP_FOLDER . DIRECTORY_SEPARATOR . 'deploynaut-transfer-' . $dataTransfer->ID;
+			$archive = $dataTransfer->DataArchive();
 
-			// Validate and fix any problems with the archive before performing the transfer
-			$valid = $dataTransfer->DataArchive()->validateAndFixArchiveFile($log, $workingDir, $dataTransfer->Mode);
-			if(!$valid) {
-				throw new RuntimeException('Invalid archive, transfer aborted.');
+			// extract the sspak contents, we'll need these so capistrano can restore that content
+			try {
+				$archive->extractArchive($workingDir);
+			} catch(Exception $e) {
+				$log->write($e->getMessage());
+				throw new RuntimeException($e->getMessage());
+			}
+
+			// validate the contents match the requested transfer mode
+			$result = $archive->validateArchiveContents($workingDir, $dataTransfer->Mode);
+			if(!$result->valid()) {
+				// do some cleaning, get rid of the extracted archive lying around
+				$process = new Process(sprintf('rm -rf %s', escapeshellarg($workingDir)));
+				$process->run();
+
+				// log the reason why we can't restore the snapshot and halt the process
+				$log->write($result->message());
+				throw new RuntimeException($result->message());
 			}
 
 			// Put up a maintenance page during a restore of db or assets.
@@ -280,29 +294,12 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			$log->write(sprintf('Backup of assets from "%s" done', $name));
 		}
 
-		$log->write('Creating sspak file');
 		$sspakFilename = sprintf('%s.sspak', $dataArchive->generateFilename($dataTransfer));
-		$sspakCmd = sprintf('sspak saveexisting %s 2>&1', $sspakFilename);
-		if($dataTransfer->Mode == 'db') {
-			$sspakCmd .= sprintf(' --db=%s', $databasePath);
-		} elseif($dataTransfer->Mode == 'assets') {
-			$sspakCmd .= sprintf(' --assets=%s/assets', $filepathBase);
-		} else {
-			$sspakCmd .= sprintf(' --db=%s --assets=%s/assets', $databasePath, $filepathBase);
-		}
-
-		$process = new Process($sspakCmd, $filepathBase);
-		$process->setTimeout(3600);
-		$process->run();
-		if(!$process->isSuccessful()) {
-			$log->write('Could not package the backup via sspak');
-			throw new RuntimeException($process->getErrorOutput());
-		}
-
 		$sspakFilepath = $filepathBase . DIRECTORY_SEPARATOR . $sspakFilename;
 
 		try {
 			$dataArchive->attachFile($sspakFilepath, $dataTransfer);
+			$dataArchive->setArchiveFromFiles($filepathBase);
 		} catch(Exception $e) {
 			$log->write($e->getMessage());
 			throw new RuntimeException($e->getMessage());
@@ -362,7 +359,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		// Restore database into target environment
 		if(in_array($dataTransfer->Mode, array('all', 'db'))) {
 			$log->write(sprintf('Restore of database to "%s" started', $name));
-			$args = array('data_path' => $workingDir . DIRECTORY_SEPARATOR . 'database.sql.gz');
+			$args = array('data_path' => $workingDir . DIRECTORY_SEPARATOR . 'database.sql');
 			$command = $this->getCommand('data:pushdb', 'db', $environment, $args, $log);
 			$command->run(function($type, $buffer) use($log) {
 				$log->write($buffer);
