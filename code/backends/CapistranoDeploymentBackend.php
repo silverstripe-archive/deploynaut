@@ -300,9 +300,12 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		}
 
 		$sspakFilepath = $filepathBase . DIRECTORY_SEPARATOR . $sspakFilename;
-		$result = $dataArchive->attachFile($sspakFilepath, $dataTransfer, $log);
-		if(!$result) {
-			throw new RuntimeException(sprintf('Failed to add sspak file: %s', $sspakFilepath));
+
+		try {
+			$dataArchive->attachFile($sspakFilepath, $dataTransfer);
+		} catch(Exception $e) {
+			$log->write($e->getMessage());
+			throw new RuntimeException($e->getMessage());
 		}
 
 		// Remove any assets and db files lying around, they're not longer needed as they're now part
