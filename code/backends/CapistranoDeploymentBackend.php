@@ -280,9 +280,9 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			$log->write(sprintf('Backup of assets from "%s" done', $name));
 		}
 
-		$log->write('Creating *.sspak file');
+		$log->write('Creating sspak file');
 		$sspakFilename = sprintf('%s.sspak', $dataArchive->generateFilename($dataTransfer));
-		$sspakCmd = sprintf('cd %s && sspak saveexisting %s 2>&1', $filepathBase, $sspakFilename);
+		$sspakCmd = sprintf('sspak saveexisting %s 2>&1', $sspakFilename);
 		if($dataTransfer->Mode == 'db') {
 			$sspakCmd .= sprintf(' --db=%s', $databasePath);
 		} elseif($dataTransfer->Mode == 'assets') {
@@ -291,7 +291,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			$sspakCmd .= sprintf(' --db=%s --assets=%s/assets', $databasePath, $filepathBase);
 		}
 
-		$process = new Process($sspakCmd);
+		$process = new Process($sspakCmd, $filepathBase);
 		$process->setTimeout(3600);
 		$process->run();
 		if(!$process->isSuccessful()) {
@@ -318,7 +318,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			throw new RuntimeException($process->getErrorOutput());
 		}
 
-		$log->write(sprintf('Creating *.sspak file done: %s', $dataArchive->ArchiveFile()->getAbsoluteURL()));
+		$log->write(sprintf('Creating sspak file done: %s', $dataArchive->ArchiveFile()->getAbsoluteURL()));
 	}
 
 	/**
@@ -343,8 +343,8 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	 * and pushes it to the environment referenced in $dataTransfer.
 	 *
 	 * @param string $workingDir Directory for the unpacked files.
-	 * @param  DNDataTransfer    $dataTransfer
-	 * @param  DeploynautLogFile $log
+	 * @param DNDataTransfer $dataTransfer
+	 * @param DeploynautLogFile $log
 	 */
 	protected function dataTransferRestore($workingDir, DNDataTransfer $dataTransfer, DeploynautLogFile $log) {
 		$environment = $dataTransfer->Environment();
@@ -355,7 +355,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		$cleanupFn = function() use($self, $workingDir, $environment, $log) {
 			// Rebuild makes sense even if failed - maybe we can at least partly recover.
 			$self->rebuild($environment, $log);
-			$process = new Process('rm -rf ' . escapeshellarg($workingDir));
+			$process = new Process(sprintf('rm -rf %s', escapeshellarg($workingDir)));
 			$process->run();
 		};
 
