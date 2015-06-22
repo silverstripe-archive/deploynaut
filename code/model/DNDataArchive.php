@@ -317,10 +317,9 @@ class DNDataArchive extends DataObject {
 	 *
 	 * @param string $sspakFilepath
 	 * @param DNDataTransfer $dataTransfer
-	 * @param DeploynautLogFile $log
 	 * @return bool
 	 */
-	public function attachFile($sspakFilepath, DNDataTransfer $dataTransfer, DeploynautLogFile $log) {
+	public function attachFile($sspakFilepath, DNDataTransfer $dataTransfer) {
 		$sspakFilepath = ltrim(
 			str_replace(
 				array(ASSETS_PATH, realpath(ASSETS_PATH)),
@@ -330,30 +329,24 @@ class DNDataArchive extends DataObject {
 			DIRECTORY_SEPARATOR
 		);
 
-		try {
-			$folder = Folder::find_or_make(dirname($sspakFilepath));
-			$file = new File();
-			$file->Name = basename($sspakFilepath);
-			$file->Filename = $sspakFilepath;
-			$file->ParentID = $folder->ID;
-			$file->write();
+		$folder = Folder::find_or_make(dirname($sspakFilepath));
+		$file = new File();
+		$file->Name = basename($sspakFilepath);
+		$file->Filename = $sspakFilepath;
+		$file->ParentID = $folder->ID;
+		$file->write();
 
-			// "Status" will be updated by the job execution
-			$dataTransfer->write();
+		// "Status" will be updated by the job execution
+		$dataTransfer->write();
 
-			// Get file hash to ensure consistency.
-			// Only do this when first associating the file since hashing large files is expensive.
-			$this->ArchiveFileHash = md5_file($file->FullPath);
-			$this->ArchiveFileID = $file->ID;
-			$this->DataTransfers()->add($dataTransfer);
-			$this->write();
+		// Get file hash to ensure consistency.
+		// Only do this when first associating the file since hashing large files is expensive.
+		$this->ArchiveFileHash = md5_file($file->FullPath);
+		$this->ArchiveFileID = $file->ID;
+		$this->DataTransfers()->add($dataTransfer);
+		$this->write();
 
-			return true;
-		} catch(Exception $e) {
-			$log->write(sprintf('Failed to add sspak file: %s', $e->getMessage()));
-		}
-
-		return false;
+		return true;
 	}
 
 	/**
