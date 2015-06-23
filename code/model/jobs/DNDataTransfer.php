@@ -121,25 +121,18 @@ class DNDataTransfer extends DataObject {
 	 */
 	public function start() {
 		$env = $this->Environment();
-		$project = $env->Project();
-
 		$args = array(
-			'projectName' => $project->Name,
-			'environmentName' => $env->Name,
 			'dataTransferID' => $this->ID,
-			'logfile' => $this->logfile(),
-			'direction' => $this->Direction,
-			'mode' => $this->Mode
+			'logfile' => $this->logfile()
 		);
 
 		$log = $this->log();
 		$log->write(strtr(
-			'Creating a job to transfer data on environment "<proj>:<env>" (direction: <dir>, mode: <mode>)',
+			'Creating a job to transfer data on environment "<name>" (direction: <dir>, mode: <mode>)',
 			array(
 				'<dir>' => $this->Direction,
 				'<mode>' => $this->Mode,
-				'<env>' => $env->Name,
-				'<proj>' => $project->Name
+				'<name>' => $env->getFullName()
 			)
 		));
 
