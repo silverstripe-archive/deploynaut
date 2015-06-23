@@ -1,4 +1,5 @@
 <?php
+use \Symfony\Component\Process\Process;
 
 /**
  * God controller for the deploynaut interface
@@ -312,7 +313,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		$validEnvs = $project->DNEnvironmentList()
-			->filterByCallback(function($item) {return $item->canUploadArchive();});
+			->filterByCallback(function($item) {
+				return $item->canUploadArchive();
+			});
 
 		// Validate $data['EnvironmentID'] by checking against $validEnvs.
 		$environment = $validEnvs->find('ID', $data['EnvironmentID']);
@@ -321,7 +324,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		// Validate mode.
-		if (!in_array($data['Mode'], array('all', 'assets', 'db'))) {
+		if(!in_array($data['Mode'], array('all', 'assets', 'db'))) {
 			throw new LogicException('Invalid mode');
 		}
 
@@ -342,6 +345,51 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$dataArchive->DataTransfers()->add($dataTransfer);
 		$form->saveInto($dataArchive);
 		$dataArchive->write();
+		$workingDir = TEMP_FOLDER . DIRECTORY_SEPARATOR . 'deploynaut-transfer-' . $dataTransfer->ID;
+
+		$cleanupFn = function() use($workingDir, $dataTransfer, $dataArchive) {
+			$process = new Process(sprintf('rm -rf %s', escapeshellarg($workingDir)));
+			$process->run();
+			$dataTransfer->delete();
+			$dataArchive->delete();
+		};
+
+		// extract the sspak contents so we can inspect them
+		try {
+			$dataArchive->extractArchive($workingDir);
+		} catch(Exception $e) {
+			$cleanupFn();
+			$form->sessionMessage(
+				'There was a problem trying to open your snapshot for processing. Please try uploading again',
+				'bad'
+			);
+			return $this->redirectBack();
+		}
+
+		// validate that the sspak contents match the declared contents
+		$result = $dataArchive->validateArchiveContents($workingDir);
+		if(!$result->valid()) {
+			$cleanupFn();
+			$form->sessionMessage($result->message(), 'bad');
+			return $this->redirectBack();
+		}
+
+		// fix file permissions of extracted sspak files then re-build the sspak
+		try {
+			$dataArchive->fixArchivePermissions($workingDir);
+			$dataArchive->setArchiveFromFiles($workingDir);
+		} catch(Exception $e) {
+			$cleanupFn();
+			$form->sessionMessage(
+				'There was a problem processing your snapshot. Please try uploading again',
+				'bad'
+			);
+			return $this->redirectBack();
+		}
+
+		// cleanup any extracted sspak contents lying around
+		$process = new Process(sprintf('rm -rf %s', escapeshellarg($workingDir)));
+		$process->run();
 
 		return $this->customise(array(
 			'Project' => $project,
