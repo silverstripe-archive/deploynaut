@@ -1,5 +1,5 @@
 <div class="help">
-	<h4>Instructions to import a sspak file into your local site after downloading</h4>
+	<h4>Importing a snapshot into your local site</h4>
 
 	<p><strong>Note:</strong> Databases and asset snapshots are stored using the <a href="https://github.com/silverstripe/sspak">sspak</a> format.
 	You will need to install sspak using the following <a href="https://silverstripe.github.io/sspak">instructions</a> if you wish to work with these snapshots locally.</p>
@@ -14,5 +14,4 @@
 	<p>Extract the sspak file contents, allowing you to import the database and assets manually:</p>
 
 	<pre>sspak extract /path/to/downloaded/file.sspak</pre>
-
 </div>
