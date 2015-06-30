@@ -22,43 +22,49 @@ class CloneGitRepo {
 		$logfile = DEPLOYNAUT_LOG_PATH . '/clonegitrepo.log';
 		$fh = fopen($logfile, 'a');
 		if(!$fh) {
-			throw new RuntimeException('Can\'t open file "'.$logfile.'" for logging.');
+			throw new RuntimeException(sprintf('Can\'t open file "%s" for logging.', $logfile));
 		}
 
 		// if an alternate user has been configured for clone, run the command as that user
 		$user = DNData::inst()->getGitUser();
 
 		if(file_exists($path)) {
-			if($user) {
-				exec(sprintf('sudo -u %s rm -rf %s', $user, $path));
-			} else {
-				exec(sprintf('rm -rf %s', $path));
+			$command = array();
+			if($user) $command[] = sprintf('sudo -u %s', $user);
+			$command[] = sprintf('rm -rf %s', $path);
+
+			fwrite($fh, sprintf('[%s] Cleaning up existing repository %s', date('Y-m-d H:i:s'), $path) . PHP_EOL);
+			fwrite($fh, sprintf('[%s] Running command: %s', date('Y-m-d H:i:s'), implode(' ', $command)) . PHP_EOL);
+
+			$process = new \Symfony\Component\Process\Process(implode(' ', $command));
+			$process->setEnv($env);
+			$process->setTimeout(3600);
+			$process->run();
+			if(!$process->isSuccessful()) {
+				fwrite($fh, sprintf('[%s] Error cleaning up existing repository: %s', date('Y-m-d H:i:s'), $process->getErrorOutput()) . PHP_EOL);
+				throw new RuntimeException($process->getErrorOutput());
 			}
 		}
 
-		fwrite($fh, '['.date('Y-m-d H:i:s').'] Cloning ' . $repo.' to ' . $path . PHP_EOL);
+		fwrite($fh, sprintf('[%s] Cloning repository %s to %s', date('Y-m-d H:i:s'), $repo, $path) . PHP_EOL);
 		echo "[-] CloneGitRepo starting" . PHP_EOL;
 
-		// using git clone straight via system call since doing it via the
-		// Gitonomy\Git\Admin times out. Silly.
+		$command = array();
+		if($user) $command[] = sprintf('sudo -u %s', $user);
+		$command[] = sprintf('git clone --bare -q %s %s', $repo, $path);
 
-		if($user) {
-			$command = sprintf('sudo -u %s git clone --bare -q %s %s', $user, $repo, $path);
-		} else {
-			$command = sprintf('git clone --bare -q %s %s', $repo, $path);
-		}
+		fwrite($fh, sprintf('[%s] Running command: %s', date('Y-m-d H:i:s'), implode(' ', $command)) . PHP_EOL);
 
-		fwrite($fh, '['.date('Y-m-d H:i:s').'] Running command: ' . $command . PHP_EOL);
-
-		$process = new \Symfony\Component\Process\Process($command);
+		$process = new \Symfony\Component\Process\Process(implode(' ', $command));
 		$process->setEnv($env);
 		$process->setTimeout(3600);
 		$process->run();
 		if(!$process->isSuccessful()) {
+			fwrite($fh, sprintf('[%s] Error cloning repository %s to %s: %s', date('Y-m-d H:i:s'), $repo, $path, $process->getErrorOutput()) . PHP_EOL);
 			throw new RuntimeException($process->getErrorOutput());
 		}
 
-		fwrite($fh, '['.date('Y-m-d H:i:s').'] Cloned ' . $repo . ' to ' . $path . PHP_EOL);
+		fwrite($fh, sprintf('[%s] Successfully cloned repository %s to %s', date('Y-m-d H:i:s'), $repo, $path) . PHP_EOL);
 	}
 
 }
