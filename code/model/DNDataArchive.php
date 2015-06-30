@@ -288,19 +288,12 @@ class DNDataArchive extends DataObject {
 	 */
 	public function generateFilename(DNDataTransfer $dataTransfer) {
 		$generator = new RandomGenerator();
-		$sanitizeRegex = array('/\s+/', '/[^a-zA-Z0-9-_\.]/');
-		$sanitizeReplace = array('/_/', '');
-		$envName = strtolower(preg_replace($sanitizeRegex, $sanitizeReplace, $this->OriginalEnvironment()->Name));
-		$projectName = strtolower(preg_replace(
-			$sanitizeRegex,
-			$sanitizeReplace,
-			$this->OriginalEnvironment()->Project()->Name
-		));
+		$filter = FileNameFilter::create();
 
 		return sprintf(
 			'%s-%s-%s-%s-%s',
-			$projectName,
-			$envName,
+			$filter->filter(strtolower($this->OriginalEnvironment()->Project()->Name)),
+			$filter->filter(strtolower($this->OriginalEnvironment()->Name)),
 			$dataTransfer->Mode,
 			date('Ymd'),
 			sha1($generator->generateEntropy())
@@ -317,15 +310,12 @@ class DNDataArchive extends DataObject {
 	public function generateFilepath(DNDataTransfer $dataTransfer) {
 		$data = DNData::inst();
 		$transferDir = $data->getDataTransferDir();
-		$sanitizeRegex = array('/\s+/', '/[^a-zA-Z0-9-_\.]/');
-		$sanitizeReplace = array('/_/', '');
-		$projectName = strtolower(preg_replace($sanitizeRegex, $sanitizeReplace, $this->OriginalEnvironment()->Project()->Name));
-		$envName = strtolower(preg_replace($sanitizeRegex, $sanitizeReplace, $this->OriginalEnvironment()->Name));
-		
+		$filter = FileNameFilter::create();
+
 		return sprintf('%s/%s/%s/transfer-%s/',
 			$transferDir,
-			$projectName,
-			$envName,
+			$filter->filter(strtolower($this->OriginalEnvironment()->Project()->Name)),
+			$filter->filter(strtolower($this->OriginalEnvironment()->Name)),
 			$dataTransfer->ID
 		);
 	}

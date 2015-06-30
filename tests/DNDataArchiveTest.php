@@ -65,7 +65,7 @@ class DNDataArchiveTest extends DeploynautTest {
 
 		$filepath1 = $archive->generateFilepath($dataTransfer);
 		$this->assertNotNull($filepath1);
-		$this->assertContains('project_1', $filepath1);
+		$this->assertContains('project-1', $filepath1);
 		$this->assertContains('uat', $filepath1);
 		$this->assertContains('transfer-' . $dataTransfer->ID, $filepath1);
 	}
@@ -85,7 +85,7 @@ class DNDataArchiveTest extends DeploynautTest {
 
 		$filename = $archive->generateFilename($dataTransfer);
 		$this->assertNotNull($filename);
-		$this->assertContains('project_1', $filename);
+		$this->assertContains('project-1', $filename);
 		$this->assertContains('uat', $filename);
 		$this->assertContains('all', $filename);
 	}
