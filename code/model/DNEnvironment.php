@@ -403,7 +403,6 @@ class DNEnvironment extends DataObject {
 		if(!$member) return false; // Must be logged in to check permissions
 
 		if(Permission::checkMember($member, 'ADMIN')) return true;
-
 		return $this->ArchiveDownloaders()->byID($member->ID)
 			|| $member->inGroups($this->ArchiveDownloaderGroups());
 	}
