@@ -350,7 +350,12 @@ class DNDataArchive extends DataObject {
 
 		// Get file hash to ensure consistency.
 		// Only do this when first associating the file since hashing large files is expensive.
-		$this->ArchiveFileHash = md5_file($file->FullPath);
+		// Note that with CapistranoDeploymentBackend the file won't be available yet, as it
+		// gets put in place immediately after this method gets called. In which case, it will
+		// be hashed in setArchiveFromFiles()
+		if(file_exists($file->FullPath)) {
+			$this->ArchiveFileHash = md5_file($file->FullPath);
+		}
 		$this->ArchiveFileID = $file->ID;
 		$this->DataTransfers()->add($dataTransfer);
 		$this->write();
@@ -500,6 +505,9 @@ class DNDataArchive extends DataObject {
 		if(!$process->isSuccessful()) {
 			throw new RuntimeException($process->getErrorOutput());
 		}
+
+		$this->ArchiveFileHash = md5_file($this->ArchiveFile()->FullPath);
+		$this->write();
 
 		return true;
 	}
