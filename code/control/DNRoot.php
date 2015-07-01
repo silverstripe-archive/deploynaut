@@ -1364,9 +1364,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	public function CompleteDataArchives() {
 		$project = $this->getCurrentProject();
 		$archives = new ArrayList();
-		foreach($project->DNEnvironmentList() as $env) {
-			foreach($env->DataArchives() as $archive) {
-				if($archive->canView() && !$archive->isPending()) $archives->push($archive);
+		
+		$archiveList = $project->Environments()->relation("DataArchives");
+		if($archiveList->count() > 0) {
+			foreach($archiveList as $archive) {
+				if($archive->canView() && !$archive->isPending()) {
+					$archives->push($archive);
+				}
 			}
 		}
 		return new PaginatedList($archives->sort("Created", "DESC"), $this->request);

@@ -205,7 +205,7 @@ class DNDataArchive extends DataObject {
 	 * @return true if $member (or the currently logged in member if null) can upload this archive
 	 */
 	public function canRestore($member = null) {
-		$key = is_object($member) ? $member->ID : $member;
+		$key = (is_object($member) ? $member->ID : $member) . '-' . $this->ID;
 		if(!isset(self::$_cache_can_restore[$key])) {
 			self::$_cache_can_restore[$key] = $this->Environment()->canUploadArchive($member);
 		}
@@ -220,7 +220,7 @@ class DNDataArchive extends DataObject {
 	 * @return true if $member (or the currently logged in member if null) can download this archive
 	 */
 	public function canDownload($member = null) {
-		$key = is_object($member) ? $member->ID : $member;
+		$key = (is_object($member) ? $member->ID : $member) . '-' . $this->ID;
 		if(!isset(self::$_cache_can_download[$key])) {
 			self::$_cache_can_download[$key] = $this->Environment()->canDownloadArchive($member);
 		}
