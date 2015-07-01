@@ -117,4 +117,58 @@ class DNDataArchiveTest extends DeploynautTest {
 		$this->assertFalse($archive->canMoveTo($live1, $sarah));
 
 	}
+
+	public function testValidateArchiveContentsAll() {
+		$archive = DNDataArchive::create();
+		$archive->ArchiveFile()->Filename = __DIR__.'/sspaks/all.sspak';
+		$result = $archive->validateArchiveContents('all');
+		$this->assertTrue($result->valid());
+	}
+
+	public function testValidateArchiveContentsDB() {
+		$archive = DNDataArchive::create();
+		$archive->ArchiveFile()->Filename = __DIR__.'/sspaks/all.sspak';
+		$result = $archive->validateArchiveContents('db');
+		$this->assertTrue($result->valid());
+
+		$archive->ArchiveFile()->Filename = __DIR__.'/sspaks/db.sspak';
+		$result = $archive->validateArchiveContents('db');
+		$this->assertTrue($result->valid());
+	}
+
+	public function testValidateArchiveContentsDBFails() {
+		$archive = DNDataArchive::create();
+		$archive->ArchiveFile()->Filename = __DIR__.'/sspaks/assets.sspak';
+		$result = $archive->validateArchiveContents('db');
+		$this->assertFalse($result->valid());
+		$this->assertEquals('The snapshot is missing the database.', current($result->messageList()));
+	}
+
+	public function testValidateArchiveContentsAssets() {
+		$archive = DNDataArchive::create();
+		$archive->ArchiveFile()->Filename = __DIR__.'/sspaks/all.sspak';
+		$result = $archive->validateArchiveContents('assets');
+		$this->assertTrue($result->valid());
+
+		$archive->ArchiveFile()->Filename = __DIR__.'/sspaks/assets.sspak';
+		$result = $archive->validateArchiveContents('assets');
+		$this->assertTrue($result->valid());
+	}
+
+	public function testValidateArchiveContentsAssetsFails() {
+		$archive = DNDataArchive::create();
+		$archive->ArchiveFile()->Filename = __DIR__.'/sspaks/db.sspak';
+		$result = $archive->validateArchiveContents('assets');
+		$this->assertFalse($result->valid());
+		$this->assertEquals('The snapshot is missing assets.', current($result->messageList()));
+	}
+
+	public function testValidateArchiveContentsFileMissingFails() {
+		$archive = DNDataArchive::create();
+		$filename = __DIR__.'/sspaks/not.found.sspak';
+		$archive->ArchiveFile()->Filename = $filename;
+		$result = $archive->validateArchiveContents('all');
+		$this->assertFalse($result->valid());
+		$this->assertEquals('SSPak file "'.$filename.'" cannot be read.', current($result->messageList()));
+	}
 }

@@ -367,7 +367,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		// validate that the sspak contents match the declared contents
-		$result = $dataArchive->validateArchiveContents($workingDir);
+		$result = $dataArchive->validateArchiveContents();
 		if(!$result->valid()) {
 			$cleanupFn();
 			$form->sessionMessage($result->message(), 'bad');
@@ -568,7 +568,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 * 
+	 *
 	 * @param SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse
 	 */

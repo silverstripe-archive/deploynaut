@@ -169,7 +169,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			}
 
 			// validate the contents match the requested transfer mode
-			$result = $archive->validateArchiveContents($workingDir, $dataTransfer->Mode);
+			$result = $archive->validateArchiveContents($dataTransfer->Mode);
 			if(!$result->valid()) {
 				// do some cleaning, get rid of the extracted archive lying around
 				$process = new Process(sprintf('rm -rf %s', escapeshellarg($workingDir)));
