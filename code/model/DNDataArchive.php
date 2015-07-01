@@ -25,8 +25,8 @@ use \Symfony\Component\Process\Process;
  *
  * The "Author" is either the person creating the archive through a "backup" operation,
  * the person uploading through a web form, or the person requesting a manual upload.
- * 
- * The "Mode" is what the "Author" said the file includes (either 'only assets', 'only 
+ *
+ * The "Mode" is what the "Author" said the file includes (either 'only assets', 'only
  * database', or both). This is used in the ArchiveList.ss template.
  */
 class DNDataArchive extends DataObject {
@@ -128,17 +128,17 @@ class DNDataArchive extends DataObject {
 				new ReadonlyField('OriginalEnvironmentName', 'OriginalEnvironment', $this->OriginalEnvironment()->Name),
 				new ReadonlyField('EnvironmentName', 'Environment', $this->Environment()->Name),
 				$linkField = new ReadonlyField(
-					'DataArchive', 
-					'Archive File', 
+					'DataArchive',
+					'Archive File',
 					sprintf(
 						'<a href="%s">%s</a>',
 						$this->ArchiveFile()->AbsoluteURL,
-						$this->ArchiveFile()->Filename	
+						$this->ArchiveFile()->Filename
 					)
 				),
 				new GridField(
-					'DataTransfers', 
-					'Transfers', 
+					'DataTransfers',
+					'Transfers',
 					$this->DataTransfers()
 				),
 			)
@@ -159,7 +159,7 @@ class DNDataArchive extends DataObject {
 	/**
 	 * Calculates and returns a human-readable size of this archive file. If the file exists, it will determine
 	 * whether to display the output in bytes, kilobytes, megabytes, or gigabytes.
-	 * 
+	 *
 	 * @return string The human-readable size of this archive file
 	 */
 	public function FileSize() {
@@ -182,7 +182,7 @@ class DNDataArchive extends DataObject {
 	 * Some archives don't have files attached to them yet,
 	 * because a file has been posted offline and is waiting to be uploaded
 	 * against this "archive placeholder".
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public function isPending() {
@@ -422,20 +422,36 @@ class DNDataArchive extends DataObject {
 	 * For example, if the user uploaded an sspak containing just the db, but declared in the form
 	 * that it contained db+assets, then the archive is not valid.
 	 *
-	 * @param string $workingDir The path the contents will be extracted to during validation
 	 * @param string $mode "db", "assets", or "all". This is the content we're checking for. Default to the archive setting
 	 * @return ValidationResult
 	 */
-	public function validateArchiveContents($workingDir, $mode = null) {
+	public function validateArchiveContents($mode = null) {
 		$mode = $mode ?: $this->Mode;
 		$result = new ValidationResult();
 
-		if(in_array($mode, array('all', 'db')) && !is_file($workingDir . DIRECTORY_SEPARATOR . 'database.sql')) {
+		$file = $this->ArchiveFile()->FullPath;
+
+		if(!is_readable($file)) {
+			$result->error(sprintf('SSPak file "%s" cannot be read.', $file));
+			return $result;
+		}
+
+		$process = new Process(sprintf('tar -tf %s', escapeshellarg($file)));
+		$process->setTimeout(120);
+		$process->run();
+		if(!$process->isSuccessful()) {
+			throw new RuntimeException(sprintf('Could not list files in archive: %s', $process->getErrorOutput()));
+		}
+
+		$output = explode(PHP_EOL, $process->getOutput());
+		$files = array_filter($output);
+
+		if(in_array($mode, array('all', 'db')) && !in_array('database.sql.gz', $files)) {
 			$result->error('The snapshot is missing the database.');
 			return $result;
 		}
 
-		if(in_array($mode, array('all', 'assets')) && !is_dir($workingDir . DIRECTORY_SEPARATOR . 'assets')) {
+		if(in_array($mode, array('all', 'assets')) && !in_array('assets.tar.gz', $files)) {
 			$result->error('The snapshot is missing assets.');
 			return $result;
 		}
