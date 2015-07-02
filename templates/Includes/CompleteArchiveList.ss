@@ -1,6 +1,6 @@
 <h3>Data Snapshots</h3>
 
-<p>This is an archived list of all assets, databases or zip files containing both that you have access to view. Each item has links so you can download the files to your computer or restore the files to a chosen environment.If you would like to create a new snapshot from an environment, click 'Create Snapshot', the Log displays a list of all snapshot transfers.
+<p>This is an archived list of all assets, databases or zip files containing both that you have access to view. Each item has links so you can download the files to your computer or restore the files to a chosen environment. If you would like to create a new snapshot from an environment, click 'Create Snapshot', the Log displays a list of all snapshot transfers.
 If you would like to upload files from your computer to a new snapshot, click 'Upload Snapshot'
 </p>
 
