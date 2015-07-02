@@ -200,12 +200,16 @@ class DNDataArchive extends DataObject {
 
 	/**
 	 * Whether a {@link Member} can restore this archive to an environment.
+	 * This only needs to be checked *once* per member and environment.
 	 *
 	 * @param Member|null $member The {@link Member} object to test against.
 	 * @return true if $member (or the currently logged in member if null) can upload this archive
 	 */
 	public function canRestore($member = null) {
-		$key = (is_object($member) ? $member->ID : $member) . '-' . $this->ID;
+		$memberID = $member ? $member->ID : Member::currentUserID();
+		if(!$memberID) return false;
+
+		$key = $memberID . '-' . $this->EnvironmentID;
 		if(!isset(self::$_cache_can_restore[$key])) {
 			self::$_cache_can_restore[$key] = $this->Environment()->canUploadArchive($member);
 		}
@@ -215,12 +219,16 @@ class DNDataArchive extends DataObject {
 
 	/**
 	 * Whether a {@link Member} can download this archive to their PC.
+	 * This only needs to be checked *once* per member and environment.
 	 *
 	 * @param Member|null $member The {@link Member} object to test against.
 	 * @return true if $member (or the currently logged in member if null) can download this archive
 	 */
 	public function canDownload($member = null) {
-		$key = (is_object($member) ? $member->ID : $member) . '-' . $this->ID;
+		$memberID = $member ? $member->ID : Member::currentUserID();
+		if(!$memberID) return false;
+
+		$key = $memberID . '-' . $this->EnvironmentID;
 		if(!isset(self::$_cache_can_download[$key])) {
 			self::$_cache_can_download[$key] = $this->Environment()->canDownloadArchive($member);
 		}
