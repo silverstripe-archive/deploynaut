@@ -304,8 +304,13 @@ form.fields-wide .field label.left {
 	margin: 0 20px;
 }
 
+#Form_DataTransferRestoreForm div.checkbox {
+	padding-left: 15px;
+	padding-top: 5px;
+	float: right;
+}
 #Form_DataTransferRestoreForm .Actions {
-	margin-top: 40px;
+	margin-top: 35px;
 }
 
 #Form_MoveForm .Actions {

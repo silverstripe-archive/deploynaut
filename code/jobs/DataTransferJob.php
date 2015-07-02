@@ -26,7 +26,7 @@ class DataTransferJob {
 		$environment = $dataTransfer->Environment();
 		$backupDataTransfer = null;
 
-		if($dataTransfer->Direction == 'push') {
+		if(!empty($this->args['backupBeforePush']) && $dataTransfer->Direction == 'push') {
 			$backupDataTransfer = DNDataTransfer::create();
 			$backupDataTransfer->EnvironmentID = $environment->ID;
 			$backupDataTransfer->Direction = 'get';
