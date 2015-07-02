@@ -935,15 +935,18 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			}
 		}
 
-		$job = DNDataTransfer::create();
-		$job->EnvironmentID = $environment->ID;
-		$job->Direction = $data['Direction'];
-		$job->Mode = $data['Mode'];
-		$job->DataArchiveID = $dataArchive ? $dataArchive->ID : null;
-		$job->write();
-		$job->start();
+		$transfer = DNDataTransfer::create();
+		$transfer->EnvironmentID = $environment->ID;
+		$transfer->Direction = $data['Direction'];
+		$transfer->Mode = $data['Mode'];
+		$transfer->DataArchiveID = $dataArchive ? $dataArchive->ID : null;
+		if($data['Direction'] == 'push') {
+			$transfer->setBackupBeforePush(!empty($data['BackupBeforePush']));
+		}
+		$transfer->write();
+		$transfer->start();
 
-		return $this->redirect($job->Link());
+		return $this->redirect($transfer->Link());
 	}
 
 	/**
@@ -1050,7 +1053,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				new HiddenField('Direction', false, 'push'),
 				new LiteralField('Warning', '<p class="text-warning"><strong>Warning:</strong> This restore will overwrite the data on the chosen environment below</p>'),
 				new DropdownField('EnvironmentID', 'Environment', $envs->map()),
-				new DropdownField('Mode', 'Transfer', $modesMap)
+				new DropdownField('Mode', 'Transfer', $modesMap),
+				new CheckboxField('BackupBeforePush', 'Backup existing data', '1')
 			),
 			new FieldList(
 				FormAction::create('doDataTransfer', 'Restore Data')->addExtraClass('btn')

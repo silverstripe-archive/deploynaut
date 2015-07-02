@@ -69,7 +69,17 @@ class DNDataTransfer extends DataObject {
 			'title' => 'Direction',
 		),
 	);
-	
+
+	/**
+	 * When running the transfer, should a backup be performed before pushing the data?
+	 * @var bool
+	 */
+	protected $backupBeforePush = true;
+
+	public function setBackupBeforePush($value) {
+		$this->backupBeforePush = $value;
+	}
+
 	public function getTitle() {
 		return $this->dbObject('Created')->Nice() . " (Status: {$this->Status})";
 	}
@@ -100,12 +110,12 @@ class DNDataTransfer extends DataObject {
 				new ReadonlyField('ProjectName', 'Project', $this->Environment()->Project()->Name),
 				new ReadonlyField('EnvironmentName', 'Environment', $this->Environment()->Name),
 				new ReadonlyField(
-					'DataArchive', 
-					'Archive File', 
+					'DataArchive',
+					'Archive File',
 					sprintf(
 						'<a href="%s">%s</a>',
 						$this->DataArchive()->ArchiveFile()->AbsoluteURL,
-						$this->DataArchive()->ArchiveFile()->Filename	
+						$this->DataArchive()->ArchiveFile()->Filename
 					)
 				),
 			)
@@ -123,7 +133,8 @@ class DNDataTransfer extends DataObject {
 		$env = $this->Environment();
 		$args = array(
 			'dataTransferID' => $this->ID,
-			'logfile' => $this->logfile()
+			'logfile' => $this->logfile(),
+			'backupBeforePush' => $this->backupBeforePush
 		);
 
 		$log = $this->log();
