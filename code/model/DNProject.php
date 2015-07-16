@@ -509,10 +509,56 @@ class DNProject extends DataObject {
 	 * Fetch the public key for this project.
 	 */
 	public function getPublicKey() {
-		$keyDir = $this->DNData()->getKeyDir();
-		if (file_exists("$keyDir/$this->Name/$this->Name")) {
-			return file_get_contents("$keyDir/$this->Name/$this->Name.pub");
+		$key = $this->getPublicKeyPath();
+
+		if (file_exists($key)) {
+			return file_get_contents($key);
 		}
+	}
+
+
+	/**
+	 * This returns that path of the public key if a key directory is set. It doesn't check whether the file exists.
+	 *
+	 * @return string|null
+	 */
+	public function getPublicKeyPath() {
+		if($privateKey = $this->getPrivateKeyPath()) {
+			return $privateKey . '.pub';
+		}
+		return null;
+	}
+
+
+	/**
+	 * This returns that path of the private key if a key directory is set. It doesn't check whether the file exists.
+	 *
+	 * @return string|null
+	 */
+	public function getPrivateKeyPath() {
+		if($keyDir = $this->getKeyDir()) {
+			$filter = FileNameFilter::create();
+			$name = $filter->filter($this->Name);
+
+			return $this->getKeyDir() . '/' . $name;
+		}
+		return null;
+	}
+
+
+	/**
+	 * Returns the location of the projects key dir if one exists.
+	 *
+	 * @return string|null
+	 */
+	public function getKeyDir() {
+		$keyDir = $this->DNData()->getKeyDir();
+		if(!$keyDir) return null;
+
+		$filter = FileNameFilter::create();
+		$name = $filter->filter($this->Name);
+
+		return $this->DNData()->getKeyDir() . '/' . $name;
 	}
 
 	/**
