@@ -1,11 +1,21 @@
- <div class="navbar-inner">
-		<a class="brand" href="naut/projects">deploynaut<sup><small>&trade;</small></sup></a>
-		<ul class="nav">
-			<li<% if $CurrentProject %><% else %> class="active"<% end_if %>><a href="naut/projects">projects</a></li>
-		</ul>
-	 <% if CurrentUser %>
-	 	<ul class="nav pull-right">
-	 		<li><a href="Security/logout">log out</a></li>
-	 	</ul>
-	 <% end_if %>
+<div class="side-content side-header">
+	<a class="brand" href="naut/projects">SilverStripe Platform</a>
+</div>
+
+<div class="side-content">
+	<%--
+	<ul class="nav nav-stacked">
+		<li<% if $CurrentProject %><% else %> class="active"<% end_if %>><a href="naut/projects">Stacks</a></li>
+	</ul> --%>
+
+	<ul class="nav nav-stacked">
+
+	<% if DNProjectList %>
+		<li class="nav-main-heading">STACKS</li>
+		<% loop DNProjectList %>
+			<li><a href="$Link">$Name</a></li>
+		<% end_loop %>
+	<% end_if %>
+
+	</ul>
 </div>
