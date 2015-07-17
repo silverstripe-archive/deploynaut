@@ -1,0 +1,26 @@
+{
+  "name": "deploynaut",
+  "version": "1.0.0",
+  "description": "[![Build Status](https://secure.travis-ci.org/silverstripe/deploynaut.png)](https://travis-ci.org/silverstripe/deploynaut)",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "build": "node-sass -r ./sass/style.sass -o ./css/",
+    "watch": "node-sass -r -w ./sass/style.sass -o ./css/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/silverstripe/deploynaut.git"
+  },
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/silverstripe/deploynaut/issues"
+  },
+  "homepage": "https://github.com/silverstripe/deploynaut#readme",
+  "devDependencies": {
+    "node-sass": "^3.2.0"
+  }
+}
