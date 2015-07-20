@@ -238,10 +238,10 @@ class DNProject extends DataObject {
 	 * @return array
 	 */
 	public function getProcessEnv() {
-		if (file_exists($this->DNData()->getKeyDir()."/$this->Name/$this->Name")) {
+		if (file_exists($this->getPrivateKeyPath())) {
 			// Key-pair is available, use it.
 			$processEnv = array(
-				'IDENT_KEY' => $this->DNData()->getKeyDir()."/$this->Name/$this->Name",
+				'IDENT_KEY' => $this->getPrivateKeyPath(),
 				'GIT_SSH' => BASE_PATH . "/deploynaut/git-deploy.sh"
 			);
 		} else {
