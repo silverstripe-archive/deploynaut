@@ -54,7 +54,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			});
 
 			if(!$command->isSuccessful()) {
-				// Notify ops via email, if possible.
+				// Notify of failure via email, if possible.
 				$to = Config::inst()->get('DNRoot', 'alerts_to');
 				if(!$to) {
 					$log->write('Warning: cleanup has failed, but fine to continue. Needs manual cleanup sometime.');
