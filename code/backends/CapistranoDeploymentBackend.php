@@ -58,30 +58,29 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 				$to = Config::inst()->get('DNRoot', 'alerts_to');
 				if(!$to) {
 					$log->write('Warning: cleanup has failed, but fine to continue. Needs manual cleanup sometime.');
-					return;
 				} else {
 					$log->write('Warning: cleanup has failed, but fine to continue. Alert email sent.');
+
+					$subject = sprintf('[Deploynaut] Cleanup failure on %s', $name);
+					$email = new Email(null, $to, $subject);
+					$email->setTemplate('CapistranoDeploymentBackend_cleanup');
+
+					// Grab the last 3k characters, starting on a linebreak.
+					$breakpoint = strrpos($log->content(), "\n", -3000);
+					if($breakpoint === false) {
+						$content = $log->content();
+					} else {
+						$content = "[... log has been trimmed ...]\n" . substr($log->content(), $breakpoint+1);
+					}
+
+					$email->populateTemplate(array(
+						'ProjectName' => $project->Name,
+						'EnvironmentName' => $environment->Name,
+						'Log' => $content
+					));
+
+					$email->send();
 				}
-
-				$subject = sprintf('[Deploynaut] Cleanup failure on %s', $name);
-				$email = new Email(null, $to, $subject);
-				$email->setTemplate('CapistranoDeploymentBackend_cleanup');
-
-				// Grab the last 3k characters, starting on a linebreak.
-				$breakpoint = strrpos($log->content(), "\n", -3000);
-				if($breakpoint === false) {
-					$content = $log->content();
-				} else {
-					$content = "[... log has been trimmed ...]\n" . substr($log->content(), $breakpoint+1);
-				}
-
-				$email->populateTemplate(array(
-					'ProjectName' => $project->Name,
-					'EnvironmentName' => $environment->Name,
-					'Log' => $content
-				));
-
-				$email->send();
 			}
 		};
 
