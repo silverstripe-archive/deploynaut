@@ -54,33 +54,8 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			});
 
 			if(!$command->isSuccessful()) {
-				// Notify of failure via email, if possible.
-				$to = Config::inst()->get('DNRoot', 'alerts_to');
-				if(!$to) {
-					$log->write('Warning: cleanup has failed, but fine to continue. Needs manual cleanup sometime.');
-				} else {
-					$log->write('Warning: cleanup has failed, but fine to continue. Alert email sent.');
-
-					$subject = sprintf('[Deploynaut] Cleanup failure on %s', $name);
-					$email = new Email(null, $to, $subject);
-					$email->setTemplate('CapistranoDeploymentBackend_cleanup');
-
-					// Grab the last 3k characters, starting on a linebreak.
-					$breakpoint = strrpos($log->content(), "\n", -3000);
-					if($breakpoint === false) {
-						$content = $log->content();
-					} else {
-						$content = "[... log has been trimmed ...]\n" . substr($log->content(), $breakpoint+1);
-					}
-
-					$email->populateTemplate(array(
-						'ProjectName' => $project->Name,
-						'EnvironmentName' => $environment->Name,
-						'Log' => $content
-					));
-
-					$email->send();
-				}
+				$this->extend('cleanupFailure', $environment, $sha, $log, $project);
+				$log->write('Warning: Cleanup failed, but fine to continue. Needs manual cleanup sometime.');
 			}
 		};
 
@@ -91,6 +66,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 
 		if(!$command->isSuccessful()) {
 			$cleanupFn();
+			$this->extend('deployFailure', $environment, $sha, $log, $project);
 			throw new RuntimeException($command->getErrorOutput());
 		}
 
@@ -116,6 +92,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			$log->write($buffer);
 		});
 		if(!$command->isSuccessful()) {
+			$this->extend('maintenanceEnableFailure', $environment, $log);
 			throw new RuntimeException($command->getErrorOutput());
 		}
 		$log->write(sprintf('Maintenance page enabled on "%s"', $name));
@@ -131,6 +108,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			$log->write($buffer);
 		});
 		if(!$command->isSuccessful()) {
+			$this->extend('maintenanceDisableFailure', $environment, $log);
 			throw new RuntimeException($command->getErrorOutput());
 		}
 		$log->write(sprintf('Maintenance page disabled on "%s"', $name));
@@ -275,6 +253,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 				$log->write($buffer);
 			});
 			if(!$command->isSuccessful()) {
+				$this->extend('dataTransferFailure', $environment, $log);
 				throw new RuntimeException($command->getErrorOutput());
 			}
 			$log->write(sprintf('Backup of database from "%s" done', $name));
@@ -288,6 +267,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 				$log->write($buffer);
 			});
 			if(!$command->isSuccessful()) {
+				$this->extend('dataTransferFailure', $environment, $log);
 				throw new RuntimeException($command->getErrorOutput());
 			}
 			$log->write(sprintf('Backup of assets from "%s" done', $name));
@@ -366,6 +346,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			if(!$command->isSuccessful()) {
 				$cleanupFn();
 				$log->write(sprintf('Restore of database to "%s" failed: %s', $name, $command->getErrorOutput()));
+				$this->extend('dataTransferFailure', $environment, $log);
 				throw new RuntimeException($command->getErrorOutput());
 			}
 			$log->write(sprintf('Restore of database to "%s" done', $name));
@@ -382,6 +363,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			if(!$command->isSuccessful()) {
 				$cleanupFn();
 				$log->write(sprintf('Restore of assets to "%s" failed: %s', $name, $command->getErrorOutput()));
+				$this->extend('dataTransferFailure', $environment, $log);
 				throw new RuntimeException($command->getErrorOutput());
 			}
 			$log->write(sprintf('Restore of assets to "%s" done', $name));
