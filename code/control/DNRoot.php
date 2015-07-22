@@ -26,7 +26,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 	/**
 	 * Optional email to use to alert about things that need some action to be performed,
-	 * such as cleanup after a failed task.
+	 * such as deployment failing or cleanup after a failed task.
 	 *
 	 * @config
 	 * @var string
