@@ -1,4 +1,4 @@
-<div class="content">
+<div class="content page-header">
 	<div class="row items-push">
 		<div class="col-sm-7">
 			<h1 class="page-heading">Projects</h1>

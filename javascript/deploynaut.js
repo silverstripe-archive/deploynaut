@@ -40,6 +40,13 @@
 
 	$(document).ready(function() {
 
+		// Menu expand collapse
+	    $('a.nav-submenu').click(function() {
+	        $(this).toggleClass( "open" );
+	    });
+
+	    
+
 		if ($('#Form_DeployForm_BuildName').val() === '') {
 			$('#Form_DeployForm_action_doDeploy').attr('disabled', true);
 		}
