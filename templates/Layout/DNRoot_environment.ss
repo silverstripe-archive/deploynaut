@@ -145,7 +145,6 @@
 		<div class="deploy-form-outer collapse clearfix" id="envDeploy">
 				<%-- Deploy form will be put here with ajax --%>
 		</div>
-
 		<% end_if %>
 	<% end_if %>
 

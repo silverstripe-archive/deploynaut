@@ -47,8 +47,8 @@
 		list-style: none
 
 .page-container 
-	padding-left: $nav-width
-	margin: 0 auto
+	padding-left: $nav-width;
+	margin: 0 auto;
 
 
 // SIDEBAR
@@ -62,7 +62,52 @@
 	color: rgba(255, 255, 255, 0.3)
 
 .side-content 
-	padding: 13px 20px 1px
+	padding: 13px 20px 1px;
+
+	ul.nav ul
+		background-color: rgba(0, 0, 0, 0.15);
+		padding: 0;
+		margin: 0;
+		overflow: hidden;
+
+		a 
+			color: rgba(255, 255, 255, 0.4);
+			padding-left: 54px;
+			
+			&:hover 
+				color: #fff;
+				background-color: transparent;
+				text-decoration: none;
+
+		li.active a
+			color: #fff;
+
+	li > a
+		&:hover,
+		&:focus
+			color: #fff;
+
+
+
+.nav-submenu
+	position: relative;
+
+	&.open .icon-arrow
+		-ms-transform: rotate(180deg); /* IE 9 */
+		-webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
+		transform: rotate(180deg);
+
+.icon-arrow
+	width: 16px;
+	height: 16px
+	display: block;
+	position: absolute;
+	right: 15px;
+	top: 10px;
+	background-color: red;
+	background: transparent url(../img/Platform_icon-arrow.svg) no-repeat;
+
+
 
 	ul.nav ul
 		background-color: rgba(0, 0, 0, 0.15)
@@ -130,7 +175,6 @@
 		    font-weight: 400
 		    padding: 22px 35px 6px 20px
 		    text-transform: uppercase
-
 
 
 // MAIN	
