@@ -10,6 +10,10 @@ class DeploynautLogFile {
 		$this->logFile = DEPLOYNAUT_LOG_PATH . '/' . $logFile;
 	}
 
+	public function getLogFile() {
+		return $this->logFile;
+	}
+
 	public function write($message) {
 		error_log('['.date('Y-m-d H:i:s').'] ' . $message .PHP_EOL, 3, $this->logFile);
 		@chmod($this->logFile, 0666);
