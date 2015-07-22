@@ -1,5 +1,10 @@
 body {
   background-color: #f5f5f5; }
+  body a {
+    color: #3aaef9; }
+    body a:hover,
+    body a:focus {
+      color: #3aaef9; }
 
 .page-container {
   padding-left: 230px;
@@ -16,26 +21,103 @@ body {
 
 .side-content {
   padding: 13px 20px 1px; }
+  .side-content ul.nav ul {
+    background-color: rgba(0, 0, 0, 0.15);
+    padding: 0;
+    margin: 0;
+    overflow: hidden; }
+    .side-content ul.nav ul a {
+      color: rgba(255, 255, 255, 0.4);
+      padding-left: 54px; }
+      .side-content ul.nav ul a:hover {
+        color: #fff;
+        background-color: transparent;
+        text-decoration: none; }
+    .side-content ul.nav ul li.active a {
+      color: #fff; }
+  .side-content li > a:hover,
+  .side-content li > a:focus {
+    color: #fff; }
 
-.nav-main-heading {
-  color: rgba(255, 255, 255, 0.3);
-    color-font-size: 12px;
-    color-font-weight: 600;
-    color-padding: 22px 35px 6px 20px;
-    color-text-transform: uppercase; }
+.nav-submenu {
+  position: relative; }
+  .nav-submenu.open .icon-arrow {
+    -ms-transform: rotate(180deg);
+    /* IE 9 */
+    -webkit-transform: rotate(180deg);
+    /* Chrome, Safari, Opera */
+    transform: rotate(180deg); }
+
+.icon-arrow {
+  width: 16px;
+  height: 16px;
+  display: block;
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  background-color: red;
+  background: transparent url(../img/Platform_icon-arrow.svg) no-repeat; }
+
+.side-content .nav {
+  margin: 0 -20px;
+  padding: 0; }
+  .side-content .nav > li a {
+    color: rgba(255, 255, 255, 0.5);
+    padding: 10px 35px 10px 20px;
+    display: block;
+    transition: color 0.12s ease-out 0s; }
+    .side-content .nav > li a:hover, .side-content .nav > li a:focus {
+      color: rgba(255, 255, 255, 0.5);
+      background-color: rgba(0, 0, 0, 0.2); }
+  .side-content .nav > li.nav-main-heading {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 22px 35px 6px 20px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.3); }
 
 .header-navbar {
   min-height: 60px;
   background-color: #fff;
-    background-color-min-width: 320px;
-    background-color-position: fixed;
-    background-color-right: 0;
-    background-color-top: 0;
-    background-color-z-index: 1030;
-    background-color-left: 230px; }
+  min-width: 320px;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 1030;
+  left: 230px;
+  border-bottom: 1px solid #ddd; }
+  .header-navbar .nav a {
+    padding: 17px 30px 22px; }
 
 .main-container {
-  padding-top: 60px; }
+  margin-top: 60px; }
+  .main-container .page-header {
+    background-color: #f0f3f4;
+    margin: 0;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 0; }
+  .main-container .breadcrumb {
+    background-color: transparent;
+    padding-left: 0;
+    padding-right: 0;
+    margin-bottom: -25px; }
+  .main-container .page-heading {
+    margin-bottom: 30px; }
+  .main-container .nav.nav-tabs {
+    border-bottom: none; }
+    .main-container .nav.nav-tabs > li > a,
+    .main-container .nav.nav-tabs > li > a:hover,
+    .main-container .nav.nav-tabs > li > a:focus {
+      border-color: transparent;
+      padding-left: 0;
+      padding-right: 0;
+      margin-right: 20px;
+      background-color: transparent; }
+    .main-container .nav.nav-tabs > li.active > a {
+      border: none;
+      border-bottom: 3px solid #3aaef9;
+      background-color: none;
+      background-color: transparent; }
 
 .content {
   margin: 0 auto;
