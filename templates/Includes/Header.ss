@@ -20,11 +20,9 @@
 
 					<ul class="collapse" id="collapseExample-$Pos">
 
-						<% if $Up.CurrentProject %>
-						<% loop $Up.CurrentProject.Menu %>
+						<% loop $Menu %>
 							<li<% if $IsActive %> class="active"<% end_if %>><a href="$Link">$Title</a></li>
 						<% end_loop %>
-						<% end_if %>
 					</ul>
 				</li>
 
