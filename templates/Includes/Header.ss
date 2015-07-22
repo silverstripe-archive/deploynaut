@@ -12,18 +12,19 @@
 
 		<% if $DNProjectList %>
 			<li class="nav-main-heading">Stacks</li>
-			<% loop $Navigation %>
+			<% loop $DNProjectList %>
 				<li class="active">
-					<a class="nav-submenu" role="button" data-toggle="collapse" href="#collapseExample-$Pos" aria-controls="collapseExample-$Pos">
-  						<span class="icon icon-stack"></span>$Project.Name<span class="icon-arrow"></span>
+					<a class="nav-submenu" role="button" data-toggle="collapse" href="#collapseExample-$Pos" aria-expanded="false" aria-controls="collapseExample-$Pos">
+  						<span class="icon icon-stack"></span>$Name<span class="icon-arrow"></span>
 					</a>
 
-					<ul class="collapse<% if $IsActive %> in<% end_if %>" id="collapseExample-$Pos">
-						<% loop $Project.Menu %>
-							<li<% if $IsActive %> class="active"<% end_if %>>
-								<a href="$Link">$Title</a>
-							</li>
+					<ul class="collapse" id="collapseExample-$Pos">
+
+						<% if $Up.CurrentProject %>
+						<% loop $Up.CurrentProject.Menu %>
+							<li<% if $IsActive %> class="active"<% end_if %>><a href="$Link">$Title</a></li>
 						<% end_loop %>
+						<% end_if %>
 					</ul>
 				</li>
 

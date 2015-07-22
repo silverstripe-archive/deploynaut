@@ -1,6 +1,9 @@
 @import "_bootstrap-variables.sass";
 @import "node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss";
 
+$nav-width: 230px;
+$border: #ddd;
+$brand-blue: #3aaef9;
 
 .page-container 
 	padding-left: $nav-width;
@@ -65,8 +68,6 @@
 	background: transparent url(../img/Platform_icon-arrow.svg) no-repeat;
 
 
-
-
 // SIDEBAR-MENU
 
 .side-content .nav
@@ -129,9 +130,6 @@
 	.nav.nav-tabs
 		border-bottom: none;
 
-		a
-			border-bottom		
-
 		> li > 
 			a,
 			a:hover,
@@ -144,10 +142,9 @@
 
 		> li.active > a
 			border: none;
-			border-bottom: 3px solid $platform-blue;
+			border-bottom: 3px solid $brand-blue;
 			background-color: none;
 			background-color: transparent;
-
 
 .content 
 	margin: 0 auto
@@ -167,3 +164,4 @@
 .table-large > tbody > tr > td
 	padding-top: 20px
 	padding-bottom: 20px
+
