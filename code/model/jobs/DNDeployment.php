@@ -87,14 +87,32 @@ class DNDeployment extends DataObject {
 	public function log() {
 		return Injector::inst()->createWithArgs('DeploynautLogFile', array($this->logfile()));
 	}
-	
+
 	public function LogContent() {
 		return $this->log()->content();
 	}
 
+	/**
+	 * Returns the status of the resque job
+	 *
+	 * @return string
+	 */
 	public function ResqueStatus() {
 		$status = new Resque_Job_Status($this->ResqueToken);
-		return self::map_resque_status($status->get());
+		$statusCode = $status->get();
+		// The Resque job can no longer be found, fallback to the DNDeployment.Status
+		if($statusCode === false) {
+			// Translate from the DNDeployment.Status to the Resque job status for UI purposes
+			switch($this->Status) {
+				case 'Finished':
+					return 'Complete';
+				case 'Started':
+					return 'Running';
+				default:
+					return $this->Status;
+			}
+		}
+		return self::map_resque_status($statusCode);
 	}
 
 	/**
