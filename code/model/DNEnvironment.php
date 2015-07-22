@@ -294,6 +294,36 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
+	 * Send a failure email with a snippet of the log.
+	 * @param DeploynautLogFile $log
+	 */
+	public function sendFailureEmail(DeploynautLogFile $log) {
+		$to = Config::inst()->get('DNRoot', 'alerts_to');
+		if(!$to) {
+			return false;
+		}
+
+		$subject = sprintf('[Deploynaut] Failure detected on %s', $this->getFullName());
+		$email = new Email(null, $to, $subject);
+		$email->setTemplate('DeploymentFailureEmail');
+
+		// Grab the last 3k characters, starting on a linebreak.
+		$breakpoint = strrpos($log->content(), "\n", -3000);
+		if($breakpoint === false) {
+			$content = $log->content();
+		} else {
+			$content = "[... log has been trimmed ...]\n" . substr($log->content(), $breakpoint+1);
+		}
+
+		$email->populateTemplate(array(
+			'Environment' => $this,
+			'Log' => $content
+		));
+
+		$email->send();
+	}
+
+	/**
 	 * Environments are only viewable by people that can view the environment.
 	 *
 	 * @param Member $member
