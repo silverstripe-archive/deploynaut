@@ -1,20 +1,6 @@
 @import "_bootstrap-variables.sass";
 @import "node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss";
 
-$nav-width: 230px;
-$border: #ddd;
-$brand-blue: #3aaef9;
-
-body
-	background-color: #f5f5f5;
-
-	// TYPE
-	a
-		color: $brand-blue;
-
-		&:hover,
-		&:focus
-			color: $brand-blue;
 
 .page-container 
 	padding-left: $nav-width;
@@ -58,7 +44,6 @@ body
 		&:focus
 			color: #fff;
 			text-decoration: none;
-
 
 .nav-submenu
 	position: relative;
@@ -153,7 +138,7 @@ body
 
 		> li.active > a
 			border: none;
-			border-bottom: 3px solid $brand-blue;
+			border-bottom: 3px solid $platform-blue;
 			background-color: none;
 			background-color: transparent;
 
