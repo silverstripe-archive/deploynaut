@@ -1,4 +1,4 @@
 <div class="content">
-$Content
-$Form
+	$Content
+	$Form
 </div>

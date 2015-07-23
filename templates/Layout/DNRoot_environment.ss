@@ -2,15 +2,15 @@
   <div class="row items-push">
     <div class="col-sm-7">
     	<ol class="breadcrumb">
-			<li><a href="naut/project/$Project.Name">$Project.Title</a></li>
+			<li><a href="naut/project/$CurrentProject.Name">$CurrentProject.Title</a></li>
 		</ol>
     	<h1 class="page-heading">Deployments</h1>
     </div>
   </div>
 
   <ul class="nav nav-tabs">
-	<% if DNEnvironmentList %>
-		<% loop DNEnvironmentList %>
+	<% if $DNEnvironmentList %>
+		<% loop $DNEnvironmentList %>
 		<li<% if $Top.Name = $Name %> class="active"<% end_if %>><% if CanDeploy %><a href="$Link">$Name</a><% else %>$Name<% end_if %></li>
 		<% end_loop %>
 	<% end_if %>
@@ -30,18 +30,18 @@
 	<p><a href="$URL.URL">$URL.URL</a></p>
 	
 
-	<% if $CurrentBuild %>
+	<% if $CurrentEnvironment.CurrentBuild %>
 		<p>
 			This environment is currently running build
-			<span class="tooltip-hint" data-toggle="tooltip" title="$CurrentBuild.Message" data-original-title="$CurrentBuild.Message">
-				$CurrentBuild.SHA
+			<span class="tooltip-hint" data-toggle="tooltip" title="$CurrentBuild.Message" data-original-title="$CurrentEnvironment.CurrentBuild.Message">
+				$CurrentEnvironment.CurrentBuild.SHA
 			</span>
 		</p>
 	<% else %>
 		<p>New environment - deploy your first build.</p>
 	<% end_if %>
 	<% if HasMetrics %>
-		<p><a href="naut/project/$Project.Name/environment/$Name/metrics">See graphs for this environment</a></p>
+		<p><a href="naut/project/$CurrentProject.Name/environment/$Name/metrics">See graphs for this environment</a></p>
 	<% end_if %>
 
 	<% if $HasPipelineSupport %>
@@ -57,8 +57,8 @@
 			$DeployForm
 			<% if DependentFilteredCommits %>
 				<% with $GenericPipelineConfig.PipelineConfig %>
-					<h3>Successful $DependsOnProject:$DependsOnEnvironment releases</h3>
-					<p>The following $DependsOnProject:$DependsOnEnvironment releases can be deployed</p>
+					<h3>Successful $CurrentEnvironment.DependsOnProject:$CurrentEnvironment.DependsOnEnvironment releases</h3>
+					<p>The following $CurrentEnvironment.DependsOnProject:$CurrentEnvironment.DependsOnEnvironment releases can be deployed</p>
 				<% end_with %>
 				<table class="table-striped table table-bordered">
 					<thead>
@@ -91,7 +91,7 @@
 			<% end_if %>
 		<% end_if %>
 	<% else %>
-		<% if DeployForm %>
+		<% if $DeployForm %>
 			<h3>Deploy a new release</h3>
 			<p>Choose a release below and press the 'Deploy to $Name' button.</p>
 			$DeployForm
@@ -113,7 +113,7 @@
 			</tr>
 		</thead>
 		<tbody>
-		<% loop DeployHistory %>
+		<% loop $CurrentEnvironment.DeployHistory %>
 			<tr>
 				<td><span class="tooltip-hint" data-toggle="tooltip" data-original-title="$LastEdited.Nice ($LastEdited.Ago)">$LastEdited.Date</span></td>
 				<td><span class="tooltip-hint" data-toggle="tooltip" title="$Message" data-original-title="$Message">$SHA</span></td>
