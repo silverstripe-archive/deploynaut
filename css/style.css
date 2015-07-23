@@ -8092,12 +8092,13 @@ button.close {
     margin: 0;
     overflow: hidden; }
     .side-content ul.nav ul a, .side-content .deploy-form-outer .deploy-form ul.SelectionGroup ul a, .deploy-form-outer .deploy-form .side-content ul.SelectionGroup ul a {
-      color: rgba(255, 255, 255, 0.4);
+      opacity: .8;
       padding-left: 54px; }
       .side-content ul.nav ul a:hover, .side-content .deploy-form-outer .deploy-form ul.SelectionGroup ul a:hover, .deploy-form-outer .deploy-form .side-content ul.SelectionGroup ul a:hover {
         color: #fff;
         background-color: transparent;
-        text-decoration: none; }
+        text-decoration: none;
+        opacity: 1; }
     .side-content ul.nav ul li.active a, .side-content .deploy-form-outer .deploy-form ul.SelectionGroup ul li.active a, .deploy-form-outer .deploy-form .side-content ul.SelectionGroup ul li.active a {
       color: #fff; }
   .side-content li > a:hover,
