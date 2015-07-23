@@ -134,6 +134,10 @@ class DNEnvironment extends DataObject {
 		"PipelineCancellersList"	=> "Can Cancel List"
 	);
 
+	private static $singular_name = 'Capistrano Environment';
+
+	private static $plural_name = 'Capistrano Environments';
+
 	/**
 	 *
 	 * @var array
