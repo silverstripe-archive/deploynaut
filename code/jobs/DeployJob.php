@@ -69,10 +69,10 @@ class DeployJob {
 				$DNProject,
 				isset($this->args['leaveMaintenacePage']) ? $this->args['leaveMaintenacePage'] : false
 			);
-		} catch(RuntimeException $exc) {
+		} catch(Exception $e) {
 			$this->updateStatus('Failed');
 			echo "[-] DeployJob failed" . PHP_EOL;
-			throw $exc;
+			throw $e;
 		}
 		echo "[-] DeployJob finished" . PHP_EOL;
 	}
