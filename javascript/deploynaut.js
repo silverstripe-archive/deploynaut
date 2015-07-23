@@ -44,7 +44,6 @@
 	    	$('a.nav-submenu').click(function() {
 	        	$(this).toggleClass( "open" );
 	    	});
-
 	    
 
 		if ($('#Form_DeployForm_BuildName').val() === '') {
