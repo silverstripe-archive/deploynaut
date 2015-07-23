@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/silverstripe/deploynaut#readme",
   "devDependencies": {
-    "node-sass": "^3.2.0"
+    "node-sass": "^3.2.0",
+    "bootstrap-sass": "^3.3.5"
   }
 }
