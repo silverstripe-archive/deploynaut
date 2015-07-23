@@ -17,6 +17,7 @@ class DeploynautAPI extends APINoun {
 	 */
 	private static $url_handlers = array(
 		'' => 'listProjects',
+		'pushhook/' => 'pushhook',
 		'$Project//fetch' => 'project',
 		'$Project/$Environment!' => 'environment',
 		'$Project/' => 'project',
@@ -29,7 +30,8 @@ class DeploynautAPI extends APINoun {
 	public static $allowed_actions = array(
 		'project',
 		'environment',
-		'listProjects'
+		'listProjects',
+		'pushhook',
 	);
 	
 	/**
@@ -116,6 +118,45 @@ class DeploynautAPI extends APINoun {
 		$project = DNProject::get()->filter('Name', $projectName)->first();
 		$environmentName = $this->getRequest()->param('Environment');
 		return $project->Environments()->filter('Name', $environmentName)->first();
+	}
+
+	public function pushhook() {
+		// get the request body
+		$body = $this->getRequestBody();
+		if (empty($body)) {
+			throw new Exception("Request body empty");
+		}
+
+		// To properly do matching, we need a parsed, valid, URL
+		$url = parse_url($body['repository']['url']);
+		if (!$url || empty($url['host']) || empty($url['path'])) {
+			// All those values are required for matching, though Gitlab will not always give them all
+			throw new Exception("Unknown URL");
+		}
+
+		// Rather than doing all the matching in PHP, we can get a "good enough" result with this for now
+		$projects = DNProject::get()->filter(array('CVSPath:PartialMatch' => $url['path']));
+		if (empty($projects)) {
+			throw new Exception("No projects found");
+		}
+		foreach ($projects as $project) {
+			// Do host validation too
+			$projecturl = parse_url($project->CVSPath);
+			if (!$projecturl || empty($url['host']) || empty($url['path'])) {
+				// Invalid URL
+				continue;
+			}
+			if ($projecturl['host'] != $url['host']) {
+				// Non-matching URL
+				continue;
+			}
+			// If we're here, we should get around to doing the Fetch!
+			$fetch = DNGitFetch::create();
+			$fetch->ProjectID = $project->ID;
+			$fetch->write();
+			$fetch->start();
+		}
+		// TODO: Fix this with a proper way to return without causing an error
 	}
 	
 	/**
