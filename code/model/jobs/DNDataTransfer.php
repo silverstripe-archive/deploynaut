@@ -131,21 +131,13 @@ class DNDataTransfer extends DataObject {
 	 */
 	public function start() {
 		$env = $this->Environment();
+		$log = $this->log();
+
 		$args = array(
 			'dataTransferID' => $this->ID,
 			'logfile' => $this->logfile(),
 			'backupBeforePush' => $this->backupBeforePush
 		);
-
-		$log = $this->log();
-		$log->write(strtr(
-			'Creating a job to transfer data on environment "<name>" (direction: <dir>, mode: <mode>)',
-			array(
-				'<dir>' => $this->Direction,
-				'<mode>' => $this->Mode,
-				'<name>' => $env->getFullName()
-			)
-		));
 
 		if(!$this->AuthorID) {
 			$this->AuthorID = Member::currentUserID();
@@ -154,7 +146,10 @@ class DNDataTransfer extends DataObject {
 		if($this->AuthorID) {
 			$author = $this->Author();
 			$message = sprintf(
-				'Initiated by %s (%s), with IP Address %s',
+				'Data transfer to %s (%s, %s) initiated by %s (%s), with IP address %s',
+				$env->getFullName(),
+				$this->Direction,
+				$this->Mode,
 				$author->getName(),
 				$author->Email,
 				Controller::curr()->getRequest()->getIP()

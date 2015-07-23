@@ -99,6 +99,7 @@ class DNPing extends DataObject {
 	public function start() {
 		$environment = $this->Environment();
 		$project = $environment->Project();
+		$log = $this->log();
 
 		$args = array(
 			'environmentName' => $environment->Name,
@@ -107,9 +108,6 @@ class DNPing extends DataObject {
 			'env' => $project->getProcessEnv()
 		);
 
-		$log = $this->log();
-		$log->write(sprintf('Pinging "%s"', $environment->getFullName()));
-
 		if(!$this->DeployerID) {
 			$this->DeployerID = Member::currentUserID();
 		}
@@ -117,9 +115,8 @@ class DNPing extends DataObject {
 		if($this->DeployerID) {
 			$deployer = $this->Deployer();
 			$message = sprintf(
-				'Ping to %s:%s initiated by %s (%s)',
-				$args['projectName'],
-				$args['environmentName'],
+				'Ping to %s initiated by %s (%s)',
+				$environment->getFullName(),
 				$deployer->getName(),
 				$deployer->Email
 			);

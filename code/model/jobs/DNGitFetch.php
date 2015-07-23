@@ -24,6 +24,7 @@ class DNGitFetch extends DataObject {
 	 */
 	public function start() {
 		$project = $this->Project();
+		$log = $this->log();
 
 		$args = array(
 			'projectName' => $project->Name,
@@ -31,17 +32,15 @@ class DNGitFetch extends DataObject {
 			'env' => $project->getProcessEnv()
 		);
 
-		$log = $this->log();
-		$log->write(sprintf('Creating a job to update the git repository for project %s', $args['projectName']));
-
 		if(!$this->DeployerID) {
 			$this->DeployerID = Member::currentUserID();
 		}
-		
+
 		if($this->DeployerID) {
 			$deployer = $this->Deployer();
 			$message = sprintf(
-				'Initiated by %s (%s)',
+				'Update repository job for %s initiated by %s (%s)',
+				$project->Name,
 				$deployer->getName(),
 				$deployer->Email
 			);

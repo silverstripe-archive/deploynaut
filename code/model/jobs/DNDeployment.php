@@ -123,6 +123,7 @@ class DNDeployment extends DataObject {
 	protected function enqueueDeployment() {
 		$environment = $this->Environment();
 		$project = $environment->Project();
+		$log = $this->log();
 
 		$args = array(
 			'environmentName' => $environment->Name,
@@ -135,9 +136,6 @@ class DNDeployment extends DataObject {
 			'leaveMaintenacePage' => $this->LeaveMaintenacePage
 		);
 
-		$log = $this->log();
-		$log->write(sprintf('Deploying %s to "%s"', $args['sha'], $environment->getFullName()));
-
 		if(!$this->DeployerID) {
 			$this->DeployerID = Member::currentUserID();
 		}
@@ -145,11 +143,11 @@ class DNDeployment extends DataObject {
 		if($this->DeployerID) {
 			$deployer = $this->Deployer();
 			$message = sprintf(
-				'Deploy to %s:%s initiated by %s (%s)',
-				$args['projectName'],
-				$args['environmentName'],
+				'Deploy to %s initiated by %s (%s), with IP address %s',
+				$environment->getFullName(),
 				$deployer->getName(),
-				$deployer->Email
+				$deployer->Email,
+				Controller::curr()->getRequest()->getIP()
 			);
 			$log->write($message);
 		}
