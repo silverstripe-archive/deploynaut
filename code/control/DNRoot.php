@@ -168,7 +168,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Performs canView permission check by limiting visible projects in DNProjectsList() call.
 		return $this->customise(array(
 			'Title' => 'Projects',
-			'CurrentProject' => $this->getCurrentProject(),
 		))->render();
 	}
 
@@ -522,7 +521,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		return $this->customise(array(
-			'CurrentProject' => $project,
 			'ProjectOverview' => 1,
 			'DataTransferForm' => $this->getDataTransferForm($request)
 		))->render();
@@ -569,7 +567,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		return $this->customise(array(
-			'CurrentProject' => $project,
 			'DNEnvironmentList' => $this->getCurrentProject()->DNEnvironmentList(),
 			'FlagSnapshotsEnabled' => $this->FlagSnapshotsEnabled(),
 			'CurrentEnvironment' => $env

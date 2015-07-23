@@ -1,8 +1,5 @@
 <div class="content page-header">
 	<% include PageHeader %>
-
-	<% if $CurrentProject %>
-	<ul class="nav nav-tabs">
 		<li>
 			<a href="<% with $Navigation %><% loop $Project.Menu %>
 					<% if $IsActive %>$Link<% end_if %><% end_loop %><% end_with %>">Overview</a>
