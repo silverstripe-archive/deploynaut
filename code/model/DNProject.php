@@ -158,20 +158,36 @@ class DNProject extends DataObject {
 		$list->push(new ArrayData(array(
 			'Link' => sprintf('naut/project/%s', $this->Name),
 			'Title' => 'Deploy',
-			'IsActive' => Controller::curr()->getAction() == 'project'
+			'IsActive' => $this->isCurrent() && Controller::curr()->getAction() == 'project'
 		)));
 
 		if(DNRoot::FlagSnapshotsEnabled()) {
 			$list->push(new ArrayData(array(
 				'Link' => sprintf('naut/project/%s/snapshots', $this->Name),
 				'Title' => 'Snapshots',
-				'IsActive' => Controller::curr()->getAction() == 'snapshots'
+				'IsActive' => $this->isCurrent() && Controller::curr()->getAction() == 'snapshots'
 			)));
 		}
 
 		$this->extend('updateMenu', $list);
 
 		return $list;
+	}
+
+	/**
+	 * Checks whether this project is currently being viewed.
+	 *
+	 * @todo This shouldn't belong in the model. Better navigation is needed.
+	 *
+	 * @return boolean
+	 */
+	public function isCurrent() {
+		$controller = Controller::curr();
+		if(method_exists($controller, 'getCurrentProject')) {
+			$project = $controller->getCurrentProject();
+			return $project && $this->ID == $project->ID;
+		}
+		return false;
 	}
 
 	/**

@@ -720,6 +720,30 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		});
 	}
 
+
+	/**
+	 * Returns top level navigation of projects.
+	 *
+	 * @return ArrayList
+	 */
+	public function Navigation() {
+		$navigation = new ArrayList();
+
+		$currentProject = $this->getCurrentProject();
+
+		$projects = $this->DNProjectList();
+		if($projects->count() > 0) {
+			foreach($projects as $project) {
+				$navigation->push(array(
+					'Project' => $project,
+					'IsActive' => $currentProject && $currentProject->ID == $project->ID,
+				));
+			}
+		}
+
+		return $navigation;
+	}
+
 	/**
 	 * Construct the deployment form
 	 *
