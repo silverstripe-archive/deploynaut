@@ -1,7 +1,7 @@
 <div class="content page-header">
 	<div class="row items-push">
 		<div class="col-sm-7">
-			<h1 class="page-heading"><% with Project %>$Title<% end_with %></h1>
+			<h1 class="page-heading"><% with $CurrentProject %>$Title<% end_with %></h1>
 		</div>
 	</div>
 </div>
@@ -15,7 +15,7 @@
 	</ul>
 	<% end_if %> --%>
 
-	<% with Project %>
+	<% with $CurrentProject %>
 	<%-- <ul class="nav level-2">
 	<% if DNEnvironmentList %>
 		<% loop DNEnvironmentList %>
@@ -109,7 +109,7 @@
 		</h3>
 		<div class="project-branch-content">
 		<% if IsOpenByDefault %>
-		<% include DNRoot_branchinfo %>
+		<% include BranchInfo %>
 		<% end_if %>
 		</div>
 	</div>
