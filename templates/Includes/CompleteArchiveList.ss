@@ -44,7 +44,7 @@ If you would like to upload files from your computer to a new snapshot, click 'U
 						</td>
 						<td class="action">
 							<% if $CanDownload && ArchiveFile %>
-								<a href="$ArchiveFile.Link">
+								<a href="$ArchiveFile.Link" download="">
 									Download
 								</a>
 							<% end_if %>
