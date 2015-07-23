@@ -5,7 +5,6 @@
 	<% if $CurrentProject %>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="#">Overview</a></li>
-
 		<% if $CurrentProject.canBackup %>
 		<li><a href="$CurrentProject.Link('createsnapshot')">Create Snapshot</a></li>
 		<% end_if %>
