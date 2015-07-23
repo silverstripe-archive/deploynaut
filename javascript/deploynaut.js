@@ -41,9 +41,10 @@
 	$(document).ready(function() {
 
 		// Menu expand collapse
-	    $('a.nav-submenu').click(function() {
-	        $(this).toggleClass( "open" );
-	    });
+//	    $('#main-navigation a.nav-submenu').click(function() {
+//	        $(this).toggleClass( "open" );
+//	    });
+//		$('.collapse-navigation').collapse();
 
 	    
 
