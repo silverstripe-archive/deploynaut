@@ -2,7 +2,6 @@
 	<% include PageHeader %>
 
 	<% if $CurrentProject %>
-
 	<ul class="nav nav-tabs">
 		<% if $Project.canBackup %>
 		<li class="active"><a href="$CurrentProject.Link('createsnapshot')">Create Snapshot</a></li>

@@ -1,4 +1,4 @@
-<div class="row items-push">
+<div class="row">
 	<div class="col-sm-7">
 		<ol class="breadcrumb">
 			<li><a href="#">$CurrentProject.Title</a></li>
