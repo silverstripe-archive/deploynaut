@@ -1,14 +1,5 @@
 <div class="content page-header">
-	<div class="row items-push">
-		<div class="col-sm-7">
-			<ol class="breadcrumb">
-				<li><a href="#">$Project.Title</a></li>
-				<li><a href="#">$Parent.Title FIX!!</a></li>
-			</ol>
-			<h1 class="page-heading">$Title</h1>
-		</div>
-	</div>
-
+	<% include PageHeader %>
 
 	<% if $CurrentProject %>
 
