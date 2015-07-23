@@ -1,6 +1,6 @@
 <div class="content page-header">
   <div class="row">
-    <div class="col-sm-7">
+    <div class="col-md-12">
     	<ol class="breadcrumb">
 			<li><a href="naut/project/$CurrentProject.Name">$CurrentProject.Title</a></li>
 		</ol>

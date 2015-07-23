@@ -1,7 +1,7 @@
 <div class="content page-header">
 
 	<div class="row">
-		<div class="col-sm-7">
+		<div class="col-md-12">
 			<ol class="breadcrumb">
 				<li><a href="#">$CurrentProject.Title</a></li>
 			</ol>
@@ -42,7 +42,7 @@
 	<table class="table">
 		<thead>
 			<tr>
-				<th>Environment</th>
+				<th>Name</th>
 				<th>URL</th>
 				<th>Build currently deployed</th>
 				<th class="text-center">Can you deploy?</th>
