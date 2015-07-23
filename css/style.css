@@ -6059,6 +6059,14 @@ button.close {
   .hidden-print {
     display: none !important; } }
 
+body {
+  background-color: #f5f5f5; }
+  body a {
+    color: #3aaef9; }
+    body a:hover,
+    body a:focus {
+      color: #3aaef9; }
+
 .page-container {
   padding-left: 230px;
   margin: 0 auto; }
