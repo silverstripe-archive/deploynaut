@@ -2,7 +2,7 @@
 	<div class="row items-push">
 		<div class="col-sm-7">
 			<ol class="breadcrumb">
-				<li><a href="#">$Project.Title</a></li>
+				<li><a href="#">$CurrentProject.Title</a></li>
 				<li><a href="#">$Parent.Title $Name FIX!!</a></li>
 			</ol>
 			<h1 class="page-heading">$Title</h1>
@@ -11,10 +11,10 @@
 
 	<% if $CurrentProject %>
 	<ul class="nav nav-tabs">
-		<% if $Project.canBackup %>
+		<% if $CurrentProject.canBackup %>
 		<li><a href="$CurrentProject.Link('createsnapshot')">Create Snapshot</a></li>
 		<% end_if %>
-		<% if $Project.canUploadArchive %>
+		<% if $CurrentProject.canUploadArchive %>
 		<li><a href="$CurrentProject.Link('uploadsnapshot')">Upload Snapshot</a></li>
 		<% end_if %>
 		<li class="active"><a href="$CurrentProject.Link('snapshotslog')">Log</a></li>

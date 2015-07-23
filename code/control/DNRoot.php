@@ -175,7 +175,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Performs canView permission check by limiting visible projects in DNProjectsList() call.
 		return $this->customise(array(
 			'Title' => 'Projects',
-			'CurrentProject' => $this->getCurrentProject(),
 		))->render();
 	}
 
@@ -193,8 +192,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		return $this->customise(array(
 			'Title' => 'Data Snapshots',
-			'Project' => $project,
-			'CurrentProject' => $project,
 			'SnapshotsSection' => 1,
 		))->render();
 	}
@@ -217,8 +214,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		return $this->customise(array(
 			'Title' => 'Create Data Snapshot',
-			'Project' => $project,
-			'CurrentProject' => $project,
 			'SnapshotsSection' => 1,
 			'DataTransferForm' => $this->getDataTransferForm($request)
 		))->render();
@@ -241,8 +236,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		return $this->customise(array(
-			'Project' => $project,
-			'CurrentProject' => $project,
 			'SnapshotsSection' => 1,
 			'UploadLimit' => $maxSize = File::format_size(min(
 				File::ini2bytes(ini_get('upload_max_filesize')),
@@ -393,8 +386,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$process->run();
 
 		return $this->customise(array(
-			'Project' => $project,
-			'CurrentProject' => $project,
 			'SnapshotsSection' => 1,
 			'DataArchive' => $dataArchive,
 			'DataTransferRestoreForm' => $this->getDataTransferRestoreForm($this->request, $dataArchive),
@@ -489,8 +480,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		return $this->customise(array(
 			'Title' => 'Data Snapshots Log',
-			'Project' => $project,
-			'CurrentProject' => $project,
 			'SnapshotsSection' => 1,
 		))->render();
 	}
@@ -520,8 +509,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		return $this->customise(array(
 			'Title' => 'How to send us your Data Snapshot by post',
-			'Project' => $project,
-			'CurrentProject' => $project,
 			'DataArchive' => $dataArchive,
 			'Address' => Config::inst()->get('Deploynaut', 'snapshot_post_address'),
 			'BackURL' => $project->Link(),
@@ -541,7 +528,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		return $this->customise(array(
-			'CurrentProject' => $project,
 			'ProjectOverview' => 1,
 			'DataTransferForm' => $this->getDataTransferForm($request)
 		))->render();
@@ -588,7 +574,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		return $this->customise(array(
-			'CurrentProject' => $project,
 			'DNEnvironmentList' => $this->getCurrentProject()->DNEnvironmentList(),
 			'FlagSnapshotsEnabled' => $this->FlagSnapshotsEnabled(),
 			'CurrentEnvironment' => $env
@@ -693,10 +678,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return new SS_HTTPResponse("Environment '" . Convert::raw2xml($request->latestParam('Environment')) . "' not found.", 404);
 		}
 
-		return $env->customise(array(
-			'Project' => $project,
-			'CurrentProject' => $project,
-		))->render();
+		return $env->render();
 	}
 
 	/**
@@ -887,7 +869,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * @return Form
 	 */
-	public function getDataTransferForm($request) {
+	public function getDataTransferForm(SS_HTTPRequest $request = null) {
 		// Performs canView permission check by limiting visible projects
 		$envs = $this->getCurrentProject()->DNEnvironmentList()
 			->filterByCallback(function($item) {return $item->canBackup();});
@@ -907,7 +889,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				FormAction::create('doDataTransfer', 'Create')->addExtraClass('btn')
 			)
 		);
-		$form->setFormAction($request->getURL().'/DataTransferForm');
+		$form->setFormAction($this->getRequest()->getURL().'/DataTransferForm');
 
 		return $form;
 	}
