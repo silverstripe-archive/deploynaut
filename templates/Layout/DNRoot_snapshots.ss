@@ -1,9 +1,11 @@
 <div class="content page-header">
 
-	<% include PageHeader %>
+	<% include PageHeader ShowEnvironmentList=false %>
 
 	<% if $CurrentProject %>
 	<ul class="nav nav-tabs">
+		<li class="active"><a href="#">Overview</a></li>
+
 		<% if $CurrentProject.canBackup %>
 		<li><a href="$CurrentProject.Link('createsnapshot')">Create Snapshot</a></li>
 		<% end_if %>
@@ -14,23 +16,21 @@
 	</ul>
 	<% end_if %>
 </div>
+
 <div class="content">
-
-
-<% with $CurrentProject %>
-<% if $HasDiskQuota %>
-	<% if $HasExceededDiskQuota %>
-		<p class="message bad">You have exceeded the total quota of $DiskQuotaMB MB. You will need to delete old snapshots in order to create new ones.</p>
-	<% else %>
-		<p class="message good">You have used $UsedQuotaMB MB out of total quota $DiskQuotaMB MB quota across all environments for this project.</p>
+	<% with $CurrentProject %>
+	<% if $HasDiskQuota %>
+		<% if $HasExceededDiskQuota %>
+			<p class="message bad">You have exceeded the total quota of $DiskQuotaMB MB. You will need to delete old snapshots in order to create new ones.</p>
+		<% else %>
+			<p class="message good">You have used $UsedQuotaMB MB out of total quota $DiskQuotaMB MB quota across all environments for this project.</p>
+		<% end_if %>
 	<% end_if %>
-<% end_if %>
-<% end_with %>
+	<% end_with %>
 
-<% include CompleteArchiveList %>
+	<% include CompleteArchiveList %>
 
-<% include PendingArchiveList %>
+	<% include PendingArchiveList %>
 
-<% include SnapshotImportInstructions %>
-
+	<% include SnapshotImportInstructions %>
 </div>

@@ -1,5 +1,5 @@
 <div class="content page-header">
-  <div class="row items-push">
+  <div class="row">
     <div class="col-sm-7">
     	<ol class="breadcrumb">
 			<li><a href="naut/project/$CurrentProject.Name">$CurrentProject.Title</a></li>
@@ -8,13 +8,15 @@
     </div>
   </div>
 
-  <ul class="nav nav-tabs">
-	<% if $DNEnvironmentList %>
-		<% loop $DNEnvironmentList %>
-		<li<% if $Top.Name = $Name %> class="active"<% end_if %>><% if CanDeploy %><a href="$Link">$Name</a><% else %>$Name<% end_if %></li>
-		<% end_loop %>
-	<% end_if %>
-	</ul>
+	<% with $CurrentProject %>
+	  <ul class="nav nav-tabs">
+		<% if $DNEnvironmentList %>
+			<% loop $DNEnvironmentList %>
+			<li<% if $Top.Name = $Name %> class="active"<% end_if %>><% if CanDeploy %><a href="$Link">$Name</a><% else %>$Name<% end_if %></li>
+			<% end_loop %>
+		<% end_if %>
+		</ul>
+	<% end_with %>
 
 </div>
 <div class="content">

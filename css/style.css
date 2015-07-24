@@ -1056,7 +1056,7 @@ body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
   line-height: 1.42857;
-  color: #333333;
+  color: #646464;
   background-color: #fff; }
 
 input,
@@ -1140,9 +1140,9 @@ hr {
 h1, h2, h3, h4, h5, h6,
 .h1, .h2, .h3, .h4, .h5, .h6 {
   font-family: inherit;
-  font-weight: 500;
+  font-weight: 300;
   line-height: 1.1;
-  color: inherit; }
+  color: #555555; }
   h1 small,
   h1 .small, h2 small,
   h2 .small, h3 small,
@@ -2027,8 +2027,8 @@ table {
   background-color: transparent; }
 
 caption {
-  padding-top: 8px;
-  padding-bottom: 8px;
+  padding-top: 12px 10px;
+  padding-bottom: 12px 10px;
   color: #777777;
   text-align: left; }
 
@@ -2045,13 +2045,13 @@ th {
   .table > tbody > tr > td,
   .table > tfoot > tr > th,
   .table > tfoot > tr > td {
-    padding: 8px;
+    padding: 12px 10px;
     line-height: 1.42857;
     vertical-align: top;
-    border-top: 1px solid #ddd; }
+    border-top: 1px solid #f0f0f0; }
   .table > thead > tr > th {
     vertical-align: bottom;
-    border-bottom: 2px solid #ddd; }
+    border-bottom: 2px solid #f0f0f0; }
   .table > caption + thead > tr:first-child > th,
   .table > caption + thead > tr:first-child > td,
   .table > colgroup + thead > tr:first-child > th,
@@ -2060,7 +2060,7 @@ th {
   .table > thead:first-child > tr:first-child > td {
     border-top: 0; }
   .table > tbody + tbody {
-    border-top: 2px solid #ddd; }
+    border-top: 2px solid #f0f0f0; }
   .table .table {
     background-color: #fff; }
 
@@ -2073,14 +2073,14 @@ th {
   padding: 5px; }
 
 .table-bordered {
-  border: 1px solid #ddd; }
+  border: 1px solid #f0f0f0; }
   .table-bordered > thead > tr > th,
   .table-bordered > thead > tr > td,
   .table-bordered > tbody > tr > th,
   .table-bordered > tbody > tr > td,
   .table-bordered > tfoot > tr > th,
   .table-bordered > tfoot > tr > td {
-    border: 1px solid #ddd; }
+    border: 1px solid #f0f0f0; }
   .table-bordered > thead > tr > th,
   .table-bordered > thead > tr > td {
     border-bottom-width: 2px; }
@@ -2216,7 +2216,7 @@ table th[class*="col-"] {
       margin-bottom: 15px;
       overflow-y: hidden;
       -ms-overflow-style: -ms-autohiding-scrollbar;
-      border: 1px solid #ddd; }
+      border: 1px solid #f0f0f0; }
       .table-responsive > .table {
         margin-bottom: 0; }
         .table-responsive > .table > thead > tr > th,
@@ -2705,7 +2705,7 @@ select[multiple].input-lg, .input-group-lg > select[multiple].form-control,
   display: block;
   margin-top: 5px;
   margin-bottom: 10px;
-  color: #737373; }
+  color: #a4a4a4; }
 
 @media (min-width: 768px) {
   .form-inline .form-group {
@@ -4262,7 +4262,7 @@ tbody.collapse.in {
   padding: 8px 15px;
   margin-bottom: 20px;
   list-style: none;
-  background-color: #f5f5f5;
+  background-color: transparent;
   border-radius: 4px; }
   .breadcrumb > li {
     display: inline-block; }
@@ -4551,7 +4551,7 @@ a.badge:focus {
     margin-right: auto; }
   .thumbnail .caption {
     padding: 9px;
-    color: #333333; }
+    color: #646464; }
 
 a.thumbnail:hover,
 a.thumbnail:focus,
@@ -5071,7 +5071,7 @@ button.list-group-item-danger {
 .panel > .panel-body + .table-responsive,
 .panel > .table + .panel-body,
 .panel > .table-responsive + .panel-body {
-  border-top: 1px solid #ddd; }
+  border-top: 1px solid #f0f0f0; }
 
 .panel > .table > tbody:first-child > tr:first-child th,
 .panel > .table > tbody:first-child > tr:first-child td {
@@ -6091,7 +6091,8 @@ button.close {
       color: #fff; }
   .side-content li > a:hover,
   .side-content li > a:focus {
-    color: #fff; }
+    color: #fff;
+    text-decoration: none; }
 
 .nav-submenu {
   position: relative; }
@@ -6150,7 +6151,6 @@ button.close {
     border-bottom: 1px solid #ddd;
     padding-bottom: 0; }
   .main-container .breadcrumb {
-    background-color: transparent;
     padding-left: 0;
     padding-right: 0;
     margin-bottom: -25px; }
@@ -6176,3 +6176,14 @@ button.close {
   margin: 0 auto;
   padding: 30px 30px 1px;
     padding-background-color: #f9f9f9; }
+
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th {
+  border-bottom: 1px solid #ddd;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 16px 10px 12px;
+  text-transform: uppercase; }
+
+.table-large > tbody > tr > td {
+  padding-top: 20px;
+  padding-bottom: 20px; }
