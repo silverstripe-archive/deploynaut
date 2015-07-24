@@ -8103,7 +8103,8 @@ button.close {
       color: #fff; }
   .side-content li > a:hover,
   .side-content li > a:focus {
-    color: #fff; }
+    color: #fff;
+    text-decoration: none; }
 
 .nav-submenu {
   position: relative; }
