@@ -1,4 +1,4 @@
-<% with Transfer %>
+<% with $CurrentTransfer %>
 <% if Direction == 'get' %>
 	<h3>
 		Backup $ModeNice from <a href="$Environment.Project.Link">$Environment.Project.Name</a>:<a href="$Environment.Link">$Environment.Name</a>
@@ -14,7 +14,7 @@
 		<li><a href="naut/project/$CurrentProject.Name/snapshots">Return to snapshots</a></li>
 	</ul>
 </div>
-<% with Transfer %>
+<% with $CurrentTransfer %>
 <h5>Status:</h5>
 <pre id="queue_action" class="$ResqueStatus">$ResqueStatus</pre>
 
