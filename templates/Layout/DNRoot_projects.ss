@@ -6,10 +6,14 @@
 	</div>
 </div>
 <div class="content">
-	<table class="table-striped table table-bordered">
+	<table class="table table-large">
 		<thead>
 			<tr>
 				<th>Project name</th>
+				<th>Live URL</th>
+				<th>UAT URL</th>
+				<th class="text-center">Environments</th>
+				<th>Code</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -17,6 +21,10 @@
 		<% loop DNProjectList %>
 			<tr>
 				<td><a href="$Link">$Name</a></td>
+				<td><a href="#">Live Link</a></td>
+				<td><a href="#">UAT Link</a></td>
+				<td class="text-center">3</td>
+				<td><a href="#">Link</a></td>
 			</tr>
 		<% end_loop %>
 		<% else %>
