@@ -4,6 +4,11 @@
 
 	<% if $CurrentProject %>
 	<ul class="nav nav-tabs">
+		<li>
+			<a href="<% with $Navigation %><% loop $Project.Menu %>
+					<% if $IsActive %>$Link<% end_if %><% end_loop %><% end_with %>">Overview</a>
+		</li>
+
 		<% if $CurrentProject.canBackup %>
 		<li class="active"><a href="$CurrentProject.Link('createsnapshot')">Create Snapshot</a></li>
 		<% end_if %>
@@ -14,9 +19,9 @@
 	</ul>
 	<% end_if %>
 </div>
-<div class="content">
+<div class="content text-center">
 
-	<h3>$Title</h3>
+	<h3 class="">Create a snapshot</h3>
 
 	<p>Back up the database and/or assets into a file and transfer it to deploynaut. From there it can be 
 	downloaded or used for later restores</p>

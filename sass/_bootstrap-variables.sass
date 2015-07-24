@@ -32,7 +32,7 @@ $platform-blue:			#3aaef9
 //** Background color for `<body>`.
 $body-bg:               #fff
 //** Global text color on `<body>`.
-$text-color:            $gray-dark
+$text-color:            #646464
 
 //** Global textual link color.
 $link-color:            $platform-blue
@@ -69,10 +69,10 @@ $font-size-h6:            ceil(($font-size-base * 0.85)) // ~12px
 // $line-height-computed:    floor(($font-size-base * $line-height-base)) // ~20px
 
 //** By default, this inherits from the `<body>`.
-// $headings-font-family:    inherit
-// $headings-font-weight:    500
-// $headings-line-height:    1.1
-// $headings-color:          inherit
+$headings-font-family:    inherit
+$headings-font-weight:    300
+$headings-line-height:    1.1
+$headings-color:          $gray
 
 
 //== Iconography
@@ -130,20 +130,20 @@ $font-size-h6:            ceil(($font-size-base * 0.85)) // ~12px
 //## Customizes the `.table` component with basic values, each used across all table variations.
 
 //** Padding for `<th>`s and `<td>`s.
-// $table-cell-padding:            8px
+$table-cell-padding:            12px 10px
 //** Padding for cells in `.table-condensed`.
-// $table-condensed-cell-padding:  5px
+$table-condensed-cell-padding:  5px
 
 //** Default background color used for all tables.
-// $table-bg:                      transparent
+$table-bg:                      transparent
 //** Background color used for `.table-striped`.
-// $table-bg-accent:               #f9f9f9
+$table-bg-accent:               #f9f9f9
 //** Background color used for `.table-hover`.
-// $table-bg-hover:                #f5f5f5
-// $table-bg-active:               $table-bg-hover
+$table-bg-hover:                #f5f5f5
+$table-bg-active:               $table-bg-hover
 
 //** Border color for table and cell borders.
-$table-border-color:            #ddd
+$table-border-color:            #f0f0f0
 
 
 //== Buttons
@@ -797,16 +797,16 @@ $navbar-inverse-toggle-border-color:        #333
 //
 //##
 
-// $breadcrumb-padding-vertical:   8px
-// $breadcrumb-padding-horizontal: 15px
+$breadcrumb-padding-vertical:   8px
+$breadcrumb-padding-horizontal: 15px
 //** Breadcrumb background color
-// $breadcrumb-bg:                 #f5f5f5
+$breadcrumb-bg:                 transparent
 //** Breadcrumb text color
-// $breadcrumb-color:              #ccc
+$breadcrumb-color:              #ccc
 //** Text color of current page in the breadcrumb
-// $breadcrumb-active-color:       $gray-light
+$breadcrumb-active-color:       $gray-light
 //** Textual separator for between breadcrumb elements
-// $breadcrumb-separator:          "/"
+$breadcrumb-separator:          "/"
 
 
 //== Carousel
@@ -858,7 +858,7 @@ $navbar-inverse-toggle-border-color:        #333
 //** Horizontal offset for forms and lists.
 // $component-offset-horizontal: 180px
 //** Text muted color
-// $text-muted:                  $gray-light
+$text-muted:                  $gray-light
 //** Abbreviations and acronyms border color
 // $abbr-border-color:           $gray-light
 //** Headings small color
@@ -870,8 +870,9 @@ $navbar-inverse-toggle-border-color:        #333
 //** Blockquote border color
 // $blockquote-border-color:     $gray-lighter
 //** Page header border color
-// $page-header-border-color:    $gray-lighter
+$page-header-border-color:    $gray-lighter
 //** Width of horizontal description list titles
 // $dl-horizontal-offset:        $component-offset-horizontal
 //** Horizontal line color.
-// $hr-border:                   $gray-lighter
+$hr-border:                   $gray-lighter
+$UI-border:	#ddd

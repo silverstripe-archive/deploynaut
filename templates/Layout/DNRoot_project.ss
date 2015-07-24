@@ -1,9 +1,20 @@
 <div class="content page-header">
-	<div class="row items-push">
+
+	<div class="row">
 		<div class="col-sm-7">
-			<h1 class="page-heading"><% with $CurrentProject %>$Title<% end_with %></h1>
+			<ol class="breadcrumb">
+				<li><a href="#">$CurrentProject.Title</a></li>
+			</ol>
+			<h1 class="page-heading">
+			<% loop $Navigation %>
+				<% loop $Project.Menu %>
+					<% if $IsActive %>$Title<% end_if %>
+				<% end_loop %>
+			<% end_loop %>
+			</h1>
 		</div>
 	</div>
+
 </div>
 <div class="content">
 
@@ -28,13 +39,13 @@
 	</ul> --%>
 
 	<h3 id="env">Environments</h3>
-	<table class="table-striped table table-bordered">
+	<table class="table">
 		<thead>
 			<tr>
 				<th>Environment</th>
 				<th>URL</th>
 				<th>Build currently deployed</th>
-				<th>Can you deploy?</th>
+				<th class="text-center">Can you deploy?</th>
 				<th>More info</th>
 			</tr>
 		</thead>
@@ -51,7 +62,7 @@
 					</span>
 					<% end_if %>
 				</td>
-				<td>
+				<td class="text-center">
 					<% if CanDeploy %><span class="good">Yes</span>
 					<% else_if DeployersList %>
 					No, ask $DeployersList
