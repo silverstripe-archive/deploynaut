@@ -3,7 +3,7 @@
 /**
  * Class DeploymentPipelineTest
  * This class performs the actual deployment after the smoke test has passed
- * 
+ *
  * Configure using the below code in your deploy.yml
  * <code>
  * Steps:
@@ -11,18 +11,18 @@
  *     Class: DeploymentPipelineStep
  *     MaxDuration: 3600 # optionally timeout after 1 hour
  * </code>
- * 
+ *
  * {@see DNRoot::doDeploy()} for non-pipeline equivalent
- * 
+ *
  * @package deploynaut
  * @subpackage pipeline
  */
 class DeploymentPipelineStep extends LongRunningPipelineStep {
-	
+
 	private static $db = array(
 		'Doing' => "Enum('Deployment,Snapshot,Queued', 'Queued')"
 	);
-	
+
 	public function getTitle() {
 		// Make sure the title includes the subtask
 		return parent::getTitle() . ":{$this->Doing}";
@@ -30,7 +30,7 @@ class DeploymentPipelineStep extends LongRunningPipelineStep {
 
 	public function start() {
 		parent::start();
-		
+
 		switch($this->Status) {
 			case 'Started':
 				// If we are doing a subtask, check which one to continue
@@ -52,17 +52,17 @@ class DeploymentPipelineStep extends LongRunningPipelineStep {
 				return false;
 		}
 	}
-	
+
 	/**
 	 * Begin a new deployment
-	 * 
+	 *
 	 * @return boolean
 	 */
 	protected function startDeploy() {
 		$this->Status = 'Started';
 		$this->Doing = 'Deployment';
 		$this->log("{$this->Title} starting deployment");
-		
+
 		// Check environment and SHA
 		$pipeline = $this->Pipeline();
 		$environment = $pipeline->Environment();
@@ -71,7 +71,7 @@ class DeploymentPipelineStep extends LongRunningPipelineStep {
 			$this->markFailed();
 			return false;
 		}
-		
+
 		if(empty($pipeline->SHA)) {
 			$this->log("No available SHA for {$this->Title}");
 			$this->markFailed();
@@ -98,10 +98,10 @@ class DeploymentPipelineStep extends LongRunningPipelineStep {
 		$pipeline->CurrentDeploymentID = $deployment->ID;
 		$pipeline->write();
 		$this->write();
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * Create a snapshot of the db and store the ID on the Pipline
 	 * @return bool True if success
@@ -141,7 +141,7 @@ class DeploymentPipelineStep extends LongRunningPipelineStep {
 
 		return true;
 	}
-	
+
 	/**
 	 * Check status of current snapshot
 	 */
@@ -166,7 +166,7 @@ class DeploymentPipelineStep extends LongRunningPipelineStep {
 			$this->markFailed();
 			return false;
 		}
-		
+
 		// Check finished state
 		$status = $snapshot->ResqueStatus();
 		if($this->checkResqueStatus($status)) {
@@ -177,7 +177,7 @@ class DeploymentPipelineStep extends LongRunningPipelineStep {
 
 	/**
 	 * Check status of deployment and finish task if complete, or fail if timedout
-	 * 
+	 *
 	 * @return boolean
 	 */
 	protected function continueDeploy() {
@@ -189,7 +189,7 @@ class DeploymentPipelineStep extends LongRunningPipelineStep {
 			$this->finish();
 			return !$this->isFailed();
 		}
-		
+
 		// Get related deployment
 		$deployment = $this->Pipeline()->CurrentDeployment();
 		if(empty($deployment) || !$deployment->exists()) {
@@ -197,7 +197,7 @@ class DeploymentPipelineStep extends LongRunningPipelineStep {
 			$this->markFailed();
 			return false;
 		}
-		
+
 		// Check finished state
 		$status = $deployment->ResqueStatus();
 		if($this->checkResqueStatus($status)) {
@@ -205,10 +205,10 @@ class DeploymentPipelineStep extends LongRunningPipelineStep {
 		}
 		return !$this->isFailed();
 	}
-	
+
 	/**
 	 * Check the status of a resque sub-task
-	 * 
+	 *
 	 * @param string $status Resque task status
 	 * @return boolean True if the task is finished successfully
 	 */

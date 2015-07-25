@@ -417,7 +417,7 @@ class DNProject extends DataObject {
 	 * @return boolean
 	 */
 	public function projectFolderExists() {
-		if(file_exists($this->DNData()->getEnvironmentDir().'/'.$this->Name)){
+		if(file_exists($this->DNData()->getEnvironmentDir().'/'.$this->Name)) {
 			return true;
 		}
 		return false;

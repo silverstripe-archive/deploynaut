@@ -142,17 +142,17 @@ class DNCommit extends ViewableData {
 		if(!$environments->count()) {
 			return false;
 		}
-		
+
 		$environment = $environments->first();
-		
+
 		$deployments = DNDeployment::get()
 				->filter('Status', 'Finished')
 				->filter('EnvironmentID', $environment->ID);
-		
+
 		if($deployments->count()) {
 			return true;
 		}
-		
+
 		return false;
 	}
 
