@@ -3,7 +3,7 @@
 /**
  * Class representing a single data transfer in a project,
  * which can include a database export, an archive of all assets, or both.
- * 
+ *
  * It can be one of two directions:
  * - Backup: Package up data on an environment and store it in a local file
  * - Restore: Transfer data from a local file into an environment, extract assets and/or restore a database
@@ -15,7 +15,7 @@
  * a reference to a Resque token (which might still be in progress).
  *
  * The "Environment" points to the source or target involved.
- * 
+ *
  * @method DNDataArchive DataArchive()
  */
 class DNDataTransfer extends DataObject {
@@ -28,7 +28,7 @@ class DNDataTransfer extends DataObject {
 		"Mode" => "Enum('all, assets, db', '')",
 		"Origin" => "Enum('EnvironmentTransfer,ManualUpload', 'EnvironmentTransfer')",
 	);
-	
+
 	private static $has_one = array(
 		"Environment" => "DNEnvironment",
 		"Author" => "Member",
@@ -142,7 +142,7 @@ class DNDataTransfer extends DataObject {
 		if(!$this->AuthorID) {
 			$this->AuthorID = Member::currentUserID();
 		}
-		
+
 		if($this->AuthorID) {
 			$author = $this->Author();
 			$message = sprintf(
@@ -164,9 +164,9 @@ class DNDataTransfer extends DataObject {
 		$message = sprintf('Data transfer queued as job %s', $token);
 		$log->write($message);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param Member $member
 	 * @return bool
 	 */
@@ -187,15 +187,15 @@ class DNDataTransfer extends DataObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return \DeploynautLogFile
 	 */
 	public function log() {
 		return new DeploynautLogFile($this->logfile());
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return string
 	 */
 	public function LogContent() {
@@ -215,7 +215,7 @@ class DNDataTransfer extends DataObject {
 		} else {
 			$description = 'Restore ' . $this->getModeNice() . ' to ' . $envName;
 		}
-		
+
 		return $description;
 	}
 
@@ -239,7 +239,7 @@ class DNDataTransfer extends DataObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return string
 	 */
 	public function ResqueStatus() {
