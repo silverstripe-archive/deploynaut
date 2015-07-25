@@ -1,7 +1,7 @@
 <?php
 
 class DNGitFetch extends DataObject {
-	
+
 	/**
 	 *
 	 * @var array
@@ -9,7 +9,7 @@ class DNGitFetch extends DataObject {
 	private static $db = array(
 		"ResqueToken" => "Varchar(255)",
 	);
-	
+
 	/**
 	 *
 	 * @var array
@@ -18,7 +18,7 @@ class DNGitFetch extends DataObject {
 		"Project" => "DNProject",
 		"Deployer" =>"Member",
 	);
-	
+
 	/**
 	 * Queue a fetch job
 	 */
@@ -54,9 +54,9 @@ class DNGitFetch extends DataObject {
 		$message = sprintf('Fetch queued as job %s', $token);
 		$log->write($message);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param Member $member
 	 * @return bool
 	 */
@@ -77,15 +77,15 @@ class DNGitFetch extends DataObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return \DeploynautLogFile
 	 */
 	public function log() {
 		return new DeploynautLogFile($this->logfile());
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return string
 	 */
 	public function LogContent() {
@@ -93,7 +93,7 @@ class DNGitFetch extends DataObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return string
 	 */
 	public function ResqueStatus() {
