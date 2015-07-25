@@ -24,7 +24,7 @@ class SizeRestrictedPackageCacheTest extends SapphireTest {
 		$this->gen = new PackageCacheTest_MockGenerator;
 		// To do: refactor so as not to be pipelinetest-specific (see also SimplePackageGeneratorTest)
 		$this->log = new PipelineTest_MockLog(null);
-		
+
 	}
 	function tearDown() {
 		if($this->tempPath) Filesystem::removeFolder($this->tempPath);
@@ -56,7 +56,7 @@ class SizeRestrictedPackageCacheTest extends SapphireTest {
 		$this->assertFileExists($files['project1.b']);
 	}
 
-	/** 
+	/**
 	 * Check that a subsequent re-fetch will mark the file as newer and so not garbage collect it
 	 */
 	function testSizeRestrictionIsLastAccessed() {
@@ -75,7 +75,7 @@ class SizeRestrictedPackageCacheTest extends SapphireTest {
 		$this->assertFileNotExists($files['project1.b']);
 	}
 
-	/** 
+	/**
 	 * Check that caching is actually happening
 	 */
 	function testCacheDoesntRegenerateUnnecessarily() {

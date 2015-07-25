@@ -3,25 +3,25 @@
  * Base class for the APINouns
  */
 class APINoun extends Controller {
-	
+
 	/**
 	 *
 	 * @var controller
 	 */
 	protected $parent = null;
-	
+
 	/**
 	 *
 	 * @var DataObject
 	 */
 	protected $record = null;
-	
+
 	/**
 	 *
 	 * @var Member
 	 */
 	protected $member = null;
-	
+
 	/**
 	 * Holds the url segment for this admin
 	 *
@@ -33,7 +33,7 @@ class APINoun extends Controller {
 		$this->parent = $parent;
 		parent::__construct();
 	}
-	
+
 	/**
 	 * Enable basic auth on the API
 	 */
@@ -41,31 +41,31 @@ class APINoun extends Controller {
 		$this->member = BasicAuth::requireLogin('Deploynaut API');
 		parent::init();
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return DataObject
 	 */
 	public function getRecord() {
 		return $this->record;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return Member
 	 */
 	public function getMember() {
 		return $this->member;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return SS_HTTPResponse
 	 */
 	protected function getAPIResponse($output) {
 		$response = $this->getResponse();
 		if($this->respondWithText()) {
-			$body = print_r($output, true);  
+			$body = print_r($output, true);
 			$response->addHeader('Content-Type', 'text/plain');
 		} else {
 			$body = Convert::raw2json($output);
@@ -74,9 +74,9 @@ class APINoun extends Controller {
 		$response->setBody($body);
 		return $response;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return boolean
 	 */
 	protected function respondWithJSON() {
@@ -88,9 +88,9 @@ class APINoun extends Controller {
 		}
 		return false;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return boolean
 	 */
 	protected function respondWithText() {
@@ -102,18 +102,18 @@ class APINoun extends Controller {
 		}
 		return false;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return array|null
 	 */
 	protected function getRequestBody() {
 		return Convert::json2array($this->getRequest()->getBody());
 	}
-	
+
 	/**
-	 * Return a simple response with a message 
-	 * 
+	 * Return a simple response with a message
+	 *
 	 * @param string $message
 	 * @param int $statusCode
 	 * @return SS_HTTPResponse

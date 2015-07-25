@@ -32,7 +32,7 @@ class SimplePackageGenerator extends PackageGenerator {
 	 * Generate the package
 	 */
 	public function generatePackage($sha, $baseDir, $outputFilename, DeploynautLogFile $log) {
-		$tempPath = TEMP_FOLDER . "/" . str_replace(".tar.gz","", basename($outputFilename));
+		$tempPath = TEMP_FOLDER . "/" . str_replace(".tar.gz", "", basename($outputFilename));
 		if(!file_exists($tempPath)) mkdir($tempPath);
 
 		// Execute these in sequence until there's a failure
@@ -41,7 +41,7 @@ class SimplePackageGenerator extends PackageGenerator {
 			new Process("git archive $sha | tar -x -C " . escapeshellarg($tempPath), $baseDir),
 			// Run build script
 			new Process($this->buildScript, $tempPath, null, null, 3600),
-			// Compress the result 
+			// Compress the result
 			new Process("tar -czf " . escapeshellarg($outputFilename) . " " . escapeshellarg(basename($tempPath)), dirname($tempPath)),
 		);
 
@@ -66,7 +66,7 @@ class SimplePackageGenerator extends PackageGenerator {
 
 	/**
 	 * Execute an array of processes, one after the other, throwing an exception on the first failure.
-	 * 
+	 *
 	 * @param array $processes An array of Symfony\Component\Process\Process objects
 	 * @param DeploynautLogFile $log The log to send output to
 	 */

@@ -1,17 +1,17 @@
 <?php
 /**
  * Entry point for the deploynaut API
- * 
+ *
  * /naut/api/projectname/
  * /naut/api/projectname/environmentname
- * 
- * @todo It might be good to break this out to a controller chain so that 
+ *
+ * @todo It might be good to break this out to a controller chain so that
  * "/naut/api/projectname/environmentname" controller chain becomes
  * DeploynautAPI > APIProject > APIEnvironment
- * 
+ *
  */
 class DeploynautAPI extends APINoun {
-	
+
 	/**
 	 * Default URL handlers - (Action)/(ID)//(OtherID)
 	 */
@@ -21,7 +21,7 @@ class DeploynautAPI extends APINoun {
 		'$Project/$Environment!' => 'environment',
 		'$Project/' => 'project',
 	);
-	
+
 	/**
 	 *
 	 * @var array
@@ -31,15 +31,15 @@ class DeploynautAPI extends APINoun {
 		'environment',
 		'listProjects'
 	);
-	
+
 	/**
 	 *
 	 * @var string
 	 */
 	protected $link = 'deploynaut/api';
-	
+
 	/**
-	 * 
+	 *
 	 * @param SS_HTTPRequest $request
 	 * @return string
 	 */
@@ -62,10 +62,10 @@ class DeploynautAPI extends APINoun {
 
 		return $this->getAPIResponse($response);
 	}
-	
+
 	/**
 	 * Controller Action
-	 * 
+	 *
 	 * @param SS_HTTPRequest $request
 	 * @return APIProject
 	 */
@@ -76,10 +76,10 @@ class DeploynautAPI extends APINoun {
 		}
 		return new APIProject($this, $project);
 	}
-	
+
 	/**
 	 * Controller Action
-	 * 
+	 *
 	 * @param SS_HTTPRequest $request
 	 * @return APIEnvironment
 	 */
@@ -88,27 +88,27 @@ class DeploynautAPI extends APINoun {
 		if(!$project) {
 			return new SS_HTTPResponse('Project "' . Convert::raw2xml($request->latestParam('Project')) . '" not found.', 404);
 		}
-		
+
 		$environment = $this->getEnvironment();
 		if(!$environment) {
 			return new SS_HTTPResponse('Environment "' . Convert::raw2xml($request->latestParam('Environment')) . '" not found.', 404);
 		}
 		return new APIEnvironment($this, $environment);
 	}
-	
+
 	/**
 	 * Get project from URL
-	 * 
+	 *
 	 * @return DNProject
 	 */
 	protected function getProject() {
 		$projectName = $this->getRequest()->param('Project');
 		return DNProject::get()->filter('Name', $projectName)->first();
 	}
-	
+
 	/**
 	 * Get environment from URL
-	 * 
+	 *
 	 * @return DNEnvironment
 	 */
 	protected function getEnvironment() {
@@ -117,9 +117,9 @@ class DeploynautAPI extends APINoun {
 		$environmentName = $this->getRequest()->param('Environment');
 		return $project->Environments()->filter('Name', $environmentName)->first();
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return string
 	 */
 	public function Link() {

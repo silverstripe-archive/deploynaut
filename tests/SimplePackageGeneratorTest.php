@@ -13,7 +13,7 @@ class SimplePackageGeneratorTest extends SapphireTest {
 		// and delete it entirely on tearDown()
 		$this->tempPath = TEMP_FOLDER . '/SimplePackageGeneratorTest-' . rand(1000000,9999999);
 		mkdir($this->tempPath);
-		
+
 	}
 	function tearDown() {
 		if($this->tempPath) Filesystem::removeFolder($this->tempPath);
@@ -34,7 +34,7 @@ class SimplePackageGeneratorTest extends SapphireTest {
 		// and a generic memory-log or mock-log placed in here.
 		$log = new PipelineTest_MockLog(null);
 
-		// Create the generator and execute the script		
+		// Create the generator and execute the script
 		$gen = new SimplePackageGenerator;
 		$gen->setBuildScript("touch build-script-executed.txt");
 		$this->assertTrue($gen->generatePackage($sha, $gitPath, $packagePath, $log));
@@ -49,7 +49,7 @@ class SimplePackageGeneratorTest extends SapphireTest {
 		// Confirm not junk files included
 		$this->assertEquals(array(
 			'test/',
-			'test/README.md', 
+			'test/README.md',
 			'test/build-script-executed.txt',
 			'test/index.php',
 		), $packageFiles);

@@ -50,7 +50,7 @@ abstract class PackageGenerator {
 		if($this->cache) {
 			$identifier .= '-' . get_class($this) . '-' . $this->getIdentifier();
  			return $this->cache->getPackageFilename($this, $identifier, $sha, $repositoryDir, $log);
- 		
+
  		// Default, cacheless implementation
  		} else {
  			$filename = TEMP_FOLDER .'/' . $sha . '.tar.gz';
