@@ -1,6 +1,6 @@
 <?php
 
-/** 
+/**
  * Class for calling the package generator and caching the results.
  */
 class SizeRestrictedPackageCache implements PackageCache {
@@ -10,7 +10,7 @@ class SizeRestrictedPackageCache implements PackageCache {
 
 	/**
 	 * Set the maximum number of items that will be stored in the package cache.
-	 * 
+	 *
 	 * If null, items will never be deleted. If set, cache entries will be touched whenever they are accessed,
 	 * and the least-recently-access items will be deleted.
 	 *

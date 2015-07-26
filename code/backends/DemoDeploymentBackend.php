@@ -8,7 +8,7 @@
  * It's useful for demonstrating how the system works, and how you can write deployment back-ends
  */
 class DemoDeploymentBackend extends Object implements DeploymentBackend {
-	
+
 	/**
 	 * Deploy the given build to the given environment
 	 */
