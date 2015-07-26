@@ -29,7 +29,7 @@ class PipelineStep extends DataObject implements PipelineData {
 	private static $db = array(
 		'Name' => 'Varchar(255)',
 		'Order' => 'Int',
-		'Status' => 'Enum("Queued,Started,Finished,Failed,Aborted,n/a","n/a")',
+		'Status' => 'Enum("Queued,Started,Finished,Failed,Aborted,n/a", "n/a")',
 		'Config' => 'Text' // serialized array of configuration for this step
 	);
 
@@ -48,7 +48,7 @@ class PipelineStep extends DataObject implements PipelineData {
 		'Status',
 		'LastEdited'
 	);
-	
+
 	/**
 	 * Cached of config merged with defaults
 	 *
@@ -72,7 +72,7 @@ class PipelineStep extends DataObject implements PipelineData {
 	public function getNiceName() {
 		$niceName = $this->getConfigSetting('NiceName')
 			?: ucwords(trim(strtolower(preg_replace('/_?([A-Z])/', ' $1', $this->getTitle()))));
-		
+
 		if($this->isFinished()) {
 			$niceName = $this->getConfigSetting('NiceDone') ?: $niceName;
 		}
@@ -117,7 +117,7 @@ class PipelineStep extends DataObject implements PipelineData {
 
 	/**
 	 * Retrieve the value of a specific config setting
-	 * 
+	 *
 	 * @param string $setting Settings
 	 * @param string $setting,... Sub-settings
 	 * @return mixed Value of setting, or null if not set
@@ -197,7 +197,7 @@ class PipelineStep extends DataObject implements PipelineData {
 
 	/**
 	 * Log a message to the current log
-	 * 
+	 *
 	 * @param string $message
 	 */
 	public function log($message = "") {

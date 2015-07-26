@@ -2,28 +2,28 @@
 
 /**
  * Represents a long running pipeline step with a timeout
- * 
+ *
  * @package deploynaut
  * @subpackage pipeline
  */
 class LongRunningPipelineStep extends PipelineStep {
-	
+
 	/**
 	 * Determines maximum allowed execution for deployment
-	 * 
+	 *
 	 * @return int Number of seconds, or null if not enabled
 	 */
 	public function getMaxDuration() {
 		return $this->getConfigSetting('MaxDuration') ?: null;
 	}
-	
+
 	private static $db = array(
 		'Started' => 'SS_Datetime'
 	);
-	
+
 	/**
 	 * Return true if this has timed out
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public function isTimedOut() {
@@ -31,10 +31,10 @@ class LongRunningPipelineStep extends PipelineStep {
 		$timeout = $this->getMaxDuration();
 		return $age && $timeout && ($age > $timeout);
 	}
-	
+
 	/**
 	 * Gets the age of this job in seconds, or 0 if not started
-	 * 
+	 *
 	 * @return int Age in seconds
 	 */
 	public function getAge() {
@@ -45,7 +45,7 @@ class LongRunningPipelineStep extends PipelineStep {
 		}
 		return 0;
 	}
-	
+
 	public function start() {
 		// Ensure started date is set
 		if(!$this->Started) {

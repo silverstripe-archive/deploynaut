@@ -201,5 +201,4 @@ class DNData extends ViewableData {
 		sort($paths);
 		return array_values($paths);
 	}
-
 }

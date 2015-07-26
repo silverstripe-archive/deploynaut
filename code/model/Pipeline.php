@@ -115,7 +115,7 @@ class Pipeline extends DataObject implements PipelineData {
 	 *           objects so that the steps know what to smoketest, deploy, etc.
 	 */
 	private static $db = array(
-		'Status' => 'Enum("Running,Complete,Failed,Aborted,Rollback,Queued","Queued")',
+		'Status' => 'Enum("Running,Complete,Failed,Aborted,Rollback,Queued", "Queued")',
 		'Config' => 'Text', // serialized array of configuration for this pipeline
 		'SHA' => 'Varchar(255)',
 		'DryRun' => 'Boolean', // Try if this deployment is a test dryrun

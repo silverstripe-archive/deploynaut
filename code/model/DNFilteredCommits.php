@@ -40,13 +40,13 @@ class DNFilteredCommits extends Object {
 
 	public function setFilter($filter = 'Finished') {
 		$this->filter = $filter;
-	} 
+	}
 
 	public function getCommits() {
 		if (!isset($this->env)) {
 			$this->environmentNotSetException();
 		}
-		$successfulCommits = 
+		$successfulCommits =
 			$this->env->DeployHistory()->filter(
 				array('Status' => $this->filter, 'EnvironmentID' => $this->env->ID)
 			)->sort('Created', $this->sort);

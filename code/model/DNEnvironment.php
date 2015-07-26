@@ -422,7 +422,7 @@ class DNEnvironment extends DataObject {
 		if(!$member) return false;
 
 		if(Permission::checkMember($member, 'ADMIN')) return true;
-		
+
 		return $this->PipelineCancellers()->byID($member->ID)
 			|| $member->inGroups($this->PipelineCancellerGroups());
 	}
@@ -629,7 +629,7 @@ class DNEnvironment extends DataObject {
 			->Deployments()
 			->sort('LastEdited DESC');
 		$repo = $this->Project()->getRepository();
-		if(!$repo){
+		if(!$repo) {
 			return $history;
 		}
 
@@ -665,7 +665,7 @@ class DNEnvironment extends DataObject {
 				'Message' => (string)Convert::raw2xml($commit->getMessage()),
 				'ShortHash' => Convert::raw2xml($commit->getFixedShortHash(8)),
 				'Hash' => Convert::raw2xml($commit->getHash())
-			);  
+			);
 		} catch(\Gitonomy\Git\Exception\ReferenceNotFoundException $exc) {
 			return array(
 				'AuthorName' => '(unknown)',
@@ -1101,7 +1101,7 @@ PHP
 		} else {
 			// Treat this as basic non-associative list
 			$list = new ArrayList();
-			foreach($array as $value){
+			foreach($array as $value) {
 				$list->push(self::array_to_viewabledata($value));
 			}
 			return $list;
@@ -1162,7 +1162,7 @@ PHP
 		if(strcasecmp('test', $this->Name) === 0) {
 			$result->error('"test" is not a valid environment name when using Capistrano backend.');
 		}
-		
+
 		return $result;
 	}
 

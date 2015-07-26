@@ -97,7 +97,7 @@ class SmokeTestPipelineStep extends PipelineStep {
 	 */
 	protected function initCurl() {
 		$handle = curl_init();
-		
+
 		// avoid curl_exec pushing out the response to the screen
 		$timeout = $this->getConfigSetting('RequestTimeout');
 		curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);

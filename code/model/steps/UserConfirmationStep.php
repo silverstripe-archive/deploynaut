@@ -3,14 +3,14 @@
 /**
  * Pauses progression of a deployment while external authorisation is requested.
  * This is performed via the default messaging service specified.
- * 
+ *
  * Configure using the below code in your deploy.yml
- * 
+ *
  * MessagingArguments is an arbitrary array of arguments which is understood by
  * the service specified as the ConfirmationMessagingService for this project.
  * See deploynaut/_config/messaging.yml for the default service configuration.
  * See deploynaut/_config/pipeline.yml for the default step configuration
- * 
+ *
  * <code>
  * Steps:
  *   RequestConfirmationStep:
@@ -44,7 +44,7 @@
  *       from: admin@silverstripe.com
  *       reply-to: noreply@silverstripe.com
  * </code>
- * 
+ *
  * @method Member Responder() Member who has given an approval for this request
  * @property string $Approval
  * @property int $NotifiedGroup
@@ -52,7 +52,7 @@
  * @subpackage pipeline
  */
 class UserConfirmationStep extends LongRunningPipelineStep {
-	
+
 	/**
 	 * Messages
 	 */
@@ -60,13 +60,13 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 	const ALERT_TIMEOUT = 'TimeOut';
 	const ALERT_REQUEST = 'Request';
 	const ALERT_REJECT = 'Reject';
-	
+
 	/**
 	 * Message roles
 	 */
 	const ROLE_REQUESTER = 'Requester';
 	const ROLE_RECIPIENT = 'Recipient';
-	
+
 	private static $db = array(
 		// A finished step is approved and a failed step is rejected.
 		// Aborted confirmation is left as None
@@ -77,16 +77,16 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 		// is incremented
 		'NotifiedGroup' => 'Int'
 	);
-	
+
 	private static $defaults = array(
 		'Approval' => 'None',
 		'NotifiedGroup' => 0
 	);
-	
+
 	private static $has_one = array(
 		'Responder' => 'Member'
 	);
-	
+
 	/**
 	 * This step depends on a configured messaging service
 	 *
@@ -96,51 +96,51 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 	private static $dependencies = array(
 		'MessagingService' => '%$ConfirmationMessagingService'
 	);
-	
+
 	/**
 	 * Currently assigned messaging service
 	 *
-	 * @var ConfirmationMessagingService 
+	 * @var ConfirmationMessagingService
 	 */
 	private $messagingService = null;
-	
+
 	/**
 	 * Assign a messaging service for this step
-	 * 
+	 *
 	 * @param ConfirmationMessagingService $service
 	 */
 	public function setMessagingService(ConfirmationMessagingService $service) {
 		$this->messagingService = $service;
 	}
-	
+
 	/**
 	 * Get the currently configured messaging service
-	 * 
+	 *
 	 * @return ConfirmationMessagingService
 	 */
 	public function getMessagingService() {
 		return $this->messagingService;
 	}
-	
+
 	/**
 	 * Determine if the confirmation has been responded to (ether with acceptance, rejection, or cancelled)
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public function hasResponse() {
 		return $this->Approval !== 'None';
 	}
-	
+
 	public function start() {
 		parent::start();
-		
+
 		// Just in case this step is being mistakenly restarted
 		if($this->hasResponse()) {
 			$this->log("{$this->Title} has already been processed with a response of {$this->Approval}");
 			$this->markFailed();
 			return false;
 		}
-		
+
 		// Begin or process this step
 		switch($this->Status) {
 			case 'Started':
@@ -153,34 +153,34 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 				return false;
 		}
 	}
-	
+
 	/**
 	 * Can the current user approve this pipeline?
-	 * 
+	 *
 	 * @param Member $member
 	 * @return boolean
 	 */
 	public function canApprove($member = null) {
 		return $this->Pipeline()->Environment()->canApprove($member);
 	}
-	
+
 	/**
 	 * When the recipient wishes to approve this request
-	 * 
+	 *
 	 * @return boolean True if successful
 	 */
 	public function approve() {
 		// Check permission
 		if(!$this->canApprove()) {
 			return Security::permissionFailure(
-				null, 
+				null,
 				_t("UserConfirmationStep.DENYAPPROVE", "You do not have permission to approve this deployment")
 			);
 		}
-		
+
 		// Skip subsequent approvals if already approved / rejected
 		if($this->hasResponse()) return;
-		
+
 		// Approve
 		$this->Approval = 'Approved';
 		$this->log("{$this->Title} has been approved");
@@ -189,24 +189,24 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 		$this->sendMessage(self::ALERT_APPROVE);
 		return true;
 	}
-	
+
 	/**
 	 * When the recipient wishes to reject this request
-	 * 
+	 *
 	 * @return boolean True if successful
 	 */
 	public function reject() {
 		// Check permission
 		if(!$this->canApprove()) {
 			return Security::permissionFailure(
-				null, 
+				null,
 				_t("UserConfirmationStep.DENYREJECT", "You do not have permission to reject this deployment")
 			);
 		}
-		
+
 		// Skip subsequent approvals if already approved / rejected
 		if($this->hasResponse()) return;
-		
+
 		// Reject
 		$this->Approval = 'Rejected';
 		$this->log("{$this->Title} has been rejected");
@@ -215,10 +215,10 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 		$this->sendMessage(self::ALERT_REJECT);
 		return true;
 	}
-	
+
 	/**
 	 * Report the status of the current request queue and makes sure it hasn't overrun it's time allowed
-	 * 
+	 *
 	 * @return boolean True if not failed
 	 */
 	protected function checkStatus() {
@@ -231,7 +231,7 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 			$this->sendMessage(self::ALERT_TIMEOUT);
 			return false;
 		}
-		
+
 		// If operating on a delayed notification schedule, determine if there are further groups who should be notified
 		if($delay = $this->getConfigSetting('RecipientsDelay')) {
 			// Check group that should have been notified by now
@@ -253,14 +253,14 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 				return true;
 			}
 		}
-		
-		
+
+
 		// While still running report no error, waiting for resque job to eventually finish.
 		// Since this could potentially fill the log with hundreds of thousands of messages,
 		// if it takes a few days to get a response, don't write anything.
 		return true;
 	}
-	
+
 	/**
 	 * Initiate the approval process
 	 */
@@ -277,10 +277,10 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 		$this->write();
 		return true;
 	}
-	
+
 	/**
 	 * Finds a message template for a given role and message
-	 * 
+	 *
 	 * @param string $role Role name for role-customised messages. Usually 'Requester' or 'Recipient'
 	 * @param string $messageID Message ID
 	 * @return array Resulting array(subject, message)
@@ -295,10 +295,10 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 			->Pipeline()
 			->injectMessageReplacements($message, $subject, $substitutions);
 	}
-	
+
 	/**
 	 * Retrieve message replacements
-	 * 
+	 *
 	 * @return array
 	 */
 	public function getReplacements() {
@@ -312,10 +312,10 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 			)
 		);
 	}
-	
+
 	/**
 	 * Sends a message to a specified recipient(s)
-	 * 
+	 *
 	 * @param string $messageID Message ID. One of 'Reject', 'Approve', 'TimeOut' or 'Request'
 	 * @param mixed $recipientGroup Either a numeric index of the next recipient to send to, or "all" for all
 	 * This is used for delayed notification so that failover recipients can be notified.
@@ -324,10 +324,10 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 	protected function sendMessage($messageID, $recipientGroup = 'all') {
 		// Add additionally configured arguments
 		$arguments = $this->getConfigSetting('ServiceArguments') ?: array();
-		
+
 		// Get member who began this request
 		$author = $this->Pipeline()->Author();
-		
+
 		// Send message to requester
 		if($recipientGroup === 'all' || $recipientGroup === 0) {
 			list($subject, $message) = $this->generateMessageTemplate(self::ROLE_REQUESTER, $messageID);
@@ -337,7 +337,7 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 				$this->messagingService->sendMessage($this, $message, $author, array_merge($arguments, $extra));
 			}
 		}
-		
+
 		// Filter recipients based on group
 		$recipients = $this->getConfigSetting('Recipients');
 		if(is_array($recipients) && $recipientGroup !== 'all') {
@@ -349,7 +349,7 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 			$this->log("Skipping sending message to empty recipients");
 			return;
 		}
-		
+
 		// Send to recipients
 		list($subject, $message) = $this->generateMessageTemplate(self::ROLE_RECIPIENT, $messageID);
 		if($subject && $message && $recipients) {
@@ -359,21 +359,21 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 			$this->messagingService->sendMessage($this, $message, $recipients, array_merge($arguments, $extra));
 		}
 	}
-	
+
 	public function getRunningDescription() {
-		
+
 		// Don't show options if this step has already been confirmed
 		if($this->hasResponse() || !$this->isRunning()) return;
-		
+
 		return 'This deployment is currently awaiting approval before it can complete.';
 	}
-	
+
 	public function allowedActions() {
 		// Don't show options if this step has already been confirmed or can't be confirmed
 		if($this->hasResponse() || !$this->isRunning() || !$this->canApprove()) {
 			return parent::allowedActions();
 		}
-		
+
 		// Return actions
 		return array(
 			'approve' => array(

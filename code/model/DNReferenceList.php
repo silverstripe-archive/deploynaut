@@ -25,14 +25,19 @@ class DNReferenceList extends ArrayList {
 	}
 
 	/**
-	 *
 	 * @param DNProject $project
 	 * @param DNData $data
 	 * @param Gitonomy\Git\Reference $reference
 	 * @param string $blockBranch
 	 * @param bool $getTags
 	 */
-	public function __construct(DNProject $project, DNData $data, Gitonomy\Git\Reference $reference = null, $blockBranch = null, $getTags = false) {
+	public function __construct(
+		DNProject $project,
+		DNData $data,
+		Gitonomy\Git\Reference $reference = null,
+		$blockBranch = null,
+		$getTags = false
+	) {
 		$this->project = $project;
 		$this->data = $data;
 		$this->reference = $reference;
@@ -42,7 +47,6 @@ class DNReferenceList extends ArrayList {
 	}
 
 	/**
-	 *
 	 * @param int $limit
 	 */
 	public function setLimit($limit) {
@@ -51,7 +55,6 @@ class DNReferenceList extends ArrayList {
 	}
 
 	/**
-	 *
 	 * @param int $limit - defaults to the ten lates
 	 * @return array()
 	 */
