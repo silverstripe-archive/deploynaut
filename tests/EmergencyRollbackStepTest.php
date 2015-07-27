@@ -124,7 +124,7 @@ class EmergencyRollbackStepTest extends PipelineTest {
 
 		$step->start();
 		$this->logInWithPermission('ADMIN');
-		$this->assertEquals('Please press the "Rollback" button to rollback deployment',
+		$this->assertEquals('You may now roll back to the previous version, if needed.',
 			$step->getRunningDescription());
 	}
 
