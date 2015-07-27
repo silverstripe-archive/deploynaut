@@ -21,23 +21,53 @@
 </div>
 <div class="content">
 
-	<h3>Details</h3>
-	<p><a href="$URL.URL">$URL.URL</a></p>
-	
+	<% with $CurrentEnvironment %>
+		<div class="row">
+			<div class="col-md-12 environment-details">
+				<h4>Environment Details:</h4>
 
-	<% if $CurrentEnvironment.CurrentBuild %>
-		<p>
-			This environment is currently running build
-			<span class="tooltip-hint" data-toggle="tooltip" title="$CurrentBuild.Message" data-original-title="$CurrentEnvironment.CurrentBuild.Message">
-				$CurrentEnvironment.CurrentBuild.SHA
-			</span>
-		</p>
-	<% else %>
-		<p>New environment - deploy your first build.</p>
-	<% end_if %>
-	<% if HasMetrics %>
-		<p><a href="naut/project/$CurrentProject.Name/environment/$Name/metrics">See graphs for this environment</a></p>
-	<% end_if %>
+				<%-- Display Environment URL --%>
+				<% if $URL %>
+					<span>URL: <a href="$URL.URL">$URL.URL</a></span>
+				<% end_if %>
+
+				<%-- Display current build on environment --%>
+				<span>
+					Deployed Revision:
+					<% if $CurrentBuild %>
+						<a class="tooltip-hint"
+					  		data-toggle="tooltip"
+					  		title="$CurrentBuild.Message"
+					  		data-original-title="$CurrentBuild.Message"
+							href="$CurrentBuild.Link">
+
+							$CurrentBuild.SHA
+						</a>
+					<% else %>
+						No deployments have been made
+					<% end_if %>
+				</span>
+
+				<%-- Display logs link for environment --%>
+				<% if $LogsLink %>
+					<span>
+						Logs: <a href="$LogsLink">View Logs for $Name</a>
+					</span>
+				<% end_if %>
+
+				<%-- Display metrics for environment --%>
+				<% if $Up.HasMetrics %>
+					<span>
+						Metrics:
+						<a href="naut/project/$Up.CurrentProject.Name/environment/$Name/metrics">
+							See graphs for this environment
+						</a>
+					</span>
+				<% end_if %>
+
+			</div>
+	</div>
+	<% end_with %>
 
 	<% if $HasPipelineSupport %>
 		<% if $CurrentPipeline %>

@@ -12,7 +12,7 @@
 }
 </style>
 
-<h3><a href="naut/project/$Project.Name">$CurrentProject.Name</a>:<a href="naut/project/$CurrentProject.Name/environment/$Name">$Name</a></h3>
+<h3><a href="naut/project/$CurrentProject.Name">$CurrentProject.Name</a>:<a href="naut/project/$CurrentProject.Name/environment/$Name">$Name</a></h3>
 <h4>Metric dashboard</h4>
 
 <% loop GraphServers %>
