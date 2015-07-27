@@ -91,11 +91,6 @@
 	<% if getRepositoryURL %>
 		<pre>Repository URL: $getRepositoryURL</pre>
 	<% end_if %>
-	<% if repoExists %>
-		<a href="#gitFetchModal" class="btn update-repository" data-api-url="$APILink(fetch)">Fetch latest changes</a>
-	<% else %>
-		<p>Getting latest changes from your repository. You may refresh this page at will.</p>
-	<% end_if %>
 
 	<div id="gitFetchModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	  <div class="modal-header">

@@ -4,13 +4,13 @@
 	"use strict";
 
 	var queue = {
-		showlog: function($status, $content, logLink) {
+		showlog: function(status, content, logLink) {
 			var self = this;
 			$.getJSON(logLink, {randval: Math.random()},
 			function(data) {
-				$status.text(data.status);
-				$content.text(data.content);
-				$status.attr('class', data.status);
+				status.text(data.status);
+				content.text(data.content);
+				$(status).addClass(data.status);
 				$('title').text(data.status + " | Deploynaut");
 				if (data.status === 'Complete') {
 					self._clearInterval();
@@ -18,9 +18,13 @@
 			}
 			);
 		},
+
+
 		start: function() {
 			this._setupPinging();
 		},
+
+
 		/**
 		 * Will fetch latest deploy log and reload the content with it
 		 */
@@ -30,6 +34,8 @@
 				self.showlog($("#queue_action"), $("#queue_log"), $('#queue_log').data('loglink'));
 			}, 3000);
 		},
+
+
 		/**
 		 * Will remove the pinging and refresh of the application list
 		 */
@@ -44,7 +50,6 @@
 	    	$('a.nav-submenu').click(function() {
 	        	$(this).toggleClass( "open" );
 	    	});
-	    
 
 		if ($('#Form_DeployForm_BuildName').val() === '') {
 			$('#Form_DeployForm_action_doDeploy').attr('disabled', true);
@@ -85,38 +90,70 @@
 			}
 		});
 
-		$('a.update-repository').click(function(e) {
-			e.preventDefault();
 
-			$(this).attr('disabled', 'disabled');
-			$(this).html('Fetching');
-			$(this).toggleClass('loading');
+		// This is the deployment page dropdown menu.
+		$('.deploy-dropdown').click(function(e) {
+
+			if($(this).hasClass('success')) {
+				$(this).toggleClass('open');
+				$($(this).attr('aria-controls')).collapse('toggle');
+				return;
+			}
+
+			// Don't perform when we're already loading or have already loaded
+			if($(this).hasClass('loading') || $(this).hasClass('success')) {
+				return;
+			}
+
+			// Add loading class so the user can see something happening
+			$(this).addClass('loading');
+
+			// Yay Javascript!
+			var self = this;
 
 			$.ajax({
 				type: "POST",
 				url: $(this).data('api-url'),
 				dataType: 'json',
 				success: function(data) {
+
+					// Check every 2 seconds to see the if job has finished.
 					window.fetchInterval = window.setInterval(function() {
 						$.ajax({
 							type: "GET",
 							url: data.href,
 							dataType: 'json',
-							success: function(log_data) {
-								$('#gitFetchModal .modal-body').html('<pre>' + log_data.message + '</pre>');
-								$('#gitFetchModal .modal-footer').html('Status: ' + log_data.status);
-								if(log_data.status === 'Failed' || log_data.status === 'Complete') {
+							success: function(data) {
+
+								if(data.status === 'Failed') {
+									$(self).removeClass('loading').addClass('error');
+									clearInterval(window.fetchInterval);
+								} else if(data.status === 'Complete') {
+									$(self).removeClass('loading').addClass('success').toggleClass('open');
+									$($(self).attr('aria-controls')).collapse();
 									clearInterval(window.fetchInterval);
 								}
-								if(log_data.status === 'Complete') {
-									location.reload();
-								}
+							},
+							error: function(data) {
+								$(self).removeClass('loading').addClass('error');
+								clearInterval(window.fetchInterval);
 							}
 						});
 					}, 2000);
 				}
 			});
 		});
+
+		$('.tabbedselectiongroup > li > a').on('click', function (e) {
+			// Set the release type.
+			var releaseType = $(this).attr('data-value');
+			$(this).parents('form').first('input[name="SelectRelease"]').val(releaseType);
+
+			$(this).tab('show');
+
+			return false;
+		});
+
 
 		$('.tooltip-hint, .btn-tooltip').tooltip({
 			placement: "top",

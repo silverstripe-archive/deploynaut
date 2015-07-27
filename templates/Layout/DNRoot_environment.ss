@@ -20,15 +20,8 @@
 
 </div>
 <div class="content">
-	<% if $CurrentProject %>
-		<%-- <ul class="nav nav-tabs">
-			<% loop $CurrentProject.Menu %>
-			<li<% if $IsActive %> class="active"<% end_if %>><a href="$Link">$Title</a></li>
-			<% end_loop %>
-		</ul> --%>
-	<% end_if %>
 
-	<h3 class="">Details</h3>
+	<h3>Details</h3>
 	<p><a href="$URL.URL">$URL.URL</a></p>
 	
 
@@ -57,7 +50,7 @@
 			<h3>Initiate the release process</h3>
 			<p class="alert alert-info">$GenericPipelineConfig.PipelineConfig.Description</p>
 			$DeployForm
-			<% if DependentFilteredCommits %>
+			<% if $DependentFilteredCommits %>
 				<% with $GenericPipelineConfig.PipelineConfig %>
 					<h3>Successful $CurrentEnvironment.DependsOnProject:$CurrentEnvironment.DependsOnEnvironment releases</h3>
 					<p>The following $CurrentEnvironment.DependsOnProject:$CurrentEnvironment.DependsOnEnvironment releases can be deployed</p>
@@ -93,11 +86,17 @@
 			<% end_if %>
 		<% end_if %>
 	<% else %>
-		<% if $DeployForm %>
-			<h3>Deploy a new release</h3>
-			<p>Choose a release below and press the 'Deploy to $Name' button.</p>
-			$DeployForm
-		<% end_if %>
+        <div class="deploy-dropdown" data-api-url="$CurrentProject.APILink('fetch')" aria-controls="#envDeploy">
+			<span class="environment-name">Deploy to $CurrentEnvironment.Name</span>
+            <span class="icon" aria-hidden="true"></span>
+            <span class="loading-text">Fetching latest code&hellip;</span>
+        </div>
+
+        <div class="deploy-form-outer collapse clearfix" id="envDeploy">
+			<% if $DeployForm %>
+				$DeployForm
+			<% end_if %>
+		</div>
 	<% end_if %>
 
 
@@ -124,8 +123,8 @@
 				<% if $Status = 'Queued' %><span class="label label-info">Queued</span><% end_if %>
 				<% if $Status = 'Started' %><span class="label label-info">Started</span><% end_if %>
 				<% if $Status = 'Finished' %><span class="label label-success">Finished</span><% end_if %>
-				<% if $Status = 'Failed' %><span class="label label-important">Failed</span><% end_if %>
-				<% if $Status = 'n/a' %><span class="label label-inverse">n/a</span><% end_if %>
+				<% if $Status = 'Failed' %><span class="label label-danger">Failed</span><% end_if %>
+				<% if $Status = 'n/a' %><span class="label label-warning">n/a</span><% end_if %>
 				</td>
 				<td><% if $Link %><a href="$Link">Details</a><% end_if %></td>
 			</tr>

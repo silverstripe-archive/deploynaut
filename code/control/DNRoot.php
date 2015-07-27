@@ -536,6 +536,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		return $this->customise(array(
 			'ProjectOverview' => 1
+			'ProjectOverview' => 1,
 		))->render();
 	}
 
@@ -579,11 +580,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return new SS_HTTPResponse("Environment '" . Convert::raw2xml($request->latestParam('Environment')) . "' not found.", 404);
 		}
 
-		return $this->customise(array(
+		return $this->render(array(
 			'DNEnvironmentList' => $this->getCurrentProject()->DNEnvironmentList(),
 			'FlagSnapshotsEnabled' => $this->FlagSnapshotsEnabled(),
-			'CurrentEnvironment' => $env
-		))->render();
+		));
 	}
 
 	/**
@@ -739,25 +739,23 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return Form
 	 */
 	public function getDeployForm() {
+
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
-			return new SS_HTTPResponse("Project '" . Convert::raw2xml($request->latestParam('Project')) . "' not found.", 404);
+			return new SS_HTTPResponse("Project '"
+				. Convert::raw2xml($this->getRequest()->latestParam('Project')) . "' not found.", 404);
 		}
 
 		// Performs canView permission check by limiting visible projects
 		$environment = $this->getCurrentEnvironment($project);
 		if(!$environment) {
-			return new SS_HTTPResponse("Environment '" . Convert::raw2xml($request->latestParam('Environment')) . "' not found.", 404);
+			return new SS_HTTPResponse("Environment '"
+				. Convert::raw2xml($this->getRequest()->request->latestParam('Environment')) . "' not found.", 404);
 		}
 
 		if(!$environment->canDeploy()) {
 			return new SS_HTTPResponse("Not allowed to deploy", 401);
-		}
-
-		if(!$project->repoExists()) {
-			$literalField = new LiteralField('noRepoWarning', '<strong>The GIT repository is for the time being not available.</strong>');
-			return Form::create($this, 'DeployForm', new FieldList($literalField), new FieldList());
 		}
 
 		// Generate the form
@@ -823,9 +821,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		if($environment->Name != $params['Environment']) throw new LogicException("Environment in URL doesn't match this deploy");
 		if($project->Name != $params['Project']) throw new LogicException("Project in URL doesn't match this deploy");
 
-		return $this->customise(new ArrayData(array(
+		return $this->render(array(
 			'Deployment' => $deployment,
-		)))->render();
+		));
 	}
 
 	/**

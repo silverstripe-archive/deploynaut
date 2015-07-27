@@ -1,67 +1,90 @@
-@import "_bootstrap-variables.sass";
-@import "node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss";
+@import "_bootstrap-variables.sass"
+@import "node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss"
+@import "tabs"
+
+@font-face
+	font-family: 'Glyphicons Halflings'
+	src: url("../fonts/bootstrap/glyphicons-halflings-regular.eot")
+	src: url("../fonts/bootstrap/glyphicons-halflings-regular.eot?#iefix") format("embedded-opentype"), url("../fonts/bootstrap/glyphicons-halflings-regular.woff") format("woff"), url("../fonts/bootstrap/glyphicons-halflings-regular.ttf") format("truetype"), url("../fonts/bootstrap/glyphicons-halflings-regular.svg#glyphicons_halflingsregular") format("svg")
+
+.alert
+	&.Failed
+		@extend .alert-danger
+
+	&.Finished
+		@extend .alert-success
+
+
+	&.Started
+		@extend .alert-info
+
+	&.Queued
+		@extend .alert-info
+
+	&.Invalid
+		@extend .alert-warning
 
 
 .page-container 
-	padding-left: $nav-width;
-	margin: 0 auto;
+	padding-left: $nav-width
+	margin: 0 auto
 
 
 // SIDEBAR
 .sidebar
-	width: $nav-width;
-	left: 0;
-	bottom: 0;
-	overflow-y: auto;
-	position: fixed;
-	top: 0;
+	width: $nav-width
+	left: 0
+	bottom: 0
+	overflow-y: auto
+	position: fixed
+	top: 0
 	color: rgba(255, 255, 255, 0.3)
 
 .side-content 
-	padding: 13px 20px 1px;
+	padding: 13px 20px 1px
 
 	ul.nav ul
-		background-color: rgba(0, 0, 0, 0.15);
-		padding: 0;
-		margin: 0;
-		overflow: hidden;
+		background-color: rgba(0, 0, 0, 0.15)
+		padding: 0
+		margin: 0
+		overflow: hidden
 
 		a
-			opacity: .8;
-			padding-left: 54px;
+			opacity: .8
+			padding-left: 54px
 			
 			&:hover 
-				color: #fff;
-				background-color: transparent;
-				text-decoration: none;
-				opacity: 1;
+				color: #fff
+				background-color: transparent
+				text-decoration: none
+				opacity: 1
 
 		li.active a
-			color: #fff;
+			color: #fff
 
 	li > a
 		&:hover,
 		&:focus
-			color: #fff;
-			text-decoration: none;
+			color: #fff
+			text-decoration: none
 
 .nav-submenu
-	position: relative;
+	position: relative
 
 	&.open .icon-arrow
-		-ms-transform: rotate(180deg); /* IE 9 */
-		-webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
-		transform: rotate(180deg);
+		-ms-transform: rotate(180deg) /* IE 9 */
+		-webkit-transform: rotate(180deg) /* Chrome, Safari, Opera */
+		transform: rotate(180deg)
 
 .icon-arrow
-	width: 16px;
+	width: 16px
 	height: 16px
-	display: block;
-	position: absolute;
-	right: 15px;
-	top: 10px;
-	background-color: red;
-	background: transparent url(../img/Platform_icon-arrow.svg) no-repeat;
+	display: block
+	position: absolute
+	right: 15px
+	top: 10px
+	background-color: red
+	background: transparent url(../img/Platform_icon-arrow.svg) no-repeat
 
 
 // SIDEBAR-MENU
@@ -92,55 +115,55 @@
 // MAIN	
 // Header bar
 .header-navbar
-	min-height: 60px;
-	background-color: #fff;
-	min-width: 320px;
-	position: fixed;
-	right: 0;
-	top: 0;
-	z-index: 1030;
-	left: 230px;
-	border-bottom: 1px solid $UI-border;
+	min-height: 60px
+	background-color: #fff
+	min-width: 320px
+	position: fixed
+	right: 0
+	top: 0
+	z-index: 1030
+	left: 230px
+	border-bottom: 1px solid $UI-border
 
 	.nav a
-		padding: 17px 30px 22px;
+		padding: 17px 30px 22px
 
 
 .main-container
-	margin-top: 60px;
+	margin-top: 60px
 
 	.page-header 
-		background-color: #f0f3f4;
-		margin: 0;
-		border-bottom: 1px solid $UI-border;
-		padding-bottom: 0;
+		background-color: #f0f3f4
+		margin: 0
+		border-bottom: 1px solid $UI-border
+		padding-bottom: 0
 
 	.breadcrumb
-		padding-left: 0;
-		padding-right: 0;
-		margin-bottom: -25px;
+		padding-left: 0
+		padding-right: 0
+		margin-bottom: -25px
 
 	.page-heading
-		margin-bottom: 30px;
+		margin-bottom: 30px
 
 	.nav.nav-tabs
-		border-bottom: none;
+		border-bottom: none
 
 		> li > 
 			a,
 			a:hover,
 			a:focus
-				border-color: transparent;
-				padding-left: 0;
-				padding-right: 0;
-				margin-right: 20px;
-				background-color: transparent;
+				border-color: transparent
+				padding-left: 0
+				padding-right: 0
+				margin-right: 20px
+				background-color: transparent
 
 		> li.active > a
-			border: none;
-			border-bottom: 3px solid $platform-blue;
-			background-color: none;
-			background-color: transparent;
+			border: none
+			border-bottom: 3px solid $platform-blue
+			background-color: none
+			background-color: transparent
 
 .content 
 	margin: 0 auto
@@ -152,11 +175,98 @@
 // TYPE
 .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th
 	border-bottom: 1px solid $UI-border
-	font-size: 14px;
-	font-weight: 600;
-	padding: 16px 10px 12px;
-	text-transform: uppercase;
+	font-size: 14px
+	font-weight: 600
+	padding: 16px 10px 12px
+	text-transform: uppercase
 
 .table-large > tbody > tr > td
 	padding-top: 20px
 	padding-bottom: 20px
+
+
+// Environment
+.deploy-dropdown
+	@extend .btn
+	@extend .btn-primary
+	@extend .btn-block
+	@extend .btn-lg
+	border-radius: 0px
+	text-align: left
+	font-size: 26px
+	line-height: 40px
+
+	.icon
+		@extend .glyphicon
+		@extend .glyphicon-menu-down
+		@extend .pull-right
+		line-height: 40px
+
+	.loading-text
+		display: none;
+
+	&.open
+		.icon
+			@extend .glyphicon-menu-up
+
+	&.loading
+		.loading-text
+			@extend .pull-right
+			display: inherit
+			font-size: 20px
+
+		.icon
+			margin-left: 10px
+
+.deploy-form-outer
+	border-width: 0px 1px 1px
+	border-style: solid
+	border-color: #bbb
+
+	.deploy-form
+		.SelectionGroup
+			@extend .nav
+			@extend .nav-pills
+			@extend .nav-stacked
+			@extend .col-md-4
+
+			> li
+				background-color: #ddd
+				border-width: 1px 1px 1px 0px
+				border-color: #bbb
+				border-style: solid
+
+				a
+					color: $gray
+					font-size: 14px
+					padding: 25px 15px
+					display: block
+
+				&.active
+					background-color: #ffffff
+					border: none
+
+					+ li
+						border-top-width: 1px
+
+					a
+						color: $gray
+
+				&:last-child
+					border-bottom-width: 0px
+
+				+ li
+					margin-top: 0
+					border-top-width: 0px
+
+			+ .tab-content
+				@extend .col-md-8
+
+		*[name="action_doDeploy"]
+			@extend .btn-block
+			@extend .btn-lg
+			@extend .btn-success
+			border-radius: 0
+			font-size: 26px
+			line-height: 40px
+			margin: 20px 0
