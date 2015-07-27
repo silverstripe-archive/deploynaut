@@ -141,7 +141,7 @@ class EmergencyRollbackStep extends LongRunningPipelineStep {
 		if($this->RolledBack) return;
 
 		return _t('EmergencyRollbackStep.RUNNINGDESCRIPTION',
-			'Please press the "Rollback" button to rollback deployment');
+			'You may now roll back to the previous version, if needed.');
 	}
 
 	public function allowedActions() {
