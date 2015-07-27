@@ -14,14 +14,30 @@
 	&.Complete
 		@extend .alert-success
 
-	&.Started
-		@extend .alert-info
-
-	&.Queued
+	&.Started,
+	&.Queued,
+	&.Running
 		@extend .alert-info
 
 	&.Invalid
 		@extend .alert-warning
+
+.progress-bar
+	width: 100% /* default */
+
+	&.Failed
+		@extend .progress-bar-danger
+
+	&.Complete
+		@extend .progress-bar-success
+
+	&.Started,
+	&.Queued,
+	&.Running
+		@extend .progress-bar-info
+
+	&.Invalid
+		@extend .progress-bar-warning
 
 
 .page-container 
@@ -273,3 +289,20 @@
 .environment-details
 	> span
 		display: block
+
+.deployment-progress
+	height: auto
+
+	.progress-bar
+		padding: 8px 15px
+		line-height: 40px
+		font-size: 28px
+		text-align: left
+
+		.status
+			@extend .pull-right
+			font-size: 26px;
+
+.log-content
+	overflow-y: auto;
+	max-height: 450px;

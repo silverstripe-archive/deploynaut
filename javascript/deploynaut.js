@@ -13,6 +13,10 @@
 				$(status).addClass(data.status);
 				$('title').text(data.status + " | Deploynaut");
 				if (data.status == 'Complete' || data.status == 'Failed' || data.status == 'Invalid') {
+					$(status).removeClass('Running')
+						.removeClass('Queued')
+						.removeClass('progress-bar-striped')
+						.removeClass('active');
 					self._clearInterval();
 				}
 			}
@@ -31,7 +35,7 @@
 		_setupPinging: function() {
 			var self = this;
 			window._queue_refresh = window.setInterval(function() {
-				self.showlog($("#queue_action"), $("#queue_log"), $('#queue_log').data('loglink'));
+				self.showlog($("#queue_action .status"), $("#queue_log"), $('#queue_log').data('loglink'));
 			}, 3000);
 		},
 

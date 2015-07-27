@@ -1425,7 +1425,7 @@ blockquote {
       content: '\2014 \00A0'; }
 
 .blockquote-reverse,
-blockquote.pull-right, .deploy-dropdown blockquote.icon, .deploy-dropdown.loading blockquote.loading-text {
+blockquote.pull-right, .deploy-dropdown blockquote.icon, .deploy-dropdown.loading blockquote.loading-text, .deployment-progress .progress-bar blockquote.status {
   padding-right: 15px;
   padding-left: 0;
   border-right: 5px solid #eeeeee;
@@ -1437,10 +1437,12 @@ blockquote.pull-right, .deploy-dropdown blockquote.icon, .deploy-dropdown.loadin
   blockquote.pull-right footer:before,
   .deploy-dropdown blockquote.icon footer:before,
   .deploy-dropdown.loading blockquote.loading-text footer:before,
+  .deployment-progress .progress-bar blockquote.status footer:before,
   blockquote.pull-right small:before,
   .deploy-dropdown blockquote.icon small:before,
   .deploy-dropdown.loading blockquote.loading-text small:before,
-  blockquote.pull-right .small:before, .deploy-dropdown blockquote.icon .small:before, .deploy-dropdown.loading blockquote.loading-text .small:before {
+  .deployment-progress .progress-bar blockquote.status small:before,
+  blockquote.pull-right .small:before, .deploy-dropdown blockquote.icon .small:before, .deploy-dropdown.loading blockquote.loading-text .small:before, .deployment-progress .progress-bar blockquote.status .small:before {
     content: ''; }
   .blockquote-reverse footer:after,
   .blockquote-reverse small:after,
@@ -1448,10 +1450,12 @@ blockquote.pull-right, .deploy-dropdown blockquote.icon, .deploy-dropdown.loadin
   blockquote.pull-right footer:after,
   .deploy-dropdown blockquote.icon footer:after,
   .deploy-dropdown.loading blockquote.loading-text footer:after,
+  .deployment-progress .progress-bar blockquote.status footer:after,
   blockquote.pull-right small:after,
   .deploy-dropdown blockquote.icon small:after,
   .deploy-dropdown.loading blockquote.loading-text small:after,
-  blockquote.pull-right .small:after, .deploy-dropdown blockquote.icon .small:after, .deploy-dropdown.loading blockquote.loading-text .small:after {
+  .deployment-progress .progress-bar blockquote.status small:after,
+  blockquote.pull-right .small:after, .deploy-dropdown blockquote.icon .small:after, .deploy-dropdown.loading blockquote.loading-text .small:after, .deployment-progress .progress-bar blockquote.status .small:after {
     content: '\00A0 \2014'; }
 
 address {
@@ -3415,7 +3419,7 @@ tbody.collapse.in {
   -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   background-clip: padding-box; }
-  .dropdown-menu.pull-right, .deploy-dropdown .dropdown-menu.icon, .deploy-dropdown.loading .dropdown-menu.loading-text {
+  .dropdown-menu.pull-right, .deploy-dropdown .dropdown-menu.icon, .deploy-dropdown.loading .dropdown-menu.loading-text, .deployment-progress .progress-bar .dropdown-menu.status {
     right: 0;
     left: auto; }
   .dropdown-menu .divider {
@@ -3489,7 +3493,7 @@ tbody.collapse.in {
   top: 0;
   z-index: 990; }
 
-.pull-right > .dropdown-menu, .deploy-dropdown .icon > .dropdown-menu, .deploy-dropdown.loading .loading-text > .dropdown-menu {
+.pull-right > .dropdown-menu, .deploy-dropdown .icon > .dropdown-menu, .deploy-dropdown.loading .loading-text > .dropdown-menu, .deployment-progress .progress-bar .status > .dropdown-menu {
   right: 0;
   left: auto; }
 
@@ -4732,13 +4736,19 @@ a.thumbnail.active {
   .alert-success .alert-link, .alert.Complete .alert-link {
     color: #2b542c; }
 
-.alert-info, .alert.Started, .alert.Queued {
+.alert-info, .alert.Started,
+.alert.Queued,
+.alert.Running {
   background-color: #d9edf7;
   border-color: #bce8f1;
   color: #31708f; }
-  .alert-info hr, .alert.Started hr, .alert.Queued hr {
+  .alert-info hr, .alert.Started hr,
+  .alert.Queued hr,
+  .alert.Running hr {
     border-top-color: #a6e1ec; }
-  .alert-info .alert-link, .alert.Started .alert-link, .alert.Queued .alert-link {
+  .alert-info .alert-link, .alert.Started .alert-link,
+  .alert.Queued .alert-link,
+  .alert.Running .alert-link {
     color: #245269; }
 
 .alert-warning, .alert.Invalid {
@@ -4808,30 +4818,32 @@ a.thumbnail.active {
   -o-animation: progress-bar-stripes 2s linear infinite;
   animation: progress-bar-stripes 2s linear infinite; }
 
-.progress-bar-success {
+.progress-bar-success, .progress-bar.Complete {
   background-color: #5cb85c; }
-  .progress-striped .progress-bar-success {
+  .progress-striped .progress-bar-success, .progress-striped .progress-bar.Complete {
     background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
     background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
     background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent); }
 
-.progress-bar-info {
+.progress-bar-info, .progress-bar.Started,
+.progress-bar.Queued,
+.progress-bar.Running {
   background-color: #5bc0de; }
-  .progress-striped .progress-bar-info {
+  .progress-striped .progress-bar-info, .progress-striped .progress-bar.Started, .progress-striped .progress-bar.Queued, .progress-striped .progress-bar.Running {
     background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
     background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
     background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent); }
 
-.progress-bar-warning {
+.progress-bar-warning, .progress-bar.Invalid {
   background-color: #f0ad4e; }
-  .progress-striped .progress-bar-warning {
+  .progress-striped .progress-bar-warning, .progress-striped .progress-bar.Invalid {
     background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
     background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
     background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent); }
 
-.progress-bar-danger {
+.progress-bar-danger, .progress-bar.Failed {
   background-color: #d9534f; }
-  .progress-striped .progress-bar-danger {
+  .progress-striped .progress-bar-danger, .progress-striped .progress-bar.Failed {
     background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
     background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
     background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent); }
@@ -4855,7 +4867,7 @@ a.thumbnail.active {
     max-width: none; }
 
 .media-right,
-.media > .pull-right, .deploy-dropdown .media > .icon, .deploy-dropdown.loading .media > .loading-text {
+.media > .pull-right, .deploy-dropdown .media > .icon, .deploy-dropdown.loading .media > .loading-text, .deployment-progress .progress-bar .media > .status {
   padding-left: 10px; }
 
 .media-left,
@@ -5999,7 +6011,7 @@ button.close {
   margin-left: auto;
   margin-right: auto; }
 
-.pull-right, .deploy-dropdown .icon, .deploy-dropdown.loading .loading-text {
+.pull-right, .deploy-dropdown .icon, .deploy-dropdown.loading .loading-text, .deployment-progress .progress-bar .status {
   float: right !important; }
 
 .pull-left {
@@ -6256,6 +6268,9 @@ button.close {
   src: url("../fonts/bootstrap/glyphicons-halflings-regular.eot");
   src: url("../fonts/bootstrap/glyphicons-halflings-regular.eot?#iefix") format("embedded-opentype"), url("../fonts/bootstrap/glyphicons-halflings-regular.woff") format("woff"), url("../fonts/bootstrap/glyphicons-halflings-regular.ttf") format("truetype"), url("../fonts/bootstrap/glyphicons-halflings-regular.svg#glyphicons_halflingsregular") format("svg"); }
 
+.progress-bar {
+  width: 100%; }
+
 .page-container {
   padding-left: 230px;
   margin: 0 auto; }
@@ -6434,3 +6449,17 @@ button.close {
 
 .environment-details > span {
   display: block; }
+
+.deployment-progress {
+  height: auto; }
+  .deployment-progress .progress-bar {
+    padding: 8px 15px;
+    line-height: 40px;
+    font-size: 28px;
+    text-align: left; }
+    .deployment-progress .progress-bar .status {
+      font-size: 26px; }
+
+.log-content {
+  overflow-y: auto;
+  max-height: 450px; }
