@@ -1,23 +1,23 @@
 <?php
 
 class PipelineController extends Controller {
-	
+
 	private static $allowed_actions = array(
 		'abort',
 		'log',
 		'step'
 	);
-	
+
 	protected $controller = null;
-	
+
 	protected $pipeline = null;
-	
+
 	public function __construct($controller, Pipeline $pipeline) {
 		$this->controller = $controller;
 		parent::__construct();
 		$this->pipeline = $pipeline;
 	}
-	
+
 	/**
 	 * Shows status of this pipeline
 	 */
@@ -26,7 +26,7 @@ class PipelineController extends Controller {
 			'Pipeline' => $this->pipeline
 		)))->renderWith('DNRoot_pipeline');
 	}
-	
+
 	/**
 	 * Get log for this pipeline
 	 */
@@ -64,14 +64,14 @@ class PipelineController extends Controller {
 		}
 		return $this->redirect($this->pipeline->Environment()->Link());
 	}
-	
+
 	/**
 	 * Perform an action on the current pipeline step
 	 */
 	public function step() {
 		$action = $this->request->param('ID');
 		$step = $this->pipeline->CurrentStep();
-		
+
 		// Check if the action is available on this step
 		if($step && ($actions = $step->allowedActions()) && isset($actions[$action])) {
 			// Execute this action, allowing it to override the httpresponse given
