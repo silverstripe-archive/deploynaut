@@ -70,7 +70,7 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 	private static $db = array(
 		// A finished step is approved and a failed step is rejected.
 		// Aborted confirmation is left as None
-		'Approval' => "Enum('Approved,Rejected,None','None')",
+		'Approval' => "Enum('Approved,Rejected,None', 'None')",
 		// If RecipientsDelay is specified, this value records the index of the most recently notified
 		// group of users. This will be incremented once another level of fallback has been notified.
 		// E.g. once primary admin has been notified, the secondary admin can be notified, and this
