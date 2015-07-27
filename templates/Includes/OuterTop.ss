@@ -19,7 +19,7 @@
 
 <body>
 <div class="page-container">
-    <nav class="sidebar">
+    <nav class="sidebar navbar-inverse">
 		<% include Header %>
     </nav>
 
