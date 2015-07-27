@@ -12,7 +12,7 @@
 				content.text(data.content);
 				$(status).addClass(data.status);
 				$('title').text(data.status + " | Deploynaut");
-				if (data.status === 'Complete') {
+				if (data.status == 'Complete' || data.status == 'Failed' || data.status == 'Invalid') {
 					self._clearInterval();
 				}
 			}
