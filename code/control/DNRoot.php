@@ -103,6 +103,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * Check for feature flags:
 	 * - FLAG_SNAPSHOTS_ENABLED: set to true to enable globally
 	 * - FLAG_SNAPSHOTS_ENABLED_FOR_MEMBERS: set to semicolon-separated list of email addresses of allowed users.
+	 *
+	 * @return boolean
 	 */
 	public static function FlagSnapshotsEnabled() {
 		if (defined('FLAG_SNAPSHOTS_ENABLED') && FLAG_SNAPSHOTS_ENABLED) return true;
@@ -1359,7 +1361,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	public function CompleteDataArchives() {
 		$project = $this->getCurrentProject();
 		$archives = new ArrayList();
-		
+
 		$archiveList = $project->Environments()->relation("DataArchives");
 		if($archiveList->count() > 0) {
 			foreach($archiveList as $archive) {
