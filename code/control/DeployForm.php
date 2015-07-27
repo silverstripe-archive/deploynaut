@@ -56,7 +56,7 @@ class DeployForm_CommitValidator extends DeployForm_ValidatorBase {
 	public function php($data) {
 		// Check release method
 		if(empty($data['SelectRelease'])
-			|| !in_array($data['SelectRelease'], array('Tag','Branch','Redeploy','SHA', 'FilteredCommits'))
+			|| !in_array($data['SelectRelease'], array('Tag', 'Branch', 'Redeploy', 'SHA', 'FilteredCommits'))
 		) {
 			$method = empty($data['SelectRelease']) ? '(blank)' : $data['SelectRelease'];
 			$this->validationError(
