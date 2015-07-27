@@ -18,14 +18,14 @@
 <% end_if %>
 
 <% if DataArchive %>
-    <h3>Successfully uploaded your snapshot</h3>
-    <p>Your snapshot has been saved in Deploynaut.</p>
-    <p>Please view the <a href="$BackURL">snapshots list</a> to restore this snapshot to an environment.</p>
+	<h3>Successfully uploaded your snapshot</h3>
+	<p>Your snapshot has been saved in Deploynaut.</p>
+	<p>Please view the <a href="$BackURL">snapshots list</a> to restore this snapshot to an environment.</p>
 <% else %>
 <ul class="nav nav-pills switch-tabs">
-    <li class="active"><a href="#tab1" data-toggle="tab">Upload Data Snapshot</a></li>
-    <li class="join"><p>or</p></li>
-    <li><a href="#tab2" data-toggle="tab">Provide externally</a></li>
+	<li class="active"><a href="#tab1" data-toggle="tab">Upload Data Snapshot</a></li>
+	<li class="join"><p>or</p></li>
+	<li><a href="#tab2" data-toggle="tab">Provide externally</a></li>
 </ul>
 
 <div class="tab-content">
