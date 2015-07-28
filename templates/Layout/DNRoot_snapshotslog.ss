@@ -7,7 +7,7 @@
 			<a href="<% with $Navigation %><% loop $Project.Menu %>
 					<% if $IsActive %>$Link<% end_if %><% end_loop %><% end_with %>">Overview</a>
 		</li>
-		
+
 		<% if $CurrentProject.canBackup %>
 		<li><a href="$CurrentProject.Link('createsnapshot')">Create Snapshot</a></li>
 		<% end_if %>

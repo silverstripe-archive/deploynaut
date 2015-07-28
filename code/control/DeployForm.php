@@ -215,21 +215,21 @@ class DeployForm extends Form {
 		if($branches) {
 			$releaseMethods[] = new SelectionGroup_Item(
 				'Branch',
-				new DropdownField('Branch', '', $branches),
+				new DropdownField('Branch', 'Deploy to', $branches),
 				'Deploy the latest version of a branch'
 			);
 		}
 		if($tags) {
 			$releaseMethods[] = new SelectionGroup_Item(
 				'Tag',
-				new DropdownField('Tag', '', $tags),
+				new DropdownField('Tag', 'Deploy to', $tags),
 				'Deploy a tagged release'
 			);
 		}
 		if($redeploy) {
 			$releaseMethods[] = new SelectionGroup_Item(
 				'Redeploy',
-				new GroupedDropdownField('Redeploy', '', $redeploy),
+				new GroupedDropdownField('Redeploy', 'Redeploy', $redeploy),
 				'Redeploy a release that was previously deployed (to any environment)'
 			);
 		}
@@ -240,7 +240,7 @@ class DeployForm extends Form {
 			'Deploy a specific SHA'
 		);
 
-		$field = new SelectionGroup('SelectRelease', $releaseMethods);
+		$field = new TabbedSelectionGroup('SelectRelease', $releaseMethods);
 		$field->setValue(reset($releaseMethods)->getValue());
 		return $field;
 	}
