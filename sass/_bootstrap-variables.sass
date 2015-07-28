@@ -16,7 +16,7 @@ $gray:                   lighten($gray-base, 33.5%) // #555
 $gray-light:             lighten($gray-base, 46.7%) // #777
 $gray-lighter:           lighten($gray-base, 93.5%) // #eee
 
-$brand-primary:         darken(#3aaef9, 6.5%) // #337ab7
+$brand-primary:         #3aaef9 // #337ab7 - darken(#3aaef9, 6.5%)
 $brand-success:         #5cb85c
 $brand-info:            #5bc0de
 $brand-warning:         #f0ad4e
@@ -46,7 +46,7 @@ $link-hover-decoration: underline
 //
 //## Font, line-height, and color for body text, headings, and more.
 
-$font-family-sans-serif:  "Helvetica Neue", Helvetica, Arial, sans-serif
+$font-family-sans-serif:  "proxima-nova","Helvetica Neue", Helvetica, Arial, sans-serif;
 $font-family-serif:       Georgia, "Times New Roman", Times, serif
 //** Default monospace fonts for `<code>`, `<kbd>`, and `<pre>`.
 $font-family-monospace:   Menlo, Monaco, Consolas, "Courier New", monospace
@@ -190,14 +190,14 @@ $btn-link-disabled-color:        $gray-light
 //##
 
 //** `<input>` background color
-// $input-bg:                       #fff
+$input-bg:                       #fff
 //** `<input disabled>` background color
 // $input-bg-disabled:              $gray-lighter
 
 //** Text color for `<input>`s
 // $input-color:                    $gray
 //** `<input>` border color
-// $input-border:                   #ccc
+$input-border:                   #e6e6e6
 
 // TODO: Rename `$input-border-radius` to `$input-border-radius-base` in v4
 //** Default `.form-control` border radius
@@ -209,7 +209,7 @@ $btn-link-disabled-color:        $gray-light
 // $input-border-radius-small:      $border-radius-small
 
 //** Border color for inputs on focus
-// $input-border-focus:             #66afe9
+$input-border-focus:             #646464 
 
 //** Placeholder text color
 // $input-color-placeholder:        #999
