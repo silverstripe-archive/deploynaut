@@ -10,10 +10,10 @@
 		</tr>
 	</thead>
 	<tbody>
-	<% if DNEnvironmentList %>
-	<% loop DNEnvironmentList %>
+	<% if $DNEnvironmentList %>
+	<% loop $DNEnvironmentList %>
 		<tr>
-			<td><% if CanDeploy %><a href="$Link">$Name</a><% else %>$Name<% end_if %></td>
+			<td><% if $CanDeploy %><a href="$Link">$Name</a><% else %>$Name<% end_if %></td>
 			<td><a href="$URL">$URL</a></td>
 			<td>
 				<% if $CurrentBuild %>
@@ -23,15 +23,15 @@
 				<% end_if %>
 			</td>
 			<td>
-			<% if CanDeploy %><span class="good">Yes</span>
-			<% else_if DeployersList %>
+			<% if $CanDeploy %><span class="good">Yes</span>
+			<% else_if $DeployersList %>
 			No, ask $DeployersList
 			<% else %>
 			<span class="bad">Deployment disabled</span>
 			<% end_if %>
 			</td>
 			<td>
-				<% if HasMetrics %>
+				<% if $HasMetrics %>
 				<a a href="$Link/metrics">Metrics</a>
 				<% end_if %>
 			</td>

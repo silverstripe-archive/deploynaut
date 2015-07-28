@@ -1,7 +1,7 @@
 <div class="content page-header">
 
 	<div class="row">
-		<div class="col-sm-7">
+		<div class="col-md-12">
 			<ol class="breadcrumb">
 				<li><a href="#">$CurrentProject.Title</a></li>
 			</ol>
@@ -42,7 +42,7 @@
 	<table class="table">
 		<thead>
 			<tr>
-				<th>Environment</th>
+				<th>Name</th>
 				<th>URL</th>
 				<th>Build currently deployed</th>
 				<th class="text-center">Can you deploy?</th>
@@ -90,11 +90,6 @@
 
 	<% if getRepositoryURL %>
 		<pre>Repository URL: $getRepositoryURL</pre>
-	<% end_if %>
-	<% if repoExists %>
-		<a href="#gitFetchModal" class="btn update-repository" data-api-url="$APILink(fetch)">Fetch latest changes</a>
-	<% else %>
-		<p>Getting latest changes from your repository. You may refresh this page at will.</p>
 	<% end_if %>
 
 	<div id="gitFetchModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

@@ -1,50 +1,90 @@
 <div class="content page-header">
-  <div class="row">
-    <div class="col-sm-7">
-    	<ol class="breadcrumb">
-			<li><a href="naut/project/$CurrentProject.Name">$CurrentProject.Title</a></li>
-		</ol>
-    	<h1 class="page-heading">Deployments</h1>
-    </div>
-  </div>
+  	<div class="row">
+		<div class="col-md-9">
+			<ol class="breadcrumb">
+				<li><a href="naut/project/$CurrentProject.Name">$CurrentProject.Title</a></li>
+			</ol>
+			<h1 class="page-heading">Deployments</h1>
 
-	<% with $CurrentProject %>
-	  <ul class="nav nav-tabs">
-		<% if $DNEnvironmentList %>
-			<% loop $DNEnvironmentList %>
-			<li<% if $Top.Name = $Name %> class="active"<% end_if %>><% if CanDeploy %><a href="$Link">$Name</a><% else %>$Name<% end_if %></li>
-			<% end_loop %>
-		<% end_if %>
-		</ul>
-	<% end_with %>
+			<% with $CurrentProject %>
+				<ul class="nav nav-tabs">
+					<% if $DNEnvironmentList %>
+						<% loop $DNEnvironmentList %>
+							<li<% if $Top.Name = $Name %> class="active"<% end_if %>><% if CanDeploy %><a href="$Link">$Name</a><% else %>$Name<% end_if %></li>
+						<% end_loop %>
+					<% end_if %>
+				</ul>
+			<% end_with %>
+        </div>
+
+		<div class="col-md-3">
+			<ul class="project-links">
+				<% if $CurrentEnvironment.URL %>
+					<li>
+						<span class="fa fa-link"></span>
+						<a href="$Current.Environment.URL.URL">$CurrentEnvironment.URL.URL</a>
+					</li>
+				<% end_if %>
+				<% if $CurrentProject.RepoURL %>
+					<li>
+						<span class="fa fa-code"></span>
+						<a href="$CurrentProject.RepoURL.URL">View Code</a>
+					</li>
+				<% end_if %>
+			</ul>
+		</div>
+  </div>
 
 </div>
 <div class="content">
-	<% if $CurrentProject %>
-		<%-- <ul class="nav nav-tabs">
-			<% loop $CurrentProject.Menu %>
-			<li<% if $IsActive %> class="active"<% end_if %>><a href="$Link">$Title</a></li>
-			<% end_loop %>
-		</ul> --%>
-	<% end_if %>
 
-	<h3 class="">Details</h3>
-	<p><a href="$URL.URL">$URL.URL</a></p>
-	
+	<% with $CurrentEnvironment %>
+		<div class="row">
+			<div class="col-md-12 environment-details">
+				<h4>Environment Details:</h4>
 
-	<% if $CurrentEnvironment.CurrentBuild %>
-		<p>
-			This environment is currently running build
-			<span class="tooltip-hint" data-toggle="tooltip" title="$CurrentBuild.Message" data-original-title="$CurrentEnvironment.CurrentBuild.Message">
-				$CurrentEnvironment.CurrentBuild.SHA
-			</span>
-		</p>
-	<% else %>
-		<p>New environment - deploy your first build.</p>
-	<% end_if %>
-	<% if HasMetrics %>
-		<p><a href="naut/project/$CurrentProject.Name/environment/$Name/metrics">See graphs for this environment</a></p>
-	<% end_if %>
+				<%-- Display Environment URL --%>
+				<% if $URL %>
+					<span>URL: <a href="$URL.URL">$URL.URL</a></span>
+				<% end_if %>
+
+				<%-- Display current build on environment --%>
+				<span>
+					Deployed Revision:
+					<% if $CurrentBuild %>
+						<a class="tooltip-hint"
+							data-toggle="tooltip"
+							title="$CurrentBuild.Message"
+							data-original-title="$CurrentBuild.Message"
+							href="$CurrentBuild.Link">
+
+							$CurrentBuild.SHA
+						</a>
+					<% else %>
+						No deployments have been made
+					<% end_if %>
+				</span>
+
+				<%-- Display logs link for environment --%>
+				<% if $LogsLink %>
+					<span>
+						Logs: <a href="$LogsLink">View Logs for $Name</a>
+					</span>
+				<% end_if %>
+
+				<%-- Display metrics for environment --%>
+				<% if $Up.HasMetrics %>
+					<span>
+						Metrics:
+						<a href="naut/project/$Up.CurrentProject.Name/environment/$Name/metrics">
+							See graphs for this environment
+						</a>
+					</span>
+				<% end_if %>
+
+			</div>
+	</div>
+	<% end_with %>
 
 	<% if $HasPipelineSupport %>
 		<% if $CurrentPipeline %>
@@ -57,7 +97,7 @@
 			<h3>Initiate the release process</h3>
 			<p class="alert alert-info">$GenericPipelineConfig.PipelineConfig.Description</p>
 			$DeployForm
-			<% if DependentFilteredCommits %>
+			<% if $DependentFilteredCommits %>
 				<% with $GenericPipelineConfig.PipelineConfig %>
 					<h3>Successful $CurrentEnvironment.DependsOnProject:$CurrentEnvironment.DependsOnEnvironment releases</h3>
 					<p>The following $CurrentEnvironment.DependsOnProject:$CurrentEnvironment.DependsOnEnvironment releases can be deployed</p>
@@ -94,9 +134,18 @@
 		<% end_if %>
 	<% else %>
 		<% if $DeployForm %>
-			<h3>Deploy a new release</h3>
-			<p>Choose a release below and press the 'Deploy to $Name' button.</p>
-			$DeployForm
+		<div class="deploy-dropdown" data-api-url="$CurrentProject.APILink('fetch')" aria-controls="#envDeploy"
+			 data-form-url="$CurrentEnvironment.Link/DeployForm">
+
+			<span class="environment-name">Deploy to $CurrentEnvironment.Name</span>
+			<span class="icon" aria-hidden="true"></span>
+			<span class="loading-text">Fetching latest code&hellip;</span>
+		</div>
+
+		<div class="deploy-form-outer collapse clearfix" id="envDeploy">
+				<%-- Deploy form will be put here with ajax --%>
+		</div>
+
 		<% end_if %>
 	<% end_if %>
 
@@ -124,8 +173,8 @@
 				<% if $Status = 'Queued' %><span class="label label-info">Queued</span><% end_if %>
 				<% if $Status = 'Started' %><span class="label label-info">Started</span><% end_if %>
 				<% if $Status = 'Finished' %><span class="label label-success">Finished</span><% end_if %>
-				<% if $Status = 'Failed' %><span class="label label-important">Failed</span><% end_if %>
-				<% if $Status = 'n/a' %><span class="label label-inverse">n/a</span><% end_if %>
+				<% if $Status = 'Failed' %><span class="label label-danger">Failed</span><% end_if %>
+				<% if $Status = 'n/a' %><span class="label label-warning">n/a</span><% end_if %>
 				</td>
 				<td><% if $Link %><a href="$Link">Details</a><% end_if %></td>
 			</tr>

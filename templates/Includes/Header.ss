@@ -14,7 +14,7 @@
 			<li class="nav-main-heading">Stacks</li>
 			<% loop $Navigation %>
 				<li class="active">
-					<a class="nav-submenu" role="button" data-toggle="collapse" href="#collapseExample-$Pos" aria-controls="collapseExample-$Pos">
+					<a class="nav-submenu<% if $IsActive %> open<% end_if %>" role="button" data-toggle="collapse" href="#collapseExample-$Pos" aria-controls="collapseExample-$Pos">
   						<span class="icon icon-stack"></span>$Project.Name<span class="icon-arrow"></span>
 					</a>
 

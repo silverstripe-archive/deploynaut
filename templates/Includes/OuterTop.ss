@@ -8,7 +8,6 @@
     <meta name="description" content="">
 
 	<% require themedCSS(style,deploynaut) %>
-	<% require themedCSS(theme-style,platform) %>
 
     <meta name="author" content="SilverStripe LTD">
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
