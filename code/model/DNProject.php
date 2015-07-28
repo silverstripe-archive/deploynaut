@@ -161,16 +161,16 @@ class DNProject extends DataObject {
 		$list->push(new ArrayData(array(
 			'Link' => sprintf('naut/project/%s', $this->Name),
 			'Title' => 'Deploy',
-			'IsCurrent' => $this->isCurrent() && $controller->getAction() == 'project',
-			'IsSection' => $this->isCurrent() && $actionType == DNRoot::ACTION_DEPLOY
+			'IsCurrent' => $this->isCurrent(),
+			'IsSection' => $this->isSection() && $actionType == DNRoot::ACTION_DEPLOY
 		)));
 
 		if(DNRoot::FlagSnapshotsEnabled()) {
 			$list->push(new ArrayData(array(
 				'Link' => sprintf('naut/project/%s/snapshots', $this->Name),
 				'Title' => 'Snapshots',
-				'IsCurrent' => $this->isCurrent() && $controller->getAction() == 'snapshots',
-				'IsSection' => $this->isCurrent() && $actionType == DNRoot::ACTION_SNAPSHOT
+				'IsCurrent' => $this->isSection() && $controller->getAction() == 'snapshots',
+				'IsSection' => $this->isSection() && $actionType == DNRoot::ACTION_SNAPSHOT
 			)));
 		}
 
@@ -180,19 +180,21 @@ class DNProject extends DataObject {
 	}
 
 	/**
-	 * Checks whether this project is currently being viewed.
-	 *
-	 * @todo This shouldn't belong in the model. Better navigation is needed.
-	 *
-	 * @return boolean
+	 * Is this project currently at the root level of the controller that handles it?
+	 * @return bool
 	 */
 	public function isCurrent() {
+		return $this->isSection() && Controller::curr()->getAction() == 'project';
+	}
+
+	/**
+	 * Is this project currently in a controller that is handling it or performing a sub-task?
+	 * @return bool
+	 */
+	public function isSection() {
 		$controller = Controller::curr();
-		if(method_exists($controller, 'getCurrentProject')) {
-			$project = $controller->getCurrentProject();
-			return $project && $this->ID == $project->ID;
-		}
-		return false;
+		$project = $controller->getField('CurrentProject');
+		return $project && $this->ID == $project->ID;
 	}
 
 	/**
