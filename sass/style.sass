@@ -1,5 +1,6 @@
 @import "_bootstrap-variables.sass"
 @import "node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss"
+@import "node_modules/font-awesome/scss/font-awesome.scss"
 @import "tabs"
 
 @font-face
@@ -39,6 +40,11 @@
 	&.Invalid
 		@extend .progress-bar-warning
 
+.list-reset
+	> li
+		padding: 0
+		margin: 0
+		list-style: none
 
 .page-container 
 	padding-left: $nav-width
@@ -212,8 +218,8 @@
 	line-height: 40px
 
 	.icon
-		@extend .glyphicon
-		@extend .glyphicon-menu-down
+		@extend .fa
+		@extend .fa-chevron-down
 		@extend .pull-right
 		line-height: 40px
 
@@ -222,7 +228,7 @@
 
 	&.open
 		.icon
-			@extend .glyphicon-menu-up
+			@extend .fa-chevron-up
 
 	&.loading
 		.loading-text
@@ -231,6 +237,8 @@
 			font-size: 20px
 
 		.icon
+			@extend .fa-spinner
+			@extend .fa-pulse
 			margin-left: 10px
 
 .deploy-form-outer
@@ -290,6 +298,15 @@
 	> span
 		display: block
 
+.project-links
+	@extend .list-reset
+
+	li
+		line-height: 24px
+
+		a
+			margin-left: 5px
+
 .deployment-progress
 	height: auto
 
@@ -301,8 +318,8 @@
 
 		.status
 			@extend .pull-right
-			font-size: 26px;
+			font-size: 26px
 
 .log-content
-	overflow-y: auto;
-	max-height: 450px;
+	overflow-y: auto
+	max-height: 450px

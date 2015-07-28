@@ -10,14 +10,14 @@
 			function(data) {
 				status.text(data.status);
 				content.text(data.content);
-				$(status).addClass(data.status);
+				$(status).parent().addClass(data.status);
 				$('title').text(data.status + " | Deploynaut");
 				if (data.status == 'Complete' || data.status == 'Failed' || data.status == 'Invalid') {
-					$(status).removeClass('Running')
-						.removeClass('Queued')
-						.removeClass('progress-bar-striped')
-						.removeClass('active');
+					$(status).parent().removeClass('Running Queued progress-bar-striped active');
 					self._clearInterval();
+				} else if (data.status == 'Running') {
+					$(status).parent().addClass('progress-bar-striped active')
+					$(status).parent().removeClass('Queued');
 				}
 			}
 			);
@@ -133,8 +133,19 @@
 									$(self).removeClass('loading').addClass('error');
 									clearInterval(window.fetchInterval);
 								} else if(data.status === 'Complete') {
-									$(self).removeClass('loading').addClass('success').toggleClass('open');
-									$($(self).attr('aria-controls')).collapse();
+									// Now we need to load the form with the new GIT data
+									$.ajax({
+										type: 'GET',
+										url: $(self).attr('data-form-url'),
+										dataType: 'json',
+										success: function(formData) {
+											$(self).next('.deploy-form-outer').html(formData.Content);
+
+											$(self).removeClass('loading').addClass('success').toggleClass('open');
+											$($(self).attr('aria-controls')).collapse();
+										}
+									});
+
 									clearInterval(window.fetchInterval);
 								}
 							},
@@ -148,7 +159,7 @@
 			});
 		});
 
-		$('.tabbedselectiongroup > li > a').on('click', function (e) {
+		$('.deploy-form-outer').on('click', '.tabbedselectiongroup > li > a', function (e) {
 			// Set the release type.
 			var releaseType = $(this).attr('data-value');
 			$(this).parents('form').first('input[name="SelectRelease"]').val(releaseType);

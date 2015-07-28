@@ -761,7 +761,17 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Generate the form
 		$form = new DeployForm($this, 'DeployForm', $environment, $project);
 
-		// Tweak the action so it plays well with our fake URL structure.
+		// If this is an ajax request we don't want to submit the form - we just want ot retreive the markup.
+		if($this->getRequest()->isAjax() && $this->getRequest()->isGET()) {
+			// We can just use the URL we're accessing
+			$form->setFormAction($this->getRequest()->getURL());
+
+			$body = json_encode(array('Content' => $form->forAjaxTemplate()->forTemplate()));
+			$this->getResponse()->addHeader('Content-Type', 'application/json');
+			$this->getResponse()->setBody($body);
+			return $body;
+		}
+
 		$form->setFormAction($this->getRequest()->getURL().'/DeployForm');
 		return $form;
 	}

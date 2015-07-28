@@ -9,9 +9,7 @@
   },
   "scripts": {
     "build": "node-sass -r ./sass/style.sass -o ./css/",
-    "watch": "node-sass -r -w ./sass/style.sass -o ./css/",
-    "build": "node-sass -r ./sass/form.sass -o ./css/",
-    "watch": "node-sass -r -w ./sass/form.sass -o ./css/"
+    "watch": "node-sass -r -w ./sass/style.sass -o ./css/"
   },
   "repository": {
     "type": "git",
@@ -24,6 +22,7 @@
   "homepage": "https://github.com/silverstripe/deploynaut#readme",
   "devDependencies": {
     "node-sass": "^3.2.0",
-    "bootstrap-sass": "^3.3.5"
+    "bootstrap-sass": "^3.3.5",
+    "font-awesome": "^4.3.0"
   }
 }

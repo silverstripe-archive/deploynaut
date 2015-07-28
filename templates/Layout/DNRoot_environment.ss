@@ -1,22 +1,39 @@
 <div class="content page-header">
-  <div class="row">
-    <div class="col-md-12">
-    	<ol class="breadcrumb">
-			<li><a href="naut/project/$CurrentProject.Name">$CurrentProject.Title</a></li>
-		</ol>
-    	<h1 class="page-heading">Deployments</h1>
-    </div>
-  </div>
+  	<div class="row">
+		<div class="col-md-9">
+			<ol class="breadcrumb">
+				<li><a href="naut/project/$CurrentProject.Name">$CurrentProject.Title</a></li>
+			</ol>
+			<h1 class="page-heading">Deployments</h1>
 
-	<% with $CurrentProject %>
-	  <ul class="nav nav-tabs">
-		<% if $DNEnvironmentList %>
-			<% loop $DNEnvironmentList %>
-			<li<% if $Top.Name = $Name %> class="active"<% end_if %>><% if CanDeploy %><a href="$Link">$Name</a><% else %>$Name<% end_if %></li>
-			<% end_loop %>
-		<% end_if %>
-		</ul>
-	<% end_with %>
+			<% with $CurrentProject %>
+				<ul class="nav nav-tabs">
+					<% if $DNEnvironmentList %>
+						<% loop $DNEnvironmentList %>
+							<li<% if $Top.Name = $Name %> class="active"<% end_if %>><% if CanDeploy %><a href="$Link">$Name</a><% else %>$Name<% end_if %></li>
+						<% end_loop %>
+					<% end_if %>
+				</ul>
+			<% end_with %>
+        </div>
+
+		<div class="col-md-3">
+			<ul class="project-links">
+				<% if $CurrentEnvironment.URL %>
+					<li>
+						<span class="fa fa-link"></span>
+						<a href="$Current.Environment.URL.URL">$CurrentEnvironment.URL.URL</a>
+					</li>
+				<% end_if %>
+				<% if $CurrentProject.RepoURL %>
+					<li>
+						<span class="fa fa-code"></span>
+						<a href="$CurrentProject.RepoURL.URL">View Code</a>
+					</li>
+				<% end_if %>
+			</ul>
+		</div>
+  </div>
 
 </div>
 <div class="content">
@@ -36,9 +53,9 @@
 					Deployed Revision:
 					<% if $CurrentBuild %>
 						<a class="tooltip-hint"
-					  		data-toggle="tooltip"
-					  		title="$CurrentBuild.Message"
-					  		data-original-title="$CurrentBuild.Message"
+							data-toggle="tooltip"
+							title="$CurrentBuild.Message"
+							data-original-title="$CurrentBuild.Message"
 							href="$CurrentBuild.Link">
 
 							$CurrentBuild.SHA
@@ -116,17 +133,20 @@
 			<% end_if %>
 		<% end_if %>
 	<% else %>
-        <div class="deploy-dropdown" data-api-url="$CurrentProject.APILink('fetch')" aria-controls="#envDeploy">
-			<span class="environment-name">Deploy to $CurrentEnvironment.Name</span>
-            <span class="icon" aria-hidden="true"></span>
-            <span class="loading-text">Fetching latest code&hellip;</span>
-        </div>
+		<% if $DeployForm %>
+		<div class="deploy-dropdown" data-api-url="$CurrentProject.APILink('fetch')" aria-controls="#envDeploy"
+			 data-form-url="$CurrentEnvironment.Link/DeployForm">
 
-        <div class="deploy-form-outer collapse clearfix" id="envDeploy">
-			<% if $DeployForm %>
-				$DeployForm
-			<% end_if %>
+			<span class="environment-name">Deploy to $CurrentEnvironment.Name</span>
+			<span class="icon" aria-hidden="true"></span>
+			<span class="loading-text">Fetching latest code&hellip;</span>
 		</div>
+
+		<div class="deploy-form-outer collapse clearfix" id="envDeploy">
+				<%-- Deploy form will be put here with ajax --%>
+		</div>
+
+		<% end_if %>
 	<% end_if %>
 
 
