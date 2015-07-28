@@ -536,7 +536,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		return $this->customise(array(
 			'ProjectOverview' => 1
-			'ProjectOverview' => 1,
 		))->render();
 	}
 
