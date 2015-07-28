@@ -50,6 +50,9 @@
 
 	$(document).ready(function() {
 
+		// Enable select2
+		$('select:not(.disable-select2)').select2();
+
 		// Menu expand collapse
 	    	$('a.nav-submenu').click(function() {
 	        	$(this).toggleClass( "open" );
@@ -143,6 +146,9 @@
 
 											$(self).removeClass('loading').addClass('success').toggleClass('open');
 											$($(self).attr('aria-controls')).collapse();
+
+											// Enable select2
+											$('.deploy-form-outer .tab-pane:first select:not(.disable-select2)').select2();
 										}
 									});
 
@@ -162,9 +168,14 @@
 		$('.deploy-form-outer').on('click', '.tabbedselectiongroup > li > a', function (e) {
 			// Set the release type.
 			var releaseType = $(this).attr('data-value');
-			$(this).parents('form').first('input[name="SelectRelease"]').val(releaseType);
+			$(this).parents('form').find('input[name="SelectRelease"]').attr('value', releaseType);
 
 			$(this).tab('show');
+
+			// Ensure select2 is enabled
+			// This needs to be done when the tab is visible otherwise the width can screw up
+			var id = $(this).attr('href');
+			$(id).find('select:not(.disable-select2)').select2();
 
 			return false;
 		});

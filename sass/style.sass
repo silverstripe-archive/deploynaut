@@ -1,12 +1,15 @@
 @import "_bootstrap-variables.sass"
 @import "node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss"
 @import "node_modules/font-awesome/scss/font-awesome.scss"
-@import "tabs"
 
-@font-face
-	font-family: 'Glyphicons Halflings'
-	src: url("../fonts/bootstrap/glyphicons-halflings-regular.eot")
-	src: url("../fonts/bootstrap/glyphicons-halflings-regular.eot?#iefix") format("embedded-opentype"), url("../fonts/bootstrap/glyphicons-halflings-regular.woff") format("woff"), url("../fonts/bootstrap/glyphicons-halflings-regular.ttf") format("truetype"), url("../fonts/bootstrap/glyphicons-halflings-regular.svg#glyphicons_halflingsregular") format("svg")
+// Select2
+@import "thirdparty/select2/src/scss/core.scss"
+@import "select2/theme/layout.scss"
+
+// Deploynaut styles
+@import "tabs"
+@import "forms"
+
 
 .alert
 	&.Failed
@@ -39,6 +42,7 @@
 
 	&.Invalid
 		@extend .progress-bar-warning
+
 
 .list-reset
 	> li
@@ -217,17 +221,17 @@
 	font-size: 26px
 	line-height: 40px
 
-	.icon
+	.status-icon
 		@extend .fa
 		@extend .fa-chevron-down
 		@extend .pull-right
 		line-height: 40px
 
 	.loading-text
-		display: none;
+		display: none
 
 	&.open
-		.icon
+		.status-icon
 			@extend .fa-chevron-up
 
 	&.loading
@@ -236,7 +240,7 @@
 			display: inherit
 			font-size: 20px
 
-		.icon
+		.status-icon
 			@extend .fa-spinner
 			@extend .fa-pulse
 			margin-left: 10px
@@ -275,6 +279,7 @@
 					a
 						color: $gray
 
+
 				&:last-child
 					border-bottom-width: 0px
 
@@ -284,6 +289,15 @@
 
 			+ .tab-content
 				@extend .col-md-8
+				padding-top: 2em
+
+				select,
+				.select2,
+				input,
+				.CompositeField
+					width: 100%
+					margin-bottom: 0.75em
+
 
 		*[name="action_doDeploy"]
 			@extend .btn-block
