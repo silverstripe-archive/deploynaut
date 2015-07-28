@@ -184,6 +184,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return string - HTML
 	 */
 	public function snapshots(SS_HTTPRequest $request) {
+		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
+
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
@@ -202,6 +204,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return string - HTML
 	 */
 	public function createsnapshot(SS_HTTPRequest $request) {
+		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
+
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
@@ -225,6 +229,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return string - HTML
 	 */
 	public function uploadsnapshot(SS_HTTPRequest $request) {
+		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
+
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
@@ -300,6 +306,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	public function doUploadSnapshot($data, $form) {
+		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
+
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
@@ -439,6 +447,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	public function doPostSnapshot($data, $form) {
+		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
+
 		$project = $this->getCurrentProject();
 		if(!$project) {
 			return new SS_HTTPResponse("Project '" . Convert::raw2xml($this->getRequest()->latestParam('Project')) . "' not found.", 404);
@@ -472,6 +482,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return string - HTML
 	 */
 	public function snapshotslog(SS_HTTPRequest $request) {
+		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
+
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
@@ -488,6 +500,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @param  SS_HTTPRequest $request [description]
 	 */
 	public function postsnapshotsuccess(SS_HTTPRequest $request) {
+		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
+
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
@@ -528,8 +542,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		return $this->customise(array(
-			'ProjectOverview' => 1,
-			'DataTransferForm' => $this->getDataTransferForm($request)
+			'ProjectOverview' => 1
 		))->render();
 	}
 
@@ -895,6 +908,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	public function doDataTransfer($data, $form) {
+		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
+
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
@@ -960,6 +975,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * View into the log for a {@link DNDataTransfer}.
 	 */
 	public function transfer($request) {
+		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
+
 		$params = $request->params();
 		$transfer = DNDataTransfer::get()->byId($params['Identifier']);
 
@@ -983,6 +1000,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return string
 	 */
 	public function transferlog(SS_HTTPRequest $request) {
+		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
+
 		$params = $request->params();
 		$transfer = DNDataTransfer::get()->byId($params['Identifier']);
 
@@ -1078,6 +1097,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * Submissions are handled through {@link doDataTransfer()}, same as backup operations.
 	 */
 	public function restoresnapshot($request) {
+		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
+
 		$dataArchive = DNDataArchive::get()->byId($request->param('DataArchiveID'));
 
 		if(!$dataArchive) {
@@ -1102,6 +1123,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * Submissions are handled through {@link doDelete()}.
 	 */
 	public function deletesnapshot($request) {
+		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
+
 		$dataArchive = DNDataArchive::get()->byId($request->param('DataArchiveID'));
 
 		if(!$dataArchive) {
@@ -1150,6 +1173,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	public function doDelete($data, $form) {
+		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
+
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
@@ -1183,6 +1208,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * View a form to move a specific {@link DataArchive}.
 	 */
 	public function movesnapshot($request) {
+		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
+
 		$dataArchive = DNDataArchive::get()->byId($request->param('DataArchiveID'));
 
 		if(!$dataArchive) {
@@ -1229,6 +1256,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	public function doMove($data, $form) {
+		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
+
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
@@ -1321,7 +1350,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 *
 	 * @return DNProject
 	 */
-	protected function getCurrentProject() {
+	public function getCurrentProject() {
 		return $this->DNProjectList()->filter('Name', $this->getRequest()->latestParam('Project'))->First();
 	}
 
@@ -1330,9 +1359,43 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @param DNProject $project
 	 * @return DNEnvironment
 	 */
-	protected function getCurrentEnvironment($project = null) {
+	public function getCurrentEnvironment($project = null) {
 		if(!$project) $project = $this->getCurrentProject();
 		return $project->DNEnvironmentList()->filter('Name', $this->getRequest()->latestParam('Environment'))->First();
+	}
+
+	/** @const string - action type for actions that perform deployments */
+	const ACTION_DEPLOY = 'deploy';
+	/** @const string - action type for actions that manipulate snapshots */
+	const ACTION_SNAPSHOT = 'snapshot';
+
+	private static $action_types = array(
+		self::ACTION_DEPLOY,
+		self::ACTION_SNAPSHOT
+	);
+
+	private $actionType = self::ACTION_DEPLOY;
+
+	/**
+	 * This will return a const that indicates the class of action currently being performed
+	 *
+	 * Until DNRoot is de-godded, it does a bunch of different actions all in the same class.
+	 * So we just have each action handler calll setCurrentActionType to define what sort of
+	 * action it is.
+	 *
+	 * @return string - one of the consts from self::$action_types
+	 */
+	public function getCurrentActionType() {
+		return $this->actionType;
+	}
+
+	/**
+	 * Sets the current action type
+	 *
+	 * @param $actionType string - one of the consts from self::$action_types
+	 */
+	public function setCurrentActionType($actionType) {
+		$this->actionType = $actionType;
 	}
 
 	/**

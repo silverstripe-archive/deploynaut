@@ -155,17 +155,22 @@ class DNProject extends DataObject {
 	public function Menu() {
 		$list = new ArrayList();
 
+		$controller = Controller::curr();
+		$actionType = $controller->getField('CurrentActionType');
+
 		$list->push(new ArrayData(array(
 			'Link' => sprintf('naut/project/%s', $this->Name),
 			'Title' => 'Deploy',
-			'IsActive' => $this->isCurrent() && Controller::curr()->getAction() == 'project'
+			'IsCurrent' => $this->isCurrent() && $controller->getAction() == 'project',
+			'IsSection' => $this->isCurrent() && $actionType == DNRoot::ACTION_DEPLOY
 		)));
 
 		if(DNRoot::FlagSnapshotsEnabled()) {
 			$list->push(new ArrayData(array(
 				'Link' => sprintf('naut/project/%s/snapshots', $this->Name),
 				'Title' => 'Snapshots',
-				'IsActive' => $this->isCurrent() && Controller::curr()->getAction() == 'snapshots'
+				'IsCurrent' => $this->isCurrent() && $controller->getAction() == 'snapshots',
+				'IsSection' => $this->isCurrent() && $actionType == DNRoot::ACTION_SNAPSHOT
 			)));
 		}
 
