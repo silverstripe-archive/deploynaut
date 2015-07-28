@@ -27,12 +27,12 @@
 		<% include Header %>
     </nav>
 
+    <% if $CurrentUser %>
     <header class="header-navbar">
-		<% if $CurrentUser %>
-            <ul class="nav pull-right">
-                <li><a href="Security/logout">Log out</a></li>
-            </ul>
-		<% end_if %>
+        <ul class="nav pull-right">
+            <li><a href="Security/logout">Log out</a></li>
+        </ul>
     </header>
+    <% end_if %>
 
     <div class="main-container">

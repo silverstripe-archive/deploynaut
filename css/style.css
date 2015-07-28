@@ -1206,10 +1206,10 @@ h3, .h3 {
   font-size: 24px; }
 
 h4, .h4 {
-  font-size: 18px; }
+  font-size: 20px; }
 
 h5, .h5 {
-  font-size: 14px; }
+  font-size: 16px; }
 
 h6, .h6 {
   font-size: 12px; }
@@ -8185,6 +8185,19 @@ button.close {
   margin-bottom: 0;
   font-size: 14px; }
 
+#MemberLoginForm_LoginForm .radio input[type="radio"],
+#MemberLoginForm_LoginForm .radio-inline input[type="radio"],
+#MemberLoginForm_LoginForm .checkbox input[type="checkbox"],
+#MemberLoginForm_LoginForm .checkbox-inline input[type="checkbox"], #MemberLoginForm_LostPasswordForm .radio input[type="radio"],
+#MemberLoginForm_LostPasswordForm .radio-inline input[type="radio"],
+#MemberLoginForm_LostPasswordForm .checkbox input[type="checkbox"],
+#MemberLoginForm_LostPasswordForm .checkbox-inline input[type="checkbox"] {
+  margin-left: 0; }
+
+#MemberLoginForm_LoginForm .field.checkbox, #MemberLoginForm_LostPasswordForm .field.checkbox {
+  margin-bottom: 30px;
+  margin-top: 30px; }
+
 /* -- Input styles ---------------------------------- */
 .form-group, .field.text {
   position: relative;
@@ -8333,76 +8346,31 @@ label {
   animation: inputHighlighter 0.3s ease; }
 
 /* -- highlighter animation --------------------------- */
+@-webkit-keyframes inputHighlighter {
+  from {
+    background: #5264AE; }
+  to {
+    width: 0;
+    background: transparent; } }
+
+@-moz-keyframes inputHighlighter {
+  form-control {
+    background: #5264AE; }
+  to {
+    width: 0;
+    background: transparent; } }
+
+@keyframes inputHighlighter {
+  from {
+    background: #5264AE; }
+  to {
+    width: 0;
+    background: transparent; } }
+
 /*-- Checkbox --------------------------- */
 /*
  * Core styles required for the checkboxes.
  * @author Jason Mayes 2014, www.jasonmayes.com */
-.form-group.checkbox, .checkbox.field.text {
-  margin-top: 20px; }
-
-.checkbox input[type='checkbox'] {
-  height: 0;
-  width: 0;
-  opacity: 0; }
-
-.checkbox label {
-  font-size: 14px;
-  font-weight: 300;
-  line-height: 1;
-  display: inline-block;
-  overflow: hidden;
-  position: relative;
-  top: 10px;
-  padding-left: 0; }
-
-.checkbox .chk-span {
-  top: 0;
-  border: 1px solid #5a5a5a;
-  color: #1d1d1d;
-  cursor: pointer;
-  display: inline-block;
-  float: left;
-  height: 14px;
-  margin: 0 14px 14px 1px;
-  outline-color: #eaeaea;
-  padding: 0;
-  position: relative;
-  width: 14px;
-  -webkit-transition: all 0.2s ease-in-out;
-  -moz-transition: all 0.2s ease-in-out;
-  transition: all 0.2s ease-in-out;
-  z-index: 1; }
-
-.checkbox .chk-span.checked {
-  top: -2px;
-  border-left: 2px solid #03a9f4;
-  border-bottom: 4px solid #03a9f4;
-  border-top: 1px solid transparent;
-  border-right: 1px solid transparent;
-  -webkit-transform: rotate(-45deg) scaleY(0.5);
-  -moz-transform: rotate(-45deg) scaleY(0.5);
-  -ms-transform: rotate(-45deg) scaleY(0.5);
-  -o-transform: rotate(-45deg) scaleY(0.5);
-  transform: rotate(-45deg) scaleY(0.5); }
-
-.checkbox .chk-span.checked {
-  border-left-color: #03a9f4;
-  border-bottom-color: #03a9f4; }
-
-.checkbox input[type='checkbox']:focus ~ label {
-  color: #03a9f4; }
-  .checkbox input[type='checkbox']:focus ~ label .chk-span {
-    border-color: #03a9f4; }
-    .checkbox input[type='checkbox']:focus ~ label .chk-span.checked {
-      border-left-color: #03a9f4;
-      border-bottom-color: #03a9f4;
-      border-top: 1px solid transparent;
-      border-right: 1px solid transparent; }
-
-@media (min-width: 768px) {
-  .form-inline .radio label, .form-inline .checkbox label {
-    padding-left: 5px; } }
-
 .form-control-static {
   font-size: 16px; }
 
@@ -8421,7 +8389,7 @@ h1 {
   letter-spacing: -1px; }
 
 .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th {
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #eee;
   font-size: 14px;
   font-weight: 600;
   padding: 16px 10px 12px;
@@ -8430,6 +8398,15 @@ h1 {
 .table-large > tbody > tr > td {
   padding-top: 20px;
   padding-bottom: 20px; }
+
+.font-w300 {
+  font-weight: 300; }
+
+.font-w600 {
+  font-weight: 600; }
+
+.push {
+  margin-bottom: 20px; }
 
 @font-face {
   font-family: 'Glyphicons Halflings';
@@ -8522,7 +8499,7 @@ h1 {
   top: 0;
   z-index: 1030;
   left: 230px;
-  border-bottom: 1px solid #ddd; }
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02); }
   .header-navbar .nav a, .header-navbar .deploy-form-outer .deploy-form .SelectionGroup a, .deploy-form-outer .deploy-form .header-navbar .SelectionGroup a {
     padding: 17px 30px 22px; }
 
@@ -8531,7 +8508,7 @@ h1 {
   .main-container .page-header {
     background-color: #f0f3f4;
     margin: 0;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #eee;
     padding-bottom: 0; }
   .main-container .breadcrumb {
     padding-left: 0;
