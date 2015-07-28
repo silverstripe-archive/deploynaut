@@ -535,8 +535,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		return $this->customise(array(
-			'ProjectOverview' => 1,
-			'DataTransferForm' => $this->getDataTransferForm($request)
+			'ProjectOverview' => 1
 		))->render();
 	}
 
