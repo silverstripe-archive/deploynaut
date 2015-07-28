@@ -16,7 +16,7 @@ $gray:                   lighten($gray-base, 33.5%) // #555
 $gray-light:             lighten($gray-base, 46.7%) // #777
 $gray-lighter:           lighten($gray-base, 93.5%) // #eee
 
-$brand-primary:         darken(#3aaef9, 6.5%) // #337ab7
+$brand-primary:         #3aaef9 // #337ab7 - darken(#3aaef9, 6.5%)
 $brand-success:         #5cb85c
 $brand-info:            #5bc0de
 $brand-warning:         #f0ad4e
@@ -46,7 +46,7 @@ $link-hover-decoration: underline
 //
 //## Font, line-height, and color for body text, headings, and more.
 
-$font-family-sans-serif:  "Helvetica Neue", Helvetica, Arial, sans-serif
+$font-family-sans-serif:  "proxima-nova","Helvetica Neue", Helvetica, Arial, sans-serif;
 $font-family-serif:       Georgia, "Times New Roman", Times, serif
 //** Default monospace fonts for `<code>`, `<kbd>`, and `<pre>`.
 $font-family-monospace:   Menlo, Monaco, Consolas, "Courier New", monospace
@@ -59,8 +59,8 @@ $font-size-small:         ceil(($font-size-base * 0.85)) // ~12px
 $font-size-h1:            floor(($font-size-base * 2.6)) // ~36px
 $font-size-h2:            floor(($font-size-base * 2.15)) // ~30px
 $font-size-h3:            ceil(($font-size-base * 1.7)) // ~24px
-$font-size-h4:            ceil(($font-size-base * 1.25)) // ~18px
-$font-size-h5:            $font-size-base
+$font-size-h4:            ceil(($font-size-base * 1.37)) // ~20px
+$font-size-h5:            ceil(($font-size-base * 1.13)) // ~16px
 $font-size-h6:            ceil(($font-size-base * 0.85)) // ~12px
 
 //** Unit-less `line-height` for use in components like buttons.
@@ -96,24 +96,24 @@ $headings-color:          $gray
 //
 //## Define common padding and border radius sizes and more. Values based on 14px text and 1.428 line-height (~20px to start).
 
-// $padding-base-vertical:     6px
-// $padding-base-horizontal:   12px
+$padding-base-vertical:     6px
+$padding-base-horizontal:   12px
 
-// $padding-large-vertical:    10px
-// $padding-large-horizontal:  16px
+$padding-large-vertical:    10px
+$padding-large-horizontal:  16px
 
-// $padding-small-vertical:    5px
-// $padding-small-horizontal:  10px
+$padding-small-vertical:    5px
+$padding-small-horizontal:  10px
 
-// $padding-xs-vertical:       1px
-// $padding-xs-horizontal:     5px
+$padding-xs-vertical:       1px
+$padding-xs-horizontal:     5px
 
-// $line-height-large:         1.3333333 // extra decimals for Win 8.1 Chrome
-// $line-height-small:         1.5
+$line-height-large:         1.3333333 // extra decimals for Win 8.1 Chrome
+$line-height-small:         1.5
 
-// $border-radius-base:        4px
-// $border-radius-large:       6px
-// $border-radius-small:       3px
+$border-radius-base:        2px
+$border-radius-large:       6px
+$border-radius-small:       0px
 
 //** Global color for active items (e.g., navs or dropdowns).
 // $component-active-color:    #fff
@@ -180,9 +180,9 @@ $btn-danger-border:              darken($btn-danger-bg, 5%)
 $btn-link-disabled-color:        $gray-light
 
 // Allows for customizing button radius independently from global border radius
-// $btn-border-radius-base:         $border-radius-base
-// $btn-border-radius-large:        $border-radius-large
-// $btn-border-radius-small:        $border-radius-small
+$btn-border-radius-base:         $border-radius-base
+$btn-border-radius-large:        $border-radius-large
+$btn-border-radius-small:        $border-radius-small
 
 
 //== Forms
@@ -190,14 +190,14 @@ $btn-link-disabled-color:        $gray-light
 //##
 
 //** `<input>` background color
-// $input-bg:                       #fff
+$input-bg:                       #fff
 //** `<input disabled>` background color
-// $input-bg-disabled:              $gray-lighter
+$input-bg-disabled:              $gray-lighter
 
 //** Text color for `<input>`s
-// $input-color:                    $gray
+$input-color:                    $gray
 //** `<input>` border color
-// $input-border:                   #ccc
+$input-border:                   #e6e6e6
 
 // TODO: Rename `$input-border-radius` to `$input-border-radius-base` in v4
 //** Default `.form-control` border radius
@@ -209,10 +209,10 @@ $btn-link-disabled-color:        $gray-light
 // $input-border-radius-small:      $border-radius-small
 
 //** Border color for inputs on focus
-// $input-border-focus:             #66afe9
+$input-border-focus:             #646464 
 
 //** Placeholder text color
-// $input-color-placeholder:        #999
+$input-color-placeholder:        #999
 
 //** Default `.form-control` height
 // $input-height-base:              ($line-height-computed + ($padding-base-vertical * 2) + 2)
@@ -507,21 +507,21 @@ $nav-pills-active-link-hover-color:         $gray
 //
 //## Define colors for form feedback states and, by default, alerts.
 
-// $state-success-text:             #3c763d
-// $state-success-bg:               #dff0d8
-// $state-success-border:           darken(adjust-hue($state-success-bg, -10), 5%)
+$state-success-text:             #3c763d
+$state-success-bg:               #dff0d8
+$state-success-border:           darken(adjust-hue($state-success-bg, -10), 5%)
 
-// $state-info-text:                #31708f
-// $state-info-bg:                  #d9edf7
-// $state-info-border:              darken(adjust-hue($state-info-bg, -10), 7%)
+$state-info-text:                $platform-blue
+$state-info-bg:                  #edf6fd
+$state-info-border:              darken(adjust-hue($state-info-bg, -10), 7%)
 
-// $state-warning-text:             #8a6d3b
-// $state-warning-bg:               #fcf8e3
-// $state-warning-border:           darken(adjust-hue($state-warning-bg, -10), 5%)
+$state-warning-text:             #8a6d3b
+$state-warning-bg:               #fcf8e3
+$state-warning-border:           darken(adjust-hue($state-warning-bg, -10), 5%)
 
-// $state-danger-text:              #a94442
-// $state-danger-bg:                #f2dede
-// $state-danger-border:            darken(adjust-hue($state-danger-bg, -10), 5%)
+$state-danger-text:              #a94442
+$state-danger-bg:                #f2dede
+$state-danger-border:            darken(adjust-hue($state-danger-bg, -10), 5%)
 
 
 //== Tooltips
@@ -631,25 +631,25 @@ $nav-pills-active-link-hover-color:         $gray
 //
 //## Define alert colors, border radius, and padding.
 
-// $alert-padding:               15px
-// $alert-border-radius:         $border-radius-base
-// $alert-link-font-weight:      bold
+$alert-padding:               15px
+$alert-border-radius:         $border-radius-base
+$alert-link-font-weight:      bold
 
-// $alert-success-bg:            $state-success-bg
-// $alert-success-text:          $state-success-text
-// $alert-success-border:        $state-success-border
+$alert-success-bg:            $state-success-bg
+$alert-success-text:          $state-success-text
+$alert-success-border:        $state-success-border
 
-// $alert-info-bg:               $state-info-bg
-// $alert-info-text:             $state-info-text
-// $alert-info-border:           $state-info-border
+$alert-info-bg:               $state-info-bg
+$alert-info-text:             $state-info-text
+$alert-info-border:           $state-info-border
 
-// $alert-warning-bg:            $state-warning-bg
-// $alert-warning-text:          $state-warning-text
-// $alert-warning-border:        $state-warning-border
+$alert-warning-bg:            $state-warning-bg
+$alert-warning-text:          $state-warning-text
+$alert-warning-border:        $state-warning-border
 
-// $alert-danger-bg:             $state-danger-bg
-// $alert-danger-text:           $state-danger-text
-// $alert-danger-border:         $state-danger-border
+$alert-danger-bg:             $state-danger-bg
+$alert-danger-text:           $state-danger-text
+$alert-danger-border:         $state-danger-border
 
 
 //== Progress bars
@@ -846,10 +846,10 @@ $breadcrumb-separator:          "/"
 // $kbd-color:                   #fff
 // $kbd-bg:                      #333
 
-// $pre-bg:                      #f5f5f5
-// $pre-color:                   $gray-dark
-// $pre-border-color:            #ccc
-// $pre-scrollable-max-height:   340px
+$pre-bg:                      #f0f3f4
+$pre-color:                   $gray-dark
+$pre-border-color:            #ddd
+$pre-scrollable-max-height:   340px
 
 
 //== Type
@@ -876,4 +876,4 @@ $page-header-border-color:    $gray-lighter
 // $dl-horizontal-offset:        $component-offset-horizontal
 //** Horizontal line color.
 $hr-border:                   $gray-lighter
-$UI-border:	#ddd
+$UI-border:	#eee

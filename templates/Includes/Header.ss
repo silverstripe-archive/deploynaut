@@ -15,7 +15,7 @@
 			<% loop $Navigation %>
 				<li class="active">
 					<a class="nav-submenu<% if $IsActive %> open<% end_if %>" role="button" data-toggle="collapse" href="#collapseExample-$Pos" aria-controls="collapseExample-$Pos">
-  						<span class="icon icon-stack"></span>$Project.Name<span class="icon-arrow"></span>
+  						<span class="plat-icon icon-stack"></span>$Project.Name<span class="icon-arrow"></span>
 					</a>
 
 					<ul class="collapse<% if $IsActive %> in<% end_if %>" id="collapseExample-$Pos">
@@ -32,9 +32,9 @@
 
 		<li class="nav-main-heading">Support</li>
 		
-		<li><a href=""><span class="icon icon-helpdesk"></span>Help desk</a></li>
-		<li><a href=""><span class="icon icon-documentation"></span>Documentation</a></li>
-		<li><a href="http://www.silverstripe.com/platform"><span class="icon icon-overview"></span>Platform overview</a></li>
+		<li><a href=""><span class="plat-icon icon-helpdesk"></span>Help desk</a></li>
+		<li><a href=""><span class="plat-icon icon-documentation"></span>Documentation</a></li>
+		<li><a href="http://www.silverstripe.com/platform"><span class="plat-icon icon-overview"></span>Platform overview</a></li>
 
 	</ul>
 </div>
