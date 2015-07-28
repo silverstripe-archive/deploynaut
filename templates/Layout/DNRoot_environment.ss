@@ -10,7 +10,7 @@
 				<ul class="nav nav-tabs">
 					<% if $DNEnvironmentList %>
 						<% loop $DNEnvironmentList %>
-							<li<% if $Top.Name = $Name %> class="active"<% end_if %>><% if CanDeploy %><a href="$Link">$Name</a><% else %>$Name<% end_if %></li>
+							<li<% if $IsSection %> class="active"<% end_if %>><% if CanDeploy %><a href="$Link">$Name</a><% else %>$Name<% end_if %></li>
 						<% end_loop %>
 					<% end_if %>
 				</ul>
