@@ -386,19 +386,26 @@
 		a
 			margin-left: 5px
 
-.deployment-progress
-	height: auto
 
-	.progress-bar
-		padding: 8px 15px
-		line-height: 40px
-		font-size: 28px
-		text-align: left
+.deployment-status
+	margin-top: 2em
 
-		.status
-			@extend .pull-right
-			font-size: 26px
+	.deployment-progress
+		height: auto
+
+		.progress-bar
+			padding: 8px 15px
+			line-height: 40px
+			font-size: 28px
+			text-align: left
+
+			.status
+				@extend .pull-right
+				font-size: 26px
 
 .log-content
 	overflow-y: auto
 	max-height: 450px
+	background: #333
+	color: #fff
+	margin-top: 0

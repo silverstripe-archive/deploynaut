@@ -83,7 +83,7 @@
 				<% end_if %>
 
 			</div>
-	</div>
+		</div>
 	<% end_with %>
 
 	<% if $HasPipelineSupport %>
