@@ -8,7 +8,7 @@
 
 <div class="tab-content">
 	<% loop $FieldList %>
-		<div id="deploy-tab-$Pos" class="tab-pane<% if $Selected %> active<% end_if %>">
+		<div id="deploy-tab-$Pos" class="tab-pane<% if $Selected %> active<% end_if %> clearfix">
 			$FieldHolder
 		</div>
 	<% end_loop %>

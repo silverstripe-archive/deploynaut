@@ -148,7 +148,11 @@
 											$($(self).attr('aria-controls')).collapse();
 
 											// Enable select2
-											$('.deploy-form-outer .tab-pane:first select:not(.disable-select2)').select2();
+											$('.deploy-form-outer .tab-pane.active select:not(.disable-select2)').select2();
+
+											// Ensure the correct value is set for hidden field "SelectRelease"
+											var releaseType = $('.deploy-form-outer .tabbedselectiongroup > li.active a').attr('data-value');
+											$('.deploy-form-outer').find('input[name="SelectRelease"]').attr('value', releaseType);
 										}
 									});
 

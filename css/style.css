@@ -4873,13 +4873,16 @@ a.thumbnail.active {
     right: -21px;
     color: inherit; }
 
-.alert-success, .alert.Complete {
+.alert-success, .alert.alert-good,
+.alert.Complete {
   background-color: #dff0d8;
   border-color: #d6e9c6;
   color: #3c763d; }
-  .alert-success hr, .alert.Complete hr {
+  .alert-success hr, .alert.alert-good hr,
+  .alert.Complete hr {
     border-top-color: #c9e2b3; }
-  .alert-success .alert-link, .alert.Complete .alert-link {
+  .alert-success .alert-link, .alert.alert-good .alert-link,
+  .alert.Complete .alert-link {
     color: #2b542c; }
 
 .alert-info, .alert.Started,
@@ -4906,13 +4909,16 @@ a.thumbnail.active {
   .alert-warning .alert-link, .alert.Invalid .alert-link {
     color: #66512c; }
 
-.alert-danger, .alert.Failed {
+.alert-danger, .alert.alert-error,
+.alert.Failed {
   background-color: #f2dede;
   border-color: #ebccd1;
   color: #a94442; }
-  .alert-danger hr, .alert.Failed hr {
+  .alert-danger hr, .alert.alert-error hr,
+  .alert.Failed hr {
     border-top-color: #e4b9c0; }
-  .alert-danger .alert-link, .alert.Failed .alert-link {
+  .alert-danger .alert-link, .alert.alert-error .alert-link,
+  .alert.Failed .alert-link {
     color: #843534; }
 
 @-webkit-keyframes progress-bar-stripes {
@@ -9297,7 +9303,8 @@ pre {
   border-radius: 0px;
   text-align: left;
   font-size: 26px;
-  line-height: 40px; }
+  line-height: 40px;
+  margin-bottom: 0; }
   .deploy-dropdown .status-icon {
     line-height: 40px; }
   .deploy-dropdown .loading-text {
@@ -9312,6 +9319,10 @@ pre {
   border-width: 0px 1px 1px;
   border-style: solid;
   border-color: #bbb; }
+  .deploy-form-outer .deploy-form label {
+    position: static;
+    font-size: 16px;
+    color: #555555; }
   .deploy-form-outer .deploy-form .SelectionGroup > li {
     background-color: #ddd;
     border-width: 1px 1px 1px 0px;
@@ -9338,18 +9349,28 @@ pre {
     padding-top: 2em; }
     .deploy-form-outer .deploy-form .SelectionGroup + .tab-content select,
     .deploy-form-outer .deploy-form .SelectionGroup + .tab-content .select2,
-    .deploy-form-outer .deploy-form .SelectionGroup + .tab-content input,
+    .deploy-form-outer .deploy-form .SelectionGroup + .tab-content input[type="text"],
     .deploy-form-outer .deploy-form .SelectionGroup + .tab-content .CompositeField {
       width: 100%;
       margin-bottom: 0.75em; }
+      .deploy-form-outer .deploy-form .SelectionGroup + .tab-content select > *,
+      .deploy-form-outer .deploy-form .SelectionGroup + .tab-content .select2 > *,
+      .deploy-form-outer .deploy-form .SelectionGroup + .tab-content input[type="text"] > *,
+      .deploy-form-outer .deploy-form .SelectionGroup + .tab-content .CompositeField > * {
+        width: 100%; }
   .deploy-form-outer .deploy-form *[name="action_doDeploy"] {
     border-radius: 0;
     font-size: 26px;
     line-height: 40px;
     margin: 20px 0; }
 
-.environment-details > span {
-  display: block; }
+.deploy-history {
+  margin-top: 3em; }
+
+.environment-details {
+  margin-bottom: 3em; }
+  .environment-details > * > span {
+    display: block; }
 
 .project-links li {
   line-height: 24px; }

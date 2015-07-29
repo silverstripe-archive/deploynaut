@@ -39,8 +39,8 @@
 <div class="content">
 
 	<% with $CurrentEnvironment %>
-		<div class="row">
-			<div class="col-md-12 environment-details">
+		<div class="row environment-details">
+			<div class="col-md-12">
 				<h4>Environment Details:</h4>
 
 				<%-- Display Environment URL --%>
@@ -134,51 +134,60 @@
 		<% end_if %>
 	<% else %>
 		<% if $DeployForm %>
-		<div class="deploy-dropdown" data-api-url="$CurrentProject.APILink('fetch')" aria-controls="#envDeploy"
-			 data-form-url="$CurrentEnvironment.Link/DeployForm">
 
-			<span class="environment-name">Deploy to $CurrentEnvironment.Name</span>
-			<span class="status-icon" aria-hidden="true"></span>
-			<span class="loading-text">Fetching latest code&hellip;</span>
-		</div>
+			<% with $DeployForm %>
+				<% if $Message %>
+					<p id="{$FormName}_error" class="alert alert-$MessageType">$Message</p>
+					$clearMessage
+				<% end_if %>
+			<% end_with %>
 
-		<div class="deploy-form-outer collapse clearfix" id="envDeploy">
-				<%-- Deploy form will be put here with ajax --%>
-		</div>
+			<div class="deploy-dropdown" data-api-url="$CurrentProject.APILink('fetch')" aria-controls="#envDeploy"
+				 data-form-url="$CurrentEnvironment.Link/DeployForm">
 
+				<span class="environment-name">Deploy to $CurrentEnvironment.Name</span>
+				<span class="status-icon" aria-hidden="true"></span>
+				<span class="loading-text">Fetching latest code&hellip;</span>
+			</div>
+
+			<div class="deploy-form-outer collapse clearfix" id="envDeploy">
+					<%-- Deploy form will be put here with ajax --%>
+			</div>
 		<% end_if %>
 	<% end_if %>
 
 
 
-	<h3>Deploy history</h3>
-	<p>Below builds have previous been deployed to this environment, ordered by deploy date descending.</p>
-	<table class="table-striped table table-bordered">
-		<thead>
-			<tr>
-				<th>Date deployed</th>
-				<th>Build</th>
-				<th>Deployer</th>
-				<th>Status</th>
-				<th>Actions</th>
-			</tr>
-		</thead>
-		<tbody>
-		<% loop $CurrentEnvironment.DeployHistory.limit(20) %>
-			<tr>
-				<td><span class="tooltip-hint" data-toggle="tooltip" data-original-title="$LastEdited.Nice ($LastEdited.Ago)">$LastEdited.Date</span></td>
-				<td><span class="tooltip-hint" data-toggle="tooltip" title="$Message" data-original-title="$Message">$SHA</span></td>
-				<td>$Deployer.Name <% if $Deployer.Email %>&lt;$Deployer.Email&gt; <% end_if %></td>
-				<td>
-				<% if $Status = 'Queued' %><span class="label label-info">Queued</span><% end_if %>
-				<% if $Status = 'Started' %><span class="label label-info">Started</span><% end_if %>
-				<% if $Status = 'Finished' %><span class="label label-success">Finished</span><% end_if %>
-				<% if $Status = 'Failed' %><span class="label label-danger">Failed</span><% end_if %>
-				<% if $Status = 'n/a' %><span class="label label-warning">n/a</span><% end_if %>
-				</td>
-				<td><% if $Link %><a href="$Link">Details</a><% end_if %></td>
-			</tr>
-		<% end_loop %>
-		</tbody>
-	</table>
+	<div class="deploy-history">
+		<h3>Deploy history</h3>
+		<p>Below builds have previously been deployed to this environment.</p>
+		<table class="table-striped table table-bordered">
+			<thead>
+				<tr>
+					<th>Date deployed</th>
+					<th>Build</th>
+					<th>Deployer</th>
+					<th>Status</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+			<% loop $CurrentEnvironment.DeployHistory.limit(20) %>
+				<tr>
+					<td><span class="tooltip-hint" data-toggle="tooltip" data-original-title="$LastEdited.Nice ($LastEdited.Ago)">$LastEdited.Date</span></td>
+					<td><span class="tooltip-hint" data-toggle="tooltip" title="$Message" data-original-title="$Message">$SHA</span></td>
+					<td>$Deployer.Name <% if $Deployer.Email %>&lt;$Deployer.Email&gt; <% end_if %></td>
+					<td>
+					<% if $Status = 'Queued' %><span class="label label-info">Queued</span><% end_if %>
+					<% if $Status = 'Started' %><span class="label label-info">Started</span><% end_if %>
+					<% if $Status = 'Finished' %><span class="label label-success">Finished</span><% end_if %>
+					<% if $Status = 'Failed' %><span class="label label-danger">Failed</span><% end_if %>
+					<% if $Status = 'n/a' %><span class="label label-warning">n/a</span><% end_if %>
+					</td>
+					<td><% if $Link %><a href="$Link">Details</a><% end_if %></td>
+				</tr>
+			<% end_loop %>
+			</tbody>
+		</table>
+	</div>
 </div>
