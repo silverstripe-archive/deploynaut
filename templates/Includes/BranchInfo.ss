@@ -1,8 +1,4 @@
 <% with $CurrentBranch %>
-    <p>Legend:
-        <span class="label label-info">release tag</span>
-        <span class="label">other branch containing this</span>
-    </p>
     <table class="table-striped table table-bordered">
         <thead>
         <tr>

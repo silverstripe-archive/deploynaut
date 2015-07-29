@@ -9369,3 +9369,39 @@ pre {
 .log-content {
   overflow-y: auto;
   max-height: 450px; }
+
+.repo-url label {
+  font-size: 16px;
+  color: #555555;
+  display: block;
+  position: static; }
+
+.repo-url input[type=text] {
+  line-height: 35px;
+  padding: 0 15px;
+  width: 100%;
+  font-weight: 400;
+  border-width: 0 0 1px 0;
+  border-style: solid;
+  border-color: #e6e6e6; }
+
+.project-branch .branch-details {
+  cursor: pointer; }
+
+.project-branch .project-branch-content {
+  display: none; }
+
+.project-branch .closed-icon {
+  display: inline-block; }
+
+.project-branch .open-icon {
+  display: none; }
+
+.project-branch.open .project-branch-content {
+  display: block; }
+
+.project-branch.open .closed-icon {
+  display: none; }
+
+.project-branch.open .open-icon {
+  display: inline-block; }
