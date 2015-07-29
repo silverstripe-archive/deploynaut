@@ -3,7 +3,8 @@
 .field.text,
 .field.dropdown
 	@extend .form-group
-	@extend .col-md-12
+	margin-left: 0
+	margin-right: 0;
 
 .action
 	@extend .btn
@@ -20,6 +21,11 @@ select
 label
 	@extend .control-label
 
+.field.dataarchivefile 
+	margin-bottom: 15px
+	
+	label
+		position: relative;
 
 // Security page
 
@@ -45,6 +51,7 @@ label
 		margin-top: 30px
 
 
+
 // Alerts
 .alert-special
 	background-color: $platform-blue
@@ -62,8 +69,7 @@ label
 /* -- Input styles ---------------------------------- */
 .form-group
 	position: relative
-	margin-top: 35px
-	margin-bottom: 20px
+	margin-bottom: 15px
 
 .input-group
 	position: relative
@@ -98,8 +104,8 @@ label
 
 /* -- label styles ---------------------------------- */
 label 
-	position: absolute;
-	top: -18px;
+	// position: absolute;
+	// top: -18px;
 	color: #999;
 	font-size: 12px;
 	font-weight: 300;
