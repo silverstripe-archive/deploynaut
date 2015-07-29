@@ -8,6 +8,9 @@
     <meta name="description" content="">
 
 	<% require themedCSS(style,deploynaut) %>
+	<% require themedCSS(theme-style,platform) %>
+
+	<% require javascript('deploynaut/thirdparty/select2/dist/js/select2.min.js') %>
 
     <meta name="author" content="SilverStripe LTD">
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->

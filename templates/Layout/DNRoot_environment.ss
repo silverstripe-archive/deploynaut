@@ -10,7 +10,7 @@
 				<ul class="nav nav-tabs">
 					<% if $DNEnvironmentList %>
 						<% loop $DNEnvironmentList %>
-							<li<% if $Top.Name = $Name %> class="active"<% end_if %>><% if CanDeploy %><a href="$Link">$Name</a><% else %>$Name<% end_if %></li>
+							<li<% if $IsSection %> class="active"<% end_if %>><% if CanDeploy %><a href="$Link">$Name</a><% else %>$Name<% end_if %></li>
 						<% end_loop %>
 					<% end_if %>
 				</ul>
@@ -138,7 +138,7 @@
 			 data-form-url="$CurrentEnvironment.Link/DeployForm">
 
 			<span class="environment-name">Deploy to $CurrentEnvironment.Name</span>
-			<span class="icon" aria-hidden="true"></span>
+			<span class="status-icon" aria-hidden="true"></span>
 			<span class="loading-text">Fetching latest code&hellip;</span>
 		</div>
 
@@ -164,7 +164,7 @@
 			</tr>
 		</thead>
 		<tbody>
-		<% loop $CurrentEnvironment.DeployHistory %>
+		<% loop $CurrentEnvironment.DeployHistory.limit(20) %>
 			<tr>
 				<td><span class="tooltip-hint" data-toggle="tooltip" data-original-title="$LastEdited.Nice ($LastEdited.Ago)">$LastEdited.Date</span></td>
 				<td><span class="tooltip-hint" data-toggle="tooltip" title="$Message" data-original-title="$Message">$SHA</span></td>

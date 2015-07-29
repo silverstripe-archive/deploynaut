@@ -678,11 +678,28 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function Link() {
 		return $this->Project()->Link()."/environment/" . $this->Name;
+	}
+
+	/**
+	 * Is this environment currently at the root level of the controller that handles it?
+	 * @return bool
+	 */
+	public function isCurrent() {
+		return $this->isSection() && Controller::curr()->getAction() == 'environment';
+	}
+
+	/**
+	 * Is this environment currently in a controller that is handling it or performing a sub-task?
+	 * @return bool
+	 */
+	public function isSection() {
+		$controller = Controller::curr();
+		$environment = $controller->getField('CurrentEnvironment');
+		return $environment && $environment->ID == $this->ID;
 	}
 
 
