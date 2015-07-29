@@ -26,7 +26,7 @@
 			<p>Back up the database and/or assets into a file and transfer it to deploynaut. From there it can be downloaded or used for later restores</p>
 
 			<% with $DataTransferForm %>
-			<form $FormAttributes class="form-horizontal">
+			<form $FormAttributes class="">
 				<% loop VisibleFields %>$FieldHolder<% end_loop %>
 				$Actions
 				$HiddenFields
