@@ -1,6 +1,38 @@
+// CUSTOM FORMS
+
+.field.text
+	@extend .form-group
+
+.action
+	@extend .btn
+	@extend .btn-primary
+	@extend .btn-lg
+
+.btn 
+	margin-bottom: 20px;
 
 
-//FORMS
+
+// Security page
+
+#MemberLoginForm_LoginForm, #MemberLoginForm_LostPasswordForm
+
+	input.text
+		@extend .form-control
+		font-size: 20px !important
+
+	label
+		position: relative
+		top: 0
+		margin-bottom: 0;
+		font-size: 14px
+
+	.field.checkbox
+
+
+
+
+//FORMS GENERAL
 /* -- Input styles ---------------------------------- */
 .form-group
 	position: relative
@@ -21,7 +53,8 @@
 	padding: 0
 	background-color: transparent
 	box-shadow: none
-	border-bottom: 1px solid #757575
+	border-bottom: 1px solid $input-border
+	//box-shadow: 0 1px 0 #e6e6e6
 
 .input-group .form-control
 	position: relative;
@@ -31,7 +64,8 @@
 	margin-bottom: 0;
 
 .form-control:focus 
-	border-color: #757575;
+	border-color: $input-border-focus;
+	//box-shadow: 0 2px 0 #e6e6e6
 	outline: none;
 	box-shadow: none;
 
@@ -43,6 +77,7 @@ label
 	color: #999;
 	font-size: 12px;
 	font-weight: 300;
+	color: #6a8ea5
 	transition: 0.2s ease all;
 	-moz-transition: 0.2s ease all;
 	-webkit-transition: 0.2s ease all;

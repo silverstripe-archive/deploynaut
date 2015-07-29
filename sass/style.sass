@@ -2,6 +2,9 @@
 @import "node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss"
 @import "node_modules/font-awesome/scss/font-awesome.scss"
 @import "tabs"
+@import "_form.sass"
+@import "_type.sass"
+
 
 @font-face
 	font-family: 'Glyphicons Halflings'
@@ -47,8 +50,8 @@
 		list-style: none
 
 .page-container 
-	padding-left: $nav-width
-	margin: 0 auto
+	padding-left: $nav-width;
+	margin: 0 auto;
 
 
 // SIDEBAR
@@ -62,7 +65,54 @@
 	color: rgba(255, 255, 255, 0.3)
 
 .side-content 
-	padding: 13px 20px 1px
+	padding: 13px 20px 1px;
+
+	ul.nav ul
+		background-color: rgba(0, 0, 0, 0.15);
+		padding: 0;
+		margin: 0;
+		overflow: hidden;
+
+		a
+			opacity: .8;
+			padding-left: 54px;
+			
+			&:hover 
+				color: #fff;
+				background-color: transparent;
+				text-decoration: none;
+				opacity: 1;
+
+		li.active a
+			color: #fff;
+
+	li > a
+		&:hover,
+		&:focus
+			color: #fff;
+			text-decoration: none;
+
+
+.nav-submenu
+	font-weight: bold
+	position: relative;
+
+	&.open .icon-arrow
+		-ms-transform: rotate(180deg); /* IE 9 */
+		-webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
+		transform: rotate(180deg);
+
+.icon-arrow
+	width: 16px;
+	height: 16px
+	display: block;
+	position: absolute;
+	right: 15px;
+	top: 10px;
+	background-color: red;
+	background: transparent url(../img/Platform_icon-arrow.svg) no-repeat;
+
+
 
 	ul.nav ul
 		background-color: rgba(0, 0, 0, 0.15)
@@ -132,7 +182,6 @@
 		    text-transform: uppercase
 
 
-
 // MAIN	
 // Header bar
 .header-navbar
@@ -144,7 +193,7 @@
 	top: 0
 	z-index: 1030
 	left: 230px
-	border-bottom: 1px solid $UI-border
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02)
 
 	.nav a
 		padding: 17px 30px 22px
@@ -190,20 +239,6 @@
 	margin: 0 auto
 	padding: 30px 30px 1px
     background-color: #f9f9f9
-
-	
-
-// TYPE
-.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th
-	border-bottom: 1px solid $UI-border
-	font-size: 14px
-	font-weight: 600
-	padding: 16px 10px 12px
-	text-transform: uppercase
-
-.table-large > tbody > tr > td
-	padding-top: 20px
-	padding-bottom: 20px
 
 
 // Environment

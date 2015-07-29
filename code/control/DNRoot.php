@@ -738,7 +738,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return Form
 	 */
 	public function getDeployForm() {
-
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {

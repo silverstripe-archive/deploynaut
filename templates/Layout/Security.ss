@@ -1,3 +1,4 @@
-<h1>SilverStripe Platform</h1>
+<h1>Deploynaut</h1>
+
 $Content
 $Form

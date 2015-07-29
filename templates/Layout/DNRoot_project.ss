@@ -1,21 +1,13 @@
 <div class="content page-header">
-
 	<div class="row">
 		<div class="col-md-12">
-			<ol class="breadcrumb">
-				<li><a href="#">$CurrentProject.Title</a></li>
-			</ol>
 			<h1 class="page-heading">
-			<% loop $Navigation %>
-				<% loop $Project.Menu %>
-					<% if $IsActive %>$Title<% end_if %>
-				<% end_loop %>
-			<% end_loop %>
+				$CurrentProject.Title
 			</h1>
 		</div>
 	</div>
-
 </div>
+
 <div class="content">
 
 	<%-- <% if $CurrentProject %>
@@ -125,4 +117,12 @@
 	</div>
 	</div> -->
 	<% end_with %>
+
+
+	<h1 class="font-w300 push">h1. Heading</h1>
+<h2 class="font-w300 push">h2. Heading</h2>
+<h3 class="font-w300 push">h3. Heading</h3>
+<h4 class="font-w300 push">h4. Heading</h4>
+<h5 class="font-w300 push">h5. Heading</h5>
+
 </div>
