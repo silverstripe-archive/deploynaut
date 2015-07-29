@@ -409,3 +409,43 @@
 	background: #333
 	color: #fff
 	margin-top: 0
+
+.repo-url
+
+	label
+		font-size: 16px
+		color: $gray
+		display: block
+		position: static
+
+	input[type=text]
+		line-height: 35px
+		padding: 0 15px
+		width: 100%
+		font-weight: 400
+		border-width: 0 0 1px 0
+		border-style: solid
+		border-color: #e6e6e6
+
+.project-branch
+	.branch-details
+		cursor: pointer
+
+	.project-branch-content
+		display: none
+
+	.closed-icon
+		display: inline-block
+
+	.open-icon
+		display: none
+
+	&.open
+		.project-branch-content
+			display: block
+
+		.closed-icon
+			display: none
+
+		.open-icon
+			display: inline-block
