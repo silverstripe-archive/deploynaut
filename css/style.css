@@ -1427,7 +1427,7 @@ blockquote {
       content: '\2014 \00A0'; }
 
 .blockquote-reverse,
-blockquote.pull-right, .deploy-dropdown blockquote.status-icon, .deploy-dropdown.loading blockquote.loading-text, .deployment-progress .progress-bar blockquote.status {
+blockquote.pull-right, .deploy-dropdown blockquote.status-icon, .deploy-dropdown.loading blockquote.loading-text, .deployment-status .deployment-progress .progress-bar blockquote.status {
   padding-right: 15px;
   padding-left: 0;
   border-right: 5px solid #eeeeee;
@@ -1439,12 +1439,12 @@ blockquote.pull-right, .deploy-dropdown blockquote.status-icon, .deploy-dropdown
   blockquote.pull-right footer:before,
   .deploy-dropdown blockquote.status-icon footer:before,
   .deploy-dropdown.loading blockquote.loading-text footer:before,
-  .deployment-progress .progress-bar blockquote.status footer:before,
+  .deployment-status .deployment-progress .progress-bar blockquote.status footer:before,
   blockquote.pull-right small:before,
   .deploy-dropdown blockquote.status-icon small:before,
   .deploy-dropdown.loading blockquote.loading-text small:before,
-  .deployment-progress .progress-bar blockquote.status small:before,
-  blockquote.pull-right .small:before, .deploy-dropdown blockquote.status-icon .small:before, .deploy-dropdown.loading blockquote.loading-text .small:before, .deployment-progress .progress-bar blockquote.status .small:before {
+  .deployment-status .deployment-progress .progress-bar blockquote.status small:before,
+  blockquote.pull-right .small:before, .deploy-dropdown blockquote.status-icon .small:before, .deploy-dropdown.loading blockquote.loading-text .small:before, .deployment-status .deployment-progress .progress-bar blockquote.status .small:before {
     content: ''; }
   .blockquote-reverse footer:after,
   .blockquote-reverse small:after,
@@ -1452,12 +1452,12 @@ blockquote.pull-right, .deploy-dropdown blockquote.status-icon, .deploy-dropdown
   blockquote.pull-right footer:after,
   .deploy-dropdown blockquote.status-icon footer:after,
   .deploy-dropdown.loading blockquote.loading-text footer:after,
-  .deployment-progress .progress-bar blockquote.status footer:after,
+  .deployment-status .deployment-progress .progress-bar blockquote.status footer:after,
   blockquote.pull-right small:after,
   .deploy-dropdown blockquote.status-icon small:after,
   .deploy-dropdown.loading blockquote.loading-text small:after,
-  .deployment-progress .progress-bar blockquote.status small:after,
-  blockquote.pull-right .small:after, .deploy-dropdown blockquote.status-icon .small:after, .deploy-dropdown.loading blockquote.loading-text .small:after, .deployment-progress .progress-bar blockquote.status .small:after {
+  .deployment-status .deployment-progress .progress-bar blockquote.status small:after,
+  blockquote.pull-right .small:after, .deploy-dropdown blockquote.status-icon .small:after, .deploy-dropdown.loading blockquote.loading-text .small:after, .deployment-status .deployment-progress .progress-bar blockquote.status .small:after {
     content: '\00A0 \2014'; }
 
 address {
@@ -3518,7 +3518,7 @@ tbody.collapse.in {
   -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   background-clip: padding-box; }
-  .dropdown-menu.pull-right, .deploy-dropdown .dropdown-menu.status-icon, .deploy-dropdown.loading .dropdown-menu.loading-text, .deployment-progress .progress-bar .dropdown-menu.status {
+  .dropdown-menu.pull-right, .deploy-dropdown .dropdown-menu.status-icon, .deploy-dropdown.loading .dropdown-menu.loading-text, .deployment-status .deployment-progress .progress-bar .dropdown-menu.status {
     right: 0;
     left: auto; }
   .dropdown-menu .divider {
@@ -3592,7 +3592,7 @@ tbody.collapse.in {
   top: 0;
   z-index: 990; }
 
-.pull-right > .dropdown-menu, .deploy-dropdown .status-icon > .dropdown-menu, .deploy-dropdown.loading .loading-text > .dropdown-menu, .deployment-progress .progress-bar .status > .dropdown-menu {
+.pull-right > .dropdown-menu, .deploy-dropdown .status-icon > .dropdown-menu, .deploy-dropdown.loading .loading-text > .dropdown-menu, .deployment-status .deployment-progress .progress-bar .status > .dropdown-menu {
   right: 0;
   left: auto; }
 
@@ -5013,7 +5013,7 @@ a.thumbnail.active {
     max-width: none; }
 
 .media-right,
-.media > .pull-right, .deploy-dropdown .media > .status-icon, .deploy-dropdown.loading .media > .loading-text, .deployment-progress .progress-bar .media > .status {
+.media > .pull-right, .deploy-dropdown .media > .status-icon, .deploy-dropdown.loading .media > .loading-text, .deployment-status .deployment-progress .progress-bar .media > .status {
   padding-left: 10px; }
 
 .media-left,
@@ -6157,7 +6157,7 @@ button.close {
   margin-left: auto;
   margin-right: auto; }
 
-.pull-right, .deploy-dropdown .status-icon, .deploy-dropdown.loading .loading-text, .deployment-progress .progress-bar .status {
+.pull-right, .deploy-dropdown .status-icon, .deploy-dropdown.loading .loading-text, .deployment-status .deployment-progress .progress-bar .status {
   float: right !important; }
 
 .pull-left {
@@ -6423,7 +6423,7 @@ button.close {
   border: solid 0.08em #eee;
   border-radius: .1em; }
 
-.pull-right, .deploy-dropdown .status-icon, .deploy-dropdown.loading .loading-text, .deployment-progress .progress-bar .status {
+.pull-right, .deploy-dropdown .status-icon, .deploy-dropdown.loading .loading-text, .deployment-status .deployment-progress .progress-bar .status {
   float: right; }
 
 .pull-left {
@@ -6432,7 +6432,7 @@ button.close {
 .fa.pull-left, .deploy-dropdown .pull-left.status-icon {
   margin-right: .3em; }
 
-.fa.pull-right, .deploy-dropdown .status-icon, .deploy-dropdown.loading .fa.loading-text, .deploy-dropdown.loading .loading-text.status-icon, .deployment-progress .progress-bar .fa.status, .deployment-progress .progress-bar .deploy-dropdown .status.status-icon, .deploy-dropdown .deployment-progress .progress-bar .status.status-icon {
+.fa.pull-right, .deploy-dropdown .status-icon, .deploy-dropdown.loading .fa.loading-text, .deploy-dropdown.loading .loading-text.status-icon, .deployment-status .deployment-progress .progress-bar .fa.status, .deployment-status .deployment-progress .progress-bar .deploy-dropdown .status.status-icon, .deploy-dropdown .deployment-status .deployment-progress .progress-bar .status.status-icon {
   margin-left: .3em; }
 
 .fa-spin {
@@ -9356,16 +9356,21 @@ pre {
   .project-links li a {
     margin-left: 5px; }
 
-.deployment-progress {
-  height: auto; }
-  .deployment-progress .progress-bar {
-    padding: 8px 15px;
-    line-height: 40px;
-    font-size: 28px;
-    text-align: left; }
-    .deployment-progress .progress-bar .status {
-      font-size: 26px; }
+.deployment-status {
+  margin-top: 2em; }
+  .deployment-status .deployment-progress {
+    height: auto; }
+    .deployment-status .deployment-progress .progress-bar {
+      padding: 8px 15px;
+      line-height: 40px;
+      font-size: 28px;
+      text-align: left; }
+      .deployment-status .deployment-progress .progress-bar .status {
+        font-size: 26px; }
 
 .log-content {
   overflow-y: auto;
-  max-height: 450px; }
+  max-height: 450px;
+  background: #333;
+  color: #fff;
+  margin-top: 0; }
