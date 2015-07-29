@@ -9127,6 +9127,9 @@ pre {
 .push {
   margin-bottom: 20px; }
 
+.fa, .deploy-dropdown .status-icon {
+  margin-right: 4px; }
+
 .progress-bar {
   width: 100%; }
 
