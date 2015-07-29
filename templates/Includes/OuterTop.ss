@@ -11,6 +11,10 @@
 	<% require themedCSS(theme-style,platform) %>
 
 	<% require javascript('deploynaut/thirdparty/select2/dist/js/select2.min.js') %>
+    	<% require javascript("deploynaut/javascript/material.js") %>
+
+    	<script src="//use.typekit.net/opf7opz.js"></script>
+    	<script>try{Typekit.load();}catch(e){}</script>
 
     <meta name="author" content="SilverStripe LTD">
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -25,16 +29,12 @@
 		<% include Header %>
     </nav>
 
+    <% if $CurrentUser %>
     <header class="header-navbar">
-		<% if $CurrentUser %>
-            <ul class="nav pull-right">
-                <li><a href="Security/logout">Log out</a></li>
-            </ul>
-		<% end_if %>
+        <ul class="nav pull-right">
+            <li><a href="Security/logout">Log out</a></li>
+        </ul>
     </header>
+    <% end_if %>
 
     <div class="main-container">
-
-        <div class="content">
-            <div class="row">
-                <div class="col-md-12">
