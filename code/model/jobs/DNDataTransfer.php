@@ -89,7 +89,7 @@ class DNDataTransfer extends DataObject {
 	}
 
 	public function LogLink() {
-		return $this->Link() . '/log';
+		return Controller::join_links($this->Link(), 'log');
 	}
 
 	public function getDefaultSearchContext() {

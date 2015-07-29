@@ -991,10 +991,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		if($project->Name != $params['Project']) throw new LogicException("Project in URL doesn't match this deploy");
 
-		return $this->customise(new ArrayData(array(
+		return $this->render(array(
 			'CurrentTransfer' => $transfer,
 			'SnapshotsSection' => 1,
-		)))->render();
+		));
 	}
 
 	/**

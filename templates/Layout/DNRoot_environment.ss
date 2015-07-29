@@ -22,7 +22,7 @@
 				<% if $CurrentEnvironment.URL %>
 					<li>
 						<span class="fa fa-link"></span>
-						<a href="$Current.Environment.URL.URL">$CurrentEnvironment.URL.URL</a>
+						<a href="$CurrentEnvironment.URL.URL">$CurrentEnvironment.URL.URL</a>
 					</li>
 				<% end_if %>
 				<% if $CurrentProject.RepoURL %>
