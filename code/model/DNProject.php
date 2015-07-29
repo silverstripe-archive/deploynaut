@@ -621,6 +621,78 @@ class DNProject extends DataObject {
 	}
 
 	/**
+	 * Whitelist configuration that describes how to convert a repository URL into a link
+	 * to a web user interface for that URL
+	 *
+	 * Consists of a hash of "full.lower.case.domain" => {configuration} key/value pairs
+	 *
+	 * {configuration} can either be boolean true to auto-detect both the host and the
+	 * name of the UI provider, or a nested array that overrides either one or both
+	 * of the auto-detected valyes
+	 *
+	 * @var array
+	 */
+	static private $repository_interfaces = array(
+		'github.com' => true,
+		'bitbucket.org' => true,
+		'repo.or.cz' => array(
+			'scheme' => 'http',
+			'name' => 'repo.or.cz',
+			'regex' => array('^(.*)$' => '/w$1')
+		),
+
+		/* Example for adding your own gitlab repository and override all auto-detected values (with their defaults)
+		'gitlab.mysite.com' => array(
+			'host' => 'gitlab.mysite.com',
+			'name' => 'Gitlab',
+			'regex' => array('.git$' => '')
+		),
+		*/
+	);
+
+	/**
+	 * Get the human name of the UI tool that lets the user view the repository code
+	 * @return string
+	 */
+	public function getRepositoryInterfaceName() {
+		$url = parse_url($this->CVSPath);
+		$interfaces = $this->config()->repository_interfaces;
+		$host = strtolower($url['host']);
+		$components = explode('.', $host);
+
+		if (array_key_exists($host, $interfaces)) {
+			$interface = $interfaces[$host];
+			return isset($interface['name']) ? $interface['name'] : ucfirst($components[0]);
+		}
+	}
+
+	/**
+	 * Get the URL of the URL tool that lets the user view the repository code
+	 * @return string
+	 */
+	public function getRepositoryInterfaceURL() {
+		$url = parse_url($this->CVSPath);
+		$interfaces = $this->config()->repository_interfaces;
+		$host = strtolower($url['host']);
+
+		if (array_key_exists($host, $interfaces)) {
+			$interface = $interfaces[$host];
+
+			$scheme = isset($interface['scheme']) ? $interface['scheme'] : 'https';
+			$host = isset($interface['host']) ? $interface['host'] : $host;
+			$regex = isset($interface['regex']) ? $interface['regex'] : array('\.git$' => '');
+
+			$path = $url['path'];
+
+			foreach ($regex as $pattern => $replacement) {
+				$path = preg_replace('/'.$pattern.'/', $replacement, $path);
+			}
+
+			return Controller::join_links($scheme.'://', $host, $path);
+		}
+	}
+
+	/**
 	 *
 	 * @return string
 	 */
