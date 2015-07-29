@@ -1101,7 +1101,7 @@ img {
   line-height: 1.42857;
   background-color: #fff;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 2px;
   -webkit-transition: all 0.2s ease-in-out;
   -o-transition: all 0.2s ease-in-out;
   transition: all 0.2s ease-in-out;
@@ -1277,11 +1277,11 @@ a.text-success:focus {
   color: #2b542c; }
 
 .text-info {
-  color: #31708f; }
+  color: #3aaef9; }
 
 a.text-info:hover,
 a.text-info:focus {
-  color: #245269; }
+  color: #099af7; }
 
 .text-warning {
   color: #8a6d3b; }
@@ -1315,11 +1315,11 @@ a.bg-success:focus {
   background-color: #c1e2b3; }
 
 .bg-info {
-  background-color: #d9edf7; }
+  background-color: #edf6fd; }
 
 a.bg-info:hover,
 a.bg-info:focus {
-  background-color: #afd9ee; }
+  background-color: #bfdff8; }
 
 .bg-warning {
   background-color: #fcf8e3; }
@@ -1476,14 +1476,14 @@ code {
   font-size: 90%;
   color: #c7254e;
   background-color: #f9f2f4;
-  border-radius: 4px; }
+  border-radius: 2px; }
 
 kbd {
   padding: 2px 4px;
   font-size: 90%;
   color: #fff;
   background-color: #333;
-  border-radius: 3px;
+  border-radius: 0px;
   box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25); }
   kbd kbd {
     padding: 0;
@@ -1500,9 +1500,9 @@ pre {
   word-break: break-all;
   word-wrap: break-word;
   color: #333333;
-  background-color: #f5f5f5;
-  border: 1px solid #ccc;
-  border-radius: 4px; }
+  background-color: #f0f3f4;
+  border: 1px solid #ddd;
+  border-radius: 2px; }
   pre code {
     padding: 0;
     font-size: inherit;
@@ -1558,7 +1558,8 @@ pre {
   .row:after {
     clear: both; }
 
-.col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .deploy-form-outer .deploy-form .SelectionGroup, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .deploy-form-outer .deploy-form .SelectionGroup + .tab-content, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {
+.col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .deploy-form-outer .deploy-form .SelectionGroup, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .deploy-form-outer .deploy-form .SelectionGroup + .tab-content, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .field.text,
+.field.dropdown, .col-lg-12 {
   position: relative;
   min-height: 1px;
   padding-left: 15px;
@@ -1827,7 +1828,8 @@ pre {
     margin-left: 100%; } }
 
 @media (min-width: 992px) {
-  .col-md-1, .col-md-2, .col-md-3, .col-md-4, .deploy-form-outer .deploy-form .SelectionGroup, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .deploy-form-outer .deploy-form .SelectionGroup + .tab-content, .col-md-9, .col-md-10, .col-md-11, .col-md-12 {
+  .col-md-1, .col-md-2, .col-md-3, .col-md-4, .deploy-form-outer .deploy-form .SelectionGroup, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .deploy-form-outer .deploy-form .SelectionGroup + .tab-content, .col-md-9, .col-md-10, .col-md-11, .col-md-12, .field.text,
+  .field.dropdown {
     float: left; }
   .col-md-1 {
     width: 8.33333%; }
@@ -1851,7 +1853,8 @@ pre {
     width: 83.33333%; }
   .col-md-11 {
     width: 91.66667%; }
-  .col-md-12 {
+  .col-md-12, .field.text,
+  .field.dropdown {
     width: 100%; }
   .col-md-pull-0 {
     right: auto; }
@@ -2171,14 +2174,14 @@ table th[class*="col-"] {
 .table > tfoot > tr > th.info,
 .table > tfoot > tr.info > td,
 .table > tfoot > tr.info > th {
-  background-color: #d9edf7; }
+  background-color: #edf6fd; }
 
 .table-hover > tbody > tr > td.info:hover,
 .table-hover > tbody > tr > th.info:hover,
 .table-hover > tbody > tr.info:hover > td,
 .table-hover > tbody > tr:hover > .info,
 .table-hover > tbody > tr.info:hover > th {
-  background-color: #c4e3f3; }
+  background-color: #d6ebfa; }
 
 .table > thead > tr > td.warning,
 .table > thead > tr > th.warning,
@@ -2322,7 +2325,8 @@ output {
   line-height: 1.42857;
   color: #555555; }
 
-.form-control, #MemberLoginForm_LoginForm input.text, #MemberLoginForm_LostPasswordForm input.text {
+.form-control, input.text,
+select {
   display: block;
   width: 100%;
   height: 34px;
@@ -2333,37 +2337,41 @@ output {
   background-color: #fff;
   background-image: none;
   border: 1px solid #e6e6e6;
-  border-radius: 4px;
+  border-radius: 2px;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
   -o-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
   transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s; }
-  .form-control:focus, #MemberLoginForm_LoginForm input.text:focus, #MemberLoginForm_LostPasswordForm input.text:focus {
+  .form-control:focus, input.text:focus,
+  select:focus {
     border-color: #646464;
     outline: 0;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(100, 100, 100, 0.6);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(100, 100, 100, 0.6); }
-  .form-control::-moz-placeholder, #MemberLoginForm_LoginForm input.text::-moz-placeholder, #MemberLoginForm_LostPasswordForm input.text::-moz-placeholder {
+  .form-control::-moz-placeholder, input.text::-moz-placeholder,
+  select::-moz-placeholder {
     color: #999;
     opacity: 1; }
-  .form-control:-ms-input-placeholder, #MemberLoginForm_LoginForm input.text:-ms-input-placeholder, #MemberLoginForm_LostPasswordForm input.text:-ms-input-placeholder {
+  .form-control:-ms-input-placeholder, input.text:-ms-input-placeholder,
+  select:-ms-input-placeholder {
     color: #999; }
-  .form-control::-webkit-input-placeholder, #MemberLoginForm_LoginForm input.text::-webkit-input-placeholder, #MemberLoginForm_LostPasswordForm input.text::-webkit-input-placeholder {
+  .form-control::-webkit-input-placeholder, input.text::-webkit-input-placeholder,
+  select::-webkit-input-placeholder {
     color: #999; }
   .form-control[disabled],
-  #MemberLoginForm_LoginForm input[disabled].text,
-  #MemberLoginForm_LostPasswordForm input[disabled].text,
+  input[disabled].text,
+  select[disabled],
   .form-control[readonly],
-  #MemberLoginForm_LoginForm input[readonly].text,
-  #MemberLoginForm_LostPasswordForm input[readonly].text,
-  fieldset[disabled] .form-control, fieldset[disabled] #MemberLoginForm_LoginForm input.text, #MemberLoginForm_LoginForm fieldset[disabled] input.text, fieldset[disabled] #MemberLoginForm_LostPasswordForm input.text, #MemberLoginForm_LostPasswordForm fieldset[disabled] input.text {
+  input[readonly].text,
+  select[readonly],
+  fieldset[disabled] .form-control, fieldset[disabled] input.text, fieldset[disabled] select {
     background-color: #eeeeee;
     opacity: 1; }
   .form-control[disabled],
-  #MemberLoginForm_LoginForm input[disabled].text,
-  #MemberLoginForm_LostPasswordForm input[disabled].text,
-  fieldset[disabled] .form-control, fieldset[disabled] #MemberLoginForm_LoginForm input.text, #MemberLoginForm_LoginForm fieldset[disabled] input.text, fieldset[disabled] #MemberLoginForm_LostPasswordForm input.text, #MemberLoginForm_LostPasswordForm fieldset[disabled] input.text {
+  input[disabled].text,
+  select[disabled],
+  fieldset[disabled] .form-control, fieldset[disabled] input.text, fieldset[disabled] select {
     cursor: not-allowed; }
 
 textarea.form-control {
@@ -2374,40 +2382,41 @@ input[type="search"] {
 
 @media screen and (-webkit-min-device-pixel-ratio: 0) {
   input[type="date"].form-control,
-  #MemberLoginForm_LoginForm input[type="date"].text,
-  #MemberLoginForm_LostPasswordForm input[type="date"].text,
+  input[type="date"].text,
   input[type="time"].form-control,
-  #MemberLoginForm_LoginForm input[type="time"].text,
-  #MemberLoginForm_LostPasswordForm input[type="time"].text,
+  input[type="time"].text,
   input[type="datetime-local"].form-control,
-  #MemberLoginForm_LoginForm input[type="datetime-local"].text,
-  #MemberLoginForm_LostPasswordForm input[type="datetime-local"].text,
-  input[type="month"].form-control, #MemberLoginForm_LoginForm input[type="month"].text, #MemberLoginForm_LostPasswordForm input[type="month"].text {
+  input[type="datetime-local"].text,
+  input[type="month"].form-control, input[type="month"].text {
     line-height: 34px; }
   input[type="date"].input-sm,
   .input-group-sm > input[type="date"].form-control,
-  #MemberLoginForm_LoginForm .input-group-sm > input[type="date"].text, #MemberLoginForm_LostPasswordForm .input-group-sm > input[type="date"].text, .input-group-sm > input[type="date"].input-group-addon,
+  .input-group-sm > input[type="date"].text,
+  .input-group-sm > input[type="date"].input-group-addon,
   .input-group-sm > .input-group-btn > input[type="date"].btn,
   .input-group-sm > .input-group-btn > input[type="date"].action,
   .input-group-sm > .input-group-btn > input[type="date"].deploy-dropdown,
   .input-group-sm input[type="date"],
   input[type="time"].input-sm,
   .input-group-sm > input[type="time"].form-control,
-  #MemberLoginForm_LoginForm .input-group-sm > input[type="time"].text, #MemberLoginForm_LostPasswordForm .input-group-sm > input[type="time"].text, .input-group-sm > input[type="time"].input-group-addon,
+  .input-group-sm > input[type="time"].text,
+  .input-group-sm > input[type="time"].input-group-addon,
   .input-group-sm > .input-group-btn > input[type="time"].btn,
   .input-group-sm > .input-group-btn > input[type="time"].action,
   .input-group-sm > .input-group-btn > input[type="time"].deploy-dropdown,
   .input-group-sm input[type="time"],
   input[type="datetime-local"].input-sm,
   .input-group-sm > input[type="datetime-local"].form-control,
-  #MemberLoginForm_LoginForm .input-group-sm > input[type="datetime-local"].text, #MemberLoginForm_LostPasswordForm .input-group-sm > input[type="datetime-local"].text, .input-group-sm > input[type="datetime-local"].input-group-addon,
+  .input-group-sm > input[type="datetime-local"].text,
+  .input-group-sm > input[type="datetime-local"].input-group-addon,
   .input-group-sm > .input-group-btn > input[type="datetime-local"].btn,
   .input-group-sm > .input-group-btn > input[type="datetime-local"].action,
   .input-group-sm > .input-group-btn > input[type="datetime-local"].deploy-dropdown,
   .input-group-sm input[type="datetime-local"],
   input[type="month"].input-sm,
   .input-group-sm > input[type="month"].form-control,
-  #MemberLoginForm_LoginForm .input-group-sm > input[type="month"].text, #MemberLoginForm_LostPasswordForm .input-group-sm > input[type="month"].text, .input-group-sm > input[type="month"].input-group-addon,
+  .input-group-sm > input[type="month"].text,
+  .input-group-sm > input[type="month"].input-group-addon,
   .input-group-sm > .input-group-btn > input[type="month"].btn,
   .input-group-sm > .input-group-btn > input[type="month"].action,
   .input-group-sm > .input-group-btn > input[type="month"].deploy-dropdown,
@@ -2415,35 +2424,40 @@ input[type="search"] {
     line-height: 30px; }
   input[type="date"].input-lg,
   .input-group-lg > input[type="date"].form-control,
-  #MemberLoginForm_LoginForm .input-group-lg > input[type="date"].text, #MemberLoginForm_LostPasswordForm .input-group-lg > input[type="date"].text, .input-group-lg > input[type="date"].input-group-addon,
+  .input-group-lg > input[type="date"].text,
+  .input-group-lg > input[type="date"].input-group-addon,
   .input-group-lg > .input-group-btn > input[type="date"].btn,
   .input-group-lg > .input-group-btn > input[type="date"].action,
   .input-group-lg > .input-group-btn > input[type="date"].deploy-dropdown,
   .input-group-lg input[type="date"],
   input[type="time"].input-lg,
   .input-group-lg > input[type="time"].form-control,
-  #MemberLoginForm_LoginForm .input-group-lg > input[type="time"].text, #MemberLoginForm_LostPasswordForm .input-group-lg > input[type="time"].text, .input-group-lg > input[type="time"].input-group-addon,
+  .input-group-lg > input[type="time"].text,
+  .input-group-lg > input[type="time"].input-group-addon,
   .input-group-lg > .input-group-btn > input[type="time"].btn,
   .input-group-lg > .input-group-btn > input[type="time"].action,
   .input-group-lg > .input-group-btn > input[type="time"].deploy-dropdown,
   .input-group-lg input[type="time"],
   input[type="datetime-local"].input-lg,
   .input-group-lg > input[type="datetime-local"].form-control,
-  #MemberLoginForm_LoginForm .input-group-lg > input[type="datetime-local"].text, #MemberLoginForm_LostPasswordForm .input-group-lg > input[type="datetime-local"].text, .input-group-lg > input[type="datetime-local"].input-group-addon,
+  .input-group-lg > input[type="datetime-local"].text,
+  .input-group-lg > input[type="datetime-local"].input-group-addon,
   .input-group-lg > .input-group-btn > input[type="datetime-local"].btn,
   .input-group-lg > .input-group-btn > input[type="datetime-local"].action,
   .input-group-lg > .input-group-btn > input[type="datetime-local"].deploy-dropdown,
   .input-group-lg input[type="datetime-local"],
   input[type="month"].input-lg,
   .input-group-lg > input[type="month"].form-control,
-  #MemberLoginForm_LoginForm .input-group-lg > input[type="month"].text, #MemberLoginForm_LostPasswordForm .input-group-lg > input[type="month"].text, .input-group-lg > input[type="month"].input-group-addon,
+  .input-group-lg > input[type="month"].text,
+  .input-group-lg > input[type="month"].input-group-addon,
   .input-group-lg > .input-group-btn > input[type="month"].btn,
   .input-group-lg > .input-group-btn > input[type="month"].action,
   .input-group-lg > .input-group-btn > input[type="month"].deploy-dropdown,
   .input-group-lg input[type="month"] {
     line-height: 46px; } }
 
-.form-group, .field.text {
+.form-group, .field.text,
+.field.dropdown {
   margin-bottom: 15px; }
 
 .radio,
@@ -2514,26 +2528,33 @@ fieldset[disabled] .checkbox label {
   min-height: 34px; }
   .form-control-static.input-lg,
   .input-group-lg > .form-control-static.form-control,
-  #MemberLoginForm_LoginForm .input-group-lg > input.form-control-static.text, #MemberLoginForm_LostPasswordForm .input-group-lg > input.form-control-static.text, .input-group-lg > .form-control-static.input-group-addon,
+  .input-group-lg > input.form-control-static.text,
+  .input-group-lg > select.form-control-static,
+  .input-group-lg > .form-control-static.input-group-addon,
   .input-group-lg > .input-group-btn > .form-control-static.btn,
   .input-group-lg > .input-group-btn > .form-control-static.action,
   .input-group-lg > .input-group-btn > .form-control-static.deploy-dropdown,
   .form-control-static.input-sm, .input-group-sm > .form-control-static.form-control,
-  #MemberLoginForm_LoginForm .input-group-sm > input.form-control-static.text, #MemberLoginForm_LostPasswordForm .input-group-sm > input.form-control-static.text, .input-group-sm > .form-control-static.input-group-addon,
+  .input-group-sm > input.form-control-static.text,
+  .input-group-sm > select.form-control-static,
+  .input-group-sm > .form-control-static.input-group-addon,
   .input-group-sm > .input-group-btn > .form-control-static.btn, .input-group-sm > .input-group-btn > .form-control-static.action, .input-group-sm > .input-group-btn > .form-control-static.deploy-dropdown {
     padding-left: 0;
     padding-right: 0; }
 
 .input-sm, .input-group-sm > .form-control,
-#MemberLoginForm_LoginForm .input-group-sm > input.text, #MemberLoginForm_LostPasswordForm .input-group-sm > input.text, .input-group-sm > .input-group-addon,
+.input-group-sm > input.text,
+.input-group-sm > select,
+.input-group-sm > .input-group-addon,
 .input-group-sm > .input-group-btn > .btn, .input-group-sm > .input-group-btn > .action, .input-group-sm > .input-group-btn > .deploy-dropdown {
   height: 30px;
   padding: 5px 10px;
   font-size: 12px;
   line-height: 1.5;
-  border-radius: 3px; }
+  border-radius: 0px; }
 
 select.input-sm, .input-group-sm > select.form-control,
+.input-group-sm > select,
 .input-group-sm > select.input-group-addon,
 .input-group-sm > .input-group-btn > select.btn, .input-group-sm > .input-group-btn > select.action, .input-group-sm > .input-group-btn > select.deploy-dropdown {
   height: 30px;
@@ -2545,24 +2566,23 @@ textarea.input-sm,
 .input-group-sm > .input-group-btn > textarea.btn,
 .input-group-sm > .input-group-btn > textarea.action,
 .input-group-sm > .input-group-btn > textarea.deploy-dropdown,
-select[multiple].input-sm, .input-group-sm > select[multiple].form-control,
-.input-group-sm > select[multiple].input-group-addon,
+select[multiple].input-sm, .input-group-sm > select[multiple],
 .input-group-sm > .input-group-btn > select[multiple].btn, .input-group-sm > .input-group-btn > select[multiple].action, .input-group-sm > .input-group-btn > select[multiple].deploy-dropdown {
   height: auto; }
 
-.form-group-sm .form-control, .form-group-sm #MemberLoginForm_LoginForm input.text, #MemberLoginForm_LoginForm .form-group-sm input.text, .form-group-sm #MemberLoginForm_LostPasswordForm input.text, #MemberLoginForm_LostPasswordForm .form-group-sm input.text {
+.form-group-sm .form-control, .form-group-sm input.text, .form-group-sm select {
   height: 30px;
   padding: 5px 10px;
   font-size: 12px;
   line-height: 1.5;
-  border-radius: 3px; }
+  border-radius: 0px; }
 
-.form-group-sm select.form-control {
+.form-group-sm select.form-control, .form-group-sm select {
   height: 30px;
   line-height: 30px; }
 
 .form-group-sm textarea.form-control,
-.form-group-sm select[multiple].form-control {
+.form-group-sm select[multiple].form-control, .form-group-sm select[multiple] {
   height: auto; }
 
 .form-group-sm .form-control-static {
@@ -2573,7 +2593,9 @@ select[multiple].input-sm, .input-group-sm > select[multiple].form-control,
   line-height: 1.5; }
 
 .input-lg, .input-group-lg > .form-control,
-#MemberLoginForm_LoginForm .input-group-lg > input.text, #MemberLoginForm_LostPasswordForm .input-group-lg > input.text, .input-group-lg > .input-group-addon,
+.input-group-lg > input.text,
+.input-group-lg > select,
+.input-group-lg > .input-group-addon,
 .input-group-lg > .input-group-btn > .btn, .input-group-lg > .input-group-btn > .action, .input-group-lg > .input-group-btn > .deploy-dropdown {
   height: 46px;
   padding: 10px 16px;
@@ -2582,6 +2604,7 @@ select[multiple].input-sm, .input-group-sm > select[multiple].form-control,
   border-radius: 6px; }
 
 select.input-lg, .input-group-lg > select.form-control,
+.input-group-lg > select,
 .input-group-lg > select.input-group-addon,
 .input-group-lg > .input-group-btn > select.btn, .input-group-lg > .input-group-btn > select.action, .input-group-lg > .input-group-btn > select.deploy-dropdown {
   height: 46px;
@@ -2593,24 +2616,23 @@ textarea.input-lg,
 .input-group-lg > .input-group-btn > textarea.btn,
 .input-group-lg > .input-group-btn > textarea.action,
 .input-group-lg > .input-group-btn > textarea.deploy-dropdown,
-select[multiple].input-lg, .input-group-lg > select[multiple].form-control,
-.input-group-lg > select[multiple].input-group-addon,
+select[multiple].input-lg, .input-group-lg > select[multiple],
 .input-group-lg > .input-group-btn > select[multiple].btn, .input-group-lg > .input-group-btn > select[multiple].action, .input-group-lg > .input-group-btn > select[multiple].deploy-dropdown {
   height: auto; }
 
-.form-group-lg .form-control, .form-group-lg #MemberLoginForm_LoginForm input.text, #MemberLoginForm_LoginForm .form-group-lg input.text, .form-group-lg #MemberLoginForm_LostPasswordForm input.text, #MemberLoginForm_LostPasswordForm .form-group-lg input.text {
+.form-group-lg .form-control, .form-group-lg input.text, .form-group-lg select {
   height: 46px;
   padding: 10px 16px;
   font-size: 18px;
   line-height: 1.33333;
   border-radius: 6px; }
 
-.form-group-lg select.form-control {
+.form-group-lg select.form-control, .form-group-lg select {
   height: 46px;
   line-height: 46px; }
 
 .form-group-lg textarea.form-control,
-.form-group-lg select[multiple].form-control {
+.form-group-lg select[multiple].form-control, .form-group-lg select[multiple] {
   height: auto; }
 
 .form-group-lg .form-control-static {
@@ -2622,7 +2644,7 @@ select[multiple].input-lg, .input-group-lg > select[multiple].form-control,
 
 .has-feedback {
   position: relative; }
-  .has-feedback .form-control, .has-feedback #MemberLoginForm_LoginForm input.text, #MemberLoginForm_LoginForm .has-feedback input.text, .has-feedback #MemberLoginForm_LostPasswordForm input.text, #MemberLoginForm_LostPasswordForm .has-feedback input.text {
+  .has-feedback .form-control, .has-feedback input.text, .has-feedback select {
     padding-right: 42.5px; }
 
 .form-control-feedback {
@@ -2639,30 +2661,35 @@ select[multiple].input-lg, .input-group-lg > select[multiple].form-control,
 
 .input-lg + .form-control-feedback,
 .input-group-lg > .form-control + .form-control-feedback,
-#MemberLoginForm_LoginForm .input-group-lg > input.text + .form-control-feedback, #MemberLoginForm_LostPasswordForm .input-group-lg > input.text + .form-control-feedback, .input-group-lg > .input-group-addon + .form-control-feedback,
+.input-group-lg > input.text + .form-control-feedback,
+.input-group-lg > select + .form-control-feedback,
+.input-group-lg > .input-group-addon + .form-control-feedback,
 .input-group-lg > .input-group-btn > .btn + .form-control-feedback,
 .input-group-lg > .input-group-btn > .action + .form-control-feedback,
 .input-group-lg > .input-group-btn > .deploy-dropdown + .form-control-feedback,
 .input-group-lg + .form-control-feedback,
-.form-group-lg .form-control + .form-control-feedback, .form-group-lg #MemberLoginForm_LoginForm input.text + .form-control-feedback, #MemberLoginForm_LoginForm .form-group-lg input.text + .form-control-feedback, .form-group-lg #MemberLoginForm_LostPasswordForm input.text + .form-control-feedback, #MemberLoginForm_LostPasswordForm .form-group-lg input.text + .form-control-feedback {
+.form-group-lg .form-control + .form-control-feedback, .form-group-lg input.text + .form-control-feedback, .form-group-lg select + .form-control-feedback {
   width: 46px;
   height: 46px;
   line-height: 46px; }
 
 .input-sm + .form-control-feedback,
 .input-group-sm > .form-control + .form-control-feedback,
-#MemberLoginForm_LoginForm .input-group-sm > input.text + .form-control-feedback, #MemberLoginForm_LostPasswordForm .input-group-sm > input.text + .form-control-feedback, .input-group-sm > .input-group-addon + .form-control-feedback,
+.input-group-sm > input.text + .form-control-feedback,
+.input-group-sm > select + .form-control-feedback,
+.input-group-sm > .input-group-addon + .form-control-feedback,
 .input-group-sm > .input-group-btn > .btn + .form-control-feedback,
 .input-group-sm > .input-group-btn > .action + .form-control-feedback,
 .input-group-sm > .input-group-btn > .deploy-dropdown + .form-control-feedback,
 .input-group-sm + .form-control-feedback,
-.form-group-sm .form-control + .form-control-feedback, .form-group-sm #MemberLoginForm_LoginForm input.text + .form-control-feedback, #MemberLoginForm_LoginForm .form-group-sm input.text + .form-control-feedback, .form-group-sm #MemberLoginForm_LostPasswordForm input.text + .form-control-feedback, #MemberLoginForm_LostPasswordForm .form-group-sm input.text + .form-control-feedback {
+.form-group-sm .form-control + .form-control-feedback, .form-group-sm input.text + .form-control-feedback, .form-group-sm select + .form-control-feedback {
   width: 30px;
   height: 30px;
   line-height: 30px; }
 
 .has-success .help-block,
 .has-success .control-label,
+.has-success label,
 .has-success .radio,
 .has-success .checkbox,
 .has-success .radio-inline,
@@ -2673,11 +2700,11 @@ select[multiple].input-lg, .input-group-lg > select[multiple].form-control,
 .has-success.checkbox-inline label {
   color: #3c763d; }
 
-.has-success .form-control, .has-success #MemberLoginForm_LoginForm input.text, #MemberLoginForm_LoginForm .has-success input.text, .has-success #MemberLoginForm_LostPasswordForm input.text, #MemberLoginForm_LostPasswordForm .has-success input.text {
+.has-success .form-control, .has-success input.text, .has-success select {
   border-color: #3c763d;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); }
-  .has-success .form-control:focus, .has-success #MemberLoginForm_LoginForm input.text:focus, #MemberLoginForm_LoginForm .has-success input.text:focus, .has-success #MemberLoginForm_LostPasswordForm input.text:focus, #MemberLoginForm_LostPasswordForm .has-success input.text:focus {
+  .has-success .form-control:focus, .has-success input.text:focus, .has-success select:focus {
     border-color: #2b542c;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #67b168;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #67b168; }
@@ -2692,6 +2719,7 @@ select[multiple].input-lg, .input-group-lg > select[multiple].form-control,
 
 .has-warning .help-block,
 .has-warning .control-label,
+.has-warning label,
 .has-warning .radio,
 .has-warning .checkbox,
 .has-warning .radio-inline,
@@ -2702,11 +2730,11 @@ select[multiple].input-lg, .input-group-lg > select[multiple].form-control,
 .has-warning.checkbox-inline label {
   color: #8a6d3b; }
 
-.has-warning .form-control, .has-warning #MemberLoginForm_LoginForm input.text, #MemberLoginForm_LoginForm .has-warning input.text, .has-warning #MemberLoginForm_LostPasswordForm input.text, #MemberLoginForm_LostPasswordForm .has-warning input.text {
+.has-warning .form-control, .has-warning input.text, .has-warning select {
   border-color: #8a6d3b;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); }
-  .has-warning .form-control:focus, .has-warning #MemberLoginForm_LoginForm input.text:focus, #MemberLoginForm_LoginForm .has-warning input.text:focus, .has-warning #MemberLoginForm_LostPasswordForm input.text:focus, #MemberLoginForm_LostPasswordForm .has-warning input.text:focus {
+  .has-warning .form-control:focus, .has-warning input.text:focus, .has-warning select:focus {
     border-color: #66512c;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #c0a16b;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #c0a16b; }
@@ -2721,6 +2749,7 @@ select[multiple].input-lg, .input-group-lg > select[multiple].form-control,
 
 .has-error .help-block,
 .has-error .control-label,
+.has-error label,
 .has-error .radio,
 .has-error .checkbox,
 .has-error .radio-inline,
@@ -2731,11 +2760,11 @@ select[multiple].input-lg, .input-group-lg > select[multiple].form-control,
 .has-error.checkbox-inline label {
   color: #a94442; }
 
-.has-error .form-control, .has-error #MemberLoginForm_LoginForm input.text, #MemberLoginForm_LoginForm .has-error input.text, .has-error #MemberLoginForm_LostPasswordForm input.text, #MemberLoginForm_LostPasswordForm .has-error input.text {
+.has-error .form-control, .has-error input.text, .has-error select {
   border-color: #a94442;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); }
-  .has-error .form-control:focus, .has-error #MemberLoginForm_LoginForm input.text:focus, #MemberLoginForm_LoginForm .has-error input.text:focus, .has-error #MemberLoginForm_LostPasswordForm input.text:focus, #MemberLoginForm_LostPasswordForm .has-error input.text:focus {
+  .has-error .form-control:focus, .has-error input.text:focus, .has-error select:focus {
     border-color: #843534;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ce8483;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ce8483; }
@@ -2761,11 +2790,11 @@ select[multiple].input-lg, .input-group-lg > select[multiple].form-control,
   color: #a4a4a4; }
 
 @media (min-width: 768px) {
-  .form-inline .form-group, .form-inline .field.text {
+  .form-inline .form-group, .form-inline .field.text, .form-inline .field.dropdown {
     display: inline-block;
     margin-bottom: 0;
     vertical-align: middle; }
-  .form-inline .form-control, .form-inline #MemberLoginForm_LoginForm input.text, #MemberLoginForm_LoginForm .form-inline input.text, .form-inline #MemberLoginForm_LostPasswordForm input.text, #MemberLoginForm_LostPasswordForm .form-inline input.text {
+  .form-inline .form-control, .form-inline input.text, .form-inline select {
     display: inline-block;
     width: auto;
     vertical-align: middle; }
@@ -2776,11 +2805,11 @@ select[multiple].input-lg, .input-group-lg > select[multiple].form-control,
     vertical-align: middle; }
     .form-inline .input-group .input-group-addon,
     .form-inline .input-group .input-group-btn,
-    .form-inline .input-group .form-control, .form-inline .input-group #MemberLoginForm_LoginForm input.text, #MemberLoginForm_LoginForm .form-inline .input-group input.text, .form-inline .input-group #MemberLoginForm_LostPasswordForm input.text, #MemberLoginForm_LostPasswordForm .form-inline .input-group input.text {
+    .form-inline .input-group .form-control, .form-inline .input-group input.text, .form-inline .input-group select {
       width: auto; }
-  .form-inline .input-group > .form-control, .form-inline #MemberLoginForm_LoginForm .input-group > input.text, #MemberLoginForm_LoginForm .form-inline .input-group > input.text, .form-inline #MemberLoginForm_LostPasswordForm .input-group > input.text, #MemberLoginForm_LostPasswordForm .form-inline .input-group > input.text {
+  .form-inline .input-group > .form-control, .form-inline .input-group > input.text, .form-inline .input-group > select {
     width: 100%; }
-  .form-inline .control-label {
+  .form-inline .control-label, .form-inline label {
     margin-bottom: 0;
     vertical-align: middle; }
   .form-inline .radio,
@@ -2811,19 +2840,20 @@ select[multiple].input-lg, .input-group-lg > select[multiple].form-control,
 .form-horizontal .checkbox {
   min-height: 27px; }
 
-.form-horizontal .form-group, .form-horizontal .field.text {
+.form-horizontal .form-group, .form-horizontal .field.text, .form-horizontal .field.dropdown {
   margin-left: -15px;
   margin-right: -15px; }
   .form-horizontal .form-group:before,
   .form-horizontal .field.text:before,
-  .form-horizontal .form-group:after, .form-horizontal .field.text:after {
+  .form-horizontal .field.dropdown:before,
+  .form-horizontal .form-group:after, .form-horizontal .field.text:after, .form-horizontal .field.dropdown:after {
     content: " ";
     display: table; }
-  .form-horizontal .form-group:after, .form-horizontal .field.text:after {
+  .form-horizontal .form-group:after, .form-horizontal .field.text:after, .form-horizontal .field.dropdown:after {
     clear: both; }
 
 @media (min-width: 768px) {
-  .form-horizontal .control-label {
+  .form-horizontal .control-label, .form-horizontal label {
     text-align: right;
     margin-bottom: 0;
     padding-top: 7px; } }
@@ -2832,12 +2862,12 @@ select[multiple].input-lg, .input-group-lg > select[multiple].form-control,
   right: 15px; }
 
 @media (min-width: 768px) {
-  .form-horizontal .form-group-lg .control-label {
+  .form-horizontal .form-group-lg .control-label, .form-horizontal .form-group-lg label {
     padding-top: 14.33333px;
     font-size: 18px; } }
 
 @media (min-width: 768px) {
-  .form-horizontal .form-group-sm .control-label {
+  .form-horizontal .form-group-sm .control-label, .form-horizontal .form-group-sm label {
     padding-top: 6px;
     font-size: 12px; } }
 
@@ -2855,7 +2885,7 @@ select[multiple].input-lg, .input-group-lg > select[multiple].form-control,
   padding: 6px 12px;
   font-size: 14px;
   line-height: 1.42857;
-  border-radius: 4px;
+  border-radius: 2px;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -3396,13 +3426,13 @@ fieldset[disabled] a.btn, fieldset[disabled] a.action, fieldset[disabled] a.depl
   padding: 5px 10px;
   font-size: 12px;
   line-height: 1.5;
-  border-radius: 3px; }
+  border-radius: 0px; }
 
 .btn-xs, .btn-group-xs > .btn, .btn-group-xs > .action, .btn-group-xs > .deploy-dropdown {
   padding: 1px 5px;
   font-size: 12px;
   line-height: 1.5;
-  border-radius: 3px; }
+  border-radius: 0px; }
 
 .btn-block, .deploy-dropdown, .deploy-form-outer .deploy-form *[name="action_doDeploy"] {
   display: block;
@@ -3484,7 +3514,7 @@ tbody.collapse.in {
   background-color: #fff;
   border: 1px solid #ccc;
   border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 4px;
+  border-radius: 2px;
   -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   background-clip: padding-box; }
@@ -3767,12 +3797,12 @@ tbody.collapse.in {
   border-radius: 0; }
 
 .btn-group-vertical > .btn:first-child:not(:last-child), .btn-group-vertical > .action:first-child:not(:last-child), .btn-group-vertical > .deploy-dropdown:first-child:not(:last-child) {
-  border-top-right-radius: 4px;
+  border-top-right-radius: 2px;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0; }
 
 .btn-group-vertical > .btn:last-child:not(:first-child), .btn-group-vertical > .action:last-child:not(:first-child), .btn-group-vertical > .deploy-dropdown:last-child:not(:first-child) {
-  border-bottom-left-radius: 4px;
+  border-bottom-left-radius: 2px;
   border-top-right-radius: 0;
   border-top-left-radius: 0; }
 
@@ -3829,7 +3859,7 @@ tbody.collapse.in {
     float: none;
     padding-left: 0;
     padding-right: 0; }
-  .input-group .form-control, .input-group #MemberLoginForm_LoginForm input.text, #MemberLoginForm_LoginForm .input-group input.text, .input-group #MemberLoginForm_LostPasswordForm input.text, #MemberLoginForm_LostPasswordForm .input-group input.text {
+  .input-group .form-control, .input-group input.text, .input-group select {
     position: relative;
     z-index: 2;
     float: left;
@@ -3838,11 +3868,11 @@ tbody.collapse.in {
 
 .input-group-addon,
 .input-group-btn,
-.input-group .form-control, .input-group #MemberLoginForm_LoginForm input.text, #MemberLoginForm_LoginForm .input-group input.text, .input-group #MemberLoginForm_LostPasswordForm input.text, #MemberLoginForm_LostPasswordForm .input-group input.text {
+.input-group .form-control, .input-group input.text, .input-group select {
   display: table-cell; }
   .input-group-addon:not(:first-child):not(:last-child),
   .input-group-btn:not(:first-child):not(:last-child),
-  .input-group .form-control:not(:first-child):not(:last-child), .input-group #MemberLoginForm_LoginForm input.text:not(:first-child):not(:last-child), #MemberLoginForm_LoginForm .input-group input.text:not(:first-child):not(:last-child), .input-group #MemberLoginForm_LostPasswordForm input.text:not(:first-child):not(:last-child), #MemberLoginForm_LostPasswordForm .input-group input.text:not(:first-child):not(:last-child) {
+  .input-group .form-control:not(:first-child):not(:last-child), .input-group input.text:not(:first-child):not(:last-child), .input-group select:not(:first-child):not(:last-child) {
     border-radius: 0; }
 
 .input-group-addon,
@@ -3860,13 +3890,13 @@ tbody.collapse.in {
   text-align: center;
   background-color: #eeeeee;
   border: 1px solid #e6e6e6;
-  border-radius: 4px; }
-  .input-group-addon.input-sm, #MemberLoginForm_LoginForm .input-group-sm > input.input-group-addon.text, #MemberLoginForm_LostPasswordForm .input-group-sm > input.input-group-addon.text, .input-group-sm > .input-group-addon,
+  border-radius: 2px; }
+  .input-group-addon.input-sm, .input-group-sm > .input-group-addon,
   .input-group-sm > .input-group-btn > .input-group-addon.btn, .input-group-sm > .input-group-btn > .input-group-addon.action, .input-group-sm > .input-group-btn > .input-group-addon.deploy-dropdown {
     padding: 5px 10px;
     font-size: 12px;
-    border-radius: 3px; }
-  .input-group-addon.input-lg, #MemberLoginForm_LoginForm .input-group-lg > input.input-group-addon.text, #MemberLoginForm_LostPasswordForm .input-group-lg > input.input-group-addon.text, .input-group-lg > .input-group-addon,
+    border-radius: 0px; }
+  .input-group-addon.input-lg, .input-group-lg > .input-group-addon,
   .input-group-lg > .input-group-btn > .input-group-addon.btn, .input-group-lg > .input-group-btn > .input-group-addon.action, .input-group-lg > .input-group-btn > .input-group-addon.deploy-dropdown {
     padding: 10px 16px;
     font-size: 18px;
@@ -3876,9 +3906,9 @@ tbody.collapse.in {
     margin-top: 0; }
 
 .input-group .form-control:first-child,
-.input-group #MemberLoginForm_LoginForm input.text:first-child,
-#MemberLoginForm_LoginForm .input-group input.text:first-child, .input-group #MemberLoginForm_LostPasswordForm input.text:first-child,
-#MemberLoginForm_LostPasswordForm .input-group input.text:first-child, .input-group-addon:first-child,
+.input-group input.text:first-child,
+.input-group select:first-child,
+.input-group-addon:first-child,
 .input-group-btn:first-child > .btn,
 .input-group-btn:first-child > .action,
 .input-group-btn:first-child > .deploy-dropdown,
@@ -3897,9 +3927,9 @@ tbody.collapse.in {
   border-right: 0; }
 
 .input-group .form-control:last-child,
-.input-group #MemberLoginForm_LoginForm input.text:last-child,
-#MemberLoginForm_LoginForm .input-group input.text:last-child, .input-group #MemberLoginForm_LostPasswordForm input.text:last-child,
-#MemberLoginForm_LostPasswordForm .input-group input.text:last-child, .input-group-addon:last-child,
+.input-group input.text:last-child,
+.input-group select:last-child,
+.input-group-addon:last-child,
 .input-group-btn:last-child > .btn,
 .input-group-btn:last-child > .action,
 .input-group-btn:last-child > .deploy-dropdown,
@@ -4001,7 +4031,7 @@ tbody.collapse.in {
       margin-right: 2px;
       line-height: 1.42857;
       border: 1px solid transparent;
-      border-radius: 4px 4px 0 0; }
+      border-radius: 2px 2px 0 0; }
       .nav-tabs > li > a:hover {
         border-color: #eeeeee #eeeeee #ddd; }
     .nav-tabs > li.active > a,
@@ -4054,7 +4084,7 @@ tbody.collapse.in {
   border-bottom: 0; }
   .nav-tabs-justified > li > a, .nav-tabs.nav-justified > li > a {
     margin-right: 0;
-    border-radius: 4px; }
+    border-radius: 2px; }
   .nav-tabs-justified > .active > a,
   .nav-tabs.nav-justified > .active > a, .nav-tabs-justified > .active > a:hover,
   .nav-tabs.nav-justified > .active > a:hover, .nav-tabs-justified > .active > a:focus, .nav-tabs.nav-justified > .active > a:focus {
@@ -4062,7 +4092,7 @@ tbody.collapse.in {
   @media (min-width: 768px) {
     .nav-tabs-justified > li > a, .nav-tabs.nav-justified > li > a {
       border-bottom: 1px solid #ddd;
-      border-radius: 4px 4px 0 0; }
+      border-radius: 2px 2px 0 0; }
     .nav-tabs-justified > .active > a,
     .nav-tabs.nav-justified > .active > a, .nav-tabs-justified > .active > a:hover,
     .nav-tabs.nav-justified > .active > a:hover, .nav-tabs-justified > .active > a:focus, .nav-tabs.nav-justified > .active > a:focus {
@@ -4092,7 +4122,7 @@ tbody.collapse.in {
     clear: both; }
   @media (min-width: 768px) {
     .navbar {
-      border-radius: 4px; } }
+      border-radius: 2px; } }
 
 .navbar-header:before,
 .navbar-header:after {
@@ -4214,7 +4244,7 @@ tbody.collapse.in {
   background-color: transparent;
   background-image: none;
   border: 1px solid transparent;
-  border-radius: 4px; }
+  border-radius: 2px; }
   .navbar-toggle:focus {
     outline: 0; }
   .navbar-toggle .icon-bar {
@@ -4272,11 +4302,11 @@ tbody.collapse.in {
   margin-top: 8px;
   margin-bottom: 8px; }
   @media (min-width: 768px) {
-    .navbar-form .form-group, .navbar-form .field.text {
+    .navbar-form .form-group, .navbar-form .field.text, .navbar-form .field.dropdown {
       display: inline-block;
       margin-bottom: 0;
       vertical-align: middle; }
-    .navbar-form .form-control, .navbar-form #MemberLoginForm_LoginForm input.text, #MemberLoginForm_LoginForm .navbar-form input.text, .navbar-form #MemberLoginForm_LostPasswordForm input.text, #MemberLoginForm_LostPasswordForm .navbar-form input.text {
+    .navbar-form .form-control, .navbar-form input.text, .navbar-form select {
       display: inline-block;
       width: auto;
       vertical-align: middle; }
@@ -4287,11 +4317,11 @@ tbody.collapse.in {
       vertical-align: middle; }
       .navbar-form .input-group .input-group-addon,
       .navbar-form .input-group .input-group-btn,
-      .navbar-form .input-group .form-control, .navbar-form .input-group #MemberLoginForm_LoginForm input.text, #MemberLoginForm_LoginForm .navbar-form .input-group input.text, .navbar-form .input-group #MemberLoginForm_LostPasswordForm input.text, #MemberLoginForm_LostPasswordForm .navbar-form .input-group input.text {
+      .navbar-form .input-group .form-control, .navbar-form .input-group input.text, .navbar-form .input-group select {
         width: auto; }
-    .navbar-form .input-group > .form-control, .navbar-form #MemberLoginForm_LoginForm .input-group > input.text, #MemberLoginForm_LoginForm .navbar-form .input-group > input.text, .navbar-form #MemberLoginForm_LostPasswordForm .input-group > input.text, #MemberLoginForm_LostPasswordForm .navbar-form .input-group > input.text {
+    .navbar-form .input-group > .form-control, .navbar-form .input-group > input.text, .navbar-form .input-group > select {
       width: 100%; }
-    .navbar-form .control-label {
+    .navbar-form .control-label, .navbar-form label {
       margin-bottom: 0;
       vertical-align: middle; }
     .navbar-form .radio,
@@ -4310,9 +4340,9 @@ tbody.collapse.in {
     .navbar-form .has-feedback .form-control-feedback {
       top: 0; } }
   @media (max-width: 767px) {
-    .navbar-form .form-group, .navbar-form .field.text {
+    .navbar-form .form-group, .navbar-form .field.text, .navbar-form .field.dropdown {
       margin-bottom: 5px; }
-      .navbar-form .form-group:last-child, .navbar-form .field.text:last-child {
+      .navbar-form .form-group:last-child, .navbar-form .field.text:last-child, .navbar-form .field.dropdown:last-child {
         margin-bottom: 0; } }
   @media (min-width: 768px) {
     .navbar-form {
@@ -4332,8 +4362,8 @@ tbody.collapse.in {
 
 .navbar-fixed-bottom .navbar-nav > li > .dropdown-menu {
   margin-bottom: 0;
-  border-top-right-radius: 4px;
-  border-top-left-radius: 4px;
+  border-top-right-radius: 2px;
+  border-top-left-radius: 2px;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0; }
 
@@ -4522,7 +4552,7 @@ tbody.collapse.in {
   margin-bottom: 20px;
   list-style: none;
   background-color: transparent;
-  border-radius: 4px; }
+  border-radius: 2px; }
   .breadcrumb > li {
     display: inline-block; }
     .breadcrumb > li + li:before {
@@ -4536,7 +4566,7 @@ tbody.collapse.in {
   display: inline-block;
   padding-left: 0;
   margin: 20px 0;
-  border-radius: 4px; }
+  border-radius: 2px; }
   .pagination > li {
     display: inline; }
     .pagination > li > a,
@@ -4553,12 +4583,12 @@ tbody.collapse.in {
     .pagination > li:first-child > a,
     .pagination > li:first-child > span {
       margin-left: 0;
-      border-bottom-left-radius: 4px;
-      border-top-left-radius: 4px; }
+      border-bottom-left-radius: 2px;
+      border-top-left-radius: 2px; }
     .pagination > li:last-child > a,
     .pagination > li:last-child > span {
-      border-bottom-right-radius: 4px;
-      border-top-right-radius: 4px; }
+      border-bottom-right-radius: 2px;
+      border-top-right-radius: 2px; }
   .pagination > li > a:hover,
   .pagination > li > a:focus,
   .pagination > li > span:hover,
@@ -4613,13 +4643,13 @@ tbody.collapse.in {
 
 .pagination-sm > li:first-child > a,
 .pagination-sm > li:first-child > span {
-  border-bottom-left-radius: 3px;
-  border-top-left-radius: 3px; }
+  border-bottom-left-radius: 0px;
+  border-top-left-radius: 0px; }
 
 .pagination-sm > li:last-child > a,
 .pagination-sm > li:last-child > span {
-  border-bottom-right-radius: 3px;
-  border-top-right-radius: 3px; }
+  border-bottom-right-radius: 0px;
+  border-top-right-radius: 0px; }
 
 .pager {
   padding-left: 0;
@@ -4799,7 +4829,7 @@ a.badge:focus {
   line-height: 1.42857;
   background-color: #fff;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 2px;
   -webkit-transition: border 0.2s ease-in-out;
   -o-transition: border 0.2s ease-in-out;
   transition: border 0.2s ease-in-out; }
@@ -4823,7 +4853,7 @@ a.thumbnail.active {
   padding: 15px;
   margin-bottom: 20px;
   border: 1px solid transparent;
-  border-radius: 4px; }
+  border-radius: 2px; }
   .alert h4 {
     margin-top: 0;
     color: inherit; }
@@ -4855,17 +4885,17 @@ a.thumbnail.active {
 .alert-info, .alert.Started,
 .alert.Queued,
 .alert.Running {
-  background-color: #d9edf7;
-  border-color: #bce8f1;
-  color: #31708f; }
+  background-color: #edf6fd;
+  border-color: #cdedf9;
+  color: #3aaef9; }
   .alert-info hr, .alert.Started hr,
   .alert.Queued hr,
   .alert.Running hr {
-    border-top-color: #a6e1ec; }
+    border-top-color: #b6e5f7; }
   .alert-info .alert-link, .alert.Started .alert-link,
   .alert.Queued .alert-link,
   .alert.Running .alert-link {
-    color: #245269; }
+    color: #099af7; }
 
 .alert-warning, .alert.Invalid {
   background-color: #fcf8e3;
@@ -4902,7 +4932,7 @@ a.thumbnail.active {
   height: 20px;
   margin-bottom: 20px;
   background-color: #f5f5f5;
-  border-radius: 4px;
+  border-radius: 2px;
   -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1); }
 
@@ -5022,12 +5052,12 @@ a.thumbnail.active {
   background-color: #fff;
   border: 1px solid #ddd; }
   .list-group-item:first-child {
-    border-top-right-radius: 4px;
-    border-top-left-radius: 4px; }
+    border-top-right-radius: 2px;
+    border-top-left-radius: 2px; }
   .list-group-item:last-child {
     margin-bottom: 0;
-    border-bottom-right-radius: 4px;
-    border-bottom-left-radius: 4px; }
+    border-bottom-right-radius: 2px;
+    border-bottom-left-radius: 2px; }
 
 a.list-group-item,
 button.list-group-item {
@@ -5111,12 +5141,12 @@ button.list-group-item-success {
     border-color: #3c763d; }
 
 .list-group-item-info {
-  color: #31708f;
-  background-color: #d9edf7; }
+  color: #3aaef9;
+  background-color: #edf6fd; }
 
 a.list-group-item-info,
 button.list-group-item-info {
-  color: #31708f; }
+  color: #3aaef9; }
   a.list-group-item-info .list-group-item-heading,
   button.list-group-item-info .list-group-item-heading {
     color: inherit; }
@@ -5124,8 +5154,8 @@ button.list-group-item-info {
   a.list-group-item-info:focus,
   button.list-group-item-info:hover,
   button.list-group-item-info:focus {
-    color: #31708f;
-    background-color: #c4e3f3; }
+    color: #3aaef9;
+    background-color: #d6ebfa; }
   a.list-group-item-info.active,
   a.list-group-item-info.active:hover,
   a.list-group-item-info.active:focus,
@@ -5133,8 +5163,8 @@ button.list-group-item-info {
   button.list-group-item-info.active:hover,
   button.list-group-item-info.active:focus {
     color: #fff;
-    background-color: #31708f;
-    border-color: #31708f; }
+    background-color: #3aaef9;
+    border-color: #3aaef9; }
 
 .list-group-item-warning {
   color: #8a6d3b;
@@ -5200,7 +5230,7 @@ button.list-group-item-danger {
   margin-bottom: 20px;
   background-color: #fff;
   border: 1px solid transparent;
-  border-radius: 4px;
+  border-radius: 2px;
   -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05); }
 
@@ -5216,8 +5246,8 @@ button.list-group-item-danger {
 .panel-heading {
   padding: 10px 15px;
   border-bottom: 1px solid transparent;
-  border-top-right-radius: 3px;
-  border-top-left-radius: 3px; }
+  border-top-right-radius: 1px;
+  border-top-left-radius: 1px; }
   .panel-heading > .dropdown .dropdown-toggle {
     color: inherit; }
 
@@ -5237,8 +5267,8 @@ button.list-group-item-danger {
   padding: 10px 15px;
   background-color: #f5f5f5;
   border-top: 1px solid #ddd;
-  border-bottom-right-radius: 3px;
-  border-bottom-left-radius: 3px; }
+  border-bottom-right-radius: 1px;
+  border-bottom-left-radius: 1px; }
 
 .panel > .list-group,
 .panel > .panel-collapse > .list-group {
@@ -5250,13 +5280,13 @@ button.list-group-item-danger {
   .panel > .list-group:first-child .list-group-item:first-child,
   .panel > .panel-collapse > .list-group:first-child .list-group-item:first-child {
     border-top: 0;
-    border-top-right-radius: 3px;
-    border-top-left-radius: 3px; }
+    border-top-right-radius: 1px;
+    border-top-left-radius: 1px; }
   .panel > .list-group:last-child .list-group-item:last-child,
   .panel > .panel-collapse > .list-group:last-child .list-group-item:last-child {
     border-bottom: 0;
-    border-bottom-right-radius: 3px;
-    border-bottom-left-radius: 3px; }
+    border-bottom-right-radius: 1px;
+    border-bottom-left-radius: 1px; }
 
 .panel > .panel-heading + .panel-collapse > .list-group .list-group-item:first-child {
   border-top-right-radius: 0;
@@ -5280,14 +5310,14 @@ button.list-group-item-danger {
 
 .panel > .table:first-child,
 .panel > .table-responsive:first-child > .table:first-child {
-  border-top-right-radius: 3px;
-  border-top-left-radius: 3px; }
+  border-top-right-radius: 1px;
+  border-top-left-radius: 1px; }
   .panel > .table:first-child > thead:first-child > tr:first-child,
   .panel > .table:first-child > tbody:first-child > tr:first-child,
   .panel > .table-responsive:first-child > .table:first-child > thead:first-child > tr:first-child,
   .panel > .table-responsive:first-child > .table:first-child > tbody:first-child > tr:first-child {
-    border-top-left-radius: 3px;
-    border-top-right-radius: 3px; }
+    border-top-left-radius: 1px;
+    border-top-right-radius: 1px; }
     .panel > .table:first-child > thead:first-child > tr:first-child td:first-child,
     .panel > .table:first-child > thead:first-child > tr:first-child th:first-child,
     .panel > .table:first-child > tbody:first-child > tr:first-child td:first-child,
@@ -5296,7 +5326,7 @@ button.list-group-item-danger {
     .panel > .table-responsive:first-child > .table:first-child > thead:first-child > tr:first-child th:first-child,
     .panel > .table-responsive:first-child > .table:first-child > tbody:first-child > tr:first-child td:first-child,
     .panel > .table-responsive:first-child > .table:first-child > tbody:first-child > tr:first-child th:first-child {
-      border-top-left-radius: 3px; }
+      border-top-left-radius: 1px; }
     .panel > .table:first-child > thead:first-child > tr:first-child td:last-child,
     .panel > .table:first-child > thead:first-child > tr:first-child th:last-child,
     .panel > .table:first-child > tbody:first-child > tr:first-child td:last-child,
@@ -5305,18 +5335,18 @@ button.list-group-item-danger {
     .panel > .table-responsive:first-child > .table:first-child > thead:first-child > tr:first-child th:last-child,
     .panel > .table-responsive:first-child > .table:first-child > tbody:first-child > tr:first-child td:last-child,
     .panel > .table-responsive:first-child > .table:first-child > tbody:first-child > tr:first-child th:last-child {
-      border-top-right-radius: 3px; }
+      border-top-right-radius: 1px; }
 
 .panel > .table:last-child,
 .panel > .table-responsive:last-child > .table:last-child {
-  border-bottom-right-radius: 3px;
-  border-bottom-left-radius: 3px; }
+  border-bottom-right-radius: 1px;
+  border-bottom-left-radius: 1px; }
   .panel > .table:last-child > tbody:last-child > tr:last-child,
   .panel > .table:last-child > tfoot:last-child > tr:last-child,
   .panel > .table-responsive:last-child > .table:last-child > tbody:last-child > tr:last-child,
   .panel > .table-responsive:last-child > .table:last-child > tfoot:last-child > tr:last-child {
-    border-bottom-left-radius: 3px;
-    border-bottom-right-radius: 3px; }
+    border-bottom-left-radius: 1px;
+    border-bottom-right-radius: 1px; }
     .panel > .table:last-child > tbody:last-child > tr:last-child td:first-child,
     .panel > .table:last-child > tbody:last-child > tr:last-child th:first-child,
     .panel > .table:last-child > tfoot:last-child > tr:last-child td:first-child,
@@ -5325,7 +5355,7 @@ button.list-group-item-danger {
     .panel > .table-responsive:last-child > .table:last-child > tbody:last-child > tr:last-child th:first-child,
     .panel > .table-responsive:last-child > .table:last-child > tfoot:last-child > tr:last-child td:first-child,
     .panel > .table-responsive:last-child > .table:last-child > tfoot:last-child > tr:last-child th:first-child {
-      border-bottom-left-radius: 3px; }
+      border-bottom-left-radius: 1px; }
     .panel > .table:last-child > tbody:last-child > tr:last-child td:last-child,
     .panel > .table:last-child > tbody:last-child > tr:last-child th:last-child,
     .panel > .table:last-child > tfoot:last-child > tr:last-child td:last-child,
@@ -5334,7 +5364,7 @@ button.list-group-item-danger {
     .panel > .table-responsive:last-child > .table:last-child > tbody:last-child > tr:last-child th:last-child,
     .panel > .table-responsive:last-child > .table:last-child > tfoot:last-child > tr:last-child td:last-child,
     .panel > .table-responsive:last-child > .table:last-child > tfoot:last-child > tr:last-child th:last-child {
-      border-bottom-right-radius: 3px; }
+      border-bottom-right-radius: 1px; }
 
 .panel > .panel-body + .table,
 .panel > .panel-body + .table-responsive,
@@ -5402,7 +5432,7 @@ button.list-group-item-danger {
   margin-bottom: 20px; }
   .panel-group .panel {
     margin-bottom: 0;
-    border-radius: 4px; }
+    border-radius: 2px; }
     .panel-group .panel + .panel {
       margin-top: 5px; }
   .panel-group .panel-heading {
@@ -5458,18 +5488,18 @@ button.list-group-item-danger {
     border-bottom-color: #d6e9c6; }
 
 .panel-info {
-  border-color: #bce8f1; }
+  border-color: #cdedf9; }
   .panel-info > .panel-heading {
-    color: #31708f;
-    background-color: #d9edf7;
-    border-color: #bce8f1; }
+    color: #3aaef9;
+    background-color: #edf6fd;
+    border-color: #cdedf9; }
     .panel-info > .panel-heading + .panel-collapse > .panel-body {
-      border-top-color: #bce8f1; }
+      border-top-color: #cdedf9; }
     .panel-info > .panel-heading .badge {
-      color: #d9edf7;
-      background-color: #31708f; }
+      color: #edf6fd;
+      background-color: #3aaef9; }
   .panel-info > .panel-footer + .panel-collapse > .panel-body {
-    border-bottom-color: #bce8f1; }
+    border-bottom-color: #cdedf9; }
 
 .panel-warning {
   border-color: #faebcc; }
@@ -5530,7 +5560,7 @@ button.list-group-item-danger {
   margin-bottom: 20px;
   background-color: #f5f5f5;
   border: 1px solid #e3e3e3;
-  border-radius: 4px;
+  border-radius: 2px;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05); }
   .well blockquote {
@@ -5543,7 +5573,7 @@ button.list-group-item-danger {
 
 .well-sm {
   padding: 9px;
-  border-radius: 3px; }
+  border-radius: 0px; }
 
 .close {
   float: right;
@@ -5732,7 +5762,7 @@ button.close {
   color: #fff;
   text-align: center;
   background-color: #000;
-  border-radius: 4px; }
+  border-radius: 2px; }
 
 .tooltip-arrow {
   position: absolute;
@@ -8198,8 +8228,17 @@ button.close {
   margin-bottom: 30px;
   margin-top: 30px; }
 
+.alert-special {
+  background-color: #3aaef9;
+  margin-bottom: 20px;
+  margin: -30px -30px 0;
+  padding-left: 30px;
+  padding-right: 30px;
+  color: #fff; }
+
 /* -- Input styles ---------------------------------- */
-.form-group, .field.text {
+.form-group, .field.text,
+.field.dropdown {
   position: relative;
   margin-top: 35px;
   margin-bottom: 20px; }
@@ -8207,7 +8246,8 @@ button.close {
 .input-group {
   position: relative; }
 
-.form-control, #MemberLoginForm_LoginForm input.text, #MemberLoginForm_LostPasswordForm input.text {
+.form-control, input.text,
+select {
   display: block;
   height: 36px;
   width: 100%;
@@ -8220,14 +8260,15 @@ button.close {
   box-shadow: none;
   border-bottom: 1px solid #e6e6e6; }
 
-.input-group .form-control, .input-group #MemberLoginForm_LoginForm input.text, #MemberLoginForm_LoginForm .input-group input.text, .input-group #MemberLoginForm_LostPasswordForm input.text, #MemberLoginForm_LostPasswordForm .input-group input.text {
+.input-group .form-control, .input-group input.text, .input-group select {
   position: relative;
   z-index: inherit;
   float: inherit;
   width: 100%;
   margin-bottom: 0; }
 
-.form-control:focus, #MemberLoginForm_LoginForm input.text:focus, #MemberLoginForm_LostPasswordForm input.text:focus {
+.form-control:focus, input.text:focus,
+select:focus {
   border-color: #646464;
   outline: none;
   box-shadow: none; }
@@ -8244,13 +8285,13 @@ label {
   -moz-transition: 0.2s ease all;
   -webkit-transition: 0.2s ease all; }
 
-.form-horizontal .control-label {
+.form-horizontal .control-label, .form-horizontal label {
   position: relative;
   top: 0;
   margin-bottom: 0; }
 
 @media (min-width: 768px) {
-  .form-horizontal .control-label {
+  .form-horizontal .control-label, .form-horizontal label {
     font-size: 16px; } }
 
 .float-label {
@@ -8260,19 +8301,25 @@ label {
   pointer-events: none; }
 
 /* active state */
-.form-control:focus ~ .float-label, #MemberLoginForm_LoginForm input.text:focus ~ .float-label, #MemberLoginForm_LostPasswordForm input.text:focus ~ .float-label, .form-control:valid ~ .float-label, #MemberLoginForm_LoginForm input.text:valid ~ .float-label, #MemberLoginForm_LostPasswordForm input.text:valid ~ .float-label {
+.form-control:focus ~ .float-label, input.text:focus ~ .float-label,
+select:focus ~ .float-label, .form-control:valid ~ .float-label, input.text:valid ~ .float-label,
+select:valid ~ .float-label {
   top: -18px;
   font-size: 12px; }
 
 /* input colors ---- */
-.form-control:focus ~ label, #MemberLoginForm_LoginForm input.text:focus ~ label, #MemberLoginForm_LostPasswordForm input.text:focus ~ label {
+.form-control:focus ~ label, input.text:focus ~ label,
+select:focus ~ label {
   color: #03a9f4; }
 
-.form-control:focus ~ .form-bar:before, #MemberLoginForm_LoginForm input.text:focus ~ .form-bar:before, #MemberLoginForm_LostPasswordForm input.text:focus ~ .form-bar:before, .form-control:focus ~ .form-bar:after, #MemberLoginForm_LoginForm input.text:focus ~ .form-bar:after, #MemberLoginForm_LostPasswordForm input.text:focus ~ .form-bar:after {
+.form-control:focus ~ .form-bar:before, input.text:focus ~ .form-bar:before,
+select:focus ~ .form-bar:before, .form-control:focus ~ .form-bar:after, input.text:focus ~ .form-bar:after,
+select:focus ~ .form-bar:after {
   background: #03a9f4; }
 
 /* help-block */
-.form-group .help-block, .field.text .help-block {
+.form-group .help-block, .field.text .help-block,
+.field.dropdown .help-block {
   position: absolute; }
 
 .help-block {
@@ -8296,9 +8343,9 @@ label {
   width: 100%; }
 
 @media (min-width: 768px) {
-  .form-inline .form-group, .form-inline .field.text {
+  .form-inline .form-group, .form-inline .field.text, .form-inline .field.dropdown {
     margin-top: 16px; }
-  .input-group-btn, .input-group .form-control, .input-group #MemberLoginForm_LoginForm input.text, #MemberLoginForm_LoginForm .input-group input.text, .input-group #MemberLoginForm_LostPasswordForm input.text, #MemberLoginForm_LostPasswordForm .input-group input.text, .input-group-addon, .form-inline .input-group {
+  .input-group-btn, .input-group .form-control, .input-group input.text, .input-group select, .input-group-addon, .form-inline .input-group {
     display: inline-block; }
   .input-group {
     width: auto; } }
@@ -8326,7 +8373,9 @@ label {
   right: 50%; }
 
 /* active state */
-.form-control:focus ~ .form-bar:before, #MemberLoginForm_LoginForm input.text:focus ~ .form-bar:before, #MemberLoginForm_LostPasswordForm input.text:focus ~ .form-bar:before, .form-control:focus ~ .form-bar:after, #MemberLoginForm_LoginForm input.text:focus ~ .form-bar:after, #MemberLoginForm_LostPasswordForm input.text:focus ~ .form-bar:after {
+.form-control:focus ~ .form-bar:before, input.text:focus ~ .form-bar:before,
+select:focus ~ .form-bar:before, .form-control:focus ~ .form-bar:after, input.text:focus ~ .form-bar:after,
+select:focus ~ .form-bar:after {
   width: 50%; }
 
 /* -- highlighter styles ------------------------------ */
@@ -8340,7 +8389,8 @@ label {
   opacity: 0.4; }
 
 /* active state */
-.form-control:focus ~ .form-highlight, #MemberLoginForm_LoginForm input.text:focus ~ .form-highlight, #MemberLoginForm_LostPasswordForm input.text:focus ~ .form-highlight {
+.form-control:focus ~ .form-highlight, input.text:focus ~ .form-highlight,
+select:focus ~ .form-highlight {
   -webkit-animation: inputHighlighter 0.3s ease;
   -moz-animation: inputHighlighter 0.3s ease;
   animation: inputHighlighter 0.3s ease; }
@@ -8374,7 +8424,9 @@ label {
 .form-control-static {
   font-size: 16px; }
 
-.form-control[disabled], #MemberLoginForm_LoginForm input[disabled].text, #MemberLoginForm_LostPasswordForm input[disabled].text, .form-control[readonly], #MemberLoginForm_LoginForm input[readonly].text, #MemberLoginForm_LostPasswordForm input[readonly].text, fieldset[disabled] .form-control, fieldset[disabled] #MemberLoginForm_LoginForm input.text, #MemberLoginForm_LoginForm fieldset[disabled] input.text, fieldset[disabled] #MemberLoginForm_LostPasswordForm input.text, #MemberLoginForm_LostPasswordForm fieldset[disabled] input.text {
+.form-control[disabled], input[disabled].text,
+select[disabled], .form-control[readonly], input[readonly].text,
+select[readonly], fieldset[disabled] .form-control, fieldset[disabled] input.text, fieldset[disabled] select {
   background-color: transparent;
   border-bottom-style: dashed; }
 
@@ -8387,6 +8439,13 @@ label {
 h1 {
   font-weight: 700;
   letter-spacing: -1px; }
+
+p {
+  margin-bottom: 20px; }
+
+pre {
+  margin-top: -10px;
+  margin-bottom: 20px; }
 
 .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th {
   border-bottom: 1px solid #eee;
@@ -8457,6 +8516,7 @@ h1 {
     text-decoration: none; }
 
 .nav-submenu {
+  font-weight: bold;
   position: relative; }
   .nav-submenu.open .icon-arrow {
     -ms-transform: rotate(180deg);
