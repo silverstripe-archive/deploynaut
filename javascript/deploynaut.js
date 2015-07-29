@@ -79,7 +79,7 @@
 			queue.start();
 		}
 
-		$('.project-branch > h3').click(function() {
+		$('.project-branch > .branch-details').click(function() {
 			var $project = $(this).parent();
 			var $content = $project.find('.project-branch-content');
 

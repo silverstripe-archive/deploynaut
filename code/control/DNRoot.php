@@ -559,9 +559,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return new SS_HTTPResponse("Branch '" . $branchName . "' not found.", 404);
 		}
 
-		return $this->customise(array(
+		return $this->render(array(
 			'CurrentBranch' => $branch,
-		))->render();
+		));
 	}
 
 	/**
