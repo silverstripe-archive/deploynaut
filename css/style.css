@@ -1558,8 +1558,7 @@ pre {
   .row:after {
     clear: both; }
 
-.col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .deploy-form-outer .deploy-form .SelectionGroup, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .deploy-form-outer .deploy-form .SelectionGroup + .tab-content, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .field.text,
-.field.dropdown, .col-lg-12 {
+.col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .deploy-form-outer .deploy-form .SelectionGroup, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .deploy-form-outer .deploy-form .SelectionGroup + .tab-content, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {
   position: relative;
   min-height: 1px;
   padding-left: 15px;
@@ -1828,8 +1827,7 @@ pre {
     margin-left: 100%; } }
 
 @media (min-width: 992px) {
-  .col-md-1, .col-md-2, .col-md-3, .col-md-4, .deploy-form-outer .deploy-form .SelectionGroup, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .deploy-form-outer .deploy-form .SelectionGroup + .tab-content, .col-md-9, .col-md-10, .col-md-11, .col-md-12, .field.text,
-  .field.dropdown {
+  .col-md-1, .col-md-2, .col-md-3, .col-md-4, .deploy-form-outer .deploy-form .SelectionGroup, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .deploy-form-outer .deploy-form .SelectionGroup + .tab-content, .col-md-9, .col-md-10, .col-md-11, .col-md-12 {
     float: left; }
   .col-md-1 {
     width: 8.33333%; }
@@ -1853,8 +1851,7 @@ pre {
     width: 83.33333%; }
   .col-md-11 {
     width: 91.66667%; }
-  .col-md-12, .field.text,
-  .field.dropdown {
+  .col-md-12 {
     width: 100%; }
   .col-md-pull-0 {
     right: auto; }
@@ -8853,8 +8850,18 @@ button.close {
       -webkit-border-radius--moz-border-radius: 0 4px 4px 0;
         -webkit-border-radius--moz-border-radius-border-radius: 0 4px 4px 0; }
 
+.field.text,
+.field.dropdown {
+  margin-left: 0;
+  margin-right: 0; }
+
 .btn, .action, .deploy-dropdown {
   margin-bottom: 20px; }
+
+.field.dataarchivefile {
+  margin-bottom: 15px; }
+  .field.dataarchivefile label {
+    position: relative; }
 
 #MemberLoginForm_LoginForm input.text, #MemberLoginForm_LostPasswordForm input.text {
   font-size: 20px !important; }
@@ -8890,8 +8897,7 @@ button.close {
 .form-group, .field.text,
 .field.dropdown {
   position: relative;
-  margin-top: 35px;
-  margin-bottom: 20px; }
+  margin-bottom: 15px; }
 
 .input-group {
   position: relative; }
@@ -8925,8 +8931,6 @@ select:focus {
 
 /* -- label styles ---------------------------------- */
 label {
-  position: absolute;
-  top: -18px;
   color: #999;
   font-size: 12px;
   font-weight: 300;
@@ -9128,6 +9132,26 @@ pre {
 .page-container {
   padding-left: 230px;
   margin: 0 auto; }
+
+.upload-exceed-container {
+  position: relative;
+  overflow: hidden; }
+
+.upload-exceed-link {
+  margin-top: 7px; }
+
+.upload-close {
+  background-color: #ddd;
+  color: #444;
+  display: block;
+  padding: 10px 15px;
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  border-radius-top-left: 2px; }
+  .upload-close:hover {
+    color: #444;
+    background-color: #d7d7d7; }
 
 .sidebar {
   width: 230px;
