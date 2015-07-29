@@ -13,9 +13,11 @@
 
 
 .alert
+	&.alert-error,
 	&.Failed
 		@extend .alert-danger
 
+	&.alert-good,
 	&.Complete
 		@extend .alert-success
 
@@ -267,6 +269,7 @@
 	text-align: left
 	font-size: 26px
 	line-height: 40px
+	margin-bottom: 0
 
 	.status-icon
 		@extend .fa
@@ -292,12 +295,19 @@
 			@extend .fa-pulse
 			margin-left: 10px
 
+
 .deploy-form-outer
 	border-width: 0px 1px 1px
 	border-style: solid
 	border-color: #bbb
 
 	.deploy-form
+
+		label
+			position: static
+			font-size: 16px
+			color: $gray
+
 		.SelectionGroup
 			@extend .nav
 			@extend .nav-pills
@@ -340,10 +350,13 @@
 
 				select,
 				.select2,
-				input,
+				input[type="text"],
 				.CompositeField
 					width: 100%
 					margin-bottom: 0.75em
+
+					> *
+						width: 100%
 
 
 		*[name="action_doDeploy"]
@@ -355,8 +368,13 @@
 			line-height: 40px
 			margin: 20px 0
 
+.deploy-history
+	margin-top: 3em
+
 .environment-details
-	> span
+	margin-bottom: 3em
+
+	> * > span
 		display: block
 
 .project-links
