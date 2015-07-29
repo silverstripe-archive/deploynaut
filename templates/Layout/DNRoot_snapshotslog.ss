@@ -1,4 +1,5 @@
 <div class="content page-header">
+
 	<% include PageHeader %>
 
 	<% if $CurrentProject %>
