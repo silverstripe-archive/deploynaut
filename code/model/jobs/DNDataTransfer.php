@@ -146,7 +146,7 @@ class DNDataTransfer extends DataObject {
 		if($this->AuthorID) {
 			$author = $this->Author();
 			$message = sprintf(
-				'Data transfer to %s (%s, %s) initiated by %s (%s), with IP address %s',
+				'Data transfer on %s (%s, %s) initiated by %s (%s), with IP address %s',
 				$env->getFullName(),
 				$this->Direction,
 				$this->Mode,
