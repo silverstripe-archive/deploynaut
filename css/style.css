@@ -8460,6 +8460,44 @@ h1 {
   position: relative; }
   .nav-submenu.open .icon-arrow {
     -ms-transform: rotate(180deg);
+    /* IE 9 */
+    -webkit-transform: rotate(180deg);
+    /* Chrome, Safari, Opera */
+    transform: rotate(180deg); }
+
+.icon-arrow {
+  width: 16px;
+  height: 16px;
+  display: block;
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  background-color: red;
+  background: transparent url(../img/Platform_icon-arrow.svg) no-repeat; }
+  .icon-arrow ul.nav ul, .icon-arrow .deploy-form-outer .deploy-form ul.SelectionGroup ul, .deploy-form-outer .deploy-form .icon-arrow ul.SelectionGroup ul {
+    background-color: rgba(0, 0, 0, 0.15);
+    padding: 0;
+    margin: 0;
+    overflow: hidden; }
+    .icon-arrow ul.nav ul a, .icon-arrow .deploy-form-outer .deploy-form ul.SelectionGroup ul a, .deploy-form-outer .deploy-form .icon-arrow ul.SelectionGroup ul a {
+      opacity: .8;
+      padding-left: 54px; }
+      .icon-arrow ul.nav ul a:hover, .icon-arrow .deploy-form-outer .deploy-form ul.SelectionGroup ul a:hover, .deploy-form-outer .deploy-form .icon-arrow ul.SelectionGroup ul a:hover {
+        color: #fff;
+        background-color: transparent;
+        text-decoration: none;
+        opacity: 1; }
+    .icon-arrow ul.nav ul li.active a, .icon-arrow .deploy-form-outer .deploy-form ul.SelectionGroup ul li.active a, .deploy-form-outer .deploy-form .icon-arrow ul.SelectionGroup ul li.active a {
+      color: #fff; }
+  .icon-arrow li > a:hover,
+  .icon-arrow li > a:focus {
+    color: #fff;
+    text-decoration: none; }
+
+.nav-submenu {
+  position: relative; }
+  .nav-submenu.open .icon-arrow {
+    -ms-transform: rotate(180deg);
     -webkit-transform: rotate(180deg);
     transform: rotate(180deg); }
 
