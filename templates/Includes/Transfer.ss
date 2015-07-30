@@ -3,9 +3,9 @@
         <div class="col-md-12">
             <ol class="breadcrumb">
                 <li><a href="naut/project/$CurrentProject.Name">$CurrentProject.Title</a></li>
-                <li><a href="naut/project/$CurrentTransfer.Environment.Name.ATTR">$CurrentTransfer.Environment.Name</a></li>
+                <li><a href="naut/project/$CurrentProject.Name/sanpshots">Snapshots</a></li>
             </ol>
-            <h1 class="page-heading">Snapshots</h1>
+            <h1 class="page-heading">Create: $CurrentTransfer.Environment.Name</h1>
         </div>
     </div>
 

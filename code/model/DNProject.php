@@ -201,6 +201,14 @@ class DNProject extends DataObject {
 	}
 
 	/**
+	 * Return the current object from $this->Menu()
+	 * Good for making titles and things
+	 */
+	public function CurrentMenu() {
+		return $this->Menu()->filter('IsSection', true)->First();
+	}
+
+	/**
 	 * Is this project currently in a controller that is handling it or performing a sub-task?
 	 * @return bool
 	 */

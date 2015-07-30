@@ -504,6 +504,11 @@ $textarea-transition-time: 0.6s
 
 		.open-icon
 			display: inline-block
+			
+
+.breadcrumb > li + li:before
+	content: "#{$breadcrumb-separator}"; // Unicode space added since inline-block means non-collapsing white-space
+
 
 // Custom helpers
 

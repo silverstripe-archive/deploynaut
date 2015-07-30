@@ -8,5 +8,4 @@
 				<% end_loop %>
 			<% end_if %>
 	<% end_with %>
-
 </ul>

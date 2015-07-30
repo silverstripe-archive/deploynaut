@@ -1,16 +1,9 @@
 <div class="content page-header">
   	<div class="row">
-		<div class="col-md-9">
-			<ol class="breadcrumb">
-				<li><a href="naut/project/$CurrentProject.Name">$CurrentProject.Title</a></li>
-			</ol>
-			<h1 class="page-heading">Deployments</h1>
+		<div class="col-md-12">
+			<% include Breadcrumb %>
 
-			<% include DeploymentTabs %>
-        </div>
-
-		<div class="col-md-3">
-			<ul class="project-links">
+			<ul class="project-links pull-right">
 				<% if $CurrentEnvironment.URL %>
 					<li>
 						<span class="fa fa-link"></span>
@@ -24,10 +17,12 @@
 					</li>
 				<% end_if %>
 			</ul>
-		</div>
-  </div>
 
+			<% include DeploymentTabs %>
+        </div>
+	</div>
 </div>
+
 <div class="content">
 
 	<% with $CurrentEnvironment %>

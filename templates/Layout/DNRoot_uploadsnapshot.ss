@@ -1,22 +1,23 @@
 <div class="content page-header">
-	<% include PageHeader %>
+	<div class="row">
+		<div class="col-md-9">
+			<% include Breadcrumb %>
 
-	<% if $CurrentProject %>
-	<ul class="nav nav-tabs">
-		<li>
-			<a href="<% with $Navigation %><% loop $Project.Menu %>
-					<% if $IsActive %>$Link<% end_if %><% end_loop %><% end_with %>">Overview</a>
-		</li>
+			<% if $CurrentProject %>
+			<ul class="nav nav-tabs">
+				<li><a href="$CurrentProject.Link('snapshots')">Overview</a></li>
 
-		<% if $CurrentProject.canBackup %>
-		<li><a href="$CurrentProject.Link('createsnapshot')">Create Snapshot</a></li>
-		<% end_if %>
-		<% if $CurrentProject.canUploadArchive %>
-		<li class="active"><a href="$CurrentProject.Link('uploadsnapshot')">Upload Snapshot</a></li>
-		<% end_if %>
-		<li><a href="$CurrentProject.Link('snapshotslog')">Log</a></li>
-	</ul>
-	<% end_if %>
+				<% if $CurrentProject.canBackup %>
+				<li><a href="$CurrentProject.Link('createsnapshot')">Create Snapshot</a></li>
+				<% end_if %>
+				<% if $CurrentProject.canUploadArchive %>
+				<li class="active"><a href="$CurrentProject.Link('uploadsnapshot')">Upload Snapshot</a></li>
+				<% end_if %>
+				<li><a href="$CurrentProject.Link('snapshotslog')">Log</a></li>
+			</ul>
+			<% end_if %>
+		</div>
+	</div>
 </div>
 
 <div class="content">
