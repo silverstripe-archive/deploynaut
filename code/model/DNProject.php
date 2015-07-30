@@ -343,6 +343,10 @@ class DNProject extends DataObject {
 			});
 	}
 
+	public function EnvironmentsByUsage($usage) {
+		return $this->DNEnvironmentList()->filter('Usage', $usage);
+	}
+
 	/**
 	 * Returns a map of envrionment name to build name
 	 */

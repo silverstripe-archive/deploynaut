@@ -71,7 +71,8 @@ class DNEnvironment extends DataObject {
 		"Name" => "Varchar(255)",
 		"URL" => "Varchar(255)",
 		"BackendIdentifier" => "Varchar(255)", // Injector identifier of the DeploymentBackend
-		"DryRunEnabled" => "Boolean" // True if the dry run button should be enabled on the frontend
+		"DryRunEnabled" => "Boolean", // True if the dry run button should be enabled on the frontend
+		"Usage" => "Enum('Production, UAT, Test, Unspecified', 'Unspecified')"
 	);
 
 	/**
@@ -122,16 +123,17 @@ class DNEnvironment extends DataObject {
 	 * @var array
 	 */
 	public static $summary_fields = array(
-		"Name"						=> "Environment Name",
-		"URL"						=> "URL",
-		"DeployersList"				=> "Can Deploy List",
-		"CanRestoreMembersList"		=> "Can Restore List",
-		"CanBackupMembersList"		=> "Can Backup List",
-		"ArchiveUploadersList"		=> "Can Upload List",
-		"ArchiveDownloadersList"	=> "Can Download List",
-		"ArchiveDeletersList"		=> "Can Delete List",
-		"PipelineApproversList"		=> "Can Approve List",
-		"PipelineCancellersList"	=> "Can Cancel List"
+		"Name" => "Environment Name",
+		"Usage" => "Usage",
+		"URL" => "URL",
+		"DeployersList" => "Can Deploy List",
+		"CanRestoreMembersList" => "Can Restore List",
+		"CanBackupMembersList" => "Can Backup List",
+		"ArchiveUploadersList" => "Can Upload List",
+		"ArchiveDownloadersList" => "Can Download List",
+		"ArchiveDeletersList"  => "Can Delete List",
+		"PipelineApproversList" => "Can Approve List",
+		"PipelineCancellersList" => "Can Cancel List"
 	);
 
 	private static $singular_name = 'Capistrano Environment';
@@ -206,6 +208,11 @@ class DNEnvironment extends DataObject {
 	 */
 	public function getFullName($separator = ':') {
 		return sprintf('%s%s%s', $this->Project()->Name, $separator, $this->Name);
+	}
+
+	public function getBareURL() {
+		$url = parse_url($this->URL);
+		return strtolower($url['host']);
 	}
 
 	/**
@@ -762,6 +769,9 @@ class DNEnvironment extends DataObject {
 			TextField::create('Name', 'Environment name')
 				->setDescription('A descriptive name for this environment, e.g. staging, uat, production'),
 
+
+			$this->obj('Usage')->scaffoldFormField('Environment usage'),
+
 			// The Main.URL field
 			TextField::create('URL', 'Server URL')
 				->setDescription('This url will be used to provide the front-end with a link to this environment'),
@@ -974,6 +984,23 @@ PHP
 		$this->writeConfigFile();
 		$this->writePipelineFile();
 	}
+
+	public function onAfterWrite() {
+		parent::onAfterWrite();
+
+		if ($this->Usage == 'Production' || $this->Usage == 'UAT') {
+			$conflicting = DNEnvironment::get()
+				->filter('ProjectID', $this->ProjectID)
+				->filter('Usage', $this->Usage)
+				->exclude('ID', $this->ID);
+
+			foreach ($conflicting as $otherEnvironment) {
+				$otherEnvironment->Usage = 'Unspecified';
+				$otherEnvironment->write();
+			}
+		}
+	}
+
 
 	/**
 	 * Ensure that environment paths are setup on the local filesystem
