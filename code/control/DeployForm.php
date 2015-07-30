@@ -153,11 +153,9 @@ class DeployForm extends Form {
 			$field = $this->buildCommitSelector($project);
 			$validator = new DeployForm_CommitValidator();
 			$actions = new FieldList(
-				FormAction::create('doDeploy', "Deploy Branch " . $environment->Name)
-					->addExtraClass('btn btn-primary')
-					->setAttribute('onclick',
-						"return confirm('This will start a direct deployment.\\n\\nContinue?');"
-					)
+				FormAction::create('doDeploy', "Deploy to " . Convert::raw2att($environment->Name))
+					->addExtraClass('btn btn-primary deploy-button')
+					->setAttribute('data-environment-name', Convert::raw2att($environment->Name))
 			);
 		}
 		parent::__construct($controller, $name, new FieldList($field), $actions, $validator);

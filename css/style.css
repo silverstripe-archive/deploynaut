@@ -9450,7 +9450,7 @@ ul {
 .alert .fa, .disk-quota .fa, .alert .deploy-dropdown .status-icon, .deploy-dropdown .alert .status-icon, .disk-quota .deploy-dropdown .status-icon, .deploy-dropdown .disk-quota .status-icon {
   margin-right: 4px; }
 
-.alert ul {
+.alert ul, .disk-quota ul {
   margin: 10px 0; }
 
 .progress-bar {
@@ -9735,17 +9735,15 @@ ul {
   .project-links li a {
     margin-left: 5px; }
 
-.deployment-status {
-  margin-top: 2em; }
-  .deployment-status .deployment-progress {
-    height: auto; }
-    .deployment-status .deployment-progress .progress-bar {
-      padding: 8px 15px;
-      line-height: 40px;
-      font-size: 28px;
-      text-align: left; }
-      .deployment-status .deployment-progress .progress-bar .status {
-        font-size: 26px; }
+.deployment-status .deployment-progress {
+  height: auto; }
+  .deployment-status .deployment-progress .progress-bar {
+    padding: 8px 15px;
+    line-height: 40px;
+    font-size: 28px;
+    text-align: left; }
+    .deployment-status .deployment-progress .progress-bar .status {
+      font-size: 26px; }
 
 .log-content {
   overflow-y: auto;

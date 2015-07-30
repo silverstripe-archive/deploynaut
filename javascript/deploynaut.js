@@ -184,6 +184,18 @@
 			return false;
 		});
 
+		$('.deploy-form-outer').on('click', '.deploy-button', function(e) {
+			var releaseType = $(this).parents('form').find('input[name="SelectRelease"]').attr('value');
+
+			var environment = $(this).attr('data-environment-name');
+			var revision = $(this).parents('form').find('*[name="' + releaseType + '"]').val();
+
+			return confirm('You are about to begin the following deployment:\n\n'
+				+ 'Environment: ' + environment + '\n'
+				+ 'Revision: ' + revision + '\n\n'
+				+ 'Continue?');
+		});
+
 
 		$('.tooltip-hint, .btn-tooltip').tooltip({
 			placement: "top",
