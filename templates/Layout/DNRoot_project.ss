@@ -4,6 +4,7 @@
 			<h1 class="page-heading">
 				$CurrentProject.Title
 			</h1>
+			<% include DeploymentTabs Overview=true %>
 		</div>
 		<div class="col-md-5 repo-url">
 			<% if $CurrentProject.RepositoryURL %>
