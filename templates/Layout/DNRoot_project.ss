@@ -72,14 +72,6 @@
 			</tbody>
 		</table>
 
-		<div id="gitFetchModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		  <div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-			<h3 id="myModalLabel">Updating GIT repository</h3>
-		  </div>
-		  <div class="modal-body"></div>
-		  <div class="modal-footer"></div>
-		</div>
 
 		<% if $PublicKey %>
 			<h4>Deploy key</h4>
