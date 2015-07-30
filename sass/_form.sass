@@ -4,7 +4,8 @@
 .field.dropdown
 	@extend .form-group
 	margin-left: 0
-	margin-right: 0;
+	margin-right: 0
+	margin-bottom: 0
 
 .action
 	@extend .btn
@@ -15,17 +16,36 @@
 	margin-bottom: 20px;
 
 input.text,
-select
+select,
+textarea,
+.readonly span.readonly
 	@extend .form-control
 
-label
-	@extend .control-label
+.readonly span.readonly
+	color: #888
+	line-height: 36px
+
+.textarea
+	transition: height $textarea-transition-time;
+	-webkit-transition: height $textarea-transition-time
+	-moz-transition: height $textarea-transition-time
+	-ms-transition: height $textarea-transition-time
+	-o-transition: height $textarea-transition-time
+
+	&:focus
+		height: 100px
 
 .field.dataarchivefile 
 	margin-bottom: 15px
 	
 	label
 		position: relative;
+
+.field + .field
+	margin-top: 25px
+
+fieldset + .Actions
+	margin-top: 35px
 
 // Security page
 
@@ -119,11 +139,9 @@ label
 
 
 /* -- label styles ---------------------------------- */
-label 
-	// position: absolute;
-	// top: -18px;
-	color: #999;
-	font-size: 12px;
+label
+	@extend .control-label
+	font-size: 14px;
 	font-weight: 300;
 	color: #6a8ea5
 	transition: 0.2s ease all;
