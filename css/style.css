@@ -9151,6 +9151,9 @@ ul {
 .alert .fa, .alert .deploy-dropdown .status-icon, .deploy-dropdown .alert .status-icon {
   margin-right: 4px; }
 
+.alert ul {
+  margin: 10px 0; }
+
 .progress-bar {
   width: 100%; }
 
