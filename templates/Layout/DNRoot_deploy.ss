@@ -6,15 +6,7 @@
             </ol>
             <h1 class="page-heading">Deployments</h1>
 
-			<% with $CurrentProject %>
-                <ul class="nav nav-tabs">
-					<% if $DNEnvironmentList %>
-						<% loop $DNEnvironmentList %>
-                            <li<% if $IsSection %> class="active"<% end_if %>><% if CanDeploy %><a href="$Link">$Name</a><% else %>$Name<% end_if %></li>
-						<% end_loop %>
-					<% end_if %>
-                </ul>
-			<% end_with %>
+			<% include DeploymentTabs %>
         </div>
 
         <div class="col-md-3">
