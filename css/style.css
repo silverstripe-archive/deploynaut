@@ -1350,7 +1350,7 @@ ol {
   ol ol {
     margin-bottom: 0; }
 
-.list-unstyled {
+.list-unstyled, .environment-details ul {
   padding-left: 0;
   list-style: none; }
 
@@ -9733,11 +9733,10 @@ ul {
 
 .environment-details {
   margin-bottom: 3em; }
-  .environment-details > * > span {
-    display: block; }
 
 .project-links li {
-  line-height: 24px; }
+  line-height: 24px;
+  margin-bottom: 4px; }
   .project-links li a {
     margin-left: 5px; }
 
@@ -9758,17 +9757,22 @@ ul {
   color: #fff;
   margin-top: 0; }
 
+.repo-ux img {
+  height: 14px; }
+
 .repo-url label {
-  font-size: 16px;
   color: #555555;
   display: block;
-  position: static; }
+  position: static;
+  margin-bottom: 0; }
 
 .repo-url input[type=text] {
-  line-height: 35px;
-  padding: 0 15px;
+  color: #777777;
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-size: 11px;
+  line-height: 24px;
+  padding: 0 8px;
   width: 100%;
-  font-weight: 400;
   border-width: 0 0 1px 0;
   border-style: solid;
   border-color: #e6e6e6; }
