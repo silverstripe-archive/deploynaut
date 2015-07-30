@@ -59,7 +59,12 @@ class DNReferenceList extends ArrayList {
 	 * @return array()
 	 */
 	protected function getReferences() {
-		$repository = new Gitonomy\Git\Repository($this->project->LocalCVSPath);
+		try {
+			$repository = new Gitonomy\Git\Repository($this->project->LocalCVSPath);
+		} catch (Exception $e) {
+			return array();
+		}
+
 		if($this->getTags) {
 			if($this->reference) throw new LogicException("Can't have \$reference and \$getTags both set");
 			$log = $repository->getReferences()->getTags();
