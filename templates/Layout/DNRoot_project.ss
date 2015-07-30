@@ -1,9 +1,7 @@
 <div class="content page-header">
 	<div class="row">
 		<div class="col-md-7">
-			<h1 class="page-heading">
-				$CurrentProject.Title
-			</h1>
+			<% include Breadcrumb %>
 			<% include DeploymentTabs Overview=true %>
 		</div>
 		<div class="col-md-5 repo-url">
