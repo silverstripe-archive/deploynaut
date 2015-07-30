@@ -9119,9 +9119,17 @@ h1 {
 p {
   margin-bottom: 20px; }
 
-pre {
+pre,
+ol,
+ul {
   margin-top: -10px;
   margin-bottom: 20px; }
+  pre.nav,
+  .deploy-form-outer .deploy-form pre.SelectionGroup,
+  ol.nav,
+  .deploy-form-outer .deploy-form ol.SelectionGroup,
+  ul.nav, .deploy-form-outer .deploy-form ul.SelectionGroup {
+    margin-top: 0; }
 
 .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th {
   border-bottom: 1px solid #eee;
@@ -9140,12 +9148,6 @@ pre {
 .font-w600 {
   font-weight: 600; }
 
-.push {
-  margin-bottom: 20px; }
-
-.fa.i-push, .deploy-dropdown .i-push.status-icon {
-  margin-right: 4px; }
-
 .alert .fa, .alert .deploy-dropdown .status-icon, .deploy-dropdown .alert .status-icon {
   margin-right: 4px; }
 
@@ -9162,7 +9164,8 @@ pre {
   margin: 0 auto; }
 
 .upload-exceed-link {
-  margin-bottom: 0; }
+  margin-bottom: 0;
+  margin-left: 30px; }
 
 .upload-exceed-container {
   position: relative;
@@ -9293,50 +9296,50 @@ pre {
   min-height: 60px;
   background-color: #fff;
   min-width: 320px;
-  position: fixed;
-  right: 0;
-  top: 0;
-  z-index: 1030;
   left: 230px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02); }
+  border-bottom: 1px solid #eee; }
   .header-navbar .nav a, .header-navbar .deploy-form-outer .deploy-form .SelectionGroup a, .deploy-form-outer .deploy-form .header-navbar .SelectionGroup a {
     padding: 18px 30px 22px; }
 
-.main-container {
-  margin-top: 60px; }
-  .main-container .page-header {
-    background-color: #f0f3f4;
-    margin: 0;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 0; }
-  .main-container .breadcrumb {
+.main-container .page-header {
+  background-color: #f0f3f4;
+  margin: 0;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0; }
+
+.main-container .breadcrumb {
+  padding-left: 0;
+  padding-right: 0;
+  margin-bottom: -25px; }
+
+.main-container .page-heading {
+  margin-bottom: 30px; }
+
+.main-container .nav.nav-tabs, .main-container .deploy-form-outer .deploy-form .nav-tabs.SelectionGroup, .deploy-form-outer .deploy-form .main-container .nav-tabs.SelectionGroup {
+  border-bottom: none; }
+  .main-container .nav.nav-tabs > li > a,
+  .main-container .deploy-form-outer .deploy-form .nav-tabs.SelectionGroup > li > a,
+  .deploy-form-outer .deploy-form .main-container .nav-tabs.SelectionGroup > li > a, .main-container .nav.nav-tabs > li > a:hover,
+  .main-container .deploy-form-outer .deploy-form .nav-tabs.SelectionGroup > li > a:hover,
+  .deploy-form-outer .deploy-form .main-container .nav-tabs.SelectionGroup > li > a:hover, .main-container .nav.nav-tabs > li > a:focus, .main-container .deploy-form-outer .deploy-form .nav-tabs.SelectionGroup > li > a:focus, .deploy-form-outer .deploy-form .main-container .nav-tabs.SelectionGroup > li > a:focus {
+    border-color: transparent;
     padding-left: 0;
     padding-right: 0;
-    margin-bottom: -25px; }
-  .main-container .page-heading {
-    margin-bottom: 30px; }
-  .main-container .nav.nav-tabs, .main-container .deploy-form-outer .deploy-form .nav-tabs.SelectionGroup, .deploy-form-outer .deploy-form .main-container .nav-tabs.SelectionGroup {
-    border-bottom: none; }
-    .main-container .nav.nav-tabs > li > a,
-    .main-container .deploy-form-outer .deploy-form .nav-tabs.SelectionGroup > li > a,
-    .deploy-form-outer .deploy-form .main-container .nav-tabs.SelectionGroup > li > a, .main-container .nav.nav-tabs > li > a:hover,
-    .main-container .deploy-form-outer .deploy-form .nav-tabs.SelectionGroup > li > a:hover,
-    .deploy-form-outer .deploy-form .main-container .nav-tabs.SelectionGroup > li > a:hover, .main-container .nav.nav-tabs > li > a:focus, .main-container .deploy-form-outer .deploy-form .nav-tabs.SelectionGroup > li > a:focus, .deploy-form-outer .deploy-form .main-container .nav-tabs.SelectionGroup > li > a:focus {
-      border-color: transparent;
-      padding-left: 0;
-      padding-right: 0;
-      margin-right: 20px;
-      background-color: transparent; }
-    .main-container .nav.nav-tabs > li.active > a, .main-container .deploy-form-outer .deploy-form .nav-tabs.SelectionGroup > li.active > a, .deploy-form-outer .deploy-form .main-container .nav-tabs.SelectionGroup > li.active > a {
-      border: none;
-      border-bottom: 3px solid #3aaef9;
-      background-color: none;
-      background-color: transparent; }
+    margin-right: 20px;
+    background-color: transparent; }
+  .main-container .nav.nav-tabs > li.active > a, .main-container .deploy-form-outer .deploy-form .nav-tabs.SelectionGroup > li.active > a, .deploy-form-outer .deploy-form .main-container .nav-tabs.SelectionGroup > li.active > a {
+    border: none;
+    border-bottom: 3px solid #3aaef9;
+    background-color: none;
+    background-color: transparent; }
 
 .content {
   margin: 0 auto;
   padding: 30px 30px 1px;
     padding-background-color: #f9f9f9; }
+  .content.content-vert {
+    padding-top: 0;
+    padding-bottom: 0; }
 
 .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th {
   border-bottom: 1px solid #eee;
@@ -9481,3 +9484,21 @@ pre {
 
 .project-branch.open .open-icon {
   display: inline-block; }
+
+.vertical-center {
+  min-height: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center; }
+
+.vertical-offset-20 {
+  min-height: 100%;
+  min-height: 80vh;
+  display: flex;
+  align-items: center; }
+
+.push {
+  margin-bottom: 20px; }
+
+.push-lg {
+  margin-bottom: 40px; }

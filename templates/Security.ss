@@ -1,7 +1,7 @@
 <% include OuterTop %>
-<div class="content">
+<div class="content content-vert">
 	<div class="row">
-		<div class="col-md-8 col-md-offset-2">
+		<div class="col-md-8 col-md-offset-2 vertical-offset-20">
 			$Layout
 		</div>
 	</div>

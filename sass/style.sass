@@ -62,6 +62,7 @@
 
 .upload-exceed-link
 	margin-bottom: 0;
+	margin-left: 30px;
 
 .upload-exceed-container
 	position: relative;
@@ -224,19 +225,22 @@
 	min-height: 60px
 	background-color: #fff
 	min-width: 320px
-	position: fixed
-	right: 0
-	top: 0
-	z-index: 1030
 	left: 230px
-	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02)
+	border-bottom: 1px solid #eee
+
+	// needed when the top bar is used more
+	// position: fixed 
+	// right: 0
+	// top: 0
+	// z-index: 1030
+	// box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02)
 
 	.nav a
 		padding: 18px 30px 22px
 
 
 .main-container
-	margin-top: 60px
+	// margin-top: 60px (needed when the top bar is used more)
 
 	.page-header 
 		background-color: #f0f3f4
@@ -275,6 +279,10 @@
 	margin: 0 auto
 	padding: 30px 30px 1px
     background-color: #f9f9f9
+
+	&.content-vert
+		padding-top: 0
+		padding-bottom: 0
 
 	
 
@@ -481,3 +489,23 @@
 
 		.open-icon
 			display: inline-block
+
+// Custom helpers
+
+.vertical-center 		/* Uses .content-vert */
+	min-height: 100%	/* Fallback for browsers do NOT support vh unit */
+	min-height: 100vh	/* These two lines are counted as one :-)       */
+	display: flex
+	align-items: center
+
+.vertical-offset-20		/* Uses .content-vert */
+	min-height: 100%	/* Fallback for browsers do NOT support vh unit */
+	min-height: 80vh	/* These two lines are counted as one :-)       */
+	display: flex
+	align-items: center
+
+.push
+	margin-bottom: $padding-large-vertical*2
+
+.push-lg
+	margin-bottom: $padding-large-vertical*4
