@@ -1,3 +1,5 @@
+$textarea-transition-time: 0.6s
+
 @import "_bootstrap-variables.sass"
 @import "node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss"
 @import "node_modules/font-awesome/scss/font-awesome.scss"
@@ -10,7 +12,6 @@
 @import "tabs"
 @import "_form.sass"
 @import "_type.sass"
-
 
 .alert
 	&.alert-error,
@@ -61,19 +62,17 @@
 	margin: 0 auto
 
 .upload-exceed-link
-	margin-bottom: 0;
-	margin-left: 30px;
+	margin-bottom: 0
+	margin-left: 30px
 
 .upload-exceed-container
-	position: relative;
-	overflow: hidden;
+	position: relative
+	overflow: hidden
 
 	.upload-exceed-link
 		position: absolute
-		top: -1px;
-		right: -1px;
-
-
+		top: -1px
+		right: -1px
 
 .upload-close
 	background-color: #ddd
@@ -522,3 +521,6 @@
 
 .push-lg
 	margin-bottom: $padding-large-vertical*4
+
+.alerts-approval-form
+	margin-top: 20px

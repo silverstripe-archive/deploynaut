@@ -2323,7 +2323,9 @@ output {
   color: #555555; }
 
 .form-control, input.text,
-select {
+select,
+textarea,
+.readonly span.readonly {
   display: block;
   width: 100%;
   height: 34px;
@@ -2341,37 +2343,51 @@ select {
   -o-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
   transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s; }
   .form-control:focus, input.text:focus,
-  select:focus {
+  select:focus,
+  textarea:focus,
+  .readonly span.readonly:focus {
     border-color: #646464;
     outline: 0;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(100, 100, 100, 0.6);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(100, 100, 100, 0.6); }
   .form-control::-moz-placeholder, input.text::-moz-placeholder,
-  select::-moz-placeholder {
+  select::-moz-placeholder,
+  textarea::-moz-placeholder,
+  .readonly span.readonly::-moz-placeholder {
     color: #999;
     opacity: 1; }
   .form-control:-ms-input-placeholder, input.text:-ms-input-placeholder,
-  select:-ms-input-placeholder {
+  select:-ms-input-placeholder,
+  textarea:-ms-input-placeholder,
+  .readonly span.readonly:-ms-input-placeholder {
     color: #999; }
   .form-control::-webkit-input-placeholder, input.text::-webkit-input-placeholder,
-  select::-webkit-input-placeholder {
+  select::-webkit-input-placeholder,
+  textarea::-webkit-input-placeholder,
+  .readonly span.readonly::-webkit-input-placeholder {
     color: #999; }
   .form-control[disabled],
   input[disabled].text,
   select[disabled],
+  textarea[disabled],
+  .readonly span[disabled].readonly,
   .form-control[readonly],
   input[readonly].text,
   select[readonly],
-  fieldset[disabled] .form-control, fieldset[disabled] input.text, fieldset[disabled] select {
+  textarea[readonly],
+  .readonly span[readonly].readonly,
+  fieldset[disabled] .form-control, fieldset[disabled] input.text, fieldset[disabled] select, fieldset[disabled] textarea, fieldset[disabled] .readonly span.readonly, .readonly fieldset[disabled] span.readonly {
     background-color: #eeeeee;
     opacity: 1; }
   .form-control[disabled],
   input[disabled].text,
   select[disabled],
-  fieldset[disabled] .form-control, fieldset[disabled] input.text, fieldset[disabled] select {
+  textarea[disabled],
+  .readonly span[disabled].readonly,
+  fieldset[disabled] .form-control, fieldset[disabled] input.text, fieldset[disabled] select, fieldset[disabled] textarea, fieldset[disabled] .readonly span.readonly, .readonly fieldset[disabled] span.readonly {
     cursor: not-allowed; }
 
-textarea.form-control {
+textarea.form-control, textarea {
   height: auto; }
 
 input[type="search"] {
@@ -2527,14 +2543,16 @@ fieldset[disabled] .checkbox label {
   .input-group-lg > .form-control-static.form-control,
   .input-group-lg > input.form-control-static.text,
   .input-group-lg > select.form-control-static,
-  .input-group-lg > .form-control-static.input-group-addon,
+  .input-group-lg > textarea.form-control-static,
+  .readonly .input-group-lg > span.form-control-static.readonly, .input-group-lg > .form-control-static.input-group-addon,
   .input-group-lg > .input-group-btn > .form-control-static.btn,
   .input-group-lg > .input-group-btn > .form-control-static.action,
   .input-group-lg > .input-group-btn > .form-control-static.deploy-dropdown,
   .form-control-static.input-sm, .input-group-sm > .form-control-static.form-control,
   .input-group-sm > input.form-control-static.text,
   .input-group-sm > select.form-control-static,
-  .input-group-sm > .form-control-static.input-group-addon,
+  .input-group-sm > textarea.form-control-static,
+  .readonly .input-group-sm > span.form-control-static.readonly, .input-group-sm > .form-control-static.input-group-addon,
   .input-group-sm > .input-group-btn > .form-control-static.btn, .input-group-sm > .input-group-btn > .form-control-static.action, .input-group-sm > .input-group-btn > .form-control-static.deploy-dropdown {
     padding-left: 0;
     padding-right: 0; }
@@ -2542,7 +2560,8 @@ fieldset[disabled] .checkbox label {
 .input-sm, .input-group-sm > .form-control,
 .input-group-sm > input.text,
 .input-group-sm > select,
-.input-group-sm > .input-group-addon,
+.input-group-sm > textarea,
+.readonly .input-group-sm > span.readonly, .input-group-sm > .input-group-addon,
 .input-group-sm > .input-group-btn > .btn, .input-group-sm > .input-group-btn > .action, .input-group-sm > .input-group-btn > .deploy-dropdown {
   height: 30px;
   padding: 5px 10px;
@@ -2559,6 +2578,7 @@ select.input-sm, .input-group-sm > select.form-control,
 
 textarea.input-sm,
 .input-group-sm > textarea.form-control,
+.input-group-sm > textarea,
 .input-group-sm > textarea.input-group-addon,
 .input-group-sm > .input-group-btn > textarea.btn,
 .input-group-sm > .input-group-btn > textarea.action,
@@ -2567,7 +2587,7 @@ select[multiple].input-sm, .input-group-sm > select[multiple],
 .input-group-sm > .input-group-btn > select[multiple].btn, .input-group-sm > .input-group-btn > select[multiple].action, .input-group-sm > .input-group-btn > select[multiple].deploy-dropdown {
   height: auto; }
 
-.form-group-sm .form-control, .form-group-sm input.text, .form-group-sm select {
+.form-group-sm .form-control, .form-group-sm input.text, .form-group-sm select, .form-group-sm textarea, .form-group-sm .readonly span.readonly, .readonly .form-group-sm span.readonly {
   height: 30px;
   padding: 5px 10px;
   font-size: 12px;
@@ -2579,6 +2599,7 @@ select[multiple].input-sm, .input-group-sm > select[multiple],
   line-height: 30px; }
 
 .form-group-sm textarea.form-control,
+.form-group-sm textarea,
 .form-group-sm select[multiple].form-control, .form-group-sm select[multiple] {
   height: auto; }
 
@@ -2592,7 +2613,8 @@ select[multiple].input-sm, .input-group-sm > select[multiple],
 .input-lg, .input-group-lg > .form-control,
 .input-group-lg > input.text,
 .input-group-lg > select,
-.input-group-lg > .input-group-addon,
+.input-group-lg > textarea,
+.readonly .input-group-lg > span.readonly, .input-group-lg > .input-group-addon,
 .input-group-lg > .input-group-btn > .btn, .input-group-lg > .input-group-btn > .action, .input-group-lg > .input-group-btn > .deploy-dropdown {
   height: 46px;
   padding: 10px 16px;
@@ -2609,6 +2631,7 @@ select.input-lg, .input-group-lg > select.form-control,
 
 textarea.input-lg,
 .input-group-lg > textarea.form-control,
+.input-group-lg > textarea,
 .input-group-lg > textarea.input-group-addon,
 .input-group-lg > .input-group-btn > textarea.btn,
 .input-group-lg > .input-group-btn > textarea.action,
@@ -2617,7 +2640,7 @@ select[multiple].input-lg, .input-group-lg > select[multiple],
 .input-group-lg > .input-group-btn > select[multiple].btn, .input-group-lg > .input-group-btn > select[multiple].action, .input-group-lg > .input-group-btn > select[multiple].deploy-dropdown {
   height: auto; }
 
-.form-group-lg .form-control, .form-group-lg input.text, .form-group-lg select {
+.form-group-lg .form-control, .form-group-lg input.text, .form-group-lg select, .form-group-lg textarea, .form-group-lg .readonly span.readonly, .readonly .form-group-lg span.readonly {
   height: 46px;
   padding: 10px 16px;
   font-size: 18px;
@@ -2629,6 +2652,7 @@ select[multiple].input-lg, .input-group-lg > select[multiple],
   line-height: 46px; }
 
 .form-group-lg textarea.form-control,
+.form-group-lg textarea,
 .form-group-lg select[multiple].form-control, .form-group-lg select[multiple] {
   height: auto; }
 
@@ -2641,7 +2665,7 @@ select[multiple].input-lg, .input-group-lg > select[multiple],
 
 .has-feedback {
   position: relative; }
-  .has-feedback .form-control, .has-feedback input.text, .has-feedback select {
+  .has-feedback .form-control, .has-feedback input.text, .has-feedback select, .has-feedback textarea, .has-feedback .readonly span.readonly, .readonly .has-feedback span.readonly {
     padding-right: 42.5px; }
 
 .form-control-feedback {
@@ -2660,12 +2684,13 @@ select[multiple].input-lg, .input-group-lg > select[multiple],
 .input-group-lg > .form-control + .form-control-feedback,
 .input-group-lg > input.text + .form-control-feedback,
 .input-group-lg > select + .form-control-feedback,
-.input-group-lg > .input-group-addon + .form-control-feedback,
+.input-group-lg > textarea + .form-control-feedback,
+.readonly .input-group-lg > span.readonly + .form-control-feedback, .input-group-lg > .input-group-addon + .form-control-feedback,
 .input-group-lg > .input-group-btn > .btn + .form-control-feedback,
 .input-group-lg > .input-group-btn > .action + .form-control-feedback,
 .input-group-lg > .input-group-btn > .deploy-dropdown + .form-control-feedback,
 .input-group-lg + .form-control-feedback,
-.form-group-lg .form-control + .form-control-feedback, .form-group-lg input.text + .form-control-feedback, .form-group-lg select + .form-control-feedback {
+.form-group-lg .form-control + .form-control-feedback, .form-group-lg input.text + .form-control-feedback, .form-group-lg select + .form-control-feedback, .form-group-lg textarea + .form-control-feedback, .form-group-lg .readonly span.readonly + .form-control-feedback, .readonly .form-group-lg span.readonly + .form-control-feedback {
   width: 46px;
   height: 46px;
   line-height: 46px; }
@@ -2674,12 +2699,13 @@ select[multiple].input-lg, .input-group-lg > select[multiple],
 .input-group-sm > .form-control + .form-control-feedback,
 .input-group-sm > input.text + .form-control-feedback,
 .input-group-sm > select + .form-control-feedback,
-.input-group-sm > .input-group-addon + .form-control-feedback,
+.input-group-sm > textarea + .form-control-feedback,
+.readonly .input-group-sm > span.readonly + .form-control-feedback, .input-group-sm > .input-group-addon + .form-control-feedback,
 .input-group-sm > .input-group-btn > .btn + .form-control-feedback,
 .input-group-sm > .input-group-btn > .action + .form-control-feedback,
 .input-group-sm > .input-group-btn > .deploy-dropdown + .form-control-feedback,
 .input-group-sm + .form-control-feedback,
-.form-group-sm .form-control + .form-control-feedback, .form-group-sm input.text + .form-control-feedback, .form-group-sm select + .form-control-feedback {
+.form-group-sm .form-control + .form-control-feedback, .form-group-sm input.text + .form-control-feedback, .form-group-sm select + .form-control-feedback, .form-group-sm textarea + .form-control-feedback, .form-group-sm .readonly span.readonly + .form-control-feedback, .readonly .form-group-sm span.readonly + .form-control-feedback {
   width: 30px;
   height: 30px;
   line-height: 30px; }
@@ -2697,11 +2723,11 @@ select[multiple].input-lg, .input-group-lg > select[multiple],
 .has-success.checkbox-inline label {
   color: #3c763d; }
 
-.has-success .form-control, .has-success input.text, .has-success select {
+.has-success .form-control, .has-success input.text, .has-success select, .has-success textarea, .has-success .readonly span.readonly, .readonly .has-success span.readonly {
   border-color: #3c763d;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); }
-  .has-success .form-control:focus, .has-success input.text:focus, .has-success select:focus {
+  .has-success .form-control:focus, .has-success input.text:focus, .has-success select:focus, .has-success textarea:focus, .has-success .readonly span.readonly:focus, .readonly .has-success span.readonly:focus {
     border-color: #2b542c;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #67b168;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #67b168; }
@@ -2727,11 +2753,11 @@ select[multiple].input-lg, .input-group-lg > select[multiple],
 .has-warning.checkbox-inline label {
   color: #8a6d3b; }
 
-.has-warning .form-control, .has-warning input.text, .has-warning select {
+.has-warning .form-control, .has-warning input.text, .has-warning select, .has-warning textarea, .has-warning .readonly span.readonly, .readonly .has-warning span.readonly {
   border-color: #8a6d3b;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); }
-  .has-warning .form-control:focus, .has-warning input.text:focus, .has-warning select:focus {
+  .has-warning .form-control:focus, .has-warning input.text:focus, .has-warning select:focus, .has-warning textarea:focus, .has-warning .readonly span.readonly:focus, .readonly .has-warning span.readonly:focus {
     border-color: #66512c;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #c0a16b;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #c0a16b; }
@@ -2757,11 +2783,11 @@ select[multiple].input-lg, .input-group-lg > select[multiple],
 .has-error.checkbox-inline label {
   color: #a94442; }
 
-.has-error .form-control, .has-error input.text, .has-error select {
+.has-error .form-control, .has-error input.text, .has-error select, .has-error textarea, .has-error .readonly span.readonly, .readonly .has-error span.readonly {
   border-color: #a94442;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); }
-  .has-error .form-control:focus, .has-error input.text:focus, .has-error select:focus {
+  .has-error .form-control:focus, .has-error input.text:focus, .has-error select:focus, .has-error textarea:focus, .has-error .readonly span.readonly:focus, .readonly .has-error span.readonly:focus {
     border-color: #843534;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ce8483;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ce8483; }
@@ -2791,7 +2817,7 @@ select[multiple].input-lg, .input-group-lg > select[multiple],
     display: inline-block;
     margin-bottom: 0;
     vertical-align: middle; }
-  .form-inline .form-control, .form-inline input.text, .form-inline select {
+  .form-inline .form-control, .form-inline input.text, .form-inline select, .form-inline textarea, .form-inline .readonly span.readonly, .readonly .form-inline span.readonly {
     display: inline-block;
     width: auto;
     vertical-align: middle; }
@@ -2802,9 +2828,9 @@ select[multiple].input-lg, .input-group-lg > select[multiple],
     vertical-align: middle; }
     .form-inline .input-group .input-group-addon,
     .form-inline .input-group .input-group-btn,
-    .form-inline .input-group .form-control, .form-inline .input-group input.text, .form-inline .input-group select {
+    .form-inline .input-group .form-control, .form-inline .input-group input.text, .form-inline .input-group select, .form-inline .input-group textarea, .form-inline .input-group .readonly span.readonly, .readonly .form-inline .input-group span.readonly {
       width: auto; }
-  .form-inline .input-group > .form-control, .form-inline .input-group > input.text, .form-inline .input-group > select {
+  .form-inline .input-group > .form-control, .form-inline .input-group > input.text, .form-inline .input-group > select, .form-inline .input-group > textarea, .form-inline .readonly .input-group > span.readonly, .readonly .form-inline .input-group > span.readonly {
     width: 100%; }
   .form-inline .control-label, .form-inline label {
     margin-bottom: 0;
@@ -3856,7 +3882,7 @@ tbody.collapse.in {
     float: none;
     padding-left: 0;
     padding-right: 0; }
-  .input-group .form-control, .input-group input.text, .input-group select {
+  .input-group .form-control, .input-group input.text, .input-group select, .input-group textarea, .input-group .readonly span.readonly, .readonly .input-group span.readonly {
     position: relative;
     z-index: 2;
     float: left;
@@ -3865,11 +3891,11 @@ tbody.collapse.in {
 
 .input-group-addon,
 .input-group-btn,
-.input-group .form-control, .input-group input.text, .input-group select {
+.input-group .form-control, .input-group input.text, .input-group select, .input-group textarea, .input-group .readonly span.readonly, .readonly .input-group span.readonly {
   display: table-cell; }
   .input-group-addon:not(:first-child):not(:last-child),
   .input-group-btn:not(:first-child):not(:last-child),
-  .input-group .form-control:not(:first-child):not(:last-child), .input-group input.text:not(:first-child):not(:last-child), .input-group select:not(:first-child):not(:last-child) {
+  .input-group .form-control:not(:first-child):not(:last-child), .input-group input.text:not(:first-child):not(:last-child), .input-group select:not(:first-child):not(:last-child), .input-group textarea:not(:first-child):not(:last-child), .input-group .readonly span.readonly:not(:first-child):not(:last-child), .readonly .input-group span.readonly:not(:first-child):not(:last-child) {
     border-radius: 0; }
 
 .input-group-addon,
@@ -3888,12 +3914,12 @@ tbody.collapse.in {
   background-color: #eeeeee;
   border: 1px solid #e6e6e6;
   border-radius: 2px; }
-  .input-group-addon.input-sm, .input-group-sm > .input-group-addon,
+  .input-group-addon.input-sm, .readonly .input-group-sm > span.input-group-addon.readonly, .input-group-sm > .input-group-addon,
   .input-group-sm > .input-group-btn > .input-group-addon.btn, .input-group-sm > .input-group-btn > .input-group-addon.action, .input-group-sm > .input-group-btn > .input-group-addon.deploy-dropdown {
     padding: 5px 10px;
     font-size: 12px;
     border-radius: 0px; }
-  .input-group-addon.input-lg, .input-group-lg > .input-group-addon,
+  .input-group-addon.input-lg, .readonly .input-group-lg > span.input-group-addon.readonly, .input-group-lg > .input-group-addon,
   .input-group-lg > .input-group-btn > .input-group-addon.btn, .input-group-lg > .input-group-btn > .input-group-addon.action, .input-group-lg > .input-group-btn > .input-group-addon.deploy-dropdown {
     padding: 10px 16px;
     font-size: 18px;
@@ -3905,7 +3931,9 @@ tbody.collapse.in {
 .input-group .form-control:first-child,
 .input-group input.text:first-child,
 .input-group select:first-child,
-.input-group-addon:first-child,
+.input-group textarea:first-child,
+.input-group .readonly span.readonly:first-child,
+.readonly .input-group span.readonly:first-child, .input-group-addon:first-child,
 .input-group-btn:first-child > .btn,
 .input-group-btn:first-child > .action,
 .input-group-btn:first-child > .deploy-dropdown,
@@ -3926,7 +3954,9 @@ tbody.collapse.in {
 .input-group .form-control:last-child,
 .input-group input.text:last-child,
 .input-group select:last-child,
-.input-group-addon:last-child,
+.input-group textarea:last-child,
+.input-group .readonly span.readonly:last-child,
+.readonly .input-group span.readonly:last-child, .input-group-addon:last-child,
 .input-group-btn:last-child > .btn,
 .input-group-btn:last-child > .action,
 .input-group-btn:last-child > .deploy-dropdown,
@@ -4303,7 +4333,7 @@ tbody.collapse.in {
       display: inline-block;
       margin-bottom: 0;
       vertical-align: middle; }
-    .navbar-form .form-control, .navbar-form input.text, .navbar-form select {
+    .navbar-form .form-control, .navbar-form input.text, .navbar-form select, .navbar-form textarea, .navbar-form .readonly span.readonly, .readonly .navbar-form span.readonly {
       display: inline-block;
       width: auto;
       vertical-align: middle; }
@@ -4314,9 +4344,9 @@ tbody.collapse.in {
       vertical-align: middle; }
       .navbar-form .input-group .input-group-addon,
       .navbar-form .input-group .input-group-btn,
-      .navbar-form .input-group .form-control, .navbar-form .input-group input.text, .navbar-form .input-group select {
+      .navbar-form .input-group .form-control, .navbar-form .input-group input.text, .navbar-form .input-group select, .navbar-form .input-group textarea, .navbar-form .input-group .readonly span.readonly, .readonly .navbar-form .input-group span.readonly {
         width: auto; }
-    .navbar-form .input-group > .form-control, .navbar-form .input-group > input.text, .navbar-form .input-group > select {
+    .navbar-form .input-group > .form-control, .navbar-form .input-group > input.text, .navbar-form .input-group > select, .navbar-form .input-group > textarea, .navbar-form .readonly .input-group > span.readonly, .readonly .navbar-form .input-group > span.readonly {
       width: 100%; }
     .navbar-form .control-label, .navbar-form label {
       margin-bottom: 0;
@@ -8860,15 +8890,35 @@ button.close {
 .field.text,
 .field.dropdown {
   margin-left: 0;
-  margin-right: 0; }
+  margin-right: 0;
+  margin-bottom: 0; }
 
 .btn, .action, .deploy-dropdown {
   margin-bottom: 20px; }
+
+.readonly span.readonly {
+  color: #888;
+  line-height: 36px; }
+
+.textarea {
+  transition: height 0.6s;
+  -webkit-transition: height 0.6s;
+  -moz-transition: height 0.6s;
+  -ms-transition: height 0.6s;
+  -o-transition: height 0.6s; }
+  .textarea:focus {
+    height: 100px; }
 
 .field.dataarchivefile {
   margin-bottom: 15px; }
   .field.dataarchivefile label {
     position: relative; }
+
+.field + .field {
+  margin-top: 25px; }
+
+fieldset + .Actions {
+  margin-top: 35px; }
 
 #MemberLoginForm_LoginForm input.text, #MemberLoginForm_LostPasswordForm input.text {
   font-size: 20px !important; }
@@ -8926,7 +8976,9 @@ button.close {
   position: relative; }
 
 .form-control, input.text,
-select {
+select,
+textarea,
+.readonly span.readonly {
   display: block;
   height: 36px;
   width: 100%;
@@ -8939,7 +8991,7 @@ select {
   box-shadow: none;
   border-bottom: 1px solid #e6e6e6; }
 
-.input-group .form-control, .input-group input.text, .input-group select {
+.input-group .form-control, .input-group input.text, .input-group select, .input-group textarea, .input-group .readonly span.readonly, .readonly .input-group span.readonly {
   position: relative;
   z-index: inherit;
   float: inherit;
@@ -8947,15 +8999,16 @@ select {
   margin-bottom: 0; }
 
 .form-control:focus, input.text:focus,
-select:focus {
+select:focus,
+textarea:focus,
+.readonly span.readonly:focus {
   border-color: #646464;
   outline: none;
   box-shadow: none; }
 
 /* -- label styles ---------------------------------- */
 label {
-  color: #999;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 300;
   color: #6a8ea5;
   transition: 0.2s ease all;
@@ -8979,19 +9032,29 @@ label {
 
 /* active state */
 .form-control:focus ~ .float-label, input.text:focus ~ .float-label,
-select:focus ~ .float-label, .form-control:valid ~ .float-label, input.text:valid ~ .float-label,
-select:valid ~ .float-label {
+select:focus ~ .float-label,
+textarea:focus ~ .float-label,
+.readonly span.readonly:focus ~ .float-label, .form-control:valid ~ .float-label, input.text:valid ~ .float-label,
+select:valid ~ .float-label,
+textarea:valid ~ .float-label,
+.readonly span.readonly:valid ~ .float-label {
   top: -18px;
   font-size: 12px; }
 
 /* input colors ---- */
 .form-control:focus ~ label, input.text:focus ~ label,
-select:focus ~ label {
+select:focus ~ label,
+textarea:focus ~ label,
+.readonly span.readonly:focus ~ label {
   color: #03a9f4; }
 
 .form-control:focus ~ .form-bar:before, input.text:focus ~ .form-bar:before,
-select:focus ~ .form-bar:before, .form-control:focus ~ .form-bar:after, input.text:focus ~ .form-bar:after,
-select:focus ~ .form-bar:after {
+select:focus ~ .form-bar:before,
+textarea:focus ~ .form-bar:before,
+.readonly span.readonly:focus ~ .form-bar:before, .form-control:focus ~ .form-bar:after, input.text:focus ~ .form-bar:after,
+select:focus ~ .form-bar:after,
+textarea:focus ~ .form-bar:after,
+.readonly span.readonly:focus ~ .form-bar:after {
   background: #03a9f4; }
 
 /* help-block */
@@ -9022,7 +9085,7 @@ select:focus ~ .form-bar:after {
 @media (min-width: 768px) {
   .form-inline .form-group, .form-inline .field.text, .form-inline .field.dropdown {
     margin-top: 16px; }
-  .input-group-btn, .input-group .form-control, .input-group input.text, .input-group select, .input-group-addon, .form-inline .input-group {
+  .input-group-btn, .input-group .form-control, .input-group input.text, .input-group select, .input-group textarea, .input-group .readonly span.readonly, .readonly .input-group span.readonly, .input-group-addon, .form-inline .input-group {
     display: inline-block; }
   .input-group {
     width: auto; } }
@@ -9051,8 +9114,12 @@ select:focus ~ .form-bar:after {
 
 /* active state */
 .form-control:focus ~ .form-bar:before, input.text:focus ~ .form-bar:before,
-select:focus ~ .form-bar:before, .form-control:focus ~ .form-bar:after, input.text:focus ~ .form-bar:after,
-select:focus ~ .form-bar:after {
+select:focus ~ .form-bar:before,
+textarea:focus ~ .form-bar:before,
+.readonly span.readonly:focus ~ .form-bar:before, .form-control:focus ~ .form-bar:after, input.text:focus ~ .form-bar:after,
+select:focus ~ .form-bar:after,
+textarea:focus ~ .form-bar:after,
+.readonly span.readonly:focus ~ .form-bar:after {
   width: 50%; }
 
 /* -- highlighter styles ------------------------------ */
@@ -9067,7 +9134,9 @@ select:focus ~ .form-bar:after {
 
 /* active state */
 .form-control:focus ~ .form-highlight, input.text:focus ~ .form-highlight,
-select:focus ~ .form-highlight {
+select:focus ~ .form-highlight,
+textarea:focus ~ .form-highlight,
+.readonly span.readonly:focus ~ .form-highlight {
   -webkit-animation: inputHighlighter 0.3s ease;
   -moz-animation: inputHighlighter 0.3s ease;
   animation: inputHighlighter 0.3s ease; }
@@ -9102,8 +9171,12 @@ select:focus ~ .form-highlight {
   font-size: 16px; }
 
 .form-control[disabled], input[disabled].text,
-select[disabled], .form-control[readonly], input[readonly].text,
-select[readonly], fieldset[disabled] .form-control, fieldset[disabled] input.text, fieldset[disabled] select {
+select[disabled],
+textarea[disabled],
+.readonly span[disabled].readonly, .form-control[readonly], input[readonly].text,
+select[readonly],
+textarea[readonly],
+.readonly span[readonly].readonly, fieldset[disabled] .form-control, fieldset[disabled] input.text, fieldset[disabled] select, fieldset[disabled] textarea, fieldset[disabled] .readonly span.readonly, .readonly fieldset[disabled] span.readonly {
   background-color: transparent;
   border-bottom-style: dashed; }
 
@@ -9506,3 +9579,6 @@ ul {
 
 .push-lg {
   margin-bottom: 40px; }
+
+.alerts-approval-form {
+  margin-top: 20px; }
