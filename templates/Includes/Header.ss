@@ -3,16 +3,12 @@
 </div>
 
 <div class="side-content">
-	<%--
-	<ul class="nav nav-stacked">
-		<li<% if $CurrentProject %><% else %> class="active"<% end_if %>><a href="naut/projects">Stacks</a></li>
-	</ul> --%>
 
 	<ul class="nav nav-stacked">
 
 		<% if $DNProjectList %>
 			<li class="nav-main-heading">Stacks</li>
-			<% loop $Navigation %>
+			<% loop $Navigation(5) %>
 				<li class="active">
 					<a class="nav-submenu<% if $IsActive %> open<% end_if %>" role="button" data-toggle="collapse" href="#collapseExample-$Pos" aria-controls="collapseExample-$Pos">
   						<span class="plat-icon icon-stack"></span>$Project.Name<span class="icon-arrow"></span>
@@ -28,6 +24,12 @@
 				</li>
 
 			<% end_loop %>
+
+			<% if $DNProjectList.count > 5 %>
+				<li class="">
+					<a href="{$BaseHref}naut/projects">View more&hellip;</a>
+                </li>
+			<% end_if %>
 		<% end_if %>
 
 		<li class="nav-main-heading">Support</li>

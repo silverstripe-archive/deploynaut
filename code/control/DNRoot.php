@@ -716,20 +716,43 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 *
 	 * @return ArrayList
 	 */
-	public function Navigation() {
+	public function Navigation($limit = 5) {
 		$navigation = new ArrayList();
 
 		$currentProject = $this->getCurrentProject();
 
 		$projects = $this->DNProjectList();
 		if($projects->count() > 0) {
-			foreach($projects as $project) {
+			$activeProject = false;
+
+			if($limit > 0) {
+				$limitedProjects = $projects->limit($limit);
+			} else {
+				$limitedProjects = $projects;
+			}
+
+			foreach($limitedProjects as $project) {
+				$isActive = $currentProject && $currentProject->ID == $project->ID;
+				if($isActive) {
+					$activeProject = true;
+				}
+
 				$navigation->push(array(
 					'Project' => $project,
 					'IsActive' => $currentProject && $currentProject->ID == $project->ID,
 				));
 			}
+
+			// Ensure the current project is in the list
+			if(!$activeProject && $currentProject) {
+				$navigation->unshift(array(
+					'Project' => $currentProject,
+					'IsActive' => true,
+				));
+				$navigation->pop();
+			}
 		}
+
 
 		return $navigation;
 	}
