@@ -62,8 +62,26 @@ label
 	color: #fff
 
 
+// Select dropdown
+.select
+.select2-container .select2-selection--single
+	height: 35px
+	font-size: 16px
 
+	.select2-selection__rendered
+		padding: 3px 0
 
+.select2-container--default .select2-selection--single
+	border-radius: 0;
+	border-color: transparent
+	border-bottom: 1px solid $input-border
+
+	&:active,
+	&:focus
+		border-color-bottom: $input-border-focus;
+
+	.select2-selection__arrow
+		margin-top: 2px;
 
 //FORMS GENERAL
 /* -- Input styles ---------------------------------- */
@@ -86,7 +104,6 @@ label
 	background-color: transparent
 	box-shadow: none
 	border-bottom: 1px solid $input-border
-	//box-shadow: 0 1px 0 #e6e6e6
 
 .input-group .form-control
 	position: relative;
@@ -97,7 +114,6 @@ label
 
 .form-control:focus 
 	border-color: $input-border-focus;
-	//box-shadow: 0 2px 0 #e6e6e6
 	outline: none;
 	box-shadow: none;
 

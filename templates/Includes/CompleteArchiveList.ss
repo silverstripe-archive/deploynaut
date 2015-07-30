@@ -91,11 +91,11 @@ If you would like to upload files from your computer to a new snapshot, click 'U
 		<% end_if %>
 	<% else %>
 		<div class="alert alert-info">
-			There are currently no archived files
+			<i class="fa fa-info-circle"> </i>There are currently no archived files
 		</div>
 	<% end_if %>
 <% else %>
 	<div class="alert-warning">
-		There are currently no archived files that you can access
+		<i class="fa fa-exclamation-circle"></i>There are currently no archived files that you can access
 	</div>
 <% end_if %>

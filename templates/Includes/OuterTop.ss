@@ -32,7 +32,8 @@
     <% if $CurrentUser %>
     <header class="header-navbar">
         <ul class="nav pull-right">
-            <li><a href="Security/logout">Log out</a></li>
+            <li><a href="Security/logout"><i class="fa fa-sign-out"></i>
+ Log out</a></li>
         </ul>
     </header>
     <% end_if %>

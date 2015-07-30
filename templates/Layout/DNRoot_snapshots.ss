@@ -23,7 +23,7 @@
 			<% if $HasExceededDiskQuota %>
 				<p class="alert alert-danger">You have exceeded the total quota of $DiskQuotaMB MB. You will need to delete old snapshots in order to create new ones.</p>
 			<% else %>
-				<p class="alert alert-special">You have used $UsedQuotaMB MB out of total quota $DiskQuotaMB MB quota across all environments for this project.</p>
+				<p class="alert alert-special"><i class="fa fa-info-circle"> </i>You have used $UsedQuotaMB MB out of total quota $DiskQuotaMB MB quota across all environments for this project.</p>
 			<% end_if %>
 		<% end_if %>
 	<% end_with %>
