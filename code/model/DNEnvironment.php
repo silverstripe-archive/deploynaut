@@ -212,7 +212,7 @@ class DNEnvironment extends DataObject {
 
 	public function getBareURL() {
 		$url = parse_url($this->URL);
-		return strtolower($url['host']);
+		if (isset($url['host'])) return strtolower($url['host']);
 	}
 
 	/**

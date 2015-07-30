@@ -673,6 +673,8 @@ class DNProject extends DataObject {
 	 */
 	public function getRepositoryInterfaceName() {
 		$url = parse_url($this->CVSPath);
+		if (!isset($url['host'])) return;
+
 		$interfaces = $this->config()->repository_interfaces;
 		$host = strtolower($url['host']);
 		$components = explode('.', $host);
@@ -689,6 +691,8 @@ class DNProject extends DataObject {
 	 */
 	public function getRepositoryInterfaceURL() {
 		$url = parse_url($this->CVSPath);
+		if (!isset($url['host']) || !isset($url['path'])) return;
+
 		$interfaces = $this->config()->repository_interfaces;
 		$host = strtolower($url['host']);
 
