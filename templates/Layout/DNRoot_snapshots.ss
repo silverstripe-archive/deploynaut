@@ -7,10 +7,10 @@
 		<li class="active"><a href="#">Overview</a></li>
 
 		<% if $CurrentProject.canBackup %>
-		<li><a href="$CurrentProject.Link('createsnapshot')">Create Snapshot</a></li>
+			<li><a href="$CurrentProject.Link('createsnapshot')">Create Snapshot</a></li>
 		<% end_if %>
 		<% if $CurrentProject.canUploadArchive %>
-		<li><a href="$CurrentProject.Link('uploadsnapshot')">Upload Snapshot</a></li>
+			<li><a href="$CurrentProject.Link('uploadsnapshot')">Upload Snapshot</a></li>
 		<% end_if %>
 		<li><a href="$CurrentProject.Link('snapshotslog')">Log</a></li>
 	</ul>
@@ -21,9 +21,20 @@
 	<% with $CurrentProject %>
 		<% if $HasDiskQuota %>
 			<% if $HasExceededDiskQuota %>
-				<p class="alert alert-danger">You have exceeded the total quota of $DiskQuotaMB MB. You will need to delete old snapshots in order to create new ones.</p>
+				<div class="disk-quota danger">
+                    <i class="fa fa-exclamation-circle"></i>
+					The project has exceeded the total quota of $DiskQuotaMB MB. Delete old snapshots to free up space.
+				</div>
+			<% else_if $DiskQuotaUsagePercent > 85 %>
+				<div class="disk-quota warning">
+                    <i class="fa fa-exclamation-triangle"></i>
+					You have used $UsedQuotaMB MB out of your $DiskQuotaMB MB quota across all environments for this project.
+				</div>
 			<% else %>
-				<p class="alert alert-special"><i class="fa fa-info-circle"> </i>You have used $UsedQuotaMB MB out of total quota $DiskQuotaMB MB quota across all environments for this project.</p>
+				<div class="disk-quota success">
+					<i class="fa fa-info-circle"></i>
+					You have used $UsedQuotaMB MB out of your $DiskQuotaMB MB quota across all environments for this project.
+				</div>
 			<% end_if %>
 		<% end_if %>
 	<% end_with %>
@@ -32,5 +43,4 @@
 
 	<% include PendingArchiveList %>
 
-	<% include SnapshotImportInstructions %>
 </div>

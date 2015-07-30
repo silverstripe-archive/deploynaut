@@ -4846,20 +4846,21 @@ a.thumbnail:focus,
 a.thumbnail.active {
   border-color: #3aaef9; }
 
-.alert {
+.alert, .disk-quota {
   padding: 15px;
   margin-bottom: 20px;
   border: 1px solid transparent;
   border-radius: 2px; }
-  .alert h4 {
+  .alert h4, .disk-quota h4 {
     margin-top: 0;
     color: inherit; }
-  .alert .alert-link {
+  .alert .alert-link, .disk-quota .alert-link {
     font-weight: bold; }
   .alert > p,
-  .alert > ul {
+  .disk-quota > p,
+  .alert > ul, .disk-quota > ul {
     margin-bottom: 0; }
-  .alert > p + p {
+  .alert > p + p, .disk-quota > p + p {
     margin-top: 5px; }
 
 .alert-dismissable, .alert-dismissible {
@@ -4871,51 +4872,51 @@ a.thumbnail.active {
     color: inherit; }
 
 .alert-success, .alert.alert-good,
-.alert.Complete {
+.alert-good.disk-quota, .alert.Complete, .Complete.disk-quota, .disk-quota.success {
   background-color: #dff0d8;
   border-color: #d6e9c6;
   color: #3c763d; }
   .alert-success hr, .alert.alert-good hr,
-  .alert.Complete hr {
+  .alert-good.disk-quota hr, .alert.Complete hr, .Complete.disk-quota hr, .disk-quota.success hr {
     border-top-color: #c9e2b3; }
   .alert-success .alert-link, .alert.alert-good .alert-link,
-  .alert.Complete .alert-link {
+  .alert-good.disk-quota .alert-link, .alert.Complete .alert-link, .Complete.disk-quota .alert-link, .disk-quota.success .alert-link {
     color: #2b542c; }
 
 .alert-info, .alert.Started,
-.alert.Queued,
-.alert.Running {
+.Started.disk-quota, .alert.Queued,
+.Queued.disk-quota, .alert.Running, .Running.disk-quota {
   background-color: #edf6fd;
   border-color: #cdedf9;
   color: #3aaef9; }
   .alert-info hr, .alert.Started hr,
-  .alert.Queued hr,
-  .alert.Running hr {
+  .Started.disk-quota hr, .alert.Queued hr,
+  .Queued.disk-quota hr, .alert.Running hr, .Running.disk-quota hr {
     border-top-color: #b6e5f7; }
   .alert-info .alert-link, .alert.Started .alert-link,
-  .alert.Queued .alert-link,
-  .alert.Running .alert-link {
+  .Started.disk-quota .alert-link, .alert.Queued .alert-link,
+  .Queued.disk-quota .alert-link, .alert.Running .alert-link, .Running.disk-quota .alert-link {
     color: #099af7; }
 
-.alert-warning, .alert.Invalid {
+.alert-warning, .alert.Invalid, .Invalid.disk-quota, .disk-quota.warning {
   background-color: #fcf8e3;
   border-color: #faebcc;
   color: #8a6d3b; }
-  .alert-warning hr, .alert.Invalid hr {
+  .alert-warning hr, .alert.Invalid hr, .Invalid.disk-quota hr, .disk-quota.warning hr {
     border-top-color: #f7e1b5; }
-  .alert-warning .alert-link, .alert.Invalid .alert-link {
+  .alert-warning .alert-link, .alert.Invalid .alert-link, .Invalid.disk-quota .alert-link, .disk-quota.warning .alert-link {
     color: #66512c; }
 
 .alert-danger, .alert.alert-error,
-.alert.Failed {
+.alert-error.disk-quota, .alert.Failed, .Failed.disk-quota, .disk-quota.danger {
   background-color: #f2dede;
   border-color: #ebccd1;
   color: #a94442; }
   .alert-danger hr, .alert.alert-error hr,
-  .alert.Failed hr {
+  .alert-error.disk-quota hr, .alert.Failed hr, .Failed.disk-quota hr, .disk-quota.danger hr {
     border-top-color: #e4b9c0; }
   .alert-danger .alert-link, .alert.alert-error .alert-link,
-  .alert.Failed .alert-link {
+  .alert-error.disk-quota .alert-link, .alert.Failed .alert-link, .Failed.disk-quota .alert-link, .disk-quota.danger .alert-link {
     color: #843534; }
 
 @-webkit-keyframes progress-bar-stripes {
@@ -9148,7 +9149,7 @@ ul {
 .font-w600 {
   font-weight: 600; }
 
-.alert .fa, .alert .deploy-dropdown .status-icon, .deploy-dropdown .alert .status-icon {
+.alert .fa, .disk-quota .fa, .alert .deploy-dropdown .status-icon, .deploy-dropdown .alert .status-icon, .disk-quota .deploy-dropdown .status-icon, .deploy-dropdown .disk-quota .status-icon {
   margin-right: 4px; }
 
 .progress-bar {
@@ -9187,6 +9188,9 @@ ul {
   .upload-close:hover {
     color: #444;
     background-color: #d7d7d7; }
+
+.disk-quota {
+  margin: -30px -30px 0; }
 
 .sidebar {
   width: 230px;
