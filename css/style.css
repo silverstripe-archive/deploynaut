@@ -9145,10 +9145,10 @@ button.close {
 fieldset + .Actions {
   margin-top: 35px; }
 
-#MemberLoginForm_LoginForm input.text, #MemberLoginForm_LostPasswordForm input.text {
+#MemberLoginForm_LoginForm input.text, #MemberLoginForm_LostPasswordForm input.text, #LDAPLoginForm_LoginForm input.text {
   font-size: 20px !important; }
 
-#MemberLoginForm_LoginForm label, #MemberLoginForm_LostPasswordForm label {
+#MemberLoginForm_LoginForm label, #MemberLoginForm_LostPasswordForm label, #LDAPLoginForm_LoginForm label {
   position: relative;
   top: 0;
   margin-bottom: 0;
@@ -9160,12 +9160,18 @@ fieldset + .Actions {
 #MemberLoginForm_LoginForm .checkbox-inline input[type="checkbox"], #MemberLoginForm_LostPasswordForm .radio input[type="radio"],
 #MemberLoginForm_LostPasswordForm .radio-inline input[type="radio"],
 #MemberLoginForm_LostPasswordForm .checkbox input[type="checkbox"],
-#MemberLoginForm_LostPasswordForm .checkbox-inline input[type="checkbox"] {
+#MemberLoginForm_LostPasswordForm .checkbox-inline input[type="checkbox"], #LDAPLoginForm_LoginForm .radio input[type="radio"],
+#LDAPLoginForm_LoginForm .radio-inline input[type="radio"],
+#LDAPLoginForm_LoginForm .checkbox input[type="checkbox"],
+#LDAPLoginForm_LoginForm .checkbox-inline input[type="checkbox"] {
   margin-left: 0; }
 
-#MemberLoginForm_LoginForm .field.checkbox, #MemberLoginForm_LostPasswordForm .field.checkbox {
+#MemberLoginForm_LoginForm .field.checkbox, #MemberLoginForm_LostPasswordForm .field.checkbox, #LDAPLoginForm_LoginForm .field.checkbox {
   margin-bottom: 30px;
   margin-top: 30px; }
+
+#MemberLoginForm_LoginForm fieldset + .Actions, #MemberLoginForm_LostPasswordForm fieldset + .Actions, #LDAPLoginForm_LoginForm fieldset + .Actions {
+  margin-top: 0; }
 
 .alert-special {
   background-color: #3aaef9;
