@@ -148,6 +148,19 @@ class DNProject extends DataObject {
 	}
 
 	/**
+	 * Returns the current disk quota usage as a percentage
+	 *
+	 * @return int
+	 */
+	public function DiskQuotaUsagePercent() {
+		$quota = $this->getDiskQuotaMB();
+		if($quota > 0) {
+			return $this->getUsedQuotaMB() * 100 / $quota;
+		}
+		return 100;
+	}
+
+	/**
 	 * Get the menu to be shown on projects
 	 *
 	 * @return ArrayList
