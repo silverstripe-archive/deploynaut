@@ -206,18 +206,21 @@
 		 * Extend a specific target
 		 */
 		$('.extended-trigger').click(function(e) {
-			var $el = $($(this).data('extendedTarget')), $container = $($(this).data('extendedContainer'));
+			var $el = $($(this).data('extendedTarget'));
+			var $container = $($(this).data('extendedContainer'));
 
 			if($el.is(':empty')) {
 				$container.data('href', $(this).attr('href'));
+				$container.addClass('loading');
+
 				$el.load($(this).attr('href'), function() {
 					$container.removeClass('loading');
+					$el.removeClass('hide');
+					$el.find('select').select2();
 				});
-				$container.addClass('loading');
-				$container.show();
 			} else {
 				$el.empty();
-				$container.hide();
+				$el.addClass('hide');
 
 				// Re-enter the click handler if another button has been pressed, so the form re-opens.
 				if ($(this).attr('href')!==$container.data('href')) {

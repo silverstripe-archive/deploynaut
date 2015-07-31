@@ -3027,122 +3027,150 @@ fieldset[disabled] a.btn, fieldset[disabled] a.action, fieldset[disabled] a.depl
     color: #fff;
     background-color: #333; }
 
-.btn-primary, .action, .deploy-dropdown {
+.btn-primary, .action, .deploy-dropdown, .table-data-archives .btn, .table-data-archives .action, .table-data-archives .deploy-dropdown {
   color: #fff;
   background-color: #3aaef9;
   border-color: #21a4f8; }
   .btn-primary:focus,
   .action:focus,
   .deploy-dropdown:focus,
-  .btn-primary.focus, .focus.action, .focus.deploy-dropdown {
+  .table-data-archives .btn:focus,
+  .btn-primary.focus, .focus.action, .focus.deploy-dropdown, .table-data-archives .focus.btn {
     color: #fff;
     background-color: #099af7;
     border-color: #055d95; }
-  .btn-primary:hover, .action:hover, .deploy-dropdown:hover {
+  .btn-primary:hover, .action:hover, .deploy-dropdown:hover, .table-data-archives .btn:hover {
     color: #fff;
     background-color: #099af7;
     border-color: #0784d6; }
   .btn-primary:active,
   .action:active,
   .deploy-dropdown:active,
+  .table-data-archives .btn:active,
   .btn-primary.active,
   .active.action,
   .active.deploy-dropdown,
-  .open > .btn-primary.dropdown-toggle, .open > .dropdown-toggle.action, .open > .dropdown-toggle.deploy-dropdown {
+  .table-data-archives .active.btn,
+  .open > .btn-primary.dropdown-toggle, .open > .dropdown-toggle.action, .open > .dropdown-toggle.deploy-dropdown, .table-data-archives .open > .dropdown-toggle.btn, .table-data-archives .open > .dropdown-toggle.action, .table-data-archives .open > .dropdown-toggle.deploy-dropdown {
     color: #fff;
     background-color: #099af7;
     border-color: #0784d6; }
     .btn-primary:active:hover,
     .action:active:hover,
     .deploy-dropdown:active:hover,
+    .table-data-archives .btn:active:hover,
     .btn-primary:active:focus,
     .action:active:focus,
     .deploy-dropdown:active:focus,
+    .table-data-archives .btn:active:focus,
     .btn-primary:active.focus,
     .action:active.focus,
     .deploy-dropdown:active.focus,
+    .table-data-archives .btn:active.focus,
     .btn-primary.active:hover,
     .active.action:hover,
     .active.deploy-dropdown:hover,
+    .table-data-archives .active.btn:hover,
     .btn-primary.active:focus,
     .active.action:focus,
     .active.deploy-dropdown:focus,
+    .table-data-archives .active.btn:focus,
     .btn-primary.active.focus,
     .active.focus.action,
     .active.focus.deploy-dropdown,
+    .table-data-archives .active.focus.btn,
     .open > .btn-primary.dropdown-toggle:hover,
     .open > .dropdown-toggle.action:hover,
     .open > .dropdown-toggle.deploy-dropdown:hover,
-    .open > .btn-primary.dropdown-toggle:focus,
+    .table-data-archives .open > .dropdown-toggle.btn:hover, .table-data-archives .open > .dropdown-toggle.action:hover, .table-data-archives .open > .dropdown-toggle.deploy-dropdown:hover, .open > .btn-primary.dropdown-toggle:focus,
     .open > .dropdown-toggle.action:focus,
     .open > .dropdown-toggle.deploy-dropdown:focus,
-    .open > .btn-primary.dropdown-toggle.focus, .open > .dropdown-toggle.focus.action, .open > .dropdown-toggle.focus.deploy-dropdown {
+    .table-data-archives .open > .dropdown-toggle.btn:focus, .table-data-archives .open > .dropdown-toggle.action:focus, .table-data-archives .open > .dropdown-toggle.deploy-dropdown:focus, .open > .btn-primary.dropdown-toggle.focus, .open > .dropdown-toggle.focus.action, .open > .dropdown-toggle.focus.deploy-dropdown, .table-data-archives .open > .dropdown-toggle.focus.btn, .table-data-archives .open > .dropdown-toggle.focus.action, .table-data-archives .open > .dropdown-toggle.focus.deploy-dropdown {
       color: #fff;
       background-color: #0784d6;
       border-color: #055d95; }
   .btn-primary:active,
   .action:active,
   .deploy-dropdown:active,
+  .table-data-archives .btn:active,
   .btn-primary.active,
   .active.action,
   .active.deploy-dropdown,
-  .open > .btn-primary.dropdown-toggle, .open > .dropdown-toggle.action, .open > .dropdown-toggle.deploy-dropdown {
+  .table-data-archives .active.btn,
+  .open > .btn-primary.dropdown-toggle, .open > .dropdown-toggle.action, .open > .dropdown-toggle.deploy-dropdown, .table-data-archives .open > .dropdown-toggle.btn, .table-data-archives .open > .dropdown-toggle.action, .table-data-archives .open > .dropdown-toggle.deploy-dropdown {
     background-image: none; }
   .btn-primary.disabled,
   .disabled.action,
   .disabled.deploy-dropdown,
+  .table-data-archives .disabled.btn,
   .btn-primary.disabled:hover,
   .disabled.action:hover,
   .disabled.deploy-dropdown:hover,
+  .table-data-archives .disabled.btn:hover,
   .btn-primary.disabled:focus,
   .disabled.action:focus,
   .disabled.deploy-dropdown:focus,
+  .table-data-archives .disabled.btn:focus,
   .btn-primary.disabled.focus,
   .disabled.focus.action,
   .disabled.focus.deploy-dropdown,
+  .table-data-archives .disabled.focus.btn,
   .btn-primary.disabled:active,
   .disabled.action:active,
   .disabled.deploy-dropdown:active,
+  .table-data-archives .disabled.btn:active,
   .btn-primary.disabled.active,
   .disabled.active.action,
   .disabled.active.deploy-dropdown,
+  .table-data-archives .disabled.active.btn,
   .btn-primary[disabled],
   [disabled].action,
   [disabled].deploy-dropdown,
+  .table-data-archives [disabled].btn,
   .btn-primary[disabled]:hover,
   [disabled].action:hover,
   [disabled].deploy-dropdown:hover,
+  .table-data-archives [disabled].btn:hover,
   .btn-primary[disabled]:focus,
   [disabled].action:focus,
   [disabled].deploy-dropdown:focus,
+  .table-data-archives [disabled].btn:focus,
   .btn-primary[disabled].focus,
   [disabled].focus.action,
   [disabled].focus.deploy-dropdown,
+  .table-data-archives [disabled].focus.btn,
   .btn-primary[disabled]:active,
   [disabled].action:active,
   [disabled].deploy-dropdown:active,
+  .table-data-archives [disabled].btn:active,
   .btn-primary[disabled].active,
   [disabled].active.action,
   [disabled].active.deploy-dropdown,
+  .table-data-archives [disabled].active.btn,
   fieldset[disabled] .btn-primary,
   fieldset[disabled] .action,
   fieldset[disabled] .deploy-dropdown,
-  fieldset[disabled] .btn-primary:hover,
+  fieldset[disabled] .table-data-archives .btn,
+  .table-data-archives fieldset[disabled] .btn, fieldset[disabled] .btn-primary:hover,
   fieldset[disabled] .action:hover,
   fieldset[disabled] .deploy-dropdown:hover,
-  fieldset[disabled] .btn-primary:focus,
+  fieldset[disabled] .table-data-archives .btn:hover,
+  .table-data-archives fieldset[disabled] .btn:hover, fieldset[disabled] .btn-primary:focus,
   fieldset[disabled] .action:focus,
   fieldset[disabled] .deploy-dropdown:focus,
-  fieldset[disabled] .btn-primary.focus,
+  fieldset[disabled] .table-data-archives .btn:focus,
+  .table-data-archives fieldset[disabled] .btn:focus, fieldset[disabled] .btn-primary.focus,
   fieldset[disabled] .focus.action,
   fieldset[disabled] .focus.deploy-dropdown,
-  fieldset[disabled] .btn-primary:active,
+  fieldset[disabled] .table-data-archives .focus.btn,
+  .table-data-archives fieldset[disabled] .focus.btn, fieldset[disabled] .btn-primary:active,
   fieldset[disabled] .action:active,
   fieldset[disabled] .deploy-dropdown:active,
-  fieldset[disabled] .btn-primary.active, fieldset[disabled] .active.action, fieldset[disabled] .active.deploy-dropdown {
+  fieldset[disabled] .table-data-archives .btn:active,
+  .table-data-archives fieldset[disabled] .btn:active, fieldset[disabled] .btn-primary.active, fieldset[disabled] .active.action, fieldset[disabled] .active.deploy-dropdown, fieldset[disabled] .table-data-archives .active.btn, .table-data-archives fieldset[disabled] .active.btn {
     background-color: #3aaef9;
     border-color: #21a4f8; }
-  .btn-primary .badge, .action .badge, .deploy-dropdown .badge {
+  .btn-primary .badge, .action .badge, .deploy-dropdown .badge, .table-data-archives .btn .badge {
     color: #3aaef9;
     background-color: #fff; }
 
@@ -3445,7 +3473,7 @@ fieldset[disabled] a.btn, fieldset[disabled] a.action, fieldset[disabled] a.depl
   line-height: 1.33333;
   border-radius: 6px; }
 
-.btn-sm, .btn-group-sm > .btn, .btn-group-sm > .action, .btn-group-sm > .deploy-dropdown {
+.btn-sm, .btn-group-sm > .btn, .btn-group-sm > .action, .btn-group-sm > .deploy-dropdown, .table-data-archives .btn, .table-data-archives .action, .table-data-archives .deploy-dropdown {
   padding: 5px 10px;
   font-size: 12px;
   line-height: 1.5;
@@ -4397,7 +4425,7 @@ tbody.collapse.in {
 .navbar-btn {
   margin-top: 8px;
   margin-bottom: 8px; }
-  .navbar-btn.btn-sm, .btn-group-sm > .navbar-btn.btn, .btn-group-sm > .navbar-btn.action, .btn-group-sm > .navbar-btn.deploy-dropdown {
+  .navbar-btn.btn-sm, .btn-group-sm > .navbar-btn.btn, .btn-group-sm > .navbar-btn.action, .btn-group-sm > .navbar-btn.deploy-dropdown, .table-data-archives .navbar-btn.btn, .table-data-archives .navbar-btn.action, .table-data-archives .navbar-btn.deploy-dropdown {
     margin-top: 10px;
     margin-bottom: 10px; }
   .navbar-btn.btn-xs, .btn-group-xs > .navbar-btn.btn, .btn-group-xs > .navbar-btn.action, .btn-group-xs > .navbar-btn.deploy-dropdown {
@@ -9833,3 +9861,30 @@ ul {
 
 .alerts-approval-form {
   margin-top: 20px; }
+
+.table-data-archives .archive-list-extended td {
+  padding: 0; }
+  .table-data-archives .archive-list-extended td .archive-extended {
+    padding: 15px; }
+
+.table-data-archives .archive-list-extended .Actions {
+  margin-top: 0; }
+
+.table-data-archives .archive-list-extended #Form_MoveForm .Actions,
+.table-data-archives .archive-list-extended #Form_DataTransferRestoreForm .Actions {
+  width: 60%;
+  margin: 20px auto 15px; }
+
+.table-data-archives .archive-list-extended #Form_MoveForm fieldset > .field,
+.table-data-archives .archive-list-extended #Form_DataTransferRestoreForm fieldset > .field {
+  width: 60%;
+  margin: 0 auto; }
+  .table-data-archives .archive-list-extended #Form_MoveForm fieldset > .field + .field,
+  .table-data-archives .archive-list-extended #Form_DataTransferRestoreForm fieldset > .field + .field {
+    margin-top: 20px; }
+  .table-data-archives .archive-list-extended #Form_MoveForm fieldset > .field.checkbox input,
+  .table-data-archives .archive-list-extended #Form_DataTransferRestoreForm fieldset > .field.checkbox input {
+    margin-left: 0; }
+
+.table-data-archives .btn, .table-data-archives .action, .table-data-archives .deploy-dropdown {
+  margin-bottom: 0; }

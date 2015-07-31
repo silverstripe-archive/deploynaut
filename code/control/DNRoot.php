@@ -1103,7 +1103,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			new FieldList(
 				new HiddenField('DataArchiveID', false, $dataArchive->ID),
 				new HiddenField('Direction', false, 'push'),
-				new LiteralField('Warning', '<p class="text-warning"><strong>Warning:</strong> This restore will overwrite the data on the chosen environment below</p>'),
+				new LiteralField('Warning', '<div class="alert alert-warning"><strong>Warning:</strong> This restore will overwrite the data on the chosen environment below</div>'),
 				new DropdownField('EnvironmentID', 'Environment', $envs->map()),
 				new DropdownField('Mode', 'Transfer', $modesMap),
 				new CheckboxField('BackupBeforePush', 'Backup existing data', '1')
@@ -1187,7 +1187,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'DeleteForm',
 			new FieldList(
 				new HiddenField('DataArchiveID', false, $dataArchive->ID),
-				new LiteralField('Warning', '<p class="text-warning">Are you sure you want to permanently delete this snapshot from this archive area?</p>')
+				new LiteralField('Warning', '<div class="alert alert-warning">Are you sure you want to permanently delete this snapshot from this archive area?</div>')
 			),
 			new FieldList(
 				FormAction::create('doDelete', 'Delete')->addExtraClass('btn')
@@ -1269,7 +1269,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'MoveForm',
 			new FieldList(
 				new HiddenField('DataArchiveID', false, $dataArchive->ID),
-				new LiteralField('Warning', '<p class="text-warning"><strong>Warning:</strong> This will make the snapshot available to people with access to the target environment.<br>By pressing "Change ownership" you confirm that you have considered data confidentiality regulations.</p>'),
+				new LiteralField('Warning', '<div class="alert alert-warning"><strong>Warning:</strong> This will make the snapshot available to people with access to the target environment.<br>By pressing "Change ownership" you confirm that you have considered data confidentiality regulations.</div>'),
 				new DropdownField('EnvironmentID', 'Environment', $envs->map())
 			),
 			new FieldList(
