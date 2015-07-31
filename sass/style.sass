@@ -550,3 +550,37 @@ $textarea-transition-time: 0.6s
 
 .alerts-approval-form
 	margin-top: 20px
+
+.table-data-archives
+	.archive-list-extended
+		td
+			padding: 0
+
+			.archive-extended
+				padding: 15px
+
+		.Actions
+			margin-top: 0
+
+		#Form_MoveForm,
+		#Form_DataTransferRestoreForm
+			.Actions
+				width: 60%
+				margin: 20px auto 15px
+
+			fieldset > .field
+				width: 60%
+				margin: 0 auto
+
+				+ .field
+					margin-top: 20px
+
+				&.checkbox
+
+					input
+						margin-left: 0
+
+	.btn
+		@extend .btn-sm
+		@extend .btn-primary
+		margin-bottom: 0

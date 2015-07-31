@@ -14,7 +14,7 @@
 							<th>Environment</th>
 							<th>Mode</th>
 							<th>File Size</th>
-							<th colspan="4">Actions</th>
+							<th>Actions</th>
 						</tr>
 					</thead>
 
@@ -27,38 +27,34 @@
 								<td>$Environment.Name</td>
 								<td>$ModeNice<% if $IsBackup %> (automated backup)<% end_if %></td>
 								<td>$FileSize</td>
-								<td class="action">
-									<% if $CanDownload && $ArchiveFile && $validTargetEnvironments.count %>
-										<a href="$Top.CurrentProject.Link/movesnapshot/$ID" class="extended-trigger" data-extended-target="#archive-list-extended-$ID" data-extended-container="#archive-list-extended-container-$ID">
-											Ch-own
-										</a>
-									<% end_if %>
-								</td>
-								<td class="action">
-									<% if $CanDelete && ArchiveFile %>
-										<a href="$Top.CurrentProject.Link/deletesnapshot/$ID" class="extended-trigger" data-extended-target="#archive-list-extended-$ID" data-extended-container="#archive-list-extended-container-$ID">
-											Delete
-										</a>
-									<% end_if %>
-								</td>
-								<td class="action">
-									<% if $CanDownload && ArchiveFile %>
-										<a href="$ArchiveFile.Link" download="">
-											Download
-										</a>
-									<% end_if %>
-								</td>
-								<td class="action">
-									<% if $CanDownload && ArchiveFile %>
-										<a href="$Top.CurrentProject.Link/restoresnapshot/$ID" class="extended-trigger" data-extended-target="#archive-list-extended-$ID" data-extended-container="#archive-list-extended-container-$ID">
-											Restore
-										</a>
-									<% end_if %>
+								<td class="text-center">
+                                    <div class="btn-group" role="group">
+										<% if $CanDownload && $ArchiveFile && $validTargetEnvironments.count %>
+                                            <a href="$Top.CurrentProject.Link/movesnapshot/$ID" class="extended-trigger btn" data-extended-target="#archive-list-extended-$ID" data-extended-container="#archive-list-extended-container-$ID">
+                                                Move
+                                            </a>
+										<% end_if %>
+										<% if $CanDelete && $ArchiveFile %>
+                                            <a href="$Top.CurrentProject.Link/deletesnapshot/$ID" class="extended-trigger btn" data-extended-target="#archive-list-extended-$ID" data-extended-container="#archive-list-extended-container-$ID">
+                                                Delete
+                                            </a>
+										<% end_if %>
+										<% if $CanDownload && $ArchiveFile %>
+                                            <a href="$ArchiveFile.Link" download="" class="btn">
+                                                Download
+                                            </a>
+										<% end_if %>
+										<% if $CanDownload && $ArchiveFile %>
+                                            <a href="$Top.CurrentProject.Link/restoresnapshot/$ID" class="extended-trigger btn" data-extended-target="#archive-list-extended-$ID" data-extended-container="#archive-list-extended-container-$ID">
+                                                Restore
+                                            </a>
+										<% end_if %>
+                                    </div>
 								</td>
 							</tr>
 							<tr class="extended archive-list-extended" id="archive-list-extended-container-$ID">
 								<td colspan="10">
-									<div id="archive-list-extended-$ID"></div>
+									<div id="archive-list-extended-$ID" class="archive-extended hide"></div>
 								</td>
 							</tr>
 						<% end_loop %>
