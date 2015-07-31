@@ -1260,7 +1260,7 @@ mark,
   text-transform: capitalize; }
 
 .text-muted {
-  color: #777777; }
+  color: #aaaaaa; }
 
 .text-primary {
   color: #3aaef9; }
@@ -2044,7 +2044,7 @@ table {
 caption {
   padding-top: 12px 10px;
   padding-bottom: 12px 10px;
-  color: #777777;
+  color: #aaaaaa;
   text-align: left; }
 
 th {
@@ -9449,6 +9449,11 @@ h1 {
   font-weight: 700;
   letter-spacing: -1px; }
 
+h1, .h1,
+h2, .h2,
+h3, .h3 {
+  margin-bottom: 20px; }
+
 p {
   margin-bottom: 20px; }
 
@@ -9484,6 +9489,13 @@ ul {
 .git-sha, .repo-url input[type=text] {
   font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
   font-size: 11px; }
+
+.text-sm {
+  font-size: 12px; }
+
+.text-lg {
+  font-size: 17px;
+  font-weight: 300; }
 
 .alert .fa, .disk-quota .fa, .alert .deploy-dropdown .status-icon, .deploy-dropdown .alert .status-icon, .disk-quota .deploy-dropdown .status-icon, .deploy-dropdown .disk-quota .status-icon {
   margin-right: 4px; }
@@ -9779,7 +9791,7 @@ ul {
   margin-top: 3em; }
 
 .environment-details {
-  margin-bottom: 3em; }
+  margin-bottom: 10px; }
 
 .project-links {
   text-align: right;
@@ -9868,6 +9880,9 @@ ul {
 
 .i-push {
   margin-right: 4px; }
+
+.text-lg .i-push {
+  width: 24px; }
 
 .push {
   margin-bottom: 20px; }
