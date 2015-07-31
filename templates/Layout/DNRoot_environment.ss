@@ -160,14 +160,14 @@
 	<div class="deploy-history">
 		<h3>Deploy history</h3>
 		<p>Below builds have previously been deployed to this environment.</p>
-		<table class="table-striped table table-bordered">
+		<table class="table table-striped table-hover">
 			<thead>
 				<tr>
 					<th>Date deployed</th>
 					<th>Build</th>
 					<th>Deployer</th>
 					<th>Status</th>
-					<th>Actions</th>
+					<th>More info</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -185,7 +185,7 @@
 					<% if $Status = 'Failed' %><span class="label label-danger">Failed</span><% end_if %>
 					<% if $Status = 'n/a' %><span class="label label-warning">n/a</span><% end_if %>
 					</td>
-					<td><% if $Link %><a href="$Link">Details</a><% end_if %></td>
+					<td class="text-center"><% if $Link %><a href="$Link"><span class="glyphicon glyphicon-menu-right"></span></a><% end_if %></td>
 				</tr>
 			<% end_loop %>
 			</tbody>
