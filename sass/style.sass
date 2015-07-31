@@ -320,7 +320,7 @@ $textarea-transition-time: 0.6s
 	@extend .btn-primary
 	@extend .btn-block
 	@extend .btn-lg
-	border-radius: 0px
+	border-radius: $border-radius-base
 	text-align: left
 	font-size: 26px
 	line-height: 40px
@@ -336,6 +336,9 @@ $textarea-transition-time: 0.6s
 		display: none
 
 	&.open
+		border-bottom-left-radius: 0
+		border-bottom-right-radius: 0
+
 		.status-icon
 			@extend .fa-chevron-up
 
@@ -355,6 +358,7 @@ $textarea-transition-time: 0.6s
 	border-width: 0px 1px 1px
 	border-style: solid
 	border-color: #bbb
+	// background-color: $theme-bg
 
 	.deploy-form
 
@@ -368,16 +372,19 @@ $textarea-transition-time: 0.6s
 			@extend .nav-pills
 			@extend .nav-stacked
 			@extend .col-md-4
+			padding-right: 0
+			font-weight: 300
+			z-index: 2
 
 			> li
-				background-color: #ddd
+				background-color: $theme-bg
 				border-width: 1px 1px 1px 0px
 				border-color: #bbb
 				border-style: solid
 
 				a
 					color: $gray
-					font-size: 14px
+					font-size: $font-size-large
 					padding: 25px 15px
 					display: block
 
@@ -401,7 +408,12 @@ $textarea-transition-time: 0.6s
 
 			+ .tab-content
 				@extend .col-md-8
-				padding-top: 2em
+				padding: 2em $grid-gutter-width
+				background-color: #fff
+				box-shadow: -1px 0 0 #bbb
+
+				@media (max-width: $screen-sm)
+					box-shadow: none
 
 				select,
 				.select2,
@@ -418,7 +430,7 @@ $textarea-transition-time: 0.6s
 			@extend .btn-block
 			@extend .btn-lg
 			@extend .btn-success
-			border-radius: 0
+			border-radius: $border-radius-base
 			font-size: 26px
 			line-height: 40px
 			margin: 20px 0

@@ -152,9 +152,10 @@
 			<div class="deploy-dropdown" data-api-url="$CurrentProject.APILink('fetch')" aria-controls="#envDeploy"
 				 data-form-url="$CurrentEnvironment.Link/DeployForm">
 
-				<span class="environment-name">Deploy to $CurrentEnvironment.Name</span>
 				<span class="status-icon" aria-hidden="true"></span>
 				<span class="loading-text">Fetching latest code&hellip;</span>
+				<span class="environment-name">Deploy to $CurrentEnvironment.Name</span>
+				
 			</div>
 
 			<div class="deploy-form-outer collapse clearfix" id="envDeploy">

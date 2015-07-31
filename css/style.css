@@ -2467,7 +2467,7 @@ input[type="search"] {
   .input-group-lg > .input-group-btn > input[type="month"].action,
   .input-group-lg > .input-group-btn > input[type="month"].deploy-dropdown,
   .input-group-lg input[type="month"] {
-    line-height: 46px; } }
+    line-height: 45px; } }
 
 .form-group, .field.text,
 .field.dropdown {
@@ -2616,9 +2616,9 @@ select[multiple].input-sm, .input-group-sm > select[multiple],
 .input-group-lg > textarea,
 .readonly .input-group-lg > span.readonly, .input-group-lg > .input-group-addon,
 .input-group-lg > .input-group-btn > .btn, .input-group-lg > .input-group-btn > .action, .input-group-lg > .input-group-btn > .deploy-dropdown {
-  height: 46px;
+  height: 45px;
   padding: 10px 16px;
-  font-size: 18px;
+  font-size: 17px;
   line-height: 1.33333;
   border-radius: 6px; }
 
@@ -2626,8 +2626,8 @@ select.input-lg, .input-group-lg > select.form-control,
 .input-group-lg > select,
 .input-group-lg > select.input-group-addon,
 .input-group-lg > .input-group-btn > select.btn, .input-group-lg > .input-group-btn > select.action, .input-group-lg > .input-group-btn > select.deploy-dropdown {
-  height: 46px;
-  line-height: 46px; }
+  height: 45px;
+  line-height: 45px; }
 
 textarea.input-lg,
 .input-group-lg > textarea.form-control,
@@ -2641,15 +2641,15 @@ select[multiple].input-lg, .input-group-lg > select[multiple],
   height: auto; }
 
 .form-group-lg .form-control, .form-group-lg input.text, .form-group-lg select, .form-group-lg textarea, .form-group-lg .readonly span.readonly, .readonly .form-group-lg span.readonly {
-  height: 46px;
+  height: 45px;
   padding: 10px 16px;
-  font-size: 18px;
+  font-size: 17px;
   line-height: 1.33333;
   border-radius: 6px; }
 
 .form-group-lg select.form-control, .form-group-lg select {
-  height: 46px;
-  line-height: 46px; }
+  height: 45px;
+  line-height: 45px; }
 
 .form-group-lg textarea.form-control,
 .form-group-lg textarea,
@@ -2657,10 +2657,10 @@ select[multiple].input-lg, .input-group-lg > select[multiple],
   height: auto; }
 
 .form-group-lg .form-control-static {
-  height: 46px;
-  min-height: 38px;
+  height: 45px;
+  min-height: 37px;
   padding: 11px 16px;
-  font-size: 18px;
+  font-size: 17px;
   line-height: 1.33333; }
 
 .has-feedback {
@@ -2691,9 +2691,9 @@ select[multiple].input-lg, .input-group-lg > select[multiple],
 .input-group-lg > .input-group-btn > .deploy-dropdown + .form-control-feedback,
 .input-group-lg + .form-control-feedback,
 .form-group-lg .form-control + .form-control-feedback, .form-group-lg input.text + .form-control-feedback, .form-group-lg select + .form-control-feedback, .form-group-lg textarea + .form-control-feedback, .form-group-lg .readonly span.readonly + .form-control-feedback, .readonly .form-group-lg span.readonly + .form-control-feedback {
-  width: 46px;
-  height: 46px;
-  line-height: 46px; }
+  width: 45px;
+  height: 45px;
+  line-height: 45px; }
 
 .input-sm + .form-control-feedback,
 .input-group-sm > .form-control + .form-control-feedback,
@@ -2887,7 +2887,7 @@ select[multiple].input-lg, .input-group-lg > select[multiple],
 @media (min-width: 768px) {
   .form-horizontal .form-group-lg .control-label, .form-horizontal .form-group-lg label {
     padding-top: 14.33333px;
-    font-size: 18px; } }
+    font-size: 17px; } }
 
 @media (min-width: 768px) {
   .form-horizontal .form-group-sm .control-label, .form-horizontal .form-group-sm label {
@@ -3441,7 +3441,7 @@ fieldset[disabled] a.btn, fieldset[disabled] a.action, fieldset[disabled] a.depl
 
 .btn-lg, .btn-group-lg > .btn, .btn-group-lg > .action, .btn-group-lg > .deploy-dropdown, .action, .deploy-dropdown, .deploy-form-outer .deploy-form *[name="action_doDeploy"] {
   padding: 10px 16px;
-  font-size: 18px;
+  font-size: 17px;
   line-height: 1.33333;
   border-radius: 6px; }
 
@@ -3922,7 +3922,7 @@ tbody.collapse.in {
   .input-group-addon.input-lg, .readonly .input-group-lg > span.input-group-addon.readonly, .input-group-lg > .input-group-addon,
   .input-group-lg > .input-group-btn > .input-group-addon.btn, .input-group-lg > .input-group-btn > .input-group-addon.action, .input-group-lg > .input-group-btn > .input-group-addon.deploy-dropdown {
     padding: 10px 16px;
-    font-size: 18px;
+    font-size: 17px;
     border-radius: 6px; }
   .input-group-addon input[type="radio"],
   .input-group-addon input[type="checkbox"] {
@@ -4248,7 +4248,7 @@ tbody.collapse.in {
 .navbar-brand {
   float: left;
   padding: 15px 15px;
-  font-size: 18px;
+  font-size: 17px;
   line-height: 20px;
   height: 50px; }
   .navbar-brand:hover,
@@ -4649,7 +4649,7 @@ tbody.collapse.in {
 .pagination-lg > li > a,
 .pagination-lg > li > span {
   padding: 10px 16px;
-  font-size: 18px;
+  font-size: 17px;
   line-height: 1.33333; }
 
 .pagination-lg > li:first-child > a,
@@ -9664,7 +9664,7 @@ ul {
   padding-bottom: 20px; }
 
 .deploy-dropdown {
-  border-radius: 0px;
+  border-radius: 2px;
   text-align: left;
   font-size: 26px;
   line-height: 40px;
@@ -9673,6 +9673,9 @@ ul {
     line-height: 40px; }
   .deploy-dropdown .loading-text {
     display: none; }
+  .deploy-dropdown.open {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0; }
   .deploy-dropdown.loading .loading-text {
     display: inherit;
     font-size: 20px; }
@@ -9687,43 +9690,52 @@ ul {
     position: static;
     font-size: 16px;
     color: #555555; }
-  .deploy-form-outer .deploy-form .SelectionGroup > li {
-    background-color: #ddd;
-    border-width: 1px 1px 1px 0px;
-    border-color: #bbb;
-    border-style: solid; }
-    .deploy-form-outer .deploy-form .SelectionGroup > li a {
-      color: #555555;
-      font-size: 14px;
-      padding: 25px 15px;
-      display: block; }
-    .deploy-form-outer .deploy-form .SelectionGroup > li.active {
-      background-color: #ffffff;
-      border: none; }
-      .deploy-form-outer .deploy-form .SelectionGroup > li.active + li {
-        border-top-width: 1px; }
-      .deploy-form-outer .deploy-form .SelectionGroup > li.active a {
-        color: #555555; }
-    .deploy-form-outer .deploy-form .SelectionGroup > li:last-child {
-      border-bottom-width: 0px; }
-    .deploy-form-outer .deploy-form .SelectionGroup > li + li {
-      margin-top: 0;
-      border-top-width: 0px; }
-  .deploy-form-outer .deploy-form .SelectionGroup + .tab-content {
-    padding-top: 2em; }
-    .deploy-form-outer .deploy-form .SelectionGroup + .tab-content select,
-    .deploy-form-outer .deploy-form .SelectionGroup + .tab-content .select2,
-    .deploy-form-outer .deploy-form .SelectionGroup + .tab-content input[type="text"],
-    .deploy-form-outer .deploy-form .SelectionGroup + .tab-content .CompositeField {
-      width: 100%;
-      margin-bottom: 0.75em; }
-      .deploy-form-outer .deploy-form .SelectionGroup + .tab-content select > *,
-      .deploy-form-outer .deploy-form .SelectionGroup + .tab-content .select2 > *,
-      .deploy-form-outer .deploy-form .SelectionGroup + .tab-content input[type="text"] > *,
-      .deploy-form-outer .deploy-form .SelectionGroup + .tab-content .CompositeField > * {
-        width: 100%; }
+  .deploy-form-outer .deploy-form .SelectionGroup {
+    padding-right: 0;
+    font-weight: 300;
+    z-index: 2; }
+    .deploy-form-outer .deploy-form .SelectionGroup > li {
+      background-color: #f0f3f4;
+      border-width: 1px 1px 1px 0px;
+      border-color: #bbb;
+      border-style: solid; }
+      .deploy-form-outer .deploy-form .SelectionGroup > li a {
+        color: #555555;
+        font-size: 17px;
+        padding: 25px 15px;
+        display: block; }
+      .deploy-form-outer .deploy-form .SelectionGroup > li.active {
+        background-color: #ffffff;
+        border: none; }
+        .deploy-form-outer .deploy-form .SelectionGroup > li.active + li {
+          border-top-width: 1px; }
+        .deploy-form-outer .deploy-form .SelectionGroup > li.active a {
+          color: #555555; }
+      .deploy-form-outer .deploy-form .SelectionGroup > li:last-child {
+        border-bottom-width: 0px; }
+      .deploy-form-outer .deploy-form .SelectionGroup > li + li {
+        margin-top: 0;
+        border-top-width: 0px; }
+    .deploy-form-outer .deploy-form .SelectionGroup + .tab-content {
+      padding: 2em 30px;
+      background-color: #fff;
+      box-shadow: -1px 0 0 #bbb; }
+      @media (max-width: 768px) {
+        .deploy-form-outer .deploy-form .SelectionGroup + .tab-content {
+          box-shadow: none; } }
+      .deploy-form-outer .deploy-form .SelectionGroup + .tab-content select,
+      .deploy-form-outer .deploy-form .SelectionGroup + .tab-content .select2,
+      .deploy-form-outer .deploy-form .SelectionGroup + .tab-content input[type="text"],
+      .deploy-form-outer .deploy-form .SelectionGroup + .tab-content .CompositeField {
+        width: 100%;
+        margin-bottom: 0.75em; }
+        .deploy-form-outer .deploy-form .SelectionGroup + .tab-content select > *,
+        .deploy-form-outer .deploy-form .SelectionGroup + .tab-content .select2 > *,
+        .deploy-form-outer .deploy-form .SelectionGroup + .tab-content input[type="text"] > *,
+        .deploy-form-outer .deploy-form .SelectionGroup + .tab-content .CompositeField > * {
+          width: 100%; }
   .deploy-form-outer .deploy-form *[name="action_doDeploy"] {
-    border-radius: 0;
+    border-radius: 2px;
     font-size: 26px;
     line-height: 40px;
     margin: 20px 0; }
