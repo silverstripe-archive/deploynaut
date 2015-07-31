@@ -1,10 +1,9 @@
 <div class="content page-header">
   	<div class="row">
-		<div class="col-md-7">
+		<div class="col-md-12">
 			<% include Breadcrumb %>
 			<% include DeploymentTabs %>
-		</div>
-		<div class="col-md-5">
+
 			<ul class="project-links">
 				<% if $CurrentProject.RepositoryInterface %><% with $CurrentProject.RepositoryInterface %>
 					<li>
@@ -16,10 +15,12 @@
 				<% end_with %><% end_if %>
 				<% if $CurrentProject.RepositoryURL %>
 					<li>
-						<div class="repo-url">
+						<%--<div class="repo-url">
 							<label for="repoURL">Code Repository:</label>
 							<input type="text" value="$CurrentProject.RepositoryURL" readonly>
-						</div>
+						</div>--%>
+
+						<a tabindex="0" rdata-placement="left" ole="button" data-container="body" data-toggle="popover"  title="Code Repository" data-content="$CurrentProject.RepositoryURL"><i class="fa fa-code i-push"></i> Code repository</a>
 					</li>
 				<% end_if %>
 			</ul>
@@ -37,7 +38,7 @@
 					$DeploymentMessages
 				<% end_if %>
 
-				<h4>Environment Details:</h4>
+				<h4>Currently deployed</h4>
 
 				<ul>
 					<%-- Display Environment URL --%>

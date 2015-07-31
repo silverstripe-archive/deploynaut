@@ -9781,11 +9781,18 @@ ul {
 .environment-details {
   margin-bottom: 3em; }
 
-.project-links li {
-  line-height: 24px;
-  margin-bottom: 4px; }
-  .project-links li a {
-    margin-left: 5px; }
+.project-links {
+  text-align: right;
+  position: absolute;
+  bottom: 0;
+  right: 0; }
+  .project-links li {
+    line-height: 24px;
+    margin-bottom: 4px; }
+    .project-links li a {
+      margin-left: 5px; }
+      .project-links li a i {
+        color: #222; }
 
 .deployment-status .deployment-progress {
   height: auto; }
@@ -9843,8 +9850,9 @@ ul {
 .project-branch.open .open-icon {
   display: inline-block; }
 
-.breadcrumb > li + li:before {
-  content: "/"; }
+.breadcrumb > li:after {
+  content: "/";
+  margin-left: 5px; }
 
 .vertical-center {
   min-height: 100%;
@@ -9857,6 +9865,9 @@ ul {
   min-height: 80vh;
   display: flex;
   align-items: center; }
+
+.i-push {
+  margin-right: 4px; }
 
 .push {
   margin-bottom: 20px; }
