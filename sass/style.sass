@@ -429,14 +429,15 @@ $textarea-transition-time: 0.6s
 .environment-details
 	margin-bottom: 3em
 
-	> * > span
-		display: block
+	ul
+		@extend .list-unstyled
 
 .project-links
 	@extend .list-reset
 
 	li
 		line-height: 24px
+		margin-bottom: 4px
 
 		a
 			margin-left: 5px
@@ -465,20 +466,25 @@ $textarea-transition-time: 0.6s
 	color: #fff
 	margin-top: 0
 
+.repo-ux
+	img
+		height: 14px
 
 .repo-url
 
 	label
-		font-size: 16px
 		color: $gray
 		display: block
 		position: static
+		margin-bottom: 0
 
 	input[type=text]
-		line-height: 35px
-		padding: 0 15px
+		color: $gray-light
+		font-family: $font-family-monospace
+		font-size: 11px
+		line-height: 24px
+		padding: 0 8px
 		width: 100%
-		font-weight: 400
 		border-width: 0 0 1px 0
 		border-style: solid
 		border-color: #e6e6e6

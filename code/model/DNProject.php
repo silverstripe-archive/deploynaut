@@ -658,7 +658,9 @@ class DNProject extends DataObject {
 	 * @var array
 	 */
 	static private $repository_interfaces = array(
-		'github.com' => true,
+		'github.com' => array(
+			'icon' => 'deploynaut/img/github.png'
+		),
 		'bitbucket.org' => true,
 		'repo.or.cz' => array(
 			'scheme' => 'http',
@@ -676,33 +678,16 @@ class DNProject extends DataObject {
 	);
 
 	/**
-	 * Get the human name of the UI tool that lets the user view the repository code
-	 * @return string
+	 * Get a ViewableData structure describing the UI tool that lets the user view the repository code
+	 * @return ArrayData
 	 */
-	public function getRepositoryInterfaceName() {
-		$url = parse_url($this->CVSPath);
-		if (!isset($url['host'])) return;
-
-		$interfaces = $this->config()->repository_interfaces;
-		$host = strtolower($url['host']);
-		$components = explode('.', $host);
-
-		if (array_key_exists($host, $interfaces)) {
-			$interface = $interfaces[$host];
-			return isset($interface['name']) ? $interface['name'] : ucfirst($components[0]);
-		}
-	}
-
-	/**
-	 * Get the URL of the URL tool that lets the user view the repository code
-	 * @return string
-	 */
-	public function getRepositoryInterfaceURL() {
+	public function getRepositoryInterface() {
 		$url = parse_url($this->CVSPath);
 		if (!isset($url['host']) || !isset($url['path'])) return;
 
 		$interfaces = $this->config()->repository_interfaces;
 		$host = strtolower($url['host']);
+		$components = explode('.', $host);
 
 		if (array_key_exists($host, $interfaces)) {
 			$interface = $interfaces[$host];
@@ -717,7 +702,11 @@ class DNProject extends DataObject {
 				$path = preg_replace('/'.$pattern.'/', $replacement, $path);
 			}
 
-			return Controller::join_links($scheme.'://', $host, $path);
+			return new ArrayData(array(
+				'Name' => isset($interface['name']) ? $interface['name'] : ucfirst($components[0]),
+				'URL' => Controller::join_links($scheme.'://', $host, $path),
+				'Icon' => isset($interface['icon']) ? $interface['icon'] : 'deploynaut/img/git.png'
+			));
 		}
 	}
 
