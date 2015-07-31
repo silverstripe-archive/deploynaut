@@ -9880,8 +9880,9 @@ ul ol {
 .project-branch.open .open-icon {
   display: inline-block; }
 
-.breadcrumb > li:after {
+.breadcrumb > li + li:before {
   content: "/";
+  padding: 0 5px 0 0;
   margin-left: 5px; }
 
 .vertical-center {

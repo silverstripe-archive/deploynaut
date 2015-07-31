@@ -542,9 +542,14 @@ $textarea-transition-time: 0.6s
 			display: inline-block
 			
 
-.breadcrumb > li:after
-	content: "#{$breadcrumb-separator}"; // Unicode space added since inline-block means non-collapsing white-space
-	margin-left: 5px
+.breadcrumb
+	> li
+		+ li
+			&:before
+				content: "#{$breadcrumb-separator}"
+				padding: 0 5px 0 0
+				margin-left: 5px
+
 
 // Custom helpers
 
