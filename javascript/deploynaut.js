@@ -3,6 +3,11 @@
 (function($) {
 	"use strict";
 
+	// Popover on enviroment repository link
+	$(function () {
+		$('[data-toggle="popover"]').popover()
+	})
+
 	var queue = {
 		showlog: function(status, content, logLink) {
 			var self = this;

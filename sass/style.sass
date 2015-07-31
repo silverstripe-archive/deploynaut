@@ -446,6 +446,10 @@ $textarea-transition-time: 0.6s
 
 .project-links
 	@extend .list-reset
+	text-align: right
+	position: absolute
+	bottom: 0
+	right: 0
 
 	li
 		line-height: 24px
@@ -453,6 +457,9 @@ $textarea-transition-time: 0.6s
 
 		a
 			margin-left: 5px
+
+			i	
+				color: #222
 
 
 .deployment-status
@@ -478,9 +485,8 @@ $textarea-transition-time: 0.6s
 	color: #fff
 	margin-top: 0
 
-.repo-ux
-	img
-		height: 14px
+.repo-ux img
+	height: 14px
 
 .repo-url
 
@@ -524,9 +530,9 @@ $textarea-transition-time: 0.6s
 			display: inline-block
 			
 
-.breadcrumb > li + li:before
+.breadcrumb > li:after
 	content: "#{$breadcrumb-separator}"; // Unicode space added since inline-block means non-collapsing white-space
-
+	margin-left: 5px
 
 // Custom helpers
 
@@ -541,6 +547,9 @@ $textarea-transition-time: 0.6s
 	min-height: 80vh	/* These two lines are counted as one :-)       */
 	display: flex
 	align-items: center
+
+.i-push
+	margin-right: 4px
 
 .push
 	margin-bottom: $padding-large-vertical*2
