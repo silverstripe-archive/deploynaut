@@ -1318,7 +1318,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		return array(
 			'RedisUnavailable' => 'RedisUnavailable',
 			'RedisWorkersCount' => 'RedisWorkersCount',
-			'SidebarLinks' => 'SidebarLinks'
+			'SidebarLinks' => 'SidebarLinks',
+			"SupportLinks" => 'getSupportLinks'
 		);
 	}
 
