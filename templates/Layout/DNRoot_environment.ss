@@ -21,7 +21,7 @@
 				<h3>Currently deployed
 					<%-- Display Environment URL --%>
 					<% if $URL %>
-						<small><a class="text-muted" href="$URL"><% if $BareURL %>$BareURL<% else %>$URL<% end_if %></a></small>
+						<small><a class="text-muted" href="$URL" target="_blank"><% if $BareURL %>$BareURL<% else %>$URL<% end_if %></a></small>
 					<% end_if %>
 				</h3>
 

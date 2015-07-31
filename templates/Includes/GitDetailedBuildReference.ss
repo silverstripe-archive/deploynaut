@@ -1,6 +1,8 @@
-<div class="git-committer">
-	Committed by $Committer on $CommitDate
-</div>
+<% if $Committer %>
+	<div class="git-committer">
+		Committed by $Committer on $CommitDate
+	</div>
+<% end_if %>
 <div>
 <% if $Environment.Project.RepositoryInterface.CommitURL %>
 	<a href="{$Environment.Project.RepositoryInterface.CommitURL}/{$SHA}"
@@ -18,4 +20,3 @@
 <p>
 	$Message
 </p>
-
