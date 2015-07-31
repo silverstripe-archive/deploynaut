@@ -69,11 +69,7 @@
 					<% if $CurrentBuild %>
 						<li>
 							Deployed Revision:
-
-							<span class="git-sha tooltip-hint" data-toggle="tooltip" title="$CurrentBuild.SHA.FullHash">
-								$CurrentBuild.SHA.ShortHash
-							</span>
-							$CurrentBuild.Message
+							<% with $CurrentBuild %><% include GitBuildReference %><% end_with %>
 						</li>
 						<li>
 							<a href="$CurrentBuild.Link">View deployment log</a>
@@ -179,10 +175,7 @@
 				<tr>
 					<td><span class="tooltip-hint" data-toggle="tooltip" data-original-title="$LastEdited.Nice ($LastEdited.Ago)">$LastEdited.Date</span></td>
 					<td>
-						<span class="git-sha tooltip-hint" data-toggle="tooltip" title="$SHA.FullHash">
-							$SHA.ShortHash
-						</span>
-						$Message
+						<% include GitBuildReference %>
 					</td>
 					<td>$Deployer.Name <% if $Deployer.Email %>&lt;$Deployer.Email&gt; <% end_if %></td>
 					<td>
