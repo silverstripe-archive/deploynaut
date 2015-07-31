@@ -50,9 +50,7 @@
 					<td><% if $URL %><a href="$URL">$BareURL</a><% else %>&nbsp;<% end_if %></td>
 					<td>
 						<% if $CurrentBuild %>
-						<span class="tooltip-hint" data-toggle="tooltip" title="$CurrentBuild.Message" data-original-title="$CurrentBuild.Message">
-							$CurrentBuild.SHA
-						</span>
+							<% with $CurrentBuild %><% include GitBuildReference %><% end_with %>
 						<% else %>
 							<em>Nothing has been deployed.</em>
 						<% end_if %>

@@ -66,28 +66,19 @@
 					<% end_if %>
 
 					<%-- Display current build on environment --%>
-					<li>
-						Deployed Revision:
-						<% if $CurrentBuild %>
-							<a class="tooltip-hint"
-							   data-toggle="tooltip"
-							   title="$CurrentBuild.Message"
-							   data-original-title="$CurrentBuild.Message"
-							   href="$CurrentBuild.Link">
-
-								$CurrentBuild.SHA
-							</a>
-						<% else %>
-							No deployments have been made
-						<% end_if %>
-					</li>
-
 					<% if $CurrentBuild %>
 						<li>
-							Latest deployed change: $CurrentBuild.Message
+							Deployed Revision:
+							<% with $CurrentBuild %><% include GitBuildReference %><% end_with %>
+						</li>
+						<li>
+							<a href="$CurrentBuild.Link">View deployment log</a>
+						</li>
+					<% else %>
+						<li>
+							No deployments have been made
 						</li>
 					<% end_if %>
-
 				</ul>
 			</div>
 		</div>
@@ -183,7 +174,9 @@
 			<% loop $CurrentEnvironment.DeployHistory.limit(20) %>
 				<tr>
 					<td><span class="tooltip-hint" data-toggle="tooltip" data-original-title="$LastEdited.Nice ($LastEdited.Ago)">$LastEdited.Date</span></td>
-					<td><span class="tooltip-hint" data-toggle="tooltip" title="$Message" data-original-title="$Message">$SHA</span></td>
+					<td>
+						<% include GitBuildReference %>
+					</td>
 					<td>$Deployer.Name <% if $Deployer.Email %>&lt;$Deployer.Email&gt; <% end_if %></td>
 					<td>
 					<% if $Status = 'Queued' %><span class="label label-info">Queued</span><% end_if %>

@@ -661,7 +661,9 @@ class DNProject extends DataObject {
 		'github.com' => array(
 			'icon' => 'deploynaut/img/github.png'
 		),
-		'bitbucket.org' => true,
+		'bitbucket.org' => array(
+			'commit' => 'commits'
+		),
 		'repo.or.cz' => array(
 			'scheme' => 'http',
 			'name' => 'repo.or.cz',
@@ -670,9 +672,11 @@ class DNProject extends DataObject {
 
 		/* Example for adding your own gitlab repository and override all auto-detected values (with their defaults)
 		'gitlab.mysite.com' => array(
+			'icon' => 'deploynaut/img/git.png',
 			'host' => 'gitlab.mysite.com',
 			'name' => 'Gitlab',
-			'regex' => array('.git$' => '')
+			'regex' => array('.git$' => ''),
+			'commit' => "commit"
 		),
 		*/
 	);
@@ -702,10 +706,20 @@ class DNProject extends DataObject {
 				$path = preg_replace('/'.$pattern.'/', $replacement, $path);
 			}
 
+			$uxurl = Controller::join_links($scheme.'://', $host, $path);
+
+			if (array_key_exists('commit', $interface) && $interface['commit'] == false) {
+				$commiturl = false;
+			}
+			else {
+				$commiturl = Controller::join_links($uxurl, isset($interface['commit']) ? $interface['commit'] : 'commit');
+			}
+
 			return new ArrayData(array(
 				'Name' => isset($interface['name']) ? $interface['name'] : ucfirst($components[0]),
-				'URL' => Controller::join_links($scheme.'://', $host, $path),
-				'Icon' => isset($interface['icon']) ? $interface['icon'] : 'deploynaut/img/git.png'
+				'Icon' => isset($interface['icon']) ? $interface['icon'] : 'deploynaut/img/git.png',
+				'URL' => $uxurl,
+				'CommitURL' => $commiturl
 			));
 		}
 	}

@@ -197,10 +197,17 @@
 		});
 
 
-		$('.tooltip-hint, .btn-tooltip').tooltip({
-			placement: "top",
+		$('.tooltip-hint:not(.git-sha), .btn-tooltip').tooltip({
+			placement: 'top',
 			trigger: 'hover'
 		});
+
+		$('.tooltip-hint.git-sha').tooltip({
+			placement: 'left',
+			trigger: 'hover',
+			template: '<div class="tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner git-sha"></div></div>'
+		});
+
 
 		/**
 		 * Extend a specific target
