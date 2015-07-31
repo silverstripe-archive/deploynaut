@@ -389,12 +389,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$process = new Process(sprintf('rm -rf %s', escapeshellarg($workingDir)));
 		$process->run();
 
-		return $this->customise(array(
-			'SnapshotsSection' => 1,
-			'DataArchive' => $dataArchive,
-			'DataTransferRestoreForm' => $this->getDataTransferRestoreForm($this->request, $dataArchive),
-			'BackURL' => $project->Link('snapshots')
-		))->render();
+		return $this->redirect($project->Link('snapshots'), 301);
 	}
 
 	/**
