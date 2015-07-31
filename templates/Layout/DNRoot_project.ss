@@ -32,14 +32,15 @@
 	<% with $CurrentProject %>
 
 		<h3 id="env">Environments</h3>
-		<table class="table">
+		<table class="table table-striped table-hover">
 			<thead>
 				<tr>
 					<th>Name</th>
 					<th>URL</th>
 					<th>Build currently deployed</th>
-					<th class="text-center">Deployment Status</th>
-					<th class="text-center">Details</th>
+					<th class="text-center">Can you deploy?</th>
+					<th class="text-center">Logs</th>
+					<th class="text-center">More info</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -72,6 +73,9 @@
 						<% if not $HasMetrics && not $LogsLink %>
 							<em>-</em>
 						<% end_if %>
+					</td>
+					<td class="text-center">
+						<a href="$Link"><span class="glyphicon glyphicon-menu-right"></span></a>
 					</td>
 				</tr>
 				<% end_loop %>
