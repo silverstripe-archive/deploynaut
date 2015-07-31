@@ -1317,7 +1317,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	public static function get_template_global_variables() {
 		return array(
 			'RedisUnavailable' => 'RedisUnavailable',
-			'RedisWorkersCount' => 'RedisWorkersCount'
+			'RedisWorkersCount' => 'RedisWorkersCount',
+			'SidebarLinks' => 'SidebarLinks'
 		);
 	}
 
@@ -1342,6 +1343,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public static function RedisWorkersCount() {
 		return count(Resque_Worker::all());
+	}
+
+	private static $support_links = array();
+
+	public static function getSupportLinks() {
+		$supportLinks = self::config()->support_links;
+		if ($supportLinks) return new ArrayList($supportLinks);
 	}
 
 	/**

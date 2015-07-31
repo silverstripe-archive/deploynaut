@@ -32,11 +32,12 @@
 			<% end_if %>
 		<% end_if %>
 
-		<li class="nav-main-heading">Support</li>
-		
-		<li><a href=""><span class="plat-icon icon-helpdesk"></span>Help desk</a></li>
-		<li><a href=""><span class="plat-icon icon-documentation"></span>Documentation</a></li>
-		<li><a href="http://www.silverstripe.com/platform"><span class="plat-icon icon-overview"></span>Platform overview</a></li>
+		<% if $SupportLinks %>
+			<li class="nav-main-heading">Support</li>
 
+			<% loop $SupportLinks %>
+				<li><a href="$URL"><span class="plat-icon $IconClass"></span>$Title</a></li>
+			<% end_loop %>
+		<% end_if %>
 	</ul>
 </div>
