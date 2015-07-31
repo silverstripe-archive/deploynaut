@@ -512,12 +512,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			throw new SS_HTTPResponse_Exception('Not allowed to restore archive', 403);
 		}
 
-		return $this->customise(array(
-			'Title' => 'How to send us your Data Snapshot by post',
-			'DataArchive' => $dataArchive,
-			'Address' => Config::inst()->get('Deploynaut', 'snapshot_post_address'),
-			'BackURL' => $project->Link(),
-		))->render();
+		return $this->render(array(
+				'Title' => 'How to send us your Data Snapshot by post',
+				'DataArchive' => $dataArchive,
+				'Address' => Config::inst()->get('Deploynaut', 'snapshot_post_address'),
+				'BackURL' => $project->Link(),
+			));
 	}
 
 	/**
