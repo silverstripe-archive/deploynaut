@@ -9675,6 +9675,9 @@ ul {
     border-bottom: 3px solid #3aaef9;
     background-color: none;
     background-color: transparent; }
+    .main-container .nav.nav-tabs > li.active > a:hover, .main-container .deploy-form-outer .deploy-form .nav-tabs.SelectionGroup > li.active > a:hover, .deploy-form-outer .deploy-form .main-container .nav-tabs.SelectionGroup > li.active > a:hover, .main-container .nav.nav-tabs > li.active > a:focus, .main-container .deploy-form-outer .deploy-form .nav-tabs.SelectionGroup > li.active > a:focus, .deploy-form-outer .deploy-form .main-container .nav-tabs.SelectionGroup > li.active > a:focus {
+      color: #222222;
+      border-bottom-color: #078be0; }
 
 .content {
   margin: 0 auto;
