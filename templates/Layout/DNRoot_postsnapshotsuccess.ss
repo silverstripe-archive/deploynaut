@@ -1,3 +1,25 @@
+<div class="content page-header">
+    <div class="row">
+        <div class="col-md-9">
+			<% include Breadcrumb %>
+			<% if $CurrentProject %>
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="$CurrentProject.Link('snapshots')">Overview</a></li>
+
+					<% if $CurrentProject.canBackup %>
+                        <li><a href="$CurrentProject.Link('createsnapshot')">Create Snapshot</a></li>
+					<% end_if %>
+					<% if $CurrentProject.canUploadArchive %>
+                        <li><a href="$CurrentProject.Link('uploadsnapshot')">Upload Snapshot</a></li>
+					<% end_if %>
+                    <li><a href="$CurrentProject.Link('snapshotslog')">Log</a></li>
+                </ul>
+			<% end_if %>
+        </div>
+    </div>
+</div>
+
+
 <h3>Thanks for your request</h3>
 <p>We are now waiting for you to send us your snapshot.</p>
 
