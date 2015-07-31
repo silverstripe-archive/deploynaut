@@ -30,17 +30,17 @@
 			    <p>Please view the <a href="$BackURL">snapshots list</a> to restore this snapshot to an environment.</p>
 			<% else %>
 				<div class="tab-content">
-					<div class="tab-pane active" id="tab1">
+					<div class="tab-pane active" id="uploadform">
 						<h3>Upload a snapshot</h3>
-						<a href="#tab2" class="pull-right upload-exceed-link btn btn-warning" data-toggle="tab">File exceeds <% if $UploadLimit %>$UploadLimit<% else %>2GB<% end_if %>?</a>
+						<a href="#" data-target="#manualform" class="pull-right upload-exceed-link btn btn-warning">File exceeds <% if $UploadLimit %>$UploadLimit<% else %>2GB<% end_if %>?</a>
 						<p>Choose a local snapshot file to transfer<% if $UploadLimit %> (up to $UploadLimit)<% end_if %> (see below how to create this file). Once uploaded, you can choose to restore this file into an actual environment.</p>
 						$UploadSnapshotForm
 					</div>
-					<div class="tab-pane " id="tab2">
-												<h3>Upload a snapshot</h3>
+					<div class="tab-pane " id="manualform">
+						<h3>Upload a snapshot</h3>
 						<div class="panel panel-warning upload-exceed-container">
 							<div class="panel-body">
-								<a href="#tab1" class="pull-right upload-exceed-link btn btn-warning" data-toggle="tab"><i class="fa fa-times"></i> Close</a>
+								<a href="#" data-target="#uploadform" class="pull-right upload-exceed-link btn btn-warning"><i class="fa fa-times"></i> Close</a>
 								<h4 class="font-w600">Large files</h4>
 								<p>For large files <% if $UploadLimit %>exceeding $UploadLimit,<% end_if %> you can provide the file to us - we will then upload it on your behalf. Submit a request below to start this process.</p>
 								$PostSnapshotForm
