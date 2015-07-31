@@ -9456,18 +9456,27 @@ h3, .h3 {
 
 p {
   margin-bottom: 20px; }
+  p + pre,
+  p + ol,
+  p + ul {
+    margin-top: -10px;
+    margin-bottom: 20px; }
 
-pre,
-ol,
-ul {
-  margin-top: -10px;
-  margin-bottom: 20px; }
-  pre.nav,
-  .deploy-form-outer .deploy-form pre.SelectionGroup,
-  ol.nav,
-  .deploy-form-outer .deploy-form ol.SelectionGroup,
-  ul.nav, .deploy-form-outer .deploy-form ul.SelectionGroup {
-    margin-top: 0; }
+pre.nav,
+.deploy-form-outer .deploy-form pre.SelectionGroup,
+ol.nav,
+.deploy-form-outer .deploy-form ol.SelectionGroup,
+ul.nav, .deploy-form-outer .deploy-form ul.SelectionGroup {
+  margin-top: 0; }
+
+pre ul,
+pre ol,
+ol ul,
+ol ol,
+ul ul,
+ul ol {
+  margin-top: 0;
+  margin-bottom: 5px; }
 
 .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th {
   border-bottom: 1px solid #eee;
