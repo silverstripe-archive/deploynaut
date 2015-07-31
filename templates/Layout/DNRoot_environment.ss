@@ -1,10 +1,9 @@
 <div class="content page-header">
   	<div class="row">
-		<div class="col-md-7">
+		<div class="col-md-12">
 			<% include Breadcrumb %>
 			<% include DeploymentTabs %>
-		</div>
-		<div class="col-md-5">
+
 			<ul class="project-links">
 				<% if $CurrentProject.RepositoryInterface %><% with $CurrentProject.RepositoryInterface %>
 					<li>
@@ -16,10 +15,12 @@
 				<% end_with %><% end_if %>
 				<% if $CurrentProject.RepositoryURL %>
 					<li>
-						<div class="repo-url">
+						<%--<div class="repo-url">
 							<label for="repoURL">Code Repository:</label>
 							<input type="text" value="$CurrentProject.RepositoryURL" readonly>
-						</div>
+						</div>--%>
+
+						<a tabindex="0" rdata-placement="left" ole="button" data-container="body" data-toggle="popover"  title="Code Repository" data-content="$CurrentProject.RepositoryURL"><i class="fa fa-code i-push"></i> Code repository</a>
 					</li>
 				<% end_if %>
 			</ul>
@@ -37,49 +38,64 @@
 					$DeploymentMessages
 				<% end_if %>
 
-				<h4>Environment Details:</h4>
-
-				<ul>
+				<h3>Currently deployed  
 					<%-- Display Environment URL --%>
 					<% if $URL %>
-						<li>
-							<span class="fa fa-link"></span>
-							<a href="$URL">View site at $BareURL</a>
-						</li>
+						<small><a class="text-muted" href="$URL">$URL</a></small>
 					<% end_if %>
+				</h3>
 
-					<%-- Display logs link for environment --%>
-					<% if $LogsLink %>
-						<li>
-							Logs: <a href="$LogsLink">View Logs for $Name</a>
-						</li>
-					<% end_if %>
+				<div class="row text-lg">
+					<div class="col-md-6">
+						<ul>
 
-					<%-- Display metrics for environment --%>
-					<% if $Project.HasMetrics %>
-						<li>
-							Metrics:
-							<a href="naut/project/$Project.Name/environment/$Name/metrics">
-								See graphs for this environment
-							</a>
-						</li>
-					<% end_if %>
+							<% if $CurrentBuild %>
+								<li>
+									Latest change: $CurrentBuild.Message
+								</li>
+							<% end_if %>
 
-					<%-- Display current build on environment --%>
-					<% if $CurrentBuild %>
-						<li>
-							Deployed Revision:
-							<% with $CurrentBuild %><% include GitBuildReference %><% end_with %>
-						</li>
-						<li>
-							<a href="$CurrentBuild.Link">View deployment log</a>
-						</li>
-					<% else %>
-						<li>
-							No deployments have been made
-						</li>
-					<% end_if %>
-				</ul>
+							<%-- Display current build on environment --%>
+							<li>
+								Revision #:
+								<% if $CurrentBuild %>
+									<a class="tooltip-hint"
+									   data-toggle="tooltip"
+									   title="$CurrentBuild.Message"
+									   data-original-title="$CurrentBuild.Message"
+									   href="$CurrentBuild.Link">
+
+										$CurrentBuild.SHA
+									</a>
+								<% else %>
+									No deployments have been made
+								<% end_if %>
+							</li>
+						</ul>
+					</div>
+
+					<div class="col-md-6">
+						<ul>
+
+							<%-- Display logs link for environment --%>
+							<% if $LogsLink %>
+								<li>
+									<a href="$LogsLink"><i class="fa fa-table i-push"></i>Logs for $Name</a>
+								</li>
+							<% end_if %>
+
+							<%-- Display metrics for environment --%>
+							<% if $Project.HasMetrics %>
+								<li>
+									<a href="naut/project/$Project.Name/environment/$Name/metrics">
+										<i class="fa fa-bar-chart i-push"></i>Metrics for $Name
+									</a>
+								</li>
+							<% end_if %>
+
+						</ul>
+					</div>
+				</div>
 			</div>
 		</div>
 	<% end_with %>

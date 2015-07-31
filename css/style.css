@@ -1260,7 +1260,7 @@ mark,
   text-transform: capitalize; }
 
 .text-muted {
-  color: #777777; }
+  color: #aaaaaa; }
 
 .text-primary {
   color: #3aaef9; }
@@ -2044,7 +2044,7 @@ table {
 caption {
   padding-top: 12px 10px;
   padding-bottom: 12px 10px;
-  color: #777777;
+  color: #aaaaaa;
   text-align: left; }
 
 th {
@@ -9449,6 +9449,11 @@ h1 {
   font-weight: 700;
   letter-spacing: -1px; }
 
+h1, .h1,
+h2, .h2,
+h3, .h3 {
+  margin-bottom: 20px; }
+
 p {
   margin-bottom: 20px; }
 
@@ -9484,6 +9489,13 @@ ul {
 .git-sha, .repo-url input[type=text] {
   font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
   font-size: 11px; }
+
+.text-sm {
+  font-size: 12px; }
+
+.text-lg {
+  font-size: 17px;
+  font-weight: 300; }
 
 .alert .fa, .disk-quota .fa, .alert .deploy-dropdown .status-icon, .deploy-dropdown .alert .status-icon, .disk-quota .deploy-dropdown .status-icon, .deploy-dropdown .disk-quota .status-icon {
   margin-right: 4px; }
@@ -9776,13 +9788,20 @@ ul {
   margin-top: 3em; }
 
 .environment-details {
-  margin-bottom: 3em; }
+  margin-bottom: 10px; }
 
-.project-links li {
-  line-height: 24px;
-  margin-bottom: 4px; }
-  .project-links li a {
-    margin-left: 5px; }
+.project-links {
+  text-align: right;
+  position: absolute;
+  bottom: 0;
+  right: 0; }
+  .project-links li {
+    line-height: 24px;
+    margin-bottom: 4px; }
+    .project-links li a {
+      margin-left: 5px; }
+      .project-links li a i {
+        color: #222; }
 
 .deployment-status .deployment-progress {
   height: auto; }
@@ -9840,8 +9859,9 @@ ul {
 .project-branch.open .open-icon {
   display: inline-block; }
 
-.breadcrumb > li + li:before {
-  content: "/"; }
+.breadcrumb > li:after {
+  content: "/";
+  margin-left: 5px; }
 
 .vertical-center {
   min-height: 100%;
@@ -9854,6 +9874,12 @@ ul {
   min-height: 80vh;
   display: flex;
   align-items: center; }
+
+.i-push {
+  margin-right: 4px; }
+
+.text-lg .i-push {
+  width: 24px; }
 
 .push {
   margin-bottom: 20px; }
