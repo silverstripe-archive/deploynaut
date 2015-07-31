@@ -57,29 +57,7 @@
 				</tbody>
 			</table>
 
-			<% if $DataTransferLogs.MoreThanOnePage %>
-			<div class="pagination">
-				<ul>
-			    <% if $DataTransferLogs.NotFirstPage %>
-			        <li><a class="prev" href="$DataTransferLogs.PrevLink">Prev</a></li>
-			    <% end_if %>
-			    <% loop $DataTransferLogs.Pages %>
-			        <% if $CurrentBool %>
-			            <li class="disabled"><a href="#">$PageNum</a></li>
-			        <% else %>
-			            <% if $Link %>
-			                <li><a href="$Link">$PageNum</a></li>
-			            <% else %>
-			                <li class="disabled"><a href="#">...</a></li>
-			            <% end_if %>
-			        <% end_if %>
-			        <% end_loop %>
-			    <% if $DataTransferLogs.NotLastPage %>
-			        <li><a class="next" href="$DataTransferLogs.NextLink">Next</a></li>
-			    <% end_if %>
-			    </ul>
-			</div>
-			<% end_if %>
+			<% include Pagination Pagination=$DataTransferLogs %>
 
 		<% else %>
 			<div class="alert">

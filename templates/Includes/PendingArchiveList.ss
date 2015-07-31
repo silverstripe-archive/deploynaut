@@ -30,29 +30,7 @@
 					</tbody>
 				</table>
 
-				<% if $PendingDataArchives.MoreThanOnePage %>
-				<div class="pagination">
-					<ul>
-					<% if $PendingDataArchives.NotFirstPage %>
-						<li><a class="prev" href="$PendingDataArchives.PrevLink">Prev</a></li>
-					<% end_if %>
-					<% loop $PendingDataArchives.Pages %>
-						<% if $CurrentBool %>
-							<li class="disabled"><a href="#">$PageNum</a></li>
-						<% else %>
-							<% if $Link %>
-								<li><a href="$Link">$PageNum</a></li>
-							<% else %>
-								<li class="disabled"><a href="#">...</a></li>
-							<% end_if %>
-						<% end_if %>
-						<% end_loop %>
-					<% if $PendingDataArchives.NotLastPage %>
-						<li><a class="next" href="$PendingDataArchives.NextLink">Next</a></li>
-					<% end_if %>
-					</ul>
-				</div>
-				<% end_if %>
+				<% include Pagination Pagination=$PendingDataArchives %>
 			</div>
 		</div>
 	<% end_if %>
