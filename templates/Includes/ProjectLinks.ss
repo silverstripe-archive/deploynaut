@@ -9,7 +9,7 @@
 	<% end_with %><% end_if %>
 	<% if $CurrentProject.RepositoryURL %>
 		<li>
-			<a tabindex="0" data-placement="left" ole="button" data-container="body" data-toggle="popover"  title="Code Repository" data-content="$CurrentProject.RepositoryURL"><i class="fa fa-code i-push"></i> Code repository</a>
+			<i class="fa fa-code i-push"></i><a tabindex="0" data-placement="left" role="button" data-container="body" data-toggle="popover"  title="Code Repository" data-content="$CurrentProject.RepositoryURL">Code repository</a>
 		</li>
 	<% end_if %>
 </ul>

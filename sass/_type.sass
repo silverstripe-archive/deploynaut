@@ -11,14 +11,22 @@ h3, .h3
 p 
 	margin-bottom: $line-height-computed
 
+	+ pre,
+	+ ol,
+	+ ul
+		margin-top: -$line-height-computed/2
+		margin-bottom: $line-height-computed
+
 pre,
 ol,
 ul
-	margin-top: -$line-height-computed/2
-	margin-bottom: $line-height-computed
-
 	&.nav
 		margin-top: 0
+
+	ul,
+	ol
+		margin-top: 0
+		margin-bottom: $line-height-computed/4
 
 
 // Tables
