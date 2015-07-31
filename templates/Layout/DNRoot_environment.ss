@@ -21,7 +21,7 @@
 				<h3>Currently deployed  
 					<%-- Display Environment URL --%>
 					<% if $URL %>
-						<small><a class="text-muted" href="$URL">$URL</a></small>
+						<small><a class="text-muted" href="$URL"><% if $BareURL %>$BareURL<% else %>$URL<% end_if %></a></small>
 					<% end_if %>
 				</h3>
 
@@ -45,8 +45,10 @@
 									   data-original-title="$CurrentBuild.Message"
 									   href="$CurrentBuild.Link">
 
-										$CurrentBuild.SHA
+										<% with $CurrentBuild %><% include GitBuildReference %><% end_with %>
 									</a>
+									<a href="$CurrentBuild.Link">View deployment log</a>
+
 								<% else %>
 									No deployments have been made
 								<% end_if %>
