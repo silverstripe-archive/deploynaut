@@ -9776,10 +9776,12 @@ ul {
     margin: 20px 0; }
 
 .deploy-history {
-  margin-top: 3em; }
+  margin-top: 2.5em; }
 
 .environment-details {
-  margin-bottom: 3em; }
+  margin-bottom: 2.5em; }
+  .environment-details ul {
+    margin-bottom: 0; }
 
 .project-links li {
   line-height: 24px;

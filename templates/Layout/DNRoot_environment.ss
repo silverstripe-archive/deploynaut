@@ -171,9 +171,9 @@
 				</tr>
 			</thead>
 			<tbody>
-			<% loop $CurrentEnvironment.DeployHistory.limit(20) %>
+			<% loop $CurrentEnvironment.DeployHistory.limit(8) %>
 				<tr>
-					<td><span class="tooltip-hint" data-toggle="tooltip" data-original-title="$LastEdited.Nice ($LastEdited.Ago)">$LastEdited.Date</span></td>
+					<td><span>$LastEdited.Nice</span></td>
 					<td>
 						<% include GitBuildReference %>
 					</td>
