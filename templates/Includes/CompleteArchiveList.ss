@@ -61,29 +61,7 @@
 					</tbody>
 				</table>
 
-				<% if $CompleteDataArchives.MoreThanOnePage %>
-				<div class="pagination">
-					<ul>
-					<% if $CompleteDataArchives.NotFirstPage %>
-						<li><a class="prev" href="$CompleteDataArchives.PrevLink">Prev</a></li>
-					<% end_if %>
-					<% loop $CompleteDataArchives.Pages %>
-						<% if $CurrentBool %>
-							<li class="disabled"><a href="#">$PageNum</a></li>
-						<% else %>
-							<% if $Link %>
-								<li><a href="$Link">$PageNum</a></li>
-							<% else %>
-								<li class="disabled"><a href="#">...</a></li>
-							<% end_if %>
-						<% end_if %>
-						<% end_loop %>
-					<% if $CompleteDataArchives.NotLastPage %>
-						<li><a class="next" href="$CompleteDataArchives.NextLink">Next</a></li>
-					<% end_if %>
-					</ul>
-				</div>
-				<% end_if %>
+				<% include Pagination Pagination=$CompleteDataArchives %>
 			<% else %>
 				<div class="alert alert-info">
 					There are currently no archived files
