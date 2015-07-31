@@ -1,28 +1,9 @@
 <div class="content page-header">
 	<div class="row">
-		<div class="col-md-7">
+		<div class="col-md-12">
 			<% include Breadcrumb %>
 			<% include DeploymentTabs Overview=true %>
-		</div>
-		<div class="col-md-5">
-			<ul class="project-links">
-				<% if $CurrentProject.RepositoryInterface %><% with $CurrentProject.RepositoryInterface %>
-					<li>
-						<div class="repo-ux">
-							<img src="$Icon" />
-							<a href="$URL">View code on $Name</a>
-						</div>
-					</li>
-				<% end_with %><% end_if %>
-				<% if $CurrentProject.RepositoryURL %>
-					<li>
-						<div class="repo-url">
-							<label for="repoURL">Code Repository:</label>
-							<input type="text" value="$CurrentProject.RepositoryURL" readonly>
-						</div>
-					</li>
-				<% end_if %>
-			</ul>
+			<% include ProjectLinks %>
 		</div>
 	</div>
 </div>

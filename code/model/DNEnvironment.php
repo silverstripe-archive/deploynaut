@@ -619,6 +619,10 @@ class DNEnvironment extends DataObject {
 			$commit = $repo->getCommit($deploy->SHA);
 			if ($commit) {
 				$deploy->Message = Convert::raw2xml($commit->getMessage());
+				$deploy->Committer = Convert::raw2xml($commit->getCommitterName());
+				$deploy->CommitDate = $commit->getCommitterDate()->Format('d/m/Y g:ia');
+				$deploy->Author = Convert::raw2xml($commit->getAuthorName());
+				$deploy->AuthorDate = $commit->getAuthorDate()->Format('d/m/Y g:ia');
 			}
 			// We can't find this SHA, so we ignore adding a commit message to the deployment
 		} catch (Gitonomy\Git\Exception\ReferenceNotFoundException $ex) { }
