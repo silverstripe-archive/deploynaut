@@ -251,6 +251,14 @@
 			if(!confirm(msg)) e.preventDefault();
 		});
 
+		$('.upload-exceed-link').on('click', function() {
+			$(this).tab('show');
+
+			var id = $(this).attr('data-target');
+			$(id).find('select').select2();
+			return false;
+		});
+
 		/**
 		 * Add a delay after clicking on Approve/Reject type buttons on a Pipeline. This is because there is a brief
 		 * gap between one PipelineStep ending and the next beginning, and it's preferable to not show the user a page
