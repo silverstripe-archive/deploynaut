@@ -5791,7 +5791,7 @@ button.close {
     padding: 0 5px; }
 
 .tooltip-inner {
-  max-width: 200px;
+  max-width: 400px;
   padding: 3px 8px;
   color: #fff;
   text-align: center;
@@ -9453,6 +9453,10 @@ ul {
 .font-w600 {
   font-weight: 600; }
 
+.git-sha, .repo-url input[type=text] {
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-size: 11px; }
+
 .alert .fa, .disk-quota .fa, .alert .deploy-dropdown .status-icon, .deploy-dropdown .alert .status-icon, .disk-quota .deploy-dropdown .status-icon, .deploy-dropdown .disk-quota .status-icon {
   margin-right: 4px; }
 
@@ -9780,8 +9784,6 @@ ul {
 
 .repo-url input[type=text] {
   color: #777777;
-  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
-  font-size: 11px;
   line-height: 24px;
   padding: 0 8px;
   width: 100%;

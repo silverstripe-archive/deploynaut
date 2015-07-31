@@ -10,7 +10,7 @@ class DNDeployment extends DataObject {
 	 * @var array
 	 */
 	private static $db = array(
-		"SHA" => "Varchar(255)",
+		"SHA" => "GitSHA",
 		"ResqueToken" => "Varchar(255)",
 		// Observe that this is not the same as Resque status, since ResqueStatus is not persistent
 		// It's used for finding successful deployments and displaying that in history views in the frontend

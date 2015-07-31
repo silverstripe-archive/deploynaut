@@ -50,9 +50,10 @@
 					<td><% if $URL %><a href="$URL">$BareURL</a><% else %>&nbsp;<% end_if %></td>
 					<td>
 						<% if $CurrentBuild %>
-						<span class="tooltip-hint" data-toggle="tooltip" title="$CurrentBuild.Message" data-original-title="$CurrentBuild.Message">
-							$CurrentBuild.SHA
-						</span>
+							<span class="git-sha tooltip-hint" data-toggle="tooltip" title="$CurrentBuild.SHA.FullHash">
+								$CurrentBuild.SHA.ShortHash
+							</span>
+							$CurrentBuild.Message
 						<% else %>
 							<em>Nothing has been deployed.</em>
 						<% end_if %>
