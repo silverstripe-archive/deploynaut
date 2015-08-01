@@ -170,6 +170,12 @@ To fix this, change to the deploy user and connect to the machine and answer yes
 
 	sudo su - www-data
 	ssh -p 2222 sites@192.168.0.1
+	
+Alternative to avoid the above is to add the code below to SSH config file /var/www/.ssh/config file of www-data user (not recommended)
+
+	Host *
+	 StrictHostKeyChecking no
+
 
 ## Capistrano roles
 
@@ -211,7 +217,7 @@ The [sspak](https://github.com/silverstripe/sspak) tool is required to create
 archives of the database/assets for a specific environment into an `*.sspak` file.
 This file can be used for backups, restores, and setting up local development environments.
 
-	wget --no-check-certificate https://raw.github.com/silverstripe/sspak/gh-pages/sspak.phar; sudo cp sspak.phar /usr/local/bin/sspak
+    curl -sS https://silverstripe.github.io/sspak/install | php -- /usr/local/bin
 
 Set up feature flags in `_ss_environment.php`:
 
