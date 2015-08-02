@@ -174,6 +174,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * Action
 	 *
+	 * @param  SS_HTTPRequest $request
 	 * @return string - HTML
 	 */
 	public function snapshots(SS_HTTPRequest $request) {
