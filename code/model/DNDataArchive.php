@@ -422,7 +422,10 @@ class DNDataArchive extends DataObject {
 			$process->run();
 			if(!$process->isSuccessful()) {
 				$cleanupFn();
-				throw new RuntimeException(sprintf('Could not extract the assets archive: %s', $process->getErrorOutput()));
+				throw new RuntimeException(sprintf(
+					'Could not extract the assets archive: %s',
+					$process->getErrorOutput()
+				));
 			}
 		}
 
@@ -435,7 +438,7 @@ class DNDataArchive extends DataObject {
 	 * For example, if the user uploaded an sspak containing just the db, but declared in the form
 	 * that it contained db+assets, then the archive is not valid.
 	 *
-	 * @param string $mode "db", "assets", or "all". This is the content we're checking for. Default to the archive setting
+	 * @param string $mode This is the content ("db", "assets" or "all") we're checking for. Default in archive setting
 	 * @return ValidationResult
 	 */
 	public function validateArchiveContents($mode = null) {
