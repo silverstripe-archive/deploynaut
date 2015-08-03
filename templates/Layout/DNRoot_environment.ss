@@ -18,42 +18,15 @@
 					$DeploymentMessages
 				<% end_if %>
 
-				<div class="row text-lg">
-					<div class="col-md-6">
-						<% if $CurrentBuild %>
-							<% with $CurrentBuild %>
-								<% include GitDetailedBuildReference BareURL=$Up.BareURL, URL=$Up.URL %>
-							<% end_with %>
-						<% else %>
-							<p>
-								No deployments have been made
-							</p>
-						<% end_if %>
-						</ul>
-					</div>
-
-					<div class="col-md-6">
-						<ul>
-
-							<%-- Display logs link for environment --%>
-							<% if $LogsLink %>
-								<li>
-									<a href="$LogsLink"><i class="fa fa-table i-push"></i>Logs for $Name</a>
-								</li>
-							<% end_if %>
-
-							<%-- Display metrics for environment --%>
-							<% if $Project.HasMetrics %>
-								<li>
-									<a href="naut/project/$Project.Name/environment/$Name/metrics">
-										<i class="fa fa-bar-chart i-push"></i>Metrics for $Name
-									</a>
-								</li>
-							<% end_if %>
-
-						</ul>
-					</div>
-				</div>
+				<% if $CurrentBuild %>
+					<% with $CurrentBuild %>
+						<% include GitDetailedBuildReference BareURL=$Up.BareURL, URL=$Up.URL %>
+					<% end_with %>
+				<% else %>
+					<p>
+						No deployments have been made
+					</p>
+				<% end_if %>
 			</div>
 		</div>
 	<% end_with %>
