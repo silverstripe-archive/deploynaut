@@ -105,8 +105,7 @@
 			<% end_if %>
 		<% end_if %>
 	<% else %>
-		<% if $DeployForm %>
-
+		<% if $CurrentEnvironment.CanDeploy && $DeployForm %>
 			<% with $DeployForm %>
 				<% if $Message %>
 					<p id="{$FormName}_error" class="alert alert-$MessageType">$Message</p>
@@ -124,12 +123,10 @@
 			</div>
 
 			<div class="deploy-form-outer collapse clearfix" id="envDeploy">
-					<%-- Deploy form will be put here with ajax --%>
+				<%-- Deploy form will be put here with ajax --%>
 			</div>
 		<% end_if %>
 	<% end_if %>
-
-
 
 	<div class="deploy-history">
 		<h3>Deploy history</h3>
