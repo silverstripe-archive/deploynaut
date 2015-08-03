@@ -695,16 +695,18 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 	/**
 	 * Provide a list of all projects.
-	 * CAUTION: filterByCallback will change this into an ArrayList!
-	 *
-	 * @return ArrayList
+	 * @return mixed
 	 */
 	public function DNProjectList() {
-		return DNProject::get()->filterByCallback(function($record) {
-			return $record->canView();
-		});
-	}
+		$memberId = Member::currentUserID();
+		if(!$memberId) return new ArrayList();
 
+		if(Permission::check('ADMIN')) return DNProject::get();
+
+		return Member::get()->filter('ID', $memberId)
+			->relation('Groups')
+			->relation('Projects');
+	}
 
 	/**
 	 * Returns top level navigation of projects.
