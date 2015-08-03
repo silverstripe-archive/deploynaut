@@ -12,6 +12,6 @@
 		</span>
 	<% end_if %>
 
-    <span class="deploy-date">Deployed on $LastEdited.Nice</span>
-	<a href="$Environment.CurrentBuild.Link">View Log</a>
+	<span class="deploy-date">Deployed on $LastEdited.Nice</span>
+	<a href="$Environment.CurrentBuild.Link">View Deploy Log</a>
 </div>
