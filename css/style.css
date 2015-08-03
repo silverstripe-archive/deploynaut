@@ -9509,6 +9509,48 @@ ul ol {
   font-size: 17px;
   font-weight: 300; }
 
+body form.userswitcher {
+  width: inherit;
+  width: 230px;
+  overflow: hidden;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin: 0;
+  border-radius: 0;
+  color: #fff;
+  border: none; }
+
+form.userswitcher input,
+form.userswitcher input[type="submit"],
+form.userswitcher .Actions,
+form.userswitcher .field,
+form.userswitcher label,
+form.userswitcher fieldset {
+  margin: 0;
+  padding: 0; }
+
+body form.userswitcher select {
+  color: #fff;
+  border-color: #666;
+  margin-left: 0;
+  width: 100%; }
+
+body form.userswitcher label {
+  margin-top: 5px;
+  color: #717171; }
+
+body .userswitcher fieldset,
+body .userswitcher .Actions {
+  overflow: hidden;
+  float: none; }
+
+body .userswitcher fieldset label,
+body .userswitcher fieldset .middleColumn {
+  float: none; }
+
 .alert .fa, .disk-quota .fa, .alert .deploy-dropdown .status-icon, .deploy-dropdown .alert .status-icon, .disk-quota .deploy-dropdown .status-icon, .deploy-dropdown .disk-quota .status-icon {
   margin-right: 4px; }
 
