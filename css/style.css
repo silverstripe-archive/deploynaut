@@ -9731,14 +9731,15 @@ ul ol {
   text-align: left;
   font-size: 26px;
   line-height: 40px;
-  margin-bottom: 0; }
+  margin-bottom: 40px; }
   .deploy-dropdown .status-icon {
     line-height: 40px; }
   .deploy-dropdown .loading-text {
     display: none; }
   .deploy-dropdown.open {
     border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0; }
+    border-bottom-right-radius: 0;
+    margin-bottom: 0; }
   .deploy-dropdown.loading .loading-text {
     display: inherit;
     font-size: 20px; }
@@ -9748,7 +9749,8 @@ ul ol {
 .deploy-form-outer {
   border-width: 0px 1px 1px;
   border-style: solid;
-  border-color: #bbb; }
+  border-color: #bbb;
+  margin-bottom: 40px; }
   .deploy-form-outer .deploy-form label {
     position: static;
     font-size: 16px;
