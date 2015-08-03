@@ -9961,3 +9961,6 @@ ul ol {
 
 .table-data-archives .btn, .table-data-archives .action, .table-data-archives .deploy-dropdown {
   margin-bottom: 0; }
+
+.popover-content {
+  word-wrap: break-word; }
