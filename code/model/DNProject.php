@@ -76,6 +76,14 @@ class DNProject extends DataObject {
 	protected static $relation_cache = array();
 
 	/**
+	 * Member::currentUser() cache to avoid re-query the same thing
+	 * again and again.
+	 *
+	 * @var mixed
+	 */
+	private static $_cache_member = null;
+
+	/**
 	 * Used by the sync task
 	 *
 	 * @param string $path
@@ -225,7 +233,14 @@ class DNProject extends DataObject {
 	 * @return boolean
 	 */
 	public function canView($member = null) {
-		if(!$member) $member = Member::currentUser();
+		if(!$member) {
+			if(isset(self::$_cache_member)) {
+				$member = self::$_cache_member;
+			} else {
+				$member = Member::currentUser();
+				self::$_cache_member = $member;
+			}
+		}
 
 		if(Permission::checkMember($member, 'ADMIN')) return true;
 
