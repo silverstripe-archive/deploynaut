@@ -1,31 +1,11 @@
 <div class="content page-header">
-    <div class="row">
-        <div class="col-md-9">
-            <ol class="breadcrumb">
-                <li><a href="naut/project/$CurrentEnvironment.Name">$CurrentEnvironment.Title</a></li>
-            </ol>
-            <h1 class="page-heading">Deployments</h1>
-
+	<div class="row">
+		<div class="col-md-12">
+			<% include Breadcrumb %>
 			<% include DeploymentTabs %>
-        </div>
-
-        <div class="col-md-3">
-            <ul class="project-links">
-				<% if $CurrentEnvironment.URL %>
-                    <li>
-                        <span class="fa fa-link"></span>
-                        <a href="$CurrentEnvironment.URL.URL">$CurrentEnvironment.URL.URL</a>
-                    </li>
-				<% end_if %>
-				<% if $CurrentProject.RepoURL %>
-                    <li>
-                        <span class="fa fa-code"></span>
-                        <a href="$CurrentProject.RepoURL.URL">View Code</a>
-                    </li>
-				<% end_if %>
-            </ul>
-        </div>
-    </div>
+			<% include ProjectLinks %>
+		</div>
+	</div>
 </div>
 
 
@@ -40,7 +20,7 @@
 
 			<%-- Display Environment URL --%>
 			<% if $CurrentEnvironment.URL %>
-				<span>URL: <a href="$CurrentEnvironment.URL.URL">$CurrentEnvironment.URL.URL</a></span>
+				<br /><span>URL: <a href="$CurrentEnvironment.URL.URL">$CurrentEnvironment.URL.URL</a></span>
 			<% end_if %>
 
 		</div>
