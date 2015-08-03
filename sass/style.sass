@@ -456,6 +456,33 @@ $textarea-transition-time: 0.6s
 		@extend .list-unstyled
 		margin-bottom: 0
 
+	.build-details
+		font-size: 12px
+		margin-bottom: 20px
+
+		.title
+			font-size: 24px
+
+		span
+			display: block
+
+		span.git-sha,
+		a.git-sha
+			display: inline
+
+			&:before
+				content: " "
+				display: table
+				clear: both
+
+			+ span
+				display: inline
+
+				&:after
+					content: " "
+					display: table
+					clear: both
+
 .project-links
 	@extend .list-reset
 	text-align: right

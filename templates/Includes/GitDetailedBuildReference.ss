@@ -1,22 +1,17 @@
-<% if $Committer %>
-	<div class="git-committer">
-		Committed by $Committer on $CommitDate
-	</div>
-<% end_if %>
-<div>
-<% if $Environment.Project.RepositoryInterface.CommitURL %>
-	<a href="{$Environment.Project.RepositoryInterface.CommitURL}/{$SHA}"
-<% else %>
-	<span
-<% end_if %>
-		class="git-sha tooltip-hint"
-	>$SHA.FullHash<!--
-<% if $Environment.Project.RepositoryInterface %>
-	--></a>
-<% else %>
-	--></span>
-<% end_if %>
+<div class="build-details">
+	<a class="text-muted title" href="$URL.URL" target="_blank"><% if $BareURL %>$BareURL<% else %>$URL<% end_if %></a>
+
+	<% if $Environment.Project.RepositoryInterface.CommitURL %>
+		<a href="{$Environment.Project.RepositoryInterface.CommitURL}/{$SHA}" class="git-sha tooltip-hint">
+			$SHA.ShortHash
+		</a>
+		<% if $Committer %><span class="commit-message"> - $Message</span><% end_if %>
+	<% else %>
+		<span class="git-sha tooltip-hint">
+			$SHA.ShortHash<% if $Committer %><span class="commit-message"> - $Message</span><% end_if %>
+		</span>
+	<% end_if %>
+
+    <span class="deploy-date">Deployed on $LastEdited.Nice</span>
+	<a href="$CurrentBuild.Link">View Log</a>
 </div>
-<p>
-	$Message
-</p>

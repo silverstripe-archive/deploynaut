@@ -18,20 +18,12 @@
 					$DeploymentMessages
 				<% end_if %>
 
-				<h3>Currently deployed
-					<%-- Display Environment URL --%>
-					<% if $URL %>
-						<small><a class="text-muted" href="$URL" target="_blank"><% if $BareURL %>$BareURL<% else %>$URL<% end_if %></a></small>
-					<% end_if %>
-				</h3>
-
 				<div class="row text-lg">
 					<div class="col-md-6">
 						<% if $CurrentBuild %>
-							<% with $CurrentBuild %><% include GitDetailedBuildReference %><% end_with %>
-							<p>
-								Deployed on $LastEdited.Nice - <a href="$CurrentBuild.Link">View deployment log</a>
-							</p>
+							<% with $CurrentBuild %>
+								<% include GitDetailedBuildReference BareURL=$Up.BareURL, URL=$Up.URL %>
+							<% end_with %>
 						<% else %>
 							<p>
 								No deployments have been made
