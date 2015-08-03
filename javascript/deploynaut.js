@@ -3,33 +3,48 @@
 (function($) {
 	"use strict";
 
+	// Popover on enviroment repository link
+	$(function () {
+		$('[data-toggle="popover"]').popover()
+	})
+
 	var queue = {
-		showlog: function($status, $content, logLink) {
+		showlog: function(status, content, logLink) {
 			var self = this;
 			$.getJSON(logLink, {randval: Math.random()},
 			function(data) {
-				$status.text(data.status);
-				$content.text(data.content);
-				$status.attr('class', data.status);
+				status.text(data.status);
+				content.text(data.content);
+				$(status).parent().addClass(data.status);
 				$('title').text(data.status + " | Deploynaut");
-				if (data.status === 'Complete') {
+				if (data.status == 'Complete' || data.status == 'Failed' || data.status == 'Invalid') {
+					$(status).parent().removeClass('Running Queued progress-bar-striped active');
 					self._clearInterval();
+				} else if (data.status == 'Running') {
+					$(status).parent().addClass('progress-bar-striped active')
+					$(status).parent().removeClass('Queued');
 				}
 			}
 			);
 		},
+
+
 		start: function() {
 			this._setupPinging();
 		},
+
+
 		/**
 		 * Will fetch latest deploy log and reload the content with it
 		 */
 		_setupPinging: function() {
 			var self = this;
 			window._queue_refresh = window.setInterval(function() {
-				self.showlog($("#queue_action"), $("#queue_log"), $('#queue_log').data('loglink'));
+				self.showlog($("#queue_action .status"), $("#queue_log"), $('#queue_log').data('loglink'));
 			}, 3000);
 		},
+
+
 		/**
 		 * Will remove the pinging and refresh of the application list
 		 */
@@ -39,6 +54,14 @@
 	};
 
 	$(document).ready(function() {
+
+		// Enable select2
+		$('select:not(.disable-select2)').select2();
+
+		// Menu expand collapse
+	    	$('a.nav-submenu').click(function() {
+	        	$(this).toggleClass( "open" );
+	    	});
 
 		if ($('#Form_DeployForm_BuildName').val() === '') {
 			$('#Form_DeployForm_action_doDeploy').attr('disabled', true);
@@ -61,7 +84,7 @@
 			queue.start();
 		}
 
-		$('.project-branch > h3').click(function() {
+		$('.project-branch > .branch-details').click(function() {
 			var $project = $(this).parent();
 			var $content = $project.find('.project-branch-content');
 
@@ -79,32 +102,71 @@
 			}
 		});
 
-		$('a.update-repository').click(function(e) {
-			e.preventDefault();
 
-			$(this).attr('disabled', 'disabled');
-			$(this).html('Fetching');
-			$(this).toggleClass('loading');
+		// This is the deployment page dropdown menu.
+		$('.deploy-dropdown').click(function(e) {
+
+			if($(this).hasClass('success')) {
+				$(this).toggleClass('open');
+				$($(this).attr('aria-controls')).collapse('toggle');
+				return;
+			}
+
+			// Don't perform when we're already loading or have already loaded
+			if($(this).hasClass('loading') || $(this).hasClass('success')) {
+				return;
+			}
+
+			// Add loading class so the user can see something happening
+			$(this).addClass('loading');
+
+			// Yay Javascript!
+			var self = this;
 
 			$.ajax({
 				type: "POST",
 				url: $(this).data('api-url'),
 				dataType: 'json',
 				success: function(data) {
+
+					// Check every 2 seconds to see the if job has finished.
 					window.fetchInterval = window.setInterval(function() {
 						$.ajax({
 							type: "GET",
 							url: data.href,
 							dataType: 'json',
-							success: function(log_data) {
-								$('#gitFetchModal .modal-body').html('<pre>' + log_data.message + '</pre>');
-								$('#gitFetchModal .modal-footer').html('Status: ' + log_data.status);
-								if(log_data.status === 'Failed' || log_data.status === 'Complete') {
+							success: function(data) {
+
+								if(data.status === 'Failed') {
+									$(self).removeClass('loading').addClass('error');
+									clearInterval(window.fetchInterval);
+								} else if(data.status === 'Complete') {
+									// Now we need to load the form with the new GIT data
+									$.ajax({
+										type: 'GET',
+										url: $(self).attr('data-form-url'),
+										dataType: 'json',
+										success: function(formData) {
+											$(self).next('.deploy-form-outer').html(formData.Content);
+
+											$(self).removeClass('loading').addClass('success').toggleClass('open');
+											$($(self).attr('aria-controls')).collapse();
+
+											// Enable select2
+											$('.deploy-form-outer .tab-pane.active select:not(.disable-select2)').select2();
+
+											// Ensure the correct value is set for hidden field "SelectRelease"
+											var releaseType = $('.deploy-form-outer .tabbedselectiongroup > li.active a').attr('data-value');
+											$('.deploy-form-outer').find('input[name="SelectRelease"]').attr('value', releaseType);
+										}
+									});
+
 									clearInterval(window.fetchInterval);
 								}
-								if(log_data.status === 'Complete') {
-									location.reload();
-								}
+							},
+							error: function(data) {
+								$(self).removeClass('loading').addClass('error');
+								clearInterval(window.fetchInterval);
 							}
 						});
 					}, 2000);
@@ -112,27 +174,65 @@
 			});
 		});
 
-		$('.tooltip-hint, .btn-tooltip').tooltip({
-			placement: "top",
+		$('.deploy-form-outer').on('click', '.tabbedselectiongroup > li > a', function (e) {
+			// Set the release type.
+			var releaseType = $(this).attr('data-value');
+			$(this).parents('form').find('input[name="SelectRelease"]').attr('value', releaseType);
+
+			$(this).tab('show');
+
+			// Ensure select2 is enabled
+			// This needs to be done when the tab is visible otherwise the width can screw up
+			var id = $(this).attr('href');
+			$(id).find('select:not(.disable-select2)').select2();
+
+			return false;
+		});
+
+		$('.deploy-form-outer').on('click', '.deploy-button', function(e) {
+			var releaseType = $(this).parents('form').find('input[name="SelectRelease"]').attr('value');
+
+			var environment = $(this).attr('data-environment-name');
+			var revision = $(this).parents('form').find('*[name="' + releaseType + '"]').val();
+
+			return confirm('You are about to begin the following deployment:\n\n'
+				+ 'Environment: ' + environment + '\n'
+				+ 'Revision: ' + revision + '\n\n'
+				+ 'Continue?');
+		});
+
+
+		$('.tooltip-hint:not(.git-sha), .btn-tooltip').tooltip({
+			placement: 'top',
 			trigger: 'hover'
 		});
+
+		$('.tooltip-hint.git-sha').tooltip({
+			placement: 'left',
+			trigger: 'hover',
+			template: '<div class="tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner git-sha"></div></div>'
+		});
+
 
 		/**
 		 * Extend a specific target
 		 */
 		$('.extended-trigger').click(function(e) {
-			var $el = $($(this).data('extendedTarget')), $container = $($(this).data('extendedContainer'));
+			var $el = $($(this).data('extendedTarget'));
+			var $container = $($(this).data('extendedContainer'));
 
 			if($el.is(':empty')) {
 				$container.data('href', $(this).attr('href'));
+				$container.addClass('loading');
+
 				$el.load($(this).attr('href'), function() {
 					$container.removeClass('loading');
+					$el.removeClass('hide');
+					$el.find('select').select2();
 				});
-				$container.addClass('loading');
-				$container.show();
 			} else {
 				$el.empty();
-				$container.hide();
+				$el.addClass('hide');
 
 				// Re-enter the click handler if another button has been pressed, so the form re-opens.
 				if ($(this).attr('href')!==$container.data('href')) {
@@ -154,6 +254,14 @@
 				msg = 'Are you sure you want to restore data onto environment ' + envLabel + '?';
 
 			if(!confirm(msg)) e.preventDefault();
+		});
+
+		$('.upload-exceed-link').on('click', function() {
+			$(this).tab('show');
+
+			var id = $(this).attr('data-target');
+			$(id).find('select').select2();
+			return false;
 		});
 
 		/**

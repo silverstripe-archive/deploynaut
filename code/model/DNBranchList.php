@@ -35,10 +35,13 @@ class DNBranchList extends ArrayList {
 		// Placeholder to put master branch first
 		$firstBranch = null;
 
-		// return an empty array if the version control isn't checked out yet
-		if(!file_exists($this->project->LocalCVSPath)) return array();
+		try {
+			$repository = new Gitonomy\Git\Repository($this->project->LocalCVSPath);
+		}
+		catch (Exception $e) {
+			return $branches;
+		}
 
-		$repository = new Gitonomy\Git\Repository($this->project->LocalCVSPath);
 		foreach($repository->getReferences()->getBranches() as $branch) {
 			$obj = DNBranch::create($branch, $this->project, $this->data);
 			if($branch->getName() == 'master') $firstBranch = array($branch->getName() => $obj);

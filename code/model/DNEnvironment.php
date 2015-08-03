@@ -71,7 +71,8 @@ class DNEnvironment extends DataObject {
 		"Name" => "Varchar(255)",
 		"URL" => "Varchar(255)",
 		"BackendIdentifier" => "Varchar(255)", // Injector identifier of the DeploymentBackend
-		"DryRunEnabled" => "Boolean" // True if the dry run button should be enabled on the frontend
+		"DryRunEnabled" => "Boolean", // True if the dry run button should be enabled on the frontend
+		"Usage" => "Enum('Production, UAT, Test, Unspecified', 'Unspecified')"
 	);
 
 	/**
@@ -122,16 +123,17 @@ class DNEnvironment extends DataObject {
 	 * @var array
 	 */
 	public static $summary_fields = array(
-		"Name"						=> "Environment Name",
-		"URL"						=> "URL",
-		"DeployersList"				=> "Can Deploy List",
-		"CanRestoreMembersList"		=> "Can Restore List",
-		"CanBackupMembersList"		=> "Can Backup List",
-		"ArchiveUploadersList"		=> "Can Upload List",
-		"ArchiveDownloadersList"	=> "Can Download List",
-		"ArchiveDeletersList"		=> "Can Delete List",
-		"PipelineApproversList"		=> "Can Approve List",
-		"PipelineCancellersList"	=> "Can Cancel List"
+		"Name" => "Environment Name",
+		"Usage" => "Usage",
+		"URL" => "URL",
+		"DeployersList" => "Can Deploy List",
+		"CanRestoreMembersList" => "Can Restore List",
+		"CanBackupMembersList" => "Can Backup List",
+		"ArchiveUploadersList" => "Can Upload List",
+		"ArchiveDownloadersList" => "Can Download List",
+		"ArchiveDeletersList"  => "Can Delete List",
+		"PipelineApproversList" => "Can Approve List",
+		"PipelineCancellersList" => "Can Cancel List"
 	);
 
 	private static $singular_name = 'Capistrano Environment';
@@ -206,6 +208,11 @@ class DNEnvironment extends DataObject {
 	 */
 	public function getFullName($separator = ':') {
 		return sprintf('%s%s%s', $this->Project()->Name, $separator, $this->Name);
+	}
+
+	public function getBareURL() {
+		$url = parse_url($this->URL);
+		if (isset($url['host'])) return strtolower($url['host']);
 	}
 
 	/**
@@ -612,6 +619,10 @@ class DNEnvironment extends DataObject {
 			$commit = $repo->getCommit($deploy->SHA);
 			if ($commit) {
 				$deploy->Message = Convert::raw2xml($commit->getMessage());
+				$deploy->Committer = Convert::raw2xml($commit->getCommitterName());
+				$deploy->CommitDate = $commit->getCommitterDate()->Format('d/m/Y g:ia');
+				$deploy->Author = Convert::raw2xml($commit->getAuthorName());
+				$deploy->AuthorDate = $commit->getAuthorDate()->Format('d/m/Y g:ia');
 			}
 			// We can't find this SHA, so we ignore adding a commit message to the deployment
 		} catch (Gitonomy\Git\Exception\ReferenceNotFoundException $ex) { }
@@ -678,11 +689,28 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function Link() {
 		return $this->Project()->Link()."/environment/" . $this->Name;
+	}
+
+	/**
+	 * Is this environment currently at the root level of the controller that handles it?
+	 * @return bool
+	 */
+	public function isCurrent() {
+		return $this->isSection() && Controller::curr()->getAction() == 'environment';
+	}
+
+	/**
+	 * Is this environment currently in a controller that is handling it or performing a sub-task?
+	 * @return bool
+	 */
+	public function isSection() {
+		$controller = Controller::curr();
+		$environment = $controller->getField('CurrentEnvironment');
+		return $environment && $environment->ID == $this->ID;
 	}
 
 
@@ -744,6 +772,9 @@ class DNEnvironment extends DataObject {
 			// The Main.Name
 			TextField::create('Name', 'Environment name')
 				->setDescription('A descriptive name for this environment, e.g. staging, uat, production'),
+
+
+			$this->obj('Usage')->scaffoldFormField('Environment usage'),
 
 			// The Main.URL field
 			TextField::create('URL', 'Server URL')
@@ -957,6 +988,23 @@ PHP
 		$this->writeConfigFile();
 		$this->writePipelineFile();
 	}
+
+	public function onAfterWrite() {
+		parent::onAfterWrite();
+
+		if ($this->Usage == 'Production' || $this->Usage == 'UAT') {
+			$conflicting = DNEnvironment::get()
+				->filter('ProjectID', $this->ProjectID)
+				->filter('Usage', $this->Usage)
+				->exclude('ID', $this->ID);
+
+			foreach ($conflicting as $otherEnvironment) {
+				$otherEnvironment->Usage = 'Unspecified';
+				$otherEnvironment->write();
+			}
+		}
+	}
+
 
 	/**
 	 * Ensure that environment paths are setup on the local filesystem
