@@ -10,11 +10,8 @@
 	<% require themedCSS(style,deploynaut) %>
 	<% require themedCSS(theme-style,platform) %>
 
-	<% require javascript('deploynaut/thirdparty/select2/dist/js/select2.min.js') %>
-    	<% require javascript("deploynaut/javascript/material.js") %>
-
-    	<script src="//use.typekit.net/opf7opz.js"></script>
-    	<script>try{Typekit.load();}catch(e){}</script>
+    <script src="//use.typekit.net/opf7opz.js"></script>
+    <script>try{Typekit.load();}catch(e){}</script>
 
     <meta name="author" content="SilverStripe LTD">
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->

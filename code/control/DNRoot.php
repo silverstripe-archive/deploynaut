@@ -132,16 +132,15 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		Requirements::combine_files(
 			'deploynaut.js',
 			array(
-				//THIRDPARTY_DIR . '/jquery/jquery.js',
 				'deploynaut/javascript/jquery.js',
 				'deploynaut/javascript/bootstrap.js',
 				'deploynaut/javascript/deploynaut.js',
 				'deploynaut/javascript/bootstrap.file-input.js',
-
+				'deploynaut/thirdparty/select2/dist/js/select2.min.js',
+				'deploynaut/javascript/material.js',
 			)
 		);
 
-		Requirements::css(FRAMEWORK_ADMIN_DIR .'/thirdparty/chosen/chosen/chosen.css');
 	}
 
 	/**
