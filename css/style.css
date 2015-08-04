@@ -9850,31 +9850,16 @@ body .userswitcher fieldset .middleColumn {
 
 .environment-details {
   margin-bottom: 10px; }
+  .environment-details h3 {
+    margin-bottom: 7px; }
+  .environment-details h3 .fa, .environment-details h3 .deploy-dropdown .status-icon, .deploy-dropdown .environment-details h3 .status-icon {
+    font-size: 14px;
+    vertical-align: super; }
+  .environment-details .build-details span.git-sha,
+  .environment-details .build-details a.git-sha {
+    font-size: 14px; }
   .environment-details ul {
     margin-bottom: 0; }
-  .environment-details .build-details {
-    font-size: 12px;
-    margin-bottom: 20px; }
-    .environment-details .build-details .title {
-      font-size: 24px; }
-    .environment-details .build-details span {
-      display: block; }
-    .environment-details .build-details span.git-sha,
-    .environment-details .build-details a.git-sha {
-      display: inline; }
-      .environment-details .build-details span.git-sha:before,
-      .environment-details .build-details a.git-sha:before {
-        content: " ";
-        display: table;
-        clear: both; }
-      .environment-details .build-details span.git-sha + span,
-      .environment-details .build-details a.git-sha + span {
-        display: inline; }
-        .environment-details .build-details span.git-sha + span:after,
-        .environment-details .build-details a.git-sha + span:after {
-          content: " ";
-          display: table;
-          clear: both; }
 
 .project-links {
   text-align: right;

@@ -453,36 +453,25 @@ $textarea-transition-time: 0.6s
 .environment-details
 	margin-bottom: $padding-large-vertical
 
+	h3
+		margin-bottom: 7px
+
+	h3 .fa 
+		font-size: 14px
+		vertical-align: super
+
+	.build-details
+
+		span.git-sha,
+		a.git-sha
+			font-size: 14px
+
 	ul
 		@extend .list-unstyled
 		margin-bottom: 0
 
-	.build-details
-		font-size: 12px
-		margin-bottom: 20px
+	
 
-		.title
-			font-size: 24px
-
-		span
-			display: block
-
-		span.git-sha,
-		a.git-sha
-			display: inline
-
-			&:before
-				content: " "
-				display: table
-				clear: both
-
-			+ span
-				display: inline
-
-				&:after
-					content: " "
-					display: table
-					clear: both
 
 .project-links
 	@extend .list-reset
