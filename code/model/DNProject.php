@@ -76,6 +76,11 @@ class DNProject extends DataObject {
 	protected static $relation_cache = array();
 
 	/**
+	 * @var bool|Member
+	 */
+	protected static $_current_member_cache = null;
+
+	/**
 	 * Used by the sync task
 	 *
 	 * @param string $path
@@ -358,9 +363,19 @@ class DNProject extends DataObject {
 	 * @return ArrayList
 	 */
 	public function DNEnvironmentList() {
+
+		if(!self::$_current_member_cache) {
+			self::$_current_member_cache = Member::currentUser();
+		}
+
+		if(self::$_current_member_cache === false) {
+			return new ArrayList();
+		}
+
+		$currentMember = self::$_current_member_cache;
 		return $this->Environments()
-			->filterByCallBack(function($item) {
-				return $item->canView();
+			->filterByCallBack(function($item) use ($currentMember) {
+				return $item->canView($currentMember);
 			});
 	}
 
