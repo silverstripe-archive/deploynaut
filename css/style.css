@@ -9790,7 +9790,8 @@ body .userswitcher fieldset .middleColumn {
 .deploy-form-outer {
   border-width: 0px 1px 1px;
   border-style: solid;
-  border-color: #bbb; }
+  border-color: #bbb;
+  overflow: hidden; }
   .deploy-form-outer .deploy-form label {
     position: static;
     font-size: 16px;
@@ -9799,6 +9800,14 @@ body .userswitcher fieldset .middleColumn {
     padding-right: 0;
     font-weight: 300;
     z-index: 2; }
+    .deploy-form-outer .deploy-form .SelectionGroup:after {
+      height: 300px;
+      margin-bottom: -300px;
+      background-color: #f0f3f4;
+      position: absolute;
+      width: 100%;
+      margin-left: -1px;
+      border-top: 1px solid #bbb; }
     .deploy-form-outer .deploy-form .SelectionGroup > li {
       background-color: #f0f3f4;
       border-width: 1px 1px 1px 0px;
