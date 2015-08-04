@@ -41,7 +41,11 @@ class CloneGitRepo {
 			$process->setTimeout(3600);
 			$process->run();
 			if(!$process->isSuccessful()) {
-				fwrite($fh, sprintf('[%s] Error cleaning up existing repository: %s', date('Y-m-d H:i:s'), $process->getErrorOutput()) . PHP_EOL);
+				fwrite($fh, sprintf(
+					'[%s] Error cleaning up existing repository: %s',
+					date('Y-m-d H:i:s'),
+					$process->getErrorOutput()
+				) . PHP_EOL);
 				throw new RuntimeException($process->getErrorOutput());
 			}
 		}
@@ -60,11 +64,22 @@ class CloneGitRepo {
 		$process->setTimeout(3600);
 		$process->run();
 		if(!$process->isSuccessful()) {
-			fwrite($fh, sprintf('[%s] Error cloning repository %s to %s: %s', date('Y-m-d H:i:s'), $repo, $path, $process->getErrorOutput()) . PHP_EOL);
+			fwrite($fh, sprintf(
+				'[%s] Error cloning repository %s to %s: %s',
+				date('Y-m-d H:i:s'),
+				$repo,
+				$path,
+				$process->getErrorOutput()
+			) . PHP_EOL);
 			throw new RuntimeException($process->getErrorOutput());
 		}
 
-		fwrite($fh, sprintf('[%s] Successfully cloned repository %s to %s', date('Y-m-d H:i:s'), $repo, $path) . PHP_EOL);
+		fwrite($fh, sprintf(
+			'[%s] Successfully cloned repository %s to %s',
+			date('Y-m-d H:i:s'),
+			$repo,
+			$path
+		) . PHP_EOL);
 	}
 
 }

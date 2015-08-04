@@ -1,0 +1,662 @@
+$textarea-transition-time: 0.6s
+
+@import "_bootstrap-variables.sass"
+@import "node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss"
+@import "node_modules/font-awesome/scss/font-awesome.scss"
+
+// Select2
+@import "thirdparty/select2/src/scss/core.scss"
+@import "select2/theme/layout.scss"
+
+// Deploynaut styles
+@import "tabs"
+@import "_form.sass"
+@import "_type.sass"
+@import "_user-switch.sass"
+
+
+.alert
+	&.alert-error,
+	&.Failed
+		@extend .alert-danger
+
+	&.alert-good,
+	&.Complete
+		@extend .alert-success
+
+	&.Started,
+	&.Queued,
+	&.Running
+		@extend .alert-info
+
+	&.Invalid
+		@extend .alert-warning
+
+	.fa 
+		margin-right: 4px
+
+	ul
+		margin: 10px 0
+
+.progress-bar
+	width: 100% /* default */
+
+	&.Failed
+		@extend .progress-bar-danger
+
+	&.Complete
+		@extend .progress-bar-success
+
+	&.Started,
+	&.Queued,
+	&.Running
+		@extend .progress-bar-info
+
+	&.Invalid
+		@extend .progress-bar-warning
+
+
+.list-reset
+	> li
+		padding: 0
+		margin: 0
+		list-style: none
+
+.submenu
+	> li > ul,
+	> li > ol
+		margin-top: 0
+
+.page-container 
+	padding-left: $nav-width
+	margin: 0 auto
+
+.upload-exceed-link
+	margin-bottom: 0
+	margin-left: 30px
+
+.upload-exceed-container
+	position: relative
+	overflow: hidden
+
+	.upload-exceed-link
+		position: absolute
+		top: -1px
+		right: -1px
+
+.upload-close
+	background-color: #ddd
+	color: #444;
+	display: block;
+	padding: 10px 15px;
+	position: absolute
+	top: -1px;
+	right: -1px;
+	border-radius-top-left: $border-radius-base
+
+	&:hover
+		color: #444;
+		background-color: #d7d7d7
+
+
+.disk-quota
+	@extend .alert
+	margin: -30px -30px 0
+
+	&.success
+		@extend .alert-success
+
+	&.warning
+		@extend .alert-warning
+
+	&.danger
+		@extend .alert-danger
+
+
+// SIDEBAR
+.sidebar
+	width: $nav-width
+	left: 0
+	bottom: 0
+	overflow-y: auto
+	position: fixed
+	top: 0
+	color: rgba(255, 255, 255, 0.3)
+
+.side-content 
+	padding: 13px 20px 1px;
+
+	ul.nav ul
+		background-color: rgba(0, 0, 0, 0.15);
+		padding: 0;
+		margin: 0;
+		overflow: hidden;
+
+		a
+			opacity: .8;
+			padding-left: 54px;
+			
+			&:hover 
+				color: #fff;
+				background-color: transparent;
+				text-decoration: none;
+				opacity: 1;
+
+		li.active a
+			color: #fff;
+
+	li > a
+		&:hover,
+		&:focus
+			color: #fff;
+			text-decoration: none;
+
+
+.nav-submenu
+	font-weight: bold
+	position: relative;
+
+	&.open .icon-arrow
+		-ms-transform: rotate(180deg); /* IE 9 */
+		-webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
+		transform: rotate(180deg);
+
+.icon-arrow
+	width: 16px;
+	height: 16px
+	display: block;
+	position: absolute;
+	right: 15px;
+	top: 10px;
+	background-color: red;
+	background: transparent url(../img/Platform_icon-arrow.svg) no-repeat;
+
+
+	ul.nav ul
+		background-color: rgba(0, 0, 0, 0.15)
+		padding: 0
+		margin: 0
+		overflow: hidden
+
+		a
+			opacity: .8
+			padding-left: 54px
+			
+			&:hover 
+				color: #fff
+				background-color: transparent
+				text-decoration: none
+				opacity: 1
+
+		li.active a
+			color: #fff
+
+	li > a
+		&:hover,
+		&:focus
+			color: #fff
+			text-decoration: none
+
+.nav-submenu
+	position: relative
+
+	&.open .icon-arrow
+		-ms-transform: rotate(180deg) /* IE 9 */
+		-webkit-transform: rotate(180deg) /* Chrome, Safari, Opera */
+		transform: rotate(180deg)
+
+.icon-arrow
+	width: 16px
+	height: 16px
+	display: block
+	position: absolute
+	right: 15px
+	top: 10px
+	background-color: red
+	background: transparent url(../img/Platform_icon-arrow.svg) no-repeat
+
+
+// SIDEBAR-MENU
+
+.side-content .nav
+	margin: 0 -20px
+	padding: 0
+
+	> li 
+		a
+			color: $navbar-inverse-link-color
+			padding: 10px 35px 10px 20px
+			display: block
+			transition: color 0.12s ease-out 0s
+
+			&:hover, &:focus 
+				color: $navbar-inverse-link-color
+				background-color: rgba(0, 0, 0, 0.2)
+
+		&.nav-main-heading
+		    font-size: 12px
+		    font-weight: 400
+		    padding: 22px 35px 6px 20px
+		    text-transform: uppercase
+
+
+
+// MAIN	
+// Header bar
+.header-navbar
+	min-height: 60px
+	background-color: #fff
+	min-width: 320px
+	left: 230px
+	border-bottom: 1px solid #eee
+
+	// needed when the top bar is used more
+	// position: fixed 
+	// right: 0
+	// top: 0
+	// z-index: 1030
+	// box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02)
+
+	.nav a
+		padding: 18px 30px 22px
+
+
+.main-container
+	// margin-top: 60px (needed when the top bar is used more)
+
+	.page-header 
+		background-color: #f0f3f4
+		margin: 0
+		border-bottom: 1px solid $UI-border
+		padding-bottom: 0
+
+	.breadcrumb
+		padding-left: 0
+		padding-right: 0
+		margin-bottom: -25px
+
+	.page-heading
+		margin-bottom: 30px
+
+	.nav.nav-tabs
+		border-bottom: none
+
+		> li > 
+			a,
+			a:hover,
+			a:focus
+				border-color: transparent
+				padding-left: 0
+				padding-right: 0
+				margin-right: 20px
+				background-color: transparent
+
+		> li.active > a
+			border: none
+			border-bottom: 3px solid $platform-blue
+			background-color: none
+			background-color: transparent
+
+			&:hover, &:focus
+				color: $gray-darker
+				border-bottom-color: $link-hover-color
+
+
+.content 
+	margin: 0 auto
+	padding: 30px 30px 1px
+    background-color: #f9f9f9
+
+	&.content-vert
+		padding-top: 0
+		padding-bottom: 0
+
+	
+
+// TYPE
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th
+	border-bottom: 1px solid $UI-border
+	font-size: 14px
+	font-weight: 600
+	padding: 16px 10px 12px
+	text-transform: uppercase
+
+.table-large > tbody > tr > td
+	padding-top: 20px
+	padding-bottom: 20px
+
+
+// Environment
+.deploy-dropdown
+	@extend .btn
+	@extend .btn-primary
+	@extend .btn-block
+	@extend .btn-lg
+	border-radius: $border-radius-base
+	text-align: left
+	font-size: 26px
+	line-height: 40px
+	margin-bottom: 0
+
+	.status-icon
+		@extend .fa
+		@extend .fa-chevron-down
+		@extend .pull-right
+		line-height: 40px
+
+	.loading-text
+		display: none
+
+	&.open
+		border-bottom-left-radius: 0
+		border-bottom-right-radius: 0
+
+		.status-icon
+			@extend .fa-chevron-up
+
+	&.loading
+		.loading-text
+			@extend .pull-right
+			display: inherit
+			font-size: 20px
+
+		.status-icon
+			@extend .fa-spinner
+			@extend .fa-pulse
+			margin-left: 10px
+
+
+.deploy-form-outer
+	border-width: 0px 1px 1px
+	border-style: solid
+	border-color: #bbb
+	overflow: hidden
+
+	.deploy-form
+
+		label
+			position: static
+			font-size: 16px
+			color: $gray
+
+		.SelectionGroup
+			@extend .nav
+			@extend .nav-pills
+			@extend .nav-stacked
+			@extend .col-md-4
+			padding-right: 0
+			font-weight: 300
+			z-index: 2
+
+			&:after /* False background */
+				height: 300px
+				margin-bottom: -300px
+				background-color: $theme-bg
+				position: absolute
+				width: 100%
+				margin-left: -1px
+				border-top: 1px solid #bbb
+
+
+			> li
+				background-color: $theme-bg
+				border-width: 1px 1px 1px 0px
+				border-color: #bbb
+				border-style: solid
+
+				a
+					color: $gray
+					font-size: $font-size-large
+					padding: 25px 15px
+					display: block
+
+				&.active
+					background-color: #ffffff
+					border: none
+
+					+ li
+						border-top-width: 1px
+
+					a
+						color: $gray
+
+
+				&:last-child
+					border-bottom-width: 0px
+
+				+ li
+					margin-top: 0
+					border-top-width: 0px
+
+			+ .tab-content
+				@extend .col-md-8
+				padding: 2em $grid-gutter-width
+				background-color: #fff
+				box-shadow: -1px 0 0 #bbb
+
+				@media (max-width: $screen-sm)
+					box-shadow: none
+
+				select,
+				.select2,
+				input[type="text"],
+				.CompositeField
+					width: 100%
+					margin-bottom: 0.75em
+
+					> *
+						width: 100%
+
+
+		*[name="action_doDeploy"]
+			@extend .btn-block
+			@extend .btn-lg
+			@extend .btn-success
+			border-radius: $border-radius-base
+			font-size: 26px
+			line-height: 40px
+			margin: 20px 0
+
+.deploy-history
+	margin-top: $padding-large-vertical
+
+.environment-details
+	margin-bottom: $padding-large-vertical
+
+	ul
+		@extend .list-unstyled
+		margin-bottom: 0
+
+	.build-details
+		font-size: 12px
+		margin-bottom: 20px
+
+		.title
+			font-size: 24px
+
+		span
+			display: block
+
+		span.git-sha,
+		a.git-sha
+			display: inline
+
+			&:before
+				content: " "
+				display: table
+				clear: both
+
+			+ span
+				display: inline
+
+				&:after
+					content: " "
+					display: table
+					clear: both
+
+.project-links
+	@extend .list-reset
+	text-align: right
+	position: absolute
+	bottom: 0
+	right: 0
+
+	li
+		line-height: 24px
+		margin-bottom: 4px
+
+		a
+			margin-left: 5px
+
+			i	
+				color: #222
+
+
+.deployment-status
+
+	.deployment-progress
+		height: auto
+
+		.progress-bar
+			padding: 8px 15px
+			line-height: 40px
+			font-size: 28px
+			text-align: left
+
+			.status
+				@extend .pull-right
+				font-size: 26px
+
+
+.log-content
+	overflow-y: auto
+	max-height: 450px
+	background: #333
+	color: #fff
+	margin-top: 0
+
+.repo-ux img
+	height: 14px
+
+.repo-url
+
+	label
+		color: $gray
+		display: block
+		position: static
+		margin-bottom: 0
+
+	input[type=text]
+		@extend .git-sha
+		color: $gray-light
+		line-height: 24px
+		padding: 0 8px
+		width: 100%
+		border-width: 0 0 1px 0
+		border-style: solid
+		border-color: #e6e6e6
+
+.project-branch
+	.branch-details
+		cursor: pointer
+
+	.project-branch-content
+		display: none
+
+	.closed-icon
+		display: inline-block
+
+	.open-icon
+		display: none
+
+	&.open
+		.project-branch-content
+			display: block
+
+		.closed-icon
+			display: none
+
+		.open-icon
+			display: inline-block
+			
+
+.breadcrumb
+	> li
+		+ li
+			&:before
+				content: "#{$breadcrumb-separator}"
+				padding: 0 5px 0 0
+				margin-left: 5px
+
+
+
+.well
+	box-shadow: none
+
+
+
+// Custom helpers
+
+.vertical-center 		/* Uses .content-vert */
+	min-height: 100%	/* Fallback for browsers do NOT support vh unit */
+	min-height: 100vh	/* These two lines are counted as one :-)       */
+	display: flex
+	align-items: center
+
+.vertical-offset-20		/* Uses .content-vert */
+	min-height: 100%	/* Fallback for browsers do NOT support vh unit */
+	min-height: 80vh	/* These two lines are counted as one :-)       */
+	display: flex
+	align-items: center
+
+.i-push
+	margin-right: 4px
+
+.text-lg .i-push
+	width: 24px
+
+.push
+	margin-bottom: $padding-large-vertical*2
+
+.push-lg
+	margin-bottom: $padding-large-vertical*4
+
+.alerts-approval-form
+	margin-top: 20px
+
+.table-data-archives
+	.archive-list-extended
+		td
+			padding: 0
+
+			.archive-extended
+				padding: 15px
+
+		.Actions
+			margin-top: 0
+
+		#Form_MoveForm,
+		#Form_DataTransferRestoreForm
+			.Actions
+				width: 60%
+				margin: 20px auto 15px
+
+			fieldset > .field
+				width: 60%
+				margin: 0 auto
+
+				+ .field
+					margin-top: 20px
+
+				&.checkbox
+
+					input
+						margin-left: 0
+
+	.btn
+		@extend .btn-sm
+		@extend .btn-primary
+		margin-bottom: 0
+
+.popover-content
+	word-wrap: break-word

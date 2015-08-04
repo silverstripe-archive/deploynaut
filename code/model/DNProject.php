@@ -76,6 +76,11 @@ class DNProject extends DataObject {
 	protected static $relation_cache = array();
 
 	/**
+	 * @var bool|Member
+	 */
+	protected static $_current_member_cache = null;
+
+	/**
 	 * Used by the sync task
 	 *
 	 * @param string $path
@@ -148,6 +153,19 @@ class DNProject extends DataObject {
 	}
 
 	/**
+	 * Returns the current disk quota usage as a percentage
+	 *
+	 * @return int
+	 */
+	public function DiskQuotaUsagePercent() {
+		$quota = $this->getDiskQuotaMB();
+		if($quota > 0) {
+			return $this->getUsedQuotaMB() * 100 / $quota;
+		}
+		return 100;
+	}
+
+	/**
 	 * Get the menu to be shown on projects
 	 *
 	 * @return ArrayList
@@ -155,23 +173,54 @@ class DNProject extends DataObject {
 	public function Menu() {
 		$list = new ArrayList();
 
+		$controller = Controller::curr();
+		$actionType = $controller->getField('CurrentActionType');
+
 		$list->push(new ArrayData(array(
 			'Link' => sprintf('naut/project/%s', $this->Name),
 			'Title' => 'Deploy',
-			'IsActive' => Controller::curr()->getAction() == 'project'
+			'IsCurrent' => $this->isCurrent(),
+			'IsSection' => $this->isSection() && $actionType == DNRoot::ACTION_DEPLOY
 		)));
 
 		if(DNRoot::FlagSnapshotsEnabled()) {
 			$list->push(new ArrayData(array(
 				'Link' => sprintf('naut/project/%s/snapshots', $this->Name),
 				'Title' => 'Snapshots',
-				'IsActive' => Controller::curr()->getAction() == 'snapshots'
+				'IsCurrent' => $this->isSection() && $controller->getAction() == 'snapshots',
+				'IsSection' => $this->isSection() && $actionType == DNRoot::ACTION_SNAPSHOT
 			)));
 		}
 
 		$this->extend('updateMenu', $list);
 
 		return $list;
+	}
+
+	/**
+	 * Is this project currently at the root level of the controller that handles it?
+	 * @return bool
+	 */
+	public function isCurrent() {
+		return $this->isSection() && Controller::curr()->getAction() == 'project';
+	}
+
+	/**
+	 * Return the current object from $this->Menu()
+	 * Good for making titles and things
+	 */
+	public function CurrentMenu() {
+		return $this->Menu()->filter('IsSection', true)->First();
+	}
+
+	/**
+	 * Is this project currently in a controller that is handling it or performing a sub-task?
+	 * @return bool
+	 */
+	public function isSection() {
+		$controller = Controller::curr();
+		$project = $controller->getField('CurrentProject');
+		return $project && $this->ID == $project->ID;
 	}
 
 	/**
@@ -314,10 +363,24 @@ class DNProject extends DataObject {
 	 * @return ArrayList
 	 */
 	public function DNEnvironmentList() {
+
+		if(!self::$_current_member_cache) {
+			self::$_current_member_cache = Member::currentUser();
+		}
+
+		if(self::$_current_member_cache === false) {
+			return new ArrayList();
+		}
+
+		$currentMember = self::$_current_member_cache;
 		return $this->Environments()
-			->filterByCallBack(function($item) {
-				return $item->canView();
+			->filterByCallBack(function($item) use ($currentMember) {
+				return $item->canView($currentMember);
 			});
+	}
+
+	public function EnvironmentsByUsage($usage) {
+		return $this->DNEnvironmentList()->filter('Usage', $usage);
 	}
 
 	/**
@@ -594,6 +657,85 @@ class DNProject extends DataObject {
 		$showUrl = Config::inst()->get($this->class, 'show_repository_url');
 		if ($showUrl) {
 			return $this->CVSPath;
+		}
+	}
+
+	/**
+	 * Whitelist configuration that describes how to convert a repository URL into a link
+	 * to a web user interface for that URL
+	 *
+	 * Consists of a hash of "full.lower.case.domain" => {configuration} key/value pairs
+	 *
+	 * {configuration} can either be boolean true to auto-detect both the host and the
+	 * name of the UI provider, or a nested array that overrides either one or both
+	 * of the auto-detected valyes
+	 *
+	 * @var array
+	 */
+	static private $repository_interfaces = array(
+		'github.com' => array(
+			'icon' => 'deploynaut/img/github.png'
+		),
+		'bitbucket.org' => array(
+			'commit' => 'commits'
+		),
+		'repo.or.cz' => array(
+			'scheme' => 'http',
+			'name' => 'repo.or.cz',
+			'regex' => array('^(.*)$' => '/w$1')
+		),
+
+		/* Example for adding your own gitlab repository and override all auto-detected values (with their defaults)
+		'gitlab.mysite.com' => array(
+			'icon' => 'deploynaut/img/git.png',
+			'host' => 'gitlab.mysite.com',
+			'name' => 'Gitlab',
+			'regex' => array('.git$' => ''),
+			'commit' => "commit"
+		),
+		*/
+	);
+
+	/**
+	 * Get a ViewableData structure describing the UI tool that lets the user view the repository code
+	 * @return ArrayData
+	 */
+	public function getRepositoryInterface() {
+		$url = parse_url($this->CVSPath);
+		if (!isset($url['host']) || !isset($url['path'])) return;
+
+		$interfaces = $this->config()->repository_interfaces;
+		$host = strtolower($url['host']);
+		$components = explode('.', $host);
+
+		if (array_key_exists($host, $interfaces)) {
+			$interface = $interfaces[$host];
+
+			$scheme = isset($interface['scheme']) ? $interface['scheme'] : 'https';
+			$host = isset($interface['host']) ? $interface['host'] : $host;
+			$regex = isset($interface['regex']) ? $interface['regex'] : array('\.git$' => '');
+
+			$path = $url['path'];
+
+			foreach ($regex as $pattern => $replacement) {
+				$path = preg_replace('/'.$pattern.'/', $replacement, $path);
+			}
+
+			$uxurl = Controller::join_links($scheme.'://', $host, $path);
+
+			if (array_key_exists('commit', $interface) && $interface['commit'] == false) {
+				$commiturl = false;
+			}
+			else {
+				$commiturl = Controller::join_links($uxurl, isset($interface['commit']) ? $interface['commit'] : 'commit');
+			}
+
+			return new ArrayData(array(
+				'Name' => isset($interface['name']) ? $interface['name'] : ucfirst($components[0]),
+				'Icon' => isset($interface['icon']) ? $interface['icon'] : 'deploynaut/img/git.png',
+				'URL' => $uxurl,
+				'CommitURL' => $commiturl
+			));
 		}
 	}
 

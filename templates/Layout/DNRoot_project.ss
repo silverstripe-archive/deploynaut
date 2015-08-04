@@ -1,117 +1,80 @@
-<% with Project %>
-<h2>$Title</h2>
-<% end_with %>
+<div class="content page-header">
+	<div class="row">
+		<div class="col-md-12">
+			<% include Breadcrumb %>
+			<% include DeploymentTabs Overview=true %>
+			<% include ProjectLinks %>
+		</div>
+	</div>
+</div>
 
-<% if $CurrentProject %>
-<ul class="nav nav-tabs">
-	<% loop $CurrentProject.Menu %>
-	<li<% if $IsActive %> class="active"<% end_if %>><a href="$Link">$Title</a></li>
-	<% end_loop %>
-</ul>
-<% end_if %>
+<div class="content">
 
-<% with Project %>
-<ul class="nav level-2">
-<% if DNEnvironmentList %>
-	<% loop DNEnvironmentList %>
-	<li><% if CanDeploy %><a href="$Link">$Name</a><% else %>$Name<% end_if %></li>
-	<% end_loop %>
-<% else %>
-	<li><a href="#env">Environments</a></li>
-	<li><a href="#repo">Repository</a></li>
-<% end_if %>
-</ul>
+	<% with $CurrentProject %>
 
-<h3 id="env">Environments</h3>
-<p>Choose an environment to start the deployment process</p>
-<table class="table-striped table table-bordered">
-	<thead>
-		<tr>
-			<th>Environment</th>
-			<th>URL</th>
-			<th>Build currently deployed</th>
-			<th>Can you deploy?</th>
-			<th>More info</th>
-		</tr>
-	</thead>
-	<tbody>
-		<% if DNEnvironmentList %>
-		<% loop DNEnvironmentList %>
-		<tr>
-			<td><% if CanDeploy %><a href="$Link">$Name</a><% else %>$Name<% end_if %></td>
-			<td><% if $URL %><a href="$URL.URL">$URL.URL</a><% else %>&nbsp;<% end_if %></td>
-			<td>
-				<% if $CurrentBuild %>
-				<span class="tooltip-hint" data-toggle="tooltip" title="$CurrentBuild.Message" data-original-title="$CurrentBuild.Message">
-					$CurrentBuild.SHA
-				</span>
-				<% end_if %>
-			</td>
-			<td>
-				<% if CanDeploy %><span class="good">Yes</span>
-				<% else_if DeployersList %>
-				No, ask $DeployersList
+		<h3 id="env">Environments</h3>
+		<table class="table table-striped table-hover">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>URL</th>
+					<th>Build currently deployed</th>
+					<th class="text-center">Can you deploy?</th>
+					<th class="text-center">Logs</th>
+					<th class="text-center">More info</th>
+				</tr>
+			</thead>
+			<tbody>
+				<% if $DNEnvironmentList %>
+				<% loop $DNEnvironmentList %>
+				<tr>
+					<td><a href="$Link">$Name</a></td>
+					<td><% if $URL %><a href="$URL">$BareURL</a><% else %>&nbsp;<% end_if %></td>
+					<td>
+						<% if $CurrentBuild %>
+							<% with $CurrentBuild %><% include GitBuildReference %><% end_with %>
+						<% else %>
+							<em>Nothing has been deployed.</em>
+						<% end_if %>
+					</td>
+					<td class="text-center">
+						<% if $CanDeploy %>
+							<span class="label label-success">Enabled</span>
+						<% else %>
+							<span class="label label-danger">Disabled</span>
+						<% end_if %>
+					</td>
+					<td class="text-center">
+						<% if $HasMetrics %>
+							<a href="$Link/metrics">Metrics</a>
+						<% end_if %>
+						<% if $LogsLink %>
+							<a href="$LogsLink">Logs</a>
+						<% end_if %>
+						<% if not $HasMetrics && not $LogsLink %>
+							<em>-</em>
+						<% end_if %>
+					</td>
+					<td class="text-center">
+						<a href="$Link"><span class="glyphicon glyphicon-menu-right"></span></a>
+					</td>
+				</tr>
+				<% end_loop %>
 				<% else %>
-				<span class="bad">Deployment disabled</span>
+					<tr>
+						<td colspan="5">No environments available yet!</td>
+					</tr>
 				<% end_if %>
-			</td>
-			<td>
-				<% if HasMetrics %>
-				<a a href="$Link/metrics">Metrics</a>
-				<% end_if %>
-			</td>
-		</tr>
-		<% end_loop %>
-		<% else %>
-			<tr>
-				<td colspan="5">No environments available yet!</td>
-			</tr>
+			</tbody>
+		</table>
+
+
+		<% if $PublicKey %>
+			<h4>Deploy key</h4>
+			<p>Permit us access to your private repositories by adding this deployment key.</p>
+			<pre class="deploy-key">$PublicKey</pre>
 		<% end_if %>
-		</tbody>
-	</table>
 
-	<h3 id="repo">Repository</h3>
-	<p>Click the 'Fetch latest changes' button to update the Repository branches list below. Select the +/- button to hide/show the commits for each branch</p>
+	<% end_with %>
 
-	<% if getRepositoryURL %>
-		<pre>Repository URL: $getRepositoryURL</pre>
-	<% end_if %>
-	<% if repoExists %>
-		<a href="#gitFetchModal" class="btn update-repository" data-api-url="$APILink(fetch)">Fetch latest changes</a>
-	<% else %>
-		<p>Getting latest changes from your repository. You may refresh this page at will.</p>
-	<% end_if %>
-
-	<div id="gitFetchModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	  <div class="modal-header">
-	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-	    <h3 id="myModalLabel">Updating GIT repository</h3>
-	  </div>
-	  <div class="modal-body"></div>
-	  <div class="modal-footer"></div>
-	</div>
-
-	<% if getPublicKey %>
-		<h3>Public key</h3>
-		<pre>$getPublicKey</pre>
-	<% end_if %>
-
-	<% loop DNBranchList %>
-	<div class="project-branch$IsOpenByDefault" data-href="$Link">
-	<h3>
-		<span class="open-icon">-</span><span class="closed-icon">+</span>
-		$Name
-		<small>last updated: $LastUpdated.Nice ($LastUpdated.Ago)</small>
-	</h3>
-	<div class="project-branch-content">
-	<% if IsOpenByDefault %>
-	<% include DNRoot_branchinfo %>
-	<% end_if %>
-	</div>
-	</div>
-	<% end_loop %>
-	</tbody>
-</table>
 </div>
-</div>
-<% end_with %>

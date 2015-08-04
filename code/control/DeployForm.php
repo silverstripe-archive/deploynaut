@@ -153,11 +153,9 @@ class DeployForm extends Form {
 			$field = $this->buildCommitSelector($project);
 			$validator = new DeployForm_CommitValidator();
 			$actions = new FieldList(
-				FormAction::create('doDeploy', "Deploy to " . $environment->Name)
-					->addExtraClass('btn btn-primary')
-					->setAttribute('onclick',
-						"return confirm('This will start a direct deployment.\\n\\nContinue?');"
-					)
+				FormAction::create('doDeploy', "Deploy to " . Convert::raw2att($environment->Name))
+					->addExtraClass('btn btn-primary deploy-button')
+					->setAttribute('data-environment-name', Convert::raw2att($environment->Name))
 			);
 		}
 		parent::__construct($controller, $name, new FieldList($field), $actions, $validator);
@@ -215,21 +213,21 @@ class DeployForm extends Form {
 		if($branches) {
 			$releaseMethods[] = new SelectionGroup_Item(
 				'Branch',
-				new DropdownField('Branch', '', $branches),
+				new DropdownField('Branch', 'Deploy to', $branches),
 				'Deploy the latest version of a branch'
 			);
 		}
 		if($tags) {
 			$releaseMethods[] = new SelectionGroup_Item(
 				'Tag',
-				new DropdownField('Tag', '', $tags),
+				new DropdownField('Tag', 'Deploy to', $tags),
 				'Deploy a tagged release'
 			);
 		}
 		if($redeploy) {
 			$releaseMethods[] = new SelectionGroup_Item(
 				'Redeploy',
-				new GroupedDropdownField('Redeploy', '', $redeploy),
+				new GroupedDropdownField('Redeploy', 'Redeploy', $redeploy),
 				'Redeploy a release that was previously deployed (to any environment)'
 			);
 		}
@@ -240,7 +238,7 @@ class DeployForm extends Form {
 			'Deploy a specific SHA'
 		);
 
-		$field = new SelectionGroup('SelectRelease', $releaseMethods);
+		$field = new TabbedSelectionGroup('SelectRelease', $releaseMethods);
 		$field->setValue(reset($releaseMethods)->getValue());
 		return $field;
 	}
