@@ -1379,18 +1379,24 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 	/**
 	 *
-	 * @return DNProject
+	 * @return DNProject|null
 	 */
 	public function getCurrentProject() {
+		if(!$this->getRequest()->latestParam('Project')) {
+			return null;
+		}
 		return $this->DNProjectList()->filter('Name', $this->getRequest()->latestParam('Project'))->First();
 	}
 
 	/**
 	 *
 	 * @param DNProject $project
-	 * @return DNEnvironment
+	 * @return DNEnvironment|null
 	 */
 	public function getCurrentEnvironment($project = null) {
+		if(!$this->getRequest()->latestParam('Environment')) {
+			return null;
+		}
 		if(!$project) $project = $this->getCurrentProject();
 		return $project->DNEnvironmentList()->filter('Name', $this->getRequest()->latestParam('Environment'))->First();
 	}
