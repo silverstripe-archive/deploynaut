@@ -13,7 +13,9 @@
 <div class="content">
 	<div class="row">
 		<div class="col-md-12 environment-details">
-			<h4>Environment Details:</h4>
+			<a href="$CurrentEnvironment.Link"><i class="fa fa-long-arrow-left"></i> Back to environment</a>
+
+			<h4>Deployment details for:</h4>
 
 			<%-- Display current build on environment --%>
 			<span>Target Revision: <em>$Deployment.SHA</em></span>
