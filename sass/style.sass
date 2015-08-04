@@ -340,9 +340,10 @@ $textarea-transition-time: 0.6s
 
 	.status-icon
 		@extend .fa
-		@extend .fa-chevron-down
+		@extend .fa-angle-down
 		@extend .pull-right
-		line-height: 40px
+		line-height: 36px
+		font-size: 40px
 
 	.loading-text
 		display: none
@@ -352,17 +353,19 @@ $textarea-transition-time: 0.6s
 		border-bottom-right-radius: 0
 
 		.status-icon
-			@extend .fa-chevron-up
+			@extend .fa-angle-up
 
 	&.loading
 		.loading-text
 			@extend .pull-right
 			display: inherit
 			font-size: 20px
+			font-weight: 300
 
 		.status-icon
-			@extend .fa-spinner
-			@extend .fa-pulse
+			@extend .fa-cog
+			@extend .fa-spin
+			font-size: 26px
 			margin-left: 10px
 
 
@@ -371,6 +374,7 @@ $textarea-transition-time: 0.6s
 	border-style: solid
 	border-color: #bbb
 	overflow: hidden
+
 
 	.deploy-form
 
@@ -494,11 +498,8 @@ $textarea-transition-time: 0.6s
 		line-height: 24px
 		margin-bottom: 4px
 
-		a
-			margin-left: 5px
-
-			i	
-				color: #222
+		a i	
+			color: #222
 
 
 .deployment-status
@@ -526,6 +527,7 @@ $textarea-transition-time: 0.6s
 
 .repo-ux img
 	height: 14px
+	margin-top: -3px
 
 .repo-url
 

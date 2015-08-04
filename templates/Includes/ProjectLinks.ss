@@ -2,7 +2,7 @@
 	<% if $CurrentProject.RepositoryInterface %><% with $CurrentProject.RepositoryInterface %>
 		<li>
 			<div class="repo-ux">
-				<img src="$Icon" />
+				<img class="i-push" src="$Icon" />
 				<a href="$URL">View code on $Name</a>
 			</div>
 		</li>
