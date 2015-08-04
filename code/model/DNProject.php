@@ -178,7 +178,7 @@ class DNProject extends DataObject {
 
 		$list->push(new ArrayData(array(
 			'Link' => sprintf('naut/project/%s', $this->Name),
-			'Title' => 'Deploy',
+			'Title' => 'Deployments',
 			'IsCurrent' => $this->isCurrent(),
 			'IsSection' => $this->isSection() && $actionType == DNRoot::ACTION_DEPLOY
 		)));
