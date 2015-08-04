@@ -94,6 +94,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	);
 
 	/**
+	 * @var array
+	 */
+	protected static $_project_cache = array();
+
+	/**
 	 *
 	 * @var DNData
 	 */
@@ -1382,10 +1387,14 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return DNProject|null
 	 */
 	public function getCurrentProject() {
-		if(!$this->getRequest()->latestParam('Project')) {
+		$projectName = trim($this->getRequest()->latestParam('Project'));
+		if(!$projectName) {
 			return null;
 		}
-		return $this->DNProjectList()->filter('Name', $this->getRequest()->latestParam('Project'))->First();
+		if(empty(self::$_project_cache[$projectName])) {
+			self::$_project_cache[$projectName] = $this->DNProjectList()->filter('Name', $projectName)->First();
+		}
+		return self::$_project_cache[$projectName];
 	}
 
 	/**
