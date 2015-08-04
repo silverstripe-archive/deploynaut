@@ -13,15 +13,7 @@
 <div class="content">
 	<div class="row">
 		<div class="col-md-12 environment-details">
-			<% with $CurrentProject %>
-				<% if $DNEnvironmentList %>
-					<% loop $DNEnvironmentList %>
-						<% if $IsSection %><% if CanDeploy %>
-							<a href="$Link"><i class="fa fa-long-arrow-left"></i> Back to environment</a> 
-						<% end_if %><% end_if %>
-					<% end_loop %>
-				<% end_if %>
-			<% end_with %>
+			<a href="$CurrentEnvironment.Link"><i class="fa fa-long-arrow-left"></i> Back to environment</a>
 
 			<h4>Deployment details for:</h4>
 
