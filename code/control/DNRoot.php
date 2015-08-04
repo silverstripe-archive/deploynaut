@@ -129,7 +129,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return Security::permissionFailure();
 		}
 
-		parent::init();
 		Requirements::combine_files(
 			'deploynaut.js',
 			array(
