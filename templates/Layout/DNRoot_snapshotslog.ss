@@ -32,8 +32,8 @@
 						<th>Author</th>
 						<th>Description</th>
 						<th>Target Environment</th>
-						<th>Status</th>
-						<th colspan="3">Actions</th>
+						<th class="text-center">Status</th>
+						<th class="text-center">More info</th>
 					</tr>
 				</thead>
 
@@ -43,7 +43,7 @@
 							<td><span class="tooltip-hint" data-toggle="tooltip" data-original-title="$Created.Nice ($Created.Ago)">$Created.Date</span></td>
 							<td>$Author.FirstName $Author.Surname</td>
 							<td>$Description</td>
-							<td class="text-center">$Environment.Name</td>
+							<td>$Environment.Name</td>
 							<td class="text-center">
 							<% if $Status = 'Queued' %><span class="label label-info">Queued</span><% end_if %>
 							<% if $Status = 'Started' %><span class="label label-info">Started</span><% end_if %>
@@ -51,7 +51,7 @@
 							<% if $Status = 'Failed' %><span class="label label-danger">Failed</span><% end_if %>
 							<% if $Status = 'n/a' %><span class="label label-inverse">n/a</span><% end_if %>
 							</td>
-							<td><% if $Origin != 'ManualUpload' %><a href="$Link">Details</a><% else %>-<% end_if %></td>
+							<td class="text-center"><% if $Origin != 'ManualUpload' %><a href="$Link">Details <i class="fa fa-angle-right"></i></a><% else %>-<% end_if %></td>
 						</tr>
 					<% end_loop %>
 				</tbody>

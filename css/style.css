@@ -6509,11 +6509,11 @@ button.close {
 .fa.pull-right, .deploy-dropdown .status-icon, .deploy-dropdown.loading .fa.loading-text, .deploy-dropdown.loading .loading-text.status-icon, .deployment-status .deployment-progress .progress-bar .fa.status, .deployment-status .deployment-progress .progress-bar .deploy-dropdown .status.status-icon, .deploy-dropdown .deployment-status .deployment-progress .progress-bar .status.status-icon {
   margin-left: .3em; }
 
-.fa-spin {
+.fa-spin, .deploy-dropdown.loading .status-icon {
   -webkit-animation: fa-spin 2s infinite linear;
   animation: fa-spin 2s infinite linear; }
 
-.fa-pulse, .deploy-dropdown.loading .status-icon {
+.fa-pulse {
   -webkit-animation: fa-spin 1s infinite steps(8);
   animation: fa-spin 1s infinite steps(8); }
 
@@ -6652,7 +6652,7 @@ button.close {
   content: ""; }
 
 .fa-gear:before,
-.fa-cog:before {
+.fa-cog:before, .deploy-dropdown.loading .status-icon:before {
   content: ""; }
 
 .fa-trash-o:before {
@@ -6941,10 +6941,10 @@ button.close {
 .fa-magnet:before {
   content: ""; }
 
-.fa-chevron-up:before, .deploy-dropdown.open .status-icon:before {
+.fa-chevron-up:before {
   content: ""; }
 
-.fa-chevron-down:before, .deploy-dropdown .status-icon:before {
+.fa-chevron-down:before {
   content: ""; }
 
 .fa-retweet:before {
@@ -7326,10 +7326,10 @@ button.close {
 .fa-angle-right:before {
   content: ""; }
 
-.fa-angle-up:before {
+.fa-angle-up:before, .deploy-dropdown.open .status-icon:before {
   content: ""; }
 
-.fa-angle-down:before {
+.fa-angle-down:before, .deploy-dropdown .status-icon:before {
   content: ""; }
 
 .fa-desktop:before {
@@ -7354,7 +7354,7 @@ button.close {
 .fa-quote-right:before {
   content: ""; }
 
-.fa-spinner:before, .deploy-dropdown.loading .status-icon:before {
+.fa-spinner:before {
   content: ""; }
 
 .fa-circle:before {
@@ -9509,6 +9509,11 @@ ul ol {
   font-size: 17px;
   font-weight: 300; }
 
+.superscript {
+  font-size: 70%;
+  vertical-align: super;
+  margin-left: 4px; }
+
 body form.userswitcher {
   width: inherit;
   width: 230px;
@@ -9775,7 +9780,8 @@ body .userswitcher fieldset .middleColumn {
   line-height: 40px;
   margin-bottom: 0; }
   .deploy-dropdown .status-icon {
-    line-height: 40px; }
+    line-height: 36px;
+    font-size: 40px; }
   .deploy-dropdown .loading-text {
     display: none; }
   .deploy-dropdown.open {
@@ -9783,8 +9789,10 @@ body .userswitcher fieldset .middleColumn {
     border-bottom-right-radius: 0; }
   .deploy-dropdown.loading .loading-text {
     display: inherit;
-    font-size: 20px; }
+    font-size: 20px;
+    font-weight: 300; }
   .deploy-dropdown.loading .status-icon {
+    font-size: 26px;
     margin-left: 10px; }
 
 .deploy-form-outer {
@@ -9878,10 +9886,8 @@ body .userswitcher fieldset .middleColumn {
   .project-links li {
     line-height: 24px;
     margin-bottom: 4px; }
-    .project-links li a {
-      margin-left: 5px; }
-      .project-links li a i {
-        color: #222; }
+    .project-links li a i {
+      color: #222; }
 
 .deployment-status .deployment-progress {
   height: auto; }
@@ -9901,7 +9907,8 @@ body .userswitcher fieldset .middleColumn {
   margin-top: 0; }
 
 .repo-ux img {
-  height: 14px; }
+  height: 14px;
+  margin-top: -3px; }
 
 .repo-url label {
   color: #555555;

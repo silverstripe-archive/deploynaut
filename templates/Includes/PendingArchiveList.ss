@@ -13,7 +13,7 @@
 							<th>Requester</th>
 							<th>Environment</th>
 							<th>Upload Token</th>
-							<th>Status</th>
+							<th class="text-center">Status</th>
 						</tr>
 					</thead>
 
@@ -24,7 +24,7 @@
 								<td>$Author.FirstName $Author.Surname</td>
 								<td>$Environment.Name</td>
 								<td>$UploadToken</td>
-								<td><span class="label label-info">Pending</span></td>
+								<td class="text-center"><span class="label label-info">Pending</span></td>
 							</tr>
 						<% end_loop %>
 					</tbody>

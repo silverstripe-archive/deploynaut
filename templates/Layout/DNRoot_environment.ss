@@ -53,8 +53,8 @@
 							<th>Date deployed</th>
 							<th>Build</th>
 							<th>Deployer</th>
-							<th>Status</th>
-							<th>Actions</th>
+							<th class="text-center">Status</th>
+							<th class="text-center">More info</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -63,14 +63,14 @@
 							<td><span class="tooltip-hint" data-toggle="tooltip" data-original-title="$LastEdited.Nice ($LastEdited.Ago)">$LastEdited.Date</span></td>
 							<td><span class="tooltip-hint" data-toggle="tooltip" title="$Message" data-original-title="$Message">$SHA</span></td>
 							<td>$Deployer.Name <% if $Deployer.Email %>&lt;$Deployer.Email&gt; <% end_if %></td>
-							<td>
+							<td class="text-center">
 							<% if $Status = 'Queued' %><span class="label label-info">Queued</span><% end_if %>
 							<% if $Status = 'Started' %><span class="label label-info">Started</span><% end_if %>
 							<% if $Status = 'Finished' %><span class="label label-success">Finished</span><% end_if %>
 							<% if $Status = 'Failed' %><span class="label label-important">Failed</span><% end_if %>
 							<% if $Status = 'n/a' %><span class="label label-inverse">n/a</span><% end_if %>
 							</td>
-							<td><% if $Link %><a href="$Link">Details</a><% end_if %></td>
+							<td class="text-center"><% if $Link %><a href="$Link">Details <i class="fa fa-angle-right"></i></a><% end_if %></td>
 						</tr>
 					<% end_loop %>
 					</tbody>
@@ -91,7 +91,7 @@
 
 				<span class="status-icon" aria-hidden="true"></span>
 				<span class="loading-text">Fetching latest code&hellip;</span>
-				<span class="environment-name">Deploy to $CurrentEnvironment.Name</span>
+				<span class="environment-name"><i class="fa fa-rocket">&nbsp;</i> Deploy to $CurrentEnvironment.Name</span>
 				
 			</div>
 
@@ -110,8 +110,8 @@
 					<th>Date deployed</th>
 					<th>Build</th>
 					<th>Deployer</th>
-					<th>Status</th>
-					<th>More info</th>
+					<th class="text-center">Status</th>
+					<th class="text-center">More info</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -122,14 +122,14 @@
 						<% include GitBuildReference %>
 					</td>
 					<td>$Deployer.Name <% if $Deployer.Email %>&lt;$Deployer.Email&gt; <% end_if %></td>
-					<td>
+					<td class="text-center">
 					<% if $Status = 'Queued' %><span class="label label-info">Queued</span><% end_if %>
 					<% if $Status = 'Started' %><span class="label label-info">Started</span><% end_if %>
 					<% if $Status = 'Finished' %><span class="label label-success">Finished</span><% end_if %>
 					<% if $Status = 'Failed' %><span class="label label-danger">Failed</span><% end_if %>
 					<% if $Status = 'n/a' %><span class="label label-warning">n/a</span><% end_if %>
 					</td>
-					<td class="text-center"><% if $Link %><a href="$Link"><span class="glyphicon glyphicon-menu-right"></span></a><% end_if %></td>
+					<td class="text-center"><% if $Link %><a href="$Link">Details <i class="fa fa-angle-right"></i></a><% end_if %></td>
 				</tr>
 			<% end_loop %>
 			</tbody>
