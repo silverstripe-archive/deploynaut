@@ -91,7 +91,7 @@
 
 				<span class="status-icon" aria-hidden="true"></span>
 				<span class="loading-text">Fetching latest code&hellip;</span>
-				<span class="environment-name"><i class="fa fa-rocket">&nbsp;</i> Deploy to $CurrentEnvironment.Name</span>
+				<span class="environment-name"><i class="fa fa-rocket">&nbsp;</i> Deployment options for $CurrentEnvironment.Name</span>
 				
 			</div>
 
