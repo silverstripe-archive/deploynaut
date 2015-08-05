@@ -116,6 +116,38 @@ class DNDeployment extends DataObject {
 	}
 
 	/**
+	 * Gets the commit from source. The result is cached upstream in Repository.
+	 *
+	 * @return \Gitonomy\Git\Commit|null
+	 */
+	public function getCommit() {
+		if(!$this->SHA) return null;
+
+		$repo = $this->Environment()->Project()->getRepository();
+		if($repo) {
+			try {
+				return $repo->getCommit($this->SHA);
+			} catch (Gitonomy\Git\Exception\ReferenceNotFoundException $ex) { }
+		}
+
+		return null;
+	}
+
+
+	/**
+	 * Gets the commit message.
+	 *
+	 * @return string|null
+	 */
+	public function getCommitMessage() {
+		$commit = $this->getCommit();
+		if($commit) {
+			return Convert::raw2xml($commit->getMessage());
+		}
+		return null;
+	}
+
+	/**
 	 * Start a resque job for this deployment
 	 *
 	 * @return string Resque token

@@ -636,30 +636,9 @@ class DNEnvironment extends DataObject {
 	 * @return ArrayList
 	 */
 	public function DeployHistory() {
-		$history = $this
-			->Deployments()
+		return $this->Deployments()
+			->where('SHA IS NOT NULL')
 			->sort('LastEdited DESC');
-		$repo = $this->Project()->getRepository();
-		if(!$repo) {
-			return $history;
-		}
-
-		$ammendedHistory = new ArrayList();
-		foreach($history as $deploy) {
-			if(!$deploy->SHA) {
-				continue;
-			}
-			try {
-				$commit = $repo->getCommit($deploy->SHA);
-				if($commit) {
-					$deploy->Message = Convert::raw2xml($commit->getMessage());
-				}
-				// We can't find this SHA, so we ignore adding a commit message to the deployment
-			} catch (Gitonomy\Git\Exception\ReferenceNotFoundException $ex) { }
-			$ammendedHistory->push($deploy);
-		}
-
-		return $ammendedHistory;
 	}
 
 	/**
