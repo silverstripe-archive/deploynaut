@@ -36,7 +36,7 @@
 			<li class="nav-main-heading">Support</li>
 
 			<% loop $SupportLinks %>
-				<li><a href="$URL"><span class="plat-icon $IconClass"></span>$Title</a></li>
+				<li><a href="$URL" target="_blank"><span class="plat-icon $IconClass"></span>$Title</a></li>
 			<% end_loop %>
 		<% end_if %>
 	</ul>
