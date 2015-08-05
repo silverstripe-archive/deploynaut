@@ -155,6 +155,11 @@ class DNEnvironment extends DataObject {
 	private static $default_sort = 'Name';
 
 	/**
+	 * @var array
+	 */
+	protected static $_deploy_history_cached = array();
+
+	/**
 	 * Used by the sync task
 	 *
 	 * @param string $path
@@ -636,11 +641,15 @@ class DNEnvironment extends DataObject {
 	 * @return ArrayList
 	 */
 	public function DeployHistory() {
+		if(!empty(self::$_deploy_history_cached[$this->ID])) {
+			return self::$_deploy_history_cached[$this->ID];
+		}
 		$history = $this->Deployments()->sort('LastEdited DESC');
 		$paginatedHistory = new PaginatedList($history, Controller::curr()->getRequest());
 		$paginatedHistory->setPageLength(8);
 		$repo = $this->Project()->getRepository();
 		if(!$repo) {
+			self::$_deploy_history_cached[$this->ID] = $paginatedHistory;
 			return $paginatedHistory;
 		}
 
@@ -666,6 +675,7 @@ class DNEnvironment extends DataObject {
 		$paginatedAmendedHistory = new PaginatedList($amendedHistory, Controller::curr()->getRequest());
 		$paginatedAmendedHistory->setPageLength(8);
 		$paginatedAmendedHistory->setTotalItems($paginatedHistory->Count());
+		self::$_deploy_history_cached[$this->ID] = $paginatedAmendedHistory;
 		return $paginatedAmendedHistory;
 	}
 
