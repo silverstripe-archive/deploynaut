@@ -9973,7 +9973,9 @@ body .userswitcher fieldset .middleColumn {
   display: flex;
   align-items: center; }
   .vertical-offset-20 > div {
-    width: 100%; }
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto; }
 
 .i-push {
   margin-right: 4px; }
