@@ -9560,7 +9560,9 @@ body .userswitcher fieldset .middleColumn {
   margin-right: 4px; }
 
 .alert ul, .disk-quota ul {
-  margin: 10px 0; }
+  margin: 10px 0 20px 20px;
+  padding-bottom: 10px;
+  list-style: disc; }
 
 .progress-bar {
   width: 100%; }
