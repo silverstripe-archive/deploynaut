@@ -18,4 +18,4 @@ class TabbedSelectionGroup extends SelectionGroup {
 		return $fields;
 	}
 
-} 
+}
