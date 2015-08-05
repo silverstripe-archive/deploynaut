@@ -701,41 +701,40 @@ class DNProject extends DataObject {
 	 * @return ArrayData
 	 */
 	public function getRepositoryInterface() {
-		$url = parse_url($this->CVSPath);
-		if (!isset($url['host']) || !isset($url['path'])) return;
-
 		$interfaces = $this->config()->repository_interfaces;
-		$host = strtolower($url['host']);
-		$components = explode('.', $host);
 
-		if (array_key_exists($host, $interfaces)) {
-			$interface = $interfaces[$host];
+		/* Look for each whitelisted hostname */
+		foreach ($interfaces as $host => $interface) {
+			/* See if the CVS Path is for this hostname, followed by some junk (maybe a port), then the path */
+			if (preg_match('{^[^.]*'.$host.'(.*?)([/a-zA-Z].+)}', $this->CVSPath, $match)) {
 
-			$scheme = isset($interface['scheme']) ? $interface['scheme'] : 'https';
-			$host = isset($interface['host']) ? $interface['host'] : $host;
-			$regex = isset($interface['regex']) ? $interface['regex'] : array('\.git$' => '');
+				$path = $match[2];
 
-			$path = $url['path'];
+				$scheme = isset($interface['scheme']) ? $interface['scheme'] : 'https';
+				$host = isset($interface['host']) ? $interface['host'] : $host;
+				$regex = isset($interface['regex']) ? $interface['regex'] : array('\.git$' => '');
 
-			foreach ($regex as $pattern => $replacement) {
-				$path = preg_replace('/'.$pattern.'/', $replacement, $path);
+				$components = explode('.', $host);
+
+				foreach ($regex as $pattern => $replacement) {
+					$path = preg_replace('/' . $pattern . '/', $replacement, $path);
+				}
+
+				$uxurl = Controller::join_links($scheme . '://', $host, $path);
+
+				if (array_key_exists('commit', $interface) && $interface['commit'] == false) {
+					$commiturl = false;
+				} else {
+					$commiturl = Controller::join_links($uxurl, isset($interface['commit']) ? $interface['commit'] : 'commit');
+				}
+
+				return new ArrayData(array(
+					'Name'      => isset($interface['name']) ? $interface['name'] : ucfirst($components[0]),
+					'Icon'      => isset($interface['icon']) ? $interface['icon'] : 'deploynaut/img/git.png',
+					'URL'       => $uxurl,
+					'CommitURL' => $commiturl
+				));
 			}
-
-			$uxurl = Controller::join_links($scheme.'://', $host, $path);
-
-			if (array_key_exists('commit', $interface) && $interface['commit'] == false) {
-				$commiturl = false;
-			}
-			else {
-				$commiturl = Controller::join_links($uxurl, isset($interface['commit']) ? $interface['commit'] : 'commit');
-			}
-
-			return new ArrayData(array(
-				'Name' => isset($interface['name']) ? $interface['name'] : ucfirst($components[0]),
-				'Icon' => isset($interface['icon']) ? $interface['icon'] : 'deploynaut/img/git.png',
-				'URL' => $uxurl,
-				'CommitURL' => $commiturl
-			));
 		}
 	}
 
