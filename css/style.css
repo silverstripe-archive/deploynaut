@@ -9579,6 +9579,9 @@ body .userswitcher fieldset .middleColumn {
 .page-container {
   padding-left: 230px;
   margin: 0 auto; }
+  @media (max-width: 992px) {
+    .page-container {
+      padding-left: 0; } }
 
 .upload-exceed-link {
   margin-bottom: 0;
@@ -9615,7 +9618,21 @@ body .userswitcher fieldset .middleColumn {
   overflow-y: auto;
   position: fixed;
   top: 0;
-  color: rgba(255, 255, 255, 0.3); }
+  color: rgba(255, 255, 255, 0.3);
+  overflow-x: hidden;
+  z-index: 10;
+  transition: all 0.28s ease-out 0s;
+  opacity: 1; }
+
+@media (max-width: 992px) {
+  .sidebar {
+    width: 100%;
+    left: -100%;
+    opacity: 0; }
+  .open .sidebar {
+    display: block;
+    opacity: 1;
+    left: 0; } }
 
 .side-content {
   padding: 13px 20px 1px; }
@@ -9678,13 +9695,6 @@ body .userswitcher fieldset .middleColumn {
     color: #fff;
     text-decoration: none; }
 
-.nav-submenu {
-  position: relative; }
-  .nav-submenu.open .icon-arrow {
-    -ms-transform: rotate(180deg);
-    -webkit-transform: rotate(180deg);
-    transform: rotate(180deg); }
-
 .icon-arrow {
   width: 16px;
   height: 16px;
@@ -9720,6 +9730,11 @@ body .userswitcher fieldset .middleColumn {
   border-bottom: 1px solid #eee; }
   .header-navbar .nav a, .header-navbar .deploy-form-outer .deploy-form .SelectionGroup a, .deploy-form-outer .deploy-form .header-navbar .SelectionGroup a {
     padding: 18px 30px 22px; }
+  .header-navbar .nav-header {
+    margin-left: 30px; }
+
+button.sidebar-open {
+  margin-top: 12px; }
 
 .main-container .page-header {
   background-color: #f0f3f4;
@@ -9755,6 +9770,8 @@ body .userswitcher fieldset .middleColumn {
     .main-container .nav.nav-tabs > li.active > a:hover, .main-container .deploy-form-outer .deploy-form .nav-tabs.SelectionGroup > li.active > a:hover, .deploy-form-outer .deploy-form .main-container .nav-tabs.SelectionGroup > li.active > a:hover, .main-container .nav.nav-tabs > li.active > a:focus, .main-container .deploy-form-outer .deploy-form .nav-tabs.SelectionGroup > li.active > a:focus, .deploy-form-outer .deploy-form .main-container .nav-tabs.SelectionGroup > li.active > a:focus {
       color: #222222;
       border-bottom-color: #078be0; }
+  .main-container .nav.nav-tabs > li:last-child a, .main-container .deploy-form-outer .deploy-form .nav-tabs.SelectionGroup > li:last-child a, .deploy-form-outer .deploy-form .main-container .nav-tabs.SelectionGroup > li:last-child a {
+    margin-right: 0; }
 
 .content {
   margin: 0 auto;
@@ -9781,6 +9798,9 @@ body .userswitcher fieldset .middleColumn {
   font-size: 26px;
   line-height: 40px;
   margin-bottom: 0; }
+  @media (max-width: 992px) {
+    .deploy-dropdown {
+      font-size: 20px; } }
   .deploy-dropdown .status-icon {
     line-height: 36px;
     font-size: 40px; }
@@ -9793,6 +9813,9 @@ body .userswitcher fieldset .middleColumn {
     display: inherit;
     font-size: 20px;
     font-weight: 300; }
+    @media (max-width: 992px) {
+      .deploy-dropdown.loading .loading-text {
+        display: none; } }
   .deploy-dropdown.loading .status-icon {
     font-size: 26px;
     margin-left: 10px; }
@@ -9828,6 +9851,9 @@ body .userswitcher fieldset .middleColumn {
         border-width: 1px 1px 1px 0px;
         border-color: #ccc;
         border-style: solid; }
+        @media (max-width: 992px) {
+          .deploy-form-outer .deploy-form .SelectionGroup > li {
+            border-right: none; } }
         .deploy-form-outer .deploy-form .SelectionGroup > li a {
           color: #555555;
           font-size: 17px;
@@ -9842,6 +9868,9 @@ body .userswitcher fieldset .middleColumn {
             color: #555555; }
         .deploy-form-outer .deploy-form .SelectionGroup > li:last-child {
           border-bottom-width: 0px; }
+          @media (max-width: 992px) {
+            .deploy-form-outer .deploy-form .SelectionGroup > li:last-child {
+              border-bottom-width: 1px; } }
         .deploy-form-outer .deploy-form .SelectionGroup > li + li {
           margin-top: 0;
           border-top-width: 0px; }
@@ -9889,12 +9918,16 @@ body .userswitcher fieldset .middleColumn {
   text-align: right;
   position: absolute;
   bottom: 0;
-  right: 0; }
+  right: 0;
+  margin-top: 7px; }
   .project-links li {
     line-height: 24px;
     margin-bottom: 4px; }
     .project-links li a i {
       color: #222; }
+  @media (max-width: 992px) {
+    .project-links {
+      top: 0; } }
 
 .deployment-status .deployment-progress {
   height: auto; }

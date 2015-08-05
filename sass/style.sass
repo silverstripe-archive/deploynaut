@@ -73,6 +73,10 @@ $textarea-transition-time: 0.6s
 	padding-left: $nav-width
 	margin: 0 auto
 
+	@media (max-width: $screen-md)
+		padding-left: 0
+
+
 .upload-exceed-link
 	margin-bottom: 0
 	margin-left: 30px
@@ -124,6 +128,23 @@ $textarea-transition-time: 0.6s
 	position: fixed
 	top: 0
 	color: rgba(255, 255, 255, 0.3)
+	overflow-x: hidden
+	z-index: 10
+	transition: all 0.28s ease-out 0s
+	opacity: 1
+
+
+@media (max-width: $screen-md)
+	.sidebar
+		width: 100%
+		left: -100%
+		opacity: 0
+
+	.open .sidebar
+		display: block	
+		opacity: 1
+		left: 0
+
 
 .side-content 
 	padding: 13px 20px 1px;
@@ -156,12 +177,13 @@ $textarea-transition-time: 0.6s
 
 .nav-submenu
 	font-weight: bold
-	position: relative;
+	position: relative
 
 	&.open .icon-arrow
 		-ms-transform: rotate(180deg); /* IE 9 */
 		-webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
 		transform: rotate(180deg);
+
 
 .icon-arrow
 	width: 16px;
@@ -199,13 +221,6 @@ $textarea-transition-time: 0.6s
 			color: #fff
 			text-decoration: none
 
-.nav-submenu
-	position: relative
-
-	&.open .icon-arrow
-		-ms-transform: rotate(180deg) /* IE 9 */
-		-webkit-transform: rotate(180deg) /* Chrome, Safari, Opera */
-		transform: rotate(180deg)
 
 .icon-arrow
 	width: 16px
@@ -262,6 +277,12 @@ $textarea-transition-time: 0.6s
 	.nav a
 		padding: 18px 30px 22px
 
+	.nav-header
+		margin-left: 30px
+
+button.sidebar-open
+	margin-top: 12px
+
 
 .main-container
 	// margin-top: 60px (needed when the top bar is used more)
@@ -303,6 +324,9 @@ $textarea-transition-time: 0.6s
 				color: $gray-darker
 				border-bottom-color: $link-hover-color
 
+		> li:last-child a
+			margin-right: 0
+
 
 .content 
 	margin: 0 auto
@@ -340,6 +364,10 @@ $textarea-transition-time: 0.6s
 	line-height: 40px
 	margin-bottom: 0
 
+
+	@media (max-width: $screen-md)
+		font-size: 20px
+
 	.status-icon
 		@extend .fa
 		@extend .fa-angle-down
@@ -363,6 +391,9 @@ $textarea-transition-time: 0.6s
 			display: inherit
 			font-size: 20px
 			font-weight: 300
+
+			@media (max-width: $screen-md)
+				display: none
 
 		.status-icon
 			@extend .fa-cog
@@ -400,12 +431,6 @@ $textarea-transition-time: 0.6s
 			border-right: 1px solid #bbb
 
 
-			// margin-left: -1px
-			// border-top: 1px solid #bbb
-			// position: absolute
-			// margin-bottom: -300px
-
-
 		.SelectionGroup
 			@extend .nav
 			@extend .nav-pills
@@ -421,6 +446,9 @@ $textarea-transition-time: 0.6s
 				border-width: 1px 1px 1px 0px
 				border-color: #ccc
 				border-style: solid
+
+				@media (max-width: $screen-md)
+					border-right: none
 
 				a
 					color: $gray
@@ -441,6 +469,9 @@ $textarea-transition-time: 0.6s
 
 				&:last-child
 					border-bottom-width: 0px
+
+					@media (max-width: $screen-md)
+						border-bottom-width: 1px
 
 				+ li
 					margin-top: 0
@@ -497,7 +528,6 @@ $textarea-transition-time: 0.6s
 	ul
 		@extend .list-unstyled
 		margin-bottom: 0
-
 	
 
 
@@ -507,6 +537,7 @@ $textarea-transition-time: 0.6s
 	position: absolute
 	bottom: 0
 	right: 0
+	margin-top: 7px
 
 	li
 		line-height: 24px
@@ -514,6 +545,9 @@ $textarea-transition-time: 0.6s
 
 		a i	
 			color: #222
+
+	@media (max-width: $screen-md)
+		top: 0
 
 
 .deployment-status

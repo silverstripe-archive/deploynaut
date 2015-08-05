@@ -13,56 +13,59 @@
 	<% with $CurrentProject %>
 
 		<h3 id="env">Environments</h3>
-		<table class="table table-striped table-hover">
-			<thead>
-				<tr>
-					<th>Name</th>
-					<th>URL</th>
-					<th>Build currently deployed</th>
-					<th class="text-center">Can you deploy?</th>
-					<th class="text-center">Logs</th>
-				</tr>
-			</thead>
-			<tbody>
-				<% if $DNEnvironmentList %>
-				<% loop $DNEnvironmentList %>
-				<tr>
-					<td><a href="$Link">$Name</a></td>
-					<td><% if $URL %><a href="$URL">$BareURL</a><% else %>&nbsp;<% end_if %></td>
-					<td>
-						<% if $CurrentBuild %>
-							<% with $CurrentBuild %><% include GitBuildReference %><% end_with %>
-						<% else %>
-							<em>Nothing has been deployed.</em>
-						<% end_if %>
-					</td>
-					<td class="text-center">
-						<% if $CanDeploy %>
-							<span class="label label-success">Enabled</span>
-						<% else %>
-							<span class="label label-danger">Disabled</span>
-						<% end_if %>
-					</td>
-					<td class="text-center">
-						<% if $HasMetrics %>
-							<a href="$Link/metrics">Metrics</a>
-						<% end_if %>
-						<% if $LogsLink %>
-							<a href="$LogsLink">Logs</a>
-						<% end_if %>
-						<% if not $HasMetrics && not $LogsLink %>
-							<em>-</em>
-						<% end_if %>
-					</td>
-				</tr>
-				<% end_loop %>
-				<% else %>
+
+		<div class="table-responsive">
+			<table class="table table-striped table-hover">
+				<thead>
 					<tr>
-						<td colspan="5">No environments available yet!</td>
+						<th>Name</th>
+						<th>URL</th>
+						<th>Build currently deployed</th>
+						<th class="text-center">Can you deploy?</th>
+						<th class="text-center">Logs</th>
 					</tr>
-				<% end_if %>
-			</tbody>
-		</table>
+				</thead>
+				<tbody>
+					<% if $DNEnvironmentList %>
+					<% loop $DNEnvironmentList %>
+					<tr>
+						<td><a href="$Link">$Name</a></td>
+						<td><% if $URL %><a href="$URL">$BareURL</a><% else %>&nbsp;<% end_if %></td>
+						<td>
+							<% if $CurrentBuild %>
+								<% with $CurrentBuild %><% include GitBuildReference %><% end_with %>
+							<% else %>
+								<em>Nothing has been deployed.</em>
+							<% end_if %>
+						</td>
+						<td class="text-center">
+							<% if $CanDeploy %>
+								<span class="label label-success">Enabled</span>
+							<% else %>
+								<span class="label label-danger">Disabled</span>
+							<% end_if %>
+						</td>
+						<td class="text-center">
+							<% if $HasMetrics %>
+								<a href="$Link/metrics">Metrics</a>
+							<% end_if %>
+							<% if $LogsLink %>
+								<a href="$LogsLink">Logs</a>
+							<% end_if %>
+							<% if not $HasMetrics && not $LogsLink %>
+								<em>-</em>
+							<% end_if %>
+						</td>
+					</tr>
+					<% end_loop %>
+					<% else %>
+						<tr>
+							<td colspan="5">No environments available yet!</td>
+						</tr>
+					<% end_if %>
+				</tbody>
+			</table>
+		</div>
 
 
 		<% if $PublicKey %>

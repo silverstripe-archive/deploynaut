@@ -25,6 +25,8 @@
 
 	<% if $CanViewArchives %>
 		<% if $DataTransferLogs %>
+
+		<div class="table-responsive">
 			<table class="table table-bordered table-striped">
 				<thead>
 					<tr>
@@ -56,10 +58,11 @@
 					<% end_loop %>
 				</tbody>
 			</table>
+		</div>
 
-            <div class="text-center">
-				<% include Pagination Pagination=$DataTransferLogs %>
-            </div>
+        <div class="text-center">
+			<% include Pagination Pagination=$DataTransferLogs %>
+        </div>
 
 		<% else %>
 			<div class="alert">
