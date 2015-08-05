@@ -115,7 +115,7 @@
 				</tr>
 			</thead>
 			<tbody>
-			<% loop $CurrentEnvironment.DeployHistory.limit(8) %>
+			<% loop $CurrentEnvironment.DeployHistory %>
 				<tr>
 					<td><span>$LastEdited.Nice</span></td>
 					<td>
@@ -134,5 +134,9 @@
 			<% end_loop %>
 			</tbody>
 		</table>
+
+        <div class="text-center">
+			<% include Pagination Pagination=$CurrentEnvironment.DeployHistory %>
+		</div>
 	</div>
 </div>
