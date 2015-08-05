@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-md-12">
             <ol class="breadcrumb">
-                <li><a href="naut/project/$CurrentProject.Name">$CurrentProject.Title</a></li>
+                <li>$CurrentProject.Title</li>
                 <li><a href="naut/project/$CurrentProject.Name/snapshots">Snapshots</a></li>
             </ol>
             <h1 class="page-heading">Create: $CurrentTransfer.Environment.Name</h1>
