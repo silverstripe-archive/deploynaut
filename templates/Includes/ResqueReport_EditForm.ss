@@ -4,7 +4,7 @@
 	<% with Controller %>
 		$EditFormTools
 	<% end_with %>
-
+	
 	<div class="cms-content-fields center <% if not $Fields.hasTabset %>cms-panel-padded<% end_if %>">
 		<% if Message %>
 		<p id="{$FormName}_error" class="message $MessageType">$Message</p>
@@ -13,7 +13,7 @@
 		<% end_if %>
 
 		<fieldset>
-			<% if Legend %><legend>$Legend</legend><% end_if %>
+			<% if Legend %><legend>$Legend</legend><% end_if %> 
 			<% loop Fields %>
 				$FieldHolder
 			<% end_loop %>
