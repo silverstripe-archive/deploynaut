@@ -25,9 +25,9 @@
 		<div class="col-md-8 col-md-offset-2">
 			
 			<% if DataArchive %>
-			    <h3>Successfully uploaded your snapshot</h3>
-			    <p>Your snapshot has been saved.</p>
-			    <p>Please view the <a href="$BackURL">snapshots list</a> to restore this snapshot to an environment.</p>
+				<h3>Successfully uploaded your snapshot</h3>
+				<p>Your snapshot has been saved.</p>
+				<p>Please view the <a href="$BackURL">snapshots list</a> to restore this snapshot to an environment.</p>
 			<% else %>
 				<div class="tab-content">
 					<div class="tab-pane active" id="uploadform">
