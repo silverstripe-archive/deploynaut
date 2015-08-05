@@ -115,7 +115,7 @@
 				</tr>
 			</thead>
 			<tbody>
-			<% loop $CurrentEnvironment.DeployHistory %>
+			<% loop $DeployHistory %>
 				<tr>
 					<td><span>$LastEdited.Nice</span></td>
 					<td>
@@ -136,7 +136,7 @@
 		</table>
 
         <div class="text-center">
-			<% include Pagination Pagination=$CurrentEnvironment.DeployHistory %>
+			<% include Pagination Pagination=$DeployHistory %>
 		</div>
 	</div>
 </div>

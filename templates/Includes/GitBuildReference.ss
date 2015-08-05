@@ -14,4 +14,4 @@
 	--></span>
 <% end_if %>
 
-$Message
+$CommitMessage
