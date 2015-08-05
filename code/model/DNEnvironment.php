@@ -636,16 +636,21 @@ class DNEnvironment extends DataObject {
 	 * @return ArrayList
 	 */
 	public function DeployHistory() {
-		$history = $this
-			->Deployments()
-			->sort('LastEdited DESC');
+		$history = $this->Deployments()->sort('LastEdited DESC');
+		$paginatedHistory = new PaginatedList($history, Controller::curr()->getRequest());
+		$paginatedHistory->setPageLength(8);
 		$repo = $this->Project()->getRepository();
 		if(!$repo) {
-			return $history;
+			return $paginatedHistory;
 		}
 
-		$ammendedHistory = new ArrayList();
-		foreach($history as $deploy) {
+		$amendedHistory = new ArrayList();
+		// This fills up the array list with empty ViewableData so that the
+		// amended pagination still works.
+		for($i=0; $i<$paginatedHistory->getPageStart(); $i++) {
+			$amendedHistory->push(new DNDeployment());
+		}
+		foreach($paginatedHistory as $deploy) {
 			if(!$deploy->SHA) {
 				continue;
 			}
@@ -656,10 +661,12 @@ class DNEnvironment extends DataObject {
 				}
 				// We can't find this SHA, so we ignore adding a commit message to the deployment
 			} catch (Gitonomy\Git\Exception\ReferenceNotFoundException $ex) { }
-			$ammendedHistory->push($deploy);
+			$amendedHistory->push($deploy);
 		}
-
-		return $ammendedHistory;
+		$paginatedAmendedHistory = new PaginatedList($amendedHistory, Controller::curr()->getRequest());
+		$paginatedAmendedHistory->setPageLength(8);
+		$paginatedAmendedHistory->setTotalItems($paginatedHistory->Count());
+		return $paginatedAmendedHistory;
 	}
 
 	/**
