@@ -26,6 +26,11 @@ class DNBranch extends ViewableData {
 	);
 
 	/**
+	 * @var string
+	 */
+	protected $_lastUpdatedCache = '';
+
+	/**
 	 *
 	 * @param Gitonomy\Git\Commit $commit
 	 * @param DNProject $project
@@ -75,6 +80,10 @@ class DNBranch extends ViewableData {
 	 * @return SS_Datetime
 	 */
 	public function LastUpdated() {
+
+		if($this->_lastUpdatedCache) {
+			return $this->_lastUpdatedCache;
+		}
 		$created = $this->branch->getCommit()->getCommitterDate();
 		// gitonomy sets the time to UTC, so now we set the timezone to
 		// whatever PHP is set to (date.timezone). This will change in the future if each
@@ -83,6 +92,7 @@ class DNBranch extends ViewableData {
 
 		$d = new SS_Datetime();
 		$d->setValue($created->format('Y-m-d H:i:s'));
+		$this->_lastUpdatedCache = $d;
 		return $d;
 	}
 

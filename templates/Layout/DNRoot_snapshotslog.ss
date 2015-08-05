@@ -57,7 +57,9 @@
 				</tbody>
 			</table>
 
-			<% include Pagination Pagination=$DataTransferLogs %>
+            <div class="text-center">
+				<% include Pagination Pagination=$DataTransferLogs %>
+            </div>
 
 		<% else %>
 			<div class="alert">

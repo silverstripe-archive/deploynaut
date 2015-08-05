@@ -92,7 +92,7 @@
 				<span class="status-icon" aria-hidden="true"></span>
 				<span class="loading-text">Fetching latest code&hellip;</span>
 				<span class="environment-name"><i class="fa fa-rocket">&nbsp;</i> Deployment options for $CurrentEnvironment.Name</span>
-				
+
 			</div>
 
 			<div class="deploy-form-outer collapse clearfix" id="envDeploy">
@@ -115,7 +115,7 @@
 				</tr>
 			</thead>
 			<tbody>
-			<% loop $CurrentEnvironment.DeployHistory.limit(8) %>
+			<% loop $DeployHistory %>
 				<tr>
 					<td><span>$LastEdited.Nice</span></td>
 					<td>
@@ -134,5 +134,9 @@
 			<% end_loop %>
 			</tbody>
 		</table>
+
+        <div class="text-center">
+			<% include Pagination Pagination=$DeployHistory %>
+		</div>
 	</div>
 </div>
