@@ -47,6 +47,7 @@ class SyncProjectsAndEnvironments extends BuildTask {
 
 	/**
 	 * Remove environment files that can't be found on disk
+	 *
 	 * @param array $paths Array of pathnames
 	 * @param DNProject
 	 * @param bool $dryRun
@@ -73,6 +74,7 @@ class SyncProjectsAndEnvironments extends BuildTask {
 
 	/**
 	 * Remove projects that don't exists on disk but in the database
+	 *
 	 * @todo add a archive functionality
 	 *
 	 * @param array $paths
@@ -93,6 +95,7 @@ class SyncProjectsAndEnvironments extends BuildTask {
 
 	/**
 	 * Sync the in-db project list with a list of file paths
+	 *
 	 * @param array $paths Array of pathnames
 	 * @param DNProject
 	 * @param bool $dryRun
@@ -126,6 +129,7 @@ class SyncProjectsAndEnvironments extends BuildTask {
 
 	/**
 	 * Sync the in-db project list with a list of file paths
+	 *
 	 * @param array $paths Array of pathnames
 	 * @param boolean $dryRun
 	 */
@@ -141,7 +145,6 @@ class SyncProjectsAndEnvironments extends BuildTask {
 	}
 
 	/**
-	 *
 	 * @param string $text
 	 */
 	protected function message($text) {
@@ -152,7 +155,6 @@ class SyncProjectsAndEnvironments extends BuildTask {
 	}
 
 	/**
-	 *
 	 * @param string $text
 	 */
 	protected function echoHeader($text) {
