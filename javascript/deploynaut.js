@@ -8,6 +8,13 @@
 		$('[data-toggle="popover"]').popover()
 	})
 
+	// Openclose nav
+	$('button.sidebar-open').on('click', function(e) {
+      $('.page-container').toggleClass("open"); //you can list several class names 
+      e.preventDefault();
+    });
+
+
 	var queue = {
 		showlog: function(status, content, logLink) {
 			var self = this;
