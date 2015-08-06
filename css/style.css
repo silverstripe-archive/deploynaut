@@ -9943,6 +9943,9 @@ button.sidebar-open {
       font-size: 26px;
       line-height: 40px;
       margin: 20px 0; }
+      @media (max-width: 992px) {
+        .deploy-form-outer .deploy-form *[name="action_doDeploy"] {
+          font-size: 20px; } }
 
 .deploy-history {
   margin-top: 10px; }
