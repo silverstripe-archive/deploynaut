@@ -22,10 +22,6 @@
 					<% with $CurrentBuild %>
 						<% include GitDetailedBuildReference BareURL=$Up.BareURL, URL=$Up.URL %>
 					<% end_with %>
-				<% else %>
-					<p>
-						No deployments have been made
-					</p>
 				<% end_if %>
 			</div>
 		</div>
@@ -107,7 +103,10 @@
 
 	<div class="deploy-history">
 		<h3>Deploy history</h3>
-		<p>Below builds have previously been deployed to this environment.</p>
+
+		<% if $DeployHistory %>
+			<p>Below builds have previously been deployed to this environment.</p>
+		<% end_if %>
 
 		<div class="table-responsive">
 			<table class="table table-striped table-hover">
@@ -121,6 +120,7 @@
 					</tr>
 				</thead>
 				<tbody>
+				<% if $DeployHistory %>
 				<% loop $DeployHistory %>
 					<tr>
 						<td><span>$LastEdited.Nice</span></td>
@@ -138,11 +138,16 @@
 						<td class="text-center"><% if $Link %><a href="$Link">Details <i class="fa fa-angle-right"></i></a><% end_if %></td>
 					</tr>
 				<% end_loop %>
+				<% else %>
+					<tr>
+						<td colspan="5" class="text-center">No deployments have been made.</td>
+					</tr>
+				<% end_if %>
 				</tbody>
 			</table>
 		</div>
 
-        <div class="text-center">
+		<div class="text-center">
 			<% include Pagination Pagination=$DeployHistory %>
 		</div>
 	</div>
