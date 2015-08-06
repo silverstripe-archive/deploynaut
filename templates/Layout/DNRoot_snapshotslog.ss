@@ -49,7 +49,15 @@
 							<% if $Status = 'Started' %><span class="label label-info">Started</span><% end_if %>
 							<% if $Status = 'Finished' %><span class="label label-success">Finished</span><% end_if %>
 							<% if $Status = 'Failed' %><span class="label label-danger">Failed</span><% end_if %>
-							<% if $Status = 'n/a' %><span class="label label-inverse">n/a</span><% end_if %>
+							<% if $Status = 'n/a' %>
+								<span class="label label-default">
+									<% if $Origin == 'ManualUpload' %>
+										Uploaded
+									<% else %>
+										n/a
+									<% end_if %>
+								</span>
+							<% end_if %>
 							</td>
 							<td class="text-center"><% if $Origin != 'ManualUpload' %><a href="$Link">Details <i class="fa fa-angle-right"></i></a><% else %>-<% end_if %></td>
 						</tr>
