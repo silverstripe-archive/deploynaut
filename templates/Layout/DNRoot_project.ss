@@ -46,13 +46,9 @@
 							<% end_if %>
 						</td>
 						<td class="text-center">
-							<% if $HasMetrics %>
-								<a href="$Link/metrics">Metrics</a>
-							<% end_if %>
 							<% if $LogsLink %>
 								<a href="$LogsLink">Logs</a>
-							<% end_if %>
-							<% if not $HasMetrics && not $LogsLink %>
+							<% else %>
 								<em>-</em>
 							<% end_if %>
 						</td>
