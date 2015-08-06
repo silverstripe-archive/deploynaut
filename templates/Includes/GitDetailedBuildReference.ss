@@ -23,23 +23,12 @@
 
 	<div class="col-md-6">
 		<ul>
-
 			<%-- Display logs link for environment --%>
 			<% if $Environment.LogsLink %>
 				<li>
 					<a href="$Environment.LogsLink"><i class="fa fa-table i-push"></i>Logs for $Environment.Name</a>
 				</li>
 			<% end_if %>
-
-			<%-- Display metrics for environment --%>
-			<% if $Project.HasMetrics %>
-				<li>
-					<a href="naut/project/$Project.Name/environment/$Name/metrics">
-						<i class="fa fa-bar-chart i-push"></i>Metrics for $Environment.Name
-					</a>
-				</li>
-			<% end_if %>
-
 		</ul>
 	</div>
 </div>
