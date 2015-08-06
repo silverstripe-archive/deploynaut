@@ -9923,7 +9923,7 @@ button.sidebar-open {
       .deploy-form-outer .deploy-form .SelectionGroup + .tab-content {
         padding: 2em 30px;
         background-color: #fff;
-        box-shadow: -1px 0 0 #bbb; }
+        box-shadow: -1penvirx 0 0 #bbb; }
         @media (max-width: 768px) {
           .deploy-form-outer .deploy-form .SelectionGroup + .tab-content {
             box-shadow: none; } }
@@ -9961,7 +9961,8 @@ button.sidebar-open {
   .environment-details .build-details a.git-sha {
     font-size: 14px; }
   .environment-details ul {
-    margin-bottom: 0; }
+    margin-bottom: 0;
+    position: absolute; }
 
 .project-links {
   text-align: right;
