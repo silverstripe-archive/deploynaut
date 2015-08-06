@@ -8,7 +8,6 @@
  *
  * @property string $URL URL Of this environment
  * @property string $Name
- * @property string $GraphiteServers
  * @property bool $DryRunEnabled
  * @method DNProject Project()
  * @method DataList Deployments()
@@ -883,14 +882,6 @@ PHP
 		}
 		$deployments = GridField::create('Deployments', 'Deployments', $this->Deployments(), $deploymentsConfig);
 		$fields->addFieldToTab('Root.Deployments', $deployments);
-
-		// The Extra.GraphiteServers
-		$fields->addFieldToTab('Root.GraphiteSettings',
-			TextareaField::create('GraphiteServers')
-				->setDescription(
-					'Enter your graphite servers one by line, e.g. "server.wgtn.test"'
-				)
-		);
 
 		Requirements::javascript('deploynaut/javascript/environment.js');
 
