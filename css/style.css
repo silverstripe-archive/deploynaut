@@ -9089,6 +9089,48 @@ button.close {
   display: block;
   padding: 6px; }
 
+.wrapper {
+  position: relative;
+  margin: 0 auto;
+  overflow: hidden;
+  height: 42px; }
+
+.list {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  min-width: 3000px;
+  margin-top: 0px; }
+
+.list li {
+  display: table-cell;
+  position: relative;
+  text-align: center;
+  cursor: grab;
+  cursor: -webkit-grab;
+  color: #efefef;
+  vertical-align: middle; }
+
+.scroller {
+  text-align: center;
+  cursor: pointer;
+  display: none;
+  padding: 11px;
+  white-space: no-wrap;
+  vertical-align: middle;
+  background-color: #fff;
+  box-shadow: 0 0 2px #ddd; }
+
+.scroller-right {
+  float: right;
+  margin-right: -30px;
+  box-shadow: -2px 1px 2px #eee; }
+
+.scroller-left {
+  float: left;
+  margin-left: -30px;
+  box-shadow: 2px 1px 2px #eee; }
+
 .tabs-below .nav-tabs, .tabs-right .nav-tabs, .tabs-left .nav-tabs {
   border-bottom: 0; }
 
@@ -9843,6 +9885,9 @@ button.sidebar-open {
       float: none;
       position: unset;
       border-right: 1px solid #bbb; }
+      @media (max-width: 992px) {
+        .deploy-form-outer .deploy-form:after {
+          display: none; } }
     .deploy-form-outer .deploy-form .SelectionGroup {
       padding-right: 0;
       font-weight: 300;
@@ -9929,7 +9974,11 @@ button.sidebar-open {
       color: #222; }
   @media (max-width: 992px) {
     .project-links {
-      top: 0; } }
+      top: 0;
+      bottom: auto; } }
+  @media (max-width: 768px) {
+    .project-links {
+      display: none; } }
 
 .deployment-status .deployment-progress {
   height: auto; }
@@ -10014,6 +10063,9 @@ button.sidebar-open {
 
 .i-push {
   margin-right: 4px; }
+
+.no-wrap {
+  white-space: nowrap; }
 
 .text-lg .i-push {
   width: 24px; }

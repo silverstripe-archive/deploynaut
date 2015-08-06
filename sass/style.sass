@@ -9,7 +9,7 @@ $textarea-transition-time: 0.6s
 @import "select2/theme/layout.scss"
 
 // Deploynaut styles
-@import "tabs"
+@import "_tabs"
 @import "_form.sass"
 @import "_type.sass"
 @import "_user-switch.sass"
@@ -431,6 +431,9 @@ button.sidebar-open
 			position: unset
 			border-right: 1px solid #bbb
 
+			@media (max-width: $screen-md)
+				display: none
+
 
 		.SelectionGroup
 			@extend .nav
@@ -507,6 +510,7 @@ button.sidebar-open
 			line-height: 40px
 			margin: 20px 0
 
+
 .deploy-history
 	margin-top: $padding-large-vertical
 
@@ -550,6 +554,10 @@ button.sidebar-open
 
 	@media (max-width: $screen-md)
 		top: 0
+		bottom: auto
+
+	@media (max-width: $screen-sm)
+		display: none
 
 
 .deployment-status
@@ -657,6 +665,9 @@ button.sidebar-open
 
 .i-push
 	margin-right: 4px
+
+.no-wrap
+	white-space: nowrap
 
 .text-lg .i-push
 	width: 24px
