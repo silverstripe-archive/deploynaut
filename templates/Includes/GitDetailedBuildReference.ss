@@ -35,7 +35,7 @@
 			<% if $Project.HasMetrics %>
 				<li>
 					<a href="naut/project/$Project.Name/environment/$Name/metrics">
-						<i class="fa fa-bar-chart i-push"></i>Metrics for $Name
+						<i class="fa fa-bar-chart i-push"></i>Metrics for $Environment.Name
 					</a>
 				</li>
 			<% end_if %>
