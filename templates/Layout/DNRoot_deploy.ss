@@ -8,8 +8,6 @@
 	</div>
 </div>
 
-
-
 <div class="content">
 	<div class="row">
 		<div class="col-md-12 environment-details">
@@ -24,7 +22,6 @@
 			<% if $CurrentEnvironment.URL %>
 				<br /><span>URL: <a href="$CurrentEnvironment.URL.URL">$CurrentEnvironment.URL.URL</a></span>
 			<% end_if %>
-
 		</div>
 	</div>
 
@@ -44,7 +41,6 @@
 				</div>
 			</div>
 		</div>
-
 
 		<h5>Deploy log:</h5>
 		<pre id="queue_log" class="log-content" data-loglink="$LogLink">$LogContent</pre>
