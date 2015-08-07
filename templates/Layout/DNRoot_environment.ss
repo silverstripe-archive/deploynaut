@@ -68,7 +68,7 @@
 								<% if $Status = 'Failed' %><span class="label label-important">Failed</span><% end_if %>
 								<% if $Status = 'n/a' %><span class="label label-inverse">n/a</span><% end_if %>
 								</td>
-								<td class="text-center"><% if $Link %><a href="$Link">Details <i class="fa fa-angle-right"></i></a><% end_if %></td>
+								<td class="text-center"><% if $Link %><a class="no-wrap" href="$Link">Details <i class="fa fa-angle-right"></i></a><% end_if %></td>
 							</tr>
 						<% end_loop %>
 						</tbody>
@@ -91,7 +91,7 @@
 
 				<span class="status-icon" aria-hidden="true"></span>
 				<span class="loading-text">Fetching latest code&hellip;</span>
-				<span class="environment-name"><i class="fa fa-rocket">&nbsp;</i> Deployment options for $CurrentEnvironment.Name</span>
+				<span class="environment-name"><i class="fa fa-rocket">&nbsp;</i> Deployment options <span class="hidden-xs">for $CurrentEnvironment.Name</span></span>
 
 			</div>
 
@@ -150,5 +150,6 @@
 		<div class="text-center">
 			<% include Pagination Pagination=$DeployHistory %>
 		</div>
+
 	</div>
 </div>

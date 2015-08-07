@@ -9,7 +9,7 @@ $textarea-transition-time: 0.6s
 @import "select2/theme/layout.scss"
 
 // Deploynaut styles
-@import "tabs"
+@import "_tabs"
 @import "_form.sass"
 @import "_type.sass"
 @import "_user-switch.sass"
@@ -292,6 +292,7 @@ button.sidebar-open
 		margin: 0
 		border-bottom: 1px solid $UI-border
 		padding-bottom: 0
+		padding-top: 20px
 
 	.breadcrumb
 		padding-left: 0
@@ -430,6 +431,9 @@ button.sidebar-open
 			position: unset
 			border-right: 1px solid #bbb
 
+			@media (max-width: $screen-md)
+				display: none
+
 
 		.SelectionGroup
 			@extend .nav
@@ -481,7 +485,7 @@ button.sidebar-open
 				@extend .col-md-8
 				padding: 2em $grid-gutter-width
 				background-color: #fff
-				box-shadow: -1px 0 0 #bbb
+				box-shadow: -1penvirx 0 0 #bbb
 
 				@media (max-width: $screen-sm)
 					box-shadow: none
@@ -506,6 +510,9 @@ button.sidebar-open
 			line-height: 40px
 			margin: 20px 0
 
+			@media (max-width: $screen-md)
+				font-size: 20px
+
 .deploy-history
 	margin-top: $padding-large-vertical
 
@@ -528,6 +535,8 @@ button.sidebar-open
 	ul
 		@extend .list-unstyled
 		margin-bottom: 0
+		position: absolute
+		z-index: 2
 	
 
 
@@ -538,6 +547,7 @@ button.sidebar-open
 	bottom: 0
 	right: 0
 	margin-top: 7px
+	margin-right: 15px
 
 	li
 		line-height: 24px
@@ -548,6 +558,10 @@ button.sidebar-open
 
 	@media (max-width: $screen-md)
 		top: 0
+		bottom: auto
+
+	@media (max-width: $screen-sm)
+		display: none
 
 
 .deployment-status
@@ -655,6 +669,9 @@ button.sidebar-open
 
 .i-push
 	margin-right: 4px
+
+.no-wrap
+	white-space: nowrap
 
 .text-lg .i-push
 	width: 24px

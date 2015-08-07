@@ -61,7 +61,7 @@
 								</span>
 							<% end_if %>
 							</td>
-							<td class="text-center"><% if $Origin != 'ManualUpload' %><a href="$Link">Details <i class="fa fa-angle-right"></i></a><% else %>-<% end_if %></td>
+							<td class="text-center"><% if $Origin != 'ManualUpload' %><a class="no-wrap" href="$Link">Details <i class="fa fa-angle-right"></i></a><% else %>-<% end_if %></td>
 						</tr>
 					<% end_loop %>
 				</tbody>

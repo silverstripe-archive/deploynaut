@@ -9089,6 +9089,48 @@ button.close {
   display: block;
   padding: 6px; }
 
+.wrapper {
+  position: relative;
+  margin: 0 auto;
+  overflow: hidden;
+  height: 42px; }
+
+.list {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  min-width: 3000px;
+  margin-top: 0px; }
+
+.list li {
+  display: table-cell;
+  position: relative;
+  text-align: center;
+  cursor: grab;
+  cursor: -webkit-grab;
+  color: #efefef;
+  vertical-align: middle; }
+
+.scroller {
+  text-align: center;
+  cursor: pointer;
+  display: none;
+  padding: 11px;
+  white-space: no-wrap;
+  vertical-align: middle;
+  background-color: #fff;
+  box-shadow: 0 0 2px #ddd; }
+
+.scroller-right {
+  float: right;
+  margin-right: -30px;
+  box-shadow: -2px 1px 2px #eee; }
+
+.scroller-left {
+  float: left;
+  margin-left: -30px;
+  box-shadow: 2px 1px 2px #eee; }
+
 .tabs-below .nav-tabs, .tabs-right .nav-tabs, .tabs-left .nav-tabs {
   border-bottom: 0; }
 
@@ -9740,7 +9782,8 @@ button.sidebar-open {
   background-color: #f0f3f4;
   margin: 0;
   border-bottom: 1px solid #eee;
-  padding-bottom: 0; }
+  padding-bottom: 0;
+  padding-top: 20px; }
 
 .main-container .breadcrumb {
   padding-left: 0;
@@ -9842,6 +9885,9 @@ button.sidebar-open {
       float: none;
       position: unset;
       border-right: 1px solid #bbb; }
+      @media (max-width: 992px) {
+        .deploy-form-outer .deploy-form:after {
+          display: none; } }
     .deploy-form-outer .deploy-form .SelectionGroup {
       padding-right: 0;
       font-weight: 300;
@@ -9877,7 +9923,7 @@ button.sidebar-open {
       .deploy-form-outer .deploy-form .SelectionGroup + .tab-content {
         padding: 2em 30px;
         background-color: #fff;
-        box-shadow: -1px 0 0 #bbb; }
+        box-shadow: -1penvirx 0 0 #bbb; }
         @media (max-width: 768px) {
           .deploy-form-outer .deploy-form .SelectionGroup + .tab-content {
             box-shadow: none; } }
@@ -9897,6 +9943,9 @@ button.sidebar-open {
       font-size: 26px;
       line-height: 40px;
       margin: 20px 0; }
+      @media (max-width: 992px) {
+        .deploy-form-outer .deploy-form *[name="action_doDeploy"] {
+          font-size: 20px; } }
 
 .deploy-history {
   margin-top: 10px; }
@@ -9912,14 +9961,17 @@ button.sidebar-open {
   .environment-details .build-details a.git-sha {
     font-size: 14px; }
   .environment-details ul {
-    margin-bottom: 0; }
+    margin-bottom: 0;
+    position: absolute;
+    z-index: 2; }
 
 .project-links {
   text-align: right;
   position: absolute;
   bottom: 0;
   right: 0;
-  margin-top: 7px; }
+  margin-top: 7px;
+  margin-right: 15px; }
   .project-links li {
     line-height: 24px;
     margin-bottom: 4px; }
@@ -9927,7 +9979,11 @@ button.sidebar-open {
       color: #222; }
   @media (max-width: 992px) {
     .project-links {
-      top: 0; } }
+      top: 0;
+      bottom: auto; } }
+  @media (max-width: 768px) {
+    .project-links {
+      display: none; } }
 
 .deployment-status .deployment-progress {
   height: auto; }
@@ -10012,6 +10068,9 @@ button.sidebar-open {
 
 .i-push {
   margin-right: 4px; }
+
+.no-wrap {
+  white-space: nowrap; }
 
 .text-lg .i-push {
   width: 24px; }
