@@ -14,8 +14,8 @@
 		e.preventDefault();
 	});
 
+	// Scrolling tabs
 	if($('.list').length > 0) {
-		// Scrolling tabs
 		var hidWidth;
 		var scrollBarWidths = 40;
 
@@ -38,18 +38,18 @@
 		};
 
 		var reAdjust = function(){
-		if (($('.wrapper').outerWidth()) < widthOfList()) {
-			$('.scroller-right').show();
-		} else {
-			$('.scroller-right').hide();
-		}
+			if (($('.wrapper').outerWidth()) < widthOfList()) {
+				$('.scroller-right').show();
+			} else {
+				$('.scroller-right').hide();
+			}
 
-		if (getLeftPosi()<0) {
-			$('.scroller-left').show();
-		} else {
-			$('.item').animate({left:"-="+getLeftPosi()+"px"},'slow');
-			$('.scroller-left').hide();
-		}
+			if (getLeftPosi()<0) {
+				$('.scroller-left').show();
+			} else {
+				$('.item').animate({left:"-="+getLeftPosi()+"px"},'slow');
+				$('.scroller-left').hide();
+			}
 		}
 
 		reAdjust();
