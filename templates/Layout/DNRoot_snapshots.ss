@@ -15,7 +15,7 @@
 				<li><a href="$CurrentProject.Link('snapshotslog')">Log</a></li>
 			</ul>
 			<% end_if %>
-        </div>
+		</div>
 	</div>
 </div>
 
@@ -24,12 +24,12 @@
 		<% if $HasDiskQuota %>
 			<% if $HasExceededDiskQuota %>
 				<div class="disk-quota danger">
-                    <i class="fa fa-exclamation-circle"></i>
+					<i class="fa fa-exclamation-circle"></i>
 					The project has exceeded the total quota of $DiskQuotaMB MB. Delete old snapshots to free up space.
 				</div>
 			<% else_if $DiskQuotaUsagePercent > 85 %>
 				<div class="disk-quota warning">
-                    <i class="fa fa-exclamation-triangle"></i>
+					<i class="fa fa-exclamation-triangle"></i>
 					You have used $UsedQuotaMB MB out of your $DiskQuotaMB MB quota across all environments for this project.
 				</div>
 			<% else %>

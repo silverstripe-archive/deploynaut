@@ -68,9 +68,9 @@
 			</table>
 		</div>
 
-        <div class="text-center">
+		<div class="text-center">
 			<% include Pagination Pagination=$DataTransferLogs %>
-        </div>
+		</div>
 
 		<% else %>
 			<div class="alert">

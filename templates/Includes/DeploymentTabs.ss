@@ -2,7 +2,7 @@
 <div class="scroller scroller-right"><i class="fa fa-angle-right"></i></div>
 
 <div class="wrapper">
-	<ul class="nav nav-tabs list" id="myTab">
+	<ul class="nav nav-tabs list">
 		<li<% if $Overview %> class="active"<% end_if %>><a href="$CurrentProject.Link">Overview</a></li>
 
 		<% with $CurrentProject %>

@@ -12,7 +12,7 @@
 
 	<% with $CurrentEnvironment %>
 		<div class="row environment-details">
-			<div class="col-md-12">
+			<div class="col-md-12 clearfix">
 				<%-- If there any potential issues or warnings with deployment, show them here. --%>
 				<% if $DeploymentMessages %>
 					$DeploymentMessages
