@@ -105,6 +105,23 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	protected $data;
 
 	/**
+	 * Include requirements that deploynaut needs, such as javascript.
+	 */
+	public static function include_requirements() {
+		Requirements::combine_files(
+			'deploynaut.js',
+			array(
+				'deploynaut/javascript/jquery.js',
+				'deploynaut/javascript/bootstrap.js',
+				'deploynaut/javascript/deploynaut.js',
+				'deploynaut/javascript/bootstrap.file-input.js',
+				'deploynaut/thirdparty/select2/dist/js/select2.min.js',
+				'deploynaut/javascript/material.js',
+			)
+		);
+	}
+
+	/**
 	 * Check for feature flags:
 	 * - FLAG_SNAPSHOTS_ENABLED: set to true to enable globally
 	 * - FLAG_SNAPSHOTS_ENABLED_FOR_MEMBERS: set to semicolon-separated list of email addresses of allowed users.
@@ -134,17 +151,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return Security::permissionFailure();
 		}
 
-		Requirements::combine_files(
-			'deploynaut.js',
-			array(
-				'deploynaut/javascript/jquery.js',
-				'deploynaut/javascript/bootstrap.js',
-				'deploynaut/javascript/deploynaut.js',
-				'deploynaut/javascript/bootstrap.file-input.js',
-				'deploynaut/thirdparty/select2/dist/js/select2.min.js',
-				'deploynaut/javascript/material.js',
-			)
-		);
+		self::include_requirements();
 	}
 
 	/**
