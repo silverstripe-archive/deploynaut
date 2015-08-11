@@ -9961,9 +9961,7 @@ button.sidebar-open {
   .environment-details .build-details a.git-sha {
     font-size: 14px; }
   .environment-details ul {
-    margin-bottom: 0;
-    position: absolute;
-    z-index: 2; }
+    margin-bottom: 0; }
 
 .project-links {
   text-align: right;
