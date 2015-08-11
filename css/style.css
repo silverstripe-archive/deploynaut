@@ -9698,6 +9698,9 @@ body .userswitcher fieldset .middleColumn {
     color: #fff;
     text-decoration: none; }
 
+.btn-security {
+  margin-bottom: 0; }
+
 .nav-submenu {
   font-weight: bold;
   position: relative; }
@@ -9960,8 +9963,6 @@ button.sidebar-open {
   .environment-details .build-details span.git-sha,
   .environment-details .build-details a.git-sha {
     font-size: 14px; }
-  .environment-details ul {
-    margin-bottom: 0; }
 
 .project-links {
   text-align: right;

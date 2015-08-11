@@ -1,13 +1,9 @@
 <% include OuterTop %>
 <div class="content content-vert">
 	
-	<ul class="nav-header list-unstyled pull-left">
-		<li class="hidden-md hidden-lg">
-		    <button type="button" data-action="sidebar_toggle" data-toggle="layout" class="btn sidebar-open btn-default">
-		        <i class="fa fa-navicon"></i>
-		    </button>
-		</li>
-	</ul>
+    <button type="button" data-action="sidebar_toggle" data-toggle="layout" class="hidden-md hidden-lg btn sidebar-open btn-security btn-default">
+        <i class="fa fa-navicon"></i>
+    </button>
 	
 	<div class="row">
 		<div class="col-md-8 col-md-offset-2 vertical-offset-20">
