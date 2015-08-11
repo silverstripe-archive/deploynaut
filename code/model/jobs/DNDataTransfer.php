@@ -76,6 +76,22 @@ class DNDataTransfer extends DataObject {
 	 */
 	protected $backupBeforePush = true;
 
+	/**
+	 *
+	 * @param int $int
+	 * @return string
+	 */
+	public static function map_resque_status($int) {
+		$remap = array(
+			Resque_Job_Status::STATUS_WAITING => "Queued",
+			Resque_Job_Status::STATUS_RUNNING => "Running",
+			Resque_Job_Status::STATUS_FAILED => "Failed",
+			Resque_Job_Status::STATUS_COMPLETE => "Complete",
+			false => "Invalid",
+		);
+		return $remap[$int];
+	}
+
 	public function setBackupBeforePush($value) {
 		$this->backupBeforePush = $value;
 	}
@@ -239,21 +255,26 @@ class DNDataTransfer extends DataObject {
 	}
 
 	/**
+	 * Returns the status of the resque job
 	 *
 	 * @return string
 	 */
 	public function ResqueStatus() {
 		$status = new Resque_Job_Status($this->ResqueToken);
-
-		$remap = array(
-			Resque_Job_Status::STATUS_WAITING => "Queued",
-			Resque_Job_Status::STATUS_RUNNING => "Running",
-			Resque_Job_Status::STATUS_FAILED => "Failed",
-			Resque_Job_Status::STATUS_COMPLETE => "Complete",
-			false => "Invalid",
-		);
-
-		return $remap[$status->get()];
+		$statusCode = $status->get();
+		// The Resque job can no longer be found, fallback to the DNDataTransfer.Status
+		if($statusCode === false) {
+			// Translate from the DNDataTransfer.Status to the Resque job status for UI purposes
+			switch($this->Status) {
+				case 'Finished':
+					return 'Complete';
+				case 'Started':
+					return 'Running';
+				default:
+					return $this->Status;
+			}
+		}
+		return self::map_resque_status($statusCode);
 	}
 
 }
