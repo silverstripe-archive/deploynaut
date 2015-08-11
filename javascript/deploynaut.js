@@ -6,7 +6,7 @@
 	// Popover on enviroment repository link
 	$(function () {
 		$('[data-toggle="popover"]').popover()
-	})
+	});
 
 	// Openclose nav
 	$('button.sidebar-open').on('click', function(e) {
