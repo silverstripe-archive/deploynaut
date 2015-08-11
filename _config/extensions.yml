@@ -4,3 +4,6 @@ Name: deploynautextensions
 File:
   extensions:
     - DeploynautFileExtension
+Security:
+  extensions:
+    - DeploynautSecurityExtension
