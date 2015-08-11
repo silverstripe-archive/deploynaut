@@ -33,7 +33,6 @@
 		};
 
 		var getLeftPosi = function(){
-			console.log($('.list'));
 			return $('.list').position().left;
 		};
 
