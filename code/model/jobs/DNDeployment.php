@@ -142,7 +142,11 @@ class DNDeployment extends DataObject {
 	public function getCommitMessage() {
 		$commit = $this->getCommit();
 		if($commit) {
-			return Convert::raw2xml($commit->getMessage());
+			try {
+				return Convert::raw2xml($commit->getMessage());
+			} catch(Gitonomy\Git\Exception\ReferenceNotFoundException $e) {
+				return null;
+			}
 		}
 		return null;
 	}
