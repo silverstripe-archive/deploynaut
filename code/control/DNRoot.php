@@ -548,13 +548,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	public function branch(SS_HTTPRequest $request) {
 		$project = $this->getCurrentProject();
 		if(!$project) {
-			return new SS_HTTPResponse("Project '" . $request->latestParam('Project') . "' not found.", 404);
+			return new SS_HTTPResponse("Project '" . Convert::raw2xml($request->latestParam('Project')) . "' not found.", 404);
 		}
 
 		$branchName = $request->getVar('name');
 		$branch = $project->DNBranchList()->byName($branchName);
 		if(!$branch) {
-			return new SS_HTTPResponse("Branch '" . $branchName . "' not found.", 404);
+			return new SS_HTTPResponse("Branch '" . Convert::raw2xml($branchName) . "' not found.", 404);
 		}
 
 		return $branch->renderWith(array('DNRoot_branchinfo'));
