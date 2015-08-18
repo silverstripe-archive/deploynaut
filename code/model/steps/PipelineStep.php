@@ -251,7 +251,7 @@ class PipelineStep extends DataObject implements PipelineData {
 	 */
 	public function abort() {
 
-		if ($this->isQueued() || $this->isRunning()) {
+		if($this->isQueued() || $this->isRunning()) {
 			$this->Status = 'Aborted';
 			$this->log('Step aborted');
 			$this->write();

@@ -61,7 +61,7 @@ class DNReferenceList extends ArrayList {
 	protected function getReferences() {
 		try {
 			$repository = new Gitonomy\Git\Repository($this->project->LocalCVSPath);
-		} catch (Exception $e) {
+		} catch(Exception $e) {
 			return array();
 		}
 

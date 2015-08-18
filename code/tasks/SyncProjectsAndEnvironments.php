@@ -9,11 +9,11 @@ class SyncProjectsAndEnvironments extends BuildTask {
 		$remove = true;
 		$dryRun = true;
 
-		if($request && $request->requestVar('remove') !== NULL) {
+		if($request && $request->requestVar('remove') !== null) {
 			$remove = (bool) $request->requestVar('remove');
 		}
 
-		if($request && $request->requestVar('dryrun') !== NULL) {
+		if($request && $request->requestVar('dryrun') !== null) {
 			$dryRun = (bool) $request->requestVar('dryrun');
 		}
 

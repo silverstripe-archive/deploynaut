@@ -94,7 +94,7 @@ class SizeRestrictedPackageCache implements PackageCache {
 				return filemtime($a) > filemtime($b);
 			});
 
-			for($i=0;$i<sizeof($files)-$count;$i++) {
+			for($i = 0; $i < sizeof($files) - $count; $i++) {
 				$log->write("Removing " . $files[$i] . " from package cache");
 				unlink($files[$i]);
 			}

@@ -129,11 +129,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return boolean
 	 */
 	public static function FlagSnapshotsEnabled() {
-		if (defined('FLAG_SNAPSHOTS_ENABLED') && FLAG_SNAPSHOTS_ENABLED) return true;
-		if (defined('FLAG_SNAPSHOTS_ENABLED_FOR_MEMBERS') && FLAG_SNAPSHOTS_ENABLED_FOR_MEMBERS) {
+		if(defined('FLAG_SNAPSHOTS_ENABLED') && FLAG_SNAPSHOTS_ENABLED) return true;
+		if(defined('FLAG_SNAPSHOTS_ENABLED_FOR_MEMBERS') && FLAG_SNAPSHOTS_ENABLED_FOR_MEMBERS) {
 			$allowedMembers = explode(';', FLAG_SNAPSHOTS_ENABLED_FOR_MEMBERS);
 			$member = Member::currentUser();
-			if ($allowedMembers && $member && in_array($member->Email, $allowedMembers)) return true;
+			if($allowedMembers && $member && in_array($member->Email, $allowedMembers)) return true;
 		}
 		return false;
 	}
@@ -1003,12 +1003,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$dataArchive = null;
 
 		// Validate direction.
-		if ($data['Direction']=='get') {
+		if($data['Direction'] == 'get') {
 			$validEnvs = $this->getCurrentProject()->DNEnvironmentList()
-				->filterByCallback(function($item) {return $item->canBackup();});
-		} else if ($data['Direction']=='push') {
+				->filterByCallback(function($item) {return $item->canBackup(); });
+		} else if($data['Direction'] == 'push') {
 			$validEnvs = $this->getCurrentProject()->DNEnvironmentList()
-				->filterByCallback(function($item) {return $item->canRestore();});
+				->filterByCallback(function($item) {return $item->canRestore(); });
 		} else {
 			throw new LogicException('Invalid direction');
 		}
@@ -1020,7 +1020,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		// Validate mode.
-		if (!in_array($data['Mode'], array('all', 'assets', 'db'))) {
+		if(!in_array($data['Mode'], array('all', 'assets', 'db'))) {
 			throw new LogicException('Invalid mode');
 		}
 
@@ -1421,7 +1421,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 	public static function getSupportLinks() {
 		$supportLinks = self::config()->support_links;
-		if ($supportLinks) return new ArrayList($supportLinks);
+		if($supportLinks) return new ArrayList($supportLinks);
 	}
 
 	/**

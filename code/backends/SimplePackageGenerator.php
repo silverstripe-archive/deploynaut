@@ -25,7 +25,7 @@ class SimplePackageGenerator extends PackageGenerator {
 
 	public function getIdentifier() {
 		// If the build script changes, don't re-use cached items
-		return substr(sha1($this->buildScript),0,8);
+		return substr(sha1($this->buildScript), 0, 8);
 	}
 
 	/**
@@ -72,7 +72,7 @@ class SimplePackageGenerator extends PackageGenerator {
 	 */
 	protected function executeProcesses($processes, DeploynautLogFile $log) {
 		foreach($processes as $process) {
-			$process->mustRun(function ($type, $buffer) use($log) {
+			$process->mustRun(function($type, $buffer) use($log) {
 				$log->write($buffer);
 			});
 		}

@@ -32,7 +32,7 @@ abstract class DeployForm_ValidatorBase extends Validator {
 		}
 
 		// Check validity of commit
-		if (!preg_match('/^[a-f0-9]{40}$/', $sha)) {
+		if(!preg_match('/^[a-f0-9]{40}$/', $sha)) {
 			$this->validationError(
 				$field,
 				"Invalid release SHA: " . Convert::raw2xml($sha),
@@ -133,7 +133,7 @@ class DeployForm extends Form {
 						->setAttribute('onclick',
 							"return confirm('This will begin a release pipeline, but with the following exclusions:\\n" .
 							" - No messages will be sent\\n" .
-							" - No capistrano actions will be invoked\\n".
+							" - No capistrano actions will be invoked\\n" .
 							" - No deployments or snapshots will be created.');"
 						)
 				);
@@ -143,7 +143,7 @@ class DeployForm extends Form {
 					FormAction::create('doDeploy', "Direct deployment (bypass pipeline)")
 						->addExtraClass('btn btn-warning')
 						->setAttribute('onclick',
-							"return confirm('This will start a direct deployment, bypassing the pipeline ".
+							"return confirm('This will start a direct deployment, bypassing the pipeline " .
 							"process in place.\\n\\nAre you sure this is necessary?');"
 						)
 				);
@@ -174,7 +174,7 @@ class DeployForm extends Form {
 		foreach($project->DNBranchList() as $branch) {
 			$sha = $branch->SHA();
 			$name = $branch->Name();
-			$branches[$sha . '-' . $name] = $name . ' (' . substr($sha,0,8) . ', ' . $branch->LastUpdated()->TimeDiff() . ' old)';
+			$branches[$sha . '-' . $name] = $name . ' (' . substr($sha, 0, 8) . ', ' . $branch->LastUpdated()->TimeDiff() . ' old)';
 		}
 
 		// Tags
@@ -182,7 +182,7 @@ class DeployForm extends Form {
 		foreach($project->DNTagList()->setLimit(null) as $tag) {
 			$sha = $tag->SHA();
 			$name = $tag->Name();
-			$tags[$sha . '-' . $tag] = $name . ' (' . substr($sha,0,8) . ', ' . $tag->Created()->TimeDiff() . ' old)';
+			$tags[$sha . '-' . $tag] = $name . ' (' . substr($sha, 0, 8) . ', ' . $tag->Created()->TimeDiff() . ' old)';
 		}
 		$tags = array_reverse($tags);
 
@@ -196,7 +196,7 @@ class DeployForm extends Form {
 					$redeploy[$envName] = array();
 				}
 				if(!isset($redeploy[$envName][$sha])) {
-					$redeploy[$envName][$sha] = substr($sha,0,8) . ' (deployed ' . $deploy->obj('LastEdited')->Ago() . ')';
+					$redeploy[$envName][$sha] = substr($sha, 0, 8) . ' (deployed ' . $deploy->obj('LastEdited')->Ago() . ')';
 				}
 			}
 		}
@@ -253,11 +253,11 @@ class DeployForm extends Form {
 	protected function buildPipelineField($commits) {
 		// Get filtered commits
 		$filteredCommits = array();
-		foreach ($commits as $commit) {
+		foreach($commits as $commit) {
 			$title = sprintf(
 				"%s (%s, %s old)",
 				$commit->Message,
-				substr($commit->SHA,0,8),
+				substr($commit->SHA, 0, 8),
 				$commit->dbObject('Created')->TimeDiff()
 			);
 			$filteredCommits[$commit->SHA] = $title;
