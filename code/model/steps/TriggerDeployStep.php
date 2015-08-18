@@ -103,7 +103,9 @@ class TriggerDeployStep extends LongRunningPipelineStep {
 	 */
 	public function StartDeployment() {
 		$this->Status = 'Started';
-		if(!$this->Started) $this->Started = SS_Datetime::now()->Rfc2822();
+		if(!$this->Started) {
+			$this->Started = SS_Datetime::now()->Rfc2822();
+		}
 		$this->log("Starting {$this->Title}...");
 		$this->write();
 		return true;
@@ -111,7 +113,9 @@ class TriggerDeployStep extends LongRunningPipelineStep {
 
 	public function getRunningDescription() {
 		// Don't show options if this step has already been confirmed
-		if($this->Deployed) return;
+		if($this->Deployed) {
+			return;
+		}
 
 		return _t('TriggerDeployStep.RUNNINGDESCRIPTION',
 			'Please press the "Deploy" button to continue deployment');

@@ -49,7 +49,10 @@ class DeploynautAPI extends APINoun {
 			'projects' => array(),
 		);
 
-		if($request->httpMethod() != 'GET') return $this->message('API not found', 404);;
+		if($request->httpMethod() != 'GET') {
+			return $this->message('API not found', 404);
+		}
+		;
 
 		foreach(DNProject::get() as $item) {
 			if($item->canView($this->getMember())) {

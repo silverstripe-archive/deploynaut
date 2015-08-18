@@ -129,11 +129,15 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return boolean
 	 */
 	public static function FlagSnapshotsEnabled() {
-		if(defined('FLAG_SNAPSHOTS_ENABLED') && FLAG_SNAPSHOTS_ENABLED) return true;
+		if(defined('FLAG_SNAPSHOTS_ENABLED') && FLAG_SNAPSHOTS_ENABLED) {
+			return true;
+		}
 		if(defined('FLAG_SNAPSHOTS_ENABLED_FOR_MEMBERS') && FLAG_SNAPSHOTS_ENABLED_FOR_MEMBERS) {
 			$allowedMembers = explode(';', FLAG_SNAPSHOTS_ENABLED_FOR_MEMBERS);
 			$member = Member::currentUser();
-			if($allowedMembers && $member && in_array($member->Email, $allowedMembers)) return true;
+			if($allowedMembers && $member && in_array($member->Email, $allowedMembers)) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -697,14 +701,22 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$params = $request->params();
 		$pipeline = Pipeline::get()->byID($params['Identifier']);
 
-		if(!$pipeline || !$pipeline->ID || !$pipeline->Environment()) throw new SS_HTTPResponse_Exception('Pipeline not found', 404);
-		if(!$pipeline->Environment()->canView()) return Security::permissionFailure();
+		if(!$pipeline || !$pipeline->ID || !$pipeline->Environment()) {
+			throw new SS_HTTPResponse_Exception('Pipeline not found', 404);
+		}
+		if(!$pipeline->Environment()->canView()) {
+			return Security::permissionFailure();
+		}
 
 		$environment = $pipeline->Environment();
 		$project = $pipeline->Environment()->Project();
 
-		if($environment->Name != $params['Environment']) throw new LogicException("Environment in URL doesn't match this pipeline");
-		if($project->Name != $params['Project']) throw new LogicException("Project in URL doesn't match this pipeline");
+		if($environment->Name != $params['Environment']) {
+			throw new LogicException("Environment in URL doesn't match this pipeline");
+		}
+		if($project->Name != $params['Project']) {
+			throw new LogicException("Project in URL doesn't match this pipeline");
+		}
 
 		// Delegate to sub-requesthandler
 		return PipelineController::create($this, $pipeline);
@@ -749,9 +761,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function DNProjectList() {
 		$memberId = Member::currentUserID();
-		if(!$memberId) return new ArrayList();
+		if(!$memberId) {
+			return new ArrayList();
+		}
 
-		if(Permission::check('ADMIN')) return DNProject::get();
+		if(Permission::check('ADMIN')) {
+			return DNProject::get();
+		}
 
 		return Member::get()->filter('ID', $memberId)
 			->relation('Groups')
@@ -900,14 +916,22 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$params = $request->params();
 		$deployment = DNDeployment::get()->byId($params['Identifier']);
 
-		if(!$deployment || !$deployment->ID) throw new SS_HTTPResponse_Exception('Deployment not found', 404);
-		if(!$deployment->canView()) return Security::permissionFailure();
+		if(!$deployment || !$deployment->ID) {
+			throw new SS_HTTPResponse_Exception('Deployment not found', 404);
+		}
+		if(!$deployment->canView()) {
+			return Security::permissionFailure();
+		}
 
 		$environment = $deployment->Environment();
 		$project = $environment->Project();
 
-		if($environment->Name != $params['Environment']) throw new LogicException("Environment in URL doesn't match this deploy");
-		if($project->Name != $params['Project']) throw new LogicException("Project in URL doesn't match this deploy");
+		if($environment->Name != $params['Environment']) {
+			throw new LogicException("Environment in URL doesn't match this deploy");
+		}
+		if($project->Name != $params['Project']) {
+			throw new LogicException("Project in URL doesn't match this deploy");
+		}
 
 		return $this->render(array(
 			'Deployment' => $deployment,
@@ -923,14 +947,22 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$params = $request->params();
 		$deployment = DNDeployment::get()->byId($params['Identifier']);
 
-		if(!$deployment || !$deployment->ID) throw new SS_HTTPResponse_Exception('Deployment not found', 404);
-		if(!$deployment->canView()) return Security::permissionFailure();
+		if(!$deployment || !$deployment->ID) {
+			throw new SS_HTTPResponse_Exception('Deployment not found', 404);
+		}
+		if(!$deployment->canView()) {
+			return Security::permissionFailure();
+		}
 
 		$environment = $deployment->Environment();
 		$project = $environment->Project();
 
-		if($environment->Name != $params['Environment']) throw new LogicException("Environment in URL doesn't match this deploy");
-		if($project->Name != $params['Project']) throw new LogicException("Project in URL doesn't match this deploy");
+		if($environment->Name != $params['Environment']) {
+			throw new LogicException("Environment in URL doesn't match this deploy");
+		}
+		if($project->Name != $params['Project']) {
+			throw new LogicException("Project in URL doesn't match this deploy");
+		}
 
 		$log = $deployment->log();
 		if($log->exists()) {
@@ -1062,13 +1094,19 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$params = $request->params();
 		$transfer = DNDataTransfer::get()->byId($params['Identifier']);
 
-		if(!$transfer || !$transfer->ID) throw new SS_HTTPResponse_Exception('Transfer not found', 404);
-		if(!$transfer->canView()) return Security::permissionFailure();
+		if(!$transfer || !$transfer->ID) {
+			throw new SS_HTTPResponse_Exception('Transfer not found', 404);
+		}
+		if(!$transfer->canView()) {
+			return Security::permissionFailure();
+		}
 
 		$environment = $transfer->Environment();
 		$project = $environment->Project();
 
-		if($project->Name != $params['Project']) throw new LogicException("Project in URL doesn't match this deploy");
+		if($project->Name != $params['Project']) {
+			throw new LogicException("Project in URL doesn't match this deploy");
+		}
 
 		return $this->render(array(
 			'CurrentTransfer' => $transfer,
@@ -1087,13 +1125,19 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$params = $request->params();
 		$transfer = DNDataTransfer::get()->byId($params['Identifier']);
 
-		if(!$transfer || !$transfer->ID) throw new SS_HTTPResponse_Exception('Transfer not found', 404);
-		if(!$transfer->canView()) return Security::permissionFailure();
+		if(!$transfer || !$transfer->ID) {
+			throw new SS_HTTPResponse_Exception('Transfer not found', 404);
+		}
+		if(!$transfer->canView()) {
+			return Security::permissionFailure();
+		}
 
 		$environment = $transfer->Environment();
 		$project = $environment->Project();
 
-		if($project->Name != $params['Project']) throw new LogicException("Project in URL doesn't match this deploy");
+		if($project->Name != $params['Project']) {
+			throw new LogicException("Project in URL doesn't match this deploy");
+		}
 
 		$log = $transfer->log();
 		if($log->exists()) {
@@ -1422,7 +1466,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 	public static function getSupportLinks() {
 		$supportLinks = self::config()->support_links;
-		if($supportLinks) return new ArrayList($supportLinks);
+		if($supportLinks) {
+			return new ArrayList($supportLinks);
+		}
 	}
 
 	/**
@@ -1472,7 +1518,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		if(!$this->getRequest()->latestParam('Environment')) {
 			return null;
 		}
-		if(!$project) $project = $this->getCurrentProject();
+		if(!$project) {
+			$project = $this->getCurrentProject();
+		}
 		return $project->DNEnvironmentList()->filter('Name', $this->getRequest()->latestParam('Environment'))->First();
 	}
 
@@ -1521,12 +1569,18 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return boolean|null true if $member has access to upload or download to at least one {@link DNEnvironment}.
 	 */
 	public function CanViewArchives(Member $member = null) {
-		if(!$member) $member = Member::currentUser();
+		if(!$member) {
+			$member = Member::currentUser();
+		}
 
-		if(Permission::checkMember($member, 'ADMIN')) return true;
+		if(Permission::checkMember($member, 'ADMIN')) {
+			return true;
+		}
 
 		$allProjects = $this->DNProjectList();
-		if(!$allProjects) return false;
+		if(!$allProjects) {
+			return false;
+		}
 
 		foreach($allProjects as $project) {
 			if($project->Environments()) {
@@ -1571,7 +1625,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$archives = new ArrayList();
 		foreach($project->DNEnvironmentList() as $env) {
 			foreach($env->DataArchives() as $archive) {
-				if($archive->canView() && $archive->isPending()) $archives->push($archive);
+				if($archive->canView() && $archive->isPending()) {
+					$archives->push($archive);
+				}
 			}
 		}
 		return new PaginatedList($archives->sort("Created", "DESC"), $this->request);
