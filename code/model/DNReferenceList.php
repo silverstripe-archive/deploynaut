@@ -55,7 +55,6 @@ class DNReferenceList extends ArrayList {
 	}
 
 	/**
-	 * @param int $limit - defaults to the ten lates
 	 * @return array()
 	 */
 	protected function getReferences() {
@@ -111,6 +110,7 @@ class DNReferenceList extends ArrayList {
 
 	/**
 	 * Find a build in this set by hash.
+	 * @param string $hash
 	 */
 	public function byName($hash) {
 		if($this->loaded == false) {

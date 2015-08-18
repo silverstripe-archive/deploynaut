@@ -13,8 +13,9 @@ abstract class PackageGenerator {
 	/**
 	 * Generate the package file, saving to the given location
 	 *
-	 * @param $baseDir string The base directory of the project, checked out from git.
+	 * @param string $baseDir string The base directory of the project, checked out from git.
 	 * @param $outputFilename string The filename to write to.
+	 * @param string $sha
 	 *
 	 * @return boolean True on success
 	 */

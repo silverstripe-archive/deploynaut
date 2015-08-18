@@ -84,7 +84,7 @@ class EmailMessagingService implements ConfirmationMessagingService {
 	 *
 	 * @param PipelineStep $source Client step
 	 * @param string $from
-	 * @param string|Member $to
+	 * @param string $to
 	 * @param string $subject
 	 * @param string $body
 	 */

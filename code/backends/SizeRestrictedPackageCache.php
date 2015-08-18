@@ -72,7 +72,7 @@ class SizeRestrictedPackageCache implements PackageCache {
 	/**
 	 * Take the identifier an make it safe to use as a directory name.
 	 *
-	 * @param string $identfiier The unsanitised directory name.
+	 * @param string $identifier The unsanitised directory name.
 	 */
 	protected function sanitiseDirName($identifier) {
 		$safe = preg_replace('/[^A-Za-z0-9_-]/', '', $identifier);

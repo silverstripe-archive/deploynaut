@@ -2,7 +2,7 @@
 
 class SyncProjectsAndEnvironments extends BuildTask {
 	/**
-	 * @param SS_HTTPRequest $request|null
+	 * @param SS_HTTPRequest $request
 	 */
 	public function run($request = null) {
 		// should syncing remove obsolete records?

@@ -22,7 +22,6 @@ class DNTag extends ViewableData {
 	);
 
 	/**
-	 * @param Gitonomy\Git\Commit $commit
 	 * @param DNProject $project
 	 * @param DNData $data
 	 */

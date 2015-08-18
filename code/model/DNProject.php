@@ -102,8 +102,8 @@ class DNProject extends DataObject {
 	/**
 	 * Return the used quota in MB.
 	 *
-	 * @param mixed $round Number of decimal places to round to
-	 * @return string|int The used quota size in MB
+	 * @param integer $round Number of decimal places to round to
+	 * @return double The used quota size in MB
 	 */
 	public function getUsedQuotaMB($round = 2) {
 		$size = 0;
@@ -270,7 +270,7 @@ class DNProject extends DataObject {
 	 * Return all archives which are "manual upload requests",
 	 * meaning they don't have a file attached to them (yet).
 	 *
-	 * @return ArrayList
+	 * @return DataList
 	 */
 	public function PendingManualUploadDataArchives() {
 		return $this->DataArchives()->filter('ArchiveFileID', null);
@@ -628,7 +628,7 @@ class DNProject extends DataObject {
 	 * Setup a gridfield for the environment configs
 	 *
 	 * @param FieldList $fields
-	 * @param $environments
+	 * @param FormField $environments
 	 * @return void
 	 */
 	protected function setEnvironmentFields(&$fields, $environments) {
