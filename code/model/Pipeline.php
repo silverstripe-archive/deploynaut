@@ -85,15 +85,31 @@
  *
  * @see docs/en/pipelines.md for further information
  *
- * @method DNEnvironment Environment()
- * @method Member Author()
- * @method PipelineStep CurrentStep()
- * @method DataList Steps()
+ *
  * @property string $Status
  * @property string $Config
  * @property string $SHA
  * @property bool $DryRun
  * @property string $LastMessageSent
+ *
+ * @method Member Author()
+ * @property int AuthorID
+ * @method DNEnvironment Environment()
+ * @property int EnvironmentID
+ * @method PipelineStep CurrentStep()
+ * @property int CurrentStepID
+ * @method DNDataTransfer PreviousSnapshot()
+ * @property int PreviousSnapshotID
+ * @method DNDeployment PreviousDeployment()
+ * @property int PreviousDeploymentID
+ * @method DNDeployment CurrentDeployment()
+ * @property int CurrentDeploymentID
+ * @method PipelineStep RollbackStep1()
+ * @property int RollbackStep1ID
+ * @method PipelineStep RollbackStep2()
+ * @property int RollbackStep2ID
+ *
+ * @method HasManyList Steps()
  */
 class Pipeline extends DataObject implements PipelineData {
 
