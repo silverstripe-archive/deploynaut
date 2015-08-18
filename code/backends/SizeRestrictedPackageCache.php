@@ -91,7 +91,7 @@ class SizeRestrictedPackageCache implements PackageCache {
 		$files = glob($dir . '/*.tar.gz');
 		if(sizeof($files) > $count) {
 			usort($files, function($a, $b) {
-			    return filemtime($a) > filemtime($b);
+				return filemtime($a) > filemtime($b);
 			});
 
 			for($i=0;$i<sizeof($files)-$count;$i++) {

@@ -158,10 +158,10 @@ class DNData extends ViewableData {
 	/**
 	 * Grabs a list of projects from the env directory. The projects
 	 * in the builds directory alone will not be picked up.
- 	 * Returns an array of paths
+	 * Returns an array of paths
 	 *
 	 * @return array
- 	 */
+	 */
 	public function getProjectPaths() {
 		$paths = array();
 		if(!file_exists($this->getEnvironmentDir())) {
