@@ -28,6 +28,24 @@ use \Symfony\Component\Process\Process;
  *
  * The "Mode" is what the "Author" said the file includes (either 'only assets', 'only
  * database', or both). This is used in the ArchiveList.ss template.
+ *
+ * @property Varchar $UploadToken
+ * @property Varchar $ArchiveFileHash
+ * @property Enum $Mode
+ * @property Boolean $IsBackup
+ * @property Boolean $IsManualUpload
+ *
+ * @property Member $Author
+ * @property int $AuthorID
+ * @property DNEnvironment $OriginalEnvironment
+ * @property int $OriginalEnvironmentID
+ * @property DNEnvironment $Environment
+ * @property int $EnvironmentID
+ * @property File $ArchiveFile
+ * @property int $ArchiveFileID
+ *
+ * @method ManyManyList DNDataTransfer()
+ *
  */
 class DNDataArchive extends DataObject {
 
