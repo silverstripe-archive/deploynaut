@@ -28,6 +28,24 @@ use \Symfony\Component\Process\Process;
  *
  * The "Mode" is what the "Author" said the file includes (either 'only assets', 'only
  * database', or both). This is used in the ArchiveList.ss template.
+ *
+ * @property Varchar $UploadToken
+ * @property Varchar $ArchiveFileHash
+ * @property Enum $Mode
+ * @property Boolean $IsBackup
+ * @property Boolean $IsManualUpload
+ *
+ * @method Member Author()
+ * @property int $AuthorID
+ * @method DNEnvironment OriginalEnvironment()
+ * @property int $OriginalEnvironmentID
+ * @method DNEnvironment Environment()
+ * @property int $EnvironmentID
+ * @method File ArchiveFile()
+ * @property int $ArchiveFileID
+ *
+ * @method ManyManyList DataTransfers()
+ *
  */
 class DNDataArchive extends DataObject {
 
@@ -243,7 +261,7 @@ class DNDataArchive extends DataObject {
 	 * Whether a {@link Member} can delete this archive from staging area.
 	 *
 	 * @param Member|null $member The {@link Member} object to test against.
-	 * @return true if $member (or the currently logged in member if null) can delete this archive
+	 * @return boolean if $member (or the currently logged in member if null) can delete this archive
 	 */
 	public function canDelete($member = null) {
 		return $this->Environment()->canDeleteArchive($member);

@@ -6,11 +6,19 @@
  * This dataobject represents a target environment that source code can be deployed to.
  * Permissions are controlled by environment, see the various many-many relationships.
  *
- * @property string $URL URL Of this environment
+ * @property string $Filename
  * @property string $Name
+ * @property string $URL
+ * @property string $BackendIdentifier
  * @property bool $DryRunEnabled
+ * @property bool $Usage
+ *
  * @method DNProject Project()
- * @method DataList Deployments()
+ * @property int $ProjectID
+ *
+ * @method HasManyList Deployments()
+ * @method HasManyList DataArchives()
+ * @method HasManyList Pipelines()
  *
  * @method ManyManyList Viewers()
  * @method ManyManyList ViewerGroups()
@@ -51,6 +59,10 @@ class DNEnvironment extends DataObject {
 	 * @var bool
 	 */
 	private static $allow_web_editing = false;
+
+	/**
+	 * @var array
+	 */
 	private static $casting = array(
 		'DeployHistory' => 'Text'
 	);
@@ -213,7 +225,9 @@ class DNEnvironment extends DataObject {
 
 	public function getBareURL() {
 		$url = parse_url($this->URL);
-		if(isset($url['host'])) return strtolower($url['host']);
+		if(isset($url['host'])) {
+			return strtolower($url['host']);
+		}
 	}
 
 	/**
@@ -288,7 +302,7 @@ class DNEnvironment extends DataObject {
 	 * This can be used to determine if there is a currently running pipeline (there can only be one running per
 	 * {@link DNEnvironment} at once), as well as getting the current pipeline to be shown in templates.
 	 *
-	 * @return Pipeline|null The currently running pipeline, or null if there isn't any.
+	 * @return DataObject|null The currently running pipeline, or null if there isn't any.
 	 */
 	public function CurrentPipeline() {
 		return $this->Pipelines()->filter('Status', array('Running', 'Rollback'))->first();
@@ -308,7 +322,7 @@ class DNEnvironment extends DataObject {
 	/**
 	 * Environments are only viewable by people that can view the environment.
 	 *
-	 * @param Member $member
+	 * @param Member|null $member
 	 * @return boolean
 	 */
 	public function canView($member = null) {
@@ -336,7 +350,7 @@ class DNEnvironment extends DataObject {
 	/**
 	 * Allow deploy only to some people.
 	 *
-	 * @param Member $member
+	 * @param Member|null $member
 	 * @return boolean
 	 */
 	public function canDeploy($member = null) {
@@ -468,7 +482,7 @@ class DNEnvironment extends DataObject {
 	/**
 	 * Determine if the specified user can abort any pipelines
 	 *
-	 * @param type $member
+	 * @param Member|null $member
 	 * @return boolean
 	 */
 	public function canAbort($member = null) {
@@ -490,7 +504,7 @@ class DNEnvironment extends DataObject {
 	/**
 	 * Determine if the specified user can approve any pipelines
 	 *
-	 * @param type $member
+	 * @param Member|null $member
 	 * @return boolean
 	 */
 	public function canApprove($member = null) {
@@ -663,14 +677,19 @@ class DNEnvironment extends DataObject {
 	/**
 	 * Get the current deployed build for this environment
 	 *
-	 * Dear people of the future: If you are looking to optimize this, simply create a CurrentBuildSHA(), which can be a lot faster.
-	 * I presume you came here because of the Project display template, which only needs a SHA.
+	 * Dear people of the future: If you are looking to optimize this, simply create a CurrentBuildSHA(), which can be
+	 * a lot faster. I presume you came here because of the Project display template, which only needs a SHA.
 	 *
 	 * @return string
 	 */
 	public function CurrentBuild() {
 		// The DeployHistory function is far too slow to use for this
-		$deploy = DNDeployment::get()->filter(array('EnvironmentID' => $this->ID, 'Status' => 'Finished'))->sort('LastEdited DESC')->first();
+
+		/** @var DNDeployment $deploy */
+		$deploy = DNDeployment::get()->filter(array(
+			'EnvironmentID' => $this->ID,
+			'Status' => 'Finished'
+		))->sort('LastEdited DESC')->first();
 
 		if(!$deploy || (!$deploy->SHA)) {
 			return false;
@@ -955,7 +974,8 @@ PHP
 		// Add actions
 		$action = new FormAction('check', 'Check Connection');
 		$action->setUseButtonTag(true);
-		$action->setAttribute('data-url', Director::absoluteBaseURL() . 'naut/api/' . $this->Project()->Name . '/' . $this->Name . '/ping');
+		$dataURL = Director::absoluteBaseURL() . 'naut/api/' . $this->Project()->Name . '/' . $this->Name . '/ping';
+		$action->setAttribute('data-url', $dataURL);
 		$fields->insertBefore($action, 'Name');
 
 		// Allow extensions
@@ -979,7 +999,8 @@ PHP
 			return;
 		}
 
-		$noDeployConfig = new LabelField('noDeployConfig', 'Warning: This environment doesn\'t have deployment configuration.');
+		$warning = 'Warning: This environment doesn\'t have deployment configuration.';
+		$noDeployConfig = new LabelField('noDeployConfig', $warning);
 		$noDeployConfig->addExtraClass('message warning');
 		$fields->insertAfter($noDeployConfig, 'Filename');
 		$createConfigField = new CheckboxField('CreateEnvConfig', 'Create Config');
@@ -1217,17 +1238,23 @@ PHP
 	public function getDependentFilteredCommits() {
 		// check if this environment depends on another environemnt
 		$dependsOnEnv = $this->DependsOnEnvironment();
-		if(empty($dependsOnEnv)) return null;
+		if(empty($dependsOnEnv)) {
+			return null;
+		}
 
 		// Check if there is a filter
 		$config = $this->GenericPipelineConfig();
 		$filter = isset($config->PipelineConfig->FilteredCommits)
 			? $config->PipelineConfig->FilteredCommits
 			: null;
-		if(empty($filter)) return null;
+		if(empty($filter)) {
+			return null;
+		}
 
 		// Create and execute filter
-		if(!class_exists($filter)) throw new Exception(sprintf("Class %s does not exist", $filter));
+		if(!class_exists($filter)) {
+			throw new Exception(sprintf("Class %s does not exist", $filter));
+		}
 		$commitClass = $filter::create();
 		// setup the environment to check for commits
 		$commitClass->env = $dependsOnEnv;

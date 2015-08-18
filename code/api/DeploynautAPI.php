@@ -1,5 +1,8 @@
 <?php
+
 /**
+ * Class DeploynautAPI
+ *
  * Entry point for the deploynaut API
  *
  * /naut/api/projectname/

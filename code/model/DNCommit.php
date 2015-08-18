@@ -9,10 +9,42 @@ class DNCommit extends ViewableData {
 
 	protected $name = null;
 
+
 	protected $references = null;
 
+	/**
+	 * @var string
+	 */
 	protected $ownerBranchName = null;
 
+	/**
+	 * @var string
+	 */
+	protected $buildname;
+
+	/**
+	 * @var DNProject
+	 */
+	protected $project;
+
+	/**
+	 * @var DNData
+	 */
+	protected $data;
+
+	/**
+	 * @var string
+	 */
+	protected $subjectMessage;
+
+	/**
+	 * @var string
+	 */
+	protected $bodyMessage;
+
+	/**
+	 * @var array
+	 */
 	private static $casting = array(
 		'Name' => 'Text',
 		'SubjectMessage' => 'Text',
@@ -29,6 +61,7 @@ class DNCommit extends ViewableData {
 	 * @param Gitonomy\Git\Commit $commit
 	 * @param DNProject $project
 	 * @param DNData $data
+	 * @param string|null $ownerBranchName
 	 */
 	public function __construct(Gitonomy\Git\Commit $commit, DNProject $project, DNData $data, $ownerBranchName = null) {
 		$this->commit = $commit;

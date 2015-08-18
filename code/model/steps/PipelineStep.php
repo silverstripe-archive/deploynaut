@@ -12,7 +12,15 @@
  *   NiceDone: "Name of this step to display on frontend once finished"
  * </code>
  *
+ * @property string $Name
+ * @property int $Order
+ * @property string $Status
+ * @property string $Config
+ *
  * @method Pipeline Pipeline()
+ * @property int $PipelineID
+ *
+ * @property string $Title
  *
  * @package deploynaut
  * @subpackage pipeline

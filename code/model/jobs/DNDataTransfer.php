@@ -16,7 +16,20 @@
  *
  * The "Environment" points to the source or target involved.
  *
+ * @property string $ResqueToken
+ * @property string $Status
+ * @property string $Direction
+ * @property string $Mode
+ * @property string $Origin
+ *
+ * @method DNEnvironment Environment()
+ * @property int EnvironmentID
+ * @method Member Author()
+ * @property int AuthorID
  * @method DNDataArchive DataArchive()
+ * @property int DataArchiveID
+ * @method DNDataTransfer BackupDataTransfer()
+ * @property int BackupDataTransferID
  */
 class DNDataTransfer extends DataObject {
 
@@ -222,7 +235,7 @@ class DNDataTransfer extends DataObject {
 	}
 
 	public function getDescription() {
-		$envName = $this->Environment()->FullName;
+		$envName = $this->Environment()->getFullName();
 		if($this->Direction == 'get') {
 			if($this->Origin == 'ManualUpload') {
 				$description = 'Manual upload of ' . $this->getModeNice() . ' to ' . $envName;

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Class DNBranch
+ *
+ * @method string getName()
+ */
 class DNBranch extends ViewableData {
 
 	/**

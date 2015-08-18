@@ -18,7 +18,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	 */
 	public function deploy(DNEnvironment $environment, $sha, DeploynautLogFile $log, DNProject $project, $leaveMaintenancePage = false) {
 		$name = $environment->getFullName();
-		$repository = $project->LocalCVSPath;
+		$repository = $project->getLocalCVSPath();
 
 		$args = array(
 			'branch' => $sha,
@@ -176,7 +176,9 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		$name = $environment->getFullName();
 		$env = $environment->Project()->getProcessEnv();
 
-		if(!$args) $args = array();
+		if(!$args) {
+			$args = array();
+		}
 		$args['history_path'] = realpath(DEPLOYNAUT_LOG_PATH . '/');
 
 		// Inject env string directly into the command.

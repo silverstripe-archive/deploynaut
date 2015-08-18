@@ -1,12 +1,34 @@
 <?php
 
+/**
+ * Class DNBranchList
+ */
 class DNBranchList extends ArrayList {
 
+	/**
+	 * @var string
+	 */
 	protected static $refs_dir = '';
 
+	/**
+	 * @var bool
+	 */
 	protected $loaded = false;
 
+	/**
+	 * @var array
+	 */
 	protected $builds = array();
+
+	/**
+	 * @var DNProject
+	 */
+	protected $project;
+
+	/**
+	 * @var DNData
+	 */
+	protected $data;
 
 	public static function set_refs_dir($refsDir) {
 		self::$refs_dir = $refsDir;
@@ -36,12 +58,13 @@ class DNBranchList extends ArrayList {
 		$firstBranch = null;
 
 		try {
-			$repository = new Gitonomy\Git\Repository($this->project->LocalCVSPath);
+			$repository = new Gitonomy\Git\Repository($this->project->getLocalCVSPath());
 		} catch(Exception $e) {
 			return $branches;
 		}
 
 		foreach($repository->getReferences()->getBranches() as $branch) {
+			/** @var DNBranch $obj */
 			$obj = DNBranch::create($branch, $this->project, $this->data);
 			if($branch->getName() == 'master') {
 				$firstBranch = array($branch->getName() => $obj);
@@ -58,15 +81,21 @@ class DNBranchList extends ArrayList {
 
 	/**
 	 * Find a branch in this set by branch name.
+	 *
+	 * @param $name
+	 *
+	 * @return string
 	 */
 	public function byName($name) {
-		if($this->loaded == false) {
+		if($this->loaded === false) {
 			$this->getIterator();
 		}
 
 		if(isset($this->items[$name])) {
 			return $this->items[$name];
 		}
+
+		return '';
 	}
 
 	/**
@@ -76,7 +105,7 @@ class DNBranchList extends ArrayList {
 	 * @return ArrayIterator
 	 */
 	public function getIterator() {
-		if($this->loaded == false) {
+		if($this->loaded === false) {
 			$this->items = $this->getReferences();
 			$this->loaded = true;
 		}

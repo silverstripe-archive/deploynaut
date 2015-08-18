@@ -13,6 +13,10 @@
  *   MaxDuration: 3600
  * </code>
  *
+ * @property string $Doing
+ *
+ * @property string $Title
+ *
  * @method DNDeployment RollbackDeployment() The current rollback deployment
  */
 class RollbackStep extends LongRunningPipelineStep {

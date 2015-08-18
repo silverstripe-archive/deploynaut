@@ -1,5 +1,8 @@
 <?php
+
 /**
+ * Class DataArchiveFileField
+ *
  * Overwrite field to save into a {@link DataArchive}, using generateFilepath().
  * This mainly just works around the limitation
  * of FileField to set the folder path *before* uploading the file,
@@ -18,6 +21,7 @@ class DataArchiveFileField extends FileField {
 
 		$dataArchive = $record;
 
+		/** @var DNDataTransfer $dataTransfer */
 		$dataTransfer = $dataArchive->DataTransfers()->First();
 		if(!$dataTransfer) {
 			throw new LogicException('No transfer found');

@@ -13,7 +13,13 @@
  *     MaxDuration: 3600 # Auto time out after a hour
  * </code>
  *
+ * @property SS_Datetime RolledBack
+ *
+ * @method string Title()
+ *
  * @method Member Responder() Member who has given an approval for this request
+ * @property int ResponderID
+ *
  * @package deploynaut
  * @subpackage pipeline
  */
@@ -38,7 +44,7 @@ class EmergencyRollbackStep extends LongRunningPipelineStep {
 		}
 
 		// check if we have timed out
-		if ($this->isTimedOut()) {
+		if($this->isTimedOut()) {
 			$this->log(sprintf(_t('EmergencyRollbackStep.ROLLBACKTIMEOUT',
 				"{$this->Title} is older than %s seconds and has timed out"),
 				$this->MaxDuration));
@@ -85,7 +91,7 @@ class EmergencyRollbackStep extends LongRunningPipelineStep {
 			);
 		}
 
-		if ($this->Status == 'Queued') {
+		if($this->Status == 'Queued') {
 			$this->start();
 		}
 
@@ -96,7 +102,7 @@ class EmergencyRollbackStep extends LongRunningPipelineStep {
 		$this->write();
 
 		// Rollback itself is handled by the Pipeline object. This step will be marked as failed.
-		if ($this->Pipeline()->isRunning()) {
+		if($this->Pipeline()->isRunning()) {
 			$this->Pipeline()->markFailed();
 			return true;
 		} else {
@@ -127,7 +133,9 @@ class EmergencyRollbackStep extends LongRunningPipelineStep {
 	 */
 	public function beginRollbackWindow() {
 		$this->Status = 'Started';
-		if (!$this->Started) $this->Started = SS_Datetime::now()->Rfc2822();
+		if(!$this->Started) {
+			$this->Started = SS_Datetime::now()->Rfc2822();
+		}
 		$this->log(_t('EmergencyRollbackStep.BEGINROLLBACKWINDOW',
 			"{$this->Title} is beginning a rollback window..."));
 		$this->write();
@@ -138,7 +146,9 @@ class EmergencyRollbackStep extends LongRunningPipelineStep {
 
 	public function getRunningDescription() {
 		// Don't show options if this step has already been confirmed
-		if($this->RolledBack) return;
+		if($this->RolledBack) {
+			return;
+		}
 
 		return _t('EmergencyRollbackStep.RUNNINGDESCRIPTION',
 			'You may now roll back to the previous version, if needed.');

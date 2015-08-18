@@ -14,7 +14,11 @@
  *         MaxDuration: 86400 # Auto time out after a day
  * </code>
  *
+ * @property SS_Datetime $Deployed
+ *
  * @method Member Responder() Member who has given an approval for this request
+ * @property int ResponderID
+ *
  * @package deploynaut
  * @subpackage pipeline
  */

@@ -3,6 +3,9 @@
 /**
  * Represents a long running pipeline step with a timeout
  *
+ * @property int $MaxDuration
+ * @property SS_DateTime Started
+ *
  * @package deploynaut
  * @subpackage pipeline
  */

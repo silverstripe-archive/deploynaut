@@ -14,6 +14,10 @@
  *
  * {@see DNRoot::doDeploy()} for non-pipeline equivalent
  *
+ * @property string $Doing
+ *
+ * @property string $Title
+ *
  * @package deploynaut
  * @subpackage pipeline
  */
@@ -80,7 +84,7 @@ class DeploymentPipelineStep extends LongRunningPipelineStep {
 
 		// Skip deployment for dry run
 		if($this->Pipeline()->DryRun) {
-			$this->log("[Skipped] Create DNDeployment for SHA ".$pipeline->SHA);
+			$this->log("[Skipped] Create DNDeployment for SHA " . $pipeline->SHA);
 			$this->write();
 			return true;
 		}

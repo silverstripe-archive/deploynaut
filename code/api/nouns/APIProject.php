@@ -92,6 +92,7 @@ class APIProject extends APINoun {
 	 * @return SS_HTTPResponse
 	 */
 	protected function createFetch() {
+		/** @var DNGitFetch $fetch */
 		$fetch = DNGitFetch::create();
 		$fetch->ProjectID = $this->record->ID;
 		$fetch->write();

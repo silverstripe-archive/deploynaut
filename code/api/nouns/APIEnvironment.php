@@ -43,10 +43,8 @@ class APIEnvironment extends APINoun {
 						)
 					)
 				));
-				break;
 			default:
 				return $this->message('API not found', 404);
-				break;
 		}
 	}
 
@@ -62,13 +60,10 @@ class APIEnvironment extends APINoun {
 		switch($request->httpMethod()) {
 			case 'GET':
 				return $this->getPing($this->getRequest()->param('ID'));
-				break;
 			case 'POST':
 				return $this->createPing();
-				break;
 			default:
 				return $this->message('API not found', 404);
-				break;
 		}
 	}
 
@@ -84,13 +79,10 @@ class APIEnvironment extends APINoun {
 		switch($request->httpMethod()) {
 			case 'GET':
 				return $this->getDeploy($this->getRequest()->param('ID'));
-				break;
 			case 'POST':
 				return $this->createDeploy();
-				break;
 			default:
 				return $this->message('API not found', 404);
-				break;
 		}
 	}
 
