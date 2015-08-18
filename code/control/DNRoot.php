@@ -1021,23 +1021,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			$content = 'Waiting for action to start';
 		}
 
-		$sendJSON = (strpos($request->getHeader('Accept'), 'application/json') !== false)
-			|| $request->getExtension() == 'json';
-
-
-		$content = preg_replace('/(?:(?:\r\n|\r|\n)\s*){2}/s', "\n", $content);
-		if($sendJSON) {
-			$this->response->addHeader("Content-type", "application/json");
-			return json_encode(array(
-				'status' => $deployment->ResqueStatus(),
-				'content' => $content,
-			));
-
-		} else {
-			$this->response->addHeader("Content-type", "text/plain");
-			return $content;
-		}
-
+		return $this->sendResponse($deployment->ResqueStatus(), $content);
 	}
 
 	/**
@@ -1213,23 +1197,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			$content = 'Waiting for action to start';
 		}
 
-		$sendJSON = (strpos($request->getHeader('Accept'), 'application/json') !== false)
-			|| $request->getExtension() == 'json';
-
-
-		$content = preg_replace('/(?:(?:\r\n|\r|\n)\s*){2}/s', "\n", $content);
-		if($sendJSON) {
-			$this->response->addHeader("Content-type", "application/json");
-			return json_encode(array(
-				'status' => $transfer->ResqueStatus(),
-				'content' => $content,
-			));
-
-		} else {
-			$this->response->addHeader("Content-type", "text/plain");
-			return $content;
-		}
-
+		return $this->sendResponse($transfer->ResqueStatus(), $content);
 	}
 
 	/**
@@ -1757,6 +1725,30 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	protected function environment404Response() {
 		$envName = Convert::raw2xml($this->getRequest()->latestParam('Environment'));
 		return new SS_HTTPResponse("Environment '" . $envName . "' not found.", 404);
+	}
+
+	/**
+	 * @param string $status
+	 * @param string $content
+	 *
+	 * @return string
+	 */
+	protected function sendResponse($status, $content) {
+		// strip excessive newlines
+		$content = preg_replace('/(?:(?:\r\n|\r|\n)\s*){2}/s', "\n", $content);
+
+		$sendJSON = (strpos($this->getRequest()->getHeader('Accept'), 'application/json') !== false)
+			|| $this->getRequest()->getExtension() == 'json';
+
+		if(!$sendJSON) {
+			$this->response->addHeader("Content-type", "text/plain");
+			return $content;
+		}
+		$this->response->addHeader("Content-type", "application/json");
+		return json_encode(array(
+			'status' => $status,
+			'content' => $content,
+		));
 	}
 
 }
