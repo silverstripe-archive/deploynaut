@@ -10,18 +10,18 @@ class SyncProjectsAndEnvironments extends BuildTask {
 		$dryRun = true;
 
 		if($request && $request->requestVar('remove') !== null) {
-			$remove = (bool) $request->requestVar('remove');
+			$remove = (bool)$request->requestVar('remove');
 		}
 
 		if($request && $request->requestVar('dryrun') !== null) {
-			$dryRun = (bool) $request->requestVar('dryrun');
+			$dryRun = (bool)$request->requestVar('dryrun');
 		}
 
 		if($dryRun) {
 			echo "Running in dry run mode, no changes commited, ";
-			echo "the output shows a prediction on what will happen.".PHP_EOL;
-			echo "To skip dryrun, run the task like this:".PHP_EOL;
-			echo "./framework/sake dev/tasks/SyncProjectsAndEnvironments dryrun=0".PHP_EOL.PHP_EOL;
+			echo "the output shows a prediction on what will happen." . PHP_EOL;
+			echo "To skip dryrun, run the task like this:" . PHP_EOL;
+			echo "./framework/sake dev/tasks/SyncProjectsAndEnvironments dryrun=0" . PHP_EOL . PHP_EOL;
 			sleep(3);
 		}
 
@@ -67,7 +67,7 @@ class SyncProjectsAndEnvironments extends BuildTask {
 		}
 
 		foreach($removeList as $remove) {
-			$this->message('Removing "'.basename($remove->Name).'" from db');
+			$this->message('Removing "' . basename($remove->Name) . '" from db');
 			if(!$dryRun) {
 				$removeList->remove($remove);
 			}
@@ -88,7 +88,7 @@ class SyncProjectsAndEnvironments extends BuildTask {
 		}
 
 		foreach($removeList as $remove) {
-			$this->message($remove->Name.' '.$remove->Path);
+			$this->message($remove->Name . ' ' . $remove->Path);
 			if(!$dryrun) {
 				$removeList->remove($remove);
 			}
@@ -120,7 +120,7 @@ class SyncProjectsAndEnvironments extends BuildTask {
 				continue;
 			}
 
-			$this->message('Adding "'.basename($path).'" to db');
+			$this->message('Adding "' . basename($path) . '" to db');
 			if(!$dryRun) {
 				$environment = DNEnvironment::create_from_path($path);
 				$environment->ProjectID = $project->ID;
@@ -151,9 +151,9 @@ class SyncProjectsAndEnvironments extends BuildTask {
 	 */
 	protected function message($text) {
 		if(PHP_SAPI !== 'cli') {
-			$text = '<p>'.$text.'</p>'.PHP_EOL;
+			$text = '<p>' . $text . '</p>' . PHP_EOL;
 		}
-		echo ' - '.$text.PHP_EOL;
+		echo ' - ' . $text . PHP_EOL;
 	}
 
 	/**
@@ -161,9 +161,9 @@ class SyncProjectsAndEnvironments extends BuildTask {
 	 */
 	protected function echoHeader($text) {
 		if(PHP_SAPI !== 'cli') {
-			echo '<h2>'.$text.'</h2>'.PHP_EOL;
+			echo '<h2>' . $text . '</h2>' . PHP_EOL;
 		} else {
-			echo '# '.$text.PHP_EOL;
+			echo '# ' . $text . PHP_EOL;
 		}
 	}
 }

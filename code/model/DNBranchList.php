@@ -37,17 +37,21 @@ class DNBranchList extends ArrayList {
 
 		try {
 			$repository = new Gitonomy\Git\Repository($this->project->LocalCVSPath);
-		}
-		catch(Exception $e) {
+		} catch(Exception $e) {
 			return $branches;
 		}
 
 		foreach($repository->getReferences()->getBranches() as $branch) {
 			$obj = DNBranch::create($branch, $this->project, $this->data);
-			if($branch->getName() == 'master') $firstBranch = array($branch->getName() => $obj);
-			else $branches[$branch->getName()] = $obj;
+			if($branch->getName() == 'master') {
+				$firstBranch = array($branch->getName() => $obj);
+			} else {
+				$branches[$branch->getName()] = $obj;
+			}
 		}
-		if($firstBranch) $branches = $firstBranch + $branches;
+		if($firstBranch) {
+			$branches = $firstBranch + $branches;
+		}
 
 		return $branches;
 	}
@@ -60,7 +64,9 @@ class DNBranchList extends ArrayList {
 			$this->getIterator();
 		}
 
-		if(isset($this->items[$name])) return $this->items[$name];
+		if(isset($this->items[$name])) {
+			return $this->items[$name];
+		}
 	}
 
 	/**
@@ -75,7 +81,9 @@ class DNBranchList extends ArrayList {
 			$this->loaded = true;
 		}
 		foreach($this->items as $i => $item) {
-			if(is_array($item)) $this->items[$i] = new ArrayData($item);
+			if(is_array($item)) {
+				$this->items[$i] = new ArrayData($item);
+			}
 		}
 		return new ArrayIterator($this->items);
 	}

@@ -89,7 +89,9 @@ class PipelineStep extends DataObject implements PipelineData {
 	 * @return array
 	 */
 	public function getConfigData() {
-		if(!$this->Config) return array();
+		if(!$this->Config) {
+			return array();
+		}
 
 		// Merge with defaults
 		if(!$this->mergedConfig) {
@@ -124,7 +126,9 @@ class PipelineStep extends DataObject implements PipelineData {
 	public function getConfigSetting($setting) {
 		$source = $this->getConfigData();
 		foreach(func_get_args() as $setting) {
-			if(empty($source[$setting])) return null;
+			if(empty($source[$setting])) {
+				return null;
+			}
 			$source = $source[$setting];
 		}
 		return $source;

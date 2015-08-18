@@ -33,7 +33,9 @@ class SimplePackageGenerator extends PackageGenerator {
 	 */
 	public function generatePackage($sha, $baseDir, $outputFilename, DeploynautLogFile $log) {
 		$tempPath = TEMP_FOLDER . "/" . str_replace(".tar.gz", "", basename($outputFilename));
-		if(!file_exists($tempPath)) mkdir($tempPath);
+		if(!file_exists($tempPath)) {
+			mkdir($tempPath);
+		}
 
 		// Execute these in sequence until there's a failure
 		$processes = array(

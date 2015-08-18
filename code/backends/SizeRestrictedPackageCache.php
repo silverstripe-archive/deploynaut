@@ -41,16 +41,22 @@ class SizeRestrictedPackageCache implements PackageCache {
 	 * @param DeploynautLogFile $log The log to write status output to, including package-generation commands
 	 */
 	public function getPackageFilename(PackageGenerator $generator, $identifier, $sha, $repositoryDir, DeploynautLogFile $log) {
-		if(!$this->baseDir) throw new \LogicException("Can't use PackageCache without setting BaseDir");
+		if(!$this->baseDir) {
+			throw new \LogicException("Can't use PackageCache without setting BaseDir");
+		}
 
 		$buildPath = $this->baseDir . '/' . $this->sanitiseDirName($identifier);
 		$filename = "$buildPath/$sha.tar.gz";
 
 		if(!file_exists($this->baseDir)) {
-			if(!mkdir($this->baseDir)) throw new \LogicException("Can't create base dir {$this->baseDir}");
+			if(!mkdir($this->baseDir)) {
+				throw new \LogicException("Can't create base dir {$this->baseDir}");
+			}
 		}
 		if(!file_exists($buildPath)) {
-			if(!mkdir($buildPath)) throw new \LogicException("Can't create build path $buildPath");
+			if(!mkdir($buildPath)) {
+				throw new \LogicException("Can't create build path $buildPath");
+			}
 		}
 
 		if(file_exists($filename)) {
@@ -61,7 +67,9 @@ class SizeRestrictedPackageCache implements PackageCache {
 			return $filename;
 
 		} else {
-			if($this->cacheSize) $this->reduceDirSizeTo($buildPath, $this->cacheSize-1, $log);
+			if($this->cacheSize) {
+				$this->reduceDirSizeTo($buildPath, $this->cacheSize-1, $log);
+			}
 
 			if($generator->generatePackage($sha, $repositoryDir, $filename, $log)) {
 				return $filename;

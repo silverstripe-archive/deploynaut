@@ -8,7 +8,9 @@
 class DataArchiveFileField extends FileField {
 
 	public function saveInto(DataObjectInterface $record) {
-		if(!isset($_FILES[$this->name])) return false;
+		if(!isset($_FILES[$this->name])) {
+			return false;
+		}
 
 		if(!($record instanceof DNDataArchive)) {
 			throw new LogicException('Saving into wrong type, expected DNDataArchive');
@@ -27,7 +29,9 @@ class DataArchiveFileField extends FileField {
 		$absolutePath = $dataArchive->generateFilepath($dataTransfer);
 		$relativePath = preg_replace('#^' . preg_quote(ASSETS_PATH) . '/#', '', $absolutePath);
 		$this->upload->loadIntoFile($_FILES[$this->name], $file, $relativePath);
-		if($this->upload->isError()) return false;
+		if($this->upload->isError()) {
+			return false;
+		}
 
 		$file = $this->upload->getFile();
 		if($this->relationAutoSetting) {

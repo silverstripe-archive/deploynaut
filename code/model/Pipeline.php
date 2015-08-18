@@ -197,7 +197,9 @@ class Pipeline extends DataObject implements PipelineData {
 	public function __isset($property) {
 		// Workaround fixed in https://github.com/silverstripe/silverstripe-framework/pull/3201
 		// Remove this once we update to a version of framework which supports this
-		if($property === 'MessagingService') return !empty($this->messagingService);
+		if($property === 'MessagingService') {
+			return !empty($this->messagingService);
+		}
 		return parent::__isset($property);
 	}
 
@@ -233,8 +235,12 @@ class Pipeline extends DataObject implements PipelineData {
 	public function canAbort($member = null) {
 		// Owner can abort
 		$member = $member ?: Member::currentUser();
-		if(!$member) return false;
-		if($member->ID == $this->AuthorID) return true;
+		if(!$member) {
+			return false;
+		}
+		if($member->ID == $this->AuthorID) {
+			return true;
+		}
 
 		// Check environment permission
 		return $this->Environment()->canAbort($member);
@@ -262,7 +268,9 @@ class Pipeline extends DataObject implements PipelineData {
 	 * @return ArrayList List of items with a Link and Title attribute
 	 */
 	public function RunningOptions() {
-		if(!$this->isActive()) return null;
+		if(!$this->isActive()) {
+			return null;
+		}
 		$actions = array();
 
 		// Let current step update the current list of options
@@ -278,7 +286,9 @@ class Pipeline extends DataObject implements PipelineData {
 	 * @return ArrayList List of logs with a Link and Title attribute
 	 */
 	public function LogOptions() {
-		if(!$this->isActive()) return null;
+		if(!$this->isActive()) {
+			return null;
+		}
 		$logs[] = array(
 			'ButtonText' => 'Pipeline Log',
 			'Link' => $this->Link()
@@ -372,7 +382,9 @@ class Pipeline extends DataObject implements PipelineData {
 	public function getConfigSetting($setting) {
 		$source = $this->getConfigData();
 		foreach(func_get_args() as $setting) {
-			if(empty($source[$setting])) return null;
+			if(empty($source[$setting])) {
+				return null;
+			}
 			$source = $source[$setting];
 		}
 		return $source;
@@ -596,8 +608,12 @@ class Pipeline extends DataObject implements PipelineData {
 		$success = true;
 		$rollback1 = $this->RollbackStep1();
 		$rollback2 = $this->RollbackStep2();
-		if(!empty($rollback1) && $rollback1->Status == 'Failed') $success = false;
-		if(!empty($rollback2) && $rollback2->Status == 'Failed') $success = false;
+		if(!empty($rollback1) && $rollback1->Status == 'Failed') {
+			$success = false;
+		}
+		if(!empty($rollback2) && $rollback2->Status == 'Failed') {
+			$success = false;
+		}
 
 		// Send messages.
 		if($success) {
@@ -646,18 +662,26 @@ class Pipeline extends DataObject implements PipelineData {
 	 */
 	protected function canStartRollback() {
 		// The rollback cannot run twice.
-		if($this->isRollback()) return false;
+		if($this->isRollback()) {
+			return false;
+		}
 
 		// Rollbacks must be configured.
-		if(!$this->getConfigSetting('RollbackStep1')) return false;
+		if(!$this->getConfigSetting('RollbackStep1')) {
+			return false;
+		}
 
 		// On dryrun let rollback run
-		if($this->DryRun) return true;
+		if($this->DryRun) {
+			return true;
+		}
 
 		// Pipeline must have ran a deployment to be able to rollback.
 		$deploy = $this->CurrentDeployment();
 		$previous = $this->PreviousDeployment();
-		if(!$deploy->exists() || !$previous->exists()) return false;
+		if(!$deploy->exists() || !$previous->exists()) {
+			return false;
+		}
 
 		return true;
 	}
@@ -673,7 +697,9 @@ class Pipeline extends DataObject implements PipelineData {
 		// Abort all running or queued steps.
 		$steps = $this->Steps();
 		foreach($steps as $step) {
-			if($step->isQueued() || $step->isRunning()) $step->abort();
+			if($step->isQueued() || $step->isRunning()) {
+				$step->abort();
+			}
 		}
 
 		if($this->canStartRollback()) {
@@ -685,7 +711,9 @@ class Pipeline extends DataObject implements PipelineData {
 			$this->Status = 'Failed';
 			$this->log("Pipeline failed, not running rollback (not configured or not applicable yet).");
 			$this->write();
-			if($notify) $this->sendMessage(self::ALERT_FAILURE);
+			if($notify) {
+				$this->sendMessage(self::ALERT_FAILURE);
+			}
 		}
 	}
 
@@ -721,7 +749,9 @@ class Pipeline extends DataObject implements PipelineData {
 		// Abort all running or queued steps.
 		$steps = $this->Steps();
 		foreach($steps as $step) {
-			if($step->isQueued() || $step->isRunning()) $step->abort();
+			if($step->isQueued() || $step->isRunning()) {
+				$step->abort();
+			}
 		}
 
 		// Send notification to users about this event
@@ -751,7 +781,9 @@ class Pipeline extends DataObject implements PipelineData {
 	 */
 	public function injectMessageReplacements($message, $subject, $substitutions) {
 		// Handle empty messages
-		if(empty($subject) && empty($message)) return array(null, null);
+		if(empty($subject) && empty($message)) {
+			return array(null, null);
+		}
 
 		// Check if there's a role specific message
 		$subjectText = str_replace(
@@ -975,8 +1007,14 @@ class Pipeline extends DataObject implements PipelineData {
 		$caller = $bt[$index];
 		$caller['line'] = $bt[($index - 1)]['line']; // Overwrite line and file to be the the line/file that actually
 		$caller['file'] = $bt[($index - 1)]['file']; // called the function, not where the function is defined.
-		if(!isset($caller['class'])) $caller['class'] = ''; // In case it wasn't called from a class
-		if(!isset($caller['type'])) $caller['type'] = ''; // In case it doesn't have a type (wasn't called from class)
+		// In case it wasn't called from a class
+		if(!isset($caller['class'])) {
+			$caller['class'] = '';
+		}
+		// In case it doesn't have a type (wasn't called from class)
+		if(!isset($caller['type'])) {
+			$caller['type'] = '';
+		}
 
 		$log->write(sprintf("[%s::%s() (line %d)] %s", $caller['class'], $caller['function'], $caller['line'], $message));
 	}
@@ -1039,7 +1077,9 @@ class Pipeline extends DataObject implements PipelineData {
 	public function LogContent() {
 		if($this->exists() && $this->Environment()) {
 			$logger = $this->getLogger();
-			if($logger->exists()) return $logger->content();
+			if($logger->exists()) {
+				return $logger->content();
+			}
 		}
 	}
 

@@ -8,6 +8,9 @@
  */
 abstract class DeployForm_ValidatorBase extends Validator {
 
+	/**
+	 * @param string $fieldName
+	 */
 	public function validationError($fieldName, $message, $messageType = '') {
 		// Just make any error use the form message
 		$this->form->sessionMessage($message, $messageType);

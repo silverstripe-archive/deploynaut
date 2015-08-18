@@ -41,7 +41,9 @@ class LongRunningPipelineStep extends PipelineStep {
 		if($this->Started) {
 			$started = intval($this->dbObject('Started')->Format('U'));
 			$now = intval(SS_Datetime::now()->Format('U'));
-			if($started && $now) return $now - $started;
+			if($started && $now) {
+				return $now - $started;
+			}
 		}
 		return 0;
 	}

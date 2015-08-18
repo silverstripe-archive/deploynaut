@@ -65,7 +65,9 @@ class DNReferenceList extends ArrayList {
 		}
 
 		if($this->getTags) {
-			if($this->reference) throw new LogicException("Can't have \$reference and \$getTags both set");
+			if($this->reference) {
+				throw new LogicException("Can't have \$reference and \$getTags both set");
+			}
 			$log = $repository->getReferences()->getTags();
 
 		} else if($this->reference) {
@@ -145,7 +147,9 @@ class DNReferenceList extends ArrayList {
 			$this->loaded = true;
 		}
 		foreach($this->items as $i => $item) {
-			if(is_array($item)) $this->items[$i] = new ArrayData($item);
+			if(is_array($item)) {
+				$this->items[$i] = new ArrayData($item);
+			}
 		}
 		return new ArrayIterator($this->items);
 	}

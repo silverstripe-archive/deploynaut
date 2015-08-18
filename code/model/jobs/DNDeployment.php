@@ -121,7 +121,9 @@ class DNDeployment extends DataObject {
 	 * @return \Gitonomy\Git\Commit|null
 	 */
 	public function getCommit() {
-		if(!$this->SHA) return null;
+		if(!$this->SHA) {
+			return null;
+		}
 
 		$repo = $this->Environment()->Project()->getRepository();
 		if($repo) {

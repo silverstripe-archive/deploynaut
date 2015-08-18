@@ -179,7 +179,9 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 		}
 
 		// Skip subsequent approvals if already approved / rejected
-		if($this->hasResponse()) return;
+		if($this->hasResponse()) {
+			return;
+		}
 
 		// Approve
 		$this->Approval = 'Approved';
@@ -205,7 +207,9 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 		}
 
 		// Skip subsequent approvals if already approved / rejected
-		if($this->hasResponse()) return;
+		if($this->hasResponse()) {
+			return;
+		}
 
 		// Reject
 		$this->Approval = 'Rejected';
@@ -363,7 +367,9 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 	public function getRunningDescription() {
 
 		// Don't show options if this step has already been confirmed
-		if($this->hasResponse() || !$this->isRunning()) return;
+		if($this->hasResponse() || !$this->isRunning()) {
+			return;
+		}
 
 		return 'This deployment is currently awaiting approval before it can complete.';
 	}

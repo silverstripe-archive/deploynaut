@@ -52,7 +52,9 @@ class DNData extends ViewableData {
 		parent::__construct();
 
 		// Better to use injector to set these
-		if(func_num_args() == 0) return;
+		if(func_num_args() == 0) {
+			return;
+		}
 		Deprecation::notice(
 			'1.2.0',
 			"Don't construct DNData with parameters. Assign settings via properties instead"
@@ -78,7 +80,9 @@ class DNData extends ViewableData {
 	 * @param string $environmentDir
 	 */
 	public function setEnvironmentDir($environmentDir) {
-		if($environmentDir[0] != "/") $environmentDir = BASE_PATH . '/' . $environmentDir;
+		if($environmentDir[0] != "/") {
+			$environmentDir = BASE_PATH . '/' . $environmentDir;
+		}
 		$this->environmentDir = realpath($environmentDir) ?: $environmentDir;
 	}
 
@@ -97,7 +101,9 @@ class DNData extends ViewableData {
 	 * @param string $keyDir
 	 */
 	public function setKeyDir($keyDir) {
-		if($keyDir[0] != "/") $keyDir = BASE_PATH . '/' . $keyDir;
+		if($keyDir[0] != "/") {
+			$keyDir = BASE_PATH . '/' . $keyDir;
+		}
 		$this->keyDir = realpath($keyDir) ?: $keyDir;
 	}
 
@@ -137,7 +143,9 @@ class DNData extends ViewableData {
 	 * @param string $transferDir
 	 */
 	public function setDataTransferDir($transferDir) {
-		if($transferDir[0] != "/") $transferDir = BASE_PATH . '/' . $transferDir;
+		if($transferDir[0] != "/") {
+			$transferDir = BASE_PATH . '/' . $transferDir;
+		}
 		if(strpos($transferDir, ASSETS_PATH) === false) {
 			throw new LogicException(sprintf(
 				'DNData::dataTransferDir needs to be located within <webroot>assets/ (location: %s)',

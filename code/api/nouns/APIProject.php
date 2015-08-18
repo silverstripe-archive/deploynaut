@@ -97,7 +97,7 @@ class APIProject extends APINoun {
 		$fetch->write();
 		$fetch->start();
 
-		$location = Director::absoluteBaseURL().$this->Link().'/fetch/'.$fetch->ID;
+		$location = Director::absoluteBaseURL() . $this->Link() . '/fetch/' . $fetch->ID;
 		$output = array(
 			'message' => 'Ping queued as job ' . $fetch->ResqueToken,
 			'href' => $location,

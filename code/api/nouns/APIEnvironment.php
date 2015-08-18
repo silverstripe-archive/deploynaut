@@ -38,7 +38,7 @@ class APIEnvironment extends APINoun {
 							"href" => "$href/deploy",
 							"type" => "application/json",
 							"fields" => array(
-								array( "name" => "release", "type" => "text" ),
+								array("name" => "release", "type" => "text"),
 							),
 						)
 					)
@@ -126,7 +126,7 @@ class APIEnvironment extends APINoun {
 		$ping->write();
 		$ping->start();
 
-		$location = Director::absoluteBaseURL().$this->Link().'/ping/'.$ping->ID;
+		$location = Director::absoluteBaseURL() . $this->Link() . '/ping/' . $ping->ID;
 		$output = array(
 			'message' => 'Ping queued as job ' . $ping->ResqueToken,
 			'href' => $location,
@@ -180,7 +180,7 @@ class APIEnvironment extends APINoun {
 		$deploy->SHA = $reqBody['release'];
 		$deploy->write();
 		$deploy->start();
-		$location = Director::absoluteBaseURL().$this->Link().'/deploy/'.$deploy->ID;
+		$location = Director::absoluteBaseURL() . $this->Link() . '/deploy/' . $deploy->ID;
 		$output = array(
 			'message' => 'Deploy queued as job ' . $deploy->ResqueToken,
 			'href' => $location,

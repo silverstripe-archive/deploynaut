@@ -177,7 +177,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		$env = $environment->Project()->getProcessEnv();
 
 		if(!$args) $args = array();
-		$args['history_path'] = realpath(DEPLOYNAUT_LOG_PATH.'/');
+		$args['history_path'] = realpath(DEPLOYNAUT_LOG_PATH . '/');
 
 		// Inject env string directly into the command.
 		// Capistrano doesn't like the $process->setEnv($env) we'd normally do below.
@@ -191,7 +191,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 
 		$data = DNData::inst();
 		// Generate a capfile from a template
-		$capTemplate = file_get_contents(BASE_PATH.'/deploynaut/Capfile.template');
+		$capTemplate = file_get_contents(BASE_PATH . '/deploynaut/Capfile.template');
 		$cap = str_replace(
 			array('<config root>', '<ssh key>', '<base path>'),
 			array($data->getEnvironmentDir(), DEPLOYNAUT_SSH_KEY, BASE_PATH),
@@ -201,7 +201,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		if(defined('DEPLOYNAUT_CAPFILE')) {
 			$capFile = DEPLOYNAUT_CAPFILE;
 		} else {
-			$capFile = ASSETS_PATH.'/Capfile';
+			$capFile = ASSETS_PATH . '/Capfile';
 		}
 		file_put_contents($capFile, $cap);
 

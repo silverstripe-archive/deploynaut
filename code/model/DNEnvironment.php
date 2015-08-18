@@ -107,9 +107,9 @@ class DNEnvironment extends DataObject {
 		"CanBackupGroups"   => "Group",
 		"ArchiveUploaders"   => "Member", // Who can upload archive files linked to this environment
 		"ArchiveUploaderGroups" => "Group",
-		"ArchiveDownloaders" => "Member",  // Who can download archive files from this environment
+		"ArchiveDownloaders" => "Member", // Who can download archive files from this environment
 		"ArchiveDownloaderGroups" => "Group",
-		"ArchiveDeleters"    => "Member",  // Who can delete archive files from this environment,
+		"ArchiveDeleters"    => "Member", // Who can delete archive files from this environment,
 		"ArchiveDeleterGroups" => "Group",
 		"PipelineApprovers"  => "Member", // Who can approve / reject pipelines from this environment
 		"PipelineApproverGroups" => "Group",
@@ -193,7 +193,9 @@ class DNEnvironment extends DataObject {
 			// Multiple choices, use our choice if it's legal, otherwise default to the first item on the list
 			default:
 				$backend = $this->BackendIdentifier;
-				if(!in_array($backend, $backends)) $backend = $backends[0];
+				if(!in_array($backend, $backends)) {
+					$backend = $backends[0];
+				}
 		}
 
 		return Injector::inst()->get($backend);
@@ -211,7 +213,7 @@ class DNEnvironment extends DataObject {
 
 	public function getBareURL() {
 		$url = parse_url($this->URL);
-		if (isset($url['host'])) return strtolower($url['host']);
+		if(isset($url['host'])) return strtolower($url['host']);
 	}
 
 	/**
@@ -297,7 +299,7 @@ class DNEnvironment extends DataObject {
 	 */
 	public function CanCancelPipeline() {
 		// do we have a current pipeline
-		if ($this->HasCurrentPipeline()) {
+		if($this->HasCurrentPipeline()) {
 			return $this->CurrentPipeline()->canAbort();
 		}
 		return false;
@@ -310,10 +312,17 @@ class DNEnvironment extends DataObject {
 	 * @return boolean
 	 */
 	public function canView($member = null) {
-		if(!$member) $member = Member::currentUser();
-		if(!$member) return false; // Must be logged in to check permissions
+		if(!$member) {
+			$member = Member::currentUser();
+		}
+		if(!$member) {
+			return false;
+		}
+		// Must be logged in to check permissions
 
-		if(Permission::checkMember($member, 'ADMIN')) return true;
+		if(Permission::checkMember($member, 'ADMIN')) {
+			return true;
+		}
 
 		// if no Viewers or ViewerGroups defined, fallback to DNProject::canView permissions
 		if($this->Viewers()->exists() || $this->ViewerGroups()->exists()) {
@@ -331,10 +340,17 @@ class DNEnvironment extends DataObject {
 	 * @return boolean
 	 */
 	public function canDeploy($member = null) {
-		if(!$member) $member = Member::currentUser();
-		if(!$member) return false; // Must be logged in to check permissions
+		if(!$member) {
+			$member = Member::currentUser();
+		}
+		if(!$member) {
+			return false;
+		}
+		// Must be logged in to check permissions
 
-		if(Permission::checkMember($member, 'ADMIN')) return true;
+		if(Permission::checkMember($member, 'ADMIN')) {
+			return true;
+		}
 
 		return $this->Deployers()->byID($member->ID)
 			|| $member->inGroups($this->DeployerGroups());
@@ -348,10 +364,17 @@ class DNEnvironment extends DataObject {
 	 * @return boolean true if $member can restore, and false if they can't.
 	 */
 	public function canRestore($member = null) {
-		if(!$member) $member = Member::currentUser();
-		if(!$member) return false; // Must be logged in to check permissions
+		if(!$member) {
+			$member = Member::currentUser();
+		}
+		if(!$member) {
+			return false;
+		}
+		// Must be logged in to check permissions
 
-		if(Permission::checkMember($member, 'ADMIN')) return true;
+		if(Permission::checkMember($member, 'ADMIN')) {
+			return true;
+		}
 
 		return $this->CanRestoreMembers()->byID($member->ID)
 			|| $member->inGroups($this->CanRestoreGroups());
@@ -366,12 +389,21 @@ class DNEnvironment extends DataObject {
 	 */
 	public function canBackup($member = null) {
 		$project = $this->Project();
-		if($project->HasDiskQuota() && $project->HasExceededDiskQuota()) return false;
+		if($project->HasDiskQuota() && $project->HasExceededDiskQuota()) {
+			return false;
+		}
 
-		if(!$member) $member = Member::currentUser();
-		if(!$member) return false; // Must be logged in to check permissions
+		if(!$member) {
+			$member = Member::currentUser();
+		}
+		// Must be logged in to check permissions
+		if(!$member) {
+			return false;
+		}
 
-		if(Permission::checkMember($member, 'ADMIN')) return true;
+		if(Permission::checkMember($member, 'ADMIN')) {
+			return true;
+		}
 
 		return $this->CanBackupMembers()->byID($member->ID)
 			|| $member->inGroups($this->CanBackupGroups());
@@ -390,12 +422,21 @@ class DNEnvironment extends DataObject {
 	 */
 	public function canUploadArchive($member = null) {
 		$project = $this->Project();
-		if($project->HasDiskQuota() && $project->HasExceededDiskQuota()) return false;
+		if($project->HasDiskQuota() && $project->HasExceededDiskQuota()) {
+			return false;
+		}
 
-		if(!$member) $member = Member::currentUser();
-		if(!$member) return false; // Must be logged in to check permissions
+		if(!$member) {
+			$member = Member::currentUser();
+		}
+		if(!$member) {
+			return false;
+		}
+		// Must be logged in to check permissions
 
-		if(Permission::checkMember($member, 'ADMIN')) return true;
+		if(Permission::checkMember($member, 'ADMIN')) {
+			return true;
+		}
 
 		return $this->ArchiveUploaders()->byID($member->ID)
 			|| $member->inGroups($this->ArchiveUploaderGroups());
@@ -409,10 +450,17 @@ class DNEnvironment extends DataObject {
 	 * @return boolean true if $member can download archives from this environment, false if they can't.
 	 */
 	public function canDownloadArchive($member = null) {
-		if(!$member) $member = Member::currentUser();
-		if(!$member) return false; // Must be logged in to check permissions
+		if(!$member) {
+			$member = Member::currentUser();
+		}
+		if(!$member) {
+			return false;
+		}
+		// Must be logged in to check permissions
 
-		if(Permission::checkMember($member, 'ADMIN')) return true;
+		if(Permission::checkMember($member, 'ADMIN')) {
+			return true;
+		}
 		return $this->ArchiveDownloaders()->byID($member->ID)
 			|| $member->inGroups($this->ArchiveDownloaderGroups());
 	}
@@ -424,10 +472,16 @@ class DNEnvironment extends DataObject {
 	 * @return boolean
 	 */
 	public function canAbort($member = null) {
-		if(!$member) $member = Member::currentUser();
-		if(!$member) return false;
+		if(!$member) {
+			$member = Member::currentUser();
+		}
+		if(!$member) {
+			return false;
+		}
 
-		if(Permission::checkMember($member, 'ADMIN')) return true;
+		if(Permission::checkMember($member, 'ADMIN')) {
+			return true;
+		}
 
 		return $this->PipelineCancellers()->byID($member->ID)
 			|| $member->inGroups($this->PipelineCancellerGroups());
@@ -440,10 +494,16 @@ class DNEnvironment extends DataObject {
 	 * @return boolean
 	 */
 	public function canApprove($member = null) {
-		if(!$member) $member = Member::currentUser();
-		if(!$member) return false;
+		if(!$member) {
+			$member = Member::currentUser();
+		}
+		if(!$member) {
+			return false;
+		}
 
-		if(Permission::checkMember($member, 'ADMIN')) return true;
+		if(Permission::checkMember($member, 'ADMIN')) {
+			return true;
+		}
 		return $this->PipelineApprovers()->byID($member->ID)
 			|| $member->inGroups($this->PipelineApproverGroups());
 	}
@@ -456,10 +516,17 @@ class DNEnvironment extends DataObject {
 	 * @return boolean true if $member can delete archives from this environment, false if they can't.
 	 */
 	public function canDeleteArchive($member = null) {
-		if(!$member) $member = Member::currentUser();
-		if(!$member) return false; // Must be logged in to check permissions
+		if(!$member) {
+			$member = Member::currentUser();
+		}
+		if(!$member) {
+			return false;
+		}
+		// Must be logged in to check permissions
 
-		if(Permission::checkMember($member, 'ADMIN')) return true;
+		if(Permission::checkMember($member, 'ADMIN')) {
+			return true;
+		}
 
 		return $this->ArchiveDeleters()->byID($member->ID)
 			|| $member->inGroups($this->ArchiveDeleterGroups());
@@ -605,18 +672,18 @@ class DNEnvironment extends DataObject {
 		// The DeployHistory function is far too slow to use for this
 		$deploy = DNDeployment::get()->filter(array('EnvironmentID' => $this->ID, 'Status' => 'Finished'))->sort('LastEdited DESC')->first();
 
-		if (!$deploy || (!$deploy->SHA)) {
+		if(!$deploy || (!$deploy->SHA)) {
 			return false;
 		}
 
 		$repo = $this->Project()->getRepository();
-		if (!$repo) {
+		if(!$repo) {
 			return $deploy;
 		}
 
 		try {
 			$commit = $repo->getCommit($deploy->SHA);
-			if ($commit) {
+			if($commit) {
 				$deploy->Message = Convert::raw2xml($commit->getMessage());
 				$deploy->Committer = Convert::raw2xml($commit->getCommitterName());
 				$deploy->CommitDate = $commit->getCommitterDate()->Format('d/m/Y g:ia');
@@ -624,7 +691,7 @@ class DNEnvironment extends DataObject {
 				$deploy->AuthorDate = $commit->getAuthorDate()->Format('d/m/Y g:ia');
 			}
 			// We can't find this SHA, so we ignore adding a commit message to the deployment
-		} catch (Gitonomy\Git\Exception\ReferenceNotFoundException $ex) { }
+		} catch(Gitonomy\Git\Exception\ReferenceNotFoundException $ex) { }
 
 		return $deploy;
 	}
@@ -670,7 +737,7 @@ class DNEnvironment extends DataObject {
 	 * @return string
 	 */
 	public function Link() {
-		return $this->Project()->Link()."/environment/" . $this->Name;
+		return $this->Project()->Link() . "/environment/" . $this->Name;
 	}
 
 	/**
@@ -888,7 +955,7 @@ PHP
 		// Add actions
 		$action = new FormAction('check', 'Check Connection');
 		$action->setUseButtonTag(true);
-		$action->setAttribute('data-url', Director::absoluteBaseURL().'naut/api/'.$this->Project()->Name.'/'.$this->Name.'/ping');
+		$action->setAttribute('data-url', Director::absoluteBaseURL() . 'naut/api/' . $this->Project()->Name . '/' . $this->Name . '/ping');
 		$fields->insertBefore($action, 'Name');
 
 		// Allow extensions
@@ -954,8 +1021,8 @@ PHP
 	 */
 	public function onBeforeWrite() {
 		parent::onBeforeWrite();
-		if($this->Name && $this->Name.'.rb' != $this->Filename) {
-			$this->Filename = $this->Name.'.rb';
+		if($this->Name && $this->Name . '.rb' != $this->Filename) {
+			$this->Filename = $this->Name . '.rb';
 		}
 		$this->checkEnvironmentPath();
 		$this->writeConfigFile();
@@ -965,13 +1032,13 @@ PHP
 	public function onAfterWrite() {
 		parent::onAfterWrite();
 
-		if ($this->Usage == 'Production' || $this->Usage == 'UAT') {
+		if($this->Usage == 'Production' || $this->Usage == 'UAT') {
 			$conflicting = DNEnvironment::get()
 				->filter('ProjectID', $this->ProjectID)
 				->filter('Usage', $this->Usage)
 				->exclude('ID', $this->ID);
 
-			foreach ($conflicting as $otherEnvironment) {
+			foreach($conflicting as $otherEnvironment) {
 				$otherEnvironment->Usage = 'Unspecified';
 				$otherEnvironment->write();
 			}
@@ -994,14 +1061,16 @@ PHP
 	 * Write the deployment config file to filesystem
 	 */
 	protected function writeConfigFile() {
-		if(!$this->config()->get('allow_web_editing')) return;
+		if(!$this->config()->get('allow_web_editing')) {
+			return;
+		}
 
 		// Create a basic new environment config from a template
-		if( !$this->envFileExists()
+		if(!$this->envFileExists()
 			&& $this->Filename
 			&& $this->CreateEnvConfig
 		) {
-			$templateFile = $this->config()->template_file ?: BASE_PATH.'/deploynaut/environment.template';
+			$templateFile = $this->config()->template_file ?: BASE_PATH . '/deploynaut/environment.template';
 			file_put_contents($this->getConfigFilename(), file_get_contents($templateFile));
 		} else if($this->envFileExists() && $this->DeployConfig) {
 			file_put_contents($this->getConfigFilename(), $this->DeployConfig);
@@ -1012,7 +1081,9 @@ PHP
 	 * Write the pipeline config file to filesystem
 	 */
 	protected function writePipelineFile() {
-		if(!$this->config()->get('allow_web_editing')) return;
+		if(!$this->config()->get('allow_web_editing')) {
+			return;
+		}
 		$path = $this->getPipelineFilename();
 		if($this->PipelineConfig) {
 			// Update file
@@ -1068,7 +1139,7 @@ PHP
 		if(!$this->Filename) {
 			return '';
 		}
-		return $this->DNData()->getEnvironmentDir().'/'.$this->Project()->Name.'/'.$this->Filename;
+		return $this->DNData()->getEnvironmentDir() . '/' . $this->Project()->Name . '/' . $this->Filename;
 	}
 
 	/**
@@ -1079,9 +1150,13 @@ PHP
 	 */
 	public function getPipelineFilename() {
 		$name = $this->getConfigFilename();
-		if(!$name) return null;
+		if(!$name) {
+			return null;
+		}
 		$path = pathinfo($name);
-		if($path) return $path['dirname'] . '/' . $path['filename'] . '.yml';
+		if($path) {
+			return $path['dirname'] . '/' . $path['filename'] . '.yml';
+		}
 	}
 
 	/**
@@ -1107,7 +1182,9 @@ PHP
 	 */
 	public static function array_to_viewabledata($array) {
 		// Don't transform non-arrays
-		if(!is_array($array)) return $array;
+		if(!is_array($array)) {
+			return $array;
+		}
 
 		// Figure out whether this is indexed or associative
 		$keys = array_keys($array);
@@ -1147,10 +1224,10 @@ PHP
 		$filter = isset($config->PipelineConfig->FilteredCommits)
 			? $config->PipelineConfig->FilteredCommits
 			: null;
-		if (empty($filter)) return null;
+		if(empty($filter)) return null;
 
 		// Create and execute filter
-		if (!class_exists($filter)) throw new Exception(sprintf("Class %s does not exist", $filter));
+		if(!class_exists($filter)) throw new Exception(sprintf("Class %s does not exist", $filter));
 		$commitClass = $filter::create();
 		// setup the environment to check for commits
 		$commitClass->env = $dependsOnEnv;

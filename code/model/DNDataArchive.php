@@ -207,7 +207,9 @@ class DNDataArchive extends DataObject {
 	 */
 	public function canRestore($member = null) {
 		$memberID = $member ? $member->ID : Member::currentUserID();
-		if(!$memberID) return false;
+		if(!$memberID) {
+			return false;
+		}
 
 		$key = $memberID . '-' . $this->EnvironmentID;
 		if(!isset(self::$_cache_can_restore[$key])) {
@@ -226,7 +228,9 @@ class DNDataArchive extends DataObject {
 	 */
 	public function canDownload($member = null) {
 		$memberID = $member ? $member->ID : Member::currentUserID();
-		if(!$memberID) return false;
+		if(!$memberID) {
+			return false;
+		}
 
 		$key = $memberID . '-' . $this->EnvironmentID;
 		if(!isset(self::$_cache_can_download[$key])) {
@@ -259,14 +263,23 @@ class DNDataArchive extends DataObject {
 			return false;
 		}
 
-		if(!$member) $member = Member::currentUser();
-		if(!$member) return false; // Must be logged in to check permissions
+		if(!$member) {
+			$member = Member::currentUser();
+		}
+		if(!$member) {
+			return false;
+		}
+		// Must be logged in to check permissions
 
 		// Admin can always move.
-		if(Permission::checkMember($member, 'ADMIN')) return true;
+		if(Permission::checkMember($member, 'ADMIN')) {
+			return true;
+		}
 
 		// Checks if the user can actually access the archive.
-		if(!$this->canDownload($member)) return false;
+		if(!$this->canDownload($member)) {
+			return false;
+		}
 
 		// Hooks into ArchiveUploaders permission to prevent proliferation of permission checkboxes.
 		// Bypasses the quota check - we don't need to check for it as long as we move the snapshot within the project.

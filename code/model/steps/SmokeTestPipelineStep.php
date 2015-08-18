@@ -74,7 +74,9 @@ class SmokeTestPipelineStep extends PipelineStep {
 		} elseif(!$tests && $defaultTests) {
 			$tests = $defaultTests;
 		}
-		if($tests) return $tests;
+		if($tests) {
+			return $tests;
+		}
 
 		// if there's no tests to check for, fallback to trying to find the
 		// site's homepage by looking at the DNEnvironment fields.
@@ -126,7 +128,9 @@ class SmokeTestPipelineStep extends PipelineStep {
 
 		// Allow individual tests to override number of attempts
 		$attempts = (int)$this->getConfigSetting('Attempts');
-		if(!empty($test['Attempts'])) $attempts = $test['Attempts'];
+		if(!empty($test['Attempts'])) {
+			$attempts = $test['Attempts'];
+		}
 
 		// Run through each attempt
 		for($i = 0; $i < $attempts; $i++) {
@@ -189,7 +193,9 @@ class SmokeTestPipelineStep extends PipelineStep {
 		}
 
 		// Run out of re-attempts
-		if($attempts > 1) $this->log("Failed after {$attempts} attempts");
+		if($attempts > 1) {
+			$this->log("Failed after {$attempts} attempts");
+		}
  		return false;
 	}
 
