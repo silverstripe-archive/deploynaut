@@ -252,10 +252,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
-			return new SS_HTTPResponse(
-				"Project '" . Convert::raw2xml($request->latestParam('Project')) . "' not found.",
-				404
-			);
+			return $this->project404Response();
 		}
 
 		return $this->customise(array(
@@ -276,10 +273,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
-			return new SS_HTTPResponse(
-				"Project '" . Convert::raw2xml($request->latestParam('Project')) . "' not found.",
-				404
-			);
+			return $this->project404Response();
 		}
 
 		if(!$project->canBackup()) {
@@ -305,10 +299,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
-			return new SS_HTTPResponse(
-				"Project '" . Convert::raw2xml($request->latestParam('Project')) . "' not found.",
-				404
-			);
+			return $this->project404Response();
 		}
 
 		if(!$project->canUploadArchive()) {
@@ -336,10 +327,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
-			return new SS_HTTPResponse(
-				"Project '" . Convert::raw2xml($request->latestParam('Project')) . "' not found.",
-				404
-			);
+			return $this->project404Response();
 		}
 
 		if(!$project->canUploadArchive()) {
@@ -396,10 +384,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
-			return new SS_HTTPResponse(
-				"Project '" . Convert::raw2xml($this->getRequest()->latestParam('Project')) . "' not found.",
-				404
-			);
+			return $this->project404Response();
 		}
 
 		$validEnvs = $project->DNEnvironmentList()
@@ -499,8 +484,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
-			$projectName = Convert::raw2xml($request->latestParam('Project'));
-			return new SS_HTTPResponse("Project '" . $projectName . "' not found.", 404);
+			return $this->project404Response();
 		}
 
 		if(!$project->canUploadArchive()) {
@@ -550,8 +534,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		$project = $this->getCurrentProject();
 		if(!$project) {
-			$projectName = Convert::raw2xml($this->getRequest()->latestParam('Project'));
-			return new SS_HTTPResponse("Project '" . $projectName . "' not found.", 404);
+			return $this->project404Response();
 		}
 
 		$validEnvs = $project->DNEnvironmentList()
@@ -588,10 +571,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
-			return new SS_HTTPResponse(
-				"Project '" . Convert::raw2xml($request->latestParam('Project')) . "' not found.",
-				404
-			);
+			return $this->project404Response();
 		}
 
 		return $this->customise(array(
@@ -611,10 +591,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
-			return new SS_HTTPResponse(
-				"Project '" . Convert::raw2xml($request->latestParam('Project')) . "' not found.",
-				404
-			);
+			return $this->project404Response();
 		}
 
 		if(!$project->canUploadArchive()) {
@@ -647,10 +624,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
-			return new SS_HTTPResponse(
-				"Project '" . Convert::raw2xml($request->latestParam('Project')) . "' not found.",
-				404
-			);
+			return $this->project404Response();
 		}
 
 		return $this->customise(array(
@@ -666,8 +640,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	public function branch(SS_HTTPRequest $request) {
 		$project = $this->getCurrentProject();
 		if(!$project) {
-			$projectName = Convert::raw2xml($request->latestParam('Project'));
-			return new SS_HTTPResponse("Project '" . $projectName . "' not found.", 404);
+			return $this->project404Response();
 		}
 
 		$branchName = $request->getVar('name');
@@ -690,15 +663,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
-			$projectName = Convert::raw2xml($request->latestParam('Project'));
-			return new SS_HTTPResponse("Project '" . $projectName . "' not found.", 404);
+			return $this->project404Response();
 		}
 
 		// Performs canView permission check by limiting visible projects
 		$env = $this->getCurrentEnvironment($project);
 		if(!$env) {
-			$envName = Convert::raw2xml($request->latestParam('Environment'));
-			return new SS_HTTPResponse("Environment '" . $envName . "' not found.", 404);
+			return $this->environment404Response();
 		}
 
 		return $this->render(array(
@@ -706,6 +677,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'FlagSnapshotsEnabled' => $this->FlagSnapshotsEnabled(),
 		));
 	}
+
 
 	/**
 	 * Initiate a pipeline dry run
@@ -744,15 +716,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
-			$projectName = $this->getRequest()->latestParam('Project');
-			return new SS_HTTPResponse("Project '" . Convert::raw2xml($projectName) . "' not found.", 404);
+			return $this->project404Response();
 		}
 
 		// Performs canView permission check by limiting visible projects
 		$environment = $this->getCurrentEnvironment($project);
 		if(!$environment) {
-			$environmentName = $this->getRequest()->latestParam('Environment');
-			return new SS_HTTPResponse("Environment '" . Convert::raw2xml($environmentName) . "' not found.", 404);
+			return $this->environment404Response();
 		}
 
 		if(!$environment->DryRunEnabled && $isDryRun) {
@@ -814,17 +784,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
-			return new SS_HTTPResponse(
-				"Project '" . Convert::raw2xml($request->latestParam('Project')) . "' not found.",
-				404
-			);
+			return $this->project404Response();
 		}
 
 		// Performs canView permission check by limiting visible projects
 		$env = $this->getCurrentEnvironment($project);
 		if(!$env) {
-			$environmentName = Convert::raw2xml($request->latestParam('Environment'));
-			return new SS_HTTPResponse("Environment '" . $environmentName . "' not found.", 404);
+			return $this->environment404Response();
 		}
 
 		return $this->render();
@@ -917,19 +883,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
-			return new SS_HTTPResponse(
-				"Project '" . Convert::raw2xml($this->getRequest()->latestParam('Project')) . "' not found.",
-				404
-			);
+			return $this->project404Response();
 		}
 
 		// Performs canView permission check by limiting visible projects
 		$environment = $this->getCurrentEnvironment($project);
 		if(!$environment) {
-			return new SS_HTTPResponse(
-				"Environment '" . Convert::raw2xml($this->getRequest()->latestParam('Environment')) . "' not found.",
-				404
-			);
+			return $this->environment404Response();
 		}
 
 		if(!$environment->canDeploy()) {
@@ -969,17 +929,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
-			return new SS_HTTPResponse(
-				"Project '" . Convert::raw2xml($this->getRequest()->latestParam('Project')) . "' not found.",
-				404
-			);
+			return $this->project404Response();
 		}
 
 		// Performs canView permission check by limiting visible projects
 		$environment = $this->getCurrentEnvironment($project);
 		if(!$environment) {
-			$environmentName = Convert::raw2xml($this->getRequest()->latestParam('Environment'));
-			return new SS_HTTPResponse("Environment '" . $environmentName . "' not found.", 404);
+			return $this->environment404Response();
 		}
 
 		// Initiate the deployment
@@ -1094,8 +1050,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$envs = $this->getCurrentProject()->DNEnvironmentList()
 			->filterByCallback(function($item) {return $item->canBackup();});
 		if(!$envs) {
-			$environmentName = Convert::raw2xml($this->getRequest()->latestParam('Environment'));
-			return new SS_HTTPResponse("Environment '" . $environmentName . "' not found.", 404);
+			return $this->environment404Response();
 		}
 
 		$form = new Form(
@@ -1128,10 +1083,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
-			return new SS_HTTPResponse(
-				"Project '" . Convert::raw2xml($this->getRequest()->latestParam('Project')) . "' not found.",
-				404
-			);
+			return $this->project404Response();
 		}
 
 		$dataArchive = null;
@@ -1298,8 +1250,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			->filterByCallback(function($item) {return $item->canRestore();});
 
 		if(!$envs) {
-			$envName = Convert::raw2xml($request->latestParam('Environment'));
-			return new SS_HTTPResponse("Environment '" . $envName . "' not found.", 404);
+			return $this->environment404Response();
 		}
 
 		$modesMap = array();
@@ -1409,10 +1360,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
-			return new SS_HTTPResponse(
-				"Project '" . Convert::raw2xml($request->latestParam('Project')) . "' not found.",
-				404
-			);
+			return $this->project404Response();
 		}
 
 		$snapshotDeleteWarning = '<div class="alert alert-warning">'
@@ -1448,10 +1396,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
-			return new SS_HTTPResponse(
-				"Project '" . Convert::raw2xml($this->getRequest()->latestParam('Project')) . "' not found.",
-				404
-			);
+			return $this->project404Response();
 		}
 
 		$dataArchive = null;
@@ -1518,8 +1463,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		$envs = $dataArchive->validTargetEnvironments();
 		if(!$envs) {
-			$envName = Convert::raw2xml($request->latestParam('Environment'));
-			return new SS_HTTPResponse("Environment '" . $envName . "' not found.", 404);
+			return $this->environment404Response();
 		}
 
 		$warningMessage = '<div class="alert alert-warning"><strong>Warning:</strong> This will make the snapshot '
@@ -1557,10 +1501,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
-			return new SS_HTTPResponse(
-				"Project '" . Convert::raw2xml($this->getRequest()->latestParam('Project')) . "' not found.",
-				404
-			);
+			return $this->project404Response();
 		}
 
 		$dataArchive = null;
@@ -1798,6 +1739,24 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * @return SS_HTTPResponse
+	 */
+	protected function project404Response() {
+		return new SS_HTTPResponse(
+			"Project '" . Convert::raw2xml($this->getRequest()->latestParam('Project')) . "' not found.",
+			404
+		);
+	}
+
+	/**
+	 * @return SS_HTTPResponse
+	 */
+	protected function environment404Response() {
+		$envName = Convert::raw2xml($this->getRequest()->latestParam('Environment'));
+		return new SS_HTTPResponse("Environment '" . $envName . "' not found.", 404);
 	}
 
 }
