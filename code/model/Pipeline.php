@@ -1007,14 +1007,14 @@ class Pipeline extends DataObject implements PipelineData {
 		$caller = $bt[$index];
 		$caller['line'] = $bt[($index - 1)]['line']; // Overwrite line and file to be the the line/file that actually
 		$caller['file'] = $bt[($index - 1)]['file']; // called the function, not where the function is defined.
+		// In case it wasn't called from a class
 		if(!isset($caller['class'])) {
 			$caller['class'] = '';
 		}
-		// In case it wasn't called from a class
+		// In case it doesn't have a type (wasn't called from class)
 		if(!isset($caller['type'])) {
 			$caller['type'] = '';
 		}
-		// In case it doesn't have a type (wasn't called from class)
 
 		$log->write(sprintf("[%s::%s() (line %d)] %s", $caller['class'], $caller['function'], $caller['line'], $message));
 	}

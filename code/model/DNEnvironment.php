@@ -396,10 +396,10 @@ class DNEnvironment extends DataObject {
 		if(!$member) {
 			$member = Member::currentUser();
 		}
+		// Must be logged in to check permissions
 		if(!$member) {
 			return false;
 		}
-		// Must be logged in to check permissions
 
 		if(Permission::checkMember($member, 'ADMIN')) {
 			return true;
