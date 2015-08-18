@@ -499,10 +499,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
-			return new SS_HTTPResponse(
-				"Project '" . Convert::raw2xml($request->latestParam('Project')) . "' not found.",
-				404
-			);
+			$projectName = Convert::raw2xml($request->latestParam('Project'));
+			return new SS_HTTPResponse("Project '" . $projectName . "' not found.", 404);
 		}
 
 		if(!$project->canUploadArchive()) {
@@ -512,7 +510,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Framing an environment as a "group of people with download access"
 		// makes more sense to the user here, while still allowing us to enforce
 		// environment specific restrictions on downloading the file later on.
-		$envs = $project->DNEnvironmentList()->filterByCallback(function($item) {return $item->canUploadArchive();});
+		$envs = $project->DNEnvironmentList()->filterByCallback(function($item) {
+			return $item->canUploadArchive();
+		});
 		$envsMap = array();
 		foreach($envs as $env) {
 			$envsMap[$env->ID] = $env->Name;
@@ -550,7 +550,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		$project = $this->getCurrentProject();
 		if(!$project) {
-			return new SS_HTTPResponse("Project '" . Convert::raw2xml($this->getRequest()->latestParam('Project')) . "' not found.", 404);
+			$projectName = Convert::raw2xml($this->getRequest()->latestParam('Project'));
+			return new SS_HTTPResponse("Project '" . $projectName . "' not found.", 404);
 		}
 
 		$validEnvs = $project->DNEnvironmentList()
@@ -665,7 +666,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	public function branch(SS_HTTPRequest $request) {
 		$project = $this->getCurrentProject();
 		if(!$project) {
-			return new SS_HTTPResponse("Project '" . Convert::raw2xml($request->latestParam('Project')) . "' not found.", 404);
+			$projectName = Convert::raw2xml($request->latestParam('Project'));
+			return new SS_HTTPResponse("Project '" . $projectName . "' not found.", 404);
 		}
 
 		$branchName = $request->getVar('name');
@@ -688,16 +690,15 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
-			return new SS_HTTPResponse(
-				"Project '" . Convert::raw2xml($request->latestParam('Project')) . "' not found.",
-				404
-			);
+			$projectName = Convert::raw2xml($request->latestParam('Project'));
+			return new SS_HTTPResponse("Project '" . $projectName . "' not found.", 404);
 		}
 
 		// Performs canView permission check by limiting visible projects
 		$env = $this->getCurrentEnvironment($project);
 		if(!$env) {
-			return new SS_HTTPResponse("Environment '" . Convert::raw2xml($request->latestParam('Environment')) . "' not found.", 404);
+			$envName = Convert::raw2xml($request->latestParam('Environment'));
+			return new SS_HTTPResponse("Environment '" . $envName . "' not found.", 404);
 		}
 
 		return $this->render(array(
@@ -743,13 +744,15 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
-			return new SS_HTTPResponse("Project '" . Convert::raw2xml($this->getRequest()->latestParam('Project')) . "' not found.", 404);
+			$projectName = $this->getRequest()->latestParam('Project');
+			return new SS_HTTPResponse("Project '" . Convert::raw2xml($projectName) . "' not found.", 404);
 		}
 
 		// Performs canView permission check by limiting visible projects
 		$environment = $this->getCurrentEnvironment($project);
 		if(!$environment) {
-			return new SS_HTTPResponse("Environment '" . Convert::raw2xml($this->getRequest()->latestParam('Environment')) . "' not found.", 404);
+			$environmentName = $this->getRequest()->latestParam('Environment');
+			return new SS_HTTPResponse("Environment '" . Convert::raw2xml($environmentName) . "' not found.", 404);
 		}
 
 		if(!$environment->DryRunEnabled && $isDryRun) {
@@ -820,7 +823,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Performs canView permission check by limiting visible projects
 		$env = $this->getCurrentEnvironment($project);
 		if(!$env) {
-			return new SS_HTTPResponse("Environment '" . Convert::raw2xml($request->latestParam('Environment')) . "' not found.", 404);
+			$environmentName = Convert::raw2xml($request->latestParam('Environment'));
+			return new SS_HTTPResponse("Environment '" . $environmentName . "' not found.", 404);
 		}
 
 		return $this->render();
@@ -974,7 +978,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Performs canView permission check by limiting visible projects
 		$environment = $this->getCurrentEnvironment($project);
 		if(!$environment) {
-			return new SS_HTTPResponse("Environment '" . Convert::raw2xml($this->getRequest()->latestParam('Environment')) . "' not found.", 404);
+			$environmentName = Convert::raw2xml($this->getRequest()->latestParam('Environment'));
+			return new SS_HTTPResponse("Environment '" . $environmentName . "' not found.", 404);
 		}
 
 		// Initiate the deployment
@@ -1089,7 +1094,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$envs = $this->getCurrentProject()->DNEnvironmentList()
 			->filterByCallback(function($item) {return $item->canBackup();});
 		if(!$envs) {
-			return new SS_HTTPResponse("Environment '" . Convert::raw2xml($request->latestParam('Environment')) . "' not found.", 404);
+			$environmentName = Convert::raw2xml($this->getRequest()->latestParam('Environment'));
+			return new SS_HTTPResponse("Environment '" . $environmentName . "' not found.", 404);
 		}
 
 		$form = new Form(
@@ -1292,7 +1298,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			->filterByCallback(function($item) {return $item->canRestore();});
 
 		if(!$envs) {
-			return new SS_HTTPResponse("Environment '" . Convert::raw2xml($request->latestParam('Environment')) . "' not found.", 404);
+			$envName = Convert::raw2xml($request->latestParam('Environment'));
+			return new SS_HTTPResponse("Environment '" . $envName . "' not found.", 404);
 		}
 
 		$modesMap = array();
@@ -1306,13 +1313,15 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			$modesMap['assets'] = 'Assets only';
 		};
 
+		$alertMessage = '<div class="alert alert-warning"><strong>Warning:</strong> '
+			. 'This restore will overwrite the data on the chosen environment below</div>';
 		$form = new Form(
 			$this,
 			'DataTransferRestoreForm',
 			new FieldList(
 				new HiddenField('DataArchiveID', false, $dataArchive->ID),
 				new HiddenField('Direction', false, 'push'),
-				new LiteralField('Warning', '<div class="alert alert-warning"><strong>Warning:</strong> This restore will overwrite the data on the chosen environment below</div>'),
+				new LiteralField('Warning', $alertMessage),
 				new DropdownField('EnvironmentID', 'Environment', $envs->map()),
 				new DropdownField('Mode', 'Transfer', $modesMap),
 				new CheckboxField('BackupBeforePush', 'Backup existing data', '1')
@@ -1390,8 +1399,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 	/**
 	 * @param SS_HTTPRequest $request
-	 * @param DNDataArchive|null $dataArchive Only set when method is called manually, otherwise the state is inferred from
-	 *	the request data.
+	 * @param DNDataArchive|null $dataArchive Only set when method is called manually, otherwise the state is inferred
+	 *        from the request data.
 	 * @return Form
 	 */
 	public function getDeleteForm(SS_HTTPRequest $request, DNDataArchive $dataArchive = null) {
@@ -1509,15 +1518,19 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		$envs = $dataArchive->validTargetEnvironments();
 		if(!$envs) {
-			return new SS_HTTPResponse("Environment '" . Convert::raw2xml($request->latestParam('Environment')) . "' not found.", 404);
+			$envName = Convert::raw2xml($request->latestParam('Environment'));
+			return new SS_HTTPResponse("Environment '" . $envName . "' not found.", 404);
 		}
 
+		$warningMessage = '<div class="alert alert-warning"><strong>Warning:</strong> This will make the snapshot '
+			. 'available to people with access to the target environment.<br>By pressing "Change ownership" you '
+			. 'confirm that you have considered data confidentiality regulations.</div>';
 		$form = new Form(
 			$this,
 			'MoveForm',
 			new FieldList(
 				new HiddenField('DataArchiveID', false, $dataArchive->ID),
-				new LiteralField('Warning', '<div class="alert alert-warning"><strong>Warning:</strong> This will make the snapshot available to people with access to the target environment.<br>By pressing "Change ownership" you confirm that you have considered data confidentiality regulations.</div>'),
+				new LiteralField('Warning', $warningMessage),
 				new DropdownField('EnvironmentID', 'Environment', $envs->map())
 			),
 			new FieldList(
@@ -1707,7 +1720,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 						$environment->canUploadArchive($member) ||
 						$environment->canDownloadArchive($member)
 					) {
-						return true; // We can return early as we only need to know that we can access one environment
+						// We can return early as we only need to know that we can access one environment
+						return true;
 					}
 				}
 			}
@@ -1715,7 +1729,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 * @return PaginatedList The list of all archive files that can be accessed by the currently logged-in {@link Member}
+	 * Returns a list of all archive files that can be accessed by the currently logged-in {@link Member}
+	 *
+	 * @return PaginatedList
 	 */
 	public function CompleteDataArchives() {
 		$project = $this->getCurrentProject();
