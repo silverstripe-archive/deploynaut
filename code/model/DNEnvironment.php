@@ -920,6 +920,9 @@ PHP
 		$fields->insertAfter($createConfigField, 'noDeployConfig');
 	}
 
+	/**
+	 * @param FieldList $fields
+	 */
 	protected function setPipelineConfigurationFields($fields) {
 		if(!$this->config()->get('allow_web_editing')) {
 			return;

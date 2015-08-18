@@ -319,7 +319,7 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 	 * @param string $messageID Message ID. One of 'Reject', 'Approve', 'TimeOut' or 'Request'
 	 * @param mixed $recipientGroup Either a numeric index of the next recipient to send to, or "all" for all
 	 * This is used for delayed notification so that failover recipients can be notified.
-	 * @return boolean True if successful
+	 * @return boolean|null True if successful
 	 */
 	protected function sendMessage($messageID, $recipientGroup = 'all') {
 		// Add additionally configured arguments

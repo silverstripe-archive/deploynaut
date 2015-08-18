@@ -367,7 +367,6 @@ class Pipeline extends DataObject implements PipelineData {
 	 * Retrieve the value of a specific config setting
 	 *
 	 * @param string $setting Settings
-	 * @param string $setting,... Sub-settings
 	 * @return mixed Value of setting, or null if not set
 	 */
 	public function getConfigSetting($setting) {
@@ -772,7 +771,7 @@ class Pipeline extends DataObject implements PipelineData {
 	 * Sends a specific message to all marked recipients, including the author of this pipeline
 	 *
 	 * @param string $messageID Message ID. One of 'Abort', 'Success', or 'Failure', or some custom message
-	 * @return boolean True if successful
+	 * @return boolean|null True if successful
 	 */
 	public function sendMessage($messageID) {
 		// Check message, subject, and additional arguments to include
@@ -921,7 +920,7 @@ class Pipeline extends DataObject implements PipelineData {
 	/**
 	 * Finds the next {@link PipelineStep} that needs to execute. Relies on $this->CurrentStep() being a valid step.
 	 *
-	 * @return PipelineStep|null The next step in the pipeline, or null if none remain.
+	 * @return DataObject|null The next step in the pipeline, or null if none remain.
 	 */
 	protected function findNextStep() {
 		// otherwise get next step in chain
@@ -938,7 +937,7 @@ class Pipeline extends DataObject implements PipelineData {
 	/**
 	 * Finds the previous {@link PipelineStep} that executed. Relies on $this->CurrentStep() being a valid step.
 	 *
-	 * @return PipelineStep|null The previous step in the pipeline, or null if this is the first.
+	 * @return DataObject|null The previous step in the pipeline, or null if this is the first.
 	 */
 	public function findPreviousStep() {
 		// otherwise get previous step in chain
@@ -1012,6 +1011,9 @@ class Pipeline extends DataObject implements PipelineData {
 		return $this->getField('DryRun');
 	}
 
+	/**
+	 * @param string $action
+	 */
 	public function Link($action = null) {
 		return Controller::join_links($this->Environment()->Link(), 'pipeline', $this->ID, $action);
 	}

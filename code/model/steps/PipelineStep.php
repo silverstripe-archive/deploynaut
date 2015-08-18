@@ -119,7 +119,6 @@ class PipelineStep extends DataObject implements PipelineData {
 	 * Retrieve the value of a specific config setting
 	 *
 	 * @param string $setting Settings
-	 * @param string $setting,... Sub-settings
 	 * @return mixed Value of setting, or null if not set
 	 */
 	public function getConfigSetting($setting) {
@@ -233,7 +232,7 @@ class PipelineStep extends DataObject implements PipelineData {
 	 * Initialise the step unless it's already running (Started state).
 	 * The step will be expected to transition from here to Finished, Failed or Aborted state.
 	 *
-	 * @return boolean True if successfully started, false if error
+	 * @return boolean|null True if successfully started, false if error
 	 */
 	public function start() {
 		$this->Status = 'Started';

@@ -300,6 +300,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	/**
 	 * Utility function for triggering the db rebuild and flush.
 	 * Also cleans up and generates new error pages.
+	 * @param DeploynautLogFile $log
 	 */
 	public function rebuild(DNEnvironment $environment, $log) {
 		$name = $environment->getFullName();

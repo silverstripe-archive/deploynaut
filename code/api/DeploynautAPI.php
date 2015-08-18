@@ -41,7 +41,7 @@ class DeploynautAPI extends APINoun {
 	/**
 	 *
 	 * @param SS_HTTPRequest $request
-	 * @return string
+	 * @return SS_HTTPResponse
 	 */
 	public function listProjects(SS_HTTPRequest $request) {
 		$response = array(

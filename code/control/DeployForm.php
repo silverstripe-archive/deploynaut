@@ -18,6 +18,7 @@ abstract class DeployForm_ValidatorBase extends Validator {
 	 * Validate a commit sha
 	 *
 	 * @param string $sha
+	 * @param string $field
 	 * @return boolean
 	 */
 	protected function validateCommit($sha, $field) {
@@ -100,6 +101,10 @@ class DeployForm_PipelineValidator extends DeployForm_ValidatorBase {
  */
 class DeployForm extends Form {
 
+	/**
+	 * @param DNRoot $controller
+	 * @param string $name
+	 */
 	public function __construct($controller, $name, DNEnvironment $environment, DNProject $project) {
 		if($environment->HasPipelineSupport()) {
 			// Determine if commits are filtered
@@ -246,7 +251,6 @@ class DeployForm extends Form {
 	/**
 	 * Generate fields necessary to select from a filtered commit list
 	 *
-	 * @param DNEnvironment $environment
 	 * @param DataList $commits List of commits
 	 * @return FormField
 	 */

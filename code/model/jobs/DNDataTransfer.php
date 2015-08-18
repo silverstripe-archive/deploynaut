@@ -92,6 +92,9 @@ class DNDataTransfer extends DataObject {
 		return $remap[$int];
 	}
 
+	/**
+	 * @param boolean $value
+	 */
 	public function setBackupBeforePush($value) {
 		$this->backupBeforePush = $value;
 	}

@@ -807,7 +807,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * Construct the deployment form
 	 *
-	 * @param SS_HTTPRequest $request
 	 * @return Form
 	 */
 	public function getDeployForm() {
@@ -1318,6 +1317,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 	/**
 	 * Build snapshot move form.
+	 * @param SS_HTTPRequest $request
+	 * @param DataObject $dataArchive
 	 */
 	public function getMoveForm($request, $dataArchive = null) {
 		$dataArchive = $dataArchive ? $dataArchive : DNDataArchive::get()->byId($request->requestVar('DataArchiveID'));
@@ -1503,7 +1504,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * Sets the current action type
 	 *
-	 * @param $actionType string - one of the consts from self::$action_types
+	 * @param string $actionType string - one of the consts from self::$action_types
 	 */
 	public function setCurrentActionType($actionType) {
 		$this->actionType = $actionType;
@@ -1517,7 +1518,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * TODO To be replaced with a method that just returns the list of archives this {@link Member} has access to.
 	 *
 	 * @param Member $member The {@link Member} to check (or null to check the currently logged in Member)
-	 * @return boolean true if $member has access to upload or download to at least one {@link DNEnvironment}.
+	 * @return boolean|null true if $member has access to upload or download to at least one {@link DNEnvironment}.
 	 */
 	public function CanViewArchives(Member $member = null) {
 		if(!$member) $member = Member::currentUser();
@@ -1544,7 +1545,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 * @return ArrayList The list of all archive files that can be accessed by the currently logged-in {@link Member}
+	 * @return PaginatedList The list of all archive files that can be accessed by the currently logged-in {@link Member}
 	 */
 	public function CompleteDataArchives() {
 		$project = $this->getCurrentProject();
@@ -1562,7 +1563,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 * @return ArrayList The list of "pending" data archives which are waiting for a file
+	 * @return PaginatedList The list of "pending" data archives which are waiting for a file
 	 * to be delivered offline by post, and manually uploaded into the system.
 	 */
 	public function PendingDataArchives() {
