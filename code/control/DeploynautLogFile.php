@@ -86,7 +86,7 @@ class DeploynautLogFile {
 	 * @return bool
 	 */
 	public function exists() {
-		return (bool) $this->getLogFilePath();
+		return (bool)$this->getLogFilePath();
 	}
 
 	/**

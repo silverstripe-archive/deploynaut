@@ -119,7 +119,7 @@ class APINoun extends Controller {
 	 * @return SS_HTTPResponse
 	 */
 	protected function message($message, $statusCode) {
-		$response =  $this->getAPIResponse(array(
+		$response = $this->getAPIResponse(array(
 			'message' => $message,
 			'statusCode' => $statusCode
 		));

@@ -254,7 +254,7 @@ class DNDataArchive extends DataObject {
 	 * @return boolean true if $member can upload archives linked to this environment, false if they can't.
 	 */
 	public function canMoveTo($targetEnv, $member = null) {
-		if ($this->Environment()->Project()->ID!=$targetEnv->Project()->ID) {
+		if($this->Environment()->Project()->ID != $targetEnv->Project()->ID) {
 			// We don't permit moving snapshots between projects at this stage.
 			return false;
 		}
@@ -266,7 +266,7 @@ class DNDataArchive extends DataObject {
 		if(Permission::checkMember($member, 'ADMIN')) return true;
 
 		// Checks if the user can actually access the archive.
-		if (!$this->canDownload($member)) return false;
+		if(!$this->canDownload($member)) return false;
 
 		// Hooks into ArchiveUploaders permission to prevent proliferation of permission checkboxes.
 		// Bypasses the quota check - we don't need to check for it as long as we move the snapshot within the project.
@@ -284,7 +284,7 @@ class DNDataArchive extends DataObject {
 		$archive = $this;
 		$envs = $this->Environment()->Project()->DNEnvironmentList()
 			->filterByCallback(function($item) use ($archive) {
-				return $archive->EnvironmentID!=$item->ID && $archive->canMoveTo($item);
+				return $archive->EnvironmentID != $item->ID && $archive->canMoveTo($item);
 			});
 
 		return $envs;

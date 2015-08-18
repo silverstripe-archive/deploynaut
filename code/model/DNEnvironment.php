@@ -181,19 +181,19 @@ class DNEnvironment extends DataObject {
 		$backends = array_keys($this->config()->get('allowed_backends', Config::FIRST_SET));
 		switch(sizeof($backends)) {
 		// Nothing allowed, use the default value "DeploymentBackend"
-		case 0:
-			$backend = "DeploymentBackend";
-			break;
+			case 0:
+				$backend = "DeploymentBackend";
+				break;
 
-		// Only 1 thing allowed, use that
-		case 1:
-			$backend = $backends[0];
-			break;
+			// Only 1 thing allowed, use that
+			case 1:
+				$backend = $backends[0];
+				break;
 
-		// Multiple choices, use our choice if it's legal, otherwise default to the first item on the list
-		default:
-			$backend = $this->BackendIdentifier;
-			if(!in_array($backend, $backends)) $backend = $backends[0];
+			// Multiple choices, use our choice if it's legal, otherwise default to the first item on the list
+			default:
+				$backend = $this->BackendIdentifier;
+				if(!in_array($backend, $backends)) $backend = $backends[0];
 		}
 
 		return Injector::inst()->get($backend);

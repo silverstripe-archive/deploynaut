@@ -75,7 +75,7 @@ class DNCommit extends ViewableData {
 	 * @return ArrayList
 	 */
 	public function References() {
-		if($this->references !== null ) {
+		if($this->references !== null) {
 			return $this->references;
 		}
 		$this->references = new ArrayList();

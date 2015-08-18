@@ -39,7 +39,7 @@ class TriggerDeployStep extends LongRunningPipelineStep {
 		}
 
 		// check if we have timed out
-		if ($this->isTimedOut()) {
+		if($this->isTimedOut()) {
 			$this->log(sprintf(_t('TriggerDeployStep.DEPLOYTIMEOUT',
 				'Deployment step is older then %s seconds and has timed out'),
 				$this->MaxDuration));
@@ -86,7 +86,7 @@ class TriggerDeployStep extends LongRunningPipelineStep {
 			);
 		}
 
-		if ($this->Status == 'Queued') {
+		if($this->Status == 'Queued') {
 			$this->start();
 		}
 		// Trigger deployment
@@ -103,7 +103,7 @@ class TriggerDeployStep extends LongRunningPipelineStep {
 	 */
 	public function StartDeployment() {
 		$this->Status = 'Started';
-		if (!$this->Started) $this->Started = SS_Datetime::now()->Rfc2822();
+		if(!$this->Started) $this->Started = SS_Datetime::now()->Rfc2822();
 		$this->log("Starting {$this->Title}...");
 		$this->write();
 		return true;

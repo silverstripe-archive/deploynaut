@@ -287,7 +287,7 @@ class DNProject extends DataObject {
 	 * @return array
 	 */
 	public function getProcessEnv() {
-		if (file_exists($this->getPrivateKeyPath())) {
+		if(file_exists($this->getPrivateKeyPath())) {
 			// Key-pair is available, use it.
 			$processEnv = array(
 				'IDENT_KEY' => $this->getPrivateKeyPath(),
@@ -540,10 +540,10 @@ class DNProject extends DataObject {
 	 */
 	protected function checkCVSPath() {
 		$changedFields = $this->getChangedFields(true, 2);
-		if (!$this->CVSPath) {
+		if(!$this->CVSPath) {
 			return;
 		}
-		if (isset($changedFields['CVSPath']) || isset($changedFields['Name'])) {
+		if(isset($changedFields['CVSPath']) || isset($changedFields['Name'])) {
 			$this->cloneRepo();
 		}
 	}
@@ -574,7 +574,7 @@ class DNProject extends DataObject {
 	public function getPublicKey() {
 		$key = $this->getPublicKeyPath();
 
-		if (file_exists($key)) {
+		if(file_exists($key)) {
 			return file_get_contents($key);
 		}
 	}
@@ -655,7 +655,7 @@ class DNProject extends DataObject {
 	 */
 	public function getRepositoryURL() {
 		$showUrl = Config::inst()->get($this->class, 'show_repository_url');
-		if ($showUrl) {
+		if($showUrl) {
 			return $this->CVSPath;
 		}
 	}
@@ -704,9 +704,9 @@ class DNProject extends DataObject {
 		$interfaces = $this->config()->repository_interfaces;
 
 		/* Look for each whitelisted hostname */
-		foreach ($interfaces as $host => $interface) {
+		foreach($interfaces as $host => $interface) {
 			/* See if the CVS Path is for this hostname, followed by some junk (maybe a port), then the path */
-			if (preg_match('{^[^.]*'.$host.'(.*?)([/a-zA-Z].+)}', $this->CVSPath, $match)) {
+			if(preg_match('{^[^.]*' . $host . '(.*?)([/a-zA-Z].+)}', $this->CVSPath, $match)) {
 
 				$path = $match[2];
 
@@ -716,13 +716,13 @@ class DNProject extends DataObject {
 
 				$components = explode('.', $host);
 
-				foreach ($regex as $pattern => $replacement) {
+				foreach($regex as $pattern => $replacement) {
 					$path = preg_replace('/' . $pattern . '/', $replacement, $path);
 				}
 
 				$uxurl = Controller::join_links($scheme . '://', $host, $path);
 
-				if (array_key_exists('commit', $interface) && $interface['commit'] == false) {
+				if(array_key_exists('commit', $interface) && $interface['commit'] == false) {
 					$commiturl = false;
 				} else {
 					$commiturl = Controller::join_links($uxurl, isset($interface['commit']) ? $interface['commit'] : 'commit');

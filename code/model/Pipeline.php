@@ -300,8 +300,8 @@ class Pipeline extends DataObject implements PipelineData {
 
 		// Get logs from rollback steps (only for RollbackSteps).
 		$rollbackSteps = array($this->RollbackStep1(), $this->RollbackStep2());
-		foreach ($rollbackSteps as $rollback) {
-			if($rollback->exists() && $rollback->ClassName=='RollbackStep') {
+		foreach($rollbackSteps as $rollback) {
+			if($rollback->exists() && $rollback->ClassName == 'RollbackStep') {
 				if($rollback->RollbackDeploymentID > 0) {
 					$logs[] = array(
 						'ButtonText' => 'Rollback Log',
@@ -597,11 +597,11 @@ class Pipeline extends DataObject implements PipelineData {
 		$success = true;
 		$rollback1 = $this->RollbackStep1();
 		$rollback2 = $this->RollbackStep2();
-		if (!empty($rollback1) && $rollback1->Status=='Failed') $success = false;
-		if (!empty($rollback2) && $rollback2->Status=='Failed') $success = false;
+		if(!empty($rollback1) && $rollback1->Status == 'Failed') $success = false;
+		if(!empty($rollback2) && $rollback2->Status == 'Failed') $success = false;
 
 		// Send messages.
-		if ($success) {
+		if($success) {
 			$this->log("Pipeline failed, but rollback completed successfully.");
 			$this->sendMessage(self::ALERT_ROLLBACK_SUCCESS);
 		} else {
@@ -631,7 +631,7 @@ class Pipeline extends DataObject implements PipelineData {
 
 		// Add smoke test step, if available, for later processing.
 		$configRollback2 = $this->getConfigSetting('RollbackStep2');
-		if ($configRollback2) {
+		if($configRollback2) {
 			$stepRollback2 = $this->pushPipelineStep('RollbackStep2', $configRollback2);
 			$this->RollbackStep2ID = $stepRollback2->ID;
 		}
@@ -647,10 +647,10 @@ class Pipeline extends DataObject implements PipelineData {
 	 */
 	protected function canStartRollback() {
 		// The rollback cannot run twice.
-		if ($this->isRollback()) return false;
+		if($this->isRollback()) return false;
 
 		// Rollbacks must be configured.
-		if (!$this->getConfigSetting('RollbackStep1')) return false;
+		if(!$this->getConfigSetting('RollbackStep1')) return false;
 
 		// On dryrun let rollback run
 		if($this->DryRun) return true;
@@ -658,7 +658,7 @@ class Pipeline extends DataObject implements PipelineData {
 		// Pipeline must have ran a deployment to be able to rollback.
 		$deploy = $this->CurrentDeployment();
 		$previous = $this->PreviousDeployment();
-		if (!$deploy->exists() || !$previous->exists()) return false;
+		if(!$deploy->exists() || !$previous->exists()) return false;
 
 		return true;
 	}
@@ -674,12 +674,12 @@ class Pipeline extends DataObject implements PipelineData {
 		// Abort all running or queued steps.
 		$steps = $this->Steps();
 		foreach($steps as $step) {
-			if ($step->isQueued() || $step->isRunning()) $step->abort();
+			if($step->isQueued() || $step->isRunning()) $step->abort();
 		}
 
 		if($this->canStartRollback()) {
 			$this->beginRollback();
-		} else if ($this->isRollback()) {
+		} else if($this->isRollback()) {
 			$this->finaliseRollback();
 		} else {
 			// Not able to roll back - fail immediately.
@@ -722,7 +722,7 @@ class Pipeline extends DataObject implements PipelineData {
 		// Abort all running or queued steps.
 		$steps = $this->Steps();
 		foreach($steps as $step) {
-			if ($step->isQueued() || $step->isRunning()) $step->abort();
+			if($step->isQueued() || $step->isRunning()) $step->abort();
 		}
 
 		// Send notification to users about this event
@@ -737,7 +737,7 @@ class Pipeline extends DataObject implements PipelineData {
 	 */
 	protected function generateMessageTemplate($messageID) {
 		$subject = $this->getConfigSetting('PipelineConfig', 'Subjects', $messageID);
-		$message = $this->getConfigSetting('PipelineConfig', 'Messages',  $messageID);
+		$message = $this->getConfigSetting('PipelineConfig', 'Messages', $messageID);
 		$substitutions = $this->getReplacements();
 		return $this->injectMessageReplacements($message, $subject, $substitutions);
 	}
@@ -886,7 +886,7 @@ class Pipeline extends DataObject implements PipelineData {
 			if(!$nextStep) {
 
 				// Special handling, since the main pipeline has already failed at this stage.
-				if ($this->isRollback()) {
+				if($this->isRollback()) {
 					$this->finaliseRollback();
 					return false;
 				}
@@ -896,7 +896,7 @@ class Pipeline extends DataObject implements PipelineData {
 					'PipelineID' => $this->ID,
 					'Status' => 'Failed'
 				))->count();
-				if ($failedSteps) {
+				if($failedSteps) {
 					$this->log('At least one of the steps has failed marking the pipeline as failed');
 					$this->markFailed();
 					return false;
