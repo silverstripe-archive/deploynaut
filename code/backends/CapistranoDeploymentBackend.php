@@ -215,8 +215,6 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		$log->write(sprintf('Running command: %s', $command));
 
 		$process = new Process($command);
-		// Capistrano doesn't like it - see comment above.
-		//$process->setEnv($env);
 		$process->setTimeout(3600);
 		return $process;
 	}

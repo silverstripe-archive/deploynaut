@@ -636,7 +636,7 @@ class DNProject extends DataObject {
 	 * @return string|null
 	 */
 	public function getPrivateKeyPath() {
-		if($keyDir = $this->getKeyDir()) {
+		if($this->getKeyDir()) {
 			$filter = FileNameFilter::create();
 			$name = $filter->filter($this->Name);
 
