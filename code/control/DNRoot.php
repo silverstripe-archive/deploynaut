@@ -248,17 +248,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function snapshots(SS_HTTPRequest $request) {
 		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
-
-		// Performs canView permission check by limiting visible projects
-		$project = $this->getCurrentProject();
-		if(!$project) {
-			return $this->project404Response();
-		}
-
-		return $this->customise(array(
-			'Title' => 'Data Snapshots',
-			'SnapshotsSection' => 1,
-		))->render();
+		return $this->getCustomisedViewSection('SnapshotsSection', 'Data Snapshots');
 	}
 
 	/**
@@ -565,17 +555,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function snapshotslog(SS_HTTPRequest $request) {
 		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
-
-		// Performs canView permission check by limiting visible projects
-		$project = $this->getCurrentProject();
-		if(!$project) {
-			return $this->project404Response();
-		}
-
-		return $this->customise(array(
-			'Title' => 'Data Snapshots Log',
-			'SnapshotsSection' => 1,
-		))->render();
+		return $this->getCustomisedViewSection('SnapshotsSection', 'Data Snapshots Log');
 	}
 
 	/**
@@ -619,15 +599,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return \SS_HTTPResponse
 	 */
 	public function project(SS_HTTPRequest $request) {
-		// Performs canView permission check by limiting visible projects
-		$project = $this->getCurrentProject();
-		if(!$project) {
-			return $this->project404Response();
-		}
-
-		return $this->customise(array(
-			'ProjectOverview' => 1
-		))->render();
+		return $this->getCustomisedViewSection('ProjectOverview');
 	}
 
 	/**
@@ -1761,6 +1733,29 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		if(!in_array($mode, array('all', 'assets', 'db'))) {
 			throw new LogicException('Invalid mode');
 		}
+	}
+
+	/**
+	 * @param string $sectionName
+	 * @param string $title
+	 *
+	 * @return SS_HTTPResponse
+	 */
+	protected function getCustomisedViewSection($sectionName, $title='') {
+		// Performs canView permission check by limiting visible projects
+		$project = $this->getCurrentProject();
+		if(!$project) {
+			return $this->project404Response();
+		}
+		$data = array(
+			$sectionName => 1,
+		);
+
+		if($this !== '') {
+			$data['Title'] = $title;
+		}
+
+		return $this->customise($data)->render();
 	}
 
 }
