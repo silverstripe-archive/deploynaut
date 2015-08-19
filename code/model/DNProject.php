@@ -454,6 +454,7 @@ class DNProject extends DataObject {
 	public function getCMSFields() {
 		$fields = parent::getCMSFields();
 
+		/** @var GridField $environments */
 		$environments = $fields->dataFieldByName("Environments");
 
 		$fields->fieldByName("Root")->removeByName("Viewers");
