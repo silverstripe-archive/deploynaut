@@ -18,7 +18,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	 */
 	public function deploy(DNEnvironment $environment, $sha, DeploynautLogFile $log, DNProject $project, $leaveMaintenancePage = false) {
 		$name = $environment->getFullName();
-		$repository = $project->LocalCVSPath;
+		$repository = $project->getLocalCVSPath();
 
 		$args = array(
 			'branch' => $sha,
