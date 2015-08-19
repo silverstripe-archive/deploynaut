@@ -572,7 +572,6 @@ class Pipeline extends DataObject implements PipelineData {
 	/**
 	 * Mark this Pipeline as completed.
 	 *
-	 * @return void
 	 */
 	public function markComplete() {
 		$this->Status = "Complete";
@@ -753,7 +752,6 @@ class Pipeline extends DataObject implements PipelineData {
 	/**
 	 * Mark this Pipeline as aborted
 	 *
-	 * @return void
 	 */
 	public function markAborted() {
 		$this->Status = 'Aborted';
@@ -1012,7 +1010,6 @@ class Pipeline extends DataObject implements PipelineData {
 	 *
 	 * @param string $message The message to log
 	 * @throws LogicException Thrown if we can't log yet because we don't know what to log to (no db record yet).
-	 * @return void
 	 */
 	public function log($message = "") {
 		$log = $this->getLogger();

@@ -717,7 +717,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * @param SS_HTTPRequest $request
 	 *
-	 * @return SS_HTTPResponse|void
+	 * @return SS_HTTPResponse
 	 * @throws SS_HTTPResponse_Exception
 	 */
 	public function pipeline(SS_HTTPRequest $request) {
@@ -926,7 +926,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 *
 	 * @param SS_HTTPRequest $request
 	 *
-	 * @return SS_HTTPResponse|string|void
+	 * @return SS_HTTPResponse|string
 	 * @throws SS_HTTPResponse_Exception
 	 */
 	public function deploy(SS_HTTPRequest $request) {
@@ -1103,7 +1103,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 *
 	 * @param SS_HTTPRequest $request
 	 *
-	 * @return SS_HTTPResponse|string|void
+	 * @return SS_HTTPResponse|string
 	 * @throws SS_HTTPResponse_Exception
 	 */
 	public function transfer(SS_HTTPRequest $request) {

@@ -9,8 +9,7 @@ interface DeploymentBackend {
 	 * @param string $sha
 	 * @param DeploynautLogFile $log
 	 * @param DNProject $project
-	 * @param type $leaveMaintenancePage
-	 * @return void
+	 * @param bool|type $leaveMaintenancePage
 	 */
 	public function deploy(DNEnvironment $environment, $sha, DeploynautLogFile $log, DNProject $project, $leaveMaintenancePage = false);
 
@@ -20,7 +19,6 @@ interface DeploymentBackend {
 	 *
 	 * @param DNDataTransfer $dataTransfer
 	 * @param DeploynautLogFile $log
-	 * @return void
 	 */
 	public function dataTransfer(DNDataTransfer $dataTransfer, DeploynautLogFile $log);
 
@@ -30,7 +28,6 @@ interface DeploymentBackend {
 	 * @param DNEnvironment $environment
 	 * @param DeploynautLogFile $log
 	 * @param DNProject $project
-	 * @return void
 	 */
 	public function enableMaintenance(DNEnvironment $environment, DeploynautLogFile $log, DNProject $project);
 
@@ -40,7 +37,6 @@ interface DeploymentBackend {
 	 * @param DNEnvironment $environment
 	 * @param DeploynautLogFile $log
 	 * @param DNProject $project
-	 * @return void
 	 */
 	public function disableMaintenance(DNEnvironment $environment, DeploynautLogFile $log, DNProject $project);
 
@@ -50,7 +46,6 @@ interface DeploymentBackend {
 	 * @param DNEnvironment $environment
 	 * @param DeploynautLogFile $log
 	 * @param DNProject $project
-	 * @return void
 	 */
 	public function ping(DNEnvironment $environment, DeploynautLogFile $log, DNProject $project);
 

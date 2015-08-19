@@ -668,7 +668,6 @@ class DNProject extends DataObject {
 	 *
 	 * @param FieldList $fields
 	 * @param GridField $environments
-	 * @return void
 	 */
 	protected function setEnvironmentFields(&$fields, $environments) {
 		if(!$environments) {
