@@ -156,7 +156,7 @@ class DNReferenceList extends ArrayList {
 	 * @param string $hash
 	 */
 	public function byName($hash) {
-		if($this->loaded == false) {
+		if($this->loaded === false) {
 			$this->items = $this->getReferences();
 			$this->loaded = true;
 		}

@@ -11,8 +11,20 @@ class DemoDeploymentBackend extends Object implements DeploymentBackend {
 
 	/**
 	 * Deploy the given build to the given environment
+	 *
+	 * @param DNEnvironment $environment
+	 * @param string $sha
+	 * @param DeploynautLogFile $log
+	 * @param DNProject $project
+	 * @param bool $leaveMaintenancePage
 	 */
-	public function deploy(DNEnvironment $environment, $sha, DeploynautLogFile $log, DNProject $project, $leaveMaintenancePage = false) {
+	public function deploy(
+		DNEnvironment $environment,
+		$sha,
+		DeploynautLogFile $log,
+		DNProject $project,
+		$leaveMaintenancePage = false
+	) {
 		$this->extend('deployStart', $environment, $sha, $log, $project);
 
 		$file = sprintf('%s/%s.deploy-history.txt', DEPLOYNAUT_LOG_PATH, $environment->getFullName());

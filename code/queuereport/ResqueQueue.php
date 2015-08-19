@@ -64,9 +64,12 @@ class ResqueQueue extends ViewableData {
 		foreach($resqueJobs as $idx => $job) {
 			$stdClass = json_decode($job);
 			if($stdClass->class === 'CapistranoDeploy' || $stdClass->class === 'DeployJob') {
+				$value = $stdClass->args[0]->projectName
+					. ':' . $stdClass->args[0]->environment
+					. ' - ' . $stdClass->args[0]->sha;
 				$jobs->push(new ResqueJob(array(
 					'Name' => $stdClass->class,
-					'Value' => $stdClass->args[0]->projectName . ':' . $stdClass->args[0]->environment . ' - ' . $stdClass->args[0]->sha,
+					'Value' => $value,
 				)));
 			} else {
 				$jobs->push(new ResqueJob(array(
