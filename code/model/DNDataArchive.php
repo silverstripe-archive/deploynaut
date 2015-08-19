@@ -261,7 +261,7 @@ class DNDataArchive extends DataObject {
 	 * Whether a {@link Member} can delete this archive from staging area.
 	 *
 	 * @param Member|null $member The {@link Member} object to test against.
-	 * @return true if $member (or the currently logged in member if null) can delete this archive
+	 * @return boolean if $member (or the currently logged in member if null) can delete this archive
 	 */
 	public function canDelete($member = null) {
 		return $this->Environment()->canDeleteArchive($member);

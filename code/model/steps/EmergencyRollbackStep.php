@@ -133,7 +133,9 @@ class EmergencyRollbackStep extends LongRunningPipelineStep {
 	 */
 	public function beginRollbackWindow() {
 		$this->Status = 'Started';
-		if(!$this->Started) $this->Started = SS_Datetime::now()->Rfc2822();
+		if(!$this->Started) {
+			$this->Started = SS_Datetime::now()->Rfc2822();
+		}
 		$this->log(_t('EmergencyRollbackStep.BEGINROLLBACKWINDOW',
 			"{$this->Title} is beginning a rollback window..."));
 		$this->write();

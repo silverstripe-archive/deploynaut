@@ -302,7 +302,7 @@ class DNEnvironment extends DataObject {
 	 * This can be used to determine if there is a currently running pipeline (there can only be one running per
 	 * {@link DNEnvironment} at once), as well as getting the current pipeline to be shown in templates.
 	 *
-	 * @return Pipeline|null The currently running pipeline, or null if there isn't any.
+	 * @return DataObject|null The currently running pipeline, or null if there isn't any.
 	 */
 	public function CurrentPipeline() {
 		return $this->Pipelines()->filter('Status', array('Running', 'Rollback'))->first();
