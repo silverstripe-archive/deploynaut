@@ -139,7 +139,9 @@ class DNDeployment extends DataObject {
 		if($repo) {
 			try {
 				return $repo->getCommit($this->SHA);
-			} catch(Gitonomy\Git\Exception\ReferenceNotFoundException $ex) { }
+			} catch(Gitonomy\Git\Exception\ReferenceNotFoundException $ex) {
+				return null;
+			}
 		}
 
 		return null;
