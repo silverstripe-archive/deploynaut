@@ -10,6 +10,8 @@ abstract class DeployForm_ValidatorBase extends Validator {
 
 	/**
 	 * @param string $fieldName
+	 * @param string $message
+	 * @param string $messageType
 	 */
 	public function validationError($fieldName, $message, $messageType = '') {
 		// Just make any error use the form message
@@ -173,7 +175,7 @@ class DeployForm extends Form {
 	 * Construct fields to select any commit
 	 *
 	 * @param DNProject $project
-	 * @param DataList $pipelineCommits Optional list of pipeline-filtered commits to include
+	 * @param DataList|null $pipelineCommits Optional list of pipeline-filtered commits to include
 	 * @return FormField
 	 */
 	protected function buildCommitSelector($project, $pipelineCommits = null) {

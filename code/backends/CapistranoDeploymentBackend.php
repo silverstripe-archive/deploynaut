@@ -168,7 +168,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	 * @param string $action Capistrano action to be executed
 	 * @param string $roles Defining a server role is required to target only the required servers.
 	 * @param DNEnvironment $environment
-	 * @param array $args Additional arguments for process
+	 * @param array<string>|null $args Additional arguments for process
 	 * @param DeploynautLogFile $log
 	 * @return \Symfony\Component\Process\Process
 	 */

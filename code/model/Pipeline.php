@@ -353,7 +353,7 @@ class Pipeline extends DataObject implements PipelineData {
 	/**
 	 * Cached of config merged with defaults
 	 *
-	 * @var array
+	 * @var array|null
 	 */
 	protected $mergedConfig;
 
@@ -363,6 +363,7 @@ class Pipeline extends DataObject implements PipelineData {
 	 * it'll read the YAML file directly and return that instead.
 	 *
 	 * @return array
+	 * @throws Exception
 	 */
 	public function getConfigData() {
 		// Lazy load if necessary

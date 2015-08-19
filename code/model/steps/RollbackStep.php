@@ -18,23 +18,38 @@
  * @property string $Title
  *
  * @method DNDeployment RollbackDeployment() The current rollback deployment
+ * @property int $RollbackDeploymentID
+ * @method DNDataTransfer RollbackDatabase()
+ * @property int RollbackDatabaseID
  */
 class RollbackStep extends LongRunningPipelineStep {
 
+	/**
+	 * @var array
+	 */
 	private static $db = array(
 		'Doing' => "Enum('Deployment,Snapshot,Queued', 'Queued')"
 	);
 
+	/**
+	 * @var array
+	 */
 	private static $has_one = array(
 		'RollbackDeployment' => 'DNDeployment',
 		'RollbackDatabase' => 'DNDataTransfer'
 	);
 
+	/**
+	 * @return string
+	 */
 	public function getTitle() {
 		// Make sure the title includes the subtask
 		return parent::getTitle() . ":{$this->Doing}";
 	}
 
+	/**
+	 * @return bool|null
+	 */
 	public function start() {
 		parent::start();
 

@@ -68,7 +68,7 @@ class DNGitFetch extends DataObject {
 
 	/**
 	 *
-	 * @param Member $member
+	 * @param Member|null $member
 	 * @return bool
 	 */
 	public function canView($member = null) {

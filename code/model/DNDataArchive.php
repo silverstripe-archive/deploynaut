@@ -284,10 +284,11 @@ class DNDataArchive extends DataObject {
 		if(!$member) {
 			$member = Member::currentUser();
 		}
+
+		// Must be logged in to check permissions
 		if(!$member) {
 			return false;
 		}
-		// Must be logged in to check permissions
 
 		// Admin can always move.
 		if(Permission::checkMember($member, 'ADMIN')) {
@@ -466,7 +467,7 @@ class DNDataArchive extends DataObject {
 	 * For example, if the user uploaded an sspak containing just the db, but declared in the form
 	 * that it contained db+assets, then the archive is not valid.
 	 *
-	 * @param string $mode "db", "assets", or "all". This is the content we're checking for. Default to the archive setting
+	 * @param string|null $mode "db", "assets", or "all". This is the content we're checking for. Default to the archive setting
 	 * @return ValidationResult
 	 */
 	public function validateArchiveContents($mode = null) {

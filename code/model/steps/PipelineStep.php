@@ -60,7 +60,7 @@ class PipelineStep extends DataObject implements PipelineData {
 	/**
 	 * Cached of config merged with defaults
 	 *
-	 * @var array
+	 * @var array|null
 	 */
 	protected $mergedConfig;
 

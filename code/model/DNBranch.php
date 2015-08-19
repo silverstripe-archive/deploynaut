@@ -31,7 +31,7 @@ class DNBranch extends ViewableData {
 	);
 
 	/**
-	 * @var string
+	 * @var SS_Datetime
 	 */
 	protected $_lastUpdatedCache = '';
 
@@ -94,10 +94,10 @@ class DNBranch extends ViewableData {
 		// deploynaut user has their own timezone
 		$created->setTimezone(new DateTimeZone(date_default_timezone_get()));
 
-		$d = new SS_Datetime();
-		$d->setValue($created->format('Y-m-d H:i:s'));
-		$this->_lastUpdatedCache = $d;
-		return $d;
+		$date = new SS_Datetime();
+		$date->setValue($created->format('Y-m-d H:i:s'));
+		$this->_lastUpdatedCache = $date;
+		return $date;
 	}
 
 	/**

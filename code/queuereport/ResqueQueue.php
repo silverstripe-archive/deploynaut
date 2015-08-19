@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Class ResqueQueue
+ *
+ * Used in the Resque report admin
+ *
+ * @property string $Name
+ * @property int $Size
+ */
 class ResqueQueue extends ViewableData {
 
 	/**

@@ -46,6 +46,7 @@
  * </code>
  *
  * @method Member Responder() Member who has given an approval for this request
+ * @property int $ResponderID
  * @property string $Approval
  * @property int $NotifiedGroup
  * @package deploynaut
@@ -67,6 +68,9 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 	const ROLE_REQUESTER = 'Requester';
 	const ROLE_RECIPIENT = 'Recipient';
 
+	/**
+	 * @var array
+	 */
 	private static $db = array(
 		// A finished step is approved and a failed step is rejected.
 		// Aborted confirmation is left as None
@@ -78,11 +82,17 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 		'NotifiedGroup' => 'Int'
 	);
 
+	/**
+	 * @var array
+	 */
 	private static $defaults = array(
 		'Approval' => 'None',
 		'NotifiedGroup' => 0
 	);
 
+	/**
+	 * @var array
+	 */
 	private static $has_one = array(
 		'Responder' => 'Member'
 	);
@@ -157,7 +167,7 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 	/**
 	 * Can the current user approve this pipeline?
 	 *
-	 * @param Member $member
+	 * @param Member|null $member
 	 * @return boolean
 	 */
 	public function canApprove($member = null) {
