@@ -85,15 +85,31 @@
  *
  * @see docs/en/pipelines.md for further information
  *
- * @method DNEnvironment Environment()
- * @method Member Author()
- * @method PipelineStep CurrentStep()
- * @method DataList Steps()
+ *
  * @property string $Status
  * @property string $Config
  * @property string $SHA
  * @property bool $DryRun
  * @property string $LastMessageSent
+ *
+ * @method Member Author()
+ * @property int AuthorID
+ * @method DNEnvironment Environment()
+ * @property int EnvironmentID
+ * @method PipelineStep CurrentStep()
+ * @property int CurrentStepID
+ * @method DNDataTransfer PreviousSnapshot()
+ * @property int PreviousSnapshotID
+ * @method DNDeployment PreviousDeployment()
+ * @property int PreviousDeploymentID
+ * @method DNDeployment CurrentDeployment()
+ * @property int CurrentDeploymentID
+ * @method PipelineStep RollbackStep1()
+ * @property int RollbackStep1ID
+ * @method PipelineStep RollbackStep2()
+ * @property int RollbackStep2ID
+ *
+ * @method HasManyList Steps()
  */
 class Pipeline extends DataObject implements PipelineData {
 
@@ -289,6 +305,9 @@ class Pipeline extends DataObject implements PipelineData {
 		if(!$this->isActive()) {
 			return null;
 		}
+
+		$logs = array();
+
 		$logs[] = array(
 			'ButtonText' => 'Pipeline Log',
 			'Link' => $this->Link()
@@ -553,7 +572,6 @@ class Pipeline extends DataObject implements PipelineData {
 	/**
 	 * Mark this Pipeline as completed.
 	 *
-	 * @return void
 	 */
 	public function markComplete() {
 		$this->Status = "Complete";
@@ -734,7 +752,6 @@ class Pipeline extends DataObject implements PipelineData {
 	/**
 	 * Mark this Pipeline as aborted
 	 *
-	 * @return void
 	 */
 	public function markAborted() {
 		$this->Status = 'Aborted';
@@ -993,7 +1010,6 @@ class Pipeline extends DataObject implements PipelineData {
 	 *
 	 * @param string $message The message to log
 	 * @throws LogicException Thrown if we can't log yet because we don't know what to log to (no db record yet).
-	 * @return void
 	 */
 	public function log($message = "") {
 		$log = $this->getLogger();
@@ -1039,18 +1055,22 @@ class Pipeline extends DataObject implements PipelineData {
 		}
 
 		$environment = $this->Environment();
-		$project = $this->Environment()->Project();
 		$filename = sprintf('%s.pipeline.%d.log', $environment->getFullName('.'), $this->ID);
 
 		return Injector::inst()->createWithArgs('DeploynautLogFile', array($filename));
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function getDryRun() {
 		return $this->getField('DryRun');
 	}
 
 	/**
-	 * @param string $action
+	 * @param string|null $action
+	 *
+	 * @return String
 	 */
 	public function Link($action = null) {
 		return Controller::join_links($this->Environment()->Link(), 'pipeline', $this->ID, $action);
@@ -1059,21 +1079,30 @@ class Pipeline extends DataObject implements PipelineData {
 	/**
 	 * Link to an action on the current step
 	 *
-	 * @param string $action
+	 * @param string|null $action
 	 * @return string
 	 */
 	public function StepLink($action = null) {
 		return Controller::join_links($this->Link('step'), $action);
 	}
 
+	/**
+	 * @return string
+	 */
 	public function AbortLink() {
 		return $this->Link('abort');
 	}
 
+	/**
+	 * @return string
+	 */
 	public function LogLink() {
 		return $this->Link('log');
 	}
 
+	/**
+	 * @return string
+	 */
 	public function LogContent() {
 		if($this->exists() && $this->Environment()) {
 			$logger = $this->getLogger();

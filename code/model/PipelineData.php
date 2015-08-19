@@ -13,7 +13,6 @@ interface PipelineData {
 	 * Log message
 	 *
 	 * @param string $message The message to log
-	 * @return void
 	 */
 	public function log($message);
 }

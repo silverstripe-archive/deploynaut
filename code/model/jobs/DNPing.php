@@ -1,6 +1,13 @@
 <?php
 /**
  * This class will queue a ping job and also proxy to the log file of that output
+ *
+ * @property string $ResqueToken
+ *
+ * @method DNEnvironment Environment()
+ * @property int EnvironmentID
+ * @method Member Deployer()
+ * @property int DeployerID
  */
 class DNPing extends DataObject {
 
@@ -39,7 +46,7 @@ class DNPing extends DataObject {
 
 	/**
 	 *
-	 * @param Member $member
+	 * @param Member|null $member
 	 * @return bool
 	 */
 	public function canView($member = null) {

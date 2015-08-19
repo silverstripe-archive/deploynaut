@@ -9,7 +9,7 @@ interface DeploymentBackend {
 	 * @param string $sha
 	 * @param DeploynautLogFile $log
 	 * @param DNProject $project
-	 * @param type $leaveMaintenancePage
+	 * @param bool|type $leaveMaintenancePage
 	 */
 	public function deploy(DNEnvironment $environment, $sha, DeploynautLogFile $log, DNProject $project, $leaveMaintenancePage = false);
 

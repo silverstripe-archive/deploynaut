@@ -4,6 +4,12 @@
  * DNProject represents a project that relates to a group of target
  * environments.
  *
+ * @property string Name
+ * @property string CVSPath
+ * @property int DiskQuotaMB
+ *
+ * @method HasManyList Environments()
+ * @method ManyManyList Viewers()
  */
 class DNProject extends DataObject {
 
@@ -226,41 +232,68 @@ class DNProject extends DataObject {
 	/**
 	 * Restrict access to viewing this project
 	 *
-	 * @param Member $member
+	 * @param Member|null $member
 	 * @return boolean
 	 */
 	public function canView($member = null) {
-		if(!$member) $member = Member::currentUser();
+		if(!$member) {
+			$member = Member::currentUser();
+		}
 
-		if(Permission::checkMember($member, 'ADMIN')) return true;
+		if(Permission::checkMember($member, 'ADMIN')) {
+			return true;
+		}
 
 		return $member->inGroups($this->Viewers());
 	}
 
+	/**
+	 * @param Member|null $member
+	 *
+	 * @return bool
+	 */
 	public function canRestore($member = null) {
 		return (bool)$this->Environments()->filterByCallback(function($env) use($member) {
 			return $env->canRestore($member);
 		})->Count();
 	}
 
+	/**
+	 * @param Member|null $member
+	 *
+	 * @return bool
+	 */
 	public function canBackup($member = null) {
 		return (bool)$this->Environments()->filterByCallback(function($env) use($member) {
 			return $env->canBackup($member);
 		})->Count();
 	}
 
+	/**
+	 * @param Member|null $member
+	 *
+	 * @return bool
+	 */
 	public function canUploadArchive($member = null) {
 		return (bool)$this->Environments()->filterByCallback(function($env) use($member) {
 			return $env->canUploadArchive($member);
 		})->Count();
 	}
 
+	/**
+	 * @param Member|null $member
+	 *
+	 * @return bool
+	 */
 	public function canDownloadArchive($member = null) {
 		return (bool)$this->Environments()->filterByCallback(function($env) use($member) {
 			return $env->canDownloadArchive($member);
 		})->Count();
 	}
 
+	/**
+	 * @return DataList
+	 */
 	public function DataArchives() {
 		$envIds = $this->Environments()->column('ID');
 		return DNDataArchive::get()->filter('EnvironmentID', $envIds);
@@ -353,7 +386,7 @@ class DNProject extends DataObject {
 		if(!$this->repoExists()) {
 			return false;
 		}
-		return new Gitonomy\Git\Repository($this->LocalCVSPath);
+		return new Gitonomy\Git\Repository($this->getLocalCVSPath());
 	}
 
 	/**
@@ -427,11 +460,15 @@ class DNProject extends DataObject {
 		$fields->fieldByName("Root")->removeByName("Environments");
 		$fields->fieldByName("Root")->removeByName("LocalCVSPath");
 
-		$fields->dataFieldByName('DiskQuotaMB')->setDescription('This is the maximum amount of disk space (in megabytes) that all environments within this project can use for stored snapshots');
+		$diskQuotaDesc = 'This is the maximum amount of disk space (in megabytes) that all environments within this '
+			. 'project can use for stored snapshots';
+		$fields->dataFieldByName('DiskQuotaMB')->setDescription($diskQuotaDesc);
 
+		$projectNameDesc = 'Changing the name will <strong>reset</strong> the deploy configuration and avoid using non'
+			. 'alphanumeric characters';
 		$fields->fieldByName('Root.Main.Name')
 			->setTitle('Project name')
-			->setDescription('Changing the name will <strong>reset</strong> the deploy configuration and avoid using non alphanumeric characters');
+			->setDescription($projectNameDesc);
 
 		$fields->fieldByName('Root.Main.CVSPath')
 			->setTitle('Git repository')
@@ -599,7 +636,7 @@ class DNProject extends DataObject {
 	 * @return string|null
 	 */
 	public function getPrivateKeyPath() {
-		if($keyDir = $this->getKeyDir()) {
+		if($this->getKeyDir()) {
 			$filter = FileNameFilter::create();
 			$name = $filter->filter($this->Name);
 
@@ -616,7 +653,9 @@ class DNProject extends DataObject {
 	 */
 	public function getKeyDir() {
 		$keyDir = $this->DNData()->getKeyDir();
-		if(!$keyDir) return null;
+		if(!$keyDir) {
+			return null;
+		}
 
 		$filter = FileNameFilter::create();
 		$name = $filter->filter($this->Name);
@@ -628,8 +667,7 @@ class DNProject extends DataObject {
 	 * Setup a gridfield for the environment configs
 	 *
 	 * @param FieldList $fields
-	 * @param FormField $environments
-	 * @return void
+	 * @param GridField $environments
 	 */
 	protected function setEnvironmentFields(&$fields, $environments) {
 		if(!$environments) {
