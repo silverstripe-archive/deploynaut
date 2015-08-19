@@ -235,7 +235,7 @@ class DNDataTransfer extends DataObject {
 	}
 
 	public function getDescription() {
-		$envName = $this->Environment()->FullName;
+		$envName = $this->Environment()->getFullName();
 		if($this->Direction == 'get') {
 			if($this->Origin == 'ManualUpload') {
 				$description = 'Manual upload of ' . $this->getModeNice() . ' to ' . $envName;
