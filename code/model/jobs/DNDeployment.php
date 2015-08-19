@@ -2,6 +2,16 @@
 
 /**
  * Class representing a single deplyoment (passed or failed) at a time to a particular environment
+ *
+ * @property string $SHA
+ * @property string $ResqueToken
+ * @property string $Status
+ * @property bool $LeaveMaintenacePage
+ *
+ * @method DNEnvironment Environment()
+ * @property int EnvironmentID
+ * @method Member Deployer()
+ * @property int DeployerID
  */
 class DNDeployment extends DataObject {
 

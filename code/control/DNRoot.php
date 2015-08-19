@@ -808,7 +808,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * Provide a list of all projects.
 	 *
-	 * @return ArrayList|DataList|HasManyList|ManyManyList
+	 * @return []DNProject
 	 */
 	public function DNProjectList() {
 		$memberId = Member::currentUserID();
@@ -1041,7 +1041,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			$this,
 			'DataTransferForm',
 			new FieldList(
-				new HiddenField('Direction', false, 'get'),
+				new HiddenField('Direction', null, 'get'),
 				new DropdownField('EnvironmentID', 'Environment', $envs->map()),
 				new DropdownField('Mode', 'Transfer', DNDataArchive::get_mode_map())
 			),
@@ -1238,8 +1238,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			$this,
 			'DataTransferRestoreForm',
 			new FieldList(
-				new HiddenField('DataArchiveID', false, $dataArchive->ID),
-				new HiddenField('Direction', false, 'push'),
+				new HiddenField('DataArchiveID', null, $dataArchive->ID),
+				new HiddenField('Direction', null, 'push'),
 				new LiteralField('Warning', $alertMessage),
 				new DropdownField('EnvironmentID', 'Environment', $envs->map()),
 				new DropdownField('Mode', 'Transfer', $modesMap),
@@ -1561,14 +1561,14 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 	/**
 	 *
-	 * @param DNProject $project
+	 * @param DNProject|null $project
 	 * @return DNEnvironment|null
 	 */
-	public function getCurrentEnvironment($project = null) {
-		if(!$this->getRequest()->latestParam('Environment')) {
+	public function getCurrentEnvironment(DNProject $project = null) {
+		if($this->getRequest()->latestParam('Environment') === null) {
 			return null;
 		}
-		if(!$project) {
+		if($project === null) {
 			$project = $this->getCurrentProject();
 		}
 		return $project->DNEnvironmentList()->filter('Name', $this->getRequest()->latestParam('Environment'))->First();
@@ -1603,11 +1603,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 *
 	 * TODO To be replaced with a method that just returns the list of archives this {@link Member} has access to.
 	 *
-	 * @param Member $member The {@link Member} to check (or null to check the currently logged in Member)
+	 * @param Member|null $member The {@link Member} to check (or null to check the currently logged in Member)
 	 * @return boolean|null true if $member has access to upload or download to at least one {@link DNEnvironment}.
 	 */
 	public function CanViewArchives(Member $member = null) {
-		if(!$member) {
+		if($member === null) {
 			$member = Member::currentUser();
 		}
 

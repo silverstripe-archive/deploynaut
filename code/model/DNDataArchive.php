@@ -44,7 +44,7 @@ use \Symfony\Component\Process\Process;
  * @property File $ArchiveFile
  * @property int $ArchiveFileID
  *
- * @method ManyManyList DNDataTransfer()
+ * @method ManyManyList DataTransfers()
  *
  */
 class DNDataArchive extends DataObject {

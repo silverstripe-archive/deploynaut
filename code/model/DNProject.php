@@ -4,6 +4,12 @@
  * DNProject represents a project that relates to a group of target
  * environments.
  *
+ * @property string Name
+ * @property string CVSPath
+ * @property int DiskQuotaMB
+ *
+ * @method HasManyList Environments()
+ * @method ManyManyList Viewers()
  */
 class DNProject extends DataObject {
 
