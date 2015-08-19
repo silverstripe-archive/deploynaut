@@ -241,7 +241,7 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 		if($this->isTimedOut()) {
 			$days = round($this->MaxDuration / (24.0 * 3600.0), 1);
 			$logMessage = "{$this->Title} took longer than {$this->MaxDuration} seconds ($days days) to be approved "
-			. "and has timed out";
+				. "and has timed out";
 			$this->log($logMessage);
 			$this->markFailed();
 			$this->sendMessage(self::ALERT_TIMEOUT);
