@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Class DNGitFetch
+ *
+ * @property string $ResqueToken
+ *
+ * @method DNProject Project()
+ * @property int $DNProjectID
+ * @method Member Deployer()
+ * @property int $DeployerID
+ *
+ */
 class DNGitFetch extends DataObject {
 
 	/**

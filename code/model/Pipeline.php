@@ -305,6 +305,9 @@ class Pipeline extends DataObject implements PipelineData {
 		if(!$this->isActive()) {
 			return null;
 		}
+
+		$logs = array();
+
 		$logs[] = array(
 			'ButtonText' => 'Pipeline Log',
 			'Link' => $this->Link()
