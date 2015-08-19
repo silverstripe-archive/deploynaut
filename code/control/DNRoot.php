@@ -398,10 +398,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			throw new LogicException('Invalid environment');
 		}
 
-		// Validate mode.
-		if(!in_array($data['Mode'], array('all', 'assets', 'db'))) {
-			throw new LogicException('Invalid mode');
-		}
+		$this->validateSnapshotMode($data['Mode']);
 
 		$dataArchive = DNDataArchive::create(array(
 			'AuthorID' => Member::currentUserID(),
@@ -537,8 +534,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return $this->project404Response();
 		}
 
-		$validEnvs = $project->DNEnvironmentList()
-			->filterByCallback(function($item) {return $item->canUploadArchive();});
+		$validEnvs = $project->DNEnvironmentList()->filterByCallback(function($item) {
+				return $item->canUploadArchive();
+		});
 
 		// Validate $data['EnvironmentID'] by checking against $validEnvs.
 		$environment = $validEnvs->find('ID', $data['EnvironmentID']);
@@ -1031,8 +1029,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function getDataTransferForm(SS_HTTPRequest $request = null) {
 		// Performs canView permission check by limiting visible projects
-		$envs = $this->getCurrentProject()->DNEnvironmentList()
-			->filterByCallback(function($item) {return $item->canBackup();});
+		$envs = $this->getCurrentProject()->DNEnvironmentList()->filterByCallback(function($item) {
+			return $item->canBackup();
+		});
+
 		if(!$envs) {
 			return $this->environment404Response();
 		}
@@ -1093,10 +1093,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			throw new LogicException('Invalid environment');
 		}
 
-		// Validate mode.
-		if(!in_array($data['Mode'], array('all', 'assets', 'db'))) {
-			throw new LogicException('Invalid mode');
-		}
+		$this->validateSnapshotMode($data['Mode']);
+
 
 		// Only 'push' direction is allowed an association with an existing archive.
 		if(
@@ -1214,8 +1212,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
-		$envs = $project->DNEnvironmentList()
-			->filterByCallback(function($item) {return $item->canRestore();});
+		$envs = $project->DNEnvironmentList()->filterByCallback(function($item) {
+			return $item->canRestore();
+		});
 
 		if(!$envs) {
 			return $this->environment404Response();
@@ -1441,7 +1440,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			$this,
 			'MoveForm',
 			new FieldList(
-				new HiddenField('DataArchiveID', false, $dataArchive->ID),
+				new HiddenField('DataArchiveID', null, $dataArchive->ID),
 				new LiteralField('Warning', $warningMessage),
 				new DropdownField('EnvironmentID', 'Environment', $envs->map())
 			),
@@ -1471,8 +1470,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		if(!$project) {
 			return $this->project404Response();
 		}
-
-		$dataArchive = null;
 
 		/** @var DNDataArchive $dataArchive */
 		$dataArchive = DNDataArchive::get()->byId($data['DataArchiveID']);
@@ -1570,6 +1567,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 		if($project === null) {
 			$project = $this->getCurrentProject();
+		}
+		// project can still be null
+		if($project === null) {
+			return null;
 		}
 		return $project->DNEnvironmentList()->filter('Name', $this->getRequest()->latestParam('Environment'))->First();
 	}
@@ -1749,6 +1750,17 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'status' => $status,
 			'content' => $content,
 		));
+	}
+
+	/**
+	 * Validate the snapshot mode
+	 *
+	 * @param string $mode
+	 */
+	protected function validateSnapshotMode($mode) {
+		if(!in_array($mode, array('all', 'assets', 'db'))) {
+			throw new LogicException('Invalid mode');
+		}
 	}
 
 }
