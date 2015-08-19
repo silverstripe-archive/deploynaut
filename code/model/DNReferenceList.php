@@ -59,7 +59,7 @@ class DNReferenceList extends ArrayList {
 	 */
 	protected function getReferences() {
 		try {
-			$repository = new Gitonomy\Git\Repository($this->project->LocalCVSPath);
+			$repository = new Gitonomy\Git\Repository($this->project->getLocalCVSPath());
 		} catch(Exception $e) {
 			return array();
 		}
@@ -122,7 +122,7 @@ class DNReferenceList extends ArrayList {
 		// The item might not be in the list because of the limit, try to find
 		// in an older version and add it to the list.
 		if(!isset($this->items[$hash])) {
-			$repository = new Gitonomy\Git\Repository($this->project->LocalCVSPath);
+			$repository = new Gitonomy\Git\Repository($this->project->getLocalCVSPath());
 			$commit = new Gitonomy\Git\Commit($repository, $hash);
 			$this->items[$hash] = DNCommit::create($commit, $this->project, $this->data);
 		};

@@ -176,7 +176,7 @@ class DNDeployment extends DataObject {
 		$args = array(
 			'environmentName' => $environment->Name,
 			'sha' => $this->SHA,
-			'repository' => $project->LocalCVSPath,
+			'repository' => $project->getLocalCVSPath(),
 			'logfile' => $this->logfile(),
 			'projectName' => $project->Name,
 			'env' => $project->getProcessEnv(),

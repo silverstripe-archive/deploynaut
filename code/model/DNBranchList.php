@@ -36,7 +36,7 @@ class DNBranchList extends ArrayList {
 		$firstBranch = null;
 
 		try {
-			$repository = new Gitonomy\Git\Repository($this->project->LocalCVSPath);
+			$repository = new Gitonomy\Git\Repository($this->project->getLocalCVSPath());
 		} catch(Exception $e) {
 			return $branches;
 		}

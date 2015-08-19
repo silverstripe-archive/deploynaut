@@ -359,7 +359,7 @@ class DNProject extends DataObject {
 		if(!$this->repoExists()) {
 			return false;
 		}
-		return new Gitonomy\Git\Repository($this->LocalCVSPath);
+		return new Gitonomy\Git\Repository($this->getLocalCVSPath());
 	}
 
 	/**
