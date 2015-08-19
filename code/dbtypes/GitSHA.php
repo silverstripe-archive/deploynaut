@@ -2,15 +2,26 @@
 
 class GitSHA extends Varchar {
 
-	function __construct($name = null, $options = array()) {
-		parent::__construct($name, 255, $options); // Size should probably be 40, but to avoid schema change leave for now
+	/**
+	 * @param string|null $name
+	 * @param array|null $options
+	 */
+	public function __construct($name = null, $options = array()) {
+		// Size should probably be 40, but to avoid schema change leave for now
+		parent::__construct($name, 255, $options);
 	}
 
-	function FullHash() {
+	/**
+	 * @return string
+	 */
+	public function FullHash() {
 		return $this->value;
 	}
 
-	function ShortHash() {
+	/**
+	 * @return string
+	 */
+	public function ShortHash() {
 		return substr($this->value, 0, 7);
 	}
 }
