@@ -18,6 +18,7 @@ class DataArchiveFileField extends FileField {
 
 		$dataArchive = $record;
 
+		/** @var DNDataTransfer $dataTransfer */
 		$dataTransfer = $dataArchive->DataTransfers()->First();
 		if(!$dataTransfer) {
 			throw new LogicException('No transfer found');
