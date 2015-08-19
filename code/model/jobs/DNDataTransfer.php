@@ -152,7 +152,6 @@ class DNDataTransfer extends DataObject {
 				),
 			)
 		);
-		$linkField->dontEscape = true;
 		$fields = $fields->makeReadonly();
 
 		return $fields;
