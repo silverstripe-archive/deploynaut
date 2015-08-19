@@ -19,6 +19,8 @@
  *
  * @method Pipeline Pipeline()
  *
+ * @property string $Title
+ *
  * @package deploynaut
  * @subpackage pipeline
  */

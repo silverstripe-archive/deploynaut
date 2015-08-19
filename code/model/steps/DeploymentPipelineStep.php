@@ -14,6 +14,10 @@
  *
  * {@see DNRoot::doDeploy()} for non-pipeline equivalent
  *
+ * @property string $Doing
+ *
+ * @property string $Title
+ *
  * @package deploynaut
  * @subpackage pipeline
  */

@@ -14,6 +14,7 @@
  * @property bool $Usage
  *
  * @method DNProject Project()
+ * @property int $ProjectID
  *
  * @method HasManyList Deployments()
  * @method HasManyList DataArchives()
@@ -481,7 +482,7 @@ class DNEnvironment extends DataObject {
 	/**
 	 * Determine if the specified user can abort any pipelines
 	 *
-	 * @param type $member
+	 * @param Member|null $member
 	 * @return boolean
 	 */
 	public function canAbort($member = null) {
@@ -503,7 +504,7 @@ class DNEnvironment extends DataObject {
 	/**
 	 * Determine if the specified user can approve any pipelines
 	 *
-	 * @param type $member
+	 * @param Member|null $member
 	 * @return boolean
 	 */
 	public function canApprove($member = null) {
@@ -973,7 +974,8 @@ PHP
 		// Add actions
 		$action = new FormAction('check', 'Check Connection');
 		$action->setUseButtonTag(true);
-		$action->setAttribute('data-url', Director::absoluteBaseURL() . 'naut/api/' . $this->Project()->Name . '/' . $this->Name . '/ping');
+		$dataURL = Director::absoluteBaseURL() . 'naut/api/' . $this->Project()->Name . '/' . $this->Name . '/ping';
+		$action->setAttribute('data-url', $dataURL);
 		$fields->insertBefore($action, 'Name');
 
 		// Allow extensions

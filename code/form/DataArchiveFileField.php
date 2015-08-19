@@ -1,5 +1,8 @@
 <?php
+
 /**
+ * Class DataArchiveFileField
+ *
  * Overwrite field to save into a {@link DataArchive}, using generateFilepath().
  * This mainly just works around the limitation
  * of FileField to set the folder path *before* uploading the file,

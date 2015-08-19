@@ -35,13 +35,13 @@ use \Symfony\Component\Process\Process;
  * @property Boolean $IsBackup
  * @property Boolean $IsManualUpload
  *
- * @property Member $Author
+ * @method Member Author()
  * @property int $AuthorID
- * @property DNEnvironment $OriginalEnvironment
+ * @method DNEnvironment OriginalEnvironment()
  * @property int $OriginalEnvironmentID
- * @property DNEnvironment $Environment
+ * @method DNEnvironment Environment()
  * @property int $EnvironmentID
- * @property File $ArchiveFile
+ * @method File ArchiveFile()
  * @property int $ArchiveFileID
  *
  * @method ManyManyList DataTransfers()

@@ -13,7 +13,13 @@
  *     MaxDuration: 3600 # Auto time out after a hour
  * </code>
  *
+ * @property SS_Datetime RolledBack
+ *
+ * @method string Title()
+ *
  * @method Member Responder() Member who has given an approval for this request
+ * @property int ResponderID
+ *
  * @package deploynaut
  * @subpackage pipeline
  */

@@ -232,7 +232,7 @@ class DNProject extends DataObject {
 	/**
 	 * Restrict access to viewing this project
 	 *
-	 * @param Member $member
+	 * @param Member|null $member
 	 * @return boolean
 	 */
 	public function canView($member = null) {
@@ -247,30 +247,53 @@ class DNProject extends DataObject {
 		return $member->inGroups($this->Viewers());
 	}
 
+	/**
+	 * @param Member|null $member
+	 *
+	 * @return bool
+	 */
 	public function canRestore($member = null) {
 		return (bool)$this->Environments()->filterByCallback(function($env) use($member) {
 			return $env->canRestore($member);
 		})->Count();
 	}
 
+	/**
+	 * @param Member|null $member
+	 *
+	 * @return bool
+	 */
 	public function canBackup($member = null) {
 		return (bool)$this->Environments()->filterByCallback(function($env) use($member) {
 			return $env->canBackup($member);
 		})->Count();
 	}
 
+	/**
+	 * @param Member|null $member
+	 *
+	 * @return bool
+	 */
 	public function canUploadArchive($member = null) {
 		return (bool)$this->Environments()->filterByCallback(function($env) use($member) {
 			return $env->canUploadArchive($member);
 		})->Count();
 	}
 
+	/**
+	 * @param Member|null $member
+	 *
+	 * @return bool
+	 */
 	public function canDownloadArchive($member = null) {
 		return (bool)$this->Environments()->filterByCallback(function($env) use($member) {
 			return $env->canDownloadArchive($member);
 		})->Count();
 	}
 
+	/**
+	 * @return DataList
+	 */
 	public function DataArchives() {
 		$envIds = $this->Environments()->column('ID');
 		return DNDataArchive::get()->filter('EnvironmentID', $envIds);
@@ -437,11 +460,15 @@ class DNProject extends DataObject {
 		$fields->fieldByName("Root")->removeByName("Environments");
 		$fields->fieldByName("Root")->removeByName("LocalCVSPath");
 
-		$fields->dataFieldByName('DiskQuotaMB')->setDescription('This is the maximum amount of disk space (in megabytes) that all environments within this project can use for stored snapshots');
+		$diskQuotaDesc = 'This is the maximum amount of disk space (in megabytes) that all environments within this '
+			. 'project can use for stored snapshots';
+		$fields->dataFieldByName('DiskQuotaMB')->setDescription($diskQuotaDesc);
 
+		$projectNameDesc = 'Changing the name will <strong>reset</strong> the deploy configuration and avoid using non'
+			. 'alphanumeric characters';
 		$fields->fieldByName('Root.Main.Name')
 			->setTitle('Project name')
-			->setDescription('Changing the name will <strong>reset</strong> the deploy configuration and avoid using non alphanumeric characters');
+			->setDescription($projectNameDesc);
 
 		$fields->fieldByName('Root.Main.CVSPath')
 			->setTitle('Git repository')
@@ -640,7 +667,7 @@ class DNProject extends DataObject {
 	 * Setup a gridfield for the environment configs
 	 *
 	 * @param FieldList $fields
-	 * @param FormField $environments
+	 * @param GridField $environments
 	 * @return void
 	 */
 	protected function setEnvironmentFields(&$fields, $environments) {
