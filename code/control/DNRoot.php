@@ -778,7 +778,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * Provide a list of all projects.
 	 *
-	 * @return DNProject[]
+	 * @return SS_List
 	 */
 	public function DNProjectList() {
 		$memberId = Member::currentUserID();
