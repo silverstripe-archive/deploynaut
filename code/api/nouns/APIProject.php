@@ -42,7 +42,6 @@ class APIProject extends APINoun {
 			default:
 				return $this->message('API not found', 404);
 		}
-		return $this->httpError(404, '404 - These aren\'t the droids you\'re looking for.');
 	}
 
 	/**

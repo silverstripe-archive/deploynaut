@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Class ResqueJob
+ *
+ * Used in the Resque report admin
+ *
+ */
 class ResqueJob extends ViewableData {
 
 	/**
@@ -14,16 +20,6 @@ class ResqueJob extends ViewableData {
 	 */
 	public function __construct($data = array()) {
 		$this->record = $data;
-	}
-
-	/**
-	 *
-	 * @return \FieldList
-	 */
-	public function getCMSFields() {
-		$fieldList = new FieldList();
-		$fieldList->push(new ReadonlyField('Name', 'Name', $this->Name));
-		return $fieldList;
 	}
 
 	/**

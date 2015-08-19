@@ -39,8 +39,15 @@ class SizeRestrictedPackageCache implements PackageCache {
 	 * @param string $sha The SHA of the commit to be deployed
 	 * @param string $repositoryDir The directory where the repository resides
 	 * @param DeploynautLogFile $log The log to write status output to, including package-generation commands
+	 *
+	 * @return string
 	 */
-	public function getPackageFilename(PackageGenerator $generator, $identifier, $sha, $repositoryDir, DeploynautLogFile $log) {
+	public function getPackageFilename(
+		PackageGenerator $generator,
+		$identifier, $sha,
+		$repositoryDir,
+		DeploynautLogFile $log
+	) {
 		if(!$this->baseDir) {
 			throw new \LogicException("Can't use PackageCache without setting BaseDir");
 		}

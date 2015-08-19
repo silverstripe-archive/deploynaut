@@ -10,6 +10,8 @@ abstract class DeployForm_ValidatorBase extends Validator {
 
 	/**
 	 * @param string $fieldName
+	 * @param string $message
+	 * @param string $messageType
 	 */
 	public function validationError($fieldName, $message, $messageType = '') {
 		// Just make any error use the form message
@@ -173,7 +175,7 @@ class DeployForm extends Form {
 	 * Construct fields to select any commit
 	 *
 	 * @param DNProject $project
-	 * @param DataList $pipelineCommits Optional list of pipeline-filtered commits to include
+	 * @param DataList|null $pipelineCommits Optional list of pipeline-filtered commits to include
 	 * @return FormField
 	 */
 	protected function buildCommitSelector($project, $pipelineCommits = null) {
@@ -182,7 +184,12 @@ class DeployForm extends Form {
 		foreach($project->DNBranchList() as $branch) {
 			$sha = $branch->SHA();
 			$name = $branch->Name();
-			$branches[$sha . '-' . $name] = $name . ' (' . substr($sha, 0, 8) . ', ' . $branch->LastUpdated()->TimeDiff() . ' old)';
+			$branchValue = sprintf("%s (%s, %s old)",
+				$name,
+				substr($sha, 0, 8),
+				$branch->LastUpdated()->TimeDiff()
+			);
+			$branches[$sha . '-' . $name] = $branchValue;
 		}
 
 		// Tags
@@ -190,7 +197,12 @@ class DeployForm extends Form {
 		foreach($project->DNTagList()->setLimit(null) as $tag) {
 			$sha = $tag->SHA();
 			$name = $tag->Name();
-			$tags[$sha . '-' . $tag] = $name . ' (' . substr($sha, 0, 8) . ', ' . $tag->Created()->TimeDiff() . ' old)';
+			$tagValue = sprintf("%s (%s, %s old)",
+				$name,
+				substr($sha, 0, 8),
+				$branch->LastUpdated()->TimeDiff()
+			);
+			$tags[$sha . '-' . $tag] = $tagValue;
 		}
 		$tags = array_reverse($tags);
 
@@ -204,7 +216,11 @@ class DeployForm extends Form {
 					$redeploy[$envName] = array();
 				}
 				if(!isset($redeploy[$envName][$sha])) {
-					$redeploy[$envName][$sha] = substr($sha, 0, 8) . ' (deployed ' . $deploy->obj('LastEdited')->Ago() . ')';
+					$pastValue = sprintf("%s (deployed %s)",
+						substr($sha, 0, 8),
+						$deploy->obj('LastEdited')->Ago()
+					);
+					$redeploy[$envName][$sha] = $pastValue;
 				}
 			}
 		}

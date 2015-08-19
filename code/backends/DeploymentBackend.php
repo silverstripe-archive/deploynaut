@@ -11,7 +11,13 @@ interface DeploymentBackend {
 	 * @param DNProject $project
 	 * @param bool|type $leaveMaintenancePage
 	 */
-	public function deploy(DNEnvironment $environment, $sha, DeploynautLogFile $log, DNProject $project, $leaveMaintenancePage = false);
+	public function deploy(
+		DNEnvironment $environment,
+		$sha,
+		DeploynautLogFile $log,
+		DNProject $project,
+		$leaveMaintenancePage = false
+	);
 
 	/**
 	 * Transfer data from an environment to a local file, or from a local file

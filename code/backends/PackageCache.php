@@ -14,6 +14,11 @@ interface PackageCache {
 	 * @param string $repositoryDir The directory where the repository resides
 	 * @param DeploynautLogFile $log The log to write status output to, including package-generation commands
 	 */
-	public function getPackageFilename(PackageGenerator $generator, $identifier, $sha, $repositoryDir, DeploynautLogFile $log);
-
+	public function getPackageFilename(
+		PackageGenerator $generator,
+		$identifier,
+		$sha,
+		$repositoryDir,
+		DeploynautLogFile $log
+	);
 }

@@ -30,7 +30,7 @@ class CloneGitRepo {
 
 		if(file_exists($path)) {
 			$command = array();
-			if($user) {
+			if(!empty($user)) {
 				$command[] = sprintf('sudo -u %s', $user);
 			}
 			$command[] = sprintf('rm -rf %s', $path);
@@ -56,7 +56,7 @@ class CloneGitRepo {
 		echo "[-] CloneGitRepo starting" . PHP_EOL;
 
 		$command = array();
-		if($user) {
+		if(!empty($user)) {
 			$command[] = sprintf('sudo -u %s', $user);
 		}
 		$command[] = sprintf('git clone --bare -q %s %s', $repo, $path);

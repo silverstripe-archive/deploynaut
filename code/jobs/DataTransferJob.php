@@ -9,6 +9,11 @@
  */
 class DataTransferJob {
 
+	/**
+	 * set by a resque worker
+	 */
+	public $args = array();
+
 	public function setUp() {
 		$this->updateStatus('Started');
 		chdir(BASE_PATH);

@@ -24,15 +24,24 @@
  */
 class TriggerDeployStep extends LongRunningPipelineStep {
 
+	/**
+	 * @var array
+	 */
 	private static $db = array(
 		// if this is deployed set the date it was requested
 		'Deployed' => "SS_Datetime"
 	);
 
+	/**
+	 * @var array
+	 */
 	private static $has_one = array(
 		'Responder' => 'Member'
 	);
 
+	/**
+	 * @return bool
+	 */
 	public function start() {
 		// Just in case this step is being mistakenly restarted
 		if(!empty($this->Deployed)) {
@@ -68,7 +77,7 @@ class TriggerDeployStep extends LongRunningPipelineStep {
 	/**
 	 * Can the current user trigger the deployment for this pipeline?
 	 *
-	 * @param type $member
+	 * @param Member|null $member
 	 * @return boolean
 	 */
 	public function canTriggerDeploy($member = null) {

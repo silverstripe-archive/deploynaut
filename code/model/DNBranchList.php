@@ -50,7 +50,7 @@ class DNBranchList extends ArrayList {
 	}
 
 	/**
-	 * @return array()
+	 * @return array
 	 */
 	protected function getReferences() {
 		$branches = array();

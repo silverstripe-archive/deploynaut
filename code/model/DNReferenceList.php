@@ -130,7 +130,7 @@ class DNReferenceList extends ArrayList {
 		// cache them for look up in byName
 		$builds = array();
 		foreach($limitedLog as $reference) {
-			if($this->blockBranch) {
+			if(!empty($this->blockBranch)) {
 				$branchesIncluding = GitonomyCache::getIncludingBranches($reference);
 				foreach($branchesIncluding as $candidate) {
 					if($candidate->getName() == $this->blockBranch) {
@@ -156,7 +156,7 @@ class DNReferenceList extends ArrayList {
 	 * @param string $hash
 	 */
 	public function byName($hash) {
-		if($this->loaded == false) {
+		if($this->loaded === false) {
 			$this->items = $this->getReferences();
 			$this->loaded = true;
 		}

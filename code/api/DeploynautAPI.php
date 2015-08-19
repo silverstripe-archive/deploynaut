@@ -77,7 +77,7 @@ class DeploynautAPI extends APINoun {
 	public function project(SS_HTTPRequest $request) {
 		$project = $this->getProject();
 		if(!$project) {
-			return new SS_HTTPResponse('Project "' . Convert::raw2xml($request->latestParam('Project')) . '" not found.', 404);
+			return $this->project404Response();
 		}
 		return new APIProject($this, $project);
 	}
@@ -91,14 +91,30 @@ class DeploynautAPI extends APINoun {
 	public function environment(SS_HTTPRequest $request) {
 		$project = $this->getProject();
 		if(!$project) {
-			return new SS_HTTPResponse('Project "' . Convert::raw2xml($request->latestParam('Project')) . '" not found.', 404);
+			return $this->project404Response();
 		}
 
 		$environment = $this->getEnvironment();
 		if(!$environment) {
-			return new SS_HTTPResponse('Environment "' . Convert::raw2xml($request->latestParam('Environment')) . '" not found.', 404);
+			return $this->environment404Response();
 		}
 		return new APIEnvironment($this, $environment);
+	}
+
+	/**
+	 * @return SS_HTTPResponse
+	 */
+	protected function project404Response() {
+		$projectName = Convert::raw2xml($this->getRequest()->latestParam('Project'));
+		return new SS_HTTPResponse('Project "' . $projectName . '" not found.', 404);
+	}
+
+	/**
+	 * @return SS_HTTPResponse
+	 */
+	protected function environment404Response() {
+		$envName = Convert::raw2xml($this->getRequest()->latestParam('Environment'));
+		return new SS_HTTPResponse('Environment "' . $envName . '" not found.', 404);
 	}
 
 	/**

@@ -169,11 +169,14 @@ class DNData extends ViewableData {
 	 * Returns an array of paths
 	 *
 	 * @return array
+	 * @throws Exception
 	 */
 	public function getProjectPaths() {
 		$paths = array();
 		if(!file_exists($this->getEnvironmentDir())) {
-			throw new Exception('The environment directory '.$this->getEnvironmentDir().' doesn\'t exist. Create it first and add some projects to it.');
+			$eMessage = 'The environment directory '.$this->getEnvironmentDir().' doesn\'t exist. Create it '
+			. 'first and add some projects to it.';
+			throw new Exception($eMessage);
 		}
 		foreach(scandir($this->getEnvironmentDir()) as $project) {
 			// Exlcude dot-prefixed directories (.git was getting in the way)

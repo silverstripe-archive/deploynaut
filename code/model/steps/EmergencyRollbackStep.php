@@ -25,15 +25,24 @@
  */
 class EmergencyRollbackStep extends LongRunningPipelineStep {
 
+	/**
+	 * @var array
+	 */
 	private static $db = array(
 		// if this has been rolled back set the date it was requested
 		'RolledBack' => "SS_Datetime"
 	);
 
+	/**
+	 * @var array
+	 */
 	private static $has_one = array(
 		'Responder' => 'Member'
 	);
 
+	/**
+	 * @return bool
+	 */
 	public function start() {
 		// Just in case this step is being mistakenly restarted
 		if(!empty($this->RolledBack)) {
@@ -69,7 +78,7 @@ class EmergencyRollbackStep extends LongRunningPipelineStep {
 	/**
 	 * The user can do an emergency rollback if he could have deployed the code, or if he can abort pipelines.
 	 *
-	 * @param type $member
+	 * @param Member|null $member
 	 * @return boolean
 	 */
 	public function canTriggerRollback($member = null) {

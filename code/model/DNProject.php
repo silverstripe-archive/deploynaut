@@ -454,6 +454,7 @@ class DNProject extends DataObject {
 	public function getCMSFields() {
 		$fields = parent::getCMSFields();
 
+		/** @var GridField $environments */
 		$environments = $fields->dataFieldByName("Environments");
 
 		$fields->fieldByName("Root")->removeByName("Viewers");
@@ -636,11 +637,11 @@ class DNProject extends DataObject {
 	 * @return string|null
 	 */
 	public function getPrivateKeyPath() {
-		if($this->getKeyDir()) {
+		$keyDir = $this->getKeyDir();
+		if(!empty($keyDir)) {
 			$filter = FileNameFilter::create();
 			$name = $filter->filter($this->Name);
-
-			return $this->getKeyDir() . '/' . $name;
+			return $keyDir . '/' . $name;
 		}
 		return null;
 	}

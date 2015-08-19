@@ -45,8 +45,10 @@ abstract class PackageGenerator {
 	 * @param string $sha The SHA of the commit to be deployed
 	 * @param string $repositoryDir The directory where the repository resides
 	 * @param DeploynautLogFile $log The log to write status output to, including package-generation commands
+	 *
+	 * @return string
 	 */
-	function getPackageFilename($identifier, $sha, $repositoryDir, DeploynautLogFile $log) {
+	public function getPackageFilename($identifier, $sha, $repositoryDir, DeploynautLogFile $log) {
 		// Fetch through the cache
 		if($this->cache) {
 			$identifier .= '-' . get_class($this) . '-' . $this->getIdentifier();

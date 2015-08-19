@@ -152,7 +152,6 @@ class DNDataTransfer extends DataObject {
 				),
 			)
 		);
-		$linkField->dontEscape = true;
 		$fields = $fields->makeReadonly();
 
 		return $fields;
@@ -199,7 +198,7 @@ class DNDataTransfer extends DataObject {
 
 	/**
 	 *
-	 * @param Member $member
+	 * @param Member|null $member
 	 * @return bool
 	 */
 	public function canView($member = null) {
