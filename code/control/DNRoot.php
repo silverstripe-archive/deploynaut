@@ -244,7 +244,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * Action
 	 *
 	 * @param  SS_HTTPRequest $request
-	 * @return string - HTML
+	 * @return SS_HTTPResponse - HTML
 	 */
 	public function snapshots(SS_HTTPRequest $request) {
 		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
@@ -357,7 +357,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$form->disableSecurityToken();
 		$form->addExtraClass('fields-wide');
 		// Tweak the action so it plays well with our fake URL structure.
-		$form->setFormAction($project->Link().'/UploadSnapshotForm');
+		$form->setFormAction($project->Link() . '/UploadSnapshotForm');
 
 		return $form;
 	}
@@ -505,7 +505,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$form->disableSecurityToken();
 		$form->addExtraClass('fields-wide');
 		// Tweak the action so it plays well with our fake URL structure.
-		$form->setFormAction($project->Link().'/PostSnapshotForm');
+		$form->setFormAction($project->Link() . '/PostSnapshotForm');
 
 		return $form;
 	}
@@ -551,7 +551,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * Action
 	 *
 	 * @param SS_HTTPRequest $request
-	 * @return string - HTML
+	 * @return SS_HTTPResponse - HTML
 	 */
 	public function snapshotslog(SS_HTTPRequest $request) {
 		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
@@ -880,7 +880,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return $body;
 		}
 
-		$form->setFormAction($this->getRequest()->getURL().'/DeployForm');
+		$form->setFormAction($this->getRequest()->getURL() . '/DeployForm');
 		return $form;
 	}
 
@@ -1021,7 +1021,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				FormAction::create('doDataTransfer', 'Create')->addExtraClass('btn')
 			)
 		);
-		$form->setFormAction($this->getRequest()->getURL().'/DataTransferForm');
+		$form->setFormAction($this->getRequest()->getURL() . '/DataTransferForm');
 
 		return $form;
 	}
@@ -1741,7 +1741,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 *
 	 * @return SS_HTTPResponse
 	 */
-	protected function getCustomisedViewSection($sectionName, $title='') {
+	protected function getCustomisedViewSection($sectionName, $title = '') {
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
