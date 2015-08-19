@@ -224,7 +224,9 @@ class DNEnvironment extends DataObject {
 
 	public function getBareURL() {
 		$url = parse_url($this->URL);
-		if(isset($url['host'])) return strtolower($url['host']);
+		if(isset($url['host'])) {
+			return strtolower($url['host']);
+		}
 	}
 
 	/**
@@ -1234,17 +1236,23 @@ PHP
 	public function getDependentFilteredCommits() {
 		// check if this environment depends on another environemnt
 		$dependsOnEnv = $this->DependsOnEnvironment();
-		if(empty($dependsOnEnv)) return null;
+		if(empty($dependsOnEnv)) {
+			return null;
+		}
 
 		// Check if there is a filter
 		$config = $this->GenericPipelineConfig();
 		$filter = isset($config->PipelineConfig->FilteredCommits)
 			? $config->PipelineConfig->FilteredCommits
 			: null;
-		if(empty($filter)) return null;
+		if(empty($filter)) {
+			return null;
+		}
 
 		// Create and execute filter
-		if(!class_exists($filter)) throw new Exception(sprintf("Class %s does not exist", $filter));
+		if(!class_exists($filter)) {
+			throw new Exception(sprintf("Class %s does not exist", $filter));
+		}
 		$commitClass = $filter::create();
 		// setup the environment to check for commits
 		$commitClass->env = $dependsOnEnv;

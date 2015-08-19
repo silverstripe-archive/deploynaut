@@ -68,7 +68,7 @@ class SizeRestrictedPackageCache implements PackageCache {
 
 		} else {
 			if($this->cacheSize) {
-				$this->reduceDirSizeTo($buildPath, $this->cacheSize-1, $log);
+				$this->reduceDirSizeTo($buildPath, $this->cacheSize - 1, $log);
 			}
 
 			if($generator->generatePackage($sha, $repositoryDir, $filename, $log)) {

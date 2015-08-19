@@ -80,7 +80,7 @@ class DeploymentPipelineStep extends LongRunningPipelineStep {
 
 		// Skip deployment for dry run
 		if($this->Pipeline()->DryRun) {
-			$this->log("[Skipped] Create DNDeployment for SHA ".$pipeline->SHA);
+			$this->log("[Skipped] Create DNDeployment for SHA " . $pipeline->SHA);
 			$this->write();
 			return true;
 		}

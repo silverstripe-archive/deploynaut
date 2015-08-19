@@ -236,9 +236,13 @@ class DNProject extends DataObject {
 	 * @return boolean
 	 */
 	public function canView($member = null) {
-		if(!$member) $member = Member::currentUser();
+		if(!$member) {
+			$member = Member::currentUser();
+		}
 
-		if(Permission::checkMember($member, 'ADMIN')) return true;
+		if(Permission::checkMember($member, 'ADMIN')) {
+			return true;
+		}
 
 		return $member->inGroups($this->Viewers());
 	}
@@ -622,7 +626,9 @@ class DNProject extends DataObject {
 	 */
 	public function getKeyDir() {
 		$keyDir = $this->DNData()->getKeyDir();
-		if(!$keyDir) return null;
+		if(!$keyDir) {
+			return null;
+		}
 
 		$filter = FileNameFilter::create();
 		$name = $filter->filter($this->Name);
