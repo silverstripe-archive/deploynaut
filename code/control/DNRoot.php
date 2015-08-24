@@ -681,7 +681,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return \SS_HTTPResponse
 	 */
 	protected function beginPipeline($data, DeployForm $form, $isDryRun = false) {
-		$buildName = $form->getSelectedBuild($data);
+		$buildName = DeployForm::get_selected_build($data);
 
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
@@ -891,10 +891,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 *
 	 * @param array $data
 	 * @param DeployForm $form
-	 * @return \SS_HTTPResponse
+	 *
+	 * @return SS_HTTPResponse
+	 * @throws Exception
+	 * @throws ValidationException
 	 */
 	public function doDeploy($data, $form) {
-		$buildName = $form->getSelectedBuild($data);
+		$buildName = DeployForm::get_selected_build($data);
 
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();

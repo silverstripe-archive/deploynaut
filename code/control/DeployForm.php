@@ -75,7 +75,7 @@ class DeployForm_CommitValidator extends DeployForm_ValidatorBase {
 
 		// Check sha
 		return $this->validateCommit(
-			$this->form->getSelectedBuild($data),
+			DeployForm::get_selected_build($data),
 			'SelectRelease'
 		);
 	}
@@ -92,7 +92,7 @@ class DeployForm_PipelineValidator extends DeployForm_ValidatorBase {
 
 	public function php($data) {
 		return $this->validateCommit(
-			$this->form->getSelectedBuild($data),
+			DeployForm::get_selected_build($data),
 			'FilteredCommits'
 		);
 	}
@@ -105,6 +105,23 @@ class DeployForm_PipelineValidator extends DeployForm_ValidatorBase {
  * @subpackage control
  */
 class DeployForm extends Form {
+
+	/**
+	 * Get the build selected from the given data
+	 *
+	 * @param array $data
+	 * @return string SHA of selected build
+	 */
+	public static function get_selected_build($data) {
+		if(isset($data['SelectRelease']) && !empty($data[$data['SelectRelease']])) {
+			// Filter out the tag/branch name if required
+			$array = explode('-', $data[$data['SelectRelease']]);
+			return reset($array);
+		}
+		if(isset($data['FilteredCommits']) && !empty($data['FilteredCommits'])) {
+			return $data['FilteredCommits'];
+		}
+	}
 
 	/**
 	 * @param DNRoot $controller
@@ -291,23 +308,6 @@ class DeployForm extends Form {
 			return DropdownField::create('FilteredCommits)', '')
 				->setEmptyString('No deployments available')
 				->performDisabledTransformation();
-		}
-	}
-
-	/**
-	 * Get the build selected from the given data
-	 *
-	 * @param array $data
-	 * @return string SHA of selected build
-	 */
-	public function getSelectedBuild($data) {
-		if(isset($data['SelectRelease']) && !empty($data[$data['SelectRelease']])) {
-			// Filter out the tag/branch name if required
-			$array = explode('-', $data[$data['SelectRelease']]);
-			return reset($array);
-		}
-		if(isset($data['FilteredCommits']) && !empty($data['FilteredCommits'])) {
-			return $data['FilteredCommits'];
 		}
 	}
 }
