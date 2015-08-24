@@ -127,20 +127,16 @@
 			$(this).toggleClass( "open" );
 		});
 
-		if ($('#Form_DeployForm_BuildName').val() === '') {
-			$('#Form_DeployForm_action_doDeploy').attr('disabled', true);
+		if ($('#DeployForm_DeployForm_BuildName').val() === '') {
+			$('#DeployForm_DeployForm_action_showDeploySummary').attr('disabled', true);
 		}
 
-		$('#Form_DeployForm_BuildName').change(function() {
-			if ($('#Form_DeployForm_BuildName').val() === '') {
-				$('#Form_DeployForm_action_doDeploy').attr('disabled', true);
+		$('#DeployForm_DeployForm_BuildName').change(function() {
+			if ($('#DeployForm_DeployForm_BuildName').val() === '') {
+				$('#DeployForm_DeployForm_action_showDeploySummary').attr('disabled', true);
 				return;
 			}
-			$('#Form_DeployForm_action_doDeploy').attr('disabled', false);
-		});
-
-		$('#Form_DeployForm_action_doDeploy').click(function() {
-			return confirm('Are you sure that you want to deploy?');
+			$('#DeployForm_DeployForm_action_showDeploySummary').attr('disabled', false);
 		});
 
 		// Deployment screen
@@ -253,7 +249,7 @@
 			return false;
 		});
 
-		$('.deploy-form-outer').on('click', '.deploy-button', function(e) {
+		$('form').on('click', '.deploy-button', function(e) {
 			var releaseType = $(this).parents('form').find('input[name="SelectRelease"]').attr('value');
 
 			var environment = $(this).attr('data-environment-name');
@@ -307,7 +303,7 @@
 				}
 
 			}
-			
+
 			e.preventDefault();
 		});
 
