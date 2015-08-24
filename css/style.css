@@ -3174,90 +3174,90 @@ fieldset[disabled] a.btn, fieldset[disabled] a.action, fieldset[disabled] a.depl
     color: #3aaef9;
     background-color: #fff; }
 
-.btn-success, .deploy-form-outer .deploy-form *[name="action_doDeploy"] {
+.btn-success, .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] {
   color: #fff;
   background-color: #5cb85c;
   border-color: #4cae4c; }
   .btn-success:focus,
-  .deploy-form-outer .deploy-form [name="action_doDeploy"]:focus,
-  .btn-success.focus, .deploy-form-outer .deploy-form .focus[name="action_doDeploy"] {
+  .deploy-form-outer .deploy-form [name="action_showDeploySummary"]:focus,
+  .btn-success.focus, .deploy-form-outer .deploy-form .focus[name="action_showDeploySummary"] {
     color: #fff;
     background-color: #449d44;
     border-color: #255625; }
-  .btn-success:hover, .deploy-form-outer .deploy-form [name="action_doDeploy"]:hover {
+  .btn-success:hover, .deploy-form-outer .deploy-form [name="action_showDeploySummary"]:hover {
     color: #fff;
     background-color: #449d44;
     border-color: #398439; }
   .btn-success:active,
-  .deploy-form-outer .deploy-form [name="action_doDeploy"]:active,
+  .deploy-form-outer .deploy-form [name="action_showDeploySummary"]:active,
   .btn-success.active,
-  .deploy-form-outer .deploy-form .active[name="action_doDeploy"],
-  .open > .btn-success.dropdown-toggle, .deploy-form-outer .deploy-form .open > .dropdown-toggle[name="action_doDeploy"] {
+  .deploy-form-outer .deploy-form .active[name="action_showDeploySummary"],
+  .open > .btn-success.dropdown-toggle, .deploy-form-outer .deploy-form .open > .dropdown-toggle[name="action_showDeploySummary"] {
     color: #fff;
     background-color: #449d44;
     border-color: #398439; }
     .btn-success:active:hover,
-    .deploy-form-outer .deploy-form [name="action_doDeploy"]:active:hover,
+    .deploy-form-outer .deploy-form [name="action_showDeploySummary"]:active:hover,
     .btn-success:active:focus,
-    .deploy-form-outer .deploy-form [name="action_doDeploy"]:active:focus,
+    .deploy-form-outer .deploy-form [name="action_showDeploySummary"]:active:focus,
     .btn-success:active.focus,
-    .deploy-form-outer .deploy-form [name="action_doDeploy"]:active.focus,
+    .deploy-form-outer .deploy-form [name="action_showDeploySummary"]:active.focus,
     .btn-success.active:hover,
-    .deploy-form-outer .deploy-form .active[name="action_doDeploy"]:hover,
+    .deploy-form-outer .deploy-form .active[name="action_showDeploySummary"]:hover,
     .btn-success.active:focus,
-    .deploy-form-outer .deploy-form .active[name="action_doDeploy"]:focus,
+    .deploy-form-outer .deploy-form .active[name="action_showDeploySummary"]:focus,
     .btn-success.active.focus,
-    .deploy-form-outer .deploy-form .active.focus[name="action_doDeploy"],
+    .deploy-form-outer .deploy-form .active.focus[name="action_showDeploySummary"],
     .open > .btn-success.dropdown-toggle:hover,
-    .deploy-form-outer .deploy-form .open > .dropdown-toggle[name="action_doDeploy"]:hover, .open > .btn-success.dropdown-toggle:focus,
-    .deploy-form-outer .deploy-form .open > .dropdown-toggle[name="action_doDeploy"]:focus, .open > .btn-success.dropdown-toggle.focus, .deploy-form-outer .deploy-form .open > .dropdown-toggle.focus[name="action_doDeploy"] {
+    .deploy-form-outer .deploy-form .open > .dropdown-toggle[name="action_showDeploySummary"]:hover, .open > .btn-success.dropdown-toggle:focus,
+    .deploy-form-outer .deploy-form .open > .dropdown-toggle[name="action_showDeploySummary"]:focus, .open > .btn-success.dropdown-toggle.focus, .deploy-form-outer .deploy-form .open > .dropdown-toggle.focus[name="action_showDeploySummary"] {
       color: #fff;
       background-color: #398439;
       border-color: #255625; }
   .btn-success:active,
-  .deploy-form-outer .deploy-form [name="action_doDeploy"]:active,
+  .deploy-form-outer .deploy-form [name="action_showDeploySummary"]:active,
   .btn-success.active,
-  .deploy-form-outer .deploy-form .active[name="action_doDeploy"],
-  .open > .btn-success.dropdown-toggle, .deploy-form-outer .deploy-form .open > .dropdown-toggle[name="action_doDeploy"] {
+  .deploy-form-outer .deploy-form .active[name="action_showDeploySummary"],
+  .open > .btn-success.dropdown-toggle, .deploy-form-outer .deploy-form .open > .dropdown-toggle[name="action_showDeploySummary"] {
     background-image: none; }
   .btn-success.disabled,
-  .deploy-form-outer .deploy-form .disabled[name="action_doDeploy"],
+  .deploy-form-outer .deploy-form .disabled[name="action_showDeploySummary"],
   .btn-success.disabled:hover,
-  .deploy-form-outer .deploy-form .disabled[name="action_doDeploy"]:hover,
+  .deploy-form-outer .deploy-form .disabled[name="action_showDeploySummary"]:hover,
   .btn-success.disabled:focus,
-  .deploy-form-outer .deploy-form .disabled[name="action_doDeploy"]:focus,
+  .deploy-form-outer .deploy-form .disabled[name="action_showDeploySummary"]:focus,
   .btn-success.disabled.focus,
-  .deploy-form-outer .deploy-form .disabled.focus[name="action_doDeploy"],
+  .deploy-form-outer .deploy-form .disabled.focus[name="action_showDeploySummary"],
   .btn-success.disabled:active,
-  .deploy-form-outer .deploy-form .disabled[name="action_doDeploy"]:active,
+  .deploy-form-outer .deploy-form .disabled[name="action_showDeploySummary"]:active,
   .btn-success.disabled.active,
-  .deploy-form-outer .deploy-form .disabled.active[name="action_doDeploy"],
+  .deploy-form-outer .deploy-form .disabled.active[name="action_showDeploySummary"],
   .btn-success[disabled],
-  .deploy-form-outer .deploy-form [disabled][name="action_doDeploy"],
+  .deploy-form-outer .deploy-form [disabled][name="action_showDeploySummary"],
   .btn-success[disabled]:hover,
-  .deploy-form-outer .deploy-form [disabled][name="action_doDeploy"]:hover,
+  .deploy-form-outer .deploy-form [disabled][name="action_showDeploySummary"]:hover,
   .btn-success[disabled]:focus,
-  .deploy-form-outer .deploy-form [disabled][name="action_doDeploy"]:focus,
+  .deploy-form-outer .deploy-form [disabled][name="action_showDeploySummary"]:focus,
   .btn-success[disabled].focus,
-  .deploy-form-outer .deploy-form [disabled].focus[name="action_doDeploy"],
+  .deploy-form-outer .deploy-form [disabled].focus[name="action_showDeploySummary"],
   .btn-success[disabled]:active,
-  .deploy-form-outer .deploy-form [disabled][name="action_doDeploy"]:active,
+  .deploy-form-outer .deploy-form [disabled][name="action_showDeploySummary"]:active,
   .btn-success[disabled].active,
-  .deploy-form-outer .deploy-form [disabled].active[name="action_doDeploy"],
+  .deploy-form-outer .deploy-form [disabled].active[name="action_showDeploySummary"],
   fieldset[disabled] .btn-success,
-  fieldset[disabled] .deploy-form-outer .deploy-form *[name="action_doDeploy"],
-  .deploy-form-outer .deploy-form fieldset[disabled] *[name="action_doDeploy"], fieldset[disabled] .btn-success:hover,
-  fieldset[disabled] .deploy-form-outer .deploy-form [name="action_doDeploy"]:hover,
-  .deploy-form-outer .deploy-form fieldset[disabled] [name="action_doDeploy"]:hover, fieldset[disabled] .btn-success:focus,
-  fieldset[disabled] .deploy-form-outer .deploy-form [name="action_doDeploy"]:focus,
-  .deploy-form-outer .deploy-form fieldset[disabled] [name="action_doDeploy"]:focus, fieldset[disabled] .btn-success.focus,
-  fieldset[disabled] .deploy-form-outer .deploy-form .focus[name="action_doDeploy"],
-  .deploy-form-outer .deploy-form fieldset[disabled] .focus[name="action_doDeploy"], fieldset[disabled] .btn-success:active,
-  fieldset[disabled] .deploy-form-outer .deploy-form [name="action_doDeploy"]:active,
-  .deploy-form-outer .deploy-form fieldset[disabled] [name="action_doDeploy"]:active, fieldset[disabled] .btn-success.active, fieldset[disabled] .deploy-form-outer .deploy-form .active[name="action_doDeploy"], .deploy-form-outer .deploy-form fieldset[disabled] .active[name="action_doDeploy"] {
+  fieldset[disabled] .deploy-form-outer .deploy-form *[name="action_showDeploySummary"],
+  .deploy-form-outer .deploy-form fieldset[disabled] *[name="action_showDeploySummary"], fieldset[disabled] .btn-success:hover,
+  fieldset[disabled] .deploy-form-outer .deploy-form [name="action_showDeploySummary"]:hover,
+  .deploy-form-outer .deploy-form fieldset[disabled] [name="action_showDeploySummary"]:hover, fieldset[disabled] .btn-success:focus,
+  fieldset[disabled] .deploy-form-outer .deploy-form [name="action_showDeploySummary"]:focus,
+  .deploy-form-outer .deploy-form fieldset[disabled] [name="action_showDeploySummary"]:focus, fieldset[disabled] .btn-success.focus,
+  fieldset[disabled] .deploy-form-outer .deploy-form .focus[name="action_showDeploySummary"],
+  .deploy-form-outer .deploy-form fieldset[disabled] .focus[name="action_showDeploySummary"], fieldset[disabled] .btn-success:active,
+  fieldset[disabled] .deploy-form-outer .deploy-form [name="action_showDeploySummary"]:active,
+  .deploy-form-outer .deploy-form fieldset[disabled] [name="action_showDeploySummary"]:active, fieldset[disabled] .btn-success.active, fieldset[disabled] .deploy-form-outer .deploy-form .active[name="action_showDeploySummary"], .deploy-form-outer .deploy-form fieldset[disabled] .active[name="action_showDeploySummary"] {
     background-color: #5cb85c;
     border-color: #4cae4c; }
-  .btn-success .badge, .deploy-form-outer .deploy-form *[name="action_doDeploy"] .badge {
+  .btn-success .badge, .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] .badge {
     color: #5cb85c;
     background-color: #fff; }
 
@@ -3467,7 +3467,7 @@ fieldset[disabled] a.btn, fieldset[disabled] a.action, fieldset[disabled] a.depl
     color: #777777;
     text-decoration: none; }
 
-.btn-lg, .btn-group-lg > .btn, .btn-group-lg > .action, .btn-group-lg > .deploy-dropdown, .action, .deploy-dropdown, .deploy-form-outer .deploy-form *[name="action_doDeploy"] {
+.btn-lg, .btn-group-lg > .btn, .btn-group-lg > .action, .btn-group-lg > .deploy-dropdown, .action, .deploy-dropdown, .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] {
   padding: 10px 16px;
   font-size: 17px;
   line-height: 1.33333;
@@ -3485,20 +3485,20 @@ fieldset[disabled] a.btn, fieldset[disabled] a.action, fieldset[disabled] a.depl
   line-height: 1.5;
   border-radius: 0px; }
 
-.btn-block, .deploy-dropdown, .deploy-form-outer .deploy-form *[name="action_doDeploy"] {
+.btn-block, .deploy-dropdown, .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] {
   display: block;
   width: 100%; }
 
-.btn-block + .btn-block, .deploy-dropdown + .btn-block, .deploy-form-outer .deploy-form *[name="action_doDeploy"] + .btn-block, .btn-block + .deploy-dropdown, .deploy-dropdown + .deploy-dropdown, .deploy-form-outer .deploy-form *[name="action_doDeploy"] + .deploy-dropdown, .deploy-form-outer .deploy-form .btn-block + *[name="action_doDeploy"], .deploy-form-outer .deploy-form .deploy-dropdown + *[name="action_doDeploy"], .deploy-form-outer .deploy-form *[name="action_doDeploy"] + *[name="action_doDeploy"] {
+.btn-block + .btn-block, .deploy-dropdown + .btn-block, .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] + .btn-block, .btn-block + .deploy-dropdown, .deploy-dropdown + .deploy-dropdown, .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] + .deploy-dropdown, .deploy-form-outer .deploy-form .btn-block + *[name="action_showDeploySummary"], .deploy-form-outer .deploy-form .deploy-dropdown + *[name="action_showDeploySummary"], .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] + *[name="action_showDeploySummary"] {
   margin-top: 5px; }
 
 input[type="submit"].btn-block,
 input[type="submit"].deploy-dropdown,
-.deploy-form-outer .deploy-form input[type="submit"][name="action_doDeploy"],
+.deploy-form-outer .deploy-form input[type="submit"][name="action_showDeploySummary"],
 input[type="reset"].btn-block,
 input[type="reset"].deploy-dropdown,
-.deploy-form-outer .deploy-form input[type="reset"][name="action_doDeploy"],
-input[type="button"].btn-block, input[type="button"].deploy-dropdown, .deploy-form-outer .deploy-form input[type="button"][name="action_doDeploy"] {
+.deploy-form-outer .deploy-form input[type="reset"][name="action_showDeploySummary"],
+input[type="button"].btn-block, input[type="button"].deploy-dropdown, .deploy-form-outer .deploy-form input[type="button"][name="action_showDeploySummary"] {
   width: 100%; }
 
 .fade {
@@ -3783,7 +3783,7 @@ tbody.collapse.in {
   padding-left: 8px;
   padding-right: 8px; }
 
-.btn-group > .btn-lg + .dropdown-toggle, .btn-group-lg.btn-group > .btn + .dropdown-toggle, .btn-group > .action + .dropdown-toggle, .btn-group > .deploy-dropdown + .dropdown-toggle, .deploy-form-outer .deploy-form .btn-group > *[name="action_doDeploy"] + .dropdown-toggle {
+.btn-group > .btn-lg + .dropdown-toggle, .btn-group-lg.btn-group > .btn + .dropdown-toggle, .btn-group > .action + .dropdown-toggle, .btn-group > .deploy-dropdown + .dropdown-toggle, .deploy-form-outer .deploy-form .btn-group > *[name="action_showDeploySummary"] + .dropdown-toggle {
   padding-left: 12px;
   padding-right: 12px; }
 
@@ -3797,11 +3797,11 @@ tbody.collapse.in {
 .btn .caret, .action .caret, .deploy-dropdown .caret {
   margin-left: 0; }
 
-.btn-lg .caret, .btn-group-lg > .btn .caret, .action .caret, .deploy-dropdown .caret, .deploy-form-outer .deploy-form *[name="action_doDeploy"] .caret {
+.btn-lg .caret, .btn-group-lg > .btn .caret, .action .caret, .deploy-dropdown .caret, .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] .caret {
   border-width: 5px 5px 0;
   border-bottom-width: 0; }
 
-.dropup .btn-lg .caret, .dropup .btn-group-lg > .btn .caret, .dropup .action .caret, .dropup .deploy-dropdown .caret, .dropup .deploy-form-outer .deploy-form *[name="action_doDeploy"] .caret, .deploy-form-outer .deploy-form .dropup *[name="action_doDeploy"] .caret {
+.dropup .btn-lg .caret, .dropup .btn-group-lg > .btn .caret, .dropup .action .caret, .dropup .deploy-dropdown .caret, .dropup .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] .caret, .deploy-form-outer .deploy-form .dropup *[name="action_showDeploySummary"] .caret {
   border-width: 0 5px 5px; }
 
 .btn-group-vertical > .btn,
@@ -5756,7 +5756,7 @@ button.close {
     margin-bottom: 0; }
   .modal-footer .btn-group .btn + .btn, .modal-footer .btn-group .action + .btn, .modal-footer .btn-group .deploy-dropdown + .btn, .modal-footer .btn-group .btn + .action, .modal-footer .btn-group .action + .action, .modal-footer .btn-group .deploy-dropdown + .action, .modal-footer .btn-group .btn + .deploy-dropdown, .modal-footer .btn-group .action + .deploy-dropdown, .modal-footer .btn-group .deploy-dropdown + .deploy-dropdown {
     margin-left: -1px; }
-  .modal-footer .btn-block + .btn-block, .modal-footer .deploy-dropdown + .btn-block, .modal-footer .deploy-form-outer .deploy-form *[name="action_doDeploy"] + .btn-block, .deploy-form-outer .deploy-form .modal-footer *[name="action_doDeploy"] + .btn-block, .modal-footer .btn-block + .deploy-dropdown, .modal-footer .deploy-dropdown + .deploy-dropdown, .modal-footer .deploy-form-outer .deploy-form *[name="action_doDeploy"] + .deploy-dropdown, .deploy-form-outer .deploy-form .modal-footer *[name="action_doDeploy"] + .deploy-dropdown, .modal-footer .deploy-form-outer .deploy-form .btn-block + *[name="action_doDeploy"], .deploy-form-outer .deploy-form .modal-footer .btn-block + *[name="action_doDeploy"], .modal-footer .deploy-form-outer .deploy-form .deploy-dropdown + *[name="action_doDeploy"], .deploy-form-outer .deploy-form .modal-footer .deploy-dropdown + *[name="action_doDeploy"], .modal-footer .deploy-form-outer .deploy-form *[name="action_doDeploy"] + *[name="action_doDeploy"], .deploy-form-outer .deploy-form .modal-footer *[name="action_doDeploy"] + *[name="action_doDeploy"] {
+  .modal-footer .btn-block + .btn-block, .modal-footer .deploy-dropdown + .btn-block, .modal-footer .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] + .btn-block, .deploy-form-outer .deploy-form .modal-footer *[name="action_showDeploySummary"] + .btn-block, .modal-footer .btn-block + .deploy-dropdown, .modal-footer .deploy-dropdown + .deploy-dropdown, .modal-footer .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] + .deploy-dropdown, .deploy-form-outer .deploy-form .modal-footer *[name="action_showDeploySummary"] + .deploy-dropdown, .modal-footer .deploy-form-outer .deploy-form .btn-block + *[name="action_showDeploySummary"], .deploy-form-outer .deploy-form .modal-footer .btn-block + *[name="action_showDeploySummary"], .modal-footer .deploy-form-outer .deploy-form .deploy-dropdown + *[name="action_showDeploySummary"], .deploy-form-outer .deploy-form .modal-footer .deploy-dropdown + *[name="action_showDeploySummary"], .modal-footer .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] + *[name="action_showDeploySummary"], .deploy-form-outer .deploy-form .modal-footer *[name="action_showDeploySummary"] + *[name="action_showDeploySummary"] {
     margin-left: 0; }
 
 .modal-scrollbar-measure {
@@ -9941,13 +9941,13 @@ button.sidebar-open {
           .deploy-form-outer .deploy-form .SelectionGroup + .tab-content input[type="text"] > *,
           .deploy-form-outer .deploy-form .SelectionGroup + .tab-content .CompositeField > * {
             width: 100%; }
-    .deploy-form-outer .deploy-form *[name="action_doDeploy"] {
+    .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] {
       border-radius: 2px;
       font-size: 26px;
       line-height: 40px;
       margin: 20px 0; }
       @media (max-width: 992px) {
-        .deploy-form-outer .deploy-form *[name="action_doDeploy"] {
+        .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] {
           font-size: 20px; } }
 
 .deploy-history {

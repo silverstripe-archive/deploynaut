@@ -109,66 +109,92 @@ class DeployForm extends Form {
 	/**
 	 * @param DNRoot $controller
 	 * @param string $name
+	 * @param DNEnvironment $environment
+	 * @param DNProject $project
 	 */
 	public function __construct($controller, $name, DNEnvironment $environment, DNProject $project) {
 		if($environment->HasPipelineSupport()) {
-			// Determine if commits are filtered
-			$canBypass = Permission::check(DNRoot::DEPLOYNAUT_BYPASS_PIPELINE);
-			$canDryrun = $environment->DryRunEnabled && Permission::check(DNRoot::DEPLOYNAUT_DRYRUN_PIPELINE);
-			$commits = $environment->getDependentFilteredCommits();
-			if(empty($commits)) {
-				// There are no filtered commits, so show all commits
-				$field = $this->buildCommitSelector($project);
-				$validator = new DeployForm_CommitValidator();
-			} elseif($canBypass) {
-				// Build hybrid selector that allows users to follow pipeline or use any commit
-				$field = $this->buildCommitSelector($project, $commits);
-				$validator = new DeployForm_CommitValidator();
-			} else {
-				// Restrict user to only select pipeline filtered commits
-				$field = $this->buildPipelineField($commits);
-				$validator = new DeployForm_PipelineValidator();
-			}
-
-			// Generate actions allowed for this user
-			$actions = new FieldList(
-				FormAction::create('startPipeline', "Begin the release process on " . $environment->Name)
-					->addExtraClass('btn btn-primary')
-					->setAttribute('onclick', "return confirm('This will begin a release pipeline. Continue?');")
-			);
-			if($canDryrun) {
-				$actions->push(
-					FormAction::create('doDryRun', "Dry-run release process")
-						->addExtraClass('btn btn-info')
-						->setAttribute('onclick',
-							"return confirm('This will begin a release pipeline, but with the following exclusions:\\n" .
-							" - No messages will be sent\\n" .
-							" - No capistrano actions will be invoked\\n" .
-							" - No deployments or snapshots will be created.');"
-						)
-				);
-			}
-			if($canBypass) {
-				$actions->push(
-					FormAction::create('doDeploy', "Direct deployment (bypass pipeline)")
-						->addExtraClass('btn btn-warning')
-						->setAttribute('onclick',
-							"return confirm('This will start a direct deployment, bypassing the pipeline " .
-							"process in place.\\n\\nAre you sure this is necessary?');"
-						)
-				);
-			}
+			list($field, $validator, $actions) = $this->setupPipeline($environment, $project);
 		} else {
-			// without a pipeline simply allow any commit to be selected
-			$field = $this->buildCommitSelector($project);
-			$validator = new DeployForm_CommitValidator();
-			$actions = new FieldList(
-				FormAction::create('doDeploy', "Deploy to " . Convert::raw2att($environment->Name))
-					->addExtraClass('btn btn-primary deploy-button')
-					->setAttribute('data-environment-name', Convert::raw2att($environment->Name))
-			);
+			list($field, $validator, $actions) = $this->setupSimpleDeploy($environment, $project);
 		}
 		parent::__construct($controller, $name, new FieldList($field), $actions, $validator);
+	}
+
+	/**
+	 * @param DNEnvironment $environment
+	 * @param DNProject $project
+	 *
+	 * @return array
+	 */
+	protected function setupSimpleDeploy(DNEnvironment $environment, DNProject $project) {
+		// without a pipeline simply allow any commit to be selected
+		$field = $this->buildCommitSelector($project);
+		$validator = new DeployForm_CommitValidator();
+		$actions = new FieldList(
+			FormAction::create('showDeploySummary', "Show deployment plan")->addExtraClass('btn btn-primary')
+		);
+		return array($field, $validator, $actions);
+	}
+
+	/**
+	 * @param DNEnvironment $environment
+	 * @param DNProject $project
+	 *
+	 * @return array
+	 * @throws Exception
+	 */
+	protected function setupPipeline(DNEnvironment $environment, DNProject $project) {
+		// Determine if commits are filtered
+		$canBypass = Permission::check(DNRoot::DEPLOYNAUT_BYPASS_PIPELINE);
+		$canDryrun = $environment->DryRunEnabled && Permission::check(DNRoot::DEPLOYNAUT_DRYRUN_PIPELINE);
+		$commits = $environment->getDependentFilteredCommits();
+		if(empty($commits)) {
+			// There are no filtered commits, so show all commits
+			$field = $this->buildCommitSelector($project);
+			$validator = new DeployForm_CommitValidator();
+		} elseif($canBypass) {
+			// Build hybrid selector that allows users to follow pipeline or use any commit
+			$field = $this->buildCommitSelector($project, $commits);
+			$validator = new DeployForm_CommitValidator();
+		} else {
+			// Restrict user to only select pipeline filtered commits
+			$field = $this->buildPipelineField($commits);
+			$validator = new DeployForm_PipelineValidator();
+		}
+
+		// Generate actions allowed for this user
+		$actions = new FieldList(
+			FormAction::create('startPipeline', "Begin the release process on " . $environment->Name)
+				->addExtraClass('btn btn-primary')
+				->setAttribute('onclick', "return confirm('This will begin a release pipeline. Continue?');")
+		);
+		if($canDryrun) {
+			$actions->push(
+				FormAction::create('doDryRun', "Dry-run release process")
+					->addExtraClass('btn btn-info')
+					->setAttribute(
+						'onclick',
+						"return confirm('This will begin a release pipeline, but with the following exclusions:\\n" .
+						" - No messages will be sent\\n" .
+						" - No capistrano actions will be invoked\\n" .
+						" - No deployments or snapshots will be created.');"
+					)
+			);
+		}
+		if($canBypass) {
+			$actions->push(
+				FormAction::create('showDeploySummary', "Direct deployment (bypass pipeline)")
+					->addExtraClass('btn btn-warning')
+					->setAttribute(
+						'onclick',
+						"return confirm('This will start a direct deployment, bypassing the pipeline " .
+						"process in place.\\n\\nAre you sure this is necessary?');"
+					)
+			);
+			return array($field, $validator, $actions);
+		}
+		return array($field, $validator, $actions);
 	}
 
 	/**
