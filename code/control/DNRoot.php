@@ -54,6 +54,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'pipelinelog',
 		'metrics',
 		'getDeployForm',
+		'doDeploy',
 		'deploy',
 		'deploylog',
 		'getDataTransferForm',
@@ -885,6 +886,52 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
+	 * @param array $data
+	 * @param DeployForm $form
+	 *
+	 * @return string
+	 */
+	public function showDeploySummary(array $data, DeployForm $form) {
+
+		// Performs canView permission check by limiting visible projects
+		$project = $this->getCurrentProject();
+		if(!$project) {
+			return $this->project404Response();
+		}
+
+		// Performs canView permission check by limiting visible projects
+		$environment = $this->getCurrentEnvironment($project);
+		if(!$environment) {
+			return $this->environment404Response();
+		}
+
+		// get the selected build
+		$selectedBuild = DeployForm::get_selected_build($data);
+
+		$form->setFields(new FieldList(
+			new ReadonlyField('ReadonlySHA', 'Revision', $selectedBuild),
+			new HiddenField('SelectRelease', 'SelectRelease', 'SHA'),
+			new HiddenField('SHA', 'SHA', $selectedBuild)
+         ));
+
+		$form->setActions(new FieldList(
+			FormAction::create('doDeploy', "Deploy")
+				->addExtraClass('btn btn-primary deploy-button')
+				->setAttribute('data-environment-name', Convert::raw2att($environment->Name))
+		));
+		$form->enableSecurityToken();
+
+		$form->setFormAction($this->getRequest()->getURL());
+
+		$form->setTemplate('Form');
+		return $form->getController()->renderWith(
+			array('DNRoot_deploysummary', 'DNRoot'),
+			array("SummaryForm" => $form)
+		);
+	}
+
+
+	/**
 	 * Deployment form submission handler.
 	 *
 	 * Initiate a DNDeployment record and redirect to it for status polling
@@ -916,6 +963,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$this->extend('doDeploy', $project, $environment, $buildName, $data);
 
 		$sha = $project->DNBuildList()->byName($buildName);
+		/** @var DNDeployment $deployment */
 		$deployment = DNDeployment::create();
 		$deployment->EnvironmentID = $environment->ID;
 		$deployment->SHA = $sha->FullName();

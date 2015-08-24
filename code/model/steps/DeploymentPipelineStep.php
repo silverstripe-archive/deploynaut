@@ -12,7 +12,7 @@
  *     MaxDuration: 3600 # optionally timeout after 1 hour
  * </code>
  *
- * {@see DNRoot::doDeploy()} for non-pipeline equivalent
+ * {@see DNRoot::showDeploySummary()} for non-pipeline equivalent
  *
  * @property string $Doing
  *
