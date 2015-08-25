@@ -25,7 +25,10 @@ class DNDeployment extends DataObject {
 		// Observe that this is not the same as Resque status, since ResqueStatus is not persistent
 		// It's used for finding successful deployments and displaying that in history views in the frontend
 		"Status" => "Enum('Queued, Started, Finished, Failed, n/a', 'n/a')",
-		"LeaveMaintenacePage" => "Boolean"
+		"LeaveMaintenacePage" => "Boolean",
+		// JSON encoded associative array. This will override/augment the list of arguments
+		// passed to the actual backend.
+		"Options" => "Text"
 	);
 
 	/**
@@ -185,6 +188,9 @@ class DNDeployment extends DataObject {
 			'deploymentID' => $this->ID,
 			'leaveMaintenacePage' => $this->LeaveMaintenacePage
 		);
+
+		$options = json_decode($this->Options, true);
+		array_merge($args, $options);
 
 		if(!$this->DeployerID) {
 			$this->DeployerID = Member::currentUserID();

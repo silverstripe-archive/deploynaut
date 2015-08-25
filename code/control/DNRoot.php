@@ -963,6 +963,64 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
+	 * This is a pre-flight check which checks the deployment strategy to ensure
+	 * the deployment will be valid before actually initiating the deployment.
+	 *
+	 * @param array $data
+	 * @param Form $form
+	 *
+	 * @return string json
+	 */
+	public function deploycheck($data, $form) {
+		if(!$this->getRequest()->isAjax()) {
+			return $this->httpError(403, 'Forbidden');
+		}
+
+		$project = $this->getCurrentProject();
+		if(!$project) {
+			return $this->httpError(404, 'Not Found');
+		}
+
+		$environment = $this->getCurrentEnvironment($project);
+		if(!$environment) {
+			return $this->httpError(404, 'Not Found');
+		}
+
+		$buildName = $form->getSelectedBuild($data);
+		$sha = $project->DNBuildList()->byName($buildName);
+		
+		$deployer = $environment->getDeploymentBackend();
+		$strategy = $deployer->getDeploymentStrategy($environment, $sha, $data);
+
+		$this->getResponse()->addHeader('Content-Type', 'application/json');
+
+		// Check the validation code and respond.
+		switch ($code = $strategy->getValidationCode()) {
+			case DeploymentStrategy::SUCCESS_CODE:
+			case DeploymentStrategy::WARNING_CODE:
+				$response = array(
+					'Status' => $code,
+					'Content' => $strategy->getChanges(),
+					'EstimatedTime' => $strategy->getEstimatedTime(),
+				);
+				break;
+			case DeploymentStrategy::ERROR_CODE:
+			default:
+				$response = array(
+					'Status' => 'Invalid',
+					'Content' => $strategy->getErrors(),
+				);
+		}
+
+		$response['Action'] = array(
+			'Title' => $strategy->getActionTitle(),
+			'Code' => $strategy->getActionCode(),
+		);
+
+		return json_encode($response);
+	}
+
+	/**
 	 * Action - Do the actual deploy
 	 *
 	 * @param SS_HTTPRequest $request
@@ -995,6 +1053,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'Deployment' => $deployment,
 		));
 	}
+
 
 	/**
 	 * Action - Get the latest deploy log

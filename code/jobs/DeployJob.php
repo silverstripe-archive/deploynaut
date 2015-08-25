@@ -67,7 +67,10 @@ class DeployJob {
 				$this->args['sha'],
 				$log,
 				$DNProject,
-				isset($this->args['leaveMaintenacePage']) ? $this->args['leaveMaintenacePage'] : false
+				isset($this->args['leaveMaintenacePage']) ? $this->args['leaveMaintenacePage'] : false,
+				// Pass all args to give the backend full visibility. These args also contain
+				// all options from the DeploymentStrategy merged in.
+				$this->args
 			);
 		} catch(Exception $e) {
 			$this->updateStatus('Failed');
