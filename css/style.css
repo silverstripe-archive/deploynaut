@@ -4904,21 +4904,22 @@ a.thumbnail:focus,
 a.thumbnail.active {
   border-color: #3aaef9; }
 
-.alert, .disk-quota {
+.alert, .disk-quota, .deploy-dropdown.error {
   padding: 15px;
   margin-bottom: 20px;
   border: 1px solid transparent;
   border-radius: 2px; }
-  .alert h4, .disk-quota h4 {
+  .alert h4, .disk-quota h4, .deploy-dropdown.error h4 {
     margin-top: 0;
     color: inherit; }
-  .alert .alert-link, .disk-quota .alert-link {
+  .alert .alert-link, .disk-quota .alert-link, .deploy-dropdown.error .alert-link {
     font-weight: bold; }
   .alert > p,
   .disk-quota > p,
-  .alert > ul, .disk-quota > ul {
+  .deploy-dropdown.error > p,
+  .alert > ul, .disk-quota > ul, .deploy-dropdown.error > ul {
     margin-bottom: 0; }
-  .alert > p + p, .disk-quota > p + p {
+  .alert > p + p, .disk-quota > p + p, .deploy-dropdown.error > p + p {
     margin-top: 5px; }
 
 .alert-dismissable, .alert-dismissible {
@@ -4930,51 +4931,51 @@ a.thumbnail.active {
     color: inherit; }
 
 .alert-success, .alert.alert-good,
-.alert-good.disk-quota, .alert.Complete, .Complete.disk-quota, .disk-quota.success {
+.alert-good.disk-quota, .alert-good.deploy-dropdown.error, .alert.Complete, .Complete.disk-quota, .Complete.deploy-dropdown.error, .disk-quota.success {
   background-color: #dff0d8;
   border-color: #d6e9c6;
   color: #3c763d; }
   .alert-success hr, .alert.alert-good hr,
-  .alert-good.disk-quota hr, .alert.Complete hr, .Complete.disk-quota hr, .disk-quota.success hr {
+  .alert-good.disk-quota hr, .alert-good.deploy-dropdown.error hr, .alert.Complete hr, .Complete.disk-quota hr, .Complete.deploy-dropdown.error hr, .disk-quota.success hr {
     border-top-color: #c9e2b3; }
   .alert-success .alert-link, .alert.alert-good .alert-link,
-  .alert-good.disk-quota .alert-link, .alert.Complete .alert-link, .Complete.disk-quota .alert-link, .disk-quota.success .alert-link {
+  .alert-good.disk-quota .alert-link, .alert-good.deploy-dropdown.error .alert-link, .alert.Complete .alert-link, .Complete.disk-quota .alert-link, .Complete.deploy-dropdown.error .alert-link, .disk-quota.success .alert-link {
     color: #2b542c; }
 
 .alert-info, .alert.Started,
-.Started.disk-quota, .alert.Queued,
-.Queued.disk-quota, .alert.Running, .Running.disk-quota {
+.Started.disk-quota, .Started.deploy-dropdown.error, .alert.Queued,
+.Queued.disk-quota, .Queued.deploy-dropdown.error, .alert.Running, .Running.disk-quota, .Running.deploy-dropdown.error {
   background-color: #edf6fd;
   border-color: #cdedf9;
   color: #3aaef9; }
   .alert-info hr, .alert.Started hr,
-  .Started.disk-quota hr, .alert.Queued hr,
-  .Queued.disk-quota hr, .alert.Running hr, .Running.disk-quota hr {
+  .Started.disk-quota hr, .Started.deploy-dropdown.error hr, .alert.Queued hr,
+  .Queued.disk-quota hr, .Queued.deploy-dropdown.error hr, .alert.Running hr, .Running.disk-quota hr, .Running.deploy-dropdown.error hr {
     border-top-color: #b6e5f7; }
   .alert-info .alert-link, .alert.Started .alert-link,
-  .Started.disk-quota .alert-link, .alert.Queued .alert-link,
-  .Queued.disk-quota .alert-link, .alert.Running .alert-link, .Running.disk-quota .alert-link {
+  .Started.disk-quota .alert-link, .Started.deploy-dropdown.error .alert-link, .alert.Queued .alert-link,
+  .Queued.disk-quota .alert-link, .Queued.deploy-dropdown.error .alert-link, .alert.Running .alert-link, .Running.disk-quota .alert-link, .Running.deploy-dropdown.error .alert-link {
     color: #099af7; }
 
-.alert-warning, .alert.Invalid, .Invalid.disk-quota, .disk-quota.warning {
+.alert-warning, .alert.Invalid, .Invalid.disk-quota, .Invalid.deploy-dropdown.error, .disk-quota.warning {
   background-color: #fcf8e3;
   border-color: #faebcc;
   color: #8a6d3b; }
-  .alert-warning hr, .alert.Invalid hr, .Invalid.disk-quota hr, .disk-quota.warning hr {
+  .alert-warning hr, .alert.Invalid hr, .Invalid.disk-quota hr, .Invalid.deploy-dropdown.error hr, .disk-quota.warning hr {
     border-top-color: #f7e1b5; }
-  .alert-warning .alert-link, .alert.Invalid .alert-link, .Invalid.disk-quota .alert-link, .disk-quota.warning .alert-link {
+  .alert-warning .alert-link, .alert.Invalid .alert-link, .Invalid.disk-quota .alert-link, .Invalid.deploy-dropdown.error .alert-link, .disk-quota.warning .alert-link {
     color: #66512c; }
 
 .alert-danger, .alert.alert-error,
-.alert-error.disk-quota, .alert.Failed, .Failed.disk-quota, .disk-quota.danger {
+.alert-error.disk-quota, .alert.Failed, .Failed.disk-quota, .disk-quota.danger, .deploy-dropdown.error {
   background-color: #f2dede;
   border-color: #ebccd1;
   color: #a94442; }
   .alert-danger hr, .alert.alert-error hr,
-  .alert-error.disk-quota hr, .alert.Failed hr, .Failed.disk-quota hr, .disk-quota.danger hr {
+  .alert-error.disk-quota hr, .alert.Failed hr, .Failed.disk-quota hr, .disk-quota.danger hr, .deploy-dropdown.error hr {
     border-top-color: #e4b9c0; }
   .alert-danger .alert-link, .alert.alert-error .alert-link,
-  .alert-error.disk-quota .alert-link, .alert.Failed .alert-link, .Failed.disk-quota .alert-link, .disk-quota.danger .alert-link {
+  .alert-error.disk-quota .alert-link, .alert.Failed .alert-link, .Failed.disk-quota .alert-link, .disk-quota.danger .alert-link, .deploy-dropdown.error .alert-link {
     color: #843534; }
 
 @-webkit-keyframes progress-bar-stripes {
@@ -9598,10 +9599,10 @@ body .userswitcher fieldset label,
 body .userswitcher fieldset .middleColumn {
   float: none; }
 
-.alert .fa, .disk-quota .fa, .alert .deploy-dropdown .status-icon, .deploy-dropdown .alert .status-icon, .disk-quota .deploy-dropdown .status-icon, .deploy-dropdown .disk-quota .status-icon {
+.alert .fa, .disk-quota .fa, .deploy-dropdown.error .fa, .alert .deploy-dropdown .status-icon, .deploy-dropdown .alert .status-icon, .disk-quota .deploy-dropdown .status-icon, .deploy-dropdown .disk-quota .status-icon, .deploy-dropdown.error .status-icon {
   margin-right: 4px; }
 
-.alert ul, .disk-quota ul {
+.alert ul, .disk-quota ul, .deploy-dropdown.error ul {
   margin: 10px 0 20px 20px;
   padding-bottom: 10px;
   list-style: disc; }

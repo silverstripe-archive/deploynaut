@@ -1,6 +1,6 @@
 /*jslint white: true, browser: true, nomen: true, devel: true */
 /*global jQuery: false */
-(function($) {
+(function($, deploy) {
 	"use strict";
 
 	// Popover on enviroment repository link
@@ -162,77 +162,9 @@
 			}
 		});
 
-
+		deploy.init('.deploy-dropdown');
 		// This is the deployment page dropdown menu.
-		$('.deploy-dropdown').click(function(e) {
-
-			if($(this).hasClass('success')) {
-				$(this).toggleClass('open');
-				$($(this).attr('aria-controls')).collapse('toggle');
-				return;
-			}
-
-			// Don't perform when we're already loading or have already loaded
-			if($(this).hasClass('loading') || $(this).hasClass('success')) {
-				return;
-			}
-
-			// Add loading class so the user can see something happening
-			$(this).addClass('loading');
-
-			// Yay Javascript!
-			var self = this;
-
-			$.ajax({
-				type: "POST",
-				url: $(this).data('api-url'),
-				dataType: 'json',
-				success: function(data) {
-
-					// Check every 2 seconds to see the if job has finished.
-					window.fetchInterval = window.setInterval(function() {
-						$.ajax({
-							type: "GET",
-							url: data.href,
-							dataType: 'json',
-							success: function(data) {
-
-								if(data.status === 'Failed') {
-									$(self).removeClass('loading').addClass('error');
-									clearInterval(window.fetchInterval);
-								} else if(data.status === 'Complete') {
-									// Now we need to load the form with the new GIT data
-									$.ajax({
-										type: 'GET',
-										url: $(self).attr('data-form-url'),
-										dataType: 'json',
-										success: function(formData) {
-											$(self).next('.deploy-form-outer').html(formData.Content);
-
-											$(self).removeClass('loading').addClass('success').toggleClass('open');
-											$($(self).attr('aria-controls')).collapse();
-
-											// Enable select2
-											$('.deploy-form-outer .tab-pane.active select:not(.disable-select2)').select2();
-
-											// Ensure the correct value is set for hidden field "SelectRelease"
-											var releaseType = $('.deploy-form-outer .tabbedselectiongroup > li.active a').attr('data-value');
-											$('.deploy-form-outer').find('input[name="SelectRelease"]').attr('value', releaseType);
-										}
-									});
-
-									clearInterval(window.fetchInterval);
-								}
-							},
-							error: function(data) {
-								$(self).removeClass('loading').addClass('error');
-								clearInterval(window.fetchInterval);
-							}
-						});
-					}, 2000);
-				}
-			});
-		});
+		$('.deploy-dropdown').click(deploy.fetchDropdown);
 
 		$('.deploy-form-outer').on('click', '.tabbedselectiongroup > li > a', function (e) {
 			// Set the release type.
@@ -345,4 +277,4 @@
 		});
 
 	});
-}(jQuery));
+}(jQuery, deploy));
