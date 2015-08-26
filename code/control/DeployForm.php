@@ -132,7 +132,7 @@ class DeployForm extends Form {
 		$field = $this->buildCommitSelector($project);
 		$validator = new DeployForm_CommitValidator();
 		$actions = new FieldList(
-			FormAction::create('showDeploySummary', "Show deployment plan")->addExtraClass('btn btn-primary')
+			new HiddenField('action_showDeploySummary', 'action_showDeploySummary', 'Show deployment plan')
 		);
 		return array($field, $validator, $actions);
 	}
@@ -206,7 +206,6 @@ class DeployForm extends Form {
 	 */
 	protected function buildCommitSelector($project, $pipelineCommits = null) {
 		// Branches
-		$branches = array();
 		foreach($project->DNBranchList() as $branch) {
 			$sha = $branch->SHA();
 			$name = $branch->Name();
@@ -263,14 +262,14 @@ class DeployForm extends Form {
 		if($branches) {
 			$releaseMethods[] = new SelectionGroup_Item(
 				'Branch',
-				new DropdownField('Branch', 'Deploy to', $branches),
+				new DropdownField('Branch', 'Branch', $branches, '', null, 'Select a branch'),
 				'Deploy the latest version of a branch'
 			);
 		}
 		if($tags) {
 			$releaseMethods[] = new SelectionGroup_Item(
 				'Tag',
-				new DropdownField('Tag', 'Deploy to', $tags),
+				new DropdownField('Tag', 'Deploy to', $tags, '', null, 'Select a tag'),
 				'Deploy a tagged release'
 			);
 		}

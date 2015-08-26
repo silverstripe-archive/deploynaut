@@ -162,37 +162,8 @@
 			}
 		});
 
-		deploy.init('.deploy-dropdown');
-		// This is the deployment page dropdown menu.
-		$('.deploy-dropdown').click(deploy.fetchDropdown);
-
-		$('.deploy-form-outer').on('click', '.tabbedselectiongroup > li > a', function (e) {
-			// Set the release type.
-			var releaseType = $(this).attr('data-value');
-			$(this).parents('form').find('input[name="SelectRelease"]').attr('value', releaseType);
-
-			$(this).tab('show');
-
-			// Ensure select2 is enabled
-			// This needs to be done when the tab is visible otherwise the width can screw up
-			var id = $(this).attr('href');
-			$(id).find('select:not(.disable-select2)').select2();
-
-			return false;
-		});
-
-		$('form').on('click', '.deploy-button', function(e) {
-			var releaseType = $(this).parents('form').find('input[name="SelectRelease"]').attr('value');
-
-			var environment = $(this).attr('data-environment-name');
-			var revision = $(this).parents('form').find('*[name="' + releaseType + '"]').val();
-
-			return confirm('You are about to begin the following deployment:\n\n'
-				+ 'Environment: ' + environment + '\n'
-				+ 'Revision: ' + revision + '\n\n'
-				+ 'Continue?');
-		});
-
+		// setup the git update and form fetch
+		deploy.init('.deploy-dropdown', '.deploy-form-outer');
 
 		$('.tooltip-hint:not(.git-sha), .btn-tooltip').tooltip({
 			placement: 'top',

@@ -909,22 +909,30 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// get the selected build
 		$selectedBuild =$form->getSelectedBuild($data);
 
+		// clear out the previous deploy from the 'choose revision' view and set required fields
 		$form->setFields(new FieldList(
-			new ReadonlyField('ReadonlySHA', 'Revision', $selectedBuild),
-			new HiddenField('SelectRelease', 'SelectRelease', 'SHA'),
-			new HiddenField('SHA', 'SHA', $selectedBuild)
+             new HiddenField('SelectRelease', 'SelectRelease', 'SHA'),
+             new HiddenField('SHA', 'SHA', $selectedBuild)
          ));
 
-		$form->setActions(new FieldList(
-			FormAction::create('doDeploy', "Deploy")
-				->addExtraClass('btn btn-primary deploy-button')
-				->setAttribute('data-environment-name', Convert::raw2att($environment->Name))
-		));
+		// clear out the old action button(s) from the 'choose revision' view
+		$form->setActions(new FieldList());
+
+		// ask the environments backend to amend the deploy form so that
+		// they can later be passed back via the resque job
+		$environment->Backend()->setDeployStrategies($form, $environment);
+
 		$form->enableSecurityToken();
-
 		$form->setFormAction($this->getRequest()->getURL());
-
 		$form->setTemplate('Form');
+
+		if($this->getRequest()->isAjax() && $this->getRequest()->isPOST()) {
+			$body = json_encode(array('Content' => $form->forAjaxTemplate()->forTemplate()));
+			$this->getResponse()->addHeader('Content-Type', 'application/json');
+			$this->getResponse()->setBody($body);
+			return $body;
+		}
+
 		return $form->getController()->renderWith(
 			array('DNRoot_deploysummary', 'DNRoot'),
 			array("SummaryForm" => $form)
