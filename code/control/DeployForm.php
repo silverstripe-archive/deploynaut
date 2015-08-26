@@ -116,18 +116,17 @@ class DeployForm extends Form {
 		if($environment->HasPipelineSupport()) {
 			list($field, $validator, $actions) = $this->setupPipeline($environment, $project);
 		} else {
-			list($field, $validator, $actions) = $this->setupSimpleDeploy($environment, $project);
+			list($field, $validator, $actions) = $this->setupSimpleDeploy($project);
 		}
 		parent::__construct($controller, $name, new FieldList($field), $actions, $validator);
 	}
 
 	/**
-	 * @param DNEnvironment $environment
 	 * @param DNProject $project
 	 *
 	 * @return array
 	 */
-	protected function setupSimpleDeploy(DNEnvironment $environment, DNProject $project) {
+	protected function setupSimpleDeploy(DNProject $project) {
 		// without a pipeline simply allow any commit to be selected
 		$field = $this->buildCommitSelector($project);
 		$validator = new DeployForm_CommitValidator();
@@ -206,6 +205,7 @@ class DeployForm extends Form {
 	 */
 	protected function buildCommitSelector($project, $pipelineCommits = null) {
 		// Branches
+		$branches = array();
 		foreach($project->DNBranchList() as $branch) {
 			$sha = $branch->SHA();
 			$name = $branch->Name();
@@ -259,17 +259,17 @@ class DeployForm extends Form {
 				'Deploy a commit prepared for this pipeline'
 			);
 		}
-		if($branches) {
+		if(!empty($branches)) {
 			$releaseMethods[] = new SelectionGroup_Item(
 				'Branch',
-				new DropdownField('Branch', 'Branch', $branches, '', null, 'Select a branch'),
+				new DropdownField('Branch', 'Select a branch', $branches),
 				'Deploy the latest version of a branch'
 			);
 		}
 		if($tags) {
 			$releaseMethods[] = new SelectionGroup_Item(
 				'Tag',
-				new DropdownField('Tag', 'Deploy to', $tags, '', null, 'Select a tag'),
+				new DropdownField('Tag', 'Select a tag', $tags),
 				'Deploy a tagged release'
 			);
 		}
