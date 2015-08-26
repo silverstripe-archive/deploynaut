@@ -36,7 +36,7 @@ var deploy = (function ($) {
 			var startFetch = $.ajax({
 				type: "POST",
 				url: fetchButton.data('api-url'),
-				dataType: 'json',
+				dataType: 'json'
 			});
 
 			startFetch
@@ -61,7 +61,7 @@ var deploy = (function ($) {
 	};
 
 	var deployButtonClick = function () {
-		$("form .deploy-button").on('click', function (e) {
+		$("form .deploy-button").on('click', function () {
 			var releaseType = $(this).parents('form').find('input[name="SelectRelease"]').attr('value');
 
 			var environment = $(this).attr('data-environment-name');
@@ -108,7 +108,6 @@ var deploy = (function ($) {
 		});
 
 		// Ensure the correct value is set for hidden field "SelectRelease"
-		var releaseType = $(formContainerSelector + ' .tabbedselectiongroup > li.active a').attr('data-value');
 		$(formContainerSelector).find('input[name="SelectRelease"]').attr('value', releaseType);
 	};
 
@@ -116,7 +115,7 @@ var deploy = (function ($) {
 	 * setup handlers for when the active tab changes
 	 */
 	var tabChange = function () {
-		$(formContainerSelector).on('click', '.tabbedselectiongroup > li > a', function (e) {
+		$(formContainerSelector).on('click', '.tabbedselectiongroup > li > a', function () {
 			// Set the release type.
 			$(this).parents('form').find('input[name="SelectRelease"]').attr('value', $(this).attr('data-value'));
 			$(this).tab('show');
@@ -143,7 +142,7 @@ var deploy = (function ($) {
 		}
 
 		var revisionForm = $(formContainerSelector + ' form');
-		var form = $.post(revisionForm.attr('action'), revisionForm.serialize())
+		var form = $.post(revisionForm.attr('action'), revisionForm.serialize());
 		form.done(function (data) {
 			$(formContainerSelector + " .tab-pane.active").append(data.Content);
 		})
@@ -197,16 +196,15 @@ var deploy = (function ($) {
 	/**
 	 * This should be called when a fetch job failed
 	 */
-	var fetchStatusError = function (data) {
+	var fetchStatusError = function () {
 		fetchButton.removeClass('loading').addClass('error');
 	};
 
 	/**
 	 * Get the revision form and display it
 	 *
-	 * @param data
 	 */
-	var getRevisionForm = function (data) {
+	var getRevisionForm = function () {
 		return $.ajax({
 			type: 'GET',
 			url: fetchButton.data('form-url'),
