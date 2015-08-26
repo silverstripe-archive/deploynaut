@@ -907,13 +907,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		// get the selected build
-		$selectedBuild =$form->getSelectedBuild($data);
+		$selectedBuild = $form->getSelectedBuild($data);
 
 		// clear out the previous deploy from the 'choose revision' view and set required fields
 		$form->setFields(new FieldList(
-             new HiddenField('SelectRelease', 'SelectRelease', 'SHA'),
-             new HiddenField('SHA', 'SHA', $selectedBuild)
-         ));
+			new HiddenField('SelectRelease', 'SelectRelease', 'SHA'),
+			new HiddenField('SHA', 'SHA', $selectedBuild)
+		));
 
 		// clear out the old action button(s) from the 'choose revision' view
 		$form->setActions(new FieldList());
