@@ -32,7 +32,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 					'from' => $currentBuild->SHA,
 					'to' => $sha,
 				)
-			));	
+			));
 		}
 
 		return $strategy;
@@ -49,9 +49,11 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	 */
 	public function deploy(
 		DNEnvironment $environment,
-		$sha, DeploynautLogFile $log,
+		$sha,
+		DeploynautLogFile $log,
 		DNProject $project,
-		$leaveMaintenancePage = false
+		$leaveMaintenancePage = false,
+		$options = array()
 	) {
 		$name = $environment->getFullName();
 		$repository = $project->getLocalCVSPath();

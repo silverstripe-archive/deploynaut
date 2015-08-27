@@ -907,11 +907,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		// get the selected build
-		$selectedBuild = $form->getSelectedBuild($data);
+		$strategy = $environment->Backend()->planDeploy($environment, $form->getSelectedBuild($data), $data);
+		$data = $strategy->getChanges();
 
-
-		$data = array('selected_build' => $selectedBuild);
-		// todo: get the deploy strategy
 		if($this->getRequest()->isAjax() && $this->getRequest()->isPOST()) {
 			$body = json_encode($data, JSON_PRETTY_PRINT);
 			$this->getResponse()->addHeader('Content-Type', 'application/json');
@@ -957,6 +955,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$deployment = DNDeployment::create();
 		$deployment->EnvironmentID = $environment->ID;
 		$deployment->SHA = $sha->FullName();
+		$deployment->Options = ''; // @todo pass in json_encoded options
 		$deployment->write();
 		$deployment->start();
 		return $this->redirect($deployment->Link());
@@ -989,8 +988,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$buildName = $form->getSelectedBuild($data);
 		$sha = $project->DNBuildList()->byName($buildName);
 		
-		$deployer = $environment->getDeploymentBackend();
-		$strategy = $deployer->getDeploymentStrategy($environment, $sha, $data);
+		$strategy = $environment->Backend()->planDeploy($environment, $sha, $data);
 
 		$this->getResponse()->addHeader('Content-Type', 'application/json');
 
