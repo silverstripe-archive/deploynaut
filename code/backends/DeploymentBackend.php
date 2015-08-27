@@ -6,30 +6,25 @@ interface DeploymentBackend {
 	 * Creates a deployment strategy that can be used to do some pre-flight checks.
 	 *
 	 * @param DNEnvironment $environment
-	 * @param string $sha
 	 * @param array $options
 	 *
 	 * @return DeploymentStrategy
 	 */
-	public function planDeploy(DNEnvironment $environment, $sha, $options = array());
+	public function planDeploy(DNEnvironment $environment, $options);
 
 	/**
 	 * Deploy the given build to the given environment.
 	 *
 	 * @param DNEnvironment $environment
-	 * @param string $sha
 	 * @param DeploynautLogFile $log
 	 * @param DNProject $project
-	 * @param bool|type $leaveMaintenancePage
 	 * @param array $options
 	 */
 	public function deploy(
 		DNEnvironment $environment,
-		$sha,
 		DeploynautLogFile $log,
 		DNProject $project,
-		$leaveMaintenancePage = false,
-		$options = array()
+		$options
 	);
 
 	/**

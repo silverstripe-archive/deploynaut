@@ -131,7 +131,8 @@ class DeployForm extends Form {
 		$field = $this->buildCommitSelector($project);
 		$validator = new DeployForm_CommitValidator();
 		$actions = new FieldList(
-			new HiddenField('action_showDeploySummary', 'action_showDeploySummary', 'Show deployment plan')
+			new FormAction('showDeploySummary', 'Plan deployment', 'Show deployment plan'),
+			new FormAction('doDeploy', 'Do deploy', 'Do deploy')
 		);
 		return array($field, $validator, $actions);
 	}

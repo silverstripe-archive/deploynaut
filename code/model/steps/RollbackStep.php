@@ -103,11 +103,13 @@ class RollbackStep extends LongRunningPipelineStep {
 		}
 
 		// Initialise deployment
-		$deployment = DNDeployment::create();
-		// Leave the maintenance page up if we are restoring the DB
-		$deployment->LeaveMaintenacePage = $this->doRestoreDB();
-		$deployment->EnvironmentID = $pipeline->EnvironmentID;
-		$deployment->SHA = $previous->SHA;
+		$strategy = new DeploymentStrategy($pipeline->Environment(), array(
+			'sha'=>$pipeline->SHA,
+			// Leave the maintenance page up if we are restoring the DB
+			'leaveMaintenancePage' => $this->doRestoreDB()
+		));
+		$deployment = $strategy->createDeployment();
+
 		$deployment->DeployerID = $pipeline->AuthorID;
 		$deployment->write();
 		$deployment->start();

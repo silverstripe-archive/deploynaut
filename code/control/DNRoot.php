@@ -850,7 +850,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 *
 	 * @return Form
 	 */
-	public function getDeployForm() {
+	public function getDeployForm($request = null) {
 
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
@@ -872,7 +872,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$form = new DeployForm($this, 'DeployForm', $environment, $project);
 
 		// If this is an ajax request we don't want to submit the form - we just want to retrieve the markup.
-		if($this->getRequest()->isAjax() && $this->getRequest()->isGET()) {
+		if (
+			$request &&
+			!$request->requestVar('action_showDeploySummary') &&
+			$this->getRequest()->isAjax() &&
+			$this->getRequest()->isGET()
+		) {
 			// We can just use the URL we're accessing
 			$form->setFormAction($this->getRequest()->getURL());
 
@@ -906,16 +911,18 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return $this->environment404Response();
 		}
 
-		// get the selected build
-		$strategy = $environment->Backend()->planDeploy($environment, $form->getSelectedBuild($data), $data);
-		$data = $strategy->getChanges();
+		// Plan the deployment.
+		$strategy = $environment->Backend()->planDeploy(
+			$environment,
+			array(
+				'sha' => $form->getSelectedBuild($data)
+			)
+		);
 
-		if($this->getRequest()->isAjax() && $this->getRequest()->isPOST()) {
-			$body = json_encode($data, JSON_PRETTY_PRINT);
-			$this->getResponse()->addHeader('Content-Type', 'application/json');
-			$this->getResponse()->setBody($body);
-			return $body;
-		}
+		$body = $strategy->toJSON();
+		$this->getResponse()->addHeader('Content-Type', 'application/json');
+		$this->getResponse()->setBody($body);
+		return $body;
 	}
 
 
@@ -946,76 +953,26 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return $this->environment404Response();
 		}
 
+		// TESTING Pretend we have received the strategy as JSON from the $data
+		$strategy = $environment->Backend()->planDeploy(
+			$environment,
+			array(
+				'sha' => $form->getSelectedBuild($data)
+			)
+		);
+		$json = $strategy->toJSON();
+		$data['strategy'] = $json;
+
 		// Initiate the deployment
 		// The extension point should pass in: Project, Environment, SelectRelease, buildName
 		$this->extend('doDeploy', $project, $environment, $buildName, $data);
 
-		$sha = $project->DNBuildList()->byName($buildName);
-		/** @var DNDeployment $deployment */
-		$deployment = DNDeployment::create();
-		$deployment->EnvironmentID = $environment->ID;
-		$deployment->SHA = $sha->FullName();
-		$deployment->Options = ''; // @todo pass in json_encoded options
-		$deployment->write();
+		// Start the deployment based on the approved strategy.
+		$strategy = new DeploymentStrategy($environment);
+		$strategy->fromJSON($data['strategy']);
+		$deployment = $strategy->createDeployment();
 		$deployment->start();
 		return $this->redirect($deployment->Link());
-	}
-
-	/**
-	 * This is a pre-flight check which checks the deployment strategy to ensure
-	 * the deployment will be valid before actually initiating the deployment.
-	 *
-	 * @param array $data
-	 * @param Form $form
-	 *
-	 * @return string json
-	 */
-	public function deploycheck($data, $form) {
-		if(!$this->getRequest()->isAjax()) {
-			return $this->httpError(403, 'Forbidden');
-		}
-
-		$project = $this->getCurrentProject();
-		if(!$project) {
-			return $this->httpError(404, 'Not Found');
-		}
-
-		$environment = $this->getCurrentEnvironment($project);
-		if(!$environment) {
-			return $this->httpError(404, 'Not Found');
-		}
-
-		$buildName = $form->getSelectedBuild($data);
-		$sha = $project->DNBuildList()->byName($buildName);
-		
-		$strategy = $environment->Backend()->planDeploy($environment, $sha, $data);
-
-		$this->getResponse()->addHeader('Content-Type', 'application/json');
-
-		// Check the validation code and respond.
-		switch ($code = $strategy->getValidationCode()) {
-			case DeploymentStrategy::SUCCESS_CODE:
-			case DeploymentStrategy::WARNING_CODE:
-				$response = array(
-					'Status' => $code,
-					'Content' => $strategy->getChanges(),
-					'EstimatedTime' => $strategy->getEstimatedTime(),
-				);
-				break;
-			case DeploymentStrategy::ERROR_CODE:
-			default:
-				$response = array(
-					'Status' => 'Invalid',
-					'Content' => $strategy->getErrors(),
-				);
-		}
-
-		$response['Action'] = array(
-			'Title' => $strategy->getActionTitle(),
-			'Code' => $strategy->getActionCode(),
-		);
-
-		return json_encode($response);
 	}
 
 	/**

@@ -6,7 +6,6 @@
  * @property string $SHA
  * @property string $ResqueToken
  * @property string $Status
- * @property bool $LeaveMaintenacePage
  *
  * @method DNEnvironment Environment()
  * @property int EnvironmentID
@@ -25,10 +24,8 @@ class DNDeployment extends DataObject {
 		// Observe that this is not the same as Resque status, since ResqueStatus is not persistent
 		// It's used for finding successful deployments and displaying that in history views in the frontend
 		"Status" => "Enum('Queued, Started, Finished, Failed, n/a', 'n/a')",
-		"LeaveMaintenacePage" => "Boolean",
-		// JSON encoded associative array. This will override/augment the list of arguments
-		// passed to the actual backend.
-		"Options" => "Text"
+		// JSON serialised DeploymentStrategy.
+		"Strategy" => "Text"
 	);
 
 	/**
@@ -180,17 +177,19 @@ class DNDeployment extends DataObject {
 
 		$args = array(
 			'environmentName' => $environment->Name,
-			'sha' => $this->SHA,
 			'repository' => $project->getLocalCVSPath(),
 			'logfile' => $this->logfile(),
 			'projectName' => $project->Name,
 			'env' => $project->getProcessEnv(),
-			'deploymentID' => $this->ID,
-			'leaveMaintenacePage' => $this->LeaveMaintenacePage
+			'deploymentID' => $this->ID
 		);
 
-		$options = json_decode($this->Options, true);
-		array_merge($args, $options);
+		$strategy = new DeploymentStrategy($environment);
+		$strategy->fromJSON($this->Strategy);
+		// Inject options.
+		$args = array_merge($args, $strategy->getOptions());
+		// Make sure we use the SHA as it was written into this DNDeployment.
+		$args['sha'] = $this->SHA;
 
 		if(!$this->DeployerID) {
 			$this->DeployerID = Member::currentUserID();
