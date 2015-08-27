@@ -909,34 +909,15 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// get the selected build
 		$selectedBuild = $form->getSelectedBuild($data);
 
-		// clear out the previous deploy from the 'choose revision' view and set required fields
-		$form->setFields(new FieldList(
-			new HiddenField('SelectRelease', 'SelectRelease', 'SHA'),
-			new HiddenField('SHA', 'SHA', $selectedBuild)
-		));
 
-		// clear out the old action button(s) from the 'choose revision' view
-		$form->setActions(new FieldList());
-
-		// ask the environments backend to amend the deploy form so that
-		// they can later be passed back via the resque job
-		$environment->Backend()->setDeployStrategies($form, $environment);
-
-		$form->enableSecurityToken();
-		$form->setFormAction($this->getRequest()->getURL());
-		$form->setTemplate('Form');
-
+		$data = array('selected_build' => $selectedBuild);
+		// todo: get the deploy strategy
 		if($this->getRequest()->isAjax() && $this->getRequest()->isPOST()) {
-			$body = json_encode(array('Content' => $form->forAjaxTemplate()->forTemplate()));
+			$body = json_encode($data, JSON_PRETTY_PRINT);
 			$this->getResponse()->addHeader('Content-Type', 'application/json');
 			$this->getResponse()->setBody($body);
 			return $body;
 		}
-
-		return $form->getController()->renderWith(
-			array('DNRoot_deploysummary', 'DNRoot'),
-			array("SummaryForm" => $form)
-		);
 	}
 
 
@@ -950,6 +931,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return \SS_HTTPResponse
 	 */
 	public function doDeploy($data, $form) {
+
+		// @todo receive the data as a json blob
+
 		$buildName = $form->getSelectedBuild($data);
 
 		// Performs canView permission check by limiting visible projects
