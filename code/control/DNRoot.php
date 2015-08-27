@@ -54,6 +54,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'pipelinelog',
 		'metrics',
 		'getDeployForm',
+		'doDeploy',
 		'deploy',
 		'deploylog',
 		'getDataTransferForm',
@@ -141,6 +142,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			array(
 				'deploynaut/javascript/jquery.js',
 				'deploynaut/javascript/bootstrap.js',
+				'deploynaut/javascript/deploy.js',
 				'deploynaut/javascript/deploynaut.js',
 				'deploynaut/javascript/bootstrap.file-input.js',
 				'deploynaut/thirdparty/select2/dist/js/select2.min.js',
@@ -885,6 +887,60 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
+	 * @param array $data
+	 * @param DeployForm $form
+	 *
+	 * @return string
+	 */
+	public function showDeploySummary(array $data, DeployForm $form) {
+
+		// Performs canView permission check by limiting visible projects
+		$project = $this->getCurrentProject();
+		if(!$project) {
+			return $this->project404Response();
+		}
+
+		// Performs canView permission check by limiting visible projects
+		$environment = $this->getCurrentEnvironment($project);
+		if(!$environment) {
+			return $this->environment404Response();
+		}
+
+		// get the selected build
+		$selectedBuild = $form->getSelectedBuild($data);
+
+		// clear out the previous deploy from the 'choose revision' view and set required fields
+		$form->setFields(new FieldList(
+			new HiddenField('SelectRelease', 'SelectRelease', 'SHA'),
+			new HiddenField('SHA', 'SHA', $selectedBuild)
+		));
+
+		// clear out the old action button(s) from the 'choose revision' view
+		$form->setActions(new FieldList());
+
+		// ask the environments backend to amend the deploy form so that
+		// they can later be passed back via the resque job
+		$environment->Backend()->setDeployStrategies($form, $environment);
+
+		$form->enableSecurityToken();
+		$form->setFormAction($this->getRequest()->getURL());
+		$form->setTemplate('Form');
+
+		if($this->getRequest()->isAjax() && $this->getRequest()->isPOST()) {
+			$body = json_encode(array('Content' => $form->forAjaxTemplate()->forTemplate()));
+			$this->getResponse()->addHeader('Content-Type', 'application/json');
+			$this->getResponse()->setBody($body);
+			return $body;
+		}
+
+		return $form->getController()->renderWith(
+			array('DNRoot_deploysummary', 'DNRoot'),
+			array("SummaryForm" => $form)
+		);
+	}
+
+
+	/**
 	 * Deployment form submission handler.
 	 *
 	 * Initiate a DNDeployment record and redirect to it for status polling
@@ -913,6 +969,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$this->extend('doDeploy', $project, $environment, $buildName, $data);
 
 		$sha = $project->DNBuildList()->byName($buildName);
+		/** @var DNDeployment $deployment */
 		$deployment = DNDeployment::create();
 		$deployment->EnvironmentID = $environment->ID;
 		$deployment->SHA = $sha->FullName();
