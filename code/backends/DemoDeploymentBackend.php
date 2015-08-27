@@ -10,6 +10,19 @@
 class DemoDeploymentBackend extends Object implements DeploymentBackend {
 
 	/**
+	 * Create a deployment strategy.
+	 *
+	 * @param DNEnvironment $environment
+	 * @param string $sha
+	 * @param array $options
+	 *
+	 * @return DeploymentStrategy
+	 */
+	public function planDeploy(DNEnvironment $environment, $sha, $options = array()) {
+		return new DeploymentStrategy($environment, $sha, $options);
+	}
+
+	/**
 	 * Deploy the given build to the given environment
 	 *
 	 * @param DNEnvironment $environment

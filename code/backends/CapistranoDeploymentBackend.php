@@ -14,6 +14,31 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	}
 
 	/**
+	 * Create a deployment strategy.
+	 *
+	 * @param DNEnvironment $environment
+	 * @param string $sha
+	 * @param array $options
+	 *
+	 * @return DeploymentStrategy
+	 */
+	public function planDeploy(DNEnvironment $environment, $sha, $options = array()) {
+		$strategy = new DeploymentStrategy($environment, $sha, $options);
+		
+		$currentBuild = $environment->CurrentBuild();
+		if($currentBuild && $currentBuild->SHA != $sha) {
+			$strategy->setChange(array(
+				'SHA' => array(
+					'from' => $currentBuild->SHA,
+					'to' => $sha,
+				)
+			));	
+		}
+
+		return $strategy;
+	}
+
+	/**
 	 * Deploy the given build to the given environment.
 	 *
 	 * @param DNEnvironment $environment
