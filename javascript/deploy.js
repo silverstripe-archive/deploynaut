@@ -313,7 +313,7 @@ var DeployPlan = React.createClass({
 					</table>
 
 				</div>
-				<div class="">
+				<div className="">
 					<button value="Confirm Deployment" className="action btn btn-primary deploy-button" disabled={!canDeploy} onClick={this.submitHandler}>Confirm Deployment</button>
 				</div>
 			</div>
