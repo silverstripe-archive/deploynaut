@@ -1,6 +1,6 @@
 /*jslint white: true, browser: true, nomen: true, devel: true */
 /*global jQuery: false */
-(function($, deploy) {
+(function($) {
 	"use strict";
 
 	// Popover on enviroment repository link
@@ -127,43 +127,10 @@
 			$(this).toggleClass( "open" );
 		});
 
-		if ($('#DeployForm_DeployForm_BuildName').val() === '') {
-			$('#DeployForm_DeployForm_action_showDeploySummary').attr('disabled', true);
-		}
-
-		$('#DeployForm_DeployForm_BuildName').change(function() {
-			if ($('#DeployForm_DeployForm_BuildName').val() === '') {
-				$('#DeployForm_DeployForm_action_showDeploySummary').attr('disabled', true);
-				return;
-			}
-			$('#DeployForm_DeployForm_action_showDeploySummary').attr('disabled', false);
-		});
-
 		// Deployment screen
 		if ($('#queue_log').length) {
 			queue.start();
 		}
-
-		$('.project-branch > .branch-details').click(function() {
-			var $project = $(this).parent();
-			var $content = $project.find('.project-branch-content');
-
-			if ($project.hasClass('open')) {
-				$project.removeClass('open');
-			} else {
-				$project.addClass('open');
-				// If the content hasn't been loaded yet, load it
-				if($content.html().match(/^\s+$/)) {
-					$content.html("Loading...");
-					$.get($project.data('href'), function(data) {
-						$content.html(data);
-					});
-				}
-			}
-		});
-
-		// setup the git update and form fetch
-		deploy.init('.deploy-dropdown', '.deploy-form-outer');
 
 		$('.tooltip-hint:not(.git-sha), .btn-tooltip').tooltip({
 			placement: 'top',
@@ -248,4 +215,4 @@
 		});
 
 	});
-}(jQuery, deploy));
+}(jQuery));

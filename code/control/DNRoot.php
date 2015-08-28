@@ -73,6 +73,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'deletesnapshot',
 		'movesnapshot',
 		'postsnapshotsuccess',
+		'gitRevisions',
+		'deploySummary',
+		'startDeploy',
 	);
 
 	/**
@@ -89,6 +92,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'project/$Project/PostSnapshotForm' => 'getPostSnapshotForm',
 		'project/$Project/environment/$Environment/metrics' => 'metrics',
 		'project/$Project/environment/$Environment/pipeline/$Identifier//$Action/$ID/$OtherID' => 'pipeline',
+		'project/$Project/environment/$Environment/deploy_summary' => 'deploySummary',
+		'project/$Project/environment/$Environment/git_revisions' => 'gitRevisions',
+		'project/$Project/environment/$Environment/start-deploy' => 'startDeploy',
 		'project/$Project/environment/$Environment/deploy/$Identifier/log' => 'deploylog',
 		'project/$Project/environment/$Environment/deploy/$Identifier' => 'deploy',
 		'project/$Project/transfer/$Identifier/log' => 'transferlog',
@@ -142,7 +148,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			array(
 				'deploynaut/javascript/jquery.js',
 				'deploynaut/javascript/bootstrap.js',
-				'deploynaut/javascript/deploy.js',
+				'deploynaut/javascript/q.js',
 				'deploynaut/javascript/deploynaut.js',
 				'deploynaut/javascript/bootstrap.file-input.js',
 				'deploynaut/thirdparty/select2/dist/js/select2.min.js',
@@ -892,6 +898,76 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
+	 * @param SS_HTTPRequest $request
+	 *
+	 * @return SS_HTTPResponse|string
+	 */
+	public function gitRevisions(SS_HTTPRequest $request) {
+
+		// Performs canView permission check by limiting visible projects
+		$project = $this->getCurrentProject();
+		if(!$project) {
+			return $this->project404Response();
+		}
+
+		$tabs = array();
+		$id = 1;
+
+		$data = array();
+		$data['id'] = $id;
+		$data['name'] = 'Deploy the latest version of a branch';
+		$data['field_type'] = 'dropdown';
+		$data['field_data'] = array();
+		foreach($project->DNBranchList() as $branch) {
+			$sha = $branch->SHA();
+			$name = $branch->Name();
+			$branchValue = sprintf("%s (%s, %s old)",
+				$name,
+				substr($sha, 0, 8),
+				$branch->LastUpdated()->TimeDiff()
+			);
+
+			$data['field_data'][] = array(
+				'name' => $branchValue,
+				'value' => $sha
+			);
+		}
+		$tabs[] = $data;
+
+		return json_encode($tabs, JSON_PRETTY_PRINT);
+	}
+
+	/**
+	 * @param SS_HTTPRequest $request
+	 *
+	 * @return string
+	 */
+	public function deploySummary(SS_HTTPRequest $request) {
+
+		// Performs canView permission check by limiting visible projects
+		$project = $this->getCurrentProject();
+		if(!$project) {
+			return $this->project404Response();
+		}
+
+		// Performs canView permission check by limiting visible projects
+		$environment = $this->getCurrentEnvironment($project);
+		if(!$environment) {
+			return $this->environment404Response();
+		}
+
+		// Plan the deployment.
+		$strategy = $environment->Backend()->planDeploy(
+			$environment,
+			array(
+				'sha' => $request->requestVar('sha')
+			)
+		);
+
+		return $strategy->toJSON();
+	}
+
+	/**
 	 * @param array $data
 	 * @param DeployForm $form
 	 *
@@ -925,21 +1001,18 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		return $body;
 	}
 
-
 	/**
 	 * Deployment form submission handler.
 	 *
 	 * Initiate a DNDeployment record and redirect to it for status polling
 	 *
-	 * @param array $data
-	 * @param DeployForm $form
-	 * @return \SS_HTTPResponse
+	 * @param SS_HTTPRequest $request
+	 *
+	 * @return SS_HTTPResponse
+	 * @throws ValidationException
+	 * @throws null
 	 */
-	public function doDeploy($data, $form) {
-
-		// @todo receive the data as a json blob
-
-		$buildName = $form->getSelectedBuild($data);
+	public function startDeploy(SS_HTTPRequest $request) {
 
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
@@ -957,7 +1030,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$strategy = $environment->Backend()->planDeploy(
 			$environment,
 			array(
-				'sha' => $form->getSelectedBuild($data)
+				'sha' => $request->requestVar('sha')
 			)
 		);
 		$json = $strategy->toJSON();
@@ -972,7 +1045,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$strategy->fromJSON($data['strategy']);
 		$deployment = $strategy->createDeployment();
 		$deployment->start();
-		return $this->redirect($deployment->Link());
+
+		return json_encode(array(
+			'url' => Director::absoluteBaseURL().$deployment->Link()
+		), JSON_PRETTY_PRINT);
 	}
 
 	/**
