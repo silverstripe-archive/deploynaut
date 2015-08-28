@@ -213,9 +213,10 @@ var DeployTab = React.createClass({
 	getInitialState: function() {
 		return {
 			summary: {
-				changes: [],
+				changes: null,
 				validationCode: '',
-			}
+				initialState: true,
+			},
 		};
 	},
 	componentDidMount: function() {
@@ -290,23 +291,36 @@ var DeployPlan = React.createClass({
 		});
 	},
 	render: function() {
-		console.log(this.props.summary);
-		var changes = this.props.summary.changes;
+		var errors = this.props.summary.errors;
 		var canDeploy = (this.props.summary.validationCode === "success");
-		var i = 0;
+		var actionTitle = this.props.summary.actionTitle || 'Make a selection';
 
-		var table;
-		if (canDeploy) {
-			table = <SummaryTable changes={this.props.summary.changes} />
+		var errorMessages;
+		if (errors && errors.length>0) {
+			errorMessages = errors.map(function(message) {
+				return (
+					<li class='error' dangerouslySetInnerHTML={{__html: message}}></li>
+				)
+			});
+		}
+
+		if (this.props.summary.changes) {
+			var table = <SummaryTable changes={this.props.summary.changes} />
+		} else if (!this.props.summary.initialState) {
+			console.log(this.props);
+			var table = <div>There are no changes. You can deploy anyway if you wish.</div>
 		}
 		return(
 			<div>
 				<div className="section">
 					<label><span className="numberCircle">2</span> Review Details</label>
 					{table}
+					<ul>
+						{errorMessages}
+					</ul>
 				</div>
 				<div className="section">
-					<button value="Confirm Deployment" className="action btn btn-primary deploy-button" disabled={!canDeploy} onClick={this.submitHandler}>Confirm Deployment</button>
+					<button value="Confirm Deployment" className="action btn btn-primary deploy-button" disabled={!canDeploy} onClick={this.submitHandler}>{actionTitle}</button>
 				</div>
 			</div>
 		)
@@ -315,12 +329,16 @@ var DeployPlan = React.createClass({
 
 var SummaryTable = React.createClass({
 	render: function() {
-		var summaryLines = Object.keys(this.props.changes).map(function(key) {
+		var i = 0;
+		var changes = this.props.changes;
+
+		var summaryLines = Object.keys(changes).map(function(key) {
 			i++;
 			return (
 				<SummaryLine key={i} name={key} from={changes[key].from} to={changes[key].to} />
 			)
 		});
+
 		return (
 			<table className="table-condensed">
 				<thead>
