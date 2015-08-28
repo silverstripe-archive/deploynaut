@@ -917,6 +917,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$data['id'] = $id;
 		$data['name'] = 'Deploy the latest version of a branch';
 		$data['field_type'] = 'dropdown';
+		$data['field_label'] = 'Choose branch';
+		$data['field_id'] = 'branch';
 		$data['field_data'] = array();
 		foreach($project->DNBranchList() as $branch) {
 			$sha = $branch->SHA();

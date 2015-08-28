@@ -60,7 +60,6 @@ var DeployDropDown = React.createClass({
 					opened: true
 				});
 			}).catch(function(data){
-				console.log('omg everything is broken');
 				console.error(data);
 			}).done();
 	},
@@ -100,7 +99,7 @@ var DeployDropDown = React.createClass({
 				<div className={classes} onClick={this.handleClick}>
 					<span className="status-icon" aria-hidden="true"></span>
 					<span className="loading-text">{this.state.loadingText}</span>
-					<EnvironmentName environmentName="cb-web-a" />
+					<EnvironmentName environmentName="" />
 				</div>
 				<DeployForm data={this.props.data} env_url={this.props.env_url}/>
 			</div>
@@ -151,7 +150,7 @@ var DeployForm = React.createClass({
 	render: function () {
 		return (
 			<div className="deploy-form-outer clearfix collapse in">
-			<form className="form-inline deploy-form" action="POST" action="naut/project/cloudbusters/environment/cb-web-a-fast/start-deploy">
+			<form className="form-inline deploy-form" action="POST" action="#">
 			<DeployTabSelector data={this.state.data} onSelect={this.selectHandler} selectedTab={this.state.selectedTab} />
 			<DeployTabs data={this.state.data} selectedTab={this.state.selectedTab} env_url={this.props.env_url} />
 			</form>
@@ -161,7 +160,6 @@ var DeployForm = React.createClass({
 });
 
 var DeployTabSelector = React.createClass({
-
 	render: function () {
 		var self = this;
 		var selectors = this.props.data.map(function(tab) {
@@ -173,7 +171,6 @@ var DeployTabSelector = React.createClass({
 			<ul className="SelectionGroup tabbedselectiongroup nolabel">
 			{selectors}
 			</ul>
-
 		);
 	}
 });
@@ -189,7 +186,7 @@ var DeployTabSelect = React.createClass({
 		});
 		return (
 			<li className={classes}>
-				<a onClick={this.handleClick} href={"#deploy-tab-"+this.props.tab.id} data-value={this.props.tab.type}>{this.props.tab.name}</a>
+				<a onClick={this.handleClick} href={"#deploy-tab-"+this.props.tab.id} >{this.props.tab.name}</a>
 			</li>
 		);
 	}
@@ -216,11 +213,22 @@ var DeployTab = React.createClass({
 	getInitialState: function() {
 		return {
 			summary: {
-				changes: []
+				changes: [],
+				validationCode: '',
 			}
 		};
 	},
+	componentDidMount: function() {
+		$(React.findDOMNode(this.refs.sha_selector)).select2().on("change", this.selectChangeHandler);
+	},
 	selectChangeHandler: function(event) {
+
+		if(event.target.value === "") {
+			this.setState(this.getInitialState());
+			console.log('reset');
+			return;
+		}
+
 		var self = this;
 		Q($.ajax({
 			type: "POST",
@@ -232,7 +240,6 @@ var DeployTab = React.createClass({
 			self.setState({
 				summary: data
 			});
-			console.log(self.state);
 		}, function(data){
 			console.error(data);
 		});
@@ -253,9 +260,9 @@ var DeployTab = React.createClass({
 		});
 		return (
 			<div id={"deploy-tab-"+this.props.tab.id} className={classes}>
-				{this.props.tab.name}
-				<select name="Branch" className="dropdown" onChange={this.selectChangeHandler} >
-					<option>Select something</option>
+				<label htmlFor={this.props.tab.field_id} >1. {this.props.tab.field_label}</label>
+				<select ref="sha_selector" id={this.props.tab.field_id} name="sha" className="dropdown" onChange={this.selectChangeHandler} >
+					<option value="">Select {this.props.tab.field_id}</option>
 					{options}
 				</select>
 				<DeployPlan summary={this.state.summary} env_url={this.props.env_url} />
@@ -279,24 +286,35 @@ var DeployPlan = React.createClass({
 		});
 	},
 	render: function() {
-
 		var changes = this.props.summary.changes;
-		var canDeploy = true;
+		var canDeploy = (this.props.summary.validationCode === "success");
 		var i = 0;
 		var summaryLines = Object.keys(changes).map(function(key) {
 			i++;
 			return (
-				<SummaryLine key={i} name={key} value={changes[key].to} />
+				<SummaryLine key={i} name={key} from={changes[key].from} to={changes[key].to} />
 			)
 		});
 		return(
 			<div>
-				<label>Review Details</label>
+				<label>2. Review Details</label>
 				<div>
-				{summaryLines}
+					<table className="table-condensed">
+						<thead>
+							<tr>
+								<th></th>
+								<th>From</th>
+								<th>To</th>
+							</tr>
+						</thead>
+						<tbody>
+							{summaryLines}
+						</tbody>
+					</table>
+
 				</div>
-				<div>
-					<button value="Deploy to cb-web-a-fast" className="action btn btn-primary deploy-button" disabled={!canDeploy} onClick={this.submitHandler}>Deploy</button>
+				<div class="">
+					<button value="Confirm Deployment" className="action btn btn-primary deploy-button" disabled={!canDeploy} onClick={this.submitHandler}>Confirm Deployment</button>
 				</div>
 			</div>
 		)
@@ -305,8 +323,12 @@ var DeployPlan = React.createClass({
 
 var SummaryLine = React.createClass({
 	render: function() {
+		var from = this.props.from.substring(0,30);
+		var to = this.props.to.substring(0,30);
 		return (
-			<div>{this.props.name}: {this.props.value}</div>
+			<tr>
+				<th scope="row">{this.props.name}</th><td>{from}</td><td>{to}</td>
+			</tr>
 		)
 	}
 });
