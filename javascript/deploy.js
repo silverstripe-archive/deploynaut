@@ -260,11 +260,15 @@ var DeployTab = React.createClass({
 		});
 		return (
 			<div id={"deploy-tab-"+this.props.tab.id} className={classes}>
-				<label htmlFor={this.props.tab.field_id} >1. {this.props.tab.field_label}</label>
-				<select ref="sha_selector" id={this.props.tab.field_id} name="sha" className="dropdown" onChange={this.selectChangeHandler} >
-					<option value="">Select {this.props.tab.field_id}</option>
-					{options}
-				</select>
+				<div className="section">
+					<label htmlFor={this.props.tab.field_id} ><span className="numberCircle">1</span> {this.props.tab.field_label}</label>
+					<div className="field">
+						<select ref="sha_selector" id={this.props.tab.field_id} name="sha" className="dropdown" onChange={this.selectChangeHandler} >
+							<option value="">Select {this.props.tab.field_id}</option>
+							{options}
+						</select>
+					</div>
+				</div>
 				<DeployPlan summary={this.state.summary} env_url={this.props.env_url} />
 			</div>
 		);
@@ -286,38 +290,51 @@ var DeployPlan = React.createClass({
 		});
 	},
 	render: function() {
+		console.log(this.props.summary);
 		var changes = this.props.summary.changes;
 		var canDeploy = (this.props.summary.validationCode === "success");
 		var i = 0;
-		var summaryLines = Object.keys(changes).map(function(key) {
+
+		var table;
+		if (canDeploy) {
+			table = <SummaryTable changes={this.props.summary.changes} />
+		}
+		return(
+			<div>
+				<div className="section">
+					<label><span className="numberCircle">2</span> Review Details</label>
+					{table}
+				</div>
+				<div className="section">
+					<button value="Confirm Deployment" className="action btn btn-primary deploy-button" disabled={!canDeploy} onClick={this.submitHandler}>Confirm Deployment</button>
+				</div>
+			</div>
+		)
+	}
+});
+
+var SummaryTable = React.createClass({
+	render: function() {
+		var summaryLines = Object.keys(this.props.changes).map(function(key) {
 			i++;
 			return (
 				<SummaryLine key={i} name={key} from={changes[key].from} to={changes[key].to} />
 			)
 		});
-		return(
-			<div>
-				<label>2. Review Details</label>
-				<div>
-					<table className="table-condensed">
-						<thead>
-							<tr>
-								<th></th>
-								<th>From</th>
-								<th>To</th>
-							</tr>
-						</thead>
-						<tbody>
-							{summaryLines}
-						</tbody>
-					</table>
-
-				</div>
-				<div className="">
-					<button value="Confirm Deployment" className="action btn btn-primary deploy-button" disabled={!canDeploy} onClick={this.submitHandler}>Confirm Deployment</button>
-				</div>
-			</div>
-		)
+		return (
+			<table className="table-condensed">
+				<thead>
+					<tr>
+						<th></th>
+						<th>From</th>
+						<th>To</th>
+					</tr>
+				</thead>
+				<tbody>
+					{summaryLines}
+				</tbody>
+			</table>
+		);
 	}
 });
 
