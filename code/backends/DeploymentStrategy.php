@@ -16,11 +16,6 @@ class DeploymentStrategy extends ViewableData {
 	/**
 	 * @var string
 	 */
-	protected $sha;
-
-	/**
-	 * @var string
-	 */
 	protected $actionTitle = 'Deploy';
 
 	/**
@@ -58,12 +53,10 @@ class DeploymentStrategy extends ViewableData {
 
 	/**
 	 * @param DNEnvironment $environment
-	 * @param string $sha
 	 * @param array $options
 	 */
-	public function __construct(DNEnvironment $environment, $sha, $options = array()) {
+	public function __construct(DNEnvironment $environment, $options = array()) {
 		$this->environment = $environment;
-		$this->sha = $sha;
 		$this->options = $options;
 	}
 
@@ -143,6 +136,15 @@ class DeploymentStrategy extends ViewableData {
 	}
 
 	/**
+	 * @return mixed
+	 */
+	public function getOption($option) {
+		if (!empty($this->options[$option])) {
+			return $this->options[$option];
+		}
+	}
+
+	/**
 	 * @return array
 	 */
 	public function getOptions() {
@@ -177,5 +179,66 @@ class DeploymentStrategy extends ViewableData {
 	public function getErrors() {
 		return $this->errors;
 	}
+
+	/**
+	 * @return string
+	 */
+	public function toJSON() {
+		$fields = array(
+			'actionTitle',
+			'actionCode',
+			'estimatedTime',
+			'changes',
+			'options',
+			'validationCode',
+			'errors'
+		);
+
+		$output = array();
+		foreach ($fields as $field) {
+			$output[$field] = $this->$field;
+		}
+		return json_encode($output);
+	}
+
+	/**
+	 * Load from JSON associative array.
+	 * Environment must be set by the callee when creating this object.
+	 *
+	 * @param string $json
+	 */
+	public function fromJSON($json) {
+		$fields = array(
+			'actionTitle',
+			'actionCode',
+			'estimatedTime',
+			'changes',
+			'options',
+			'validationCode',
+			'errors'
+		);
+		$decoded = json_decode($json, true);
+
+		foreach ($fields as $field) {
+			if (!empty($decoded[$field])) {
+				$this->$field = $decoded[$field];
+			}
+		}
+	}
+
+	/**
+	 * @return DNDeployment
+	 */
+	public function createDeployment() {
+		$deployment = DNDeployment::create();
+		$deployment->EnvironmentID = $this->environment->ID;
+		// Pull out the SHA from the options so we can make it queryable.
+		$deployment->SHA = $this->getOption('sha');
+		$deployment->Strategy = $this->toJSON();
+		$deployment->write();
+
+		return $deployment;
+	}
+
 }
 

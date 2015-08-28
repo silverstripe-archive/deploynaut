@@ -167,10 +167,10 @@ class APIEnvironment extends APINoun {
 			return $this->message('deploy requires a {"release": "sha1"} in the body of the request.', 400);
 		}
 
-		$deploy = DNDeployment::create();
-		$deploy->EnvironmentID = $this->record->ID;
-		$deploy->SHA = $reqBody['release'];
-		$deploy->write();
+		$strategy = new DeploymentStrategy($this->record, array(
+			'sha' => $reqBody['release']
+		));
+		$deploy = $strategy->createDeployment();
 		$deploy->start();
 		$location = Director::absoluteBaseURL() . $this->Link() . '/deploy/' . $deploy->ID;
 		$output = array(

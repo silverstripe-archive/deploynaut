@@ -17,22 +17,16 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	 * Create a deployment strategy.
 	 *
 	 * @param DNEnvironment $environment
-	 * @param string $sha
 	 * @param array $options
 	 *
 	 * @return DeploymentStrategy
 	 */
-	public function planDeploy(DNEnvironment $environment, $sha, $options = array()) {
-		$strategy = new DeploymentStrategy($environment, $sha, $options);
+	public function planDeploy(DNEnvironment $environment, $options) {
+		$strategy = new DeploymentStrategy($environment, $options);
 		
 		$currentBuild = $environment->CurrentBuild();
-		if($currentBuild && $currentBuild->SHA != $sha) {
-			$strategy->setChange(array(
-				'SHA' => array(
-					'from' => $currentBuild->SHA,
-					'to' => $sha,
-				)
-			));
+		if($currentBuild && $currentBuild->SHA != $options['sha']) {
+			$strategy->setChange('SHA', $currentBuild->SHA, $options['sha']);
 		}
 
 		return $strategy;
@@ -42,21 +36,19 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	 * Deploy the given build to the given environment.
 	 *
 	 * @param DNEnvironment $environment
-	 * @param string $sha
 	 * @param DeploynautLogFile $log
 	 * @param DNProject $project
-	 * @param bool $leaveMaintenancePage
+	 * @param array $options
 	 */
 	public function deploy(
 		DNEnvironment $environment,
-		$sha,
 		DeploynautLogFile $log,
 		DNProject $project,
-		$leaveMaintenancePage = false,
-		$options = array()
+		$options
 	) {
 		$name = $environment->getFullName();
 		$repository = $project->getLocalCVSPath();
+		$sha = $options['sha'];
 
 		$args = array(
 			'branch' => $sha,
@@ -98,7 +90,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		};
 
 		// Once the deployment has run it's necessary to update the maintenance page status
-		if($leaveMaintenancePage) {
+		if(!empty($options['leaveMaintenancePage'])) {
 			$this->enableMaintenance($environment, $log, $project);
 		}
 
@@ -109,7 +101,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		}
 
 		// Check if maintenance page should be removed
-		if(!$leaveMaintenancePage) {
+		if(empty($options['leaveMaintenancePage'])) {
 			$this->disableMaintenance($environment, $log, $project);
 		}
 
