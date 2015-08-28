@@ -299,7 +299,7 @@ var DeployPlan = React.createClass({
 		if (errors && errors.length>0) {
 			errorMessages = errors.map(function(message) {
 				return (
-					<li class='error' dangerouslySetInnerHTML={{__html: message}}></li>
+					<li class='error'>{message}</li>
 				)
 			});
 		}
