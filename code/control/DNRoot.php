@@ -911,15 +911,15 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		$tabs = array();
-		$id = 1;
-
-		$data = array();
-		$data['id'] = $id;
-		$data['name'] = 'Deploy the latest version of a branch';
-		$data['field_type'] = 'dropdown';
-		$data['field_label'] = 'Choose branch';
-		$data['field_id'] = 'branch';
-		$data['field_data'] = array();
+		$id = 0;
+		$data = array(
+			'id' => ++$id,
+			'name' => 'Deploy the latest version of a branch',
+			'field_type' => 'dropdown',
+			'field_label' => 'Choose branch',
+			'field_id' => 'branch',
+			'field_data' => array()
+		);
 		foreach($project->DNBranchList() as $branch) {
 			$sha = $branch->SHA();
 			$name = $branch->Name();
@@ -928,13 +928,30 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				substr($sha, 0, 8),
 				$branch->LastUpdated()->TimeDiff()
 			);
-
 			$data['field_data'][] = array(
 				'name' => $branchValue,
 				'value' => $sha
 			);
 		}
 		$tabs[] = $data;
+
+		$data = array(
+			'id' => ++$id,
+			'name' => 'Deploy a tagged release',
+			'field_type' => 'dropdown',
+			'field_label' => 'Choose tag',
+			'field_id' => 'tag',
+			'field_data' => array()
+		);
+		foreach($project->DNTagList()->setLimit(null) as $tag) {
+			$name = $tag->Name();
+			$data['field_data'][] = array(
+				'name' => sprintf("%s", $name),
+				'value' => $tag->SHA()
+			);
+		}
+		$tabs[] = $data;
+
 
 		return json_encode($tabs, JSON_PRETTY_PRINT);
 	}
