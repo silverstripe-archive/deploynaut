@@ -1067,7 +1067,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		return json_encode(array(
 			'url' => Director::absoluteBaseURL().$deployment->Link()
-		), JSON_PRETTY_PRINT);
+		));
 	}
 
 	/**

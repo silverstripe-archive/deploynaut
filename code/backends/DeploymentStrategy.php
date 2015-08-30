@@ -198,7 +198,7 @@ class DeploymentStrategy extends ViewableData {
 		foreach ($fields as $field) {
 			$output[$field] = $this->$field;
 		}
-		return json_encode($output, JSON_PRETTY_PRINT);
+		return json_encode($output);
 	}
 
 	/**
