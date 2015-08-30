@@ -3,3 +3,4 @@
 nodemodules/
 node_modules/
 node-modules/
+.module-cache/
