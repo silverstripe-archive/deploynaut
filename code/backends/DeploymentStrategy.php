@@ -96,7 +96,7 @@ class DeploymentStrategy extends ViewableData {
 	}
 
 	/**
-	 * @return int Time in seconds
+	 * @return int Time in minutes
 	 */
 	public function getEstimatedTime() {
 		return $this->estimatedTime;
