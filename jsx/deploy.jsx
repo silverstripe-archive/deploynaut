@@ -261,9 +261,8 @@ var DeployTab = React.createClass({
 	},
 	selectChangeHandler: function(event) {
 
+		this.setState(this.getInitialState());
 		if(event.target.value === "") {
-			this.setState(this.getInitialState());
-			console.log('reset');
 			return;
 		}
 
@@ -273,7 +272,6 @@ var DeployTab = React.createClass({
 			dataType: 'json',
 			url: this.props.env_url + '/deploy_summary',
 			data: {'sha': event.target.value}
-
 		})).then(function(data) {
 			self.setState({
 				summary: data
