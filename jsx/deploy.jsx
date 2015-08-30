@@ -39,6 +39,9 @@ function classNames () {
 	return classes.substr(1);
 }
 
+/**
+ * DeployDropdown
+ */
 var DeployDropDown = React.createClass({
 	getInitialState: function() {
 		return {
@@ -74,8 +77,8 @@ var DeployDropDown = React.createClass({
 					opened: true
 				});
 			}).catch(function(data){
-			console.error(data);
-		}).done();
+				console.error(data);
+			}).done();
 	},
 	waitForFetchToComplete:function (fetchData) {
 		var self = this;
@@ -110,17 +113,20 @@ var DeployDropDown = React.createClass({
 		});
 		return (
 			<div>
-			<div className={classes} onClick={this.handleClick}>
-				<span className="status-icon" aria-hidden="true"></span>
-				<span className="loading-text">{this.state.loadingText}</span>
-				<EnvironmentName environmentName="" />
+				<div className={classes} onClick={this.handleClick}>
+					<span className="status-icon" aria-hidden="true"></span>
+					<span className="loading-text">{this.state.loadingText}</span>
+					<EnvironmentName environmentName="" />
+				</div>
+				<DeployForm data={this.props.data} env_url={this.props.env_url} />
 			</div>
-			<DeployForm data={this.props.data} env_url={this.props.env_url}/>
-		</div>
 		);
 	}
 });
 
+/**
+ * EnvironmentName
+ */
 var EnvironmentName = React.createClass({
 	render: function () {
 		return (
@@ -132,6 +138,9 @@ var EnvironmentName = React.createClass({
 	}
 });
 
+/**
+ * DeployForm
+ */
 var DeployForm = React.createClass({
 	getInitialState: function() {
 		return {
@@ -173,6 +182,9 @@ var DeployForm = React.createClass({
 	}
 });
 
+/**
+ * DeployTabSelector
+ */
 var DeployTabSelector = React.createClass({
 	render: function () {
 		var self = this;
@@ -189,6 +201,9 @@ var DeployTabSelector = React.createClass({
 	}
 });
 
+/**
+ * DeployTabSelect
+ */
 var DeployTabSelect = React.createClass({
 	handleClick: function(e) {
 		e.preventDefault();
@@ -206,6 +221,9 @@ var DeployTabSelect = React.createClass({
 	}
 });
 
+/**
+ * DeployTabs
+ */
 var DeployTabs = React.createClass({
 	render: function () {
 		var self = this;
@@ -223,6 +241,9 @@ var DeployTabs = React.createClass({
 	}
 });
 
+/**
+ * DeployTab
+ */
 var DeployTab = React.createClass({
 	getInitialState: function() {
 		return {
@@ -291,6 +312,9 @@ var DeployTab = React.createClass({
 	}
 });
 
+/**
+ * DeployPlan
+ */
 var DeployPlan = React.createClass({
 	submitHandler: function(event) {
 		event.preventDefault();
@@ -346,6 +370,9 @@ var DeployPlan = React.createClass({
 	}
 });
 
+/**
+ * EstimatedTime
+ */
 var EstimatedTime = React.createClass({
 	render: function() {
 		var estimatedTime = this.props.estimatedTime;
@@ -359,6 +386,9 @@ var EstimatedTime = React.createClass({
 	}
 });
 
+/**
+ * SummaryTable
+ */
 var SummaryTable = React.createClass({
 	render: function() {
 		var i = 0;
@@ -388,6 +418,9 @@ var SummaryTable = React.createClass({
 	}
 });
 
+/**
+ * SummaryLine
+ */
 var SummaryLine = React.createClass({
 	render: function() {
 		var from = this.props.from.substring(0,30);
@@ -400,6 +433,9 @@ var SummaryLine = React.createClass({
 	}
 });
 
+/**
+ * Render
+ */
 React.render(
 	<DeployDropDown project_url={urls.project_url} env_url={urls.env_url} />,
 	document.getElementById('deploy_form')

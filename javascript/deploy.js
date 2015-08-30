@@ -39,6 +39,9 @@ function classNames() {
 	return classes.substr(1);
 }
 
+/**
+ * DeployDropdown
+ */
 var DeployDropDown = React.createClass({
 	displayName: 'DeployDropDown',
 
@@ -125,6 +128,9 @@ var DeployDropDown = React.createClass({
 	}
 });
 
+/**
+ * EnvironmentName
+ */
 var EnvironmentName = React.createClass({
 	displayName: 'EnvironmentName',
 
@@ -148,6 +154,9 @@ var EnvironmentName = React.createClass({
 	}
 });
 
+/**
+ * DeployForm
+ */
 var DeployForm = React.createClass({
 	displayName: 'DeployForm',
 
@@ -193,6 +202,9 @@ var DeployForm = React.createClass({
 	}
 });
 
+/**
+ * DeployTabSelector
+ */
 var DeployTabSelector = React.createClass({
 	displayName: 'DeployTabSelector',
 
@@ -209,6 +221,9 @@ var DeployTabSelector = React.createClass({
 	}
 });
 
+/**
+ * DeployTabSelect
+ */
 var DeployTabSelect = React.createClass({
 	displayName: 'DeployTabSelect',
 
@@ -232,6 +247,9 @@ var DeployTabSelect = React.createClass({
 	}
 });
 
+/**
+ * DeployTabs
+ */
 var DeployTabs = React.createClass({
 	displayName: 'DeployTabs',
 
@@ -249,6 +267,9 @@ var DeployTabs = React.createClass({
 	}
 });
 
+/**
+ * DeployTab
+ */
 var DeployTab = React.createClass({
 	displayName: 'DeployTab',
 
@@ -342,6 +363,9 @@ var DeployTab = React.createClass({
 	}
 });
 
+/**
+ * DeployPlan
+ */
 var DeployPlan = React.createClass({
 	displayName: 'DeployPlan',
 
@@ -421,6 +445,9 @@ var DeployPlan = React.createClass({
 	}
 });
 
+/**
+ * EstimatedTime
+ */
 var EstimatedTime = React.createClass({
 	displayName: 'EstimatedTime',
 
@@ -440,6 +467,9 @@ var EstimatedTime = React.createClass({
 	}
 });
 
+/**
+ * SummaryTable
+ */
 var SummaryTable = React.createClass({
 	displayName: 'SummaryTable',
 
@@ -483,6 +513,9 @@ var SummaryTable = React.createClass({
 	}
 });
 
+/**
+ * SummaryLine
+ */
 var SummaryLine = React.createClass({
 	displayName: 'SummaryLine',
 
@@ -511,4 +544,7 @@ var SummaryLine = React.createClass({
 	}
 });
 
+/**
+ * Render
+ */
 React.render(React.createElement(DeployDropDown, { project_url: urls.project_url, env_url: urls.env_url }), document.getElementById('deploy_form'));
