@@ -249,6 +249,7 @@ var DeployTab = React.createClass({
 		return {
 			summary: {
 				changes: null,
+				messages: null,
 				validationCode: '',
 				estimatedTime: null,
 				initialState: true,
@@ -330,21 +331,23 @@ var DeployPlan = React.createClass({
 		});
 	},
 	render: function() {
-		var errors = this.props.summary.errors;
-		var canDeploy = (this.props.summary.validationCode === "success");
+		var messages = this.props.summary.messages;
+		var canDeploy = (this.props.summary.validationCode==="success" || this.props.summary.validationCode==="warning");
 
-		var errorMessages = [];
-		if (errors && errors.length>0) {
-			errorMessages = errors.map(function(message) {
+		var messageList = [];
+		if (messages) {
+			messageList = messages.map(function(message) {
 				return (
-					<div className="alert alert-danger" role="alert">{message}</div>
+					<div className={message.code=='error'?'alert alert-danger':'alert alert-warning'} role="alert">
+						{message.text}
+					</div>
 				)
 			});
 		}
 
 		if (this.props.summary.changes) {
 			var changeBlock = <SummaryTable changes={this.props.summary.changes} />
-		} else if (!this.props.summary.initialState && errorMessages.length===0) {
+		} else if (!this.props.summary.initialState && messageList.length===0) {
 			var changeBlock = <div className="alert alert-info" role="alert">There are no changes but you can deploy anyway if you wish.</div>
 		}
 
@@ -352,7 +355,7 @@ var DeployPlan = React.createClass({
 			<div>
 				<div className="section">
 					<label><span className="numberCircle">2</span> Review changes</label>
-					{errorMessages}
+					{messageList}
 					{changeBlock}
 				</div>
 				<div className="section">
