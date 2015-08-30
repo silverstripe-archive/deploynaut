@@ -9885,11 +9885,15 @@ button.sidebar-open {
     border-radius: 10px; }
   .deploy-form-outer .deploy-form {
     position: relative; }
+    .deploy-form-outer .deploy-form .deploy-button small {
+      font-size: 70%;
+      text-transform: none; }
     .deploy-form-outer .deploy-form label {
       position: static;
       font-size: 16px;
       font-weight: bold;
-      color: #078be0; }
+      color: #078be0;
+      margin-bottom: 1em; }
     .deploy-form-outer .deploy-form:after {
       height: 300px;
       background-color: #f0f3f4;

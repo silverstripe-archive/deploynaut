@@ -215,6 +215,7 @@ var DeployTab = React.createClass({
 			summary: {
 				changes: null,
 				validationCode: '',
+				estimatedTime: null,
 				initialState: true,
 			},
 		};
@@ -293,37 +294,54 @@ var DeployPlan = React.createClass({
 	render: function() {
 		var errors = this.props.summary.errors;
 		var canDeploy = (this.props.summary.validationCode === "success");
-		var actionTitle = this.props.summary.actionTitle || 'Make a selection';
 
-		var errorMessages;
+		var errorMessages = [];
 		if (errors && errors.length>0) {
 			errorMessages = errors.map(function(message) {
 				return (
-					<li class='error'>{message}</li>
+					<div className="alert alert-danger" role="alert">{message}</div>
 				)
 			});
 		}
 
 		if (this.props.summary.changes) {
-			var table = <SummaryTable changes={this.props.summary.changes} />
-		} else if (!this.props.summary.initialState) {
-			console.log(this.props);
-			var table = <div>There are no changes. You can deploy anyway if you wish.</div>
+			var changeBlock = <SummaryTable changes={this.props.summary.changes} />
+		} else if (!this.props.summary.initialState && errorMessages.length===0) {
+			var changeBlock = <div className="alert alert-info" role="alert">There are no changes but you can deploy anyway if you wish.</div>
 		}
+
 		return(
 			<div>
 				<div className="section">
-					<label><span className="numberCircle">2</span> Review Details</label>
-					{table}
-					<ul>
-						{errorMessages}
-					</ul>
+					<label><span className="numberCircle">2</span> Review changes</label>
+					{errorMessages}
+					{changeBlock}
 				</div>
 				<div className="section">
-					<button value="Confirm Deployment" className="action btn btn-primary deploy-button" disabled={!canDeploy} onClick={this.submitHandler}>{actionTitle}</button>
+					<button
+						value="Confirm Deployment"
+						className="action btn btn-primary deploy-button"
+						disabled={!canDeploy}
+						onClick={this.submitHandler}>
+							{this.props.summary.actionTitle ? this.props.summary.actionTitle : 'Make a selection'}<br/>
+							<EstimatedTime estimatedTime={this.props.summary.estimatedTime} />
+					</button>
 				</div>
 			</div>
 		)
+	}
+});
+
+var EstimatedTime = React.createClass({
+	render: function() {
+		var estimatedTime = this.props.estimatedTime;
+		if (estimatedTime && estimatedTime>0) {
+			return (
+				<small>Approx. {estimatedTime} min</small>
+			);
+		}
+
+		return null;
 	}
 });
 
@@ -340,7 +358,7 @@ var SummaryTable = React.createClass({
 		});
 
 		return (
-			<table className="table-condensed">
+			<table className="table table-striped table-hover">
 				<thead>
 					<tr>
 						<th></th>
