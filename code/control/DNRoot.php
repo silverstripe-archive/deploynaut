@@ -1093,10 +1093,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		// TESTING Pretend we have received the strategy as JSON from the $data
+		$options = $request->postVar('options');
 		$strategy = $environment->Backend()->planDeploy(
 			$environment,
 			array(
-				'sha' => $request->requestVar('sha')
+				'sha' => $options['sha']
 			)
 		);
 		$json = $strategy->toJSON();
