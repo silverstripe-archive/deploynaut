@@ -9872,12 +9872,33 @@ button.sidebar-open {
   border-style: solid;
   border-color: #bbb;
   overflow: hidden; }
+  .deploy-form-outer .numberCircle {
+    display: inline-block;
+    min-width: 10px;
+    padding: 3px 7px;
+    font-weight: bold;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    background-color: #078be0;
+    border-radius: 10px; }
   .deploy-form-outer .deploy-form {
     position: relative; }
+    .deploy-form-outer .deploy-form .deploy-button {
+      text-transform: uppercase; }
+      .deploy-form-outer .deploy-form .deploy-button small {
+        font-size: 70%;
+        text-transform: none; }
+      .deploy-form-outer .deploy-form .deploy-button:disabled {
+        background-color: #eeeeee;
+        border: #555555; }
     .deploy-form-outer .deploy-form label {
       position: static;
       font-size: 16px;
-      color: #555555; }
+      font-weight: bold;
+      color: #078be0;
+      margin-bottom: 1em; }
     .deploy-form-outer .deploy-form:after {
       height: 300px;
       background-color: #f0f3f4;
@@ -9942,6 +9963,8 @@ button.sidebar-open {
           .deploy-form-outer .deploy-form .SelectionGroup + .tab-content input[type="text"] > *,
           .deploy-form-outer .deploy-form .SelectionGroup + .tab-content .CompositeField > * {
             width: 100%; }
+    .deploy-form-outer .deploy-form .section {
+      margin-bottom: 30px; }
     .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] {
       border-radius: 2px;
       font-size: 26px;

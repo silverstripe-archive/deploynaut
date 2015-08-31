@@ -415,14 +415,39 @@ button.sidebar-open
 	border-color: #bbb
 	overflow: hidden
 
+	.numberCircle
+		display: inline-block
+		min-width: 10px
+		padding: 3px 7px
+		font-weight: bold
+		line-height: 1
+		color: #fff
+		text-align: center
+		white-space: nowrap
+		background-color: darken($platform-blue, 15%)
+		border-radius: 10px
 
 	.deploy-form
 		position: relative
 
+		.deploy-button
+			text-transform: uppercase
+
+			small
+				font-size: 70%;
+				text-transform: none;
+
+			&:disabled
+				background-color: $gray-lighter
+				border: $gray
+
+
 		label
 			position: static
 			font-size: 16px
-			color: $gray
+			font-weight: bold
+			color: darken($platform-blue, 15%)
+			margin-bottom: 1em
 
 		&:after /* False background */
 			height: 300px
@@ -506,6 +531,8 @@ button.sidebar-open
 					> *
 						width: 100%
 
+		.section
+			margin-bottom: 30px
 
 		*[name="action_showDeploySummary"]
 			@extend .btn-block

@@ -48,7 +48,7 @@ class DeploymentStrategy extends ViewableData {
 	/**
 	 * @var array
 	 */
-	protected $errors = array();
+	protected $messages = array();
 
 
 	/**
@@ -96,7 +96,7 @@ class DeploymentStrategy extends ViewableData {
 	}
 
 	/**
-	 * @return int Time in seconds
+	 * @return int Time in minutes
 	 */
 	public function getEstimatedTime() {
 		return $this->estimatedTime;
@@ -162,22 +162,34 @@ class DeploymentStrategy extends ViewableData {
 	 * @return string
 	 */
 	public function getValidationCode() {
-		return $this->validatonCode;
+		return $this->validationCode;
 	}
 
 	/**
 	 * @param string $msg
 	 */
-	public function setError($msg) {
-		$this->errors[] = $msg;
-		$this->setValidationCode(DeploymentStrategy::ERROR_CODE);
+	public function setMessage($msg, $code = self::ERROR_CODE) {
+		$this->messages[] = [
+			'text' => $msg,
+			'code' => $code
+		];
+
+		$current = $this->getValidationCode();
+		$map = [
+			DeploymentStrategy::SUCCESS_CODE => 0,
+			DeploymentStrategy::WARNING_CODE => 1,
+			DeploymentStrategy::ERROR_CODE => 2
+		];
+		if ($map[$current]<$map[$code]) {
+			$this->setValidationCode($code);
+		}
 	}
 
 	/**
 	 * @return array
 	 */
-	public function getErrors() {
-		return $this->errors;
+	public function getMessages() {
+		return $this->messages;
 	}
 
 	/**
@@ -191,7 +203,7 @@ class DeploymentStrategy extends ViewableData {
 			'changes',
 			'options',
 			'validationCode',
-			'errors'
+			'messages'
 		);
 
 		$output = array();
@@ -226,7 +238,7 @@ class DeploymentStrategy extends ViewableData {
 			'changes',
 			'options',
 			'validationCode',
-			'errors'
+			'messages'
 		);
 
 		foreach ($fields as $field) {

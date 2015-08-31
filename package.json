@@ -9,7 +9,9 @@
   },
   "scripts": {
     "build": "node-sass -r ./sass/style.sass -o ./css/",
-    "watch": "node-sass -r -w ./sass/style.sass -o ./css/"
+    "watch": "node-sass -r -w ./sass/style.sass -o ./css/",
+    "jsx": "./node_modules/.bin/babel ./jsx/ --out-dir javascript/",
+    "jsx-watch": "./node_modules/.bin/babel --watch ./jsx/ --out-dir javascript/"
   },
   "repository": {
     "type": "git",
@@ -23,6 +25,7 @@
   "devDependencies": {
     "node-sass": "^3.2.0",
     "bootstrap-sass": "^3.3.5",
-    "font-awesome": "^4.3.0"
+    "font-awesome": "^4.3.0",
+    "babel": "5.8.23"
   }
 }
