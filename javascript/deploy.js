@@ -92,12 +92,15 @@ var DeployDropDown = React.createClass({
 
 	loadingDone: null,
 
+	error: null,
+
 	getInitialState: function getInitialState() {
 		return {
 			loading: false,
 			loaded: false,
 			opened: false,
-			loadingText: ""
+			loadingText: "",
+			errorText: ""
 		};
 	},
 	componentDidMount: function componentDidMount() {
@@ -119,25 +122,32 @@ var DeployDropDown = React.createClass({
 				opened: true
 			});
 		});
+		this.error = events.subscribe('error', function (text) {
+			self.setState({
+				errorText: text,
+				loading: false,
+				loadingText: '',
+				success: false,
+				opened: false
+			});
+		});
 	},
 	componentWillUnmount: function componentWillUnmount() {
 		// remove subscribers
 		this.loading.remove();
 		this.loadingDone.remove();
+		this.error.remove();
 	},
 	handleClick: function handleClick(e) {
 		e.preventDefault();
 		events.publish('loading', "Fetching latest code…");
-		var self = this;
 		Q($.ajax({
 			type: "POST",
 			dataType: 'json',
 			url: this.props.project_url + '/fetch'
 		})).then(this.waitForFetchToComplete, this.fetchStatusError).then(function () {
 			events.publish('loading/done');
-		})['catch'](function (data) {
-			console.error(data);
-		}).done();
+		})['catch'](this.fetchStatusError).done();
 	},
 	waitForFetchToComplete: function waitForFetchToComplete(fetchData) {
 		var self = this;
@@ -147,7 +157,7 @@ var DeployDropDown = React.createClass({
 			}
 			if (data.status === "Failed") {
 				return $.Deferred(function (d) {
-					return d.reject();
+					return d.reject(data);
 				}).promise();
 			}
 			return self.waitForFetchToComplete(fetchData);
@@ -161,7 +171,13 @@ var DeployDropDown = React.createClass({
 		}));
 	},
 	fetchStatusError: function fetchStatusError(data) {
-		console.error(data);
+		var message = 'Unknown error';
+		if (typeof data.responseText !== 'undefined') {
+			message = data.responseText;
+		} else if (typeof data.message !== 'undefined') {
+			message = data.message;
+		}
+		events.publish('error', message);
 	},
 	render: function render() {
 		var classes = classNames({
@@ -170,6 +186,12 @@ var DeployDropDown = React.createClass({
 			"open": this.state.opened,
 			"success": this.state.success
 		});
+
+		var form = React.createElement(DeployForm, { data: this.props.data, env_url: this.props.env_url });
+		if (this.state.errorText !== "") {
+			form = React.createElement(ErrorMessages, { message: this.state.errorText });
+		}
+
 		return React.createElement(
 			'div',
 			null,
@@ -184,7 +206,19 @@ var DeployDropDown = React.createClass({
 				),
 				React.createElement(EnvironmentName, { environmentName: '' })
 			),
-			React.createElement(DeployForm, { data: this.props.data, env_url: this.props.env_url })
+			form
+		);
+	}
+});
+
+var ErrorMessages = React.createClass({
+	displayName: 'ErrorMessages',
+
+	render: function render() {
+		return React.createElement(
+			'div',
+			{ className: 'deploy-dropdown-errors' },
+			this.props.message
 		);
 	}
 });
@@ -242,7 +276,7 @@ var DeployForm = React.createClass({
 				data: data
 			});
 		}, function (data) {
-			console.error(data);
+			events.publish('error', data);
 		});
 	},
 

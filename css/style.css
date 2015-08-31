@@ -4904,22 +4904,23 @@ a.thumbnail:focus,
 a.thumbnail.active {
   border-color: #3aaef9; }
 
-.alert, .disk-quota, .deploy-dropdown.error {
+.alert, .disk-quota, .deploy-dropdown.error, .deploy-dropdown-errors {
   padding: 15px;
   margin-bottom: 20px;
   border: 1px solid transparent;
   border-radius: 2px; }
-  .alert h4, .disk-quota h4, .deploy-dropdown.error h4 {
+  .alert h4, .disk-quota h4, .deploy-dropdown.error h4, .deploy-dropdown-errors h4 {
     margin-top: 0;
     color: inherit; }
-  .alert .alert-link, .disk-quota .alert-link, .deploy-dropdown.error .alert-link {
+  .alert .alert-link, .disk-quota .alert-link, .deploy-dropdown.error .alert-link, .deploy-dropdown-errors .alert-link {
     font-weight: bold; }
   .alert > p,
   .disk-quota > p,
   .deploy-dropdown.error > p,
-  .alert > ul, .disk-quota > ul, .deploy-dropdown.error > ul {
+  .deploy-dropdown-errors > p,
+  .alert > ul, .disk-quota > ul, .deploy-dropdown.error > ul, .deploy-dropdown-errors > ul {
     margin-bottom: 0; }
-  .alert > p + p, .disk-quota > p + p, .deploy-dropdown.error > p + p {
+  .alert > p + p, .disk-quota > p + p, .deploy-dropdown.error > p + p, .deploy-dropdown-errors > p + p {
     margin-top: 5px; }
 
 .alert-dismissable, .alert-dismissible {
@@ -4931,51 +4932,51 @@ a.thumbnail.active {
     color: inherit; }
 
 .alert-success, .alert.alert-good,
-.alert-good.disk-quota, .alert-good.deploy-dropdown.error, .alert.Complete, .Complete.disk-quota, .Complete.deploy-dropdown.error, .disk-quota.success {
+.alert-good.disk-quota, .alert-good.deploy-dropdown.error, .alert-good.deploy-dropdown-errors, .alert.Complete, .Complete.disk-quota, .Complete.deploy-dropdown.error, .Complete.deploy-dropdown-errors, .disk-quota.success {
   background-color: #dff0d8;
   border-color: #d6e9c6;
   color: #3c763d; }
   .alert-success hr, .alert.alert-good hr,
-  .alert-good.disk-quota hr, .alert-good.deploy-dropdown.error hr, .alert.Complete hr, .Complete.disk-quota hr, .Complete.deploy-dropdown.error hr, .disk-quota.success hr {
+  .alert-good.disk-quota hr, .alert-good.deploy-dropdown.error hr, .alert-good.deploy-dropdown-errors hr, .alert.Complete hr, .Complete.disk-quota hr, .Complete.deploy-dropdown.error hr, .Complete.deploy-dropdown-errors hr, .disk-quota.success hr {
     border-top-color: #c9e2b3; }
   .alert-success .alert-link, .alert.alert-good .alert-link,
-  .alert-good.disk-quota .alert-link, .alert-good.deploy-dropdown.error .alert-link, .alert.Complete .alert-link, .Complete.disk-quota .alert-link, .Complete.deploy-dropdown.error .alert-link, .disk-quota.success .alert-link {
+  .alert-good.disk-quota .alert-link, .alert-good.deploy-dropdown.error .alert-link, .alert-good.deploy-dropdown-errors .alert-link, .alert.Complete .alert-link, .Complete.disk-quota .alert-link, .Complete.deploy-dropdown.error .alert-link, .Complete.deploy-dropdown-errors .alert-link, .disk-quota.success .alert-link {
     color: #2b542c; }
 
 .alert-info, .alert.Started,
-.Started.disk-quota, .Started.deploy-dropdown.error, .alert.Queued,
-.Queued.disk-quota, .Queued.deploy-dropdown.error, .alert.Running, .Running.disk-quota, .Running.deploy-dropdown.error {
+.Started.disk-quota, .Started.deploy-dropdown.error, .Started.deploy-dropdown-errors, .alert.Queued,
+.Queued.disk-quota, .Queued.deploy-dropdown.error, .Queued.deploy-dropdown-errors, .alert.Running, .Running.disk-quota, .Running.deploy-dropdown.error, .Running.deploy-dropdown-errors {
   background-color: #edf6fd;
   border-color: #cdedf9;
   color: #3aaef9; }
   .alert-info hr, .alert.Started hr,
-  .Started.disk-quota hr, .Started.deploy-dropdown.error hr, .alert.Queued hr,
-  .Queued.disk-quota hr, .Queued.deploy-dropdown.error hr, .alert.Running hr, .Running.disk-quota hr, .Running.deploy-dropdown.error hr {
+  .Started.disk-quota hr, .Started.deploy-dropdown.error hr, .Started.deploy-dropdown-errors hr, .alert.Queued hr,
+  .Queued.disk-quota hr, .Queued.deploy-dropdown.error hr, .Queued.deploy-dropdown-errors hr, .alert.Running hr, .Running.disk-quota hr, .Running.deploy-dropdown.error hr, .Running.deploy-dropdown-errors hr {
     border-top-color: #b6e5f7; }
   .alert-info .alert-link, .alert.Started .alert-link,
-  .Started.disk-quota .alert-link, .Started.deploy-dropdown.error .alert-link, .alert.Queued .alert-link,
-  .Queued.disk-quota .alert-link, .Queued.deploy-dropdown.error .alert-link, .alert.Running .alert-link, .Running.disk-quota .alert-link, .Running.deploy-dropdown.error .alert-link {
+  .Started.disk-quota .alert-link, .Started.deploy-dropdown.error .alert-link, .Started.deploy-dropdown-errors .alert-link, .alert.Queued .alert-link,
+  .Queued.disk-quota .alert-link, .Queued.deploy-dropdown.error .alert-link, .Queued.deploy-dropdown-errors .alert-link, .alert.Running .alert-link, .Running.disk-quota .alert-link, .Running.deploy-dropdown.error .alert-link, .Running.deploy-dropdown-errors .alert-link {
     color: #099af7; }
 
-.alert-warning, .alert.Invalid, .Invalid.disk-quota, .Invalid.deploy-dropdown.error, .disk-quota.warning {
+.alert-warning, .alert.Invalid, .Invalid.disk-quota, .Invalid.deploy-dropdown.error, .Invalid.deploy-dropdown-errors, .disk-quota.warning {
   background-color: #fcf8e3;
   border-color: #faebcc;
   color: #8a6d3b; }
-  .alert-warning hr, .alert.Invalid hr, .Invalid.disk-quota hr, .Invalid.deploy-dropdown.error hr, .disk-quota.warning hr {
+  .alert-warning hr, .alert.Invalid hr, .Invalid.disk-quota hr, .Invalid.deploy-dropdown.error hr, .Invalid.deploy-dropdown-errors hr, .disk-quota.warning hr {
     border-top-color: #f7e1b5; }
-  .alert-warning .alert-link, .alert.Invalid .alert-link, .Invalid.disk-quota .alert-link, .Invalid.deploy-dropdown.error .alert-link, .disk-quota.warning .alert-link {
+  .alert-warning .alert-link, .alert.Invalid .alert-link, .Invalid.disk-quota .alert-link, .Invalid.deploy-dropdown.error .alert-link, .Invalid.deploy-dropdown-errors .alert-link, .disk-quota.warning .alert-link {
     color: #66512c; }
 
 .alert-danger, .alert.alert-error,
-.alert-error.disk-quota, .alert.Failed, .Failed.disk-quota, .disk-quota.danger, .deploy-dropdown.error {
+.alert-error.disk-quota, .alert-error.deploy-dropdown-errors, .alert.Failed, .Failed.disk-quota, .Failed.deploy-dropdown-errors, .disk-quota.danger, .deploy-dropdown.error, .deploy-dropdown-errors {
   background-color: #f2dede;
   border-color: #ebccd1;
   color: #a94442; }
   .alert-danger hr, .alert.alert-error hr,
-  .alert-error.disk-quota hr, .alert.Failed hr, .Failed.disk-quota hr, .disk-quota.danger hr, .deploy-dropdown.error hr {
+  .alert-error.disk-quota hr, .alert-error.deploy-dropdown-errors hr, .alert.Failed hr, .Failed.disk-quota hr, .Failed.deploy-dropdown-errors hr, .disk-quota.danger hr, .deploy-dropdown.error hr, .deploy-dropdown-errors hr {
     border-top-color: #e4b9c0; }
   .alert-danger .alert-link, .alert.alert-error .alert-link,
-  .alert-error.disk-quota .alert-link, .alert.Failed .alert-link, .Failed.disk-quota .alert-link, .disk-quota.danger .alert-link, .deploy-dropdown.error .alert-link {
+  .alert-error.disk-quota .alert-link, .alert.Failed .alert-link, .Failed.disk-quota .alert-link, .disk-quota.danger .alert-link, .deploy-dropdown.error .alert-link, .deploy-dropdown-errors .alert-link {
     color: #843534; }
 
 @-webkit-keyframes progress-bar-stripes {
@@ -9599,10 +9600,10 @@ body .userswitcher fieldset label,
 body .userswitcher fieldset .middleColumn {
   float: none; }
 
-.alert .fa, .disk-quota .fa, .deploy-dropdown.error .fa, .alert .deploy-dropdown .status-icon, .deploy-dropdown .alert .status-icon, .disk-quota .deploy-dropdown .status-icon, .deploy-dropdown .disk-quota .status-icon, .deploy-dropdown.error .status-icon {
+.alert .fa, .disk-quota .fa, .deploy-dropdown.error .fa, .deploy-dropdown-errors .fa, .alert .deploy-dropdown .status-icon, .deploy-dropdown .alert .status-icon, .disk-quota .deploy-dropdown .status-icon, .deploy-dropdown .disk-quota .status-icon, .deploy-dropdown.error .status-icon, .deploy-dropdown-errors .deploy-dropdown .status-icon, .deploy-dropdown .deploy-dropdown-errors .status-icon {
   margin-right: 4px; }
 
-.alert ul, .disk-quota ul, .deploy-dropdown.error ul {
+.alert ul, .disk-quota ul, .deploy-dropdown.error ul, .deploy-dropdown-errors ul {
   margin: 10px 0 20px 20px;
   padding-bottom: 10px;
   list-style: disc; }
@@ -9866,6 +9867,9 @@ button.sidebar-open {
   .deploy-dropdown.loading .status-icon {
     font-size: 26px;
     margin-left: 10px; }
+
+.deploy-dropdown-errors {
+  white-space: pre; }
 
 .deploy-form-outer {
   border-width: 0px 1px 1px;
