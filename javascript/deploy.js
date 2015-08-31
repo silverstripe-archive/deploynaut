@@ -277,6 +277,7 @@ var DeployTab = React.createClass({
 		return {
 			summary: {
 				changes: null,
+				messages: null,
 				validationCode: '',
 				estimatedTime: null,
 				initialState: true
@@ -383,23 +384,23 @@ var DeployPlan = React.createClass({
 		});
 	},
 	render: function render() {
-		var errors = this.props.summary.errors;
-		var canDeploy = this.props.summary.validationCode === "success";
+		var messages = this.props.summary.messages;
+		var canDeploy = this.props.summary.validationCode === "success" || this.props.summary.validationCode === "warning";
 
-		var errorMessages = [];
-		if (errors && errors.length > 0) {
-			errorMessages = errors.map(function (message) {
+		var messageList = [];
+		if (messages) {
+			messageList = messages.map(function (message) {
 				return React.createElement(
 					'div',
-					{ className: 'alert alert-danger', role: 'alert' },
-					message
+					{ className: message.code == 'error' ? 'alert alert-danger' : 'alert alert-warning', role: 'alert' },
+					message.text
 				);
 			});
 		}
 
 		if (this.props.summary.changes) {
 			var changeBlock = React.createElement(SummaryTable, { changes: this.props.summary.changes });
-		} else if (!this.props.summary.initialState && errorMessages.length === 0) {
+		} else if (!this.props.summary.initialState && messageList.length === 0) {
 			var changeBlock = React.createElement(
 				'div',
 				{ className: 'alert alert-info', role: 'alert' },
@@ -423,7 +424,7 @@ var DeployPlan = React.createClass({
 					),
 					' Review changes'
 				),
-				errorMessages,
+				messageList,
 				changeBlock
 			),
 			React.createElement(
