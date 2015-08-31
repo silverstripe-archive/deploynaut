@@ -39,6 +39,14 @@ function classNames () {
 	return classes.substr(1);
 }
 
+
+function isEmpty(obj) {
+	for(var p in obj){
+		return false;
+	}
+	return true;
+};
+
 /**
  * A simple pub sub event handler for intercomponent communication
  *
@@ -299,7 +307,7 @@ var DeployTab = React.createClass({
 	getInitialState: function() {
 		return {
 			summary: {
-				changes: [],
+				changes: {},
 				messages: [],
 				validationCode: '',
 				estimatedTime: null,
@@ -395,8 +403,7 @@ var DeployPlan = React.createClass({
 				)
 			});
 		}
-
-		if (typeof changes !== 'undefined' && changes.length > 0) {
+		if (!isEmpty(changes)) {
 			var changeBlock = <SummaryTable changes={changes} />
 		} else if (!this.props.summary.initialState && messageList.length===0) {
 			var changeBlock = <div className="alert alert-info" role="alert">There are no changes but you can deploy anyway if you wish.</div>

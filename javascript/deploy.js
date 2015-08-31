@@ -328,7 +328,7 @@ var DeployTab = React.createClass({
 	getInitialState: function getInitialState() {
 		return {
 			summary: {
-				changes: [],
+				changes: {},
 				messages: [],
 				validationCode: '',
 				estimatedTime: null,
@@ -449,8 +449,7 @@ var DeployPlan = React.createClass({
 				);
 			});
 		}
-
-		if (typeof changes !== 'undefined' && changes.length > 0) {
+		if (!isEmpty(changes)) {
 			var changeBlock = React.createElement(SummaryTable, { changes: changes });
 		} else if (!this.props.summary.initialState && messageList.length === 0) {
 			var changeBlock = React.createElement(
