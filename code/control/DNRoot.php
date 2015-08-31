@@ -916,7 +916,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'id' => ++$id,
 			'name' => 'Deploy the latest version of a branch',
 			'field_type' => 'dropdown',
-			'field_label' => 'Choose branch',
+			'field_label' => 'Choose a branch',
 			'field_id' => 'branch',
 			'field_data' => array()
 		);
@@ -929,8 +929,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				$branch->LastUpdated()->TimeDiff()
 			);
 			$data['field_data'][] = array(
-				'name' => $branchValue,
-				'value' => $sha
+				'id' => $sha,
+				'text' => $branchValue
 			);
 		}
 		$tabs[] = $data;
@@ -939,19 +939,66 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'id' => ++$id,
 			'name' => 'Deploy a tagged release',
 			'field_type' => 'dropdown',
-			'field_label' => 'Choose tag',
+			'field_label' => 'Choose a tag',
 			'field_id' => 'tag',
 			'field_data' => array()
 		);
 		foreach($project->DNTagList()->setLimit(null) as $tag) {
 			$name = $tag->Name();
 			$data['field_data'][] = array(
-				'name' => sprintf("%s", $name),
-				'value' => $tag->SHA()
+				'id' => $tag->SHA(),
+				'text' => sprintf("%s", $name)
 			);
 		}
 		$tabs[] = $data;
 
+		// Past deployments
+		$data = array(
+			'id' => ++$id,
+			'name' => 'Redeploy a release that was previously deployed (to any environment)',
+			'field_type' => 'dropdown',
+			'field_label' => 'Choose a previously deployed release',
+			'field_id' => 'release',
+			'field_data' => array()
+		);
+		// We are aiming at the format:
+		// [{text: 'optgroup text', children: [{id: '<sha>', text: '<inner text>'}]}]
+		$redeploy = array();
+		foreach($project->DNEnvironmentList() as $dnEnvironment) {
+			$envName = $dnEnvironment->Name;
+			foreach($dnEnvironment->DeployHistory() as $deploy) {
+				$sha = $deploy->SHA;
+				if(!isset($redeploy[$envName])) {
+					$redeploy[$envName] = array();
+				}
+				if(!isset($redeploy[$envName][$sha])) {
+					$pastValue = sprintf("%s (deployed %s)",
+						substr($sha, 0, 8),
+						$deploy->obj('LastEdited')->Ago()
+					);
+					$redeploy[$envName][] = array(
+						'id' => $sha,
+						'text' => $pastValue
+					);
+				}
+			}
+		}
+		// Convert the array to the frontend format (i.e. keyed to regular array)
+		$pastDeploymentsData = array();
+		foreach ($redeploy as $env => $descr) {
+			$data['field_data'][] = array('text'=>$env, 'children'=>$descr);
+		}
+		$tabs[] = $data;
+
+		$data = array(
+			'id' => ++$id,
+			'name' => 'Deploy a specific SHA',
+			'field_type' => 'textfield',
+			'field_label' => 'Choose a SHA',
+			'field_id' => 'SHA',
+			'field_data' => array()
+		);
+		$tabs[] = $data;
 
 		return json_encode($tabs, JSON_PRETTY_PRINT);
 	}

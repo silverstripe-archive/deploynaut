@@ -430,11 +430,17 @@ button.sidebar-open
 	.deploy-form
 		position: relative
 
-
 		.deploy-button
+			text-transform: uppercase
+
 			small
 				font-size: 70%;
 				text-transform: none;
+
+			&:disabled
+				background-color: $gray-lighter
+				border: $gray
+
 
 		label
 			position: static
@@ -527,13 +533,6 @@ button.sidebar-open
 
 		.section
 			margin-bottom: 30px
-
-		button
-			text-transform: uppercase
-
-			&:disabled
-				background-color: $gray-lighter
-				border: $gray
 
 		*[name="action_showDeploySummary"]
 			@extend .btn-block

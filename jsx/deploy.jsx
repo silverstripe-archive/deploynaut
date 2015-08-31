@@ -318,9 +318,19 @@ var DeployTab = React.createClass({
 		};
 	},
 	componentDidMount: function() {
-		$(React.findDOMNode(this.refs.sha_selector)).select2().on("change", this.selectChangeHandler);
+		if (this.props.tab.field_type==='dropdown') {
+			$(React.findDOMNode(this.refs.sha_selector)).select2({
+				// Load data into the select2.
+				// The format supports optgroups, and looks like this:
+				// [{text: 'optgroup text', children: [{id: '<sha>', text: '<inner text>'}]}]
+				data: this.props.tab.field_data
+			});
+		}
+
+		$(React.findDOMNode(this.refs.sha_selector)).select2().on("change", this.changeHandler);
 	},
-	selectChangeHandler: function(event) {
+	changeHandler: function(event) {
+		event.preventDefault();
 
 		this.setState(this.getInitialState());
 		if(event.target.value === "") {
@@ -332,7 +342,7 @@ var DeployTab = React.createClass({
 			type: "POST",
 			dataType: 'json',
 			url: this.props.env_url + '/deploy_summary',
-			data: {'sha': event.target.value}
+			data: {'sha': React.findDOMNode(this.refs.sha_selector).value}
 		})).then(function(data) {
 			self.setState({
 				summary: data
@@ -349,22 +359,40 @@ var DeployTab = React.createClass({
 			"clearfix": true,
 			"active" : (this.props.selectedTab == this.props.tab.id)
 		});
-		var id = 0;
-		var options = this.props.tab.field_data.map(function(data) {
-			id++;
-			return (
-				<option key={id} value={data.value}>{data.name}</option>
-			);
-		});
+
+		var selector;
+		switch(this.props.tab.field_type) {
+			case 'dropdown':
+				// From https://select2.github.io/examples.html "The best way to ensure that Select2 is using a percent based
+				// width is to inline the style declaration into the tag".
+				var style = {width: '100%'};
+				selector = (
+					<select ref="sha_selector" id={this.props.tab.field_id} name="sha" className="dropdown"
+						onChange={this.changeHandler} style={style}>
+						<option value="">Select {this.props.tab.field_id}</option>
+					</select>
+				)
+				// Data is loaded in componentDidMount
+				break;
+
+			case 'textfield':
+				selector = (
+					<div>
+						<input ref="sha_selector" type="text" ref="sha_selector" id={this.props.tab.field_id} name="sha" className="text" />
+						<button value="Check SHA" className="btn-lg btn-default btn check-button" onClick={this.changeHandler}>
+							Check SHA
+						</button>
+					</div>
+				)
+				break;
+		}
+
 		return (
 			<div id={"deploy-tab-"+this.props.tab.id} className={classes}>
 				<div className="section">
 					<label htmlFor={this.props.tab.field_id} ><span className="numberCircle">1</span> {this.props.tab.field_label}</label>
 					<div className="field">
-						<select ref="sha_selector" id={this.props.tab.field_id} name="sha" className="dropdown" onChange={this.selectChangeHandler} >
-							<option value="">Select {this.props.tab.field_id}</option>
-							{options}
-						</select>
+						{selector}
 					</div>
 				</div>
 				<DeployPlan summary={this.state.summary} env_url={this.props.env_url} />
