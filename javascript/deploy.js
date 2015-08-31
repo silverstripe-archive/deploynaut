@@ -121,7 +121,9 @@ var DeployDropDown = React.createClass({
 		});
 	},
 	componentWillUnmount: function componentWillUnmount() {
+		// remove subscribers
 		this.loading.remove();
+		this.loadingDone.remove();
 	},
 	handleClick: function handleClick(e) {
 		e.preventDefault();
