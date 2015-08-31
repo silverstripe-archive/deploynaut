@@ -39,6 +39,13 @@ function classNames() {
 	return classes.substr(1);
 }
 
+function isEmpty(obj) {
+	for (var p in obj) {
+		return false;
+	}
+	return true;
+};
+
 /**
  * A simple pub sub event handler for intercomponent communication
  *
@@ -572,8 +579,15 @@ var SummaryLine = React.createClass({
 	displayName: 'SummaryLine',
 
 	render: function render() {
-		var from = this.props.from.substring(0, 30);
-		var to = this.props.to.substring(0, 30);
+		var from = "-",
+		    to = "-";
+
+		if (this.props.from !== null) {
+			from = this.props.from.substring(0, 30);
+		}
+		if (this.props.to !== null) {
+			to = this.props.to.substring(0, 30);
+		}
 		return React.createElement(
 			'tr',
 			null,

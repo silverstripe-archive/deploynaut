@@ -484,11 +484,20 @@ var SummaryTable = React.createClass({
  */
 var SummaryLine = React.createClass({
 	render: function() {
-		var from = this.props.from.substring(0,30);
-		var to = this.props.to.substring(0,30);
+		var from = "-",
+			to = "-";
+
+		if(this.props.from !== null) {
+			from = this.props.from.substring(0,30);
+		}
+		if(this.props.to !== null) {
+			to = this.props.to.substring(0,30);
+		}
 		return (
 			<tr>
-				<th scope="row">{this.props.name}</th><td>{from}</td><td>{to}</td>
+				<th scope="row">{this.props.name}</th>
+				<td>{from}</td>
+				<td>{to}</td>
 			</tr>
 		)
 	}
