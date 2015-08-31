@@ -86,9 +86,8 @@
                     env_url: "{$absoluteBaseURL}{$CurrentEnvironment.Link}"
                 }
             </script>
-			<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
-            <script type="text/jsx" src="/deploynaut/javascript/deploy.js"></script>
+			<script src="/deploynaut/javascript/react-with-addons.min.js"></script>
+            <script src="/deploynaut/javascript/deploy.js"></script>
 
 		<% end_if %>
 	<% end_if %>
