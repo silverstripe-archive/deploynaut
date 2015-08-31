@@ -379,11 +379,12 @@ var DeployPlan = React.createClass({
 		});
 	},
 	render: function() {
+		var changes = this.props.summary.changes;
 		var messages = this.props.summary.messages;
 		var canDeploy = (this.props.summary.validationCode==="success" || this.props.summary.validationCode==="warning");
 
 		var messageList = [];
-		if (messages) {
+		if (typeof messages !== 'undefined' && messages.length > 0) {
 			messageList = messages.map(function(message) {
 				return (
 					<div className={message.code=='error'?'alert alert-danger':'alert alert-warning'} role="alert">
@@ -393,8 +394,8 @@ var DeployPlan = React.createClass({
 			});
 		}
 
-		if (this.props.summary.changes) {
-			var changeBlock = <SummaryTable changes={this.props.summary.changes} />
+		if (typeof changes !== 'undefined' && changes.length > 0) {
+			var changeBlock = <SummaryTable changes={changes} />
 		} else if (!this.props.summary.initialState && messageList.length===0) {
 			var changeBlock = <div className="alert alert-info" role="alert">There are no changes but you can deploy anyway if you wish.</div>
 		}
