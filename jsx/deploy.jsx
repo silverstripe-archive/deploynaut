@@ -40,9 +40,49 @@ function classNames () {
 }
 
 /**
+ * A simple pub sub event handler for intercomponent communication
+ *
+ * @type {{subscribe, publish}}
+ */
+var events = (function(){
+	var topics = {};
+	var hOP = topics.hasOwnProperty;
+
+	return {
+		subscribe: function(topic, listener) {
+			// Create the topic's object if not yet created
+			if(!hOP.call(topics, topic)) topics[topic] = [];
+
+			// Add the listener to queue
+			var index = topics[topic].push(listener) -1;
+
+			// Provide handle back for removal of topic
+			return {
+				remove: function() {
+					delete topics[topic][index];
+				}
+			};
+		},
+		publish: function(topic, info) {
+			// If the topic doesn't exist, or there's no listeners in queue, just leave
+			if(!hOP.call(topics, topic)) return;
+
+			// Cycle through topics queue, fire!
+			topics[topic].forEach(function(item) {
+				item(info != undefined ? info : {});
+			});
+		}
+	};
+})();
+
+/**
  * DeployDropdown
  */
 var DeployDropDown = React.createClass({
+
+	loadingSubscriber: null,
+	loadingDone: null,
+
 	getInitialState: function() {
 		return {
 			loading: false,
@@ -52,16 +92,30 @@ var DeployDropDown = React.createClass({
 		};
 	},
 	componentDidMount: function() {
-
+		var self = this;
+		this.loading = events.subscribe('loading', function(text) {
+			self.setState({
+				loading: true,
+				opened: false,
+				success: false,
+				loadingText: text
+			});
+		});
+		this.loadingDone = events.subscribe('loading_done', function() {
+			self.setState({
+				loading: false,
+				loadingText: '',
+				success: true,
+				opened: true
+			});
+		});
+	},
+	componentWillUnmount: function() {
+		this.loading.remove();
 	},
 	handleClick: function(e) {
 		e.preventDefault();
-		this.setState({
-			loading: true,
-			success: false,
-			opened: false,
-			loadingText: "Fetching latest code…"
-		});
+		events.publish('loading', "Fetching latest code…");
 		var self = this;
 		Q($.ajax({
 			type: "POST",
@@ -70,12 +124,7 @@ var DeployDropDown = React.createClass({
 		}))
 			.then(this.waitForFetchToComplete, this.fetchStatusError)
 			.then(function() {
-				self.setState({
-					loading: false,
-					loadingText: '',
-					success: true,
-					opened: true
-				});
+				events.publish('loading_done');
 			}).catch(function(data){
 				console.error(data);
 			}).done();
@@ -265,7 +314,7 @@ var DeployTab = React.createClass({
 		if(event.target.value === "") {
 			return;
 		}
-
+		events.publish('loading', "Calculating changes…");
 		var self = this;
 		Q($.ajax({
 			type: "POST",
@@ -276,6 +325,7 @@ var DeployTab = React.createClass({
 			self.setState({
 				summary: data
 			});
+			events.publish('loading_done');
 		}, function(data){
 			console.error(data);
 		});

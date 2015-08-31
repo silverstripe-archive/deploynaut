@@ -39,11 +39,45 @@ function classNames() {
 	return classes.substr(1);
 }
 
+var events = (function () {
+	var topics = {};
+	var hOP = topics.hasOwnProperty;
+
+	return {
+		subscribe: function subscribe(topic, listener) {
+			// Create the topic's object if not yet created
+			if (!hOP.call(topics, topic)) topics[topic] = [];
+
+			// Add the listener to queue
+			var index = topics[topic].push(listener) - 1;
+
+			// Provide handle back for removal of topic
+			return {
+				remove: function remove() {
+					delete topics[topic][index];
+				}
+			};
+		},
+		publish: function publish(topic, info) {
+			// If the topic doesn't exist, or there's no listeners in queue, just leave
+			if (!hOP.call(topics, topic)) return;
+
+			// Cycle through topics queue, fire!
+			topics[topic].forEach(function (item) {
+				item(info != undefined ? info : {});
+			});
+		}
+	};
+})();
+
 /**
  * DeployDropdown
  */
 var DeployDropDown = React.createClass({
 	displayName: 'DeployDropDown',
+
+	loading: null,
+	loadingDone: null,
 
 	getInitialState: function getInitialState() {
 		return {
@@ -53,27 +87,38 @@ var DeployDropDown = React.createClass({
 			loadingText: ""
 		};
 	},
-	componentDidMount: function componentDidMount() {},
-	handleClick: function handleClick(e) {
-		e.preventDefault();
-		this.setState({
-			loading: true,
-			success: false,
-			opened: false,
-			loadingText: "Fetching latest code…"
-		});
+	componentDidMount: function componentDidMount() {
 		var self = this;
-		Q($.ajax({
-			type: "POST",
-			dataType: 'json',
-			url: this.props.project_url + '/fetch'
-		})).then(this.waitForFetchToComplete, this.fetchStatusError).then(function () {
+		this.loading = events.subscribe('loading', function (text) {
+			self.setState({
+				loading: true,
+				opened: false,
+				success: false,
+				loadingText: text
+			});
+		});
+		this.loadingDone = events.subscribe('loading_done', function () {
 			self.setState({
 				loading: false,
 				loadingText: '',
 				success: true,
 				opened: true
 			});
+		});
+	},
+	componentWillUnmount: function componentWillUnmount() {
+		this.loading.remove();
+	},
+	handleClick: function handleClick(e) {
+		e.preventDefault();
+		events.publish('loading', "Fetching latest code…");
+		var self = this;
+		Q($.ajax({
+			type: "POST",
+			dataType: 'json',
+			url: this.props.project_url + '/fetch'
+		})).then(this.waitForFetchToComplete, this.fetchStatusError).then(function () {
+			events.publish('loading_done');
 		})['catch'](function (data) {
 			console.error(data);
 		}).done();
@@ -293,7 +338,7 @@ var DeployTab = React.createClass({
 		if (event.target.value === "") {
 			return;
 		}
-
+		events.publish('loading', "Calculating changes…");
 		var self = this;
 		Q($.ajax({
 			type: "POST",
@@ -304,6 +349,7 @@ var DeployTab = React.createClass({
 			self.setState({
 				summary: data
 			});
+			events.publish('loading_done');
 		}, function (data) {
 			console.error(data);
 		});
