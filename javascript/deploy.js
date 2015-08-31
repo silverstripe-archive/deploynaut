@@ -39,11 +39,58 @@ function classNames() {
 	return classes.substr(1);
 }
 
+function isEmpty(obj) {
+	for (var p in obj) {
+		return false;
+	}
+	return true;
+};
+
+/**
+ * A simple pub sub event handler for intercomponent communication
+ *
+ * @type {{subscribe, publish}}
+ */
+var events = (function () {
+	var topics = {};
+	var hOP = topics.hasOwnProperty;
+
+	return {
+		subscribe: function subscribe(topic, listener) {
+			// Create the topic's object if not yet created
+			if (!hOP.call(topics, topic)) topics[topic] = [];
+
+			// Add the listener to queue
+			var index = topics[topic].push(listener) - 1;
+
+			// Provide handle back for removal of topic
+			return {
+				remove: function remove() {
+					delete topics[topic][index];
+				}
+			};
+		},
+		publish: function publish(topic, info) {
+			// If the topic doesn't exist, or there's no listeners in queue, just leave
+			if (!hOP.call(topics, topic)) return;
+
+			// Cycle through topics queue, fire!
+			topics[topic].forEach(function (item) {
+				item(info != undefined ? info : {});
+			});
+		}
+	};
+})();
+
 /**
  * DeployDropdown
  */
 var DeployDropDown = React.createClass({
 	displayName: 'DeployDropDown',
+
+	loadingSubscriber: null,
+
+	loadingDone: null,
 
 	getInitialState: function getInitialState() {
 		return {
@@ -53,27 +100,41 @@ var DeployDropDown = React.createClass({
 			loadingText: ""
 		};
 	},
-	componentDidMount: function componentDidMount() {},
-	handleClick: function handleClick(e) {
-		e.preventDefault();
-		this.setState({
-			loading: true,
-			success: false,
-			opened: false,
-			loadingText: "Fetching latest code…"
-		});
+	componentDidMount: function componentDidMount() {
 		var self = this;
-		Q($.ajax({
-			type: "POST",
-			dataType: 'json',
-			url: this.props.project_url + '/fetch'
-		})).then(this.waitForFetchToComplete, this.fetchStatusError).then(function () {
+		// register subscribers
+		this.loading = events.subscribe('loading', function (text) {
+			self.setState({
+				loading: true,
+				opened: false,
+				success: false,
+				loadingText: text
+			});
+		});
+		this.loadingDone = events.subscribe('loading/done', function () {
 			self.setState({
 				loading: false,
 				loadingText: '',
 				success: true,
 				opened: true
 			});
+		});
+	},
+	componentWillUnmount: function componentWillUnmount() {
+		// remove subscribers
+		this.loading.remove();
+		this.loadingDone.remove();
+	},
+	handleClick: function handleClick(e) {
+		e.preventDefault();
+		events.publish('loading', "Fetching latest code…");
+		var self = this;
+		Q($.ajax({
+			type: "POST",
+			dataType: 'json',
+			url: this.props.project_url + '/fetch'
+		})).then(this.waitForFetchToComplete, this.fetchStatusError).then(function () {
+			events.publish('loading/done');
 		})['catch'](function (data) {
 			console.error(data);
 		}).done();
@@ -276,8 +337,8 @@ var DeployTab = React.createClass({
 	getInitialState: function getInitialState() {
 		return {
 			summary: {
-				changes: null,
-				messages: null,
+				changes: {},
+				messages: [],
 				validationCode: '',
 				estimatedTime: null,
 				initialState: true
@@ -289,25 +350,24 @@ var DeployTab = React.createClass({
 	},
 	selectChangeHandler: function selectChangeHandler(event) {
 
+		this.setState(this.getInitialState());
 		if (event.target.value === "") {
-			this.setState(this.getInitialState());
-			console.log('reset');
 			return;
 		}
-
+		events.publish('loading', "Calculating changes…");
 		var self = this;
 		Q($.ajax({
 			type: "POST",
 			dataType: 'json',
 			url: this.props.env_url + '/deploy_summary',
 			data: { 'sha': event.target.value }
-
 		})).then(function (data) {
 			self.setState({
 				summary: data
 			});
+			events.publish('loading/done');
 		}, function (data) {
-			console.error(data);
+			events.publish('loading/done');
 		});
 	},
 
@@ -384,11 +444,12 @@ var DeployPlan = React.createClass({
 		});
 	},
 	render: function render() {
+		var changes = this.props.summary.changes;
 		var messages = this.props.summary.messages;
 		var canDeploy = this.props.summary.validationCode === "success" || this.props.summary.validationCode === "warning";
 
 		var messageList = [];
-		if (messages) {
+		if (typeof messages !== 'undefined' && messages.length > 0) {
 			messageList = messages.map(function (message) {
 				return React.createElement(
 					'div',
@@ -397,9 +458,8 @@ var DeployPlan = React.createClass({
 				);
 			});
 		}
-
-		if (this.props.summary.changes) {
-			var changeBlock = React.createElement(SummaryTable, { changes: this.props.summary.changes });
+		if (!isEmpty(changes)) {
+			var changeBlock = React.createElement(SummaryTable, { changes: changes });
 		} else if (!this.props.summary.initialState && messageList.length === 0) {
 			var changeBlock = React.createElement(
 				'div',
@@ -521,8 +581,15 @@ var SummaryLine = React.createClass({
 	displayName: 'SummaryLine',
 
 	render: function render() {
-		var from = this.props.from.substring(0, 30);
-		var to = this.props.to.substring(0, 30);
+		var from = "-",
+		    to = "-";
+
+		if (this.props.from !== null) {
+			from = this.props.from.substring(0, 30);
+		}
+		if (this.props.to !== null) {
+			to = this.props.to.substring(0, 30);
+		}
 		return React.createElement(
 			'tr',
 			null,
