@@ -220,6 +220,17 @@ class DeploymentStrategy extends ViewableData {
 	 * @param string $json
 	 */
 	public function fromJSON($json) {
+		$decoded = json_decode($json, true);
+		return $this->fromArray($decoded);
+	}
+
+	/**
+	 * Load from array.
+	 * Environment must be set by the callee when creating this object.
+	 *
+	 * @param string $data
+	 */
+	public function fromArray($data) {
 		$fields = array(
 			'actionTitle',
 			'actionCode',
@@ -229,11 +240,10 @@ class DeploymentStrategy extends ViewableData {
 			'validationCode',
 			'messages'
 		);
-		$decoded = json_decode($json, true);
 
 		foreach ($fields as $field) {
-			if (!empty($decoded[$field])) {
-				$this->$field = $decoded[$field];
+			if (!empty($data[$field])) {
+				$this->$field = $data[$field];
 			}
 		}
 	}

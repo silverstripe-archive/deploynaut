@@ -1034,40 +1034,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 * @param array $data
-	 * @param DeployForm $form
-	 *
-	 * @return string
-	 */
-	public function showDeploySummary(array $data, DeployForm $form) {
-
-		// Performs canView permission check by limiting visible projects
-		$project = $this->getCurrentProject();
-		if(!$project) {
-			return $this->project404Response();
-		}
-
-		// Performs canView permission check by limiting visible projects
-		$environment = $this->getCurrentEnvironment($project);
-		if(!$environment) {
-			return $this->environment404Response();
-		}
-
-		// Plan the deployment.
-		$strategy = $environment->Backend()->planDeploy(
-			$environment,
-			array(
-				'sha' => $form->getSelectedBuild($data)
-			)
-		);
-
-		$body = $strategy->toJSON();
-		$this->getResponse()->addHeader('Content-Type', 'application/json');
-		$this->getResponse()->setBody($body);
-		return $body;
-	}
-
-	/**
 	 * Deployment form submission handler.
 	 *
 	 * Initiate a DNDeployment record and redirect to it for status polling
@@ -1092,23 +1058,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return $this->environment404Response();
 		}
 
-		// TESTING Pretend we have received the strategy as JSON from the $data
-		$strategy = $environment->Backend()->planDeploy(
-			$environment,
-			array(
-				'sha' => $request->requestVar('sha')
-			)
-		);
-		$json = $strategy->toJSON();
-		$data['strategy'] = $json;
-
 		// Initiate the deployment
 		// The extension point should pass in: Project, Environment, SelectRelease, buildName
 		$this->extend('doDeploy', $project, $environment, $buildName, $data);
 
 		// Start the deployment based on the approved strategy.
 		$strategy = new DeploymentStrategy($environment);
-		$strategy->fromJSON($data['strategy']);
+		$strategy->fromArray($request->requestVar('strategy'));
 		$deployment = $strategy->createDeployment();
 		$deployment->start();
 

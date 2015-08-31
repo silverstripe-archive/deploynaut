@@ -411,7 +411,10 @@ var DeployPlan = React.createClass({
 			type: "POST",
 			dataType: 'json',
 			url: this.props.env_url + '/start-deploy',
-			data: this.props.summary
+			data: {
+				// Pass the strategy object the user has just signed off back to the backend.
+				'strategy': this.props.summary
+			}
 		})).then(function(data) {
 			window.location = data.url;
 		}, function(data){
