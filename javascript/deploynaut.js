@@ -73,16 +73,36 @@
 	}
 
 	var queue = {
+		autoScroll: true,
 		showlog: function(status, content, logLink) {
 			var self = this;
+			//add scroll listener
+			content.on('scroll', function(ev) {
+				// if we are scrolled to the bottom then autoScroll should be on otherwise we've scrolled somewhere else
+				// and we shouldn't move the scroll any more
+				if (content.scrollTop() >= (content[0].scrollHeight - content.innerHeight())) {
+					self.autoScroll = true;
+				}
+				else {
+					self.autoScroll = false;
+				}
+			});
 			$.getJSON(logLink, {randval: Math.random()},
 			function(data) {
 				status.text(data.status);
 				content.text(data.content);
+				//scroll the content to the bottom
+				if (self.autoScroll) {
+					content.scrollTop(content[0].scrollHeight);
+					//we have to re-enable autoscroll because we'll have triggered a scroll event
+					self.autoScroll = true;
+				}
 				$(status).parent().addClass(data.status);
 				$('title').text(data.status + " | Deploynaut");
 				if (data.status == 'Complete' || data.status == 'Failed' || data.status == 'Invalid') {
 					$(status).parent().removeClass('Running Queued progress-bar-striped active');
+					//detach scroll listener
+					content.off('scroll');
 					self._clearInterval();
 				} else if (data.status == 'Running') {
 					$(status).parent().addClass('progress-bar-striped active')

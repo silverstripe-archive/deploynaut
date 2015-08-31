@@ -10024,7 +10024,8 @@ button.sidebar-open {
   max-height: 450px;
   background: #333;
   color: #fff;
-  margin-top: 0; }
+  margin-top: 0;
+  margin-bottom: 0; }
 
 .repo-ux img {
   height: 14px;
