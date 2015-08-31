@@ -346,9 +346,19 @@ var DeployTab = React.createClass({
 		};
 	},
 	componentDidMount: function componentDidMount() {
-		$(React.findDOMNode(this.refs.sha_selector)).select2().on("change", this.selectChangeHandler);
+		if (this.props.tab.field_type === 'dropdown') {
+			$(React.findDOMNode(this.refs.sha_selector)).select2({
+				// Load data into the select2.
+				// The format supports optgroups, and looks like this:
+				// [{text: 'optgroup text', children: [{id: '<sha>', text: '<inner text>'}]}]
+				data: this.props.tab.field_data
+			});
+		}
+
+		$(React.findDOMNode(this.refs.sha_selector)).select2().on("change", this.changeHandler);
 	},
-	selectChangeHandler: function selectChangeHandler(event) {
+	changeHandler: function changeHandler(event) {
+		event.preventDefault();
 
 		this.setState(this.getInitialState());
 		if (event.target.value === "") {
@@ -360,7 +370,7 @@ var DeployTab = React.createClass({
 			type: "POST",
 			dataType: 'json',
 			url: this.props.env_url + '/deploy_summary',
-			data: { 'sha': event.target.value }
+			data: { 'sha': React.findDOMNode(this.refs.sha_selector).value }
 		})).then(function (data) {
 			self.setState({
 				summary: data
@@ -377,15 +387,41 @@ var DeployTab = React.createClass({
 			"clearfix": true,
 			"active": this.props.selectedTab == this.props.tab.id
 		});
-		var id = 0;
-		var options = this.props.tab.field_data.map(function (data) {
-			id++;
-			return React.createElement(
-				'option',
-				{ key: id, value: data.value },
-				data.name
-			);
-		});
+
+		var selector;
+		switch (this.props.tab.field_type) {
+			case 'dropdown':
+				// From https://select2.github.io/examples.html "The best way to ensure that Select2 is using a percent based
+				// width is to inline the style declaration into the tag".
+				var style = { width: '100%' };
+				selector = React.createElement(
+					'select',
+					{ ref: 'sha_selector', id: this.props.tab.field_id, name: 'sha', className: 'dropdown',
+						onChange: this.changeHandler, style: style },
+					React.createElement(
+						'option',
+						{ value: '' },
+						'Select ',
+						this.props.tab.field_id
+					)
+				);
+				// Data is loaded in componentDidMount
+				break;
+
+			case 'textfield':
+				selector = React.createElement(
+					'div',
+					null,
+					React.createElement('input', { ref: 'sha_selector', type: 'text', ref: 'sha_selector', id: this.props.tab.field_id, name: 'sha', className: 'text' }),
+					React.createElement(
+						'button',
+						{ value: 'Check SHA', className: 'btn-lg btn-default btn check-button', onClick: this.changeHandler },
+						'Check SHA'
+					)
+				);
+				break;
+		}
+
 		return React.createElement(
 			'div',
 			{ id: "deploy-tab-" + this.props.tab.id, className: classes },
@@ -406,17 +442,7 @@ var DeployTab = React.createClass({
 				React.createElement(
 					'div',
 					{ className: 'field' },
-					React.createElement(
-						'select',
-						{ ref: 'sha_selector', id: this.props.tab.field_id, name: 'sha', className: 'dropdown', onChange: this.selectChangeHandler },
-						React.createElement(
-							'option',
-							{ value: '' },
-							'Select ',
-							this.props.tab.field_id
-						),
-						options
-					)
+					selector
 				)
 			),
 			React.createElement(DeployPlan, { summary: this.state.summary, env_url: this.props.env_url })

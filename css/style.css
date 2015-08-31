@@ -9885,9 +9885,14 @@ button.sidebar-open {
     border-radius: 10px; }
   .deploy-form-outer .deploy-form {
     position: relative; }
-    .deploy-form-outer .deploy-form .deploy-button small {
-      font-size: 70%;
-      text-transform: none; }
+    .deploy-form-outer .deploy-form .deploy-button {
+      text-transform: uppercase; }
+      .deploy-form-outer .deploy-form .deploy-button small {
+        font-size: 70%;
+        text-transform: none; }
+      .deploy-form-outer .deploy-form .deploy-button:disabled {
+        background-color: #eeeeee;
+        border: #555555; }
     .deploy-form-outer .deploy-form label {
       position: static;
       font-size: 16px;
@@ -9960,11 +9965,6 @@ button.sidebar-open {
             width: 100%; }
     .deploy-form-outer .deploy-form .section {
       margin-bottom: 30px; }
-    .deploy-form-outer .deploy-form button {
-      text-transform: uppercase; }
-      .deploy-form-outer .deploy-form button:disabled {
-        background-color: #eeeeee;
-        border: #555555; }
     .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] {
       border-radius: 2px;
       font-size: 26px;
