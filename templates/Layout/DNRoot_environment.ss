@@ -85,6 +85,7 @@
                     project_url: "{$absoluteBaseURL}naut/api/$CurrentProject.Name",
                     env_url: "{$absoluteBaseURL}{$CurrentEnvironment.Link}"
                 }
+				var security_token = "{$SecurityID}";
             </script>
 			<script src="/deploynaut/javascript/react-with-addons.min.js"></script>
             <script src="/deploynaut/javascript/deploy.js"></script>
