@@ -6,7 +6,7 @@ interface DeploymentBackend {
 	 * Creates a deployment strategy that can be used to do some pre-flight checks.
 	 *
 	 * @param DNEnvironment $environment
-	 * @param array $options
+	 * @param array $options An unsanitised array of request parameters from $request->requestVars.
 	 *
 	 * @return DeploymentStrategy
 	 */

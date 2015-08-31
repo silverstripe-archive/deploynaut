@@ -40,6 +40,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	const DEPLOYNAUT_DRYRUN_PIPELINE = 'DEPLOYNAUT_DRYRUN_PIPELINE';
 
 	/**
+	 * Allow advanced options on deployments
+	 */
+	const DEPLOYNAUT_ADVANCED_DEPLOY_OPTIONS = 'DEPLOYNAUT_ADVANCED_DEPLOY_OPTIONS';
+
+	/**
 	 *
 	 * @var array
 	 */
@@ -910,6 +915,20 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return $this->project404Response();
 		}
 
+		// Performs canView permission check by limiting visible projects
+		$env = $this->getCurrentEnvironment($project);
+		if(!$env) {
+			return $this->environment404Response();
+		}
+
+		// For now only permit advanced options on one environment type, because we hacked the "full-deploy"
+		// checkbox in. Other environments such as the fast or capistrano one wouldn't know what to do with it.
+		if (get_class($env)==='RainforestEnvironment') {
+			$advanced = Permission::check('DEPLOYNAUT_ADVANCED_DEPLOY_OPTIONS') ? 'true' : 'false';
+		} else {
+			$advanced = 'false';
+		}
+
 		$tabs = array();
 		$id = 0;
 		$data = array(
@@ -918,7 +937,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'field_type' => 'dropdown',
 			'field_label' => 'Choose a branch',
 			'field_id' => 'branch',
-			'field_data' => array()
+			'field_data' => array(),
+			'advanced_opts' => $advanced
 		);
 		foreach($project->DNBranchList() as $branch) {
 			$sha = $branch->SHA();
@@ -941,7 +961,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'field_type' => 'dropdown',
 			'field_label' => 'Choose a tag',
 			'field_id' => 'tag',
-			'field_data' => array()
+			'field_data' => array(),
+			'advanced_opts' => $advanced
 		);
 		foreach($project->DNTagList()->setLimit(null) as $tag) {
 			$name = $tag->Name();
@@ -959,7 +980,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'field_type' => 'dropdown',
 			'field_label' => 'Choose a previously deployed release',
 			'field_id' => 'release',
-			'field_data' => array()
+			'field_data' => array(),
+			'advanced_opts' => $advanced
 		);
 		// We are aiming at the format:
 		// [{text: 'optgroup text', children: [{id: '<sha>', text: '<inner text>'}]}]
@@ -996,7 +1018,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'field_type' => 'textfield',
 			'field_label' => 'Choose a SHA',
 			'field_id' => 'SHA',
-			'field_data' => array()
+			'field_data' => array(),
+			'advanced_opts' => $advanced
 		);
 		$tabs[] = $data;
 
@@ -1025,9 +1048,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Plan the deployment.
 		$strategy = $environment->Backend()->planDeploy(
 			$environment,
-			array(
-				'sha' => $request->requestVar('sha')
-			)
+			$request->requestVars()
 		);
 
 		return $strategy->toJSON();
@@ -1662,7 +1683,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				'name' => 'Dry-run Pipeline',
 				'category' => 'Deploynaut',
 				'help' => 'Enable dry-run execution of pipelines for testing'
-			)
+			),
+			self::DEPLOYNAUT_ADVANCED_DEPLOY_OPTIONS => array(
+				'name' => "Access to advanced deploy options",
+				'category' => "Deploynaut",
+			),
 		);
 	}
 
