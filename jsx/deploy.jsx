@@ -469,7 +469,7 @@ var EstimatedTime = React.createClass({
 		var estimatedTime = this.props.estimatedTime;
 		if (estimatedTime && estimatedTime>0) {
 			return (
-				<small>Approx. {estimatedTime} min</small>
+				<small>Estimated {estimatedTime} min</small>
 		);
 		}
 

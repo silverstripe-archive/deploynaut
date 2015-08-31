@@ -544,7 +544,7 @@ var EstimatedTime = React.createClass({
 			return React.createElement(
 				'small',
 				null,
-				'Approx. ',
+				'Estimated ',
 				estimatedTime,
 				' min'
 			);
