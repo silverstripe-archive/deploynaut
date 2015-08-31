@@ -39,6 +39,11 @@ function classNames() {
 	return classes.substr(1);
 }
 
+/**
+ * A simple pub sub event handler for intercomponent communication
+ *
+ * @type {{subscribe, publish}}
+ */
 var events = (function () {
 	var topics = {};
 	var hOP = topics.hasOwnProperty;
@@ -76,7 +81,8 @@ var events = (function () {
 var DeployDropDown = React.createClass({
 	displayName: 'DeployDropDown',
 
-	loading: null,
+	loadingSubscriber: null,
+
 	loadingDone: null,
 
 	getInitialState: function getInitialState() {
@@ -89,6 +95,7 @@ var DeployDropDown = React.createClass({
 	},
 	componentDidMount: function componentDidMount() {
 		var self = this;
+		// register subscribers
 		this.loading = events.subscribe('loading', function (text) {
 			self.setState({
 				loading: true,
@@ -97,7 +104,7 @@ var DeployDropDown = React.createClass({
 				loadingText: text
 			});
 		});
-		this.loadingDone = events.subscribe('loading_done', function () {
+		this.loadingDone = events.subscribe('loading/done', function () {
 			self.setState({
 				loading: false,
 				loadingText: '',
@@ -118,7 +125,7 @@ var DeployDropDown = React.createClass({
 			dataType: 'json',
 			url: this.props.project_url + '/fetch'
 		})).then(this.waitForFetchToComplete, this.fetchStatusError).then(function () {
-			events.publish('loading_done');
+			events.publish('loading/done');
 		})['catch'](function (data) {
 			console.error(data);
 		}).done();
@@ -349,9 +356,9 @@ var DeployTab = React.createClass({
 			self.setState({
 				summary: data
 			});
-			events.publish('loading_done');
+			events.publish('loading/done');
 		}, function (data) {
-			console.error(data);
+			events.publish('loading/done');
 		});
 	},
 

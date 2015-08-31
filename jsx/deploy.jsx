@@ -81,6 +81,7 @@ var events = (function(){
 var DeployDropDown = React.createClass({
 
 	loadingSubscriber: null,
+
 	loadingDone: null,
 
 	getInitialState: function() {
@@ -93,6 +94,7 @@ var DeployDropDown = React.createClass({
 	},
 	componentDidMount: function() {
 		var self = this;
+		// register subscribers
 		this.loading = events.subscribe('loading', function(text) {
 			self.setState({
 				loading: true,
@@ -101,7 +103,7 @@ var DeployDropDown = React.createClass({
 				loadingText: text
 			});
 		});
-		this.loadingDone = events.subscribe('loading_done', function() {
+		this.loadingDone = events.subscribe('loading/done', function() {
 			self.setState({
 				loading: false,
 				loadingText: '',
@@ -124,7 +126,7 @@ var DeployDropDown = React.createClass({
 		}))
 			.then(this.waitForFetchToComplete, this.fetchStatusError)
 			.then(function() {
-				events.publish('loading_done');
+				events.publish('loading/done');
 			}).catch(function(data){
 				console.error(data);
 			}).done();
@@ -297,8 +299,8 @@ var DeployTab = React.createClass({
 	getInitialState: function() {
 		return {
 			summary: {
-				changes: null,
-				messages: null,
+				changes: [],
+				messages: [],
 				validationCode: '',
 				estimatedTime: null,
 				initialState: true,
@@ -325,9 +327,9 @@ var DeployTab = React.createClass({
 			self.setState({
 				summary: data
 			});
-			events.publish('loading_done');
+			events.publish('loading/done');
 		}, function(data){
-			console.error(data);
+			events.publish('loading/done');
 		});
 	},
 
