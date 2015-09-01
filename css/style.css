@@ -9978,6 +9978,42 @@ button.sidebar-open {
         .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] {
           font-size: 20px; } }
 
+.fader-enter {
+  opacity: 0.01;
+  max-height: 0;
+  overflow: hidden;
+  transition-property: opacity, max-height;
+  transition-duration: 0.5s, 0.5s;
+  transition-timing-function: ease-out; }
+
+.fader-enter.fader-active {
+  opacity: 1;
+  max-height: 1000px; }
+
+.fader-leave {
+  opacity: 1;
+  max-height: 1000px;
+  overflow: hidden; }
+
+.fader-leave.fader-active {
+  max-height: 0;
+  opacity: 0.01;
+  transition-property: opacity, max-height;
+  transition-duration: 0.5s, 0.5s;
+  transition-timing-function: ease-out; }
+
+.fader-appear {
+  opacity: 0.01;
+  max-height: 0;
+  overflow: hidden;
+  transition-property: opacity, max-height;
+  transition-duration: 0.5s, 0.5s;
+  transition-timing-function: ease-out; }
+
+.fader-appear.fader-appear-active {
+  opacity: 1;
+  max-height: 1000px; }
+
 .deploy-history {
   margin-top: 10px; }
 

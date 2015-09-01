@@ -47,6 +47,8 @@ function isEmpty(obj) {
 	return true;
 };
 
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+
 /**
  * A simple pub sub event handler for intercomponent communication
  *
@@ -100,7 +102,8 @@ var DeployDropDown = React.createClass({
 			loaded: false,
 			opened: false,
 			loadingText: "",
-			errorText: ""
+			errorText: "",
+			fetched: false
 		};
 	},
 	componentDidMount: function() {
@@ -141,6 +144,10 @@ var DeployDropDown = React.createClass({
 	handleClick: function(e) {
 		e.preventDefault();
 		events.publish('loading', "Fetching latest code…");
+		this.setState({
+			fetched: false
+		});
+		var self = this;
 		Q($.ajax({
 			type: "POST",
 			dataType: 'json',
@@ -149,6 +156,9 @@ var DeployDropDown = React.createClass({
 			.then(this.waitForFetchToComplete, this.fetchStatusError)
 			.then(function() {
 				events.publish('loading/done');
+				self.setState({
+					fetched: true
+				})
 			}).catch(this.fetchStatusError).done();
 	},
 	waitForFetchToComplete:function (fetchData) {
@@ -189,9 +199,11 @@ var DeployDropDown = React.createClass({
 			"success": this.state.success
 		});
 
-		var form = <DeployForm data={this.props.data} env_url={this.props.env_url} />;
+		var form;
 		if(this.state.errorText !== "") {
 			form = <ErrorMessages message={this.state.errorText} />
+		} else if(this.state.fetched) {
+			form = <DeployForm data={this.props.data} env_url={this.props.env_url} />
 		}
 
 		return (
@@ -265,13 +277,15 @@ var DeployForm = React.createClass({
 	},
 	render: function () {
 		return (
-			<div className="deploy-form-outer clearfix collapse in">
+			<ReactCSSTransitionGroup transitionName="fader" transitionAppear={true} >
+			<div className="deploy-form-outer clearfix">
 				<form className="form-inline deploy-form" action="POST" action="#">
 					<DeployTabSelector data={this.state.data} onSelect={this.selectHandler} selectedTab={this.state.selectedTab} />
 					<DeployTabs data={this.state.data} selectedTab={this.state.selectedTab} env_url={this.props.env_url} />
 				</form>
 			</div>
-		);
+			</ReactCSSTransitionGroup>
+			);
 	}
 });
 
@@ -308,7 +322,9 @@ var DeployTabSelect = React.createClass({
 		});
 		return (
 			<li className={classes}>
-				<a onClick={this.handleClick} href={"#deploy-tab-"+this.props.tab.id} >{this.props.tab.name}</a>
+				<ReactCSSTransitionGroup transitionName="fader" transitionAppear={true} >
+					<a onClick={this.handleClick} href={"#deploy-tab-"+this.props.tab.id} >{this.props.tab.name}</a>
+				</ReactCSSTransitionGroup>
 			</li>
 		);
 	}
@@ -444,6 +460,7 @@ var DeployTab = React.createClass({
 
 		return (
 			<div id={"deploy-tab-"+this.props.tab.id} className={classes}>
+				<ReactCSSTransitionGroup transitionName="fader" transitionAppear={true} >
 				<div className="section">
 					<label htmlFor={this.props.tab.field_id} ><span className="numberCircle">1</span> {this.props.tab.field_label}</label>
 					<div className="field">
@@ -453,6 +470,7 @@ var DeployTab = React.createClass({
 					{needsVerifyButton?verifyButton:''}
 				</div>
 				<DeployPlan summary={this.state.summary} env_url={this.props.env_url} />
+				</ReactCSSTransitionGroup>
 			</div>
 		);
 	}
@@ -558,6 +576,7 @@ var SummaryTable = React.createClass({
 		});
 
 		return (
+			<ReactCSSTransitionGroup transitionName="fader" transitionAppear={true} >
 			<table className="table table-striped table-hover">
 				<thead>
 					<tr>
@@ -570,6 +589,7 @@ var SummaryTable = React.createClass({
 					{summaryLines}
 				</tbody>
 			</table>
+			</ReactCSSTransitionGroup>
 		);
 	}
 });
