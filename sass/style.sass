@@ -429,8 +429,8 @@ button.sidebar-open
 		color: #fff
 		text-align: center
 		white-space: nowrap
-		background-color: darken($platform-blue, 15%)
-		border-radius: 10px
+		background-color: $platform-blue
+		border-radius: 50%
 
 	.deploy-form
 		position: relative
@@ -443,7 +443,7 @@ button.sidebar-open
 				text-transform: none;
 
 			&:disabled
-				background-color: $gray-lighter
+				background-color: #cccccc
 				border: $gray
 
 
@@ -451,7 +451,7 @@ button.sidebar-open
 			position: static
 			font-size: 16px
 			font-weight: bold
-			color: darken($platform-blue, 15%)
+			color: $platform-blue
 			margin-bottom: 1em
 
 		&:after /* False background */

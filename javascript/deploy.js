@@ -100,7 +100,8 @@ var DeployDropDown = React.createClass({
 			loaded: false,
 			opened: false,
 			loadingText: "",
-			errorText: ""
+			errorText: "",
+			fetched: false
 		};
 	},
 	componentDidMount: function componentDidMount() {
@@ -141,12 +142,19 @@ var DeployDropDown = React.createClass({
 	handleClick: function handleClick(e) {
 		e.preventDefault();
 		events.publish('loading', "Fetching latest code…");
+		this.setState({
+			fetched: false
+		});
+		var self = this;
 		Q($.ajax({
 			type: "POST",
 			dataType: 'json',
 			url: this.props.project_url + '/fetch'
 		})).then(this.waitForFetchToComplete, this.fetchStatusError).then(function () {
 			events.publish('loading/done');
+			self.setState({
+				fetched: true
+			});
 		})['catch'](this.fetchStatusError).done();
 	},
 	waitForFetchToComplete: function waitForFetchToComplete(fetchData) {
@@ -187,9 +195,11 @@ var DeployDropDown = React.createClass({
 			"success": this.state.success
 		});
 
-		var form = React.createElement(DeployForm, { data: this.props.data, env_url: this.props.env_url, SecurityToken: this.props.SecurityToken });
+		var form;
 		if (this.state.errorText !== "") {
 			form = React.createElement(ErrorMessages, { message: this.state.errorText });
+		} else if (this.state.fetched) {
+			form = React.createElement(DeployForm, { data: this.props.data, env_url: this.props.env_url, SecurityToken: this.props.SecurityToken });
 		}
 
 		return React.createElement(
@@ -288,7 +298,7 @@ var DeployForm = React.createClass({
 	render: function render() {
 		return React.createElement(
 			'div',
-			{ className: 'deploy-form-outer clearfix collapse in' },
+			{ className: 'deploy-form-outer clearfix' },
 			React.createElement(
 				'form',
 				{ className: 'form-inline deploy-form', action: 'POST', action: '#' },
@@ -681,7 +691,7 @@ var SummaryLine = React.createClass({
 
 	render: function render() {
 		var from = "-",
-			to = "-";
+		    to = "-";
 
 		if (this.props.from !== null) {
 			from = this.props.from.substring(0, 30);
@@ -712,12 +722,8 @@ var SummaryLine = React.createClass({
 });
 
 if (typeof urls != 'undefined') {
-	/**
-	 * Render
-	 */
 	React.render(React.createElement(DeployDropDown, {
 		project_url: urls.project_url,
 		env_url: urls.env_url,
-		SecurityToken: security_token
-	}), document.getElementById('deploy_form'));
+		SecurityToken: security_token }), document.getElementById('deploy_form'));
 }
