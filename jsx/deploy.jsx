@@ -322,7 +322,7 @@ var DeployTabs = React.createClass({
 		var self = this;
 		var tabs = this.props.data.map(function(tab) {
 			return (
-				<DeployTab key={tab.id} tab={tab}  selectedTab={self.props.selectedTab} env_url={self.props.env_url} />
+				<DeployTab key={tab.id} tab={tab} selectedTab={self.props.selectedTab} env_url={self.props.env_url} />
 			);
 		});
 
@@ -359,7 +359,10 @@ var DeployTab = React.createClass({
 			});
 		}
 
-		$(React.findDOMNode(this.refs.sha_selector)).select2().on("change", this.changeHandler);
+		// Trigger handler only needed if there is no explicit button.
+		if ($(React.findDOMNode(this.refs.verify)).length===0) {
+			$(React.findDOMNode(this.refs.sha_selector)).select2().on("change", this.changeHandler);
+		}
 	},
 	changeHandler: function(event) {
 		event.preventDefault();
@@ -370,11 +373,15 @@ var DeployTab = React.createClass({
 		}
 		events.publish('loading', "Calculating changes…");
 		var self = this;
+		var forceFullElem = React.findDOMNode(this.refs.force_full);
 		Q($.ajax({
 			type: "POST",
 			dataType: 'json',
 			url: this.props.env_url + '/deploy_summary',
-			data: {'sha': React.findDOMNode(this.refs.sha_selector).value}
+			data: {
+				'sha': React.findDOMNode(this.refs.sha_selector).value,
+				'force_full': forceFullElem ? forceFullElem.checked : 'false'
+			}
 		})).then(function(data) {
 			self.setState({
 				summary: data
@@ -392,6 +399,10 @@ var DeployTab = React.createClass({
 			"active" : (this.props.selectedTab == this.props.tab.id)
 		});
 
+		var needsForceFullCheckbox = this.props.tab.advanced_opts==='true';
+		// This might still get overriden below.
+		var needsVerifyButton = needsForceFullCheckbox;
+
 		var selector;
 		switch(this.props.tab.field_type) {
 			case 'dropdown':
@@ -400,7 +411,7 @@ var DeployTab = React.createClass({
 				var style = {width: '100%'};
 				selector = (
 					<select ref="sha_selector" id={this.props.tab.field_id} name="sha" className="dropdown"
-						onChange={this.changeHandler} style={style}>
+						onChange={needsVerifyButton?null:this.changeHandler} style={style}>
 						<option value="">Select {this.props.tab.field_id}</option>
 					</select>
 				)
@@ -409,15 +420,27 @@ var DeployTab = React.createClass({
 
 			case 'textfield':
 				selector = (
-					<div>
-						<input ref="sha_selector" type="text" ref="sha_selector" id={this.props.tab.field_id} name="sha" className="text" />
-						<button value="Check SHA" className="btn-lg btn-default btn check-button" onClick={this.changeHandler}>
-							Check SHA
-						</button>
-					</div>
+					<input type="text" ref="sha_selector" id={this.props.tab.field_id} name="sha" className="text" />
 				)
+				needsVerifyButton = true;
 				break;
 		}
+
+		var forceFullCheckbox = (
+			<div className="field">
+				<span>
+					<input type="checkbox" ref="force_full" name="full"/> Force full deployment
+				</span>
+			</div>
+		);
+
+		var verifyButton = (
+			<div className="field">
+				<button ref="verify" value="Verify deployment" className="btn-lg btn-default btn check-button" onClick={this.changeHandler}>
+					Verify deployment
+				</button>
+			</div>
+		);
 
 		return (
 			<div id={"deploy-tab-"+this.props.tab.id} className={classes}>
@@ -426,6 +449,8 @@ var DeployTab = React.createClass({
 					<div className="field">
 						{selector}
 					</div>
+					{needsForceFullCheckbox?forceFullCheckbox:''}
+					{needsVerifyButton?verifyButton:''}
 				</div>
 				<DeployPlan summary={this.state.summary} env_url={this.props.env_url} />
 			</div>
@@ -459,10 +484,15 @@ var DeployPlan = React.createClass({
 		var canDeploy = (this.props.summary.validationCode==="success" || this.props.summary.validationCode==="warning");
 
 		var messageList = [];
+		var classMap = {
+			'error': 'alert alert-danger',
+			'warning': 'alert alert-warning',
+			'success': 'alert alert-info'
+		}
 		if (typeof messages !== 'undefined' && messages.length > 0) {
 			messageList = messages.map(function(message) {
 				return (
-					<div className={message.code=='error'?'alert alert-danger':'alert alert-warning'} role="alert">
+					<div className={classMap[message.code]} role="alert">
 						{message.text}
 					</div>
 				)

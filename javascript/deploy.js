@@ -389,7 +389,10 @@ var DeployTab = React.createClass({
 			});
 		}
 
-		$(React.findDOMNode(this.refs.sha_selector)).select2().on("change", this.changeHandler);
+		// Trigger handler only needed if there is no explicit button.
+		if ($(React.findDOMNode(this.refs.verify)).length === 0) {
+			$(React.findDOMNode(this.refs.sha_selector)).select2().on("change", this.changeHandler);
+		}
 	},
 	changeHandler: function changeHandler(event) {
 		event.preventDefault();
@@ -400,11 +403,15 @@ var DeployTab = React.createClass({
 		}
 		events.publish('loading', "Calculating changes…");
 		var self = this;
+		var forceFullElem = React.findDOMNode(this.refs.force_full);
 		Q($.ajax({
 			type: "POST",
 			dataType: 'json',
 			url: this.props.env_url + '/deploy_summary',
-			data: { 'sha': React.findDOMNode(this.refs.sha_selector).value }
+			data: {
+				'sha': React.findDOMNode(this.refs.sha_selector).value,
+				'force_full': forceFullElem ? forceFullElem.checked : 'false'
+			}
 		})).then(function (data) {
 			self.setState({
 				summary: data
@@ -422,6 +429,10 @@ var DeployTab = React.createClass({
 			"active": this.props.selectedTab == this.props.tab.id
 		});
 
+		var needsForceFullCheckbox = this.props.tab.advanced_opts === 'true';
+		// This might still get overriden below.
+		var needsVerifyButton = needsForceFullCheckbox;
+
 		var selector;
 		switch (this.props.tab.field_type) {
 			case 'dropdown':
@@ -431,7 +442,7 @@ var DeployTab = React.createClass({
 				selector = React.createElement(
 					'select',
 					{ ref: 'sha_selector', id: this.props.tab.field_id, name: 'sha', className: 'dropdown',
-						onChange: this.changeHandler, style: style },
+						onChange: needsVerifyButton ? null : this.changeHandler, style: style },
 					React.createElement(
 						'option',
 						{ value: '' },
@@ -443,18 +454,31 @@ var DeployTab = React.createClass({
 				break;
 
 			case 'textfield':
-				selector = React.createElement(
-					'div',
-					null,
-					React.createElement('input', { ref: 'sha_selector', type: 'text', ref: 'sha_selector', id: this.props.tab.field_id, name: 'sha', className: 'text' }),
-					React.createElement(
-						'button',
-						{ value: 'Check SHA', className: 'btn-lg btn-default btn check-button', onClick: this.changeHandler },
-						'Check SHA'
-					)
-				);
+				selector = React.createElement('input', { type: 'text', ref: 'sha_selector', id: this.props.tab.field_id, name: 'sha', className: 'text' });
+				needsVerifyButton = true;
 				break;
 		}
+
+		var forceFullCheckbox = React.createElement(
+			'div',
+			{ className: 'field' },
+			React.createElement(
+				'span',
+				null,
+				React.createElement('input', { type: 'checkbox', ref: 'force_full', name: 'full' }),
+				' Force full deployment'
+			)
+		);
+
+		var verifyButton = React.createElement(
+			'div',
+			{ className: 'field' },
+			React.createElement(
+				'button',
+				{ ref: 'verify', value: 'Verify deployment', className: 'btn-lg btn-default btn check-button', onClick: this.changeHandler },
+				'Verify deployment'
+			)
+		);
 
 		return React.createElement(
 			'div',
@@ -477,7 +501,9 @@ var DeployTab = React.createClass({
 					'div',
 					{ className: 'field' },
 					selector
-				)
+				),
+				needsForceFullCheckbox ? forceFullCheckbox : '',
+				needsVerifyButton ? verifyButton : ''
 			),
 			React.createElement(DeployPlan, { summary: this.state.summary, env_url: this.props.env_url })
 		);
@@ -512,11 +538,16 @@ var DeployPlan = React.createClass({
 		var canDeploy = this.props.summary.validationCode === "success" || this.props.summary.validationCode === "warning";
 
 		var messageList = [];
+		var classMap = {
+			'error': 'alert alert-danger',
+			'warning': 'alert alert-warning',
+			'success': 'alert alert-info'
+		};
 		if (typeof messages !== 'undefined' && messages.length > 0) {
 			messageList = messages.map(function (message) {
 				return React.createElement(
 					'div',
-					{ className: message.code == 'error' ? 'alert alert-danger' : 'alert alert-warning', role: 'alert' },
+					{ className: classMap[message.code], role: 'alert' },
 					message.text
 				);
 			});
