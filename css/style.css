@@ -9885,7 +9885,7 @@ button.sidebar-open {
     color: #fff;
     text-align: center;
     white-space: nowrap;
-    background-color: #078be0;
+    background-color: #3aaef9;
     border-radius: 10px; }
   .deploy-form-outer .deploy-form {
     position: relative; }
@@ -9901,7 +9901,7 @@ button.sidebar-open {
       position: static;
       font-size: 16px;
       font-weight: bold;
-      color: #078be0;
+      color: #3aaef9;
       margin-bottom: 1em; }
     .deploy-form-outer .deploy-form:after {
       height: 300px;
