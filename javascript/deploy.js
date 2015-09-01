@@ -46,6 +46,8 @@ function isEmpty(obj) {
 	return true;
 };
 
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+
 /**
  * A simple pub sub event handler for intercomponent communication
  *
@@ -100,7 +102,8 @@ var DeployDropDown = React.createClass({
 			loaded: false,
 			opened: false,
 			loadingText: "",
-			errorText: ""
+			errorText: "",
+			fetched: false
 		};
 	},
 	componentDidMount: function componentDidMount() {
@@ -141,12 +144,19 @@ var DeployDropDown = React.createClass({
 	handleClick: function handleClick(e) {
 		e.preventDefault();
 		events.publish('loading', "Fetching latest code…");
+		this.setState({
+			fetched: false
+		});
+		var self = this;
 		Q($.ajax({
 			type: "POST",
 			dataType: 'json',
 			url: this.props.project_url + '/fetch'
 		})).then(this.waitForFetchToComplete, this.fetchStatusError).then(function () {
 			events.publish('loading/done');
+			self.setState({
+				fetched: true
+			});
 		})['catch'](this.fetchStatusError).done();
 	},
 	waitForFetchToComplete: function waitForFetchToComplete(fetchData) {
@@ -187,9 +197,11 @@ var DeployDropDown = React.createClass({
 			"success": this.state.success
 		});
 
-		var form = React.createElement(DeployForm, { data: this.props.data, env_url: this.props.env_url, SecurityToken: this.props.SecurityToken });
+		var form;
 		if (this.state.errorText !== "") {
 			form = React.createElement(ErrorMessages, { message: this.state.errorText });
+		} else if (this.state.fetched) {
+			form = React.createElement(DeployForm, { data: this.props.data, env_url: this.props.env_url, SecurityToken: this.props.SecurityToken });
 		}
 
 		return React.createElement(
@@ -287,13 +299,17 @@ var DeployForm = React.createClass({
 	},
 	render: function render() {
 		return React.createElement(
-			'div',
-			{ className: 'deploy-form-outer clearfix collapse in' },
+			ReactCSSTransitionGroup,
+			{ transitionName: 'fader', transitionAppear: true },
 			React.createElement(
-				'form',
-				{ className: 'form-inline deploy-form', action: 'POST', action: '#' },
-				React.createElement(DeployTabSelector, { data: this.state.data, onSelect: this.selectHandler, selectedTab: this.state.selectedTab }),
-				React.createElement(DeployTabs, { data: this.state.data, selectedTab: this.state.selectedTab, env_url: this.props.env_url, SecurityToken: this.state.SecurityToken })
+				'div',
+				{ className: 'deploy-form-outer clearfix' },
+				React.createElement(
+					'form',
+					{ className: 'form-inline deploy-form', action: 'POST', action: '#' },
+					React.createElement(DeployTabSelector, { data: this.state.data, onSelect: this.selectHandler, selectedTab: this.state.selectedTab }),
+					React.createElement(DeployTabs, { data: this.state.data, selectedTab: this.state.selectedTab, env_url: this.props.env_url, SecurityToken: this.state.SecurityToken })
+				)
 			)
 		);
 	}
@@ -336,9 +352,13 @@ var DeployTabSelect = React.createClass({
 			'li',
 			{ className: classes },
 			React.createElement(
-				'a',
-				{ onClick: this.handleClick, href: "#deploy-tab-" + this.props.tab.id },
-				this.props.tab.name
+				ReactCSSTransitionGroup,
+				{ transitionName: 'fader', transitionAppear: true },
+				React.createElement(
+					'a',
+					{ onClick: this.handleClick, href: "#deploy-tab-" + this.props.tab.id },
+					this.props.tab.name
+				)
 			)
 		);
 	}
@@ -488,28 +508,32 @@ var DeployTab = React.createClass({
 			'div',
 			{ id: "deploy-tab-" + this.props.tab.id, className: classes },
 			React.createElement(
-				'div',
-				{ className: 'section' },
-				React.createElement(
-					'label',
-					{ htmlFor: this.props.tab.field_id },
-					React.createElement(
-						'span',
-						{ className: 'numberCircle' },
-						'1'
-					),
-					' ',
-					this.props.tab.field_label
-				),
+				ReactCSSTransitionGroup,
+				{ transitionName: 'fader', transitionAppear: true },
 				React.createElement(
 					'div',
-					{ className: 'field' },
-					selector
+					{ className: 'section' },
+					React.createElement(
+						'label',
+						{ htmlFor: this.props.tab.field_id },
+						React.createElement(
+							'span',
+							{ className: 'numberCircle' },
+							'1'
+						),
+						' ',
+						this.props.tab.field_label
+					),
+					React.createElement(
+						'div',
+						{ className: 'field' },
+						selector
+					),
+					needsForceFullCheckbox ? forceFullCheckbox : '',
+					needsVerifyButton ? verifyButton : ''
 				),
-				needsForceFullCheckbox ? forceFullCheckbox : '',
-				needsVerifyButton ? verifyButton : ''
-			),
-			React.createElement(DeployPlan, { summary: this.state.summary, env_url: this.props.env_url })
+				React.createElement(DeployPlan, { summary: this.state.summary, env_url: this.props.env_url })
+			)
 		);
 	}
 });
@@ -643,31 +667,35 @@ var SummaryTable = React.createClass({
 		});
 
 		return React.createElement(
-			'table',
-			{ className: 'table table-striped table-hover' },
+			ReactCSSTransitionGroup,
+			{ transitionName: 'fader', transitionAppear: true },
 			React.createElement(
-				'thead',
-				null,
+				'table',
+				{ className: 'table table-striped table-hover' },
 				React.createElement(
-					'tr',
+					'thead',
 					null,
-					React.createElement('th', null),
 					React.createElement(
-						'th',
+						'tr',
 						null,
-						'From'
-					),
-					React.createElement(
-						'th',
-						null,
-						'To'
+						React.createElement('th', null),
+						React.createElement(
+							'th',
+							null,
+							'From'
+						),
+						React.createElement(
+							'th',
+							null,
+							'To'
+						)
 					)
+				),
+				React.createElement(
+					'tbody',
+					null,
+					summaryLines
 				)
-			),
-			React.createElement(
-				'tbody',
-				null,
-				summaryLines
 			)
 		);
 	}
@@ -681,7 +709,7 @@ var SummaryLine = React.createClass({
 
 	render: function render() {
 		var from = "-",
-			to = "-";
+		    to = "-";
 
 		if (this.props.from !== null) {
 			from = this.props.from.substring(0, 30);
@@ -711,13 +739,7 @@ var SummaryLine = React.createClass({
 	}
 });
 
-if (typeof urls != 'undefined') {
-	/**
-	 * Render
-	 */
-	React.render(React.createElement(DeployDropDown, {
-		project_url: urls.project_url,
-		env_url: urls.env_url,
-		SecurityToken: security_token
-	}), document.getElementById('deploy_form'));
-}
+/**
+ * Render
+ */
+React.render(React.createElement(DeployDropDown, { project_url: urls.project_url, env_url: urls.env_url, SecurityToken: security_token }), document.getElementById('deploy_form'));

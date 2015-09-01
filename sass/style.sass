@@ -429,8 +429,8 @@ button.sidebar-open
 		color: #fff
 		text-align: center
 		white-space: nowrap
-		background-color: darken($platform-blue, 15%)
-		border-radius: 10px
+		background-color: $platform-blue
+		border-radius: 50%
 
 	.deploy-form
 		position: relative
@@ -443,7 +443,7 @@ button.sidebar-open
 				text-transform: none;
 
 			&:disabled
-				background-color: $gray-lighter
+				background-color: #cccccc
 				border: $gray
 
 
@@ -451,7 +451,7 @@ button.sidebar-open
 			position: static
 			font-size: 16px
 			font-weight: bold
-			color: darken($platform-blue, 15%)
+			color: $platform-blue
 			margin-bottom: 1em
 
 		&:after /* False background */
@@ -550,6 +550,42 @@ button.sidebar-open
 
 			@media (max-width: $screen-md)
 				font-size: 20px
+
+.fader-enter
+	opacity: 0.01
+	max-height: 0
+	overflow: hidden
+	transition-property: opacity, max-height
+	transition-duration: 0.5s, 0.5s
+	transition-timing-function: ease-out
+
+.fader-enter.fader-active
+	opacity: 1
+	max-height: 1000px
+
+.fader-leave
+	opacity: 1
+	max-height: 1000px
+	overflow: hidden
+
+.fader-leave.fader-active
+	max-height: 0
+	opacity: 0.01
+	transition-property: opacity, max-height
+	transition-duration: 0.5s, 0.5s
+	transition-timing-function: ease-out
+
+.fader-appear
+	opacity: 0.01
+	max-height: 0
+	overflow: hidden
+	transition-property: opacity, max-height
+	transition-duration: 0.5s, 0.5s
+	transition-timing-function: ease-out
+
+.fader-appear.fader-appear-active
+	opacity: 1
+	max-height: 1000px
 
 .deploy-history
 	margin-top: $padding-large-vertical
