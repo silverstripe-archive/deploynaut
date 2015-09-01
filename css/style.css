@@ -9886,7 +9886,7 @@ button.sidebar-open {
     text-align: center;
     white-space: nowrap;
     background-color: #3aaef9;
-    border-radius: 10px; }
+    border-radius: 50%; }
   .deploy-form-outer .deploy-form {
     position: relative; }
     .deploy-form-outer .deploy-form .deploy-button {
@@ -9895,7 +9895,7 @@ button.sidebar-open {
         font-size: 70%;
         text-transform: none; }
       .deploy-form-outer .deploy-form .deploy-button:disabled {
-        background-color: #eeeeee;
+        background-color: #cccccc;
         border: #555555; }
     .deploy-form-outer .deploy-form label {
       position: static;
