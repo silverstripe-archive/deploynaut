@@ -681,7 +681,7 @@ var SummaryLine = React.createClass({
 
 	render: function render() {
 		var from = "-",
-		    to = "-";
+			to = "-";
 
 		if (this.props.from !== null) {
 			from = this.props.from.substring(0, 30);
@@ -711,7 +711,13 @@ var SummaryLine = React.createClass({
 	}
 });
 
-/**
- * Render
- */
-React.render(React.createElement(DeployDropDown, { project_url: urls.project_url, env_url: urls.env_url, SecurityToken: security_token }), document.getElementById('deploy_form'));
+if (typeof urls != 'undefined') {
+	/**
+	 * Render
+	 */
+	React.render(React.createElement(DeployDropDown, {
+		project_url: urls.project_url,
+		env_url: urls.env_url,
+		SecurityToken: security_token
+	}), document.getElementById('deploy_form'));
+}

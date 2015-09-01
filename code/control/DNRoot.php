@@ -148,6 +148,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * Include requirements that deploynaut needs, such as javascript.
 	 */
 	public static function include_requirements() {
+
+		// JS should always go to the bottom, otherwise there's the risk that Requirements
+		// puts them halfway through the page to the nearest <script> tag. We don't want that.
+		Requirements::set_force_js_to_bottom(true);
+
 		Requirements::combine_files(
 			'deploynaut.js',
 			array(
@@ -155,6 +160,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				'deploynaut/javascript/bootstrap.js',
 				'deploynaut/javascript/q.js',
 				'deploynaut/javascript/deploynaut.js',
+				'deploynaut/javascript/react-with-addons.min.js',
+				'deploynaut/javascript/deploy.js',
 				'deploynaut/javascript/bootstrap.file-input.js',
 				'deploynaut/thirdparty/select2/dist/js/select2.min.js',
 				'deploynaut/javascript/material.js',
