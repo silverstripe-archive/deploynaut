@@ -193,9 +193,11 @@ class DeploymentStrategy extends ViewableData {
 	}
 
 	/**
-	 * @return string
+	 * Transform the deployment strategy to an array.
+	 *
+	 * @return array
 	 */
-	public function toJSON() {
+	public function toArray() {
 		$fields = array(
 			'actionTitle',
 			'actionCode',
@@ -210,7 +212,14 @@ class DeploymentStrategy extends ViewableData {
 		foreach ($fields as $field) {
 			$output[$field] = $this->$field;
 		}
-		return json_encode($output, JSON_PRETTY_PRINT);
+		return $output;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function toJSON() {
+			return json_encode($this->toArray(), JSON_PRETTY_PRINT);
 	}
 
 	/**
