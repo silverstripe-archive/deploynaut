@@ -8,10 +8,10 @@
     "test": "tests"
   },
   "scripts": {
-    "build": "node-sass -r ./sass/style.sass -o ./css/",
-    "watch": "node-sass -r -w ./sass/style.sass -o ./css/",
-    "jsx": "./node_modules/.bin/babel ./jsx/ --out-dir javascript/",
-    "jsx-watch": "./node_modules/.bin/babel --watch ./jsx/ --out-dir javascript/"
+    "build": "echo run 'gulp sass' instead",
+    "watch": "echo run 'gulp watch' instead",
+    "jsx": "echo run 'gulp jsx' instead",
+    "jsx-watch": "echo run 'gulp watch' instead"
   },
   "repository": {
     "type": "git",
@@ -23,9 +23,14 @@
   },
   "homepage": "https://github.com/silverstripe/deploynaut#readme",
   "devDependencies": {
-    "node-sass": "^3.2.0",
+    "babel": "5.8.23",
     "bootstrap-sass": "^3.3.5",
     "font-awesome": "^4.3.0",
-    "babel": "5.8.23"
+    "gulp": "^3.9.0",
+    "gulp-plumber": "^1.0.1",
+    "gulp-react": "^3.0.1",
+    "gulp-sass": "2.0.4",
+    "gulp-util": "^3.0.6",
+    "node-sass": "^3.2.0"
   }
 }
