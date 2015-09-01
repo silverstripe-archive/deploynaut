@@ -148,6 +148,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * Include requirements that deploynaut needs, such as javascript.
 	 */
 	public static function include_requirements() {
+
+		// JS should always go to the bottom, otherwise there's the risk that Requirements
+		// puts them halfway through the page to the nearest <script> tag. We don't want that.
+		Requirements::set_force_js_to_bottom(true);
+
 		Requirements::combine_files(
 			'deploynaut.js',
 			array(
@@ -155,6 +160,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				'deploynaut/javascript/bootstrap.js',
 				'deploynaut/javascript/q.js',
 				'deploynaut/javascript/deploynaut.js',
+				'deploynaut/javascript/react-with-addons.min.js',
+				'deploynaut/javascript/deploy.js',
 				'deploynaut/javascript/bootstrap.file-input.js',
 				'deploynaut/thirdparty/select2/dist/js/select2.min.js',
 				'deploynaut/javascript/material.js',
@@ -909,6 +916,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function gitRevisions(SS_HTTPRequest $request) {
 
+		if(!$this->checkCsrfToken($request)) {
+			return $this->httpError(400, 'Bad Request');
+		}
+
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
@@ -1022,8 +1033,39 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'advanced_opts' => $advanced
 		);
 		$tabs[] = $data;
+		$data = array(
+			'SecurityID' => SecurityToken::inst()->getValue(),
+			'Tabs' => $tabs,
+		);
 
-		return json_encode($tabs, JSON_PRETTY_PRINT);
+		return json_encode($data, JSON_PRETTY_PRINT);
+	}
+
+	/**
+	 * Check and regenerate a global CSRF token
+	 *
+	 * @param SS_HTTPRequest $request
+	 * @param bool $resetToken
+	 *
+	 * @return bool
+	 */
+	protected function checkCsrfToken(SS_HTTPRequest $request, $resetToken = true) {
+		$token = SecurityToken::inst();
+
+		// Ensure the submitted token has a value
+		$submittedToken = $request->postVar('SecurityID');
+		if(!$submittedToken) return false;
+
+		// Do the actual check.
+		$check = $token->check($submittedToken);
+
+		// Reset the token after we've checked the existing token
+		if($resetToken) {
+			$token->reset();
+		}
+
+		// Return whether the token was correct or not
+		return $check;
 	}
 
 	/**
@@ -1032,6 +1074,14 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return string
 	 */
 	public function deploySummary(SS_HTTPRequest $request) {
+
+		// Ensure the CSRF Token is correct
+		// We're not going to reset it here because the user might make multiple requests.
+		// Resetting the token could break valid requests.
+		if(!$this->checkCsrfToken($request, false)) {
+			// CSRF token didn't match
+			return $this->httpError(400, 'Bad Request');
+		}
 
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
@@ -1050,8 +1100,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			$environment,
 			$request->requestVars()
 		);
+		$data = $strategy->toArray();
 
-		return $strategy->toJSON();
+		// Append json to response
+		$token = SecurityToken::inst();
+		$data['SecurityID'] = $token->getValue();
+
+		return json_encode($data);
 	}
 
 	/**
@@ -1066,6 +1121,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @throws null
 	 */
 	public function startDeploy(SS_HTTPRequest $request) {
+
+		// Ensure the CSRF Token is correct
+		if(!$this->checkCsrfToken($request)) {
+			// CSRF token didn't match
+			return $this->httpError(400, 'Bad Request');
+		}
 
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();

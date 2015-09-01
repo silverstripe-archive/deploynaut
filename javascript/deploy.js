@@ -201,7 +201,7 @@ var DeployDropDown = React.createClass({
 		if (this.state.errorText !== "") {
 			form = React.createElement(ErrorMessages, { message: this.state.errorText });
 		} else if (this.state.fetched) {
-			form = React.createElement(DeployForm, { data: this.props.data, env_url: this.props.env_url });
+			form = React.createElement(DeployForm, { data: this.props.data, env_url: this.props.env_url, SecurityToken: this.props.SecurityToken });
 		}
 
 		return React.createElement(
@@ -282,10 +282,12 @@ var DeployForm = React.createClass({
 		Q($.ajax({
 			type: "POST",
 			dataType: 'json',
-			url: this.props.env_url + '/git_revisions'
+			url: this.props.env_url + '/git_revisions',
+			data: { 'SecurityID': self.props.SecurityToken }
 		})).then(function (data) {
 			self.setState({
-				data: data
+				data: data.Tabs,
+				SecurityToken: data.SecurityID
 			});
 		}, function (data) {
 			events.publish('error', data);
@@ -306,7 +308,7 @@ var DeployForm = React.createClass({
 					'form',
 					{ className: 'form-inline deploy-form', action: 'POST', action: '#' },
 					React.createElement(DeployTabSelector, { data: this.state.data, onSelect: this.selectHandler, selectedTab: this.state.selectedTab }),
-					React.createElement(DeployTabs, { data: this.state.data, selectedTab: this.state.selectedTab, env_url: this.props.env_url })
+					React.createElement(DeployTabs, { data: this.state.data, selectedTab: this.state.selectedTab, env_url: this.props.env_url, SecurityToken: this.state.SecurityToken })
 				)
 			)
 		);
@@ -360,6 +362,7 @@ var DeployTabSelect = React.createClass({
 			)
 		);
 	}
+
 });
 
 /**
@@ -371,7 +374,7 @@ var DeployTabs = React.createClass({
 	render: function render() {
 		var self = this;
 		var tabs = this.props.data.map(function (tab) {
-			return React.createElement(DeployTab, { key: tab.id, tab: tab, selectedTab: self.props.selectedTab, env_url: self.props.env_url });
+			return React.createElement(DeployTab, { key: tab.id, tab: tab, selectedTab: self.props.selectedTab, env_url: self.props.env_url, SecurityToken: self.props.SecurityToken });
 		});
 
 		return React.createElement(
@@ -430,7 +433,8 @@ var DeployTab = React.createClass({
 			url: this.props.env_url + '/deploy_summary',
 			data: {
 				'sha': React.findDOMNode(this.refs.sha_selector).value,
-				'force_full': forceFullElem ? forceFullElem.checked : 'false'
+				'force_full': forceFullElem ? forceFullElem.checked : 'false',
+				'SecurityID': this.props.SecurityToken
 			}
 		})).then(function (data) {
 			self.setState({
@@ -548,7 +552,8 @@ var DeployPlan = React.createClass({
 			url: this.props.env_url + '/start-deploy',
 			data: {
 				// Pass the strategy object the user has just signed off back to the backend.
-				'strategy': this.props.summary
+				'strategy': this.props.summary,
+				'SecurityID': this.props.summary.SecurityID
 			}
 		})).then(function (data) {
 			window.location = data.url;
@@ -737,4 +742,4 @@ var SummaryLine = React.createClass({
 /**
  * Render
  */
-React.render(React.createElement(DeployDropDown, { project_url: urls.project_url, env_url: urls.env_url }), document.getElementById('deploy_form'));
+React.render(React.createElement(DeployDropDown, { project_url: urls.project_url, env_url: urls.env_url, SecurityToken: security_token }), document.getElementById('deploy_form'));
