@@ -87,9 +87,6 @@
                 }
 				var security_token = "{$SecurityID}";
             </script>
-			<script src="/deploynaut/javascript/react-with-addons.min.js"></script>
-            <script src="/deploynaut/javascript/deploy.js"></script>
-
 		<% end_if %>
 	<% end_if %>
 
