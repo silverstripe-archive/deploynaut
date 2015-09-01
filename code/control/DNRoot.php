@@ -258,13 +258,20 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		return $this->customise(array(
 			'SnapshotsSection' => 1,
-			'UploadLimit' => $maxSize = File::format_size(min(
-				File::ini2bytes(ini_get('upload_max_filesize')),
-				File::ini2bytes(ini_get('post_max_size'))
-			)),
 			'UploadSnapshotForm' => $this->getUploadSnapshotForm($request),
 			'PostSnapshotForm' => $this->getPostSnapshotForm($request)
 		))->render();
+	}
+
+	/**
+	 * Return the upload limit for snapshot uploads
+	 * @return string
+	 */
+	public function UploadLimit() {
+		return File::format_size(min(
+			File::ini2bytes(ini_get('upload_max_filesize')),
+			File::ini2bytes(ini_get('post_max_size'))
+		));
 	}
 
 	/**
