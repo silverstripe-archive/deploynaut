@@ -9897,7 +9897,7 @@ button.sidebar-open {
       .deploy-form-outer .deploy-form .deploy-button:disabled {
         background-color: #cccccc;
         border: #555555; }
-    .deploy-form-outer .deploy-form label {
+    .deploy-form-outer .deploy-form .header {
       position: static;
       font-size: 16px;
       font-weight: bold;

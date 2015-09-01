@@ -441,10 +441,10 @@ var DeployTab = React.createClass({
 		}
 
 		var forceFullCheckbox = (
-			<div className="field">
-				<span>
-					<input type="checkbox" ref="force_full" name="full"/> Force full deployment
-				</span>
+			<div className="checkbox field">
+				<label>
+					<input type="checkbox" ref="force_full" name="full" id="force_full" /> Force full deployment
+				</label>
 			</div>
 		);
 
@@ -459,7 +459,9 @@ var DeployTab = React.createClass({
 		return (
 			<div id={"deploy-tab-"+this.props.tab.id} className={classes}>
 				<div className="section">
-					<label htmlFor={this.props.tab.field_id} ><span className="numberCircle">1</span> {this.props.tab.field_label}</label>
+					<div htmlFor={this.props.tab.field_id} className="header">
+						<span className="numberCircle">1</span> {this.props.tab.field_label}
+					</div>
 					<div className="field">
 						{selector}
 					</div>
@@ -522,7 +524,7 @@ var DeployPlan = React.createClass({
 		return(
 			<div>
 				<div className="section">
-					<label><span className="numberCircle">2</span> Review changes</label>
+					<div className="header"><span className="numberCircle">2</span> Review changes</div>
 					{messageList}
 					{changeBlock}
 				</div>
