@@ -201,7 +201,7 @@ var DeployDropDown = React.createClass({displayName: "DeployDropDown",
 				React.createElement("div", {className: classes, onClick: this.handleClick}, 
 					React.createElement("span", {className: "status-icon", "aria-hidden": "true"}), 
 					React.createElement("span", {className: "loading-text"}, this.state.loadingText), 
-					React.createElement(EnvironmentName, {environmentName: ""})
+					React.createElement(EnvironmentName, {environmentName: this.props.env_name})
 				), 
 				form
 			)
@@ -755,6 +755,7 @@ if (typeof urls != 'undefined') {
 		React.createElement(DeployDropDown, {
 			project_url: urls.project_url, 
 			env_url: urls.env_url, 
+			env_name: urls.env_name, 
 			SecurityToken: security_token}),
 			document.getElementById('deploy_form')
 	);
