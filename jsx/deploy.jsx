@@ -609,7 +609,7 @@ var DeployPlan = React.createClass({
 		var messages = this.props.summary.messages;
 		if (this.showNoChangesMessage()) {
 			messages = [{
-				text: "There are no changes but you can deploy anyway if you wish.sss.",
+				text: "There are no changes but you can deploy anyway if you wish.",
 				code: "success"
 			}];
 		}
