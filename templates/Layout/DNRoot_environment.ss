@@ -81,10 +81,11 @@
 		<% if $CurrentEnvironment.CanDeploy %>
             <div id="deploy_form"></div>
             <script>
-                var urls = {
-                    project_url: "{$absoluteBaseURL}naut/api/$CurrentProject.Name",
-                    env_url: "{$absoluteBaseURL}{$CurrentEnvironment.Link}"
-                }
+				var urls = {
+					project_url: "{$absoluteBaseURL}naut/api/$CurrentProject.Name",
+					env_url: "{$absoluteBaseURL}{$CurrentEnvironment.Link}",
+					env_name: "{$CurrentEnvironment.Name}"
+				};
 				var security_token = "{$SecurityID}";
             </script>
 		<% end_if %>
