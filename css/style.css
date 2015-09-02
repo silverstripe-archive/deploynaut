@@ -9956,6 +9956,10 @@ button.sidebar-open {
         @media (max-width: 768px) {
           .deploy-form-outer .deploy-form .SelectionGroup + .tab-content {
             box-shadow: none; } }
+        .deploy-form-outer .deploy-form .SelectionGroup + .tab-content input[type="checkbox"] {
+          margin-bottom: 1em;
+          margin-top: 1em;
+          margin-right: 0.5em; }
         .deploy-form-outer .deploy-form .SelectionGroup + .tab-content select,
         .deploy-form-outer .deploy-form .SelectionGroup + .tab-content .select2,
         .deploy-form-outer .deploy-form .SelectionGroup + .tab-content input[type="text"],

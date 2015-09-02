@@ -39,14 +39,6 @@ function classNames () {
 	return classes.substr(1);
 }
 
-
-function isEmpty(obj) {
-	for(var p in obj){
-		return false;
-	}
-	return true;
-};
-
 /**
  * A simple pub sub event handler for intercomponent communication
  *
@@ -353,57 +345,81 @@ var DeployTabs = React.createClass({
 var DeployTab = React.createClass({
 	getInitialState: function() {
 		return {
-			summary: {
-				changes: {},
-				messages: [],
-				validationCode: '',
-				estimatedTime: null,
-				initialState: true,
-			},
+			summary: this.getInitialSummaryState(),
+			options: {},
+			sha: ''
 		};
 	},
-	componentDidMount: function() {
-		if (this.props.tab.field_type==='dropdown') {
-			$(React.findDOMNode(this.refs.sha_selector)).select2({
-				// Load data into the select2.
-				// The format supports optgroups, and looks like this:
-				// [{text: 'optgroup text', children: [{id: '<sha>', text: '<inner text>'}]}]
-				data: this.props.tab.field_data
-			});
+	getInitialSummaryState: function() {
+		return {
+			changes: {},
+			messages: [],
+			validationCode: '',
+			estimatedTime: null,
+			initialState: true
 		}
-
-		// Trigger handler only needed if there is no explicit button.
-		if ($(React.findDOMNode(this.refs.verify)).length===0) {
-			$(React.findDOMNode(this.refs.sha_selector)).select2().on("change", this.changeHandler);
-		}
+	},
+	OptionChangeHandler: function(event) {
+		var options = this.state.options;
+		options[event.target.name] = event.target.checked;
+		this.setState({
+			options: options
+		});
+	},
+	SHAChangeHandler: function(event) {
+		this.setState({
+			sha: event.target.value
+		});
 	},
 	changeHandler: function(event) {
 		event.preventDefault();
 
-		this.setState(this.getInitialState());
+		this.setState({
+			summary: this.getInitialSummaryState()
+		});
+
 		if(event.target.value === "") {
 			return;
 		}
+
 		events.publish('loading', "Calculating changes…");
-		var self = this;
-		var forceFullElem = React.findDOMNode(this.refs.force_full);
+
+		var summaryData = {
+			sha: React.findDOMNode(this.refs.sha_selector.refs.sha).value,
+			SecurityID: this.props.SecurityToken
+		};
+		// merge the 'advanced' options if they are set
+		for (var attrname in this.state.options) {
+			summaryData[attrname] = this.state.options[attrname];
+		}
 		Q($.ajax({
 			type: "POST",
 			dataType: 'json',
 			url: this.props.env_url + '/deploy_summary',
-			data: {
-				'sha': React.findDOMNode(this.refs.sha_selector).value,
-				'force_full': forceFullElem ? forceFullElem.checked : 'false',
-				'SecurityID': this.props.SecurityToken
-			}
+			data: summaryData
 		})).then(function(data) {
-			self.setState({
+			this.setState({
 				summary: data
 			});
 			events.publish('loading/done');
-		}, function(data){
+		}.bind(this), function(data){
 			events.publish('loading/done');
 		});
+	},
+
+	showOptions: function() {
+		return this.props.tab.advanced_opts === 'true';
+	},
+
+	showVerifyButton: function() {
+		if(this.showOptions()) {
+			return true;
+		}
+		return this.props.tab.field_type == 'textfield';
+	},
+
+	shaChosen: function() {
+		return (this.state.sha !== '');
 	},
 
 	render: function () {
@@ -413,48 +429,27 @@ var DeployTab = React.createClass({
 			"active" : (this.props.selectedTab == this.props.tab.id)
 		});
 
-		var needsForceFullCheckbox = this.props.tab.advanced_opts==='true';
-		// This might still get overriden below.
-		var needsVerifyButton = needsForceFullCheckbox;
-
+		// setup the dropdown or the text input for selecting a SHA
 		var selector;
-		switch(this.props.tab.field_type) {
-			case 'dropdown':
-				// From https://select2.github.io/examples.html "The best way to ensure that Select2 is using a percent based
-				// width is to inline the style declaration into the tag".
-				var style = {width: '100%'};
-				selector = (
-					<select ref="sha_selector" id={this.props.tab.field_id} name="sha" className="dropdown"
-						onChange={needsVerifyButton?null:this.changeHandler} style={style}>
-						<option value="">Select {this.props.tab.field_id}</option>
-					</select>
-				)
-				// Data is loaded in componentDidMount
-				break;
-
-			case 'textfield':
-				selector = (
-					<input type="text" ref="sha_selector" id={this.props.tab.field_id} name="sha" className="text" />
-				)
-				needsVerifyButton = true;
-				break;
+		if (this.props.tab.field_type == 'dropdown') {
+			var changeHandler = this.changeHandler;
+			if(this.showVerifyButton()) { changeHandler = this.SHAChangeHandler }
+			selector = <SelectorDropdown ref="sha_selector" tab={this.props.tab} changeHandler={changeHandler} />
+		} else if (this.props.tab.field_type == 'textfield') {
+			selector = <SelectorText ref="sha_selector" tab={this.props.tab} changeHandler={this.SHAChangeHandler} />
 		}
 
-		var forceFullCheckbox = (
-			<div className="checkbox field">
-				<label>
-					<input type="checkbox" ref="force_full" name="full" id="force_full" /> Force full deployment
-				</label>
-			</div>
-		);
+		// 'Advanced' options
+		var options = null;
+		if(this.showOptions()) {
+			options = <AdvancedOptions tab={this.props.tab} changeHandler={this.OptionChangeHandler} />
+		}
 
-		var verifyButton = (
-			<div className="field">
-				<button ref="verify" value="Verify deployment" className="btn-lg btn-default btn check-button" onClick={this.changeHandler}>
-					Verify deployment
-				</button>
-			</div>
-		);
+		// 'The verify button'
+		var verifyButton = null;
+		if(this.showVerifyButton()) {
+			verifyButton = <VerifyButton disabled={!this.shaChosen()} changeHandler={this.changeHandler} />
+		}
 
 		return (
 			<div id={"deploy-tab-"+this.props.tab.id} className={classes}>
@@ -462,13 +457,101 @@ var DeployTab = React.createClass({
 					<div htmlFor={this.props.tab.field_id} className="header">
 						<span className="numberCircle">1</span> {this.props.tab.field_label}
 					</div>
-					<div className="field">
-						{selector}
-					</div>
-					{needsForceFullCheckbox?forceFullCheckbox:''}
-					{needsVerifyButton?verifyButton:''}
+					{selector}
+					{options}
+					{verifyButton}
 				</div>
 				<DeployPlan summary={this.state.summary} env_url={this.props.env_url} />
+			</div>
+		);
+	}
+});
+
+var SelectorDropdown = React.createClass({
+	componentDidMount: function() {
+		$(React.findDOMNode(this.refs.sha)).select2({
+			// Load data into the select2.
+			// The format supports optgroups, and looks like this:
+			// [{text: 'optgroup text', children: [{id: '<sha>', text: '<inner text>'}]}]
+			data: this.props.tab.field_data
+		});
+
+		// Trigger handler only needed if there is no explicit button.
+		if(this.props.changeHandler) {
+			$(React.findDOMNode(this.refs.sha)).select2().on("change", this.props.changeHandler);
+		}
+	},
+
+	render: function() {
+		// From https://select2.github.io/examples.html "The best way to ensure that Select2 is using a percent based
+		// width is to inline the style declaration into the tag".
+		var style = {width: '100%'};
+
+		return (
+			<div>
+				<div className="field">
+					<select
+						ref="sha"
+						id={this.props.tab.field_id}
+						name="sha"
+						className="dropdown"
+				        onChange={this.props.changeHandler}
+						style={style}>
+						<option value="">Select {this.props.tab.field_id}</option>
+					</select>
+				</div>
+			</div>
+		);
+	}
+});
+
+var SelectorText = React.createClass({
+	render: function() {
+		return(
+			<div className="field">
+				<input
+					type="text"
+					ref="sha"
+					id={this.props.tab.field_id}
+					name="sha"
+					className="text"
+					onChange={this.props.changeHandler}
+				/>
+			</div>
+		);
+	}
+});
+
+var VerifyButton = React.createClass({
+	render: function() {
+		return (
+			<div>
+				<button
+					disabled={this.props.disabled}
+					value="Verify deployment"
+					className="btn-lg btn-default btn check-button"
+					onClick={this.props.changeHandler}>
+					Verify deployment
+				</button>
+			</div>
+		);
+	}
+});
+
+var AdvancedOptions = React.createClass({
+	render: function () {
+		return (
+			<div className="deploy-options">
+				<div className="fieldcheckbox">
+					<label>
+						<input
+							type="checkbox"
+							name="force_full"
+							onChange={this.props.changeHandler}
+						/>
+						Force full deployment
+					</label>
+				</div>
 			</div>
 		);
 	}
@@ -478,8 +561,9 @@ var DeployTab = React.createClass({
  * DeployPlan
  */
 var DeployPlan = React.createClass({
-	submitHandler: function(event) {
+	deployHandler: function(event) {
 		event.preventDefault();
+		//@todo(stig): add a confirmation box
 		Q($.ajax({
 			type: "POST",
 			dataType: 'json',
@@ -495,46 +579,54 @@ var DeployPlan = React.createClass({
 			console.error(data);
 		});
 	},
+	canDeploy: function() {
+		return (this.props.summary.validationCode==="success" || this.props.summary.validationCode==="warning");
+	},
+	isEmpty: function(obj) {
+		for(var p in obj){
+			return false;
+		}
+		return true;
+	},
+	showNoChangesMessage: function() {
+		var summary = this.props.summary;
+		if(summary.initialState === true) {
+			return false;
+		}
+		if(summary.messages === 'undefined') {
+			return true;
+		}
+		return (this.isEmpty(summary.changes) && summary.messages.length === 0);
+	},
+	actionTitle: function() {
+		var actionTitle = this.props.summary.actionTitle;
+		if (typeof actionTitle === 'undefined' || actionTitle === '' ) {
+			return 'Make a selection';
+		}
+		return this.props.summary.actionTitle;
+	},
 	render: function() {
-		var changes = this.props.summary.changes;
 		var messages = this.props.summary.messages;
-		var canDeploy = (this.props.summary.validationCode==="success" || this.props.summary.validationCode==="warning");
-
-		var messageList = [];
-		var classMap = {
-			'error': 'alert alert-danger',
-			'warning': 'alert alert-warning',
-			'success': 'alert alert-info'
+		if (this.showNoChangesMessage()) {
+			messages = [{
+				text: "There are no changes but you can deploy anyway if you wish.sss.",
+				code: "success"
+			}];
 		}
-		if (typeof messages !== 'undefined' && messages.length > 0) {
-			messageList = messages.map(function(message) {
-				return (
-					<div className={classMap[message.code]} role="alert">
-						{message.text}
-					</div>
-				)
-			});
-		}
-		if (!isEmpty(changes)) {
-			var changeBlock = <SummaryTable changes={changes} />
-		} else if (!this.props.summary.initialState && messageList.length===0) {
-			var changeBlock = <div className="alert alert-info" role="alert">There are no changes but you can deploy anyway if you wish.</div>
-		}
-
 		return(
 			<div>
 				<div className="section">
 					<div className="header"><span className="numberCircle">2</span> Review changes</div>
-					{messageList}
-					{changeBlock}
+					<MessageList messages={messages} />
+					<SummaryTable changes={this.props.summary.changes} />
 				</div>
 				<div className="section">
 					<button
 						value="Confirm Deployment"
 						className="action btn btn-primary deploy-button"
-						disabled={!canDeploy}
-						onClick={this.submitHandler}>
-							{this.props.summary.actionTitle ? this.props.summary.actionTitle : 'Make a selection'}<br/>
+						disabled={!this.canDeploy()}
+						onClick={this.deployHandler}>
+							{this.actionTitle()}<br/>
 							<EstimatedTime estimatedTime={this.props.summary.estimatedTime} />
 					</button>
 				</div>
@@ -548,25 +640,68 @@ var DeployPlan = React.createClass({
  */
 var EstimatedTime = React.createClass({
 	render: function() {
-		var estimatedTime = this.props.estimatedTime;
-		if (estimatedTime && estimatedTime>0) {
+		if (this.props.estimatedTime && this.props.estimatedTime>0) {
 			return (
-				<small>Estimated {estimatedTime} min</small>
-		);
+				<small>Estimated {this.props.estimatedTime} min</small>
+			);
 		}
-
 		return null;
 	}
 });
 
+var MessageList = React.createClass({
+	render: function() {
+		if(this.props.messages.length < 1) {
+			return null;
+		}
+		if(typeof this.props.messages === 'undefined') {
+			return null;
+		}
+		var idx = 0;
+		var messages = this.props.messages.map(function(message) {
+			return <Message key={idx} message={message} />
+			idx++;
+		});
+		return (
+			<div>
+				{messages}
+			</div>
+		)
+	}
+});
+
+var Message = React.createClass({
+	render: function() {
+		var classMap = {
+			'error': 'alert alert-danger',
+			'warning': 'alert alert-warning',
+			'success': 'alert alert-info'
+		};
+		var classname=classMap[this.props.message.code];
+		return (
+			<div className={classname} role="alert">
+				{this.props.message.text}
+			</div>
+		)
+	}
+});
+
 /**
- * SummaryTable
+ * @jsx React.DOM
  */
 var SummaryTable = React.createClass({
+	isEmpty: function(obj) {
+		for(var p in obj){
+			return false;
+		}
+		return true;
+	},
 	render: function() {
-		var i = 0;
 		var changes = this.props.changes;
-
+		if(this.isEmpty(changes)) {
+			return null;
+		}
+		var i = 0;
 		var summaryLines = Object.keys(changes).map(function(key) {
 			i++;
 			return (
@@ -578,7 +713,7 @@ var SummaryTable = React.createClass({
 			<table className="table table-striped table-hover">
 				<thead>
 					<tr>
-						<th></th>
+						<th>&nbsp;</th>
 						<th>From</th>
 						<th>To</th>
 						</tr>
