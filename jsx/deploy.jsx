@@ -757,9 +757,11 @@ var SummaryTable = React.createClass({
 		return (
 			<table className="table table-striped table-hover">
 				<thead>
-					<th>&nbsp;</th>
-					<th>From</th>
-					<th>To</th>
+					<tr>
+						<th>&nbsp;</th>
+						<th>From</th>
+						<th>To</th>
+					</tr>
 				</thead>
 				<tbody>
 					{summaryLines}

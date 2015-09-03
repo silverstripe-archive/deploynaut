@@ -757,9 +757,11 @@ var SummaryTable = React.createClass({displayName: "SummaryTable",
 		return (
 			React.createElement("table", {className: "table table-striped table-hover"}, 
 				React.createElement("thead", null, 
-					React.createElement("th", null, " "), 
-					React.createElement("th", null, "From"), 
-					React.createElement("th", null, "To")
+					React.createElement("tr", null, 
+						React.createElement("th", null, " "), 
+						React.createElement("th", null, "From"), 
+						React.createElement("th", null, "To")
+					)
 				), 
 				React.createElement("tbody", null, 
 					summaryLines
