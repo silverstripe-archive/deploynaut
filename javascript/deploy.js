@@ -776,14 +776,16 @@ var SummaryTable = React.createClass({displayName: "SummaryTable",
  */
 var SummaryLine = React.createClass({displayName: "SummaryLine",
 	render: function() {
-		var from = "-",
-			to = "-";
+		var from = this.props.from,
+			to = this.props.to;
 
-		if(this.props.from !== null) {
-			from = this.props.from.substring(0,30);
+		// naive git sha detection
+		if(from !== null && from.length === 40) {
+			from = from.substring(0,7);
 		}
-		if(this.props.to !== null) {
-			to = this.props.to.substring(0,30);
+		// naive git sha detection
+		if(to !== null && to.length === 40) {
+			to = to.substring(0,7);
 		}
 
 		return (
@@ -799,10 +801,16 @@ var SummaryLine = React.createClass({displayName: "SummaryLine",
 
 var UnchangedSummaryLine = React.createClass({displayName: "UnchangedSummaryLine",
 	render: function() {
+		var from = this.props.value;
+		// naive git sha detection
+		if(from !== null && from.length === 40) {
+			from = from.substring(0,7);
+		}
+
 		return (
 			React.createElement("tr", null, 
 				React.createElement("th", {scope: "row"}, this.props.name), 
-				React.createElement("td", null, this.props.value), 
+				React.createElement("td", null, from), 
 				React.createElement("td", {className: "text-center"}, 
 					React.createElement("span", {className: "label label-success"}, "Unchanged")
 				)
