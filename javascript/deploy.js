@@ -1,3 +1,5 @@
+/** @jsx React.DOM */
+
 /**
  * Helper class to concatinate strings depeding on a true or false.
  *
@@ -257,7 +259,7 @@ var DeployForm = React.createClass({displayName: "DeployForm",
 		Q($.ajax({
 			type: "POST",
 			dataType: 'json',
-			url: this.props.env_url + '/git_revisions',
+			url: this.props.env_url + '/git_revisions'
 		})).then(function(data) {
 			self.setState({
 				data: data.Tabs
@@ -394,7 +396,9 @@ var DeployTab = React.createClass({displayName: "DeployTab",
 		};
 		// merge the 'advanced' options if they are set
 		for (var attrname in this.state.options) {
-			summaryData[attrname] = this.state.options[attrname];
+			if(this.state.options.hasOwnProperty(attrname)) {
+				summaryData[attrname] = this.state.options[attrname];
+			}
 		}
 		Q($.ajax({
 			type: "POST",
@@ -406,7 +410,7 @@ var DeployTab = React.createClass({displayName: "DeployTab",
 				summary: data
 			});
 			events.publish('change_loading/done');
-		}.bind(this), function(data){
+		}.bind(this), function(){
 			events.publish('change_loading/done');
 		});
 	},
@@ -573,7 +577,7 @@ var DeployPlan = React.createClass({displayName: "DeployPlan",
 	componentDidMount: function() {
 		var self = this;
 		// register subscribers
-		this.loading = events.subscribe('change_loading', function (text) {
+		this.loading = events.subscribe('change_loading', function () {
 			self.setState({
 				loading_changes: true
 			});
@@ -607,8 +611,10 @@ var DeployPlan = React.createClass({displayName: "DeployPlan",
 		return (this.props.summary.validationCode==="success" || this.props.summary.validationCode==="warning");
 	},
 	isEmpty: function(obj) {
-		for(var p in obj){
-			return false;
+		for (var key in obj) {
+			if (obj.hasOwnProperty(key) && obj[key]) {
+				return false;
+			}
 		}
 		return true;
 	},
@@ -731,8 +737,10 @@ var Message = React.createClass({displayName: "Message",
  */
 var SummaryTable = React.createClass({displayName: "SummaryTable",
 	isEmpty: function(obj) {
-		for(var p in obj){
-			return false;
+		for (var key in obj) {
+			if (obj.hasOwnProperty(key) && obj[key]) {
+				return false;
+			}
 		}
 		return true;
 	},
@@ -741,17 +749,18 @@ var SummaryTable = React.createClass({displayName: "SummaryTable",
 		if(this.isEmpty(changes)) {
 			return null;
 		}
-		var i = 0;
+		var idx = 0;
 		var summaryLines = Object.keys(changes).map(function(key) {
 			if(changes[key].from != changes[key].to) {
 				return (
-					React.createElement(SummaryLine, {name: key, from: changes[key].from, to: changes[key].to})
+					React.createElement(SummaryLine, {key: idx, name: key, from: changes[key].from, to: changes[key].to})
 				)
 			} else {
 				return (
-					React.createElement(UnchangedSummaryLine, {name: key, value: changes[key].from})
+					React.createElement(UnchangedSummaryLine, {key: idx, name: key, value: changes[key].from})
 				)
 			}
+			idx++;
 		});
 
 		return (
