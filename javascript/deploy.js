@@ -743,20 +743,23 @@ var SummaryTable = React.createClass({displayName: "SummaryTable",
 		}
 		var i = 0;
 		var summaryLines = Object.keys(changes).map(function(key) {
-			i++;
-			return (
-				React.createElement(SummaryLine, {key: i, name: key, from: changes[key].from, to: changes[key].to})
-			)
+			if(changes[key].from != changes[key].to) {
+				return (
+					React.createElement(SummaryLine, {name: key, from: changes[key].from, to: changes[key].to})
+				)
+			} else {
+				return (
+					React.createElement(UnchangedSummaryLine, {name: key, value: changes[key].from})
+				)
+			}
 		});
 
 		return (
 			React.createElement("table", {className: "table table-striped table-hover"}, 
 				React.createElement("thead", null, 
-					React.createElement("tr", null, 
-						React.createElement("th", null, " "), 
-						React.createElement("th", null, "From"), 
-						React.createElement("th", null, "To")
-						)
+					React.createElement("th", null, " "), 
+					React.createElement("th", null, "From"), 
+					React.createElement("th", null, "To")
 				), 
 				React.createElement("tbody", null, 
 					summaryLines
@@ -780,6 +783,7 @@ var SummaryLine = React.createClass({displayName: "SummaryLine",
 		if(this.props.to !== null) {
 			to = this.props.to.substring(0,30);
 		}
+
 		return (
 			React.createElement("tr", null, 
 				React.createElement("th", {scope: "row"}, this.props.name), 
@@ -789,6 +793,22 @@ var SummaryLine = React.createClass({displayName: "SummaryLine",
 		)
 	}
 });
+
+
+var UnchangedSummaryLine = React.createClass({displayName: "UnchangedSummaryLine",
+	render: function() {
+		return (
+			React.createElement("tr", null, 
+				React.createElement("th", {scope: "row"}, this.props.name), 
+				React.createElement("td", null, this.props.value), 
+				React.createElement("td", {className: "text-center"}, 
+					React.createElement("span", {className: "label label-success"}, "Unchanged")
+				)
+			)
+		)
+	}
+});
+
 
 if (typeof urls != 'undefined') {
 	React.render(
