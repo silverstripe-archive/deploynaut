@@ -1024,7 +1024,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			}
 		}
 		// Convert the array to the frontend format (i.e. keyed to regular array)
-		$pastDeploymentsData = array();
 		foreach ($redeploy as $env => $descr) {
 			$data['field_data'][] = array('text'=>$env, 'children'=>$descr);
 		}
