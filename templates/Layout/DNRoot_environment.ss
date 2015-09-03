@@ -86,7 +86,6 @@
 					env_url: "{$absoluteBaseURL}{$CurrentEnvironment.Link}",
 					env_name: "{$CurrentEnvironment.Name}"
 				};
-				var security_token = "{$SecurityID}";
             </script>
 		<% end_if %>
 	<% end_if %>

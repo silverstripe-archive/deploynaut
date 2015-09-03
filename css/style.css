@@ -1427,7 +1427,7 @@ blockquote {
       content: '\2014 \00A0'; }
 
 .blockquote-reverse,
-blockquote.pull-right, .deploy-dropdown blockquote.status-icon, .deploy-dropdown.loading blockquote.loading-text, .deployment-status .deployment-progress .progress-bar blockquote.status {
+blockquote.pull-right, .deploy-dropdown blockquote.status-icon, .deploy-dropdown blockquote.time, .deploy-dropdown.loading blockquote.loading-text, .deployment-status .deployment-progress .progress-bar blockquote.status {
   padding-right: 15px;
   padding-left: 0;
   border-right: 5px solid #eeeeee;
@@ -1438,26 +1438,30 @@ blockquote.pull-right, .deploy-dropdown blockquote.status-icon, .deploy-dropdown
   .blockquote-reverse .small:before,
   blockquote.pull-right footer:before,
   .deploy-dropdown blockquote.status-icon footer:before,
+  .deploy-dropdown blockquote.time footer:before,
   .deploy-dropdown.loading blockquote.loading-text footer:before,
   .deployment-status .deployment-progress .progress-bar blockquote.status footer:before,
   blockquote.pull-right small:before,
   .deploy-dropdown blockquote.status-icon small:before,
+  .deploy-dropdown blockquote.time small:before,
   .deploy-dropdown.loading blockquote.loading-text small:before,
   .deployment-status .deployment-progress .progress-bar blockquote.status small:before,
-  blockquote.pull-right .small:before, .deploy-dropdown blockquote.status-icon .small:before, .deploy-dropdown.loading blockquote.loading-text .small:before, .deployment-status .deployment-progress .progress-bar blockquote.status .small:before {
+  blockquote.pull-right .small:before, .deploy-dropdown blockquote.status-icon .small:before, .deploy-dropdown blockquote.time .small:before, .deploy-dropdown.loading blockquote.loading-text .small:before, .deployment-status .deployment-progress .progress-bar blockquote.status .small:before {
     content: ''; }
   .blockquote-reverse footer:after,
   .blockquote-reverse small:after,
   .blockquote-reverse .small:after,
   blockquote.pull-right footer:after,
   .deploy-dropdown blockquote.status-icon footer:after,
+  .deploy-dropdown blockquote.time footer:after,
   .deploy-dropdown.loading blockquote.loading-text footer:after,
   .deployment-status .deployment-progress .progress-bar blockquote.status footer:after,
   blockquote.pull-right small:after,
   .deploy-dropdown blockquote.status-icon small:after,
+  .deploy-dropdown blockquote.time small:after,
   .deploy-dropdown.loading blockquote.loading-text small:after,
   .deployment-status .deployment-progress .progress-bar blockquote.status small:after,
-  blockquote.pull-right .small:after, .deploy-dropdown blockquote.status-icon .small:after, .deploy-dropdown.loading blockquote.loading-text .small:after, .deployment-status .deployment-progress .progress-bar blockquote.status .small:after {
+  blockquote.pull-right .small:after, .deploy-dropdown blockquote.status-icon .small:after, .deploy-dropdown blockquote.time .small:after, .deploy-dropdown.loading blockquote.loading-text .small:after, .deployment-status .deployment-progress .progress-bar blockquote.status .small:after {
     content: '\00A0 \2014'; }
 
 address {
@@ -3174,90 +3178,62 @@ fieldset[disabled] a.btn, fieldset[disabled] a.action, fieldset[disabled] a.depl
     color: #3aaef9;
     background-color: #fff; }
 
-.btn-success, .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] {
+.btn-success {
   color: #fff;
   background-color: #5cb85c;
   border-color: #4cae4c; }
   .btn-success:focus,
-  .deploy-form-outer .deploy-form [name="action_showDeploySummary"]:focus,
-  .btn-success.focus, .deploy-form-outer .deploy-form .focus[name="action_showDeploySummary"] {
+  .btn-success.focus {
     color: #fff;
     background-color: #449d44;
     border-color: #255625; }
-  .btn-success:hover, .deploy-form-outer .deploy-form [name="action_showDeploySummary"]:hover {
+  .btn-success:hover {
     color: #fff;
     background-color: #449d44;
     border-color: #398439; }
   .btn-success:active,
-  .deploy-form-outer .deploy-form [name="action_showDeploySummary"]:active,
   .btn-success.active,
-  .deploy-form-outer .deploy-form .active[name="action_showDeploySummary"],
-  .open > .btn-success.dropdown-toggle, .deploy-form-outer .deploy-form .open > .dropdown-toggle[name="action_showDeploySummary"] {
+  .open > .btn-success.dropdown-toggle {
     color: #fff;
     background-color: #449d44;
     border-color: #398439; }
     .btn-success:active:hover,
-    .deploy-form-outer .deploy-form [name="action_showDeploySummary"]:active:hover,
     .btn-success:active:focus,
-    .deploy-form-outer .deploy-form [name="action_showDeploySummary"]:active:focus,
     .btn-success:active.focus,
-    .deploy-form-outer .deploy-form [name="action_showDeploySummary"]:active.focus,
     .btn-success.active:hover,
-    .deploy-form-outer .deploy-form .active[name="action_showDeploySummary"]:hover,
     .btn-success.active:focus,
-    .deploy-form-outer .deploy-form .active[name="action_showDeploySummary"]:focus,
     .btn-success.active.focus,
-    .deploy-form-outer .deploy-form .active.focus[name="action_showDeploySummary"],
     .open > .btn-success.dropdown-toggle:hover,
-    .deploy-form-outer .deploy-form .open > .dropdown-toggle[name="action_showDeploySummary"]:hover, .open > .btn-success.dropdown-toggle:focus,
-    .deploy-form-outer .deploy-form .open > .dropdown-toggle[name="action_showDeploySummary"]:focus, .open > .btn-success.dropdown-toggle.focus, .deploy-form-outer .deploy-form .open > .dropdown-toggle.focus[name="action_showDeploySummary"] {
+    .open > .btn-success.dropdown-toggle:focus,
+    .open > .btn-success.dropdown-toggle.focus {
       color: #fff;
       background-color: #398439;
       border-color: #255625; }
   .btn-success:active,
-  .deploy-form-outer .deploy-form [name="action_showDeploySummary"]:active,
   .btn-success.active,
-  .deploy-form-outer .deploy-form .active[name="action_showDeploySummary"],
-  .open > .btn-success.dropdown-toggle, .deploy-form-outer .deploy-form .open > .dropdown-toggle[name="action_showDeploySummary"] {
+  .open > .btn-success.dropdown-toggle {
     background-image: none; }
   .btn-success.disabled,
-  .deploy-form-outer .deploy-form .disabled[name="action_showDeploySummary"],
   .btn-success.disabled:hover,
-  .deploy-form-outer .deploy-form .disabled[name="action_showDeploySummary"]:hover,
   .btn-success.disabled:focus,
-  .deploy-form-outer .deploy-form .disabled[name="action_showDeploySummary"]:focus,
   .btn-success.disabled.focus,
-  .deploy-form-outer .deploy-form .disabled.focus[name="action_showDeploySummary"],
   .btn-success.disabled:active,
-  .deploy-form-outer .deploy-form .disabled[name="action_showDeploySummary"]:active,
   .btn-success.disabled.active,
-  .deploy-form-outer .deploy-form .disabled.active[name="action_showDeploySummary"],
   .btn-success[disabled],
-  .deploy-form-outer .deploy-form [disabled][name="action_showDeploySummary"],
   .btn-success[disabled]:hover,
-  .deploy-form-outer .deploy-form [disabled][name="action_showDeploySummary"]:hover,
   .btn-success[disabled]:focus,
-  .deploy-form-outer .deploy-form [disabled][name="action_showDeploySummary"]:focus,
   .btn-success[disabled].focus,
-  .deploy-form-outer .deploy-form [disabled].focus[name="action_showDeploySummary"],
   .btn-success[disabled]:active,
-  .deploy-form-outer .deploy-form [disabled][name="action_showDeploySummary"]:active,
   .btn-success[disabled].active,
-  .deploy-form-outer .deploy-form [disabled].active[name="action_showDeploySummary"],
   fieldset[disabled] .btn-success,
-  fieldset[disabled] .deploy-form-outer .deploy-form *[name="action_showDeploySummary"],
-  .deploy-form-outer .deploy-form fieldset[disabled] *[name="action_showDeploySummary"], fieldset[disabled] .btn-success:hover,
-  fieldset[disabled] .deploy-form-outer .deploy-form [name="action_showDeploySummary"]:hover,
-  .deploy-form-outer .deploy-form fieldset[disabled] [name="action_showDeploySummary"]:hover, fieldset[disabled] .btn-success:focus,
-  fieldset[disabled] .deploy-form-outer .deploy-form [name="action_showDeploySummary"]:focus,
-  .deploy-form-outer .deploy-form fieldset[disabled] [name="action_showDeploySummary"]:focus, fieldset[disabled] .btn-success.focus,
-  fieldset[disabled] .deploy-form-outer .deploy-form .focus[name="action_showDeploySummary"],
-  .deploy-form-outer .deploy-form fieldset[disabled] .focus[name="action_showDeploySummary"], fieldset[disabled] .btn-success:active,
-  fieldset[disabled] .deploy-form-outer .deploy-form [name="action_showDeploySummary"]:active,
-  .deploy-form-outer .deploy-form fieldset[disabled] [name="action_showDeploySummary"]:active, fieldset[disabled] .btn-success.active, fieldset[disabled] .deploy-form-outer .deploy-form .active[name="action_showDeploySummary"], .deploy-form-outer .deploy-form fieldset[disabled] .active[name="action_showDeploySummary"] {
+  fieldset[disabled] .btn-success:hover,
+  fieldset[disabled] .btn-success:focus,
+  fieldset[disabled] .btn-success.focus,
+  fieldset[disabled] .btn-success:active,
+  fieldset[disabled] .btn-success.active {
     background-color: #5cb85c;
     border-color: #4cae4c; }
-  .btn-success .badge, .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] .badge {
+  .btn-success .badge {
     color: #5cb85c;
     background-color: #fff; }
 
@@ -3467,7 +3443,7 @@ fieldset[disabled] a.btn, fieldset[disabled] a.action, fieldset[disabled] a.depl
     color: #777777;
     text-decoration: none; }
 
-.btn-lg, .btn-group-lg > .btn, .btn-group-lg > .action, .btn-group-lg > .deploy-dropdown, .action, .deploy-dropdown, .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] {
+.btn-lg, .btn-group-lg > .btn, .btn-group-lg > .action, .btn-group-lg > .deploy-dropdown, .action, .deploy-dropdown {
   padding: 10px 16px;
   font-size: 17px;
   line-height: 1.33333;
@@ -3485,20 +3461,18 @@ fieldset[disabled] a.btn, fieldset[disabled] a.action, fieldset[disabled] a.depl
   line-height: 1.5;
   border-radius: 0px; }
 
-.btn-block, .deploy-dropdown, .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] {
+.btn-block, .deploy-dropdown {
   display: block;
   width: 100%; }
 
-.btn-block + .btn-block, .deploy-dropdown + .btn-block, .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] + .btn-block, .btn-block + .deploy-dropdown, .deploy-dropdown + .deploy-dropdown, .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] + .deploy-dropdown, .deploy-form-outer .deploy-form .btn-block + *[name="action_showDeploySummary"], .deploy-form-outer .deploy-form .deploy-dropdown + *[name="action_showDeploySummary"], .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] + *[name="action_showDeploySummary"] {
+.btn-block + .btn-block, .deploy-dropdown + .btn-block, .btn-block + .deploy-dropdown, .deploy-dropdown + .deploy-dropdown {
   margin-top: 5px; }
 
 input[type="submit"].btn-block,
 input[type="submit"].deploy-dropdown,
-.deploy-form-outer .deploy-form input[type="submit"][name="action_showDeploySummary"],
 input[type="reset"].btn-block,
 input[type="reset"].deploy-dropdown,
-.deploy-form-outer .deploy-form input[type="reset"][name="action_showDeploySummary"],
-input[type="button"].btn-block, input[type="button"].deploy-dropdown, .deploy-form-outer .deploy-form input[type="button"][name="action_showDeploySummary"] {
+input[type="button"].btn-block, input[type="button"].deploy-dropdown {
   width: 100%; }
 
 .fade {
@@ -3569,7 +3543,7 @@ tbody.collapse.in {
   -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   background-clip: padding-box; }
-  .dropdown-menu.pull-right, .deploy-dropdown .dropdown-menu.status-icon, .deploy-dropdown.loading .dropdown-menu.loading-text, .deployment-status .deployment-progress .progress-bar .dropdown-menu.status {
+  .dropdown-menu.pull-right, .deploy-dropdown .dropdown-menu.status-icon, .deploy-dropdown .dropdown-menu.time, .deploy-dropdown.loading .dropdown-menu.loading-text, .deployment-status .deployment-progress .progress-bar .dropdown-menu.status {
     right: 0;
     left: auto; }
   .dropdown-menu .divider {
@@ -3643,7 +3617,7 @@ tbody.collapse.in {
   top: 0;
   z-index: 990; }
 
-.pull-right > .dropdown-menu, .deploy-dropdown .status-icon > .dropdown-menu, .deploy-dropdown.loading .loading-text > .dropdown-menu, .deployment-status .deployment-progress .progress-bar .status > .dropdown-menu {
+.pull-right > .dropdown-menu, .deploy-dropdown .status-icon > .dropdown-menu, .deploy-dropdown .time > .dropdown-menu, .deploy-dropdown.loading .loading-text > .dropdown-menu, .deployment-status .deployment-progress .progress-bar .status > .dropdown-menu {
   right: 0;
   left: auto; }
 
@@ -3783,7 +3757,7 @@ tbody.collapse.in {
   padding-left: 8px;
   padding-right: 8px; }
 
-.btn-group > .btn-lg + .dropdown-toggle, .btn-group-lg.btn-group > .btn + .dropdown-toggle, .btn-group > .action + .dropdown-toggle, .btn-group > .deploy-dropdown + .dropdown-toggle, .deploy-form-outer .deploy-form .btn-group > *[name="action_showDeploySummary"] + .dropdown-toggle {
+.btn-group > .btn-lg + .dropdown-toggle, .btn-group-lg.btn-group > .btn + .dropdown-toggle, .btn-group > .action + .dropdown-toggle, .btn-group > .deploy-dropdown + .dropdown-toggle {
   padding-left: 12px;
   padding-right: 12px; }
 
@@ -3797,11 +3771,11 @@ tbody.collapse.in {
 .btn .caret, .action .caret, .deploy-dropdown .caret {
   margin-left: 0; }
 
-.btn-lg .caret, .btn-group-lg > .btn .caret, .action .caret, .deploy-dropdown .caret, .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] .caret {
+.btn-lg .caret, .btn-group-lg > .btn .caret, .action .caret, .deploy-dropdown .caret {
   border-width: 5px 5px 0;
   border-bottom-width: 0; }
 
-.dropup .btn-lg .caret, .dropup .btn-group-lg > .btn .caret, .dropup .action .caret, .dropup .deploy-dropdown .caret, .dropup .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] .caret, .deploy-form-outer .deploy-form .dropup *[name="action_showDeploySummary"] .caret {
+.dropup .btn-lg .caret, .dropup .btn-group-lg > .btn .caret, .dropup .action .caret, .dropup .deploy-dropdown .caret {
   border-width: 0 5px 5px; }
 
 .btn-group-vertical > .btn,
@@ -5077,7 +5051,7 @@ a.thumbnail.active {
     max-width: none; }
 
 .media-right,
-.media > .pull-right, .deploy-dropdown .media > .status-icon, .deploy-dropdown.loading .media > .loading-text, .deployment-status .deployment-progress .progress-bar .media > .status {
+.media > .pull-right, .deploy-dropdown .media > .status-icon, .deploy-dropdown .media > .time, .deploy-dropdown.loading .media > .loading-text, .deployment-status .deployment-progress .progress-bar .media > .status {
   padding-left: 10px; }
 
 .media-left,
@@ -5758,7 +5732,7 @@ button.close {
     margin-bottom: 0; }
   .modal-footer .btn-group .btn + .btn, .modal-footer .btn-group .action + .btn, .modal-footer .btn-group .deploy-dropdown + .btn, .modal-footer .btn-group .btn + .action, .modal-footer .btn-group .action + .action, .modal-footer .btn-group .deploy-dropdown + .action, .modal-footer .btn-group .btn + .deploy-dropdown, .modal-footer .btn-group .action + .deploy-dropdown, .modal-footer .btn-group .deploy-dropdown + .deploy-dropdown {
     margin-left: -1px; }
-  .modal-footer .btn-block + .btn-block, .modal-footer .deploy-dropdown + .btn-block, .modal-footer .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] + .btn-block, .deploy-form-outer .deploy-form .modal-footer *[name="action_showDeploySummary"] + .btn-block, .modal-footer .btn-block + .deploy-dropdown, .modal-footer .deploy-dropdown + .deploy-dropdown, .modal-footer .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] + .deploy-dropdown, .deploy-form-outer .deploy-form .modal-footer *[name="action_showDeploySummary"] + .deploy-dropdown, .modal-footer .deploy-form-outer .deploy-form .btn-block + *[name="action_showDeploySummary"], .deploy-form-outer .deploy-form .modal-footer .btn-block + *[name="action_showDeploySummary"], .modal-footer .deploy-form-outer .deploy-form .deploy-dropdown + *[name="action_showDeploySummary"], .deploy-form-outer .deploy-form .modal-footer .deploy-dropdown + *[name="action_showDeploySummary"], .modal-footer .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] + *[name="action_showDeploySummary"], .deploy-form-outer .deploy-form .modal-footer *[name="action_showDeploySummary"] + *[name="action_showDeploySummary"] {
+  .modal-footer .btn-block + .btn-block, .modal-footer .deploy-dropdown + .btn-block, .modal-footer .btn-block + .deploy-dropdown, .modal-footer .deploy-dropdown + .deploy-dropdown {
     margin-left: 0; }
 
 .modal-scrollbar-measure {
@@ -6221,7 +6195,7 @@ button.close {
   margin-left: auto;
   margin-right: auto; }
 
-.pull-right, .deploy-dropdown .status-icon, .deploy-dropdown.loading .loading-text, .deployment-status .deployment-progress .progress-bar .status {
+.pull-right, .deploy-dropdown .status-icon, .deploy-dropdown .time, .deploy-dropdown.loading .loading-text, .deployment-status .deployment-progress .progress-bar .status {
   float: right !important; }
 
 .pull-left {
@@ -6435,7 +6409,7 @@ button.close {
   font-weight: normal;
   font-style: normal; }
 
-.fa, .deploy-dropdown .status-icon {
+.fa, .deploy-dropdown .status-icon, .deploy-form-outer .deploy-form .header.loading .status-icon {
   display: inline-block;
   font: normal normal normal 14px/1 FontAwesome;
   font-size: inherit;
@@ -6492,26 +6466,26 @@ button.close {
 .fa-pull-right {
   float: right; }
 
-.fa.fa-pull-left, .deploy-dropdown .fa-pull-left.status-icon {
+.fa.fa-pull-left, .deploy-dropdown .fa-pull-left.status-icon, .deploy-form-outer .deploy-form .header.loading .fa-pull-left.status-icon {
   margin-right: .3em; }
 
-.fa.fa-pull-right, .deploy-dropdown .fa-pull-right.status-icon {
+.fa.fa-pull-right, .deploy-dropdown .fa-pull-right.status-icon, .deploy-form-outer .deploy-form .header.loading .fa-pull-right.status-icon {
   margin-left: .3em; }
 
 /* Deprecated as of 4.4.0 */
-.pull-right, .deploy-dropdown .status-icon, .deploy-dropdown.loading .loading-text, .deployment-status .deployment-progress .progress-bar .status {
+.pull-right, .deploy-dropdown .status-icon, .deploy-dropdown .time, .deploy-dropdown.loading .loading-text, .deployment-status .deployment-progress .progress-bar .status {
   float: right; }
 
 .pull-left {
   float: left; }
 
-.fa.pull-left, .deploy-dropdown .pull-left.status-icon {
+.fa.pull-left, .deploy-dropdown .pull-left.status-icon, .deploy-form-outer .deploy-form .header.loading .pull-left.status-icon {
   margin-right: .3em; }
 
-.fa.pull-right, .deploy-dropdown .status-icon, .deploy-dropdown.loading .fa.loading-text, .deploy-dropdown.loading .loading-text.status-icon, .deployment-status .deployment-progress .progress-bar .fa.status, .deployment-status .deployment-progress .progress-bar .deploy-dropdown .status.status-icon, .deploy-dropdown .deployment-status .deployment-progress .progress-bar .status.status-icon {
+.fa.pull-right, .deploy-dropdown .status-icon, .deploy-dropdown .fa.time, .deploy-dropdown.loading .fa.loading-text, .deploy-dropdown.loading .loading-text.status-icon, .deploy-form-outer .deploy-form .header.loading .pull-right.status-icon, .deploy-form-outer .deploy-form .header.loading .deploy-dropdown .status-icon, .deploy-dropdown .deploy-form-outer .deploy-form .header.loading .status-icon, .deploy-form-outer .deploy-form .header.loading .deployment-status .deployment-progress .progress-bar .status-icon.status, .deployment-status .deployment-progress .progress-bar .deploy-form-outer .deploy-form .header.loading .status-icon.status, .deployment-status .deployment-progress .progress-bar .fa.status, .deployment-status .deployment-progress .progress-bar .deploy-dropdown .status.status-icon, .deploy-dropdown .deployment-status .deployment-progress .progress-bar .status.status-icon {
   margin-left: .3em; }
 
-.fa-spin, .deploy-dropdown.loading .status-icon {
+.fa-spin, .deploy-dropdown.loading .status-icon, .deploy-form-outer .deploy-form .header.loading .status-icon {
   -webkit-animation: fa-spin 2s infinite linear;
   animation: fa-spin 2s infinite linear; }
 
@@ -6654,7 +6628,7 @@ button.close {
   content: ""; }
 
 .fa-gear:before,
-.fa-cog:before, .deploy-dropdown.loading .status-icon:before {
+.fa-cog:before {
   content: ""; }
 
 .fa-trash-o:before {
@@ -6691,7 +6665,7 @@ button.close {
 .fa-repeat:before {
   content: ""; }
 
-.fa-refresh:before {
+.fa-refresh:before, .deploy-dropdown .status-icon:before, .deploy-dropdown.open .status-icon:before, .deploy-dropdown.loading .status-icon:before, .deploy-form-outer .deploy-form .header.loading .status-icon:before {
   content: ""; }
 
 .fa-list-alt:before {
@@ -7328,10 +7302,10 @@ button.close {
 .fa-angle-right:before {
   content: ""; }
 
-.fa-angle-up:before, .deploy-dropdown.open .status-icon:before {
+.fa-angle-up:before {
   content: ""; }
 
-.fa-angle-down:before, .deploy-dropdown .status-icon:before {
+.fa-angle-down:before {
   content: ""; }
 
 .fa-desktop:before {
@@ -9600,7 +9574,7 @@ body .userswitcher fieldset label,
 body .userswitcher fieldset .middleColumn {
   float: none; }
 
-.alert .fa, .disk-quota .fa, .deploy-dropdown.error .fa, .deploy-dropdown-errors .fa, .alert .deploy-dropdown .status-icon, .deploy-dropdown .alert .status-icon, .disk-quota .deploy-dropdown .status-icon, .deploy-dropdown .disk-quota .status-icon, .deploy-dropdown.error .status-icon, .deploy-dropdown-errors .deploy-dropdown .status-icon, .deploy-dropdown .deploy-dropdown-errors .status-icon {
+.alert .fa, .disk-quota .fa, .deploy-dropdown.error .fa, .deploy-dropdown-errors .fa, .alert .deploy-dropdown .status-icon, .deploy-dropdown .alert .status-icon, .disk-quota .deploy-dropdown .status-icon, .deploy-dropdown .disk-quota .status-icon, .deploy-dropdown.error .status-icon, .deploy-dropdown-errors .deploy-dropdown .status-icon, .deploy-dropdown .deploy-dropdown-errors .status-icon, .alert .deploy-form-outer .deploy-form .header.loading .status-icon, .deploy-form-outer .deploy-form .header.loading .alert .status-icon, .disk-quota .deploy-form-outer .deploy-form .header.loading .status-icon, .deploy-form-outer .deploy-form .header.loading .disk-quota .status-icon, .deploy-dropdown.error .deploy-form-outer .deploy-form .header.loading .status-icon, .deploy-form-outer .deploy-form .header.loading .deploy-dropdown.error .status-icon, .deploy-dropdown-errors .deploy-form-outer .deploy-form .header.loading .status-icon, .deploy-form-outer .deploy-form .header.loading .deploy-dropdown-errors .status-icon {
   margin-right: 4px; }
 
 .alert ul, .disk-quota ul, .deploy-dropdown.error ul, .deploy-dropdown-errors ul {
@@ -9851,7 +9825,10 @@ button.sidebar-open {
       font-size: 20px; } }
   .deploy-dropdown .status-icon {
     line-height: 36px;
-    font-size: 40px; }
+    font-size: 26px; }
+  .deploy-dropdown .time {
+    font-size: 14px;
+    line-height: 36px; }
   .deploy-dropdown .loading-text {
     display: none; }
   .deploy-dropdown.open {
@@ -9864,6 +9841,8 @@ button.sidebar-open {
     @media (max-width: 992px) {
       .deploy-dropdown.loading .loading-text {
         display: none; } }
+  .deploy-dropdown.loading .time {
+    display: none; }
   .deploy-dropdown.loading .status-icon {
     font-size: 26px;
     margin-left: 10px; }
@@ -9876,33 +9855,36 @@ button.sidebar-open {
   border-style: solid;
   border-color: #bbb;
   overflow: hidden; }
-  .deploy-form-outer .numberCircle {
-    display: inline-block;
-    min-width: 10px;
-    padding: 3px 7px;
-    font-weight: bold;
-    line-height: 1;
-    color: #fff;
-    text-align: center;
-    white-space: nowrap;
-    background-color: #3aaef9;
-    border-radius: 50%; }
   .deploy-form-outer .deploy-form {
     position: relative; }
-    .deploy-form-outer .deploy-form .deploy-button {
-      text-transform: uppercase; }
-      .deploy-form-outer .deploy-form .deploy-button small {
-        font-size: 70%;
-        text-transform: none; }
-      .deploy-form-outer .deploy-form .deploy-button:disabled {
-        background-color: #cccccc;
-        border: #555555; }
+    .deploy-form-outer .deploy-form .deploy-button small {
+      font-size: 70%;
+      text-transform: none; }
     .deploy-form-outer .deploy-form .header {
       position: static;
       font-size: 16px;
       font-weight: bold;
       color: #3aaef9;
       margin-bottom: 1em; }
+      .deploy-form-outer .deploy-form .header .numberCircle {
+        display: inline-block;
+        min-width: 10px;
+        padding: 3px 7px;
+        font-weight: bold;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        background-color: #3aaef9;
+        border-radius: 50%; }
+      .deploy-form-outer .deploy-form .header.inactive {
+        color: #ddd; }
+        .deploy-form-outer .deploy-form .header.inactive .numberCircle {
+          background-color: #ddd; }
+      .deploy-form-outer .deploy-form .header.loading .status-icon {
+        padding: 0px 5px; }
+      .deploy-form-outer .deploy-form .header.loading .numberCircle {
+        display: none; }
     .deploy-form-outer .deploy-form:after {
       height: 300px;
       background-color: #f0f3f4;
@@ -9973,14 +9955,48 @@ button.sidebar-open {
             width: 100%; }
     .deploy-form-outer .deploy-form .section {
       margin-bottom: 30px; }
-    .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] {
-      border-radius: 2px;
-      font-size: 26px;
-      line-height: 40px;
-      margin: 20px 0; }
-      @media (max-width: 992px) {
-        .deploy-form-outer .deploy-form *[name="action_showDeploySummary"] {
-          font-size: 20px; } }
+    .deploy-form-outer .deploy-form .center {
+      text-align: center; }
+    .deploy-form-outer .deploy-form button.deploy {
+      border: none;
+      font-family: inherit;
+      font-size: inherit;
+      background: none;
+      cursor: pointer;
+      padding: 15px 35px;
+      display: inline-block;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      outline: none;
+      position: relative;
+      border-radius: 5px;
+      background: #2DB475;
+      color: #fff;
+      box-shadow: 0 6px #119e4d;
+      -webkit-transition: none;
+      -moz-transition: none;
+      transition: none; }
+      .deploy-form-outer .deploy-form button.deploy:after {
+        content: '';
+        position: absolute;
+        z-index: -1;
+        -webkit-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+        transition: all 0.3s; }
+      .deploy-form-outer .deploy-form button.deploy:hover {
+        box-shadow: 0 8px #119e4d;
+        top: -2px; }
+      .deploy-form-outer .deploy-form button.deploy:active {
+        box-shadow: 0 0 #119e4d;
+        top: 6px; }
+      .deploy-form-outer .deploy-form button.deploy:disabled {
+        cursor: not-allowed;
+        color: #fff;
+        background: #DDDDDD;
+        box-shadow: 0 6px #999999; }
+        .deploy-form-outer .deploy-form button.deploy:disabled:hover {
+          top: 0;
+          box-shadow: 0 6px #999999; }
 
 .deploy-history {
   margin-top: 10px; }
@@ -9989,7 +10005,7 @@ button.sidebar-open {
   margin-bottom: 10px; }
   .environment-details h3 {
     margin-bottom: 7px; }
-  .environment-details h3 .fa, .environment-details h3 .deploy-dropdown .status-icon, .deploy-dropdown .environment-details h3 .status-icon {
+  .environment-details h3 .fa, .environment-details h3 .deploy-dropdown .status-icon, .deploy-dropdown .environment-details h3 .status-icon, .environment-details h3 .deploy-form-outer .deploy-form .header.loading .status-icon, .deploy-form-outer .deploy-form .header.loading .environment-details h3 .status-icon {
     font-size: 14px;
     vertical-align: super; }
   .environment-details .build-details span.git-sha,

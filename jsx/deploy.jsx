@@ -93,7 +93,8 @@ var DeployDropDown = React.createClass({
 			opened: false,
 			loadingText: "",
 			errorText: "",
-			fetched: false
+			fetched: true,
+			last_fetched: ""
 		};
 	},
 	componentDidMount: function() {
@@ -181,6 +182,9 @@ var DeployDropDown = React.createClass({
 		}
 		events.publish('error', message);
 	},
+	lastFetchedHandler: function(time_ago) {
+		this.setState({last_fetched: time_ago});
+	},
 	render: function() {
 		var classes = classNames({
 			"deploy-dropdown": true,
@@ -193,13 +197,14 @@ var DeployDropDown = React.createClass({
 		if(this.state.errorText !== "") {
 			form = <ErrorMessages message={this.state.errorText} />
 		} else if(this.state.fetched) {
-			form = <DeployForm data={this.props.data} env_url={this.props.env_url} SecurityToken={this.props.SecurityToken} />
+			form = <DeployForm data={this.props.data} env_url={this.props.env_url} lastFetchedHandler={this.lastFetchedHandler} />
 		}
 
 		return (
 			<div>
 				<div className={classes} onClick={this.handleClick}>
 					<span className="status-icon" aria-hidden="true"></span>
+					<span className="time">last updated {this.state.last_fetched}</span>
 					<span className="loading-text">{this.state.loadingText}</span>
 					<EnvironmentName environmentName={this.props.env_name} />
 				</div>
@@ -240,7 +245,7 @@ var DeployForm = React.createClass({
 	getInitialState: function() {
 		return {
 			selectedTab: 1,
-			data: [],
+			data: []
 		};
 	},
 	componentDidMount: function() {
@@ -253,12 +258,11 @@ var DeployForm = React.createClass({
 			type: "POST",
 			dataType: 'json',
 			url: this.props.env_url + '/git_revisions',
-			data: { 'SecurityID': self.props.SecurityToken }
 		})).then(function(data) {
 			self.setState({
-				data: data.Tabs,
-				SecurityToken: data.SecurityID
+				data: data.Tabs
 			});
+			self.props.lastFetchedHandler(data.last_fetched);
 		}, function(data){
 			events.publish('error', data);
 		});
@@ -382,7 +386,7 @@ var DeployTab = React.createClass({
 			return;
 		}
 
-		events.publish('loading', "Calculating changes…");
+		events.publish('change_loading');
 
 		var summaryData = {
 			sha: React.findDOMNode(this.refs.sha_selector.refs.sha).value,
@@ -401,9 +405,9 @@ var DeployTab = React.createClass({
 			this.setState({
 				summary: data
 			});
-			events.publish('loading/done');
+			events.publish('change_loading/done');
 		}.bind(this), function(data){
-			events.publish('loading/done');
+			events.publish('change_loading/done');
 		});
 	},
 
@@ -525,11 +529,11 @@ var SelectorText = React.createClass({
 var VerifyButton = React.createClass({
 	render: function() {
 		return (
-			<div>
+			<div className="">
 				<button
 					disabled={this.props.disabled}
 					value="Verify deployment"
-					className="btn-lg btn-default btn check-button"
+					className="btn btn-default"
 					onClick={this.props.changeHandler}>
 					Verify deployment
 				</button>
@@ -561,9 +565,29 @@ var AdvancedOptions = React.createClass({
  * DeployPlan
  */
 var DeployPlan = React.createClass({
+	getInitialState: function() {
+		return {
+			loading_changes: false
+		}
+	},
+	componentDidMount: function() {
+		var self = this;
+		// register subscribers
+		this.loading = events.subscribe('change_loading', function (text) {
+			self.setState({
+				loading_changes: true
+			});
+		});
+		this.loadingDone = events.subscribe('change_loading/done', function () {
+			self.setState({
+				loading_changes: false
+			});
+		});
+	},
 	deployHandler: function(event) {
 		event.preventDefault();
 		//@todo(stig): add a confirmation box
+		console.log(this.props.summary.SecurityID);
 		Q($.ajax({
 			type: "POST",
 			dataType: 'json',
@@ -613,23 +637,39 @@ var DeployPlan = React.createClass({
 				code: "success"
 			}];
 		}
+		var deployAction;
+		if(this.canDeploy()) {
+			deployAction = (
+				<div className="section">
+					<button
+					value="Confirm Deployment"
+					className="deploy"
+					disabled={!this.canDeploy()}
+					onClick={this.deployHandler}>
+					{this.actionTitle()}<br/>
+						<EstimatedTime estimatedTime={this.props.summary.estimatedTime} />
+					</button>
+				</div>
+			);
+		}
+
+		var headerClasses = classNames({
+			header: true,
+			inactive: !this.canDeploy(),
+			loading: this.state.loading_changes
+		});
+
 		return(
 			<div>
 				<div className="section">
-					<div className="header"><span className="numberCircle">2</span> Review changes</div>
+					<div className={headerClasses}>
+						<span className="status-icon"></span>
+						<span className="numberCircle">2</span> Review changes
+					</div>
 					<MessageList messages={messages} />
 					<SummaryTable changes={this.props.summary.changes} />
 				</div>
-				<div className="section">
-					<button
-						value="Confirm Deployment"
-						className="action btn btn-primary deploy-button"
-						disabled={!this.canDeploy()}
-						onClick={this.deployHandler}>
-							{this.actionTitle()}<br/>
-							<EstimatedTime estimatedTime={this.props.summary.estimatedTime} />
-					</button>
-				</div>
+				{deployAction}
 			</div>
 		)
 	}
@@ -755,8 +795,7 @@ if (typeof urls != 'undefined') {
 		<DeployDropDown
 			project_url = {urls.project_url}
 			env_url = {urls.env_url}
-			env_name = {urls.env_name}
-			SecurityToken = {security_token} />,
+			env_name = {urls.env_name} />,
 			document.getElementById('deploy_form')
 	);
 }

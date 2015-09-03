@@ -93,7 +93,8 @@ var DeployDropDown = React.createClass({displayName: "DeployDropDown",
 			opened: false,
 			loadingText: "",
 			errorText: "",
-			fetched: false
+			fetched: true,
+			last_fetched: ""
 		};
 	},
 	componentDidMount: function() {
@@ -181,6 +182,9 @@ var DeployDropDown = React.createClass({displayName: "DeployDropDown",
 		}
 		events.publish('error', message);
 	},
+	lastFetchedHandler: function(time_ago) {
+		this.setState({last_fetched: time_ago});
+	},
 	render: function() {
 		var classes = classNames({
 			"deploy-dropdown": true,
@@ -193,13 +197,14 @@ var DeployDropDown = React.createClass({displayName: "DeployDropDown",
 		if(this.state.errorText !== "") {
 			form = React.createElement(ErrorMessages, {message: this.state.errorText})
 		} else if(this.state.fetched) {
-			form = React.createElement(DeployForm, {data: this.props.data, env_url: this.props.env_url, SecurityToken: this.props.SecurityToken})
+			form = React.createElement(DeployForm, {data: this.props.data, env_url: this.props.env_url, lastFetchedHandler: this.lastFetchedHandler})
 		}
 
 		return (
 			React.createElement("div", null, 
 				React.createElement("div", {className: classes, onClick: this.handleClick}, 
 					React.createElement("span", {className: "status-icon", "aria-hidden": "true"}), 
+					React.createElement("span", {className: "time"}, "last updated ", this.state.last_fetched), 
 					React.createElement("span", {className: "loading-text"}, this.state.loadingText), 
 					React.createElement(EnvironmentName, {environmentName: this.props.env_name})
 				), 
@@ -240,7 +245,7 @@ var DeployForm = React.createClass({displayName: "DeployForm",
 	getInitialState: function() {
 		return {
 			selectedTab: 1,
-			data: [],
+			data: []
 		};
 	},
 	componentDidMount: function() {
@@ -253,12 +258,11 @@ var DeployForm = React.createClass({displayName: "DeployForm",
 			type: "POST",
 			dataType: 'json',
 			url: this.props.env_url + '/git_revisions',
-			data: { 'SecurityID': self.props.SecurityToken }
 		})).then(function(data) {
 			self.setState({
-				data: data.Tabs,
-				SecurityToken: data.SecurityID
+				data: data.Tabs
 			});
+			self.props.lastFetchedHandler(data.last_fetched);
 		}, function(data){
 			events.publish('error', data);
 		});
@@ -382,7 +386,7 @@ var DeployTab = React.createClass({displayName: "DeployTab",
 			return;
 		}
 
-		events.publish('loading', "Calculating changes…");
+		events.publish('change_loading');
 
 		var summaryData = {
 			sha: React.findDOMNode(this.refs.sha_selector.refs.sha).value,
@@ -401,9 +405,9 @@ var DeployTab = React.createClass({displayName: "DeployTab",
 			this.setState({
 				summary: data
 			});
-			events.publish('loading/done');
+			events.publish('change_loading/done');
 		}.bind(this), function(data){
-			events.publish('loading/done');
+			events.publish('change_loading/done');
 		});
 	},
 
@@ -525,11 +529,11 @@ var SelectorText = React.createClass({displayName: "SelectorText",
 var VerifyButton = React.createClass({displayName: "VerifyButton",
 	render: function() {
 		return (
-			React.createElement("div", null, 
+			React.createElement("div", {className: ""}, 
 				React.createElement("button", {
 					disabled: this.props.disabled, 
 					value: "Verify deployment", 
-					className: "btn-lg btn-default btn check-button", 
+					className: "btn btn-default", 
 					onClick: this.props.changeHandler}, 
 					"Verify deployment"
 				)
@@ -561,9 +565,29 @@ var AdvancedOptions = React.createClass({displayName: "AdvancedOptions",
  * DeployPlan
  */
 var DeployPlan = React.createClass({displayName: "DeployPlan",
+	getInitialState: function() {
+		return {
+			loading_changes: false
+		}
+	},
+	componentDidMount: function() {
+		var self = this;
+		// register subscribers
+		this.loading = events.subscribe('change_loading', function (text) {
+			self.setState({
+				loading_changes: true
+			});
+		});
+		this.loadingDone = events.subscribe('change_loading/done', function () {
+			self.setState({
+				loading_changes: false
+			});
+		});
+	},
 	deployHandler: function(event) {
 		event.preventDefault();
 		//@todo(stig): add a confirmation box
+		console.log(this.props.summary.SecurityID);
 		Q($.ajax({
 			type: "POST",
 			dataType: 'json',
@@ -613,23 +637,39 @@ var DeployPlan = React.createClass({displayName: "DeployPlan",
 				code: "success"
 			}];
 		}
+		var deployAction;
+		if(this.canDeploy()) {
+			deployAction = (
+				React.createElement("div", {className: "section"}, 
+					React.createElement("button", {
+					value: "Confirm Deployment", 
+					className: "deploy", 
+					disabled: !this.canDeploy(), 
+					onClick: this.deployHandler}, 
+					this.actionTitle(), React.createElement("br", null), 
+						React.createElement(EstimatedTime, {estimatedTime: this.props.summary.estimatedTime})
+					)
+				)
+			);
+		}
+
+		var headerClasses = classNames({
+			header: true,
+			inactive: !this.canDeploy(),
+			loading: this.state.loading_changes
+		});
+
 		return(
 			React.createElement("div", null, 
 				React.createElement("div", {className: "section"}, 
-					React.createElement("div", {className: "header"}, React.createElement("span", {className: "numberCircle"}, "2"), " Review changes"), 
+					React.createElement("div", {className: headerClasses}, 
+						React.createElement("span", {className: "status-icon"}), 
+						React.createElement("span", {className: "numberCircle"}, "2"), " Review changes"
+					), 
 					React.createElement(MessageList, {messages: messages}), 
 					React.createElement(SummaryTable, {changes: this.props.summary.changes})
 				), 
-				React.createElement("div", {className: "section"}, 
-					React.createElement("button", {
-						value: "Confirm Deployment", 
-						className: "action btn btn-primary deploy-button", 
-						disabled: !this.canDeploy(), 
-						onClick: this.deployHandler}, 
-							this.actionTitle(), React.createElement("br", null), 
-							React.createElement(EstimatedTime, {estimatedTime: this.props.summary.estimatedTime})
-					)
-				)
+				deployAction
 			)
 		)
 	}
@@ -755,8 +795,7 @@ if (typeof urls != 'undefined') {
 		React.createElement(DeployDropDown, {
 			project_url: urls.project_url, 
 			env_url: urls.env_url, 
-			env_name: urls.env_name, 
-			SecurityToken: security_token}),
+			env_name: urls.env_name}),
 			document.getElementById('deploy_form')
 	);
 }

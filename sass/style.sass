@@ -369,16 +369,20 @@ button.sidebar-open
 	line-height: 40px
 	margin-bottom: 0
 
-
 	@media (max-width: $screen-md)
 		font-size: 20px
 
 	.status-icon
 		@extend .fa
-		@extend .fa-angle-down
+		@extend .fa-refresh
 		@extend .pull-right
 		line-height: 36px
-		font-size: 40px
+		font-size: 26px
+
+	.time
+		@extend .pull-right
+		font-size: 14px
+		line-height: 36px
 
 	.loading-text
 		display: none
@@ -388,7 +392,7 @@ button.sidebar-open
 		border-bottom-right-radius: 0
 
 		.status-icon
-			@extend .fa-angle-up
+			@extend .fa-refresh
 
 	&.loading
 		.loading-text
@@ -399,9 +403,11 @@ button.sidebar-open
 
 			@media (max-width: $screen-md)
 				display: none
+		.time
+			display: none
 
 		.status-icon
-			@extend .fa-cog
+			@extend .fa-refresh
 			@extend .fa-spin
 			font-size: 26px
 			margin-left: 10px
@@ -420,31 +426,14 @@ button.sidebar-open
 	border-color: #bbb
 	overflow: hidden
 
-	.numberCircle
-		display: inline-block
-		min-width: 10px
-		padding: 3px 7px
-		font-weight: bold
-		line-height: 1
-		color: #fff
-		text-align: center
-		white-space: nowrap
-		background-color: $platform-blue
-		border-radius: 50%
-
 	.deploy-form
 		position: relative
 
 		.deploy-button
-			text-transform: uppercase
 
 			small
 				font-size: 70%;
 				text-transform: none;
-
-			&:disabled
-				background-color: #cccccc
-				border: $gray
 
 		.header
 			position: static
@@ -452,6 +441,35 @@ button.sidebar-open
 			font-weight: bold
 			color: $platform-blue
 			margin-bottom: 1em
+
+			.numberCircle
+				display: inline-block
+				min-width: 10px
+				padding: 3px 7px
+				font-weight: bold
+				line-height: 1
+				color: #fff
+				text-align: center
+				white-space: nowrap
+				background-color: $platform-blue
+				border-radius: 50%
+
+			&.inactive
+				color: #ddd;
+
+				.numberCircle
+					background-color: #ddd
+
+			&.loading
+				.status-icon
+					@extend .fa
+					@extend .fa-refresh
+					//@extend .pull-right
+					@extend .fa-spin
+					padding: 0px 5px
+
+				.numberCircle
+					display: none
 
 		&:after /* False background */
 			height: 300px
@@ -543,17 +561,55 @@ button.sidebar-open
 		.section
 			margin-bottom: 30px
 
-		*[name="action_showDeploySummary"]
-			@extend .btn-block
-			@extend .btn-lg
-			@extend .btn-success
-			border-radius: $border-radius-base
-			font-size: 26px
-			line-height: 40px
-			margin: 20px 0
+		.center
+			text-align: center
 
-			@media (max-width: $screen-md)
-				font-size: 20px
+		button.deploy
+			border: none
+			font-family: inherit
+			font-size: inherit
+			background: none
+			cursor: pointer
+			padding: 15px 35px
+			display: inline-block
+			text-transform: uppercase
+			letter-spacing: 1px
+			outline: none
+			position: relative
+			border-radius: 5px
+			background: #2DB475
+			color: #fff
+			box-shadow: 0 6px #119e4d
+			-webkit-transition: none
+			-moz-transition: none
+			transition: none
+
+			&:after
+				content: ''
+				position: absolute
+				z-index: -1
+				-webkit-transition: all 0.3s
+				-moz-transition: all 0.3s
+				transition: all 0.3s
+
+			&:hover
+				box-shadow: 0 8px #119e4d
+				top: -2px
+
+			&:active
+				box-shadow: 0 0 #119e4d
+				top: 6px
+
+			&:disabled
+				cursor: not-allowed
+				color: #fff
+				background: #DDDDDD
+				box-shadow: 0 6px #999999
+
+				&:hover
+					top: 0
+					box-shadow: 0 6px #999999
+
 
 .deploy-history
 	margin-top: $padding-large-vertical

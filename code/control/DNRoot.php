@@ -923,10 +923,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function gitRevisions(SS_HTTPRequest $request) {
 
-		if(!$this->checkCsrfToken($request)) {
-			return $this->httpError(400, 'Bad Request');
-		}
-
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
@@ -1039,9 +1035,20 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'advanced_opts' => $advanced
 		);
 		$tabs[] = $data;
+
+		// get the last time git fetch was run
+		$lastFetched = 'never';
+		$fetch = DNGitFetch::get()
+			->filter('ProjectID', $project->ID)
+			->sort('LastEdited', 'DESC')
+			->first();
+		if($fetch) {
+			$lastFetched = $fetch->dbObject('LastEdited')->Ago();
+		}
+
 		$data = array(
-			'SecurityID' => SecurityToken::inst()->getValue(),
 			'Tabs' => $tabs,
+		    'last_fetched' => $lastFetched
 		);
 
 		return json_encode($data, JSON_PRETTY_PRINT);
@@ -1080,14 +1087,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return string
 	 */
 	public function deploySummary(SS_HTTPRequest $request) {
-
-		// Ensure the CSRF Token is correct
-		// We're not going to reset it here because the user might make multiple requests.
-		// Resetting the token could break valid requests.
-		if(!$this->checkCsrfToken($request, false)) {
-			// CSRF token didn't match
-			return $this->httpError(400, 'Bad Request');
-		}
 
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
