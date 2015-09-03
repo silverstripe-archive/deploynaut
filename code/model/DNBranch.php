@@ -75,9 +75,15 @@ class DNBranch extends ViewableData {
 	 * @return SS_Datetime
 	 */
 	public function LastUpdated() {
-		$created = $this->branch->getCommit()->getCommitterDate();
-		// gitonomy sets the time to UTC, so now we set the timezone to
-		// whatever PHP is set to (date.timezone). This will change in the future if each
+		try {
+			$created = $this->branch->getCommit()->getCommitterDate();
+		} catch(Exception $e) {
+			//occasionally parsing will fail this is a fallback to make it still work
+			return new SS_Datetime();
+		}
+			// gitonomy sets the time to UTC, so now we set the timezone to
+			// whatever PHP is set to (date.timezone). This will change in the future if each
+		
 		// deploynaut user has their own timezone
 		$created->setTimezone(new DateTimeZone(date_default_timezone_get()));
 
