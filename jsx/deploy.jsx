@@ -743,10 +743,15 @@ var SummaryTable = React.createClass({
 		}
 		var i = 0;
 		var summaryLines = Object.keys(changes).map(function(key) {
-			i++;
-			return (
-				<SummaryLine key={i} name={key} from={changes[key].from} to={changes[key].to} />
-			)
+			if(changes[key].from != changes[key].to) {
+				return (
+					<SummaryLine name={key} from={changes[key].from} to={changes[key].to} />
+				)
+			} else {
+				return (
+					<UnchangedSummaryLine name={key} value={changes[key].from} />
+				)
+			}
 		});
 
 		return (
@@ -756,7 +761,7 @@ var SummaryTable = React.createClass({
 						<th>&nbsp;</th>
 						<th>From</th>
 						<th>To</th>
-						</tr>
+					</tr>
 				</thead>
 				<tbody>
 					{summaryLines}
@@ -780,6 +785,7 @@ var SummaryLine = React.createClass({
 		if(this.props.to !== null) {
 			to = this.props.to.substring(0,30);
 		}
+
 		return (
 			<tr>
 				<th scope="row">{this.props.name}</th>
@@ -789,6 +795,22 @@ var SummaryLine = React.createClass({
 		)
 	}
 });
+
+
+var UnchangedSummaryLine = React.createClass({
+	render: function() {
+		return (
+			<tr>
+				<th scope="row">{this.props.name}</th>
+				<td>{this.props.value}</td>
+				<td className="text-center">
+					<span className="label label-success">Unchanged</span>
+				</td>
+			</tr>
+		)
+	}
+});
+
 
 if (typeof urls != 'undefined') {
 	React.render(
