@@ -78,26 +78,16 @@
 			<% end_if %>
 		<% end_if %>
 	<% else %>
-		<% if $CurrentEnvironment.CanDeploy && $DeployForm %>
-			<% with $DeployForm %>
-				<% if $Message %>
-					<p id="{$FormName}_error" class="alert alert-$MessageType">$Message</p>
-					$clearMessage
-				<% end_if %>
-			<% end_with %>
-
-			<div class="deploy-dropdown" data-api-url="$CurrentProject.APILink('fetch')" aria-controls="#envDeploy"
-				 data-form-url="$CurrentEnvironment.Link/DeployForm">
-
-				<span class="status-icon" aria-hidden="true"></span>
-				<span class="loading-text">Fetching latest code&hellip;</span>
-				<span class="environment-name"><i class="fa fa-rocket">&nbsp;</i> Deployment options <span class="hidden-xs">for $CurrentEnvironment.Name</span></span>
-
-			</div>
-
-			<div class="deploy-form-outer collapse clearfix" id="envDeploy">
-				<%-- Deploy form will be put here with ajax --%>
-			</div>
+		<% if $CurrentEnvironment.CanDeploy %>
+            <div id="deploy_form"></div>
+            <script>
+				var urls = {
+					project_url: "{$absoluteBaseURL}naut/api/$CurrentProject.Name",
+					env_url: "{$absoluteBaseURL}{$CurrentEnvironment.Link}",
+					env_name: "{$CurrentEnvironment.Name}"
+				};
+				var security_token = "{$SecurityID}";
+            </script>
 		<% end_if %>
 	<% end_if %>
 

@@ -1,5 +1,7 @@
 <?php
 
+use Gitonomy\Git\Tag;
+
 class DNTag extends ViewableData {
 
 	/**
@@ -22,11 +24,11 @@ class DNTag extends ViewableData {
 	);
 
 	/**
-	 * @param Gitonomy\Git\Commit $commit
+	 * @param Tag $tag
 	 * @param DNProject $project
 	 * @param DNData $data
 	 */
-	public function  __construct(Gitonomy\Git\Tag $tag, DNProject $project, DNData $data) {
+	public function  __construct(Tag $tag, DNProject $project, DNData $data) {
 		$this->tag = $tag;
 		$this->project = $project;
 		$this->data = $data;

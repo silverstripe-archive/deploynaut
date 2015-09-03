@@ -14,21 +14,34 @@
  *         MaxDuration: 86400 # Auto time out after a day
  * </code>
  *
+ * @property SS_Datetime $Deployed
+ *
  * @method Member Responder() Member who has given an approval for this request
+ * @property int ResponderID
+ *
  * @package deploynaut
  * @subpackage pipeline
  */
 class TriggerDeployStep extends LongRunningPipelineStep {
 
+	/**
+	 * @var array
+	 */
 	private static $db = array(
 		// if this is deployed set the date it was requested
 		'Deployed' => "SS_Datetime"
 	);
 
+	/**
+	 * @var array
+	 */
 	private static $has_one = array(
 		'Responder' => 'Member'
 	);
 
+	/**
+	 * @return bool
+	 */
 	public function start() {
 		// Just in case this step is being mistakenly restarted
 		if(!empty($this->Deployed)) {
@@ -39,7 +52,7 @@ class TriggerDeployStep extends LongRunningPipelineStep {
 		}
 
 		// check if we have timed out
-		if ($this->isTimedOut()) {
+		if($this->isTimedOut()) {
 			$this->log(sprintf(_t('TriggerDeployStep.DEPLOYTIMEOUT',
 				'Deployment step is older then %s seconds and has timed out'),
 				$this->MaxDuration));
@@ -64,7 +77,7 @@ class TriggerDeployStep extends LongRunningPipelineStep {
 	/**
 	 * Can the current user trigger the deployment for this pipeline?
 	 *
-	 * @param type $member
+	 * @param Member|null $member
 	 * @return boolean
 	 */
 	public function canTriggerDeploy($member = null) {
@@ -86,7 +99,7 @@ class TriggerDeployStep extends LongRunningPipelineStep {
 			);
 		}
 
-		if ($this->Status == 'Queued') {
+		if($this->Status == 'Queued') {
 			$this->start();
 		}
 		// Trigger deployment
@@ -103,7 +116,9 @@ class TriggerDeployStep extends LongRunningPipelineStep {
 	 */
 	public function StartDeployment() {
 		$this->Status = 'Started';
-		if (!$this->Started) $this->Started = SS_Datetime::now()->Rfc2822();
+		if(!$this->Started) {
+			$this->Started = SS_Datetime::now()->Rfc2822();
+		}
 		$this->log("Starting {$this->Title}...");
 		$this->write();
 		return true;
@@ -111,7 +126,9 @@ class TriggerDeployStep extends LongRunningPipelineStep {
 
 	public function getRunningDescription() {
 		// Don't show options if this step has already been confirmed
-		if($this->Deployed) return;
+		if($this->Deployed) {
+			return;
+		}
 
 		return _t('TriggerDeployStep.RUNNINGDESCRIPTION',
 			'Please press the "Deploy" button to continue deployment');

@@ -30,7 +30,9 @@ class CloneGitRepo {
 
 		if(file_exists($path)) {
 			$command = array();
-			if($user) $command[] = sprintf('sudo -u %s', $user);
+			if(!empty($user)) {
+				$command[] = sprintf('sudo -u %s', $user);
+			}
 			$command[] = sprintf('rm -rf %s', $path);
 
 			fwrite($fh, sprintf('[%s] Cleaning up existing repository %s', date('Y-m-d H:i:s'), $path) . PHP_EOL);
@@ -54,7 +56,9 @@ class CloneGitRepo {
 		echo "[-] CloneGitRepo starting" . PHP_EOL;
 
 		$command = array();
-		if($user) $command[] = sprintf('sudo -u %s', $user);
+		if(!empty($user)) {
+			$command[] = sprintf('sudo -u %s', $user);
+		}
 		$command[] = sprintf('git clone --bare -q %s %s', $repo, $path);
 
 		fwrite($fh, sprintf('[%s] Running command: %s', date('Y-m-d H:i:s'), implode(' ', $command)) . PHP_EOL);

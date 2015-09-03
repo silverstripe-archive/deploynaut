@@ -25,8 +25,8 @@ class APINoun extends Controller {
 	/**
 	 * Holds the url segment for this admin
 	 *
-	 * @param Controller $parent
-	 * @param DataObject $record
+	 * @param Controller|null $parent
+	 * @param DataObject|null $record
 	 */
 	public function __construct(\Controller $parent = null, DataObject $record = null) {
 		$this->record = $record;
@@ -119,7 +119,7 @@ class APINoun extends Controller {
 	 * @return SS_HTTPResponse
 	 */
 	protected function message($message, $statusCode) {
-		$response =  $this->getAPIResponse(array(
+		$response = $this->getAPIResponse(array(
 			'message' => $message,
 			'statusCode' => $statusCode
 		));

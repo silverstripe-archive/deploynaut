@@ -39,12 +39,9 @@ class APIProject extends APINoun {
 				}
 
 				return $this->getAPIResponse($response);
-				break;
 			default:
 				return $this->message('API not found', 404);
-				break;
 		}
-		return $this->httpError(404, '404 - These aren\'t the droids you\'re looking for.');
 	}
 
 	/**
@@ -59,13 +56,10 @@ class APIProject extends APINoun {
 		switch($request->httpMethod()) {
 			case 'GET':
 				return $this->getFetch($this->getRequest()->param('ID'));
-				break;
 			case 'POST':
 				return $this->createFetch();
-				break;
 			default:
 				return $this->message('API not found', 404);
-				break;
 		}
 	}
 
@@ -92,12 +86,13 @@ class APIProject extends APINoun {
 	 * @return SS_HTTPResponse
 	 */
 	protected function createFetch() {
+		/** @var DNGitFetch $fetch */
 		$fetch = DNGitFetch::create();
 		$fetch->ProjectID = $this->record->ID;
 		$fetch->write();
 		$fetch->start();
 
-		$location = Director::absoluteBaseURL().$this->Link().'/fetch/'.$fetch->ID;
+		$location = Director::absoluteBaseURL() . $this->Link() . '/fetch/' . $fetch->ID;
 		$output = array(
 			'message' => 'Ping queued as job ' . $fetch->ResqueToken,
 			'href' => $location,

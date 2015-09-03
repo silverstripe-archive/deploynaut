@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Class DNGitFetch
+ *
+ * @property string $ResqueToken
+ *
+ * @method DNProject Project()
+ * @property int $ProjectID
+ * @method Member Deployer()
+ * @property int $DeployerID
+ *
+ */
 class DNGitFetch extends DataObject {
 
 	/**
@@ -57,7 +68,7 @@ class DNGitFetch extends DataObject {
 
 	/**
 	 *
-	 * @param Member $member
+	 * @param Member|null $member
 	 * @return bool
 	 */
 	public function canView($member = null) {

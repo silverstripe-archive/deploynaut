@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Class DNBranch
+ *
+ * @method string getName()
+ */
 class DNBranch extends ViewableData {
 
 	/**
@@ -26,13 +31,12 @@ class DNBranch extends ViewableData {
 	);
 
 	/**
-	 * @var string
+	 * @var SS_Datetime
 	 */
 	protected $_lastUpdatedCache = '';
 
 	/**
 	 *
-	 * @param Gitonomy\Git\Commit $commit
 	 * @param DNProject $project
 	 * @param DNData $data
 	 */
@@ -56,7 +60,7 @@ class DNBranch extends ViewableData {
 
 	public function Link() {
 		// Use a get-var for branch so that it can handle unsafe chars better
-		return Controller::join_links($this->project->Link(), 'branch?name='.urlencode($this->Name()));
+		return Controller::join_links($this->project->Link(), 'branch?name=' . urlencode($this->Name()));
 	}
 
 	/**
@@ -90,10 +94,10 @@ class DNBranch extends ViewableData {
 		// deploynaut user has their own timezone
 		$created->setTimezone(new DateTimeZone(date_default_timezone_get()));
 
-		$d = new SS_Datetime();
-		$d->setValue($created->format('Y-m-d H:i:s'));
-		$this->_lastUpdatedCache = $d;
-		return $d;
+		$date = new SS_Datetime();
+		$date->setValue($created->format('Y-m-d H:i:s'));
+		$this->_lastUpdatedCache = $date;
+		return $date;
 	}
 
 	/**
@@ -101,8 +105,11 @@ class DNBranch extends ViewableData {
 	 * @return string
 	 */
 	public function IsOpenByDefault() {
-		if($this->Name() == 'master') return " open";
-		else return "";
+		if($this->Name() == 'master') {
+			return " open";
+		} else {
+			return "";
+		}
 	}
 
 }

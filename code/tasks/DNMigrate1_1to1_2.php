@@ -14,7 +14,7 @@ class DNMigrate1_1to1_2 extends BuildTask {
 			foreach($environments as $environment) {
 				$newFilename = basename($environment->Filename);
 				if($environment->Filename != $newFilename) {
-					echo 'Migrating "'.$environment->Filename.'" to '.$newFilename.PHP_EOL;
+					echo 'Migrating "' . $environment->Filename . '" to ' . $newFilename . PHP_EOL;
 					$environment->Filename = $newFilename;
 					$environment->write();
 				}
@@ -26,7 +26,7 @@ class DNMigrate1_1to1_2 extends BuildTask {
 		foreach($projects as $project) {
 			if(!$project->projectFolderExists()) {
 				$warnings = true;
-				echo 'Project '.$project->Name.' don\'t have a cap project folder'.PHP_EOL;
+				echo 'Project ' . $project->Name . ' don\'t have a cap project folder' . PHP_EOL;
 			}
 		}
 		if($warnings) {

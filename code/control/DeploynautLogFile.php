@@ -10,7 +10,7 @@ class DeploynautLogFile {
 	protected $basePath;
 
 	/**
-	 * @param string $logfile The log filename
+	 * @param string $logFile The log filename
 	 * @param string|null $basePath Base path of where logs reside. Defaults to DEPLOYNAUT_LOG_PATH
 	 */
 	public function __construct($logFile, $basePath = null) {
@@ -86,7 +86,7 @@ class DeploynautLogFile {
 	 * @return bool
 	 */
 	public function exists() {
-		return (bool) $this->getLogFilePath();
+		return (bool)$this->getLogFilePath();
 	}
 
 	/**

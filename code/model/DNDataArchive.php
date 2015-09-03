@@ -28,6 +28,24 @@ use \Symfony\Component\Process\Process;
  *
  * The "Mode" is what the "Author" said the file includes (either 'only assets', 'only
  * database', or both). This is used in the ArchiveList.ss template.
+ *
+ * @property Varchar $UploadToken
+ * @property Varchar $ArchiveFileHash
+ * @property Enum $Mode
+ * @property Boolean $IsBackup
+ * @property Boolean $IsManualUpload
+ *
+ * @method Member Author()
+ * @property int $AuthorID
+ * @method DNEnvironment OriginalEnvironment()
+ * @property int $OriginalEnvironmentID
+ * @method DNEnvironment Environment()
+ * @property int $EnvironmentID
+ * @method File ArchiveFile()
+ * @property int $ArchiveFileID
+ *
+ * @method ManyManyList DataTransfers()
+ *
  */
 class DNDataArchive extends DataObject {
 
@@ -207,7 +225,9 @@ class DNDataArchive extends DataObject {
 	 */
 	public function canRestore($member = null) {
 		$memberID = $member ? $member->ID : Member::currentUserID();
-		if(!$memberID) return false;
+		if(!$memberID) {
+			return false;
+		}
 
 		$key = $memberID . '-' . $this->EnvironmentID;
 		if(!isset(self::$_cache_can_restore[$key])) {
@@ -226,7 +246,9 @@ class DNDataArchive extends DataObject {
 	 */
 	public function canDownload($member = null) {
 		$memberID = $member ? $member->ID : Member::currentUserID();
-		if(!$memberID) return false;
+		if(!$memberID) {
+			return false;
+		}
 
 		$key = $memberID . '-' . $this->EnvironmentID;
 		if(!isset(self::$_cache_can_download[$key])) {
@@ -239,7 +261,7 @@ class DNDataArchive extends DataObject {
 	 * Whether a {@link Member} can delete this archive from staging area.
 	 *
 	 * @param Member|null $member The {@link Member} object to test against.
-	 * @return true if $member (or the currently logged in member if null) can delete this archive
+	 * @return boolean if $member (or the currently logged in member if null) can delete this archive
 	 */
 	public function canDelete($member = null) {
 		return $this->Environment()->canDeleteArchive($member);
@@ -254,19 +276,29 @@ class DNDataArchive extends DataObject {
 	 * @return boolean true if $member can upload archives linked to this environment, false if they can't.
 	 */
 	public function canMoveTo($targetEnv, $member = null) {
-		if ($this->Environment()->Project()->ID!=$targetEnv->Project()->ID) {
+		if($this->Environment()->Project()->ID != $targetEnv->Project()->ID) {
 			// We don't permit moving snapshots between projects at this stage.
 			return false;
 		}
 
-		if(!$member) $member = Member::currentUser();
-		if(!$member) return false; // Must be logged in to check permissions
+		if(!$member) {
+			$member = Member::currentUser();
+		}
+
+		// Must be logged in to check permissions
+		if(!$member) {
+			return false;
+		}
 
 		// Admin can always move.
-		if(Permission::checkMember($member, 'ADMIN')) return true;
+		if(Permission::checkMember($member, 'ADMIN')) {
+			return true;
+		}
 
 		// Checks if the user can actually access the archive.
-		if (!$this->canDownload($member)) return false;
+		if(!$this->canDownload($member)) {
+			return false;
+		}
 
 		// Hooks into ArchiveUploaders permission to prevent proliferation of permission checkboxes.
 		// Bypasses the quota check - we don't need to check for it as long as we move the snapshot within the project.
@@ -284,7 +316,7 @@ class DNDataArchive extends DataObject {
 		$archive = $this;
 		$envs = $this->Environment()->Project()->DNEnvironmentList()
 			->filterByCallback(function($item) use ($archive) {
-				return $archive->EnvironmentID!=$item->ID && $archive->canMoveTo($item);
+				return $archive->EnvironmentID != $item->ID && $archive->canMoveTo($item);
 			});
 
 		return $envs;
@@ -435,7 +467,7 @@ class DNDataArchive extends DataObject {
 	 * For example, if the user uploaded an sspak containing just the db, but declared in the form
 	 * that it contained db+assets, then the archive is not valid.
 	 *
-	 * @param string $mode "db", "assets", or "all". This is the content we're checking for. Default to the archive setting
+	 * @param string|null $mode "db", "assets", or "all". This is the content we're checking for. Default to the archive setting
 	 * @return ValidationResult
 	 */
 	public function validateArchiveContents($mode = null) {

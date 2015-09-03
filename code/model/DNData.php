@@ -52,7 +52,9 @@ class DNData extends ViewableData {
 		parent::__construct();
 
 		// Better to use injector to set these
-		if(func_num_args() == 0) return;
+		if(func_num_args() == 0) {
+			return;
+		}
 		Deprecation::notice(
 			'1.2.0',
 			"Don't construct DNData with parameters. Assign settings via properties instead"
@@ -78,7 +80,9 @@ class DNData extends ViewableData {
 	 * @param string $environmentDir
 	 */
 	public function setEnvironmentDir($environmentDir) {
-		if($environmentDir[0] != "/") $environmentDir = BASE_PATH . '/' . $environmentDir;
+		if($environmentDir[0] != "/") {
+			$environmentDir = BASE_PATH . '/' . $environmentDir;
+		}
 		$this->environmentDir = realpath($environmentDir) ?: $environmentDir;
 	}
 
@@ -97,7 +101,9 @@ class DNData extends ViewableData {
 	 * @param string $keyDir
 	 */
 	public function setKeyDir($keyDir) {
-		if($keyDir[0] != "/") $keyDir = BASE_PATH . '/' . $keyDir;
+		if($keyDir[0] != "/") {
+			$keyDir = BASE_PATH . '/' . $keyDir;
+		}
 		$this->keyDir = realpath($keyDir) ?: $keyDir;
 	}
 
@@ -137,7 +143,9 @@ class DNData extends ViewableData {
 	 * @param string $transferDir
 	 */
 	public function setDataTransferDir($transferDir) {
-		if($transferDir[0] != "/") $transferDir = BASE_PATH . '/' . $transferDir;
+		if($transferDir[0] != "/") {
+			$transferDir = BASE_PATH . '/' . $transferDir;
+		}
 		if(strpos($transferDir, ASSETS_PATH) === false) {
 			throw new LogicException(sprintf(
 				'DNData::dataTransferDir needs to be located within <webroot>assets/ (location: %s)',
@@ -158,14 +166,17 @@ class DNData extends ViewableData {
 	/**
 	 * Grabs a list of projects from the env directory. The projects
 	 * in the builds directory alone will not be picked up.
- 	 * Returns an array of paths
+	 * Returns an array of paths
 	 *
 	 * @return array
- 	 */
+	 * @throws Exception
+	 */
 	public function getProjectPaths() {
 		$paths = array();
 		if(!file_exists($this->getEnvironmentDir())) {
-			throw new Exception('The environment directory '.$this->getEnvironmentDir().' doesn\'t exist. Create it first and add some projects to it.');
+			$eMessage = 'The environment directory '.$this->getEnvironmentDir().' doesn\'t exist. Create it '
+			. 'first and add some projects to it.';
+			throw new Exception($eMessage);
 		}
 		foreach(scandir($this->getEnvironmentDir()) as $project) {
 			// Exlcude dot-prefixed directories (.git was getting in the way)

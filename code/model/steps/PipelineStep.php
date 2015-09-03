@@ -12,7 +12,15 @@
  *   NiceDone: "Name of this step to display on frontend once finished"
  * </code>
  *
+ * @property string $Name
+ * @property int $Order
+ * @property string $Status
+ * @property string $Config
+ *
  * @method Pipeline Pipeline()
+ * @property int $PipelineID
+ *
+ * @property string $Title
  *
  * @package deploynaut
  * @subpackage pipeline
@@ -52,7 +60,7 @@ class PipelineStep extends DataObject implements PipelineData {
 	/**
 	 * Cached of config merged with defaults
 	 *
-	 * @var array
+	 * @var array|null
 	 */
 	protected $mergedConfig;
 
@@ -89,7 +97,9 @@ class PipelineStep extends DataObject implements PipelineData {
 	 * @return array
 	 */
 	public function getConfigData() {
-		if(!$this->Config) return array();
+		if(!$this->Config) {
+			return array();
+		}
 
 		// Merge with defaults
 		if(!$this->mergedConfig) {
@@ -119,13 +129,14 @@ class PipelineStep extends DataObject implements PipelineData {
 	 * Retrieve the value of a specific config setting
 	 *
 	 * @param string $setting Settings
-	 * @param string $setting,... Sub-settings
 	 * @return mixed Value of setting, or null if not set
 	 */
 	public function getConfigSetting($setting) {
 		$source = $this->getConfigData();
 		foreach(func_get_args() as $setting) {
-			if(empty($source[$setting])) return null;
+			if(empty($source[$setting])) {
+				return null;
+			}
 			$source = $source[$setting];
 		}
 		return $source;
@@ -233,7 +244,7 @@ class PipelineStep extends DataObject implements PipelineData {
 	 * Initialise the step unless it's already running (Started state).
 	 * The step will be expected to transition from here to Finished, Failed or Aborted state.
 	 *
-	 * @return boolean True if successfully started, false if error
+	 * @return boolean|null True if successfully started, false if error
 	 */
 	public function start() {
 		$this->Status = 'Started';
@@ -251,7 +262,7 @@ class PipelineStep extends DataObject implements PipelineData {
 	 */
 	public function abort() {
 
-		if ($this->isQueued() || $this->isRunning()) {
+		if($this->isQueued() || $this->isRunning()) {
 			$this->Status = 'Aborted';
 			$this->log('Step aborted');
 			$this->write();

@@ -2,6 +2,15 @@
 
 /**
  * Class representing a single deplyoment (passed or failed) at a time to a particular environment
+ *
+ * @property string $SHA
+ * @property string $ResqueToken
+ * @property string $Status
+ *
+ * @method DNEnvironment Environment()
+ * @property int EnvironmentID
+ * @method Member Deployer()
+ * @property int DeployerID
  */
 class DNDeployment extends DataObject {
 
@@ -15,7 +24,8 @@ class DNDeployment extends DataObject {
 		// Observe that this is not the same as Resque status, since ResqueStatus is not persistent
 		// It's used for finding successful deployments and displaying that in history views in the frontend
 		"Status" => "Enum('Queued, Started, Finished, Failed, n/a', 'n/a')",
-		"LeaveMaintenacePage" => "Boolean"
+		// JSON serialised DeploymentStrategy.
+		"Strategy" => "Text"
 	);
 
 	/**
@@ -121,13 +131,17 @@ class DNDeployment extends DataObject {
 	 * @return \Gitonomy\Git\Commit|null
 	 */
 	public function getCommit() {
-		if(!$this->SHA) return null;
+		if(!$this->SHA) {
+			return null;
+		}
 
 		$repo = $this->Environment()->Project()->getRepository();
 		if($repo) {
 			try {
 				return $repo->getCommit($this->SHA);
-			} catch (Gitonomy\Git\Exception\ReferenceNotFoundException $ex) { }
+			} catch(Gitonomy\Git\Exception\ReferenceNotFoundException $ex) {
+				return null;
+			}
 		}
 
 		return null;
@@ -163,14 +177,19 @@ class DNDeployment extends DataObject {
 
 		$args = array(
 			'environmentName' => $environment->Name,
-			'sha' => $this->SHA,
-			'repository' => $project->LocalCVSPath,
+			'repository' => $project->getLocalCVSPath(),
 			'logfile' => $this->logfile(),
 			'projectName' => $project->Name,
 			'env' => $project->getProcessEnv(),
-			'deploymentID' => $this->ID,
-			'leaveMaintenacePage' => $this->LeaveMaintenacePage
+			'deploymentID' => $this->ID
 		);
+
+		$strategy = new DeploymentStrategy($environment);
+		$strategy->fromJSON($this->Strategy);
+		// Inject options.
+		$args = array_merge($args, $strategy->getOptions());
+		// Make sure we use the SHA as it was written into this DNDeployment.
+		$args['sha'] = $this->SHA;
 
 		if(!$this->DeployerID) {
 			$this->DeployerID = Member::currentUserID();
