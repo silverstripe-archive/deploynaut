@@ -516,8 +516,6 @@ var deploy = (function (events, classNames) {
 		},
 		deployHandler: function(event) {
 			event.preventDefault();
-			//@todo(stig): add a confirmation box
-			console.log(this.props.summary.SecurityID);
 			Q($.ajax({
 				type: "POST",
 				dataType: 'json',
