@@ -161,7 +161,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				'deploynaut/javascript/q.js',
 				'deploynaut/javascript/deploynaut.js',
 				'deploynaut/javascript/react-with-addons.min.js',
-				'deploynaut/javascript/deploy.js',
+				'deploynaut/javascript/deploy.min.js',
 				'deploynaut/javascript/bootstrap.file-input.js',
 				'deploynaut/thirdparty/select2/dist/js/select2.min.js',
 				'deploynaut/javascript/material.js',
