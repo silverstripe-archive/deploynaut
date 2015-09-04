@@ -740,7 +740,7 @@ var deploy = (function (events, classNames) {
 				<tr>
 					<th scope="row">{this.props.name}</th>
 					<td>{from}</td>
-					<td className="text-center">
+					<td>
 						<span className="label label-success">Unchanged</span>
 					</td>
 				</tr>
