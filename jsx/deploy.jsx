@@ -493,6 +493,8 @@ var deploy = (function (events, classNames) {
 	 * DeployPlan
 	 */
 	var DeployPlan = React.createClass({
+		loadingSub: null,
+		loadingDoneSub: null,
 		getInitialState: function() {
 			return {
 				loading_changes: false
@@ -501,12 +503,12 @@ var deploy = (function (events, classNames) {
 		componentDidMount: function() {
 			var self = this;
 			// register subscribers
-			this.loading = events.subscribe('change_loading', function () {
+			this.loadingSub = events.subscribe('change_loading', function () {
 				self.setState({
 					loading_changes: true
 				});
 			});
-			this.loadingDone = events.subscribe('change_loading/done', function () {
+			this.loadingDoneSub = events.subscribe('change_loading/done', function () {
 				self.setState({
 					loading_changes: false
 				});
@@ -629,8 +631,8 @@ var deploy = (function (events, classNames) {
 			}
 			var idx = 0;
 			var messages = this.props.messages.map(function(message) {
-				return <Message key={idx} message={message} />
 				idx++;
+				return <Message key={idx} message={message} />
 			});
 			return (
 				<div>
@@ -675,16 +677,12 @@ var deploy = (function (events, classNames) {
 			}
 			var idx = 0;
 			var summaryLines = Object.keys(changes).map(function(key) {
-				if(changes[key].from != changes[key].to) {
-					return (
-						<SummaryLine key={idx} name={key} from={changes[key].from} to={changes[key].to} />
-					)
-				} else {
-					return (
-						<UnchangedSummaryLine key={idx} name={key} value={changes[key].from} />
-					)
-				}
 				idx++;
+				if(changes[key].from != changes[key].to) {
+					return <SummaryLine key={idx} name={key} from={changes[key].from} to={changes[key].to} />
+				} else {
+					return <UnchangedSummaryLine key={idx} name={key} value={changes[key].from} />
+				}
 			});
 
 			return (
@@ -731,7 +729,6 @@ var deploy = (function (events, classNames) {
 		}
 	});
 
-
 	var UnchangedSummaryLine = React.createClass({
 		render: function() {
 			var from = this.props.value;
@@ -748,7 +745,7 @@ var deploy = (function (events, classNames) {
 						<span className="label label-success">Unchanged</span>
 					</td>
 				</tr>
-			)
+			);
 		}
 	});
 
