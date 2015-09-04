@@ -1002,21 +1002,26 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$redeploy = array();
 		foreach($project->DNEnvironmentList() as $dnEnvironment) {
 			$envName = $dnEnvironment->Name;
+			$perEnvDeploys = array();
+
 			foreach($dnEnvironment->DeployHistory() as $deploy) {
 				$sha = $deploy->SHA;
-				if(!isset($redeploy[$envName])) {
-					$redeploy[$envName] = array();
-				}
-				if(!isset($redeploy[$envName][$sha])) {
+
+				// Check if exists to make sure the newest deployment date is used.
+				if(!isset($perEnvDeploys[$sha])) {
 					$pastValue = sprintf("%s (deployed %s)",
 						substr($sha, 0, 8),
 						$deploy->obj('LastEdited')->Ago()
 					);
-					$redeploy[$envName][] = array(
+					$perEnvDeploys[$sha] = array(
 						'id' => $sha,
 						'text' => $pastValue
 					);
 				}
+			}
+
+			if (!empty($perEnvDeploys)) {
+				$redeploy[$envName] = array_values($perEnvDeploys);
 			}
 		}
 		// Convert the array to the frontend format (i.e. keyed to regular array)
