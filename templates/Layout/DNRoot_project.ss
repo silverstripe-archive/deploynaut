@@ -47,7 +47,7 @@
 						</td>
 						<td class="text-center">
 							<% if $LogsLink %>
-								<a href="$LogsLink">Logs</a>
+								<a href="$LogsLink">Server logs</a>
 							<% else %>
 								<em>-</em>
 							<% end_if %>
