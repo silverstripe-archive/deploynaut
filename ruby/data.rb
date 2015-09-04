@@ -133,7 +133,7 @@ namespace :data do
 	#
 	# To accomplish our goals, the system must be set up such that:
 	# - webserver user is in the default group used by the ssh user.
-	# - root asset directory is owned by the ssh user and group.
+	# - root asset directory is writable by the ssh user (so that it can be deleted)
 	# - parent directory for the asset root is writable by the ssh user (so that the asset dir can be deleted)
 	# - no files in assets are owned by users other than ssh or webserver user.
 	#
@@ -144,7 +144,9 @@ namespace :data do
 			# Make sure asset directory exists.
 			run "if [ ! -e #{shared_path}/assets ]; then mkdir #{shared_path}/assets; fi", params
 			# Webserver-owned files, just fix permissions.
-			run "sudo -u #{webserver_user} find #{shared_path}/assets -type d -user #{webserver_user} -exec chmod 2755 {} \\;", params
+			run "sudo -u #{webserver_user} find #{shared_path} -maxdepth 1 -type d -user #{webserver_user} -exec chmod 0775 {} \\;", params
+			run "sudo -u #{webserver_user} find #{shared_path}/assets -maxdepth 1 -type d -user #{webserver_user} -exec chmod 0775 {} \\;", params
+			run "sudo -u #{webserver_user} find #{shared_path}/assets -mindepth 1 -type d -user #{webserver_user} -exec chmod 2755 {} \\;", params
 			run "sudo -u #{webserver_user} find #{shared_path}/assets -type f -user #{webserver_user} -exec chmod 0644 {} +", params
 			# Ssh-user owned files, must be writable by the webserver user.
 			# We cannot give files to webserver_user without being root, so we set the group write permission instead.
