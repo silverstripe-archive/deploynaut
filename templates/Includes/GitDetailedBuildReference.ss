@@ -26,7 +26,7 @@
 			<%-- Display logs link for environment --%>
 			<% if $Environment.LogsLink %>
 				<li>
-					<a href="$Environment.LogsLink"><i class="fa fa-table i-push"></i>Logs for $Environment.Name</a>
+					<a href="$Environment.LogsLink"><i class="fa fa-table i-push"></i>Server logs for $Environment.Name</a>
 				</li>
 			<% end_if %>
 		</ul>
