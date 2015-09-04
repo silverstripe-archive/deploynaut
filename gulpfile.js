@@ -3,7 +3,15 @@ var sass = require('gulp-sass');
 var react = require('gulp-react');
 var plumber = require('gulp-plumber');
 var gutil = require('gulp-util');
+var concat = require('gulp-concat');
+var sourcemaps = require('gulp-sourcemaps');
+var uglify = require('gulp-uglify');
 
+var path = {
+	JS: ['jsx/*.js', 'jsx/*.jsx'],
+	MINIFIED_SRC: 'deploy.min.js',
+	DEST_SRC: './javascript/'
+};
 
 var onError = function (err) {
 	// do a terminal beep on error
@@ -12,10 +20,14 @@ var onError = function (err) {
 };
 
 gulp.task('jsx', function () {
-	return gulp.src('./jsx/*.jsx')
+	gulp.src(path.JS)
 		.pipe(plumber({ errorHandler: onError }))
 		.pipe(react())
-		.pipe(gulp.dest('javascript'));
+		.pipe(sourcemaps.init())
+		.pipe(concat(path.MINIFIED_SRC))
+		.pipe(uglify())
+		.pipe(sourcemaps.write('./'))
+		.pipe(gulp.dest(path.DEST_SRC));
 });
 
 gulp.task('sass', function () {
@@ -26,6 +38,6 @@ gulp.task('sass', function () {
 
 // Rerun when files changes
 gulp.task('watch', function () {
-	gulp.watch('./jsx/*.jsx', ['jsx']);
+	gulp.watch(path.JS, ['jsx']);
 	gulp.watch('./sass/*.sass', ['sass']);
 });
