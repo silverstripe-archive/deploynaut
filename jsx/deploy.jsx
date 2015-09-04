@@ -123,7 +123,7 @@ var deploy = (function (events, classNames) {
 			if(this.state.errorText !== "") {
 				form = <ErrorMessages message={this.state.errorText} />
 			} else if(this.state.fetched) {
-				form = <DeployForm data={this.props.data} env_url={this.props.env_url} lastFetchedHandler={this.lastFetchedHandler} />
+				form = <DeployForm env_name={this.props.env_name} data={this.props.data} env_url={this.props.env_url} lastFetchedHandler={this.lastFetchedHandler} />
 			}
 
 			return (
@@ -202,7 +202,7 @@ var deploy = (function (events, classNames) {
 				<div className="deploy-form-outer clearfix">
 					<form className="form-inline deploy-form" action="POST" action="#">
 						<DeployTabSelector data={this.state.data} onSelect={this.selectHandler} selectedTab={this.state.selectedTab} />
-						<DeployTabs data={this.state.data} selectedTab={this.state.selectedTab} env_url={this.props.env_url} SecurityToken={this.state.SecurityToken} />
+						<DeployTabs env_name={this.props.env_name} data={this.state.data} selectedTab={this.state.selectedTab} env_url={this.props.env_url} SecurityToken={this.state.SecurityToken} />
 					</form>
 				</div>
 			);
@@ -257,7 +257,7 @@ var deploy = (function (events, classNames) {
 			var self = this;
 			var tabs = this.props.data.map(function(tab) {
 				return (
-					<DeployTab key={tab.id} tab={tab} selectedTab={self.props.selectedTab} env_url={self.props.env_url} SecurityToken={self.props.SecurityToken} />
+					<DeployTab env_name={self.props.env_name} key={tab.id} tab={tab} selectedTab={self.props.selectedTab} env_url={self.props.env_url} SecurityToken={self.props.SecurityToken} />
 				);
 			});
 
@@ -393,7 +393,7 @@ var deploy = (function (events, classNames) {
 						{options}
 						{verifyButton}
 					</div>
-					<DeployPlan summary={this.state.summary} env_url={this.props.env_url} />
+					<DeployPlan env_name={this.props.env_name} summary={this.state.summary} env_url={this.props.env_url} />
 				</div>
 			);
 		}
@@ -497,7 +497,8 @@ var deploy = (function (events, classNames) {
 		loadingDoneSub: null,
 		getInitialState: function() {
 			return {
-				loading_changes: false
+				loading_changes: false,
+				deploy_disabled: false
 			}
 		},
 		componentDidMount: function() {
@@ -516,8 +517,24 @@ var deploy = (function (events, classNames) {
 		},
 		deployHandler: function(event) {
 			event.preventDefault();
-			//@todo(stig): add a confirmation box
-			console.log(this.props.summary.SecurityID);
+			this.setState({
+				deploy_disabled: true
+			});
+
+			var message = 'You are about to begin the following deployment:\n\n'
+				+ 'Environment: ' + this.props.env_name + '\n'
+				+ 'Revision: ' + this.props.summary.options.sha + "\n\n"
+				+ 'Continue?';
+
+			var ok = confirm(message);
+
+			if(!ok) {
+				this.setState({
+					deploy_disabled: false
+				});
+				return false;
+			}
+
 			Q($.ajax({
 				type: "POST",
 				dataType: 'json',
@@ -576,7 +593,7 @@ var deploy = (function (events, classNames) {
 						<button
 						value="Confirm Deployment"
 						className="deploy"
-						disabled={!this.canDeploy()}
+						disabled={this.state.deploy_disabled}
 						onClick={this.deployHandler}>
 						{this.actionTitle()}<br/>
 							<EstimatedTime estimatedTime={this.props.summary.estimatedTime} />
@@ -740,7 +757,7 @@ var deploy = (function (events, classNames) {
 				<tr>
 					<th scope="row">{this.props.name}</th>
 					<td>{from}</td>
-					<td className="text-center">
+					<td>
 						<span className="label label-success">Unchanged</span>
 					</td>
 				</tr>
