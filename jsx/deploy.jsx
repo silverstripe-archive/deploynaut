@@ -651,9 +651,8 @@ var deploy = (function (events, classNames) {
 			};
 			var classname=classMap[this.props.message.code];
 			return (
-				<div className={classname} role="alert">
-					{this.props.message.text}
-				</div>
+				<div className={classname} role="alert"
+					dangerouslySetInnerHTML={{__html: this.props.message.text}} />
 			)
 		}
 	});
