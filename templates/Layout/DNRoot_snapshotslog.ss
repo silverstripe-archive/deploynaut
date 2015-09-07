@@ -74,12 +74,12 @@
 
 		<% else %>
 			<div class="alert">
-				There are currently no files that have been logged
+				No snapshot logs found.
 			</div>
 		<% end_if %>
 	<% else %>
 		<div class="alert">
-			There are currently no logged files that you can access
+			No snapshot logs found.
 		</div>
 	<% end_if %>
 </div>
