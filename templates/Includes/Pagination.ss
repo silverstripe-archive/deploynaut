@@ -8,7 +8,7 @@
                     </a>
                 </li>
 			<% end_if %>
-			<% loop $Pagination.Pages %>
+			<% loop $Pagination.PaginationSummary %>
 				<% if $CurrentBool %>
                     <li class="disabled"><a href="#">$PageNum</a></li>
 				<% else %>
