@@ -644,7 +644,7 @@ class DNEnvironment extends DataObject {
 					$deploy->Message = Convert::raw2xml($commit->getMessage());
 				}
 				// We can't find this SHA, so we ignore adding a commit message to the deployment
-			} catch (Gitonomy\Git\Exception\ReferenceNotFoundException $ex) { }
+			} catch (Exception $ex) { }
 			$ammendedHistory->push($deploy);
 		}
 
