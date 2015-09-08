@@ -6409,7 +6409,7 @@ button.close {
   font-weight: normal;
   font-style: normal; }
 
-.fa, .deploy-dropdown .status-icon, .deploy-form-outer .deploy-form .header.loading .status-icon {
+.fa, .icon-star, .deploy-dropdown .status-icon, .deploy-form-outer .deploy-form .header.loading .status-icon {
   display: inline-block;
   font: normal normal normal 14px/1 FontAwesome;
   font-size: inherit;
@@ -6466,10 +6466,10 @@ button.close {
 .fa-pull-right {
   float: right; }
 
-.fa.fa-pull-left, .deploy-dropdown .fa-pull-left.status-icon, .deploy-form-outer .deploy-form .header.loading .fa-pull-left.status-icon {
+.fa.fa-pull-left, .fa-pull-left.icon-star, .deploy-dropdown .fa-pull-left.status-icon, .deploy-form-outer .deploy-form .header.loading .fa-pull-left.status-icon {
   margin-right: .3em; }
 
-.fa.fa-pull-right, .deploy-dropdown .fa-pull-right.status-icon, .deploy-form-outer .deploy-form .header.loading .fa-pull-right.status-icon {
+.fa.fa-pull-right, .fa-pull-right.icon-star, .deploy-dropdown .fa-pull-right.status-icon, .deploy-form-outer .deploy-form .header.loading .fa-pull-right.status-icon {
   margin-left: .3em; }
 
 /* Deprecated as of 4.4.0 */
@@ -6479,10 +6479,10 @@ button.close {
 .pull-left {
   float: left; }
 
-.fa.pull-left, .deploy-dropdown .pull-left.status-icon, .deploy-form-outer .deploy-form .header.loading .pull-left.status-icon {
+.fa.pull-left, .pull-left.icon-star, .deploy-dropdown .pull-left.status-icon, .deploy-form-outer .deploy-form .header.loading .pull-left.status-icon {
   margin-right: .3em; }
 
-.fa.pull-right, .deploy-dropdown .status-icon, .deploy-dropdown .fa.time, .deploy-dropdown.loading .fa.loading-text, .deploy-dropdown.loading .loading-text.status-icon, .deploy-form-outer .deploy-form .header.loading .pull-right.status-icon, .deploy-form-outer .deploy-form .header.loading .deploy-dropdown .status-icon, .deploy-dropdown .deploy-form-outer .deploy-form .header.loading .status-icon, .deploy-form-outer .deploy-form .header.loading .deployment-status .deployment-progress .progress-bar .status-icon.status, .deployment-status .deployment-progress .progress-bar .deploy-form-outer .deploy-form .header.loading .status-icon.status, .deployment-status .deployment-progress .progress-bar .fa.status, .deployment-status .deployment-progress .progress-bar .deploy-dropdown .status.status-icon, .deploy-dropdown .deployment-status .deployment-progress .progress-bar .status.status-icon {
+.fa.pull-right, .pull-right.icon-star, .deploy-dropdown .icon-star.time, .deploy-dropdown.loading .icon-star.loading-text, .deployment-status .deployment-progress .progress-bar .icon-star.status, .deploy-dropdown .status-icon, .deploy-dropdown .fa.time, .deploy-dropdown.loading .fa.loading-text, .deploy-dropdown.loading .loading-text.status-icon, .deploy-form-outer .deploy-form .header.loading .pull-right.status-icon, .deploy-form-outer .deploy-form .header.loading .deploy-dropdown .status-icon, .deploy-dropdown .deploy-form-outer .deploy-form .header.loading .status-icon, .deploy-form-outer .deploy-form .header.loading .deployment-status .deployment-progress .progress-bar .status-icon.status, .deployment-status .deployment-progress .progress-bar .deploy-form-outer .deploy-form .header.loading .status-icon.status, .deployment-status .deployment-progress .progress-bar .fa.status, .deployment-status .deployment-progress .progress-bar .deploy-dropdown .status.status-icon, .deploy-dropdown .deployment-status .deployment-progress .progress-bar .status.status-icon {
   margin-left: .3em; }
 
 .fa-spin, .deploy-dropdown.loading .status-icon, .deploy-form-outer .deploy-form .header.loading .status-icon {
@@ -6586,10 +6586,10 @@ button.close {
 .fa-heart:before {
   content: ""; }
 
-.fa-star:before {
+.fa-star:before, .icon-star:before, .icon-star.hollow:hover:before {
   content: ""; }
 
-.fa-star-o:before {
+.fa-star-o:before, .icon-star:hover:before, .icon-star.hollow:before {
   content: ""; }
 
 .fa-user:before {
@@ -9574,7 +9574,7 @@ body .userswitcher fieldset label,
 body .userswitcher fieldset .middleColumn {
   float: none; }
 
-.alert .fa, .disk-quota .fa, .deploy-dropdown.error .fa, .deploy-dropdown-errors .fa, .alert .deploy-dropdown .status-icon, .deploy-dropdown .alert .status-icon, .disk-quota .deploy-dropdown .status-icon, .deploy-dropdown .disk-quota .status-icon, .deploy-dropdown.error .status-icon, .deploy-dropdown-errors .deploy-dropdown .status-icon, .deploy-dropdown .deploy-dropdown-errors .status-icon, .alert .deploy-form-outer .deploy-form .header.loading .status-icon, .deploy-form-outer .deploy-form .header.loading .alert .status-icon, .disk-quota .deploy-form-outer .deploy-form .header.loading .status-icon, .deploy-form-outer .deploy-form .header.loading .disk-quota .status-icon, .deploy-dropdown.error .deploy-form-outer .deploy-form .header.loading .status-icon, .deploy-form-outer .deploy-form .header.loading .deploy-dropdown.error .status-icon, .deploy-dropdown-errors .deploy-form-outer .deploy-form .header.loading .status-icon, .deploy-form-outer .deploy-form .header.loading .deploy-dropdown-errors .status-icon {
+.alert .fa, .disk-quota .fa, .deploy-dropdown.error .fa, .deploy-dropdown-errors .fa, .alert .icon-star, .disk-quota .icon-star, .deploy-dropdown.error .icon-star, .deploy-dropdown-errors .icon-star, .alert .deploy-dropdown .status-icon, .deploy-dropdown .alert .status-icon, .disk-quota .deploy-dropdown .status-icon, .deploy-dropdown .disk-quota .status-icon, .deploy-dropdown.error .status-icon, .deploy-dropdown-errors .deploy-dropdown .status-icon, .deploy-dropdown .deploy-dropdown-errors .status-icon, .alert .deploy-form-outer .deploy-form .header.loading .status-icon, .deploy-form-outer .deploy-form .header.loading .alert .status-icon, .disk-quota .deploy-form-outer .deploy-form .header.loading .status-icon, .deploy-form-outer .deploy-form .header.loading .disk-quota .status-icon, .deploy-dropdown.error .deploy-form-outer .deploy-form .header.loading .status-icon, .deploy-form-outer .deploy-form .header.loading .deploy-dropdown.error .status-icon, .deploy-dropdown-errors .deploy-form-outer .deploy-form .header.loading .status-icon, .deploy-form-outer .deploy-form .header.loading .deploy-dropdown-errors .status-icon {
   margin-right: 4px; }
 
 .alert ul, .disk-quota ul, .deploy-dropdown.error ul, .deploy-dropdown-errors ul {
@@ -9715,6 +9715,15 @@ body .userswitcher fieldset .middleColumn {
   .icon-arrow li > a:focus {
     color: #fff;
     text-decoration: none; }
+
+.icon-star {
+  color: #FECB58; }
+  .icon-star:hover {
+    color: #efa601; }
+  .icon-star.hollow {
+    color: #efa601; }
+    .icon-star.hollow:hover {
+      color: #FECB58; }
 
 .icon-arrow {
   width: 16px;
@@ -10005,7 +10014,7 @@ button.sidebar-open {
   margin-bottom: 10px; }
   .environment-details h3 {
     margin-bottom: 7px; }
-  .environment-details h3 .fa, .environment-details h3 .deploy-dropdown .status-icon, .deploy-dropdown .environment-details h3 .status-icon, .environment-details h3 .deploy-form-outer .deploy-form .header.loading .status-icon, .deploy-form-outer .deploy-form .header.loading .environment-details h3 .status-icon {
+  .environment-details h3 .fa, .environment-details h3 .icon-star, .environment-details h3 .deploy-dropdown .status-icon, .deploy-dropdown .environment-details h3 .status-icon, .environment-details h3 .deploy-form-outer .deploy-form .header.loading .status-icon, .deploy-form-outer .deploy-form .header.loading .environment-details h3 .status-icon {
     font-size: 14px;
     vertical-align: super; }
   .environment-details .build-details span.git-sha,

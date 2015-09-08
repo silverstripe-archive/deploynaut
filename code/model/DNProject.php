@@ -37,6 +37,7 @@ class DNProject extends DataObject {
 	 */
 	public static $many_many = array(
 		"Viewers" => "Group",
+		'StarredBy' => "Member"
 	);
 
 	/**
@@ -436,6 +437,28 @@ class DNProject extends DataObject {
 	 */
 	public function Link($action='') {
 		return Controller::join_links("naut", "project", $this->Name, $action);
+	}
+
+	/**
+	 * @return string
+	 */
+	public function ToggleStarLink() {
+		return $this->Link('/star');
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function IsStarred() {
+		$member = Member::currentUser();
+		if($member === null) {
+			return false;
+		}
+		$favourited = $this->StarredBy()->filter('MemberID', $member->ID);
+		if($favourited->count() == 0) {
+			return false;
+		}
+		return true;
 	}
 
 	/**
