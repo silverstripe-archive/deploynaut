@@ -7,3 +7,6 @@ File:
 Security:
   extensions:
     - DeploynautSecurityExtension
+Member:
+  extensions:
+    - ProjectMemberExtension

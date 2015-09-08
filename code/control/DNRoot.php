@@ -50,8 +50,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public static $allowed_actions = array(
 		'projects',
+		'nav',
 		'update',
 		'project',
+		'toggleprojectstar',
 		'branch',
 		'environment',
 		'abortpipeline',
@@ -116,6 +118,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'project/$Project/uploadsnapshot' => 'uploadsnapshot',
 		'project/$Project/snapshotslog' => 'snapshotslog',
 		'project/$Project/postsnapshotsuccess/$DataArchiveID' => 'postsnapshotsuccess',
+		'project/$Project/star' => 'toggleprojectstar',
 		'project/$Project' => 'project',
 		'projects' => 'projects',
 	);
@@ -258,6 +261,23 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		return $this->customise(array(
 			'Title' => 'Projects',
 		))->render();
+	}
+
+	/**
+	 *
+	 * @param SS_HTTPRequest $request
+	 * @return \SS_HTTPResponse
+	 */
+	public function nav(SS_HTTPRequest $request) {
+		return $this->renderWith('Nav');
+	}
+
+	/**
+	 * Return a link to the navigation template used for AJAX requests.
+	 * @return string
+	 */
+	public function NavLink() {
+		return Controller::join_links(Director::absoluteBaseURL(), 'naut', 'nav');
 	}
 
 	/**
@@ -630,6 +650,35 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
+	 * This action will star / unstar a project for the current member
+	 *
+	 * @param SS_HTTPRequest $request
+	 *
+	 * @return SS_HTTPResponse
+	 */
+	public function toggleprojectstar(SS_HTTPRequest $request) {
+		$project = $this->getCurrentProject();
+		if(!$project) {
+			return $this->project404Response();
+		}
+
+		$member = Member::currentUser();
+		if($member === null) {
+			return $this->project404Response();
+		}
+		$favProject = $member->StarredProjects()
+			->filter('DNProjectID', $project->ID)
+			->first();
+
+		if($favProject) {
+			$member->StarredProjects()->remove($favProject);
+		} else {
+			$member->StarredProjects()->add($project);
+		}
+		return $this->redirectBack();
+	}
+
+	/**
 	 *
 	 * @param SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse
@@ -823,6 +872,28 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
+	 * Provide a list of all starred projects for the currently logged in member
+	 *
+	 * @return SS_List
+	 */
+	public function getStarredProjects() {
+		$member = Member::currentUser();
+		if($member === null) {
+			return new ArrayList();
+		}
+
+		$favProjects = $member->StarredProjects();
+
+		$list = new ArrayList();
+		foreach($favProjects as $project) {
+			if($project->canView($member)) {
+				$list->add($project);
+			}
+		}
+		return $list;
+	}
+
+	/**
 	 * Returns top level navigation of projects.
 	 *
 	 * @param int $limit
@@ -834,7 +905,14 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		$currentProject = $this->getCurrentProject();
 
-		$projects = $this->DNProjectList();
+		$projects = $this->getStarredProjects();
+		if($projects->count() > 0) {
+			// user has starred projects, show as many as they want.
+			$limit = -1;
+		} else {
+			$projects = $this->DNProjectList();
+		}
+
 		if($projects->count() > 0) {
 			$activeProject = false;
 

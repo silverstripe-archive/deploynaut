@@ -169,6 +169,19 @@
 			template: '<div class="tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner git-sha"></div></div>'
 		});
 
+		$('.project-name .icon-star').click(function(e) {
+			var self = $(this);
+			var navEl = $('.side-content .nav');
+
+			$.get($(this).parent().prop('href'), function() {
+				$.get(navEl.data('nav'), function(data) {
+					navEl.html(data);
+					self.toggleClass('hollow');
+				})
+			});
+
+			e.preventDefault();
+		});
 
 		/**
 		 * Extend a specific target
