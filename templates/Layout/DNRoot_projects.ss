@@ -26,7 +26,14 @@
 			<% if $DNProjectList %>
 			<% loop $DNProjectList %>
 				<tr>
-					<td><a href="$Link">$Name</a></td>
+					<td class="project-name">
+						<a href="$Link">$Name</a>
+						<% if $IsStarred %>
+							<a class="tooltip-hint" data-toggle="tooltip" data-original-title="Unstar this project" href="$ToggleStarLink"><i class="icon-star"></i></a>
+						<% else %>
+							<a class="tooltip-hint" data-toggle="tooltip" data-original-title="Star this project so it shows in the side navigation for quick access" href="$ToggleStarLink"><i class="icon-star hollow"></i></a>
+						<% end_if %>
+					</td>
 					<td>
 						<% if $EnvironmentsByUsage("Production").First %>
 							<% with $EnvironmentsByUsage("Production").First %><a href="$URL" target="_blank">$BareURL</a><% end_with %>

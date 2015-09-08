@@ -9716,6 +9716,11 @@ body .userswitcher fieldset .middleColumn {
     color: #fff;
     text-decoration: none; }
 
+.project-name .icon-star {
+  float: left;
+  margin-right: 3px;
+  margin-top: 2px; }
+
 .icon-star {
   color: #FECB58; }
   .icon-star:hover {

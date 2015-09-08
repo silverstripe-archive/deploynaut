@@ -50,6 +50,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public static $allowed_actions = array(
 		'projects',
+		'nav',
 		'update',
 		'project',
 		'toggleprojectstar',
@@ -260,6 +261,23 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		return $this->customise(array(
 			'Title' => 'Projects',
 		))->render();
+	}
+
+	/**
+	 *
+	 * @param SS_HTTPRequest $request
+	 * @return \SS_HTTPResponse
+	 */
+	public function nav(SS_HTTPRequest $request) {
+		return $this->renderWith('Nav');
+	}
+
+	/**
+	 * Return a link to the navigation template used for AJAX requests.
+	 * @return string
+	 */
+	public function NavLink() {
+		return Controller::join_links(Director::absoluteBaseURL(), 'naut', 'nav');
 	}
 
 	/**
@@ -888,7 +906,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$currentProject = $this->getCurrentProject();
 
 		$projects = $this->getStarredProjects();
-		if($projects->count() == 0) {
+		if($projects->count() > 0) {
+			// user has starred projects, show as many as they want.
+			$limit = -1;
+		} else {
 			$projects = $this->DNProjectList();
 		}
 
