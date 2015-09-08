@@ -1,3 +1,11 @@
+<% if $Tags %>
+	<% loop $Tags %>
+		<span class="deployment-tag">
+			$Me
+		</span>
+	<% end_loop %>
+<% end_if %>
+
 <% if $Environment.Project.RepositoryInterface.CommitURL %>
 	<a href="{$Environment.Project.RepositoryInterface.CommitURL}/{$SHA}"
 <% else %>
@@ -6,12 +14,11 @@
 		class="git-sha tooltip-hint"
 		data-toggle="tooltip"
 		title="$SHA.FullHash"
-	>
-		$SHA.ShortHash<!--
+	>$SHA.ShortHash
 <% if $Environment.Project.RepositoryInterface %>
-	--></a>
+	</a>
 <% else %>
-	--></span>
+	</span>
 <% end_if %>
 
 $CommitMessage

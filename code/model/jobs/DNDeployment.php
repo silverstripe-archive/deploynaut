@@ -125,17 +125,25 @@ class DNDeployment extends DataObject {
 		return self::map_resque_status($statusCode);
 	}
 
+
+	/**
+	 * Fetch the git repository
+	 *
+	 * @return \Gitonomy\Git\Repository|null
+	 */
+	public function getRepository() {
+		if(!$this->SHA) return null;
+		return $this->Environment()->Project()->getRepository();
+	}
+
+
 	/**
 	 * Gets the commit from source. The result is cached upstream in Repository.
 	 *
 	 * @return \Gitonomy\Git\Commit|null
 	 */
 	public function getCommit() {
-		if(!$this->SHA) {
-			return null;
-		}
-
-		$repo = $this->Environment()->Project()->getRepository();
+		$repo = $this->getRepository();
 		if($repo) {
 			try {
 				return $repo->getCommit($this->SHA);
@@ -161,6 +169,40 @@ class DNDeployment extends DataObject {
 			} catch(Gitonomy\Git\Exception\ReferenceNotFoundException $e) {
 				return null;
 			}
+		}
+		return null;
+	}
+
+	/**
+	 * Return all tags for the deployed commit.
+	 *
+	 * @return ArrayList
+	 */
+	public function getTags() {
+		$returnTags = array();
+		$repo = $this->getRepository();
+		if($repo) {
+			$tags = $repo->getReferences()->resolveTags($this->SHA);
+			if(!empty($tags)) {
+				foreach ($tags as $tag) {
+					$field = Varchar::create('Tag', '255');
+					$field->setValue($tag->getName());
+					$returnTags[] = $field;
+				}
+			}
+		}
+		return new ArrayList($returnTags);
+	}
+
+	/**
+	 * Fetches the latest tag for the deployed commit
+	 *
+	 * @return \Varchar|null
+	 */
+	public function getTag() {
+		$tags = $this->getTags();
+		if($tags->count() > 0) {
+			return $tags->last();
 		}
 		return null;
 	}
