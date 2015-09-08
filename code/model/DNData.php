@@ -174,15 +174,15 @@ class DNData extends ViewableData {
 	public function getProjectPaths() {
 		$paths = array();
 		if(!file_exists($this->getEnvironmentDir())) {
-			$eMessage = 'The environment directory '.$this->getEnvironmentDir().' doesn\'t exist. Create it '
+			$eMessage = 'The environment directory ' . $this->getEnvironmentDir() . ' doesn\'t exist. Create it '
 			. 'first and add some projects to it.';
 			throw new Exception($eMessage);
 		}
 		foreach(scandir($this->getEnvironmentDir()) as $project) {
 			// Exlcude dot-prefixed directories (.git was getting in the way)
 			if(preg_match('/^[^\.]/', $project)) {
-				$path = $this->getEnvironmentDir().'/'.$project;
-				if(is_dir($path) && $project!='.' && $project!='..') {
+				$path = $this->getEnvironmentDir() . '/' . $project;
+				if(is_dir($path) && $project != '.' && $project != '..') {
 					$paths[] = $project;
 				}
 			}
@@ -200,7 +200,7 @@ class DNData extends ViewableData {
 
 		$paths = array();
 		if(!file_exists($baseDir)) {
-			throw new Exception('Environment directory '.$baseDir.' doesn\'t exist. Create it first.');
+			throw new Exception('Environment directory ' . $baseDir . ' doesn\'t exist. Create it first.');
 		}
 		// Search the directory for config files.
 		foreach(scandir($baseDir) as $environmentFile) {

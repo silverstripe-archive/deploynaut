@@ -75,7 +75,6 @@ class DeploymentStrategy extends ViewableData {
 	}
 
 	/**
-	 * @param string $title
 	 */
 	public function setActionCode($code) {
 		$this->actionCode = $code;
@@ -115,7 +114,7 @@ class DeploymentStrategy extends ViewableData {
 	}
 
 	/**
-	 * @return array Associative array of changes, e.g.
+	 * @return string Associative array of changes, e.g.
 	 *	array(
 	 *		'SHA' => array(
 	 *			'from' => 'abc',
@@ -136,16 +135,17 @@ class DeploymentStrategy extends ViewableData {
 	}
 
 	/**
-	 * @return mixed
+	 * @param string $option
+	 * @return string|null
 	 */
 	public function getOption($option) {
-		if (!empty($this->options[$option])) {
+		if(!empty($this->options[$option])) {
 			return $this->options[$option];
 		}
 	}
 
 	/**
-	 * @return array
+	 * @return string
 	 */
 	public function getOptions() {
 		return $this->options;
@@ -180,7 +180,7 @@ class DeploymentStrategy extends ViewableData {
 			DeploymentStrategy::WARNING_CODE => 1,
 			DeploymentStrategy::ERROR_CODE => 2
 		];
-		if ($map[$current]<$map[$code]) {
+		if($map[$current] < $map[$code]) {
 			$this->setValidationCode($code);
 		}
 	}
@@ -209,7 +209,7 @@ class DeploymentStrategy extends ViewableData {
 		);
 
 		$output = array();
-		foreach ($fields as $field) {
+		foreach($fields as $field) {
 			$output[$field] = $this->$field;
 		}
 		return $output;
@@ -250,8 +250,8 @@ class DeploymentStrategy extends ViewableData {
 			'messages'
 		);
 
-		foreach ($fields as $field) {
-			if (!empty($data[$field])) {
+		foreach($fields as $field) {
+			if(!empty($data[$field])) {
 				$this->$field = $data[$field];
 			}
 		}

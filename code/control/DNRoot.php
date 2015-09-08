@@ -266,7 +266,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 *
 	 * @param SS_HTTPRequest $request
-	 * @return \SS_HTTPResponse
+	 * @return HTMLText
 	 */
 	public function nav(SS_HTTPRequest $request) {
 		return $this->renderWith('Nav');
@@ -975,7 +975,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$form = new DeployForm($this, 'DeployForm', $environment, $project);
 
 		// If this is an ajax request we don't want to submit the form - we just want to retrieve the markup.
-		if (
+		if(
 			$request &&
 			!$request->requestVar('action_showDeploySummary') &&
 			$this->getRequest()->isAjax() &&
@@ -1015,7 +1015,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		// For now only permit advanced options on one environment type, because we hacked the "full-deploy"
 		// checkbox in. Other environments such as the fast or capistrano one wouldn't know what to do with it.
-		if (get_class($env)==='RainforestEnvironment') {
+		if(get_class($env) === 'RainforestEnvironment') {
 			$advanced = Permission::check('DEPLOYNAUT_ADVANCED_DEPLOY_OPTIONS') ? 'true' : 'false';
 		} else {
 			$advanced = 'false';
@@ -1098,12 +1098,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				}
 			}
 
-			if (!empty($perEnvDeploys)) {
+			if(!empty($perEnvDeploys)) {
 				$redeploy[$envName] = array_values($perEnvDeploys);
 			}
 		}
 		// Convert the array to the frontend format (i.e. keyed to regular array)
-		foreach ($redeploy as $env => $descr) {
+		foreach($redeploy as $env => $descr) {
 			$data['field_data'][] = array('text'=>$env, 'children'=>$descr);
 		}
 		$tabs[] = $data;
@@ -1131,7 +1131,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		$data = array(
 			'Tabs' => $tabs,
-		    'last_fetched' => $lastFetched
+			'last_fetched' => $lastFetched
 		);
 
 		return json_encode($data, JSON_PRETTY_PRINT);
@@ -1150,7 +1150,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		// Ensure the submitted token has a value
 		$submittedToken = $request->postVar('SecurityID');
-		if(!$submittedToken) return false;
+		if(!$submittedToken) {
+			return false;
+		}
 
 		// Do the actual check.
 		$check = $token->check($submittedToken);
@@ -1239,7 +1241,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$deployment->start();
 
 		return json_encode(array(
-			'url' => Director::absoluteBaseURL().$deployment->Link()
+			'url' => Director::absoluteBaseURL() . $deployment->Link()
 		), JSON_PRETTY_PRINT);
 	}
 

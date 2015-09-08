@@ -26,7 +26,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		
 		$currentBuild = $environment->CurrentBuild();
 		$currentSha = $currentBuild ? $currentBuild->SHA : '-';
-		if($currentSha!==$options['sha']) {
+		if($currentSha !== $options['sha']) {
 			$strategy->setChange('Code version', $currentSha, $options['sha']);
 		}
 		$strategy->setActionTitle('Confirm code deployment');
