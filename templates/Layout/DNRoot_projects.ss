@@ -1,7 +1,7 @@
 <div class="content page-header">
-	<div class="row items-push">
-		<div class="col-sm-7">
-			<h1 class="page-heading">Projects</h1>
+	<div class="row">
+		<div class="col-md-7">
+			<h1 class="page-heading">Stack overview</h1>
 		</div>
 	</div>
 </div>
@@ -15,22 +15,45 @@
 		<table class="table table-large table-striped table-hover table-projects">
 			<thead>
 				<tr>
-					<th>Project name</th>
-					<th>Live URL</th>
+					<th>Stack title</th>
+					<th>Production URL</th>
 					<th>UAT URL</th>
 					<th class="text-center">Environments</th>
 					<th>Code</th>
 				</tr>
 			</thead>
 			<tbody>
-			<% if DNProjectList %>
-			<% loop DNProjectList %>
+			<% if $DNProjectList %>
+			<% loop $DNProjectList %>
 				<tr>
 					<td><a href="$Link">$Name</a></td>
-					<td><a href="#">Live Link</a></td>
-					<td><a href="#">UAT Link</a></td>
-					<td class="text-center">3</td>
-					<td><a href="#">Link</a></td>
+					<td>
+						<% if $EnvironmentsByUsage("Production").First %>
+							<% with $EnvironmentsByUsage("Production").First %><a href="$URL" target="_blank">$BareURL</a><% end_with %>
+						<% else %>
+							-
+						<% end_if %>
+					</td>
+					<td>
+						<% if $EnvironmentsByUsage("UAT").First %>
+							<% with $EnvironmentsByUsage("UAT").First %><a href="$URL" target="_blank">$BareURL</a><% end_with %>
+						<% else %>
+							-
+						<% end_if %>
+					</td>
+					<td class="text-center"><a href="$Link">$Environments.count</a></td>
+					<td>
+						<% if $RepositoryInterface %>
+							<% with $RepositoryInterface %>
+								<div class="repo-ux">
+									<img src="$Icon" />
+									<a href="$URL">View code<i class="fa fa-external-link-square superscript"></i></a>
+								</div>
+							<% end_with %>
+						<% else %>
+							-
+						<% end_if %>
+					</td>
 				</tr>
 			<% end_loop %>
 			<% else %>
@@ -42,3 +65,4 @@
 		</table>
 	</div>
 </div>
+
