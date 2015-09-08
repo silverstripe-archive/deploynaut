@@ -6,8 +6,13 @@
 	</div>
 </div>
 <div class="content">
+	<%-- Dont show the search/filter if there are less than 5 projects in the list --%>
+	<% if $DNProjectList.count > 5 %>
+	<input type="search" class="table-filter form-control" data-table="table-projects" placeholder="Search for project">
+	<% end_if %>
+
 	<div class="table-responsive">
-		<table class="table table-large">
+		<table class="table table-large table-striped table-hover table-projects">
 			<thead>
 				<tr>
 					<th>Project name</th>
