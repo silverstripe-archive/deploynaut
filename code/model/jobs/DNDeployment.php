@@ -132,7 +132,9 @@ class DNDeployment extends DataObject {
 	 * @return \Gitonomy\Git\Repository|null
 	 */
 	public function getRepository() {
-		if(!$this->SHA) return null;
+		if(!$this->SHA) {
+			return null;
+		}
 		return $this->Environment()->Project()->getRepository();
 	}
 
@@ -184,7 +186,7 @@ class DNDeployment extends DataObject {
 		if($repo) {
 			$tags = $repo->getReferences()->resolveTags($this->SHA);
 			if(!empty($tags)) {
-				foreach ($tags as $tag) {
+				foreach($tags as $tag) {
 					$field = Varchar::create('Tag', '255');
 					$field->setValue($tag->getName());
 					$returnTags[] = $field;
