@@ -226,7 +226,7 @@ th {
   .deploy-dropdown > .caret,
   .dropup > .btn > .caret, .dropup > .action > .caret, .dropup > .deploy-dropdown > .caret {
     border-top-color: #000 !important; }
-  .label {
+  .label, .deployment-tag {
     border: 1px solid #000; }
   .table {
     border-collapse: collapse !important; }
@@ -4718,7 +4718,7 @@ tbody.collapse.in {
     background-color: #fff;
     cursor: not-allowed; }
 
-.label {
+.label, .deployment-tag {
   display: inline;
   padding: 0.2em 0.6em 0.3em;
   font-size: 75%;
@@ -4729,14 +4729,15 @@ tbody.collapse.in {
   white-space: nowrap;
   vertical-align: baseline;
   border-radius: .25em; }
-  .label:empty {
+  .label:empty, .deployment-tag:empty {
     display: none; }
-  .btn .label, .action .label, .deploy-dropdown .label {
+  .btn .label, .action .label, .deploy-dropdown .label, .btn .deployment-tag, .action .deployment-tag, .deploy-dropdown .deployment-tag {
     position: relative;
     top: -1px; }
 
 a.label:hover,
-a.label:focus {
+a.deployment-tag:hover,
+a.label:focus, a.deployment-tag:focus {
   color: #fff;
   text-decoration: none;
   cursor: pointer; }
@@ -4759,10 +4760,11 @@ a.label:focus {
   .label-success[href]:focus {
     background-color: #449d44; }
 
-.label-info {
+.label-info, .deployment-tag {
   background-color: #5bc0de; }
   .label-info[href]:hover,
-  .label-info[href]:focus {
+  [href].deployment-tag:hover,
+  .label-info[href]:focus, [href].deployment-tag:focus {
     background-color: #31b0d5; }
 
 .label-warning {
@@ -10055,6 +10057,13 @@ button.sidebar-open {
     text-align: left; }
     .deployment-status .deployment-progress .progress-bar .status {
       font-size: 26px; }
+
+.deployment-tag {
+  position: relative;
+  top: -2px; }
+
+td > .deployment-tag {
+  margin-right: 4px; }
 
 .log-content {
   overflow-y: auto;
