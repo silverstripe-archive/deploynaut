@@ -139,6 +139,12 @@
 
 	$(document).ready(function() {
 
+		// enable table filtering
+		if(document.getElementsByClassName('table-filter').length > 0) {
+			TableFilter.init('table-filter');
+			document.getElementsByClassName('table-filter')[0].focus();
+		}
+
 		// Enable select2
 		$('select:not(.disable-select2)').select2();
 
