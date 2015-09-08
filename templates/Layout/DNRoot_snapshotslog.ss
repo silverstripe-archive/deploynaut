@@ -48,7 +48,7 @@
 							<td>$Environment.Name</td>
 							<td class="text-center">
 							<% if $Status = 'Queued' %><span class="label label-info">Queued</span><% end_if %>
-							<% if $Status = 'Started' %><span class="label label-info">Started</span><% end_if %>
+							<% if $Status = 'Started' %><span class="label label-info">Running</span><% end_if %>
 							<% if $Status = 'Finished' %><span class="label label-success">Finished</span><% end_if %>
 							<% if $Status = 'Failed' %><span class="label label-danger">Failed</span><% end_if %>
 							<% if $Status = 'n/a' %>
