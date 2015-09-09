@@ -444,6 +444,24 @@ button.sidebar-open
 	@extend .alert-danger
 	white-space: pre
 
+.deploy-form-loading
+    @extend .deploy-form-outer
+    display: table;
+    width:100%;
+
+    > .icon-holder
+        display: table-cell;
+        color: $platform-blue;
+        vertical-align: middle;
+        text-align: center;
+        height:15em;
+    
+        > .fa
+          font-size: 52px;
+
+        > span
+            display: block;
+
 .deploy-form-outer
 	border-width: 0px 1px 1px
 	border-style: solid

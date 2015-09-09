@@ -124,6 +124,8 @@ var deploy = (function (events, classNames) {
 				form = <ErrorMessages message={this.state.errorText} />
 			} else if(this.state.fetched) {
 				form = <DeployForm env_name={this.props.env_name} data={this.props.data} env_url={this.props.env_url} lastFetchedHandler={this.lastFetchedHandler} />
+			} else if (this.state.loading) {
+				form = <LoadingDeployForm />
 			}
 
 			return (
@@ -131,10 +133,23 @@ var deploy = (function (events, classNames) {
 					<div className={classes} onClick={this.handleClick}>
 						<span className="status-icon" aria-hidden="true"></span>
 						<span className="time">last updated {this.state.last_fetched}</span>
-						<span className="loading-text">{this.state.loadingText}</span>
 						<EnvironmentName environmentName={this.props.env_name} />
 					</div>
 					{form}
+				</div>
+			);
+		}
+	});
+
+
+	var LoadingDeployForm = React.createClass({
+		render: function() {
+			return (
+				<div className="deploy-form-loading">
+					<div className="icon-holder">
+						<i className="fa fa-cog fa-spin"></i>
+						<span>Fetching latest code&hellip;</span>
+					</div>
 				</div>
 			);
 		}
