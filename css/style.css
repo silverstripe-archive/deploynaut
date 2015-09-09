@@ -9684,9 +9684,7 @@ body .userswitcher fieldset .middleColumn {
   position: relative; }
   .nav-submenu.open .icon-arrow {
     -ms-transform: rotate(180deg);
-    /* IE 9 */
     -webkit-transform: rotate(180deg);
-    /* Chrome, Safari, Opera */
     transform: rotate(180deg); }
 
 .icon-arrow {
@@ -9816,7 +9814,7 @@ button.sidebar-open {
 .content {
   margin: 0 auto;
   padding: 30px 30px 1px;
-    padding-background-color: #f9f9f9; }
+  background-color: #f9f9f9; }
   .content.content-vert {
     padding-top: 0;
     padding-bottom: 0; }
