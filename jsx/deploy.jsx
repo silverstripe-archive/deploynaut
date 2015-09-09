@@ -15,8 +15,6 @@ var deploy = (function (events, classNames) {
 		getInitialState: function() {
 			return {
 				loading: false,
-				loaded: false,
-				opened: false,
 				loadingText: "",
 				errorText: "",
 				fetched: true,
@@ -29,7 +27,6 @@ var deploy = (function (events, classNames) {
 			this.loadingSub = events.subscribe('loading', function(text) {
 				self.setState({
 					loading: true,
-					opened: false,
 					success: false,
 					loadingText: text
 				});
@@ -38,8 +35,7 @@ var deploy = (function (events, classNames) {
 				self.setState({
 					loading: false,
 					loadingText: '',
-					success: true,
-					opened: true
+					success: true
 				});
 			});
 			this.errorSub = events.subscribe('error', function(text) {
@@ -47,8 +43,7 @@ var deploy = (function (events, classNames) {
 					errorText: text,
 					loading: false,
 					loadingText: '',
-					success: false,
-					opened: false
+					success: false
 				});
 			});
 		},
@@ -115,17 +110,17 @@ var deploy = (function (events, classNames) {
 			var classes = classNames({
 				"deploy-dropdown": true,
 				"loading": this.state.loading,
-				"open": this.state.opened,
 				"success": this.state.success
 			});
 
 			var form;
+
 			if(this.state.errorText !== "") {
 				form = <ErrorMessages message={this.state.errorText} />
 			} else if(this.state.fetched) {
 				form = <DeployForm env_name={this.props.env_name} data={this.props.data} env_url={this.props.env_url} lastFetchedHandler={this.lastFetchedHandler} />
 			} else if (this.state.loading) {
-				form = <LoadingDeployForm />
+				form = <LoadingDeployForm message="Fetching latest code&hellip;" />
 			}
 
 			return (
@@ -141,14 +136,13 @@ var deploy = (function (events, classNames) {
 		}
 	});
 
-
 	var LoadingDeployForm = React.createClass({
 		render: function() {
 			return (
 				<div className="deploy-form-loading">
 					<div className="icon-holder">
 						<i className="fa fa-cog fa-spin"></i>
-						<span>Fetching latest code&hellip;</span>
+						<span>{this.props.message}</span>
 					</div>
 				</div>
 			);
@@ -195,12 +189,16 @@ var deploy = (function (events, classNames) {
 
 		gitData: function() {
 			var self = this;
+			self.setState({
+				loading: true
+			});
 			Q($.ajax({
 				type: "POST",
 				dataType: 'json',
 				url: this.props.env_url + '/git_revisions'
 			})).then(function(data) {
 				self.setState({
+					loading: false,
 					data: data.Tabs
 				});
 				self.props.lastFetchedHandler(data.last_fetched);
@@ -213,6 +211,12 @@ var deploy = (function (events, classNames) {
 			this.setState({selectedTab: id});
 		},
 		render: function () {
+			if(this.state.loading) {
+				return (
+					<LoadingDeployForm message="Loading&hellip;" />
+				);
+			}
+
 			return (
 				<div className="deploy-form-outer clearfix">
 					<form className="form-inline deploy-form" action="POST" action="#">
@@ -442,7 +446,7 @@ var deploy = (function (events, classNames) {
 							id={this.props.tab.field_id}
 							name="sha"
 							className="dropdown"
-					        onChange={this.props.changeHandler}
+							onChange={this.props.changeHandler}
 							style={style}>
 							<option value="">Select {this.props.tab.field_id}</option>
 						</select>
