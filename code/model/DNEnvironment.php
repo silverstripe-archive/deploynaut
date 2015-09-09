@@ -710,7 +710,7 @@ class DNEnvironment extends DataObject {
 				$deploy->AuthorDate = $commit->getAuthorDate()->Format('d/m/Y g:ia');
 			}
 			// We can't find this SHA, so we ignore adding a commit message to the deployment
-		} catch (Exception $ex) { }
+		} catch(Exception $ex) { }
 
 		return $deploy;
 	}

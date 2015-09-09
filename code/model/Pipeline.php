@@ -248,6 +248,9 @@ class Pipeline extends DataObject implements PipelineData {
 		return "Pipeline {$this->ID} (Status: {$this->Status})";
 	}
 
+	/**
+	 * @param Member $member
+	 */
 	public function canAbort($member = null) {
 		// Owner can abort
 		$member = $member ?: Member::currentUser();
