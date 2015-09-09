@@ -906,11 +906,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$currentProject = $this->getCurrentProject();
 
 		$projects = $this->getStarredProjects();
-		if($projects->count() > 0) {
-			// user has starred projects, show as many as they want.
-			$limit = -1;
-		} else {
+		if($projects->count() < 1) {
 			$projects = $this->DNProjectList();
+		} else {
+			$limit = -1;
 		}
 
 		if($projects->count() > 0) {
@@ -940,7 +939,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 					'Project' => $currentProject,
 					'IsActive' => true,
 				));
-				$navigation->pop();
+				if($limit > 0 && $navigation->count() > $limit) {
+					$navigation->pop();
+				}
 			}
 		}
 
