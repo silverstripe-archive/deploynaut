@@ -18,7 +18,7 @@
 
 	<% if $DNProjectList.count > 5 %>
 		<li class="">
-			<a href="{$BaseHref}naut/projects">View more&hellip;</a>
+			<a href="{$BaseHref}naut/projects">View all stacks&hellip;</a>
 		</li>
 	<% end_if %>
 <% end_if %>
