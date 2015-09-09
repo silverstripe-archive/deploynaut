@@ -63,7 +63,7 @@ var deploy = (function (events, classNames) {
 			Q($.ajax({
 				type: "POST",
 				dataType: 'json',
-				url: this.props.project_url + '/fetch'
+				url: this.props.context.projectUrl + '/fetch'
 			}))
 				.then(this.waitForFetchToComplete, this.fetchStatusError)
 				.then(function() {
@@ -118,7 +118,7 @@ var deploy = (function (events, classNames) {
 			if(this.state.errorText !== "") {
 				form = <ErrorMessages message={this.state.errorText} />
 			} else if(this.state.fetched) {
-				form = <DeployForm env_name={this.props.env_name} data={this.props.data} env_url={this.props.env_url} lastFetchedHandler={this.lastFetchedHandler} />
+				form = <DeployForm context={this.props.context} data={this.props.data} lastFetchedHandler={this.lastFetchedHandler} />
 			} else if (this.state.loading) {
 				form = <LoadingDeployForm message="Fetching latest code&hellip;" />
 			}
@@ -128,7 +128,7 @@ var deploy = (function (events, classNames) {
 					<div className={classes} onClick={this.handleClick}>
 						<span className="status-icon" aria-hidden="true"></span>
 						<span className="time">last updated {this.state.last_fetched}</span>
-						<EnvironmentName environmentName={this.props.env_name} />
+						<EnvironmentName environmentName={this.props.context.envName} />
 					</div>
 					{form}
 				</div>
@@ -195,7 +195,7 @@ var deploy = (function (events, classNames) {
 			Q($.ajax({
 				type: "POST",
 				dataType: 'json',
-				url: this.props.env_url + '/git_revisions'
+				url: this.props.context.envUrl + '/git_revisions'
 			})).then(function(data) {
 				self.setState({
 					loading: false,
@@ -221,7 +221,7 @@ var deploy = (function (events, classNames) {
 				<div className="deploy-form-outer clearfix">
 					<form className="form-inline deploy-form" action="POST" action="#">
 						<DeployTabSelector data={this.state.data} onSelect={this.selectHandler} selectedTab={this.state.selectedTab} />
-						<DeployTabs env_name={this.props.env_name} data={this.state.data} selectedTab={this.state.selectedTab} env_url={this.props.env_url} SecurityToken={this.state.SecurityToken} />
+						<DeployTabs context={this.props.context} data={this.state.data} selectedTab={this.state.selectedTab} SecurityToken={this.state.SecurityToken} />
 					</form>
 				</div>
 			);
@@ -276,7 +276,7 @@ var deploy = (function (events, classNames) {
 			var self = this;
 			var tabs = this.props.data.map(function(tab) {
 				return (
-					<DeployTab env_name={self.props.env_name} key={tab.id} tab={tab} selectedTab={self.props.selectedTab} env_url={self.props.env_url} SecurityToken={self.props.SecurityToken} />
+					<DeployTab context={self.props.context} key={tab.id} tab={tab} selectedTab={self.props.selectedTab} SecurityToken={self.props.SecurityToken} />
 				);
 			});
 
@@ -305,6 +305,7 @@ var deploy = (function (events, classNames) {
 				messages: [],
 				validationCode: '',
 				estimatedTime: null,
+				actionCode: null,
 				initialState: true
 			}
 		},
@@ -346,7 +347,7 @@ var deploy = (function (events, classNames) {
 			Q($.ajax({
 				type: "POST",
 				dataType: 'json',
-				url: this.props.env_url + '/deploy_summary',
+				url: this.props.context.envUrl + '/deploy_summary',
 				data: summaryData
 			})).then(function(data) {
 				this.setState({
@@ -412,7 +413,7 @@ var deploy = (function (events, classNames) {
 						{options}
 						{verifyButton}
 					</div>
-					<DeployPlan env_name={this.props.env_name} summary={this.state.summary} env_url={this.props.env_url} />
+					<DeployPlan context={this.props.context} summary={this.state.summary} />
 				</div>
 			);
 		}
@@ -517,7 +518,8 @@ var deploy = (function (events, classNames) {
 		getInitialState: function() {
 			return {
 				loading_changes: false,
-				deploy_disabled: false
+				deploy_disabled: false,
+				deployHover: false
 			}
 		},
 		componentDidMount: function() {
@@ -540,24 +542,10 @@ var deploy = (function (events, classNames) {
 				deploy_disabled: true
 			});
 
-			var message = 'You are about to begin the following deployment:\n\n'
-				+ 'Environment: ' + this.props.env_name + '\n'
-				+ 'Revision: ' + this.props.summary.options.sha + "\n\n"
-				+ 'Continue?';
-
-			var ok = confirm(message);
-
-			if(!ok) {
-				this.setState({
-					deploy_disabled: false
-				});
-				return false;
-			}
-
 			Q($.ajax({
 				type: "POST",
 				dataType: 'json',
-				url: this.props.env_url + '/start-deploy',
+				url: this.props.context.envUrl + '/start-deploy',
 				data: {
 					// Pass the strategy object the user has just signed off back to the backend.
 					'strategy': this.props.summary,
@@ -568,6 +556,12 @@ var deploy = (function (events, classNames) {
 			}, function(data){
 				console.error(data);
 			});
+		},
+		mouseEnterHandler: function(event) {
+			this.setState({deployHover: true});
+		},
+		mouseLeaveHandler: function(event) {
+			this.setState({deployHover: false});
 		},
 		canDeploy: function() {
 			return (this.props.summary.validationCode==="success" || this.props.summary.validationCode==="warning");
@@ -605,18 +599,21 @@ var deploy = (function (events, classNames) {
 					code: "success"
 				}];
 			}
+
 			var deployAction;
 			if(this.canDeploy()) {
 				deployAction = (
-					<div className="section">
-						<button
-						value="Confirm Deployment"
-						className="deploy"
-						disabled={this.state.deploy_disabled}
-						onClick={this.deployHandler}>
-						{this.actionTitle()}<br/>
-							<EstimatedTime estimatedTime={this.props.summary.estimatedTime} />
-						</button>
+					<div className="section"
+						onMouseEnter={this.mouseEnterHandler}
+						onMouseLeave={this.mouseLeaveHandler}>
+							<button
+								value="Confirm Deployment"
+								className="deploy pull-left"
+								disabled={this.state.deploy_disabled}
+								onClick={this.deployHandler}>
+								{this.actionTitle()}
+							</button>
+							<QuickSummary activated={this.state.deployHover} context={this.props.context} summary={this.props.summary} />
 					</div>
 				);
 			}
@@ -643,17 +640,44 @@ var deploy = (function (events, classNames) {
 		}
 	});
 
-	/**
-	 * EstimatedTime
-	 */
-	var EstimatedTime = React.createClass({
+	var QuickSummary = React.createClass({
 		render: function() {
-			if (this.props.estimatedTime && this.props.estimatedTime>0) {
-				return (
-					<small>Estimated {this.props.estimatedTime} min</small>
+			var type = (this.props.summary.actionCode==='fast' ? 'code-only' : 'full');
+			var estimate = [];
+			if (this.props.summary.estimatedTime && this.props.summary.estimatedTime>0) {
+				estimate = [
+					<dt>Duration:</dt>,
+					<dd>{this.props.summary.estimatedTime} min approx.</dd>
+				];
+			}
+
+			var dlClasses = classNames({
+				activated: this.props.activated,
+				'quick-summary': true
+			});
+
+			var moreInfo = null;
+			if (typeof this.props.context.deployHelp!=='undefined' && this.props.context.deployHelp) {
+				moreInfo = (
+					<a className="small" href={this.props.context.deployHelp}>more info</a>
 				);
 			}
-			return null;
+
+			if (this.props.context.siteUrl) {
+				var env = <a href={this.props.context.siteUrl}>{this.props.context.envName}</a>;
+			} else {
+				var env = <span>{this.props.context.envName}</span>;
+			}
+
+			return (
+				<dl className={dlClasses}>
+					<dt>Environment:</dt>
+					<dd>{env}</dd>
+					<dt>Deploy type:</dt>
+					<dd>{type} {moreInfo}</dd>
+					{estimate}
+				</dl>
+			);
 		}
 	});
 
@@ -785,18 +809,16 @@ var deploy = (function (events, classNames) {
 	});
 
 	return {
-		render: function(urls) {
+		render: function(context) {
 			React.render(
 				<DeployDropDown
-					project_url = {urls.project_url}
-					env_url = {urls.env_url}
-					env_name = {urls.env_name} />,
+					context = {context} />,
 				document.getElementById('deploy_form')
 			);
 		}
 	}
 }(events, classNames));
 
-if (typeof urls != 'undefined') {
-	deploy.render(urls);
+if (typeof context != 'undefined') {
+	deploy.render(context);
 }

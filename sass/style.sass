@@ -607,12 +607,13 @@ button.sidebar-open
 			text-align: center
 
 		button.deploy
+			float: left
 			border: none
 			font-family: inherit
 			font-size: inherit
 			background: none
 			cursor: pointer
-			padding: 15px 35px
+			padding: 17px 35px 14px
 			display: inline-block
 			text-transform: uppercase
 			letter-spacing: 1px
@@ -625,6 +626,8 @@ button.sidebar-open
 			-webkit-transition: none
 			-moz-transition: none
 			transition: none
+			margin-bottom: 20px
+			margin-right: 20px
 
 			&:after
 				content: ''
@@ -651,6 +654,30 @@ button.sidebar-open
 				&:hover
 					top: 0
 					box-shadow: 0 6px #999999
+
+
+		dl.quick-summary
+			@extend .small
+
+			float: left
+			opacity: 0.7
+			-webkit-transition: all 0.3s ease-out
+			-moz-transition: all 0.3s ease-out
+			-o-transition: all 0.3s ease-out
+			transition: all 0.3s ease-out
+			padding: 3px 8px
+
+			&.activated
+				opacity: 1.0
+
+			dt
+				width: 70px
+				font-weight: normal
+				float: left
+				clear: left
+			dd
+				margin-left: 80px
+
 
 
 .deploy-history
