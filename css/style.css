@@ -9831,8 +9831,7 @@ button.sidebar-open {
 
 .content {
   margin: 0 auto;
-  padding: 30px 30px 1px;
-  background-color: #f9f9f9; }
+  padding: 30px 30px 1px; }
   .content.content-vert {
     padding-top: 0;
     padding-bottom: 0; }
