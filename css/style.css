@@ -1147,19 +1147,21 @@ h1, h2, h3, h4, h5, h6,
   line-height: 1.1;
   color: #555555; }
   h1 small,
-  h1 .small, h2 small,
-  h2 .small, h3 small,
-  h3 .small, h4 small,
-  h4 .small, h5 small,
-  h5 .small, h6 small,
+  h1 .small, h1 .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-outer .deploy-form h1 dl.quick-summary, h1 .deploy-form-loading .deploy-form dl.quick-summary, .deploy-form-loading .deploy-form h1 dl.quick-summary, h2 small,
+  h2 .small, h2 .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-outer .deploy-form h2 dl.quick-summary, h2 .deploy-form-loading .deploy-form dl.quick-summary, .deploy-form-loading .deploy-form h2 dl.quick-summary, h3 small,
+  h3 .small, h3 .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-outer .deploy-form h3 dl.quick-summary, h3 .deploy-form-loading .deploy-form dl.quick-summary, .deploy-form-loading .deploy-form h3 dl.quick-summary, h4 small,
+  h4 .small, h4 .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-outer .deploy-form h4 dl.quick-summary, h4 .deploy-form-loading .deploy-form dl.quick-summary, .deploy-form-loading .deploy-form h4 dl.quick-summary, h5 small,
+  h5 .small, h5 .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-outer .deploy-form h5 dl.quick-summary, h5 .deploy-form-loading .deploy-form dl.quick-summary, .deploy-form-loading .deploy-form h5 dl.quick-summary, h6 small,
   h6 .small,
-  .h1 small,
-  .h1 .small, .h2 small,
-  .h2 .small, .h3 small,
-  .h3 .small, .h4 small,
-  .h4 .small, .h5 small,
-  .h5 .small, .h6 small,
-  .h6 .small {
+  h6 .deploy-form-outer .deploy-form dl.quick-summary,
+  .deploy-form-outer .deploy-form h6 dl.quick-summary, h6 .deploy-form-loading .deploy-form dl.quick-summary,
+  .deploy-form-loading .deploy-form h6 dl.quick-summary, .h1 small,
+  .h1 .small, .h1 .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-outer .deploy-form .h1 dl.quick-summary, .h1 .deploy-form-loading .deploy-form dl.quick-summary, .deploy-form-loading .deploy-form .h1 dl.quick-summary, .h2 small,
+  .h2 .small, .h2 .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-outer .deploy-form .h2 dl.quick-summary, .h2 .deploy-form-loading .deploy-form dl.quick-summary, .deploy-form-loading .deploy-form .h2 dl.quick-summary, .h3 small,
+  .h3 .small, .h3 .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-outer .deploy-form .h3 dl.quick-summary, .h3 .deploy-form-loading .deploy-form dl.quick-summary, .deploy-form-loading .deploy-form .h3 dl.quick-summary, .h4 small,
+  .h4 .small, .h4 .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-outer .deploy-form .h4 dl.quick-summary, .h4 .deploy-form-loading .deploy-form dl.quick-summary, .deploy-form-loading .deploy-form .h4 dl.quick-summary, .h5 small,
+  .h5 .small, .h5 .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-outer .deploy-form .h5 dl.quick-summary, .h5 .deploy-form-loading .deploy-form dl.quick-summary, .deploy-form-loading .deploy-form .h5 dl.quick-summary, .h6 small,
+  .h6 .small, .h6 .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-outer .deploy-form .h6 dl.quick-summary, .h6 .deploy-form-loading .deploy-form dl.quick-summary, .deploy-form-loading .deploy-form .h6 dl.quick-summary {
     font-weight: normal;
     line-height: 1;
     color: #777777; }
@@ -1170,14 +1172,18 @@ h3, .h3 {
   margin-top: 20px;
   margin-bottom: 10px; }
   h1 small,
-  h1 .small, .h1 small,
+  h1 .small, h1 .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-outer .deploy-form h1 dl.quick-summary, h1 .deploy-form-loading .deploy-form dl.quick-summary, .deploy-form-loading .deploy-form h1 dl.quick-summary, .h1 small,
   .h1 .small,
-  h2 small,
-  h2 .small, .h2 small,
+  .h1 .deploy-form-outer .deploy-form dl.quick-summary,
+  .deploy-form-outer .deploy-form .h1 dl.quick-summary, .h1 .deploy-form-loading .deploy-form dl.quick-summary,
+  .deploy-form-loading .deploy-form .h1 dl.quick-summary, h2 small,
+  h2 .small, h2 .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-outer .deploy-form h2 dl.quick-summary, h2 .deploy-form-loading .deploy-form dl.quick-summary, .deploy-form-loading .deploy-form h2 dl.quick-summary, .h2 small,
   .h2 .small,
-  h3 small,
-  h3 .small, .h3 small,
-  .h3 .small {
+  .h2 .deploy-form-outer .deploy-form dl.quick-summary,
+  .deploy-form-outer .deploy-form .h2 dl.quick-summary, .h2 .deploy-form-loading .deploy-form dl.quick-summary,
+  .deploy-form-loading .deploy-form .h2 dl.quick-summary, h3 small,
+  h3 .small, h3 .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-outer .deploy-form h3 dl.quick-summary, h3 .deploy-form-loading .deploy-form dl.quick-summary, .deploy-form-loading .deploy-form h3 dl.quick-summary, .h3 small,
+  .h3 .small, .h3 .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-outer .deploy-form .h3 dl.quick-summary, .h3 .deploy-form-loading .deploy-form dl.quick-summary, .deploy-form-loading .deploy-form .h3 dl.quick-summary {
     font-size: 65%; }
 
 h4, .h4,
@@ -1186,14 +1192,18 @@ h6, .h6 {
   margin-top: 10px;
   margin-bottom: 10px; }
   h4 small,
-  h4 .small, .h4 small,
+  h4 .small, h4 .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-outer .deploy-form h4 dl.quick-summary, h4 .deploy-form-loading .deploy-form dl.quick-summary, .deploy-form-loading .deploy-form h4 dl.quick-summary, .h4 small,
   .h4 .small,
-  h5 small,
-  h5 .small, .h5 small,
+  .h4 .deploy-form-outer .deploy-form dl.quick-summary,
+  .deploy-form-outer .deploy-form .h4 dl.quick-summary, .h4 .deploy-form-loading .deploy-form dl.quick-summary,
+  .deploy-form-loading .deploy-form .h4 dl.quick-summary, h5 small,
+  h5 .small, h5 .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-outer .deploy-form h5 dl.quick-summary, h5 .deploy-form-loading .deploy-form dl.quick-summary, .deploy-form-loading .deploy-form h5 dl.quick-summary, .h5 small,
   .h5 .small,
-  h6 small,
-  h6 .small, .h6 small,
-  .h6 .small {
+  .h5 .deploy-form-outer .deploy-form dl.quick-summary,
+  .deploy-form-outer .deploy-form .h5 dl.quick-summary, .h5 .deploy-form-loading .deploy-form dl.quick-summary,
+  .deploy-form-loading .deploy-form .h5 dl.quick-summary, h6 small,
+  h6 .small, h6 .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-outer .deploy-form h6 dl.quick-summary, h6 .deploy-form-loading .deploy-form dl.quick-summary, .deploy-form-loading .deploy-form h6 dl.quick-summary, .h6 small,
+  .h6 .small, .h6 .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-outer .deploy-form .h6 dl.quick-summary, .h6 .deploy-form-loading .deploy-form dl.quick-summary, .deploy-form-loading .deploy-form .h6 dl.quick-summary {
     font-size: 75%; }
 
 h1, .h1 {
@@ -1227,7 +1237,7 @@ p {
       font-size: 21px; } }
 
 small,
-.small {
+.small, .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-loading .deploy-form dl.quick-summary {
   font-size: 85%; }
 
 mark,
@@ -1416,14 +1426,14 @@ blockquote {
     margin-bottom: 0; }
   blockquote footer,
   blockquote small,
-  blockquote .small {
+  blockquote .small, blockquote .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-outer .deploy-form blockquote dl.quick-summary, blockquote .deploy-form-loading .deploy-form dl.quick-summary, .deploy-form-loading .deploy-form blockquote dl.quick-summary {
     display: block;
     font-size: 80%;
     line-height: 1.42857;
     color: #777777; }
     blockquote footer:before,
     blockquote small:before,
-    blockquote .small:before {
+    blockquote .small:before, blockquote .deploy-form-outer .deploy-form dl.quick-summary:before, .deploy-form-outer .deploy-form blockquote dl.quick-summary:before, blockquote .deploy-form-loading .deploy-form dl.quick-summary:before, .deploy-form-loading .deploy-form blockquote dl.quick-summary:before {
       content: '\2014 \00A0'; }
 
 .blockquote-reverse,
@@ -1436,7 +1446,9 @@ blockquote.pull-right, .deploy-dropdown blockquote.status-icon, .deploy-dropdown
   .blockquote-reverse footer:before,
   .blockquote-reverse small:before,
   .blockquote-reverse .small:before,
-  blockquote.pull-right footer:before,
+  .blockquote-reverse .deploy-form-outer .deploy-form dl.quick-summary:before,
+  .deploy-form-outer .deploy-form .blockquote-reverse dl.quick-summary:before, .blockquote-reverse .deploy-form-loading .deploy-form dl.quick-summary:before,
+  .deploy-form-loading .deploy-form .blockquote-reverse dl.quick-summary:before, blockquote.pull-right footer:before,
   .deploy-dropdown blockquote.status-icon footer:before,
   .deploy-dropdown blockquote.time footer:before,
   .deploy-dropdown.loading blockquote.loading-text footer:before,
@@ -1446,12 +1458,14 @@ blockquote.pull-right, .deploy-dropdown blockquote.status-icon, .deploy-dropdown
   .deploy-dropdown blockquote.time small:before,
   .deploy-dropdown.loading blockquote.loading-text small:before,
   .deployment-status .deployment-progress .progress-bar blockquote.status small:before,
-  blockquote.pull-right .small:before, .deploy-dropdown blockquote.status-icon .small:before, .deploy-dropdown blockquote.time .small:before, .deploy-dropdown.loading blockquote.loading-text .small:before, .deployment-status .deployment-progress .progress-bar blockquote.status .small:before {
+  blockquote.pull-right .small:before, .deploy-dropdown blockquote.status-icon .small:before, .deploy-dropdown blockquote.time .small:before, .deploy-dropdown.loading blockquote.loading-text .small:before, .deployment-status .deployment-progress .progress-bar blockquote.status .small:before, blockquote.pull-right .deploy-form-outer .deploy-form dl.quick-summary:before, .deploy-form-outer .deploy-form blockquote.pull-right dl.quick-summary:before, .deploy-dropdown blockquote.status-icon .deploy-form-outer .deploy-form dl.quick-summary:before, .deploy-form-outer .deploy-form .deploy-dropdown blockquote.status-icon dl.quick-summary:before, .deploy-dropdown blockquote.time .deploy-form-outer .deploy-form dl.quick-summary:before, .deploy-form-outer .deploy-form .deploy-dropdown blockquote.time dl.quick-summary:before, .deploy-dropdown.loading blockquote.loading-text .deploy-form-outer .deploy-form dl.quick-summary:before, .deploy-form-outer .deploy-form .deploy-dropdown.loading blockquote.loading-text dl.quick-summary:before, .deployment-status .deployment-progress .progress-bar blockquote.status .deploy-form-outer .deploy-form dl.quick-summary:before, .deploy-form-outer .deploy-form .deployment-status .deployment-progress .progress-bar blockquote.status dl.quick-summary:before, blockquote.pull-right .deploy-form-loading .deploy-form dl.quick-summary:before, .deploy-form-loading .deploy-form blockquote.pull-right dl.quick-summary:before, .deploy-dropdown blockquote.status-icon .deploy-form-loading .deploy-form dl.quick-summary:before, .deploy-form-loading .deploy-form .deploy-dropdown blockquote.status-icon dl.quick-summary:before, .deploy-dropdown blockquote.time .deploy-form-loading .deploy-form dl.quick-summary:before, .deploy-form-loading .deploy-form .deploy-dropdown blockquote.time dl.quick-summary:before, .deploy-dropdown.loading blockquote.loading-text .deploy-form-loading .deploy-form dl.quick-summary:before, .deploy-form-loading .deploy-form .deploy-dropdown.loading blockquote.loading-text dl.quick-summary:before, .deployment-status .deployment-progress .progress-bar blockquote.status .deploy-form-loading .deploy-form dl.quick-summary:before, .deploy-form-loading .deploy-form .deployment-status .deployment-progress .progress-bar blockquote.status dl.quick-summary:before {
     content: ''; }
   .blockquote-reverse footer:after,
   .blockquote-reverse small:after,
   .blockquote-reverse .small:after,
-  blockquote.pull-right footer:after,
+  .blockquote-reverse .deploy-form-outer .deploy-form dl.quick-summary:after,
+  .deploy-form-outer .deploy-form .blockquote-reverse dl.quick-summary:after, .blockquote-reverse .deploy-form-loading .deploy-form dl.quick-summary:after,
+  .deploy-form-loading .deploy-form .blockquote-reverse dl.quick-summary:after, blockquote.pull-right footer:after,
   .deploy-dropdown blockquote.status-icon footer:after,
   .deploy-dropdown blockquote.time footer:after,
   .deploy-dropdown.loading blockquote.loading-text footer:after,
@@ -1461,7 +1475,7 @@ blockquote.pull-right, .deploy-dropdown blockquote.status-icon, .deploy-dropdown
   .deploy-dropdown blockquote.time small:after,
   .deploy-dropdown.loading blockquote.loading-text small:after,
   .deployment-status .deployment-progress .progress-bar blockquote.status small:after,
-  blockquote.pull-right .small:after, .deploy-dropdown blockquote.status-icon .small:after, .deploy-dropdown blockquote.time .small:after, .deploy-dropdown.loading blockquote.loading-text .small:after, .deployment-status .deployment-progress .progress-bar blockquote.status .small:after {
+  blockquote.pull-right .small:after, .deploy-dropdown blockquote.status-icon .small:after, .deploy-dropdown blockquote.time .small:after, .deploy-dropdown.loading blockquote.loading-text .small:after, .deployment-status .deployment-progress .progress-bar blockquote.status .small:after, blockquote.pull-right .deploy-form-outer .deploy-form dl.quick-summary:after, .deploy-form-outer .deploy-form blockquote.pull-right dl.quick-summary:after, .deploy-dropdown blockquote.status-icon .deploy-form-outer .deploy-form dl.quick-summary:after, .deploy-form-outer .deploy-form .deploy-dropdown blockquote.status-icon dl.quick-summary:after, .deploy-dropdown blockquote.time .deploy-form-outer .deploy-form dl.quick-summary:after, .deploy-form-outer .deploy-form .deploy-dropdown blockquote.time dl.quick-summary:after, .deploy-dropdown.loading blockquote.loading-text .deploy-form-outer .deploy-form dl.quick-summary:after, .deploy-form-outer .deploy-form .deploy-dropdown.loading blockquote.loading-text dl.quick-summary:after, .deployment-status .deployment-progress .progress-bar blockquote.status .deploy-form-outer .deploy-form dl.quick-summary:after, .deploy-form-outer .deploy-form .deployment-status .deployment-progress .progress-bar blockquote.status dl.quick-summary:after, blockquote.pull-right .deploy-form-loading .deploy-form dl.quick-summary:after, .deploy-form-loading .deploy-form blockquote.pull-right dl.quick-summary:after, .deploy-dropdown blockquote.status-icon .deploy-form-loading .deploy-form dl.quick-summary:after, .deploy-form-loading .deploy-form .deploy-dropdown blockquote.status-icon dl.quick-summary:after, .deploy-dropdown blockquote.time .deploy-form-loading .deploy-form dl.quick-summary:after, .deploy-form-loading .deploy-form .deploy-dropdown blockquote.time dl.quick-summary:after, .deploy-dropdown.loading blockquote.loading-text .deploy-form-loading .deploy-form dl.quick-summary:after, .deploy-form-loading .deploy-form .deploy-dropdown.loading blockquote.loading-text dl.quick-summary:after, .deployment-status .deployment-progress .progress-bar blockquote.status .deploy-form-loading .deploy-form dl.quick-summary:after, .deploy-form-loading .deploy-form .deployment-status .deployment-progress .progress-bar blockquote.status dl.quick-summary:after {
     content: '\00A0 \2014'; }
 
 address {
@@ -5142,12 +5156,16 @@ button.list-group-item {
   .list-group-item.active .list-group-item-heading,
   .list-group-item.active .list-group-item-heading > small,
   .list-group-item.active .list-group-item-heading > .small,
-  .list-group-item.active:hover .list-group-item-heading,
+  .list-group-item.active .deploy-form-outer .deploy-form .list-group-item-heading > dl.quick-summary,
+  .deploy-form-outer .deploy-form .list-group-item.active .list-group-item-heading > dl.quick-summary, .list-group-item.active .deploy-form-loading .deploy-form .list-group-item-heading > dl.quick-summary,
+  .deploy-form-loading .deploy-form .list-group-item.active .list-group-item-heading > dl.quick-summary, .list-group-item.active:hover .list-group-item-heading,
   .list-group-item.active:hover .list-group-item-heading > small,
   .list-group-item.active:hover .list-group-item-heading > .small,
-  .list-group-item.active:focus .list-group-item-heading,
+  .list-group-item.active:hover .deploy-form-outer .deploy-form .list-group-item-heading > dl.quick-summary,
+  .deploy-form-outer .deploy-form .list-group-item.active:hover .list-group-item-heading > dl.quick-summary, .list-group-item.active:hover .deploy-form-loading .deploy-form .list-group-item-heading > dl.quick-summary,
+  .deploy-form-loading .deploy-form .list-group-item.active:hover .list-group-item-heading > dl.quick-summary, .list-group-item.active:focus .list-group-item-heading,
   .list-group-item.active:focus .list-group-item-heading > small,
-  .list-group-item.active:focus .list-group-item-heading > .small {
+  .list-group-item.active:focus .list-group-item-heading > .small, .list-group-item.active:focus .deploy-form-outer .deploy-form .list-group-item-heading > dl.quick-summary, .deploy-form-outer .deploy-form .list-group-item.active:focus .list-group-item-heading > dl.quick-summary, .list-group-item.active:focus .deploy-form-loading .deploy-form .list-group-item-heading > dl.quick-summary, .deploy-form-loading .deploy-form .list-group-item.active:focus .list-group-item-heading > dl.quick-summary {
     color: inherit; }
   .list-group-item.active .list-group-item-text,
   .list-group-item.active:hover .list-group-item-text,
@@ -5299,8 +5317,8 @@ button.list-group-item-danger {
   .panel-title > a,
   .panel-title > small,
   .panel-title > .small,
-  .panel-title > small > a,
-  .panel-title > .small > a {
+  .deploy-form-outer .deploy-form .panel-title > dl.quick-summary, .deploy-form-loading .deploy-form .panel-title > dl.quick-summary, .panel-title > small > a,
+  .panel-title > .small > a, .deploy-form-outer .deploy-form .panel-title > dl.quick-summary > a, .deploy-form-loading .deploy-form .panel-title > dl.quick-summary > a {
     color: inherit; }
 
 .panel-footer {
@@ -9994,12 +10012,13 @@ button.sidebar-open {
     .deploy-form-outer .deploy-form .center, .deploy-form-loading .deploy-form .center {
       text-align: center; }
     .deploy-form-outer .deploy-form button.deploy, .deploy-form-loading .deploy-form button.deploy {
+      float: left;
       border: none;
       font-family: inherit;
       font-size: inherit;
       background: none;
       cursor: pointer;
-      padding: 15px 35px;
+      padding: 17px 35px 14px;
       display: inline-block;
       text-transform: uppercase;
       letter-spacing: 1px;
@@ -10011,7 +10030,9 @@ button.sidebar-open {
       box-shadow: 0 6px #119e4d;
       -webkit-transition: none;
       -moz-transition: none;
-      transition: none; }
+      transition: none;
+      margin-bottom: 20px;
+      margin-right: 20px; }
       .deploy-form-outer .deploy-form button.deploy:after, .deploy-form-loading .deploy-form button.deploy:after {
         content: '';
         position: absolute;
@@ -10033,6 +10054,23 @@ button.sidebar-open {
         .deploy-form-outer .deploy-form button.deploy:disabled:hover, .deploy-form-loading .deploy-form button.deploy:disabled:hover {
           top: 0;
           box-shadow: 0 6px #999999; }
+    .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-loading .deploy-form dl.quick-summary {
+      float: left;
+      opacity: 0.7;
+      -webkit-transition: all 0.3s ease-out;
+      -moz-transition: all 0.3s ease-out;
+      -o-transition: all 0.3s ease-out;
+      transition: all 0.3s ease-out;
+      padding: 3px 8px; }
+      .deploy-form-outer .deploy-form dl.quick-summary.activated, .deploy-form-loading .deploy-form dl.quick-summary.activated {
+        opacity: 1.0; }
+      .deploy-form-outer .deploy-form dl.quick-summary dt, .deploy-form-loading .deploy-form dl.quick-summary dt {
+        width: 70px;
+        font-weight: normal;
+        float: left;
+        clear: left; }
+      .deploy-form-outer .deploy-form dl.quick-summary dd, .deploy-form-loading .deploy-form dl.quick-summary dd {
+        margin-left: 80px; }
 
 .deploy-history {
   margin-top: 10px; }

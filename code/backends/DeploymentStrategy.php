@@ -21,7 +21,7 @@ class DeploymentStrategy extends ViewableData {
 	/**
 	 * @var string
 	 */
-	protected $actionCode = 'deploy';
+	protected $actionCode = 'default';
 
 	/**
 	 * @var int 

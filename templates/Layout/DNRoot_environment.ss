@@ -79,14 +79,18 @@
 		<% end_if %>
 	<% else %>
 		<% if $CurrentEnvironment.CanDeploy %>
-            <div id="deploy_form"></div>
-            <script>
-				var urls = {
-					project_url: "{$absoluteBaseURL}naut/api/$CurrentProject.Name",
-					env_url: "{$absoluteBaseURL}{$CurrentEnvironment.Link}",
-					env_name: "{$CurrentEnvironment.Name}"
+			<div id="deploy_form"></div>
+			<script>
+				var context = {
+					projectUrl: "{$absoluteBaseURL}naut/api/$CurrentProject.Name",
+					envUrl: "{$absoluteBaseURL}{$CurrentEnvironment.Link}",
+					envName: "{$CurrentEnvironment.Name}",
+					siteUrl: "{$CurrentEnvironment.URL}",
+					<% loop $PlatformSpecificStrings %>
+						$Code: "$String",
+					<% end_loop %>
 				};
-            </script>
+			</script>
 		<% end_if %>
 	<% end_if %>
 

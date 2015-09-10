@@ -136,6 +136,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * @var array
 	 */
+	private static $platform_specific_strings = array();
+
+	/**
+	 * @var array
+	 */
 	private static $action_types = array(
 		self::ACTION_DEPLOY,
 		self::ACTION_SNAPSHOT
@@ -196,7 +201,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * @return ArrayList
 	 */
-	public static function getSupportLinks() {
+	public static function get_support_links() {
 		$supportLinks = self::config()->support_links;
 		if($supportLinks) {
 			return new ArrayList($supportLinks);
@@ -212,7 +217,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'RedisUnavailable' => 'RedisUnavailable',
 			'RedisWorkersCount' => 'RedisWorkersCount',
 			'SidebarLinks' => 'SidebarLinks',
-			"SupportLinks" => 'getSupportLinks'
+			"SupportLinks" => 'get_support_links'
 		);
 	}
 
@@ -869,6 +874,16 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		return Member::get()->filter('ID', $memberId)
 			->relation('Groups')
 			->relation('Projects');
+	}
+
+	/**
+	 * @return ArrayList
+	 */
+	public function getPlatformSpecificStrings() {
+		$strings = $this->config()->platform_specific_strings;
+		if ($strings) {
+			return new ArrayList($strings);
+		}
 	}
 
 	/**
