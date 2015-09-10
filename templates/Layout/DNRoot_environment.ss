@@ -86,9 +86,11 @@
 					envUrl: "{$absoluteBaseURL}{$CurrentEnvironment.Link}",
 					envName: "{$CurrentEnvironment.Name}",
 					siteUrl: "{$CurrentEnvironment.URL}",
-					<% loop $PlatformSpecificStrings %>
-						$Code: "$String",
-					<% end_loop %>
+					<% if $PlatformSpecificStrings %>
+						<% loop $PlatformSpecificStrings %>
+							$Code: "$String",
+						<% end_loop %>
+					<% end_if %>
 				};
 			</script>
 		<% end_if %>
