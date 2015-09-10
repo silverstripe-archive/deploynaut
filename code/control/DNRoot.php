@@ -1072,6 +1072,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'field_data' => array(),
 			'advanced_opts' => $advanced
 		);
+
 		foreach($project->DNTagList()->setLimit(null) as $tag) {
 			$name = $tag->Name();
 			$data['field_data'][] = array(
@@ -1079,6 +1080,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				'text' => sprintf("%s", $name)
 			);
 		}
+
+		// show newest tags first.
+		$data['field_data'] = array_reverse($data['field_data']);
+
 		$tabs[] = $data;
 
 		// Past deployments

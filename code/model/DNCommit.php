@@ -84,6 +84,14 @@ class DNCommit extends ViewableData {
 	}
 
 	/**
+	 * Return the full SHA of the commit.
+	 * @return string
+	 */
+	public function SHA() {
+		return htmlentities($this->commit->getHash());
+	}
+
+	/**
 	 * Return the first line of the commit message.
 	 * @return string
 	 */

@@ -141,13 +141,13 @@ class DNReferenceList extends ArrayList {
 			}
 
 			if($this->getTags) {
-				$builds[$reference->getCommitHash()] = DNTag::create($reference, $this->project, $this->data);
-
+				$builds[] = DNTag::create($reference, $this->project, $this->data);
 			} else {
 				$name = $this->reference ? $this->reference->getName() : '';
-				$builds[$reference->getHash()] = DNCommit::create($reference, $this->project, $this->data, $name);
+				$builds[] = DNCommit::create($reference, $this->project, $this->data, $name);
 			}
 		}
+
 		return $builds;
 	}
 
@@ -160,15 +160,24 @@ class DNReferenceList extends ArrayList {
 			$this->items = $this->getReferences();
 			$this->loaded = true;
 		}
+
 		// The item might not be in the list because of the limit, try to find
 		// in an older version and add it to the list.
-		if(!isset($this->items[$hash])) {
+		$found = null;
+		foreach($this->items as $item) {
+			if($item->SHA() == $hash) {
+				$found = $item;
+				break;
+			}
+		}
+
+		if($found === null) {
 			$repository = new Gitonomy\Git\Repository($this->project->getLocalCVSPath());
 			$commit = new Gitonomy\Git\Commit($repository, $hash);
-			$this->items[$hash] = DNCommit::create($commit, $this->project, $this->data);
-		};
+			$found = DNCommit::create($commit, $this->project, $this->data);
+		}
 
-		return $this->items[$hash];
+		return $found;
 	}
 
 	public function Count() {
@@ -187,9 +196,9 @@ class DNReferenceList extends ArrayList {
 			$this->items = $this->getReferences();
 			$this->loaded = true;
 		}
-		foreach($this->items as $i => $item) {
+		foreach($this->items as $item) {
 			if(is_array($item)) {
-				$this->items[$i] = new ArrayData($item);
+				$this->items[] = new ArrayData($item);
 			}
 		}
 		return new ArrayIterator($this->items);
