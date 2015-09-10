@@ -6,32 +6,32 @@
 	
 <div class="row">
 	<div class="col-md-6">
+		<h4>Currently deployed:</h4>
 		<ul class="build-details">
+			<li>
 			<% if $Environment.Project.RepositoryInterface.CommitURL %>
-				<li>
-					<% if $Tags %>
-						<% loop $Tags %>
-							<span class="deployment-tag">$Me</span>
-						<% end_loop %>
-					<% end_if %>
-					<a href="{$Environment.Project.RepositoryInterface.CommitURL}/{$SHA}" class="git-sha tooltip-hint">
-						$SHA.ShortHash
-					</a>
-					<% if $Committer %><span class="commit-message"> - $Message</span><% end_if %>
-				</li>
+				<% if $Tags %>
+					<% loop $Tags %>
+						<span class="deployment-tag">$Me</span>
+					<% end_loop %>
+				<% end_if %>
+				<a href="{$Environment.Project.RepositoryInterface.CommitURL}/{$SHA}" class="git-sha tooltip-hint">$SHA.ShortHash</a>
+				<span class="commit-message"> - $Message</span>
 			<% else %>
-				<li><span class="git-sha tooltip-hint">
+				<span class="git-sha tooltip-hint">
 					<% if $Tags %>
 						<% loop $Tags %>
 							<span class="deployment-tag">$Me</span>
 						<% end_loop %>
 					<% end_if %>
-					$SHA.ShortHash<% if $Committer %><span class="commit-message"> - $Message</span><% end_if %>
-				</span></li>
+					$SHA.ShortHash<span class="commit-message"> - $Message</span>
+				</span>
 			<% end_if %>
+			</li>
 
-			<li><span class="deploy-date">Deployed on $LastEdited.Nice</span></li>
-			<li><a href="$Environment.CurrentBuild.Link">View Deploy Log</a></li>
+			<li>
+				<span class="deploy-date">Deployed on $LastEdited.Nice</span>. <a href="$Environment.CurrentBuild.Link">View deploy log</a>
+			</li>
 		</ul>
 	</div>
 
