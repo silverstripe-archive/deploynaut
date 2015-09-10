@@ -9904,10 +9904,10 @@ button.sidebar-open {
   overflow: hidden; }
   .deploy-form-outer .deploy-form, .deploy-form-loading .deploy-form {
     position: relative; }
-    .deploy-form-outer .deploy-form .glyphicon-sort, .deploy-form-loading .deploy-form .glyphicon-sort {
-      -ms-transform: rotate(90deg);
-      -webkit-transform: rotate(90deg);
-      transform: rotate(90deg); }
+    .deploy-form-outer .deploy-form .changeAction, .deploy-form-loading .deploy-form .changeAction {
+      width: 45px; }
+      .deploy-form-outer .deploy-form .changeAction .compare-icon, .deploy-form-loading .deploy-form .changeAction .compare-icon {
+        font-size: 20px; }
     .deploy-form-outer .deploy-form .deploy-button small, .deploy-form-loading .deploy-form .deploy-button small {
       font-size: 70%;
       text-transform: none; }
