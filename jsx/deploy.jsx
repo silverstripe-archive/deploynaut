@@ -788,7 +788,7 @@ var deploy = (function (events, classNames) {
 
 			var compareUrl = null;
 			if(this.props.compareUrl !== null) {
-				compareUrl = <a target="_blank" href={this.props.compareUrl}><i className="compare-icon fa fa-eye"></i></a>
+				compareUrl = <a target="_blank" href={this.props.compareUrl}>View diff</a>
 			}
 
 			return (

@@ -9905,9 +9905,7 @@ button.sidebar-open {
   .deploy-form-outer .deploy-form, .deploy-form-loading .deploy-form {
     position: relative; }
     .deploy-form-outer .deploy-form .changeAction, .deploy-form-loading .deploy-form .changeAction {
-      width: 45px; }
-      .deploy-form-outer .deploy-form .changeAction .compare-icon, .deploy-form-loading .deploy-form .changeAction .compare-icon {
-        font-size: 20px; }
+      width: 80px; }
     .deploy-form-outer .deploy-form .deploy-button small, .deploy-form-loading .deploy-form .deploy-button small {
       font-size: 70%;
       text-transform: none; }
