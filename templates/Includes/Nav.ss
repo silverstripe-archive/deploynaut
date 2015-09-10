@@ -16,7 +16,7 @@
 		</li>
 	<% end_loop %>
 
-	<% if $DNProjectList.count > 5 %>
+	<% if $DNProjectList.count > 5 || $StarredProjects.count > 0 %>
 		<li class="">
 			<a href="{$BaseHref}naut/projects">View all stacks&hellip;</a>
 		</li>
