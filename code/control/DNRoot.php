@@ -1208,6 +1208,21 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		);
 		$data = $strategy->toArray();
 
+		// Add in a URL for comparing from->to code changes.
+		if(
+			!empty($data['changes']['Code version']['from'])
+			&& !empty($data['changes']['Code version']['to'])
+		) {
+			$interface = $project->getRepositoryInterface();
+			$compareurl = sprintf(
+				'%s/compare/%s...%s',
+				$interface->URL,
+				$data['changes']['Code version']['from'],
+				$data['changes']['Code version']['to']
+			);
+			$data['changes']['Code version']['compareUrl'] = $compareurl;
+		}
+
 		// Append json to response
 		$token = SecurityToken::inst();
 		$data['SecurityID'] = $token->getValue();

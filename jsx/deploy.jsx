@@ -737,8 +737,14 @@ var deploy = (function (events, classNames) {
 			var idx = 0;
 			var summaryLines = Object.keys(changes).map(function(key) {
 				idx++;
+
+				var compareUrl = null;
+				if(typeof changes[key].compareUrl != 'undefined') {
+					compareUrl = changes[key].compareUrl;
+				}
+
 				if(changes[key].from != changes[key].to) {
-					return <SummaryLine key={idx} name={key} from={changes[key].from} to={changes[key].to} />
+					return <SummaryLine key={idx} name={key} from={changes[key].from} to={changes[key].to} compareUrl={compareUrl} />
 				} else {
 					return <UnchangedSummaryLine key={idx} name={key} value={changes[key].from} />
 				}
@@ -750,6 +756,7 @@ var deploy = (function (events, classNames) {
 						<tr>
 							<th>&nbsp;</th>
 							<th>From</th>
+							<th>&nbsp;</th>
 							<th>To</th>
 						</tr>
 					</thead>
@@ -773,15 +780,22 @@ var deploy = (function (events, classNames) {
 			if(from !== null && from.length === 40) {
 				from = from.substring(0,7);
 			}
+
 			// naive git sha detection
 			if(to !== null && to.length === 40) {
 				to = to.substring(0,7);
+			}
+
+			var compareUrl = null;
+			if(this.props.compareUrl !== null) {
+				compareUrl = <a target="_blank" href={this.props.compareUrl}><span className="glyphicon glyphicon-sort"></span></a>
 			}
 
 			return (
 				<tr>
 					<th scope="row">{this.props.name}</th>
 					<td>{from}</td>
+					<td>{compareUrl}</td>
 					<td>{to}</td>
 				</tr>
 			)
