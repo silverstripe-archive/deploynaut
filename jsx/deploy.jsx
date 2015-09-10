@@ -756,8 +756,8 @@ var deploy = (function (events, classNames) {
 						<tr>
 							<th>&nbsp;</th>
 							<th>From</th>
-							<th>&nbsp;</th>
 							<th>To</th>
+							<th className="changeAction">&nbsp;</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -788,15 +788,15 @@ var deploy = (function (events, classNames) {
 
 			var compareUrl = null;
 			if(this.props.compareUrl !== null) {
-				compareUrl = <a target="_blank" href={this.props.compareUrl}><span className="glyphicon glyphicon-sort"></span></a>
+				compareUrl = <a target="_blank" href={this.props.compareUrl}><i className="compare-icon fa fa-eye"></i></a>
 			}
 
 			return (
 				<tr>
 					<th scope="row">{this.props.name}</th>
 					<td>{from}</td>
-					<td>{compareUrl}</td>
 					<td>{to}</td>
+					<td className="changeAction">{compareUrl}</td>
 				</tr>
 			)
 		}
@@ -814,10 +814,10 @@ var deploy = (function (events, classNames) {
 				<tr>
 					<th scope="row">{this.props.name}</th>
 					<td>{from}</td>
-					<td>&nbsp;</td>
 					<td>
 						<span className="label label-success">Unchanged</span>
 					</td>
+					<td>&nbsp;</td>
 				</tr>
 			);
 		}
