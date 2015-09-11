@@ -40,9 +40,9 @@
 						</td>
 						<td class="text-center">
 							<% if $CanDeploy %>
-								<span class="label label-success">Enabled</span>
+								<span class="label label-success">Yes</span>
 							<% else %>
-								<span class="label label-danger">Disabled</span>
+								<span class="label label-danger">No</span>
 							<% end_if %>
 						</td>
 						<td class="text-center">
