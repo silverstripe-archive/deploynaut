@@ -363,13 +363,6 @@ var deploy = (function (events, classNames) {
 			return this.props.tab.advanced_opts === 'true';
 		},
 
-		showVerifyButton: function() {
-			if(this.showOptions()) {
-				return true;
-			}
-			return this.props.tab.field_type == 'textfield';
-		},
-
 		shaChosen: function() {
 			return (this.state.sha !== '');
 		},
@@ -385,7 +378,6 @@ var deploy = (function (events, classNames) {
 			var selector;
 			if (this.props.tab.field_type == 'dropdown') {
 				var changeHandler = this.changeHandler;
-				if(this.showVerifyButton()) { changeHandler = this.SHAChangeHandler }
 				selector = <SelectorDropdown ref="sha_selector" tab={this.props.tab} changeHandler={changeHandler} />
 			} else if (this.props.tab.field_type == 'textfield') {
 				selector = <SelectorText ref="sha_selector" tab={this.props.tab} changeHandler={this.SHAChangeHandler} />
@@ -397,12 +389,6 @@ var deploy = (function (events, classNames) {
 				options = <AdvancedOptions tab={this.props.tab} changeHandler={this.OptionChangeHandler} />
 			}
 
-			// 'The verify button'
-			var verifyButton = null;
-			if(this.showVerifyButton()) {
-				verifyButton = <VerifyButton disabled={!this.shaChosen()} changeHandler={this.changeHandler} />
-			}
-
 			return (
 				<div id={"deploy-tab-"+this.props.tab.id} className={classes}>
 					<div className="section">
@@ -411,7 +397,6 @@ var deploy = (function (events, classNames) {
 						</div>
 						{selector}
 						{options}
-						{verifyButton}
 					</div>
 					<DeployPlan context={this.props.context} summary={this.state.summary} />
 				</div>
