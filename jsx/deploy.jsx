@@ -659,12 +659,12 @@ var deploy = (function (events, classNames) {
 			var moreInfo = null;
 			if (typeof this.props.context.deployHelp!=='undefined' && this.props.context.deployHelp) {
 				moreInfo = (
-					<a className="small" href={this.props.context.deployHelp}>more info</a>
+					<a target="_blank" className="small" href={this.props.context.deployHelp}>more info</a>
 				);
 			}
 
 			if (this.props.context.siteUrl) {
-				var env = <a href={this.props.context.siteUrl}>{this.props.context.envName}</a>;
+				var env = <a target="_blank" href={this.props.context.siteUrl}>{this.props.context.envName}</a>;
 			} else {
 				var env = <span>{this.props.context.envName}</span>;
 			}
