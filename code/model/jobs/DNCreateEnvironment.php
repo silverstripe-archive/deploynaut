@@ -3,6 +3,7 @@ class DNCreateEnvironment extends DataObject {
 
 	private static $db = array(
 		'Data' => 'Text',
+		'ResqueToken' => 'Varchar(255)',
 		"Status" => "Enum('Queued, Started, Finished, Failed, n/a', 'n/a')",
 	);
 

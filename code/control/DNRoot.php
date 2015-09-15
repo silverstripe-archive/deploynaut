@@ -919,6 +919,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$job = DNCreateEnvironment::create();
 		$job->Data = serialize($data);
 		$job->ProjectID = $project->ID;
+		$job->write();
 		$job->start();
 
 		return $this->redirect($project->Link('createenv') . '/' . $job->ID);
