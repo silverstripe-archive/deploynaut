@@ -66,7 +66,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'getDeployForm',
 		'doDeploy',
 		'deploy',
-		'deploylog',
 		'getDataTransferForm',
 		'transfer',
 		'transferlog',
@@ -106,7 +105,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'project/$Project/environment/$Environment/deploy_summary' => 'deploySummary',
 		'project/$Project/environment/$Environment/git_revisions' => 'gitRevisions',
 		'project/$Project/environment/$Environment/start-deploy' => 'startDeploy',
-		'project/$Project/environment/$Environment/deploy/$Identifier/log' => 'deploylog',
 		'project/$Project/environment/$Environment/deploy/$Identifier' => 'deploy',
 		'project/$Project/transfer/$Identifier/log' => 'transferlog',
 		'project/$Project/transfer/$Identifier' => 'transfer',
@@ -838,7 +836,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @param SS_HTTPRequest $request
 	 * @return string
 	 */
-	public function createenv(SS_HTTPRequest $request) {
+	public function createenvlog(SS_HTTPRequest $request) {
 		$params = $request->params();
 		$record = DNCreateEnvironment::get()->byId($params['Identifier']);
 
@@ -1410,46 +1408,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		return $this->render(array(
 			'Deployment' => $deployment,
 		));
-	}
-
-
-	/**
-	 * Action - Get the latest deploy log
-	 *
-	 * @param SS_HTTPRequest $request
-	 *
-	 * @return string
-	 * @throws SS_HTTPResponse_Exception
-	 */
-	public function deploylog(SS_HTTPRequest $request) {
-		$params = $request->params();
-		$deployment = DNDeployment::get()->byId($params['Identifier']);
-
-		if(!$deployment || !$deployment->ID) {
-			throw new SS_HTTPResponse_Exception('Deployment not found', 404);
-		}
-		if(!$deployment->canView()) {
-			return Security::permissionFailure();
-		}
-
-		$environment = $deployment->Environment();
-		$project = $environment->Project();
-
-		if($environment->Name != $params['Environment']) {
-			throw new LogicException("Environment in URL doesn't match this deploy");
-		}
-		if($project->Name != $params['Project']) {
-			throw new LogicException("Project in URL doesn't match this deploy");
-		}
-
-		$log = $deployment->log();
-		if($log->exists()) {
-			$content = $log->content();
-		} else {
-			$content = 'Waiting for action to start';
-		}
-
-		return $this->sendResponse($deployment->ResqueStatus(), $content);
 	}
 
 	/**
