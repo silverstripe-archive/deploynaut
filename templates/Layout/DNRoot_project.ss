@@ -63,7 +63,6 @@
 			</table>
 		</div>
 
-
 		<% if $PublicKey %>
 			<h4>Deploy key</h4>
 			<p>Permit us access to your private repositories by adding this deployment key.</p>
@@ -71,5 +70,9 @@
 		<% end_if %>
 
 	<% end_with %>
+
+	<% if $CurrentProject.canCreateEnvironments %>
+		$CreateEnvironmentForm
+	<% end_if %>
 
 </div>
