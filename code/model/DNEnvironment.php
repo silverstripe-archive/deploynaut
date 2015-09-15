@@ -233,6 +233,14 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
+	 * Return the current object from $this->Menu()
+	 * Good for making titles and things
+	 */
+	public function CurrentMenu() {
+		return $this->Menu()->filter('IsSection', true)->First();
+	}
+
+	/**
 	 * Return a name for this environment.
 	 *
 	 * @param string $separator The string used when concatenating project with env name

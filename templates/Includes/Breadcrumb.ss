@@ -1,7 +1,15 @@
 <ol class="breadcrumb">
-	<li>$CurrentProject.Title</li>
+	<% if $CurrentEnvironment %>
+		<li>$CurrentProject.Title &raquo; $CurrentEnvironment.Title</li>
+	<% else %>
+		<li>$CurrentProject.Title</li>
+	<% end_if %>
 </ol>
 <h1 class="page-heading">
-	todo fix this
-	<%-- $CurrentProject.CurrentMenu.Title --%>
+
+	<% if $CurrentEnvironment %>
+		$CurrentEnvironment.CurrentMenu.Title
+	<% else %>
+		$CurrentProject.CurrentMenu.Title
+	<% end_if %>
 </h1>
