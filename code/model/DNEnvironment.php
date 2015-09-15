@@ -227,15 +227,6 @@ class DNEnvironment extends DataObject {
 			'IsSection' => $this->isSection() && $actionType == DNRoot::ACTION_DEPLOY
 		)));
 
-		if(DNRoot::FlagSnapshotsEnabled()) {
-			$list->push(new ArrayData(array(
-				'Link' => sprintf('naut/project/%s/snapshots', $this->Project()->Name),
-				'Title' => 'Snapshots',
-				'IsCurrent' => $this->isSection() && $controller->getAction() == 'snapshots',
-				'IsSection' => $this->isSection() && $actionType == DNRoot::ACTION_SNAPSHOT
-			)));
-		}
-
 		$this->extend('updateMenu', $list);
 
 		return $list;

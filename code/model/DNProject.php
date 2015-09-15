@@ -173,6 +173,31 @@ class DNProject extends DataObject {
 	}
 
 	/**
+	 * Get the menu to be shown on projects
+	 *
+	 * @return ArrayList
+	 */
+	public function Menu() {
+		$list = new ArrayList();
+
+		$controller = Controller::curr();
+		$actionType = $controller->getField('CurrentActionType');
+
+		if(DNRoot::FlagSnapshotsEnabled()) {
+			$list->push(new ArrayData(array(
+				'Link' => sprintf('naut/project/%s/snapshots', $this->Name),
+				'Title' => 'Snapshots',
+				'IsCurrent' => $this->isSection() && $controller->getAction() == 'snapshots',
+				'IsSection' => $this->isSection() && $actionType == DNRoot::ACTION_SNAPSHOT
+			)));
+		}
+
+		$this->extend('updateMenu', $list);
+
+		return $list;
+	}
+
+	/**
 	 * Is this project currently at the root level of the controller that handles it?
 	 * @return bool
 	 */

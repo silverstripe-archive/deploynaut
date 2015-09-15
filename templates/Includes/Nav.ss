@@ -7,8 +7,6 @@
 			</a>
 
 			<ul class="collapse<% if $IsActive %> in<% end_if %>" id="collapseExample-$Pos">
-				<li<% if $Overview %> class="active"<% end_if %>><a href="$Project.Link">Overview</a></li>
-
 				<% with $Project %>
 					<% if $DNEnvironmentList %>
 						<% loop $DNEnvironmentList %>
@@ -16,6 +14,10 @@
 						<% end_loop %>
 					<% end_if %>
 				<% end_with %>
+
+				<% loop $Project.Menu %>
+					<li<% if $IsSection %> class="active"<% end_if %>><a href="$Link">$Title</a></li>
+				<% end_loop %>
 			</ul>
 		</li>
 	<% end_loop %>
