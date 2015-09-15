@@ -69,11 +69,15 @@
 			<pre class="deploy-key">$PublicKey</pre>
 		<% end_if %>
 
-	<% end_with %>
+		<% if $canCreateEnvironments %>
+			<h4>Create an environment</h4>
+			<% if $CreateEnvironmentsMessages %><p class="alert alert-danger">$CreateEnvironmentsMessages</p><% end_if %>
 
-	<% if $CurrentProject.canCreateEnvironments %>
-		<h4>Create an environment</h4>
-		$CreateEnvironmentForm
-	<% end_if %>
+			<% if not $CreateEnvironmentsMessages %>
+				$Top.CreateEnvironmentForm
+			<% end_if %>
+		<% end_if %>
+
+	<% end_with %>
 
 </div>

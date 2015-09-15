@@ -890,7 +890,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$action->addExtraClass('btn');
 		$form->addExtraClass('fields-wide');
 		// Tweak the action so it plays well with our fake URL structure.
-		$form->setFormAction($project->Link() . '/UploadSnapshotForm');
+		$form->setFormAction($project->Link() . '/CreateEnvironmentForm');
 
 		return $form;
 	}
