@@ -9,9 +9,12 @@
 			<ul class="collapse<% if $IsActive %> in<% end_if %>" id="collapseExample-$Pos">
 				<% with $Project %>
 					<% if $DNEnvironmentList %>
+						<li><a href="#">Environments</a></li>
+						<ul>
 						<% loop $DNEnvironmentList %>
 							<li<% if $IsSection %> class="active"<% end_if %>><a href="$Link">$Name</a></li>
 						<% end_loop %>
+						</ul>
 					<% end_if %>
 				<% end_with %>
 
