@@ -921,7 +921,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$job = DNCreateEnvironment::create();
 		$environment = DNEnvironment::create();
 		$environment->ProjectID = $project->ID;
-		$environment->Name = ''; // todo give it a name!
+		$environment->Usage = ''; // todo fill out proper usage here
+		$environment->Name = $project->Cluster . '-' . $project->Name . '-' . $data['Usage'] . '-';
 		$environment->write();
 
 		$job->Data = serialize($data);
