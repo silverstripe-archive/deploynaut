@@ -3,9 +3,9 @@
 
 <div class="wrapper">
 	<ul class="nav nav-tabs list">
-		<li<% if $Overview %> class="active"<% end_if %>><a href="$CurrentProject.Link">Overview</a></li>
+		<li<% if $Overview %> class="active"<% end_if %>><a href="$CurrentEnvironment.Link">Overview</a></li>
 
-		<% loop $CurrentProject.Menu %>
+		<% loop $CurrentEnvironment.Menu %>
 			<li<% if $IsSection %> class="active"<% end_if %>><a href="$Link">$Title</a></li>
 		<% end_loop %>
 	</ul>

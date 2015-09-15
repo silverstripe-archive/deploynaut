@@ -213,6 +213,33 @@ class DNEnvironment extends DataObject {
 		return Injector::inst()->get($backend);
 	}
 
+	public function Menu() {
+		$list = new ArrayList();
+
+		$controller = Controller::curr();
+		$actionType = $controller->getField('CurrentActionType');
+
+		$list->push(new ArrayData(array(
+			'Link' => sprintf('naut/project/%s/environment/%s', $this->Project()->Name, $this->Name),
+			'Title' => 'Deployments',
+			'IsCurrent' => $this->isCurrent(),
+			'IsSection' => $this->isSection() && $actionType == DNRoot::ACTION_DEPLOY
+		)));
+
+		if(DNRoot::FlagSnapshotsEnabled()) {
+			$list->push(new ArrayData(array(
+				'Link' => sprintf('naut/project/%s/snapshots', $this->Project()->Name),
+				'Title' => 'Snapshots',
+				'IsCurrent' => $this->isSection() && $controller->getAction() == 'snapshots',
+				'IsSection' => $this->isSection() && $actionType == DNRoot::ACTION_SNAPSHOT
+			)));
+		}
+
+		$this->extend('updateMenu', $list);
+
+		return $list;
+	}
+
 	/**
 	 * Return a name for this environment.
 	 *

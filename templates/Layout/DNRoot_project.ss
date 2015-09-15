@@ -72,6 +72,7 @@
 	<% end_with %>
 
 	<% if $CurrentProject.canCreateEnvironments %>
+		<h4>Create an environment</h4>
 		$CreateEnvironmentForm
 	<% end_if %>
 

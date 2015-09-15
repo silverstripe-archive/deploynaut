@@ -2,5 +2,6 @@
 	<li>$CurrentProject.Title</li>
 </ol>
 <h1 class="page-heading">
-	$CurrentProject.CurrentMenu.Title
+	todo fix this
+	<%-- $CurrentProject.CurrentMenu.Title --%>
 </h1>
