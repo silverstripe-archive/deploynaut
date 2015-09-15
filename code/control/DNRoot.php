@@ -922,9 +922,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$environment = DNEnvironment::create();
 		$environment->ProjectID = $project->ID;
 		$environment->Name = ''; // todo give it a name!
+		$environment->write();
 
 		$job->Data = serialize($data);
-		$job->ProjectID = $project->ID;
+		$job->EnvironmentID = $environment->ID;
 		$job->write();
 		$job->start();
 
