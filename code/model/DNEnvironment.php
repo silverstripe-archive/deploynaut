@@ -91,7 +91,8 @@ class DNEnvironment extends DataObject {
 	 * @var array
 	 */
 	public static $has_one = array(
-		"Project" => "DNProject"
+		"Project" => "DNProject",
+		"CreateEnvironment" => "DNCreateEnvironment"
 	);
 
 	/**

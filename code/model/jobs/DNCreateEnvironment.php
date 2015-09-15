@@ -8,7 +8,7 @@ class DNCreateEnvironment extends DataObject {
 	);
 
 	private static $has_one = array(
-		'Project' => 'DNProject',
+		'Environment' => 'DNEnvironment',
 		'Creator' => 'Member'
 	);
 
@@ -29,7 +29,7 @@ class DNCreateEnvironment extends DataObject {
 	}
 
 	public function Link() {
-		return Controller::join_links($this->Project()->Link(), 'environments', 'create', $this->ID);
+		return Controller::join_links($this->Environment()->Project()->Link(), 'createenv', $this->ID);
 	}
 
 	public function LogLink() {
@@ -37,7 +37,7 @@ class DNCreateEnvironment extends DataObject {
 	}
 
 	public function canView($member = null) {
-		return $this->Project()->canView($member);
+		return $this->Environment()->Project()->canView($member);
 	}
 
 	/**
@@ -47,7 +47,7 @@ class DNCreateEnvironment extends DataObject {
 	protected function logfile() {
 		return sprintf(
 			'%s.createenv.%s.log',
-			$this->Project()->Name,
+			$this->Environment()->Project()->Name,
 			$this->ID
 		);
 	}
@@ -92,12 +92,13 @@ class DNCreateEnvironment extends DataObject {
 	 * @return string Resque token
 	 */
 	protected function enqueueCreation() {
-		$project = $this->Project();
+		$project = $this->Environment()->Project();
 		$log = $this->log();
 
 		$args = array(
 			'createID' => $this->ID,
 			'logfile' => $this->logfile(),
+			'envName' => $this->Environment()->Name,
 			'projectName' => $project->Name
 		);
 
