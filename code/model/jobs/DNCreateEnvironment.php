@@ -45,7 +45,7 @@ class DNCreateEnvironment extends DataObject {
 	 */
 	protected function logfile() {
 		return sprintf(
-			'%s.%s.log',
+			'%s.createenv.%s.log',
 			$this->Project()->Name,
 			$this->ID
 		);
