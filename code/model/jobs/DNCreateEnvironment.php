@@ -2,6 +2,7 @@
 class DNCreateEnvironment extends DataObject {
 
 	private static $db = array(
+		'Data' => 'Text',
 		"Status" => "Enum('Queued, Started, Finished, Failed, n/a', 'n/a')",
 	);
 
@@ -108,8 +109,8 @@ class DNCreateEnvironment extends DataObject {
 			$message = sprintf(
 				'Environment creation for project %s initiated by %s (%s), with IP address %s',
 				$project->Name,
-				$deployer->getName(),
-				$deployer->Email,
+				$creator->getName(),
+				$creator->Email,
 				Controller::curr()->getRequest()->getIP()
 			);
 			$log->write($message);

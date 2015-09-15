@@ -109,7 +109,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'project/$Project/transfer/$Identifier/log' => 'transferlog',
 		'project/$Project/transfer/$Identifier' => 'transfer',
 		'project/$Project/environment/$Environment' => 'environment',
-		'project/$Project/createenv' => 'createenv',
+		'project/$Project/createenv/$Identifier' => 'createenv',
 		'project/$Project/CreateEnvironmentForm' => 'getCreateEnvironmentForm',
 		'project/$Project/branch' => 'branch',
 		'project/$Project/build/$Build' => 'build',
@@ -836,7 +836,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @param SS_HTTPRequest $request
 	 * @return string
 	 */
-	public function createenvlog(SS_HTTPRequest $request) {
+	public function createenv(SS_HTTPRequest $request) {
 		$params = $request->params();
 		$record = DNCreateEnvironment::get()->byId($params['Identifier']);
 
@@ -847,7 +847,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return Security::permissionFailure();
 		}
 
-		$project = $environment->Project();
+		$project = $this->getCurrentProject();
+		if(!$project) {
+			return $this->project404Response();
+		}
 
 		if($project->Name != $params['Project']) {
 			throw new LogicException("Project in URL doesn't match this creation");
@@ -913,12 +916,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return new SS_HTTPResponse('Not allowed to create environments for this project', 401);
 		}
 
-		// @todo start the creation here. Do we store the form data as a blob of text in a column?
-		var_dump($data);die;
 		$job = DNCreateEnvironment::create();
+		$job->Data = serialize($data);
 		$job->ProjectID = $project->ID;
 		$job->start();
 
+		return $this->redirect($project->Link('createenv') . '/' . $job->ID);
 	}
 
 	/**

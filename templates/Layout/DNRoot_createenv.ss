@@ -9,7 +9,7 @@
 <div class="content">
 	<div class="row">
 		<div class="col-md-12 environment-details">
-			<a href="naut/project/{$CurrentProject.Name}/environments"><i class="fa fa-long-arrow-left"></i> Back to environments</a>
+			<a href="$CurrentProject.Link"><i class="fa fa-long-arrow-left"></i> Back to overview</a>
 		</div>
 	</div>
 
