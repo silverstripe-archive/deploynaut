@@ -10,8 +10,8 @@
 				<% with $Project %>
 					<% if $DNEnvironmentList %>
 						<li>
-							<a class="nav-submenu" role="button" data-toggle="collapse" href="#collapseEnvs-$Pos" aria-controls="collapseEnvs-$Pos" href="#">Environments<span class="icon-arrow"></a>
-							<ul class="collapse<% if $Top.CurrentEnvironment %> in<% end_if %>" id="collapseEnvs-$Pos">
+							<a class="nav-submenu" role="button" data-toggle="collapse" href="#collapseEnvs-$Up.Pos" aria-controls="collapseEnvs-$Up.Pos" href="#">Environments<span class="icon-arrow"></a>
+							<ul class="collapse<% if $Top.CurrentEnvironment %> in<% end_if %>" id="collapseEnvs-$Up.Pos">
 							<% loop $DNEnvironmentList %>
 								<li<% if $IsSection %> class="active"<% end_if %>><a href="$Link">$Name</a></li>
 							<% end_loop %>
