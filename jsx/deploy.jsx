@@ -743,7 +743,15 @@ var deploy = (function (events, classNames) {
 					compareUrl = changes[key].compareUrl;
 				}
 
-				if(changes[key].from != changes[key].to) {
+				if(typeof changes[key].description!=='undefined') {
+
+					if (changes[key].description!=="") {
+						return <DescriptionOnlySummaryLine key={idx} name={key} description={changes[key].description} />
+					} else {
+						return <UnchangedSummaryLine key={idx} name={key} value="" />
+					}
+
+				} else if(changes[key].from != changes[key].to) {
 					return <SummaryLine key={idx} name={key} from={changes[key].from} to={changes[key].to} compareUrl={compareUrl} />
 				} else {
 					return <UnchangedSummaryLine key={idx} name={key} value={changes[key].from} />
@@ -755,8 +763,9 @@ var deploy = (function (events, classNames) {
 					<thead>
 						<tr>
 							<th>&nbsp;</th>
-							<th>From</th>
-							<th>To</th>
+							<th>&nbsp;</th>
+							<th className="transitionIcon">&nbsp;</th>
+							<th>&nbsp;</th>
 							<th className="changeAction">&nbsp;</th>
 						</tr>
 					</thead>
@@ -795,6 +804,7 @@ var deploy = (function (events, classNames) {
 				<tr>
 					<th scope="row">{this.props.name}</th>
 					<td>{from}</td>
+					<td><span className="glyphicon glyphicon-arrow-right" /></td>
 					<td>{to}</td>
 					<td className="changeAction">{compareUrl}</td>
 				</tr>
@@ -814,10 +824,20 @@ var deploy = (function (events, classNames) {
 				<tr>
 					<th scope="row">{this.props.name}</th>
 					<td>{from}</td>
-					<td>
-						<span className="label label-success">Unchanged</span>
-					</td>
 					<td>&nbsp;</td>
+					<td><span className="label label-success">Unchanged</span></td>
+					<td>&nbsp;</td>
+				</tr>
+			);
+		}
+	});
+
+	var DescriptionOnlySummaryLine = React.createClass({
+		render: function() {
+			return (
+				<tr>
+					<th scope="row">{this.props.name}</th>
+					<td colSpan="4" dangerouslySetInnerHTML={{__html: this.props.description}} />
 				</tr>
 			);
 		}
