@@ -114,6 +114,16 @@ class DeploymentStrategy extends ViewableData {
 	}
 
 	/**
+	 * @param string $title
+	 * @param string $desc
+	 */
+	public function setChangeDescriptionOnly($title, $desc) {
+		return $this->changes[$title] = array(
+			'description' => $desc
+		);
+	}
+
+	/**
 	 * @return string Associative array of changes, e.g.
 	 *	array(
 	 *		'SHA' => array(
