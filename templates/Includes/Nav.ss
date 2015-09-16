@@ -7,6 +7,8 @@
 			</a>
 
 			<ul class="collapse<% if $IsActive %> in<% end_if %>" id="collapseExample-$Pos">
+				<li<% if $Overview %> class="active"<% end_if %>><a href="$Project.Link">Overview</a></li>
+
 				<% with $Project %>
 					<% if $DNEnvironmentList %>
 						<li>
