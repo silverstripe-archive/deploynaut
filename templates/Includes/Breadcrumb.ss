@@ -1,6 +1,6 @@
 <ol class="breadcrumb">
 	<% if $CurrentEnvironment %>
-		<li>$CurrentProject.Title &raquo; environments</li>
+		<li>$CurrentProject.Title &raquo; Environments</li>
 	<% else %>
 		<li>$CurrentProject.Title</li>
 	<% end_if %>

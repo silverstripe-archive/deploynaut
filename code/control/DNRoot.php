@@ -1067,7 +1067,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			}
 		}
 
-
 		return $navigation;
 	}
 

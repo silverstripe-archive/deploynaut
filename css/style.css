@@ -9679,6 +9679,8 @@ body .userswitcher fieldset .middleColumn {
     padding: 0;
     margin: 0;
     overflow: hidden; }
+    .side-content ul.nav ul ul a, .side-content .deploy-form-outer .deploy-form ul.SelectionGroup ul ul a, .deploy-form-outer .deploy-form .side-content ul.SelectionGroup ul ul a, .side-content .deploy-form-loading .deploy-form ul.SelectionGroup ul ul a, .deploy-form-loading .deploy-form .side-content ul.SelectionGroup ul ul a {
+      padding-left: 64px; }
     .side-content ul.nav ul a, .side-content .deploy-form-outer .deploy-form ul.SelectionGroup ul a, .deploy-form-outer .deploy-form .side-content ul.SelectionGroup ul a, .side-content .deploy-form-loading .deploy-form ul.SelectionGroup ul a, .deploy-form-loading .deploy-form .side-content ul.SelectionGroup ul a {
       opacity: .8;
       padding-left: 54px; }

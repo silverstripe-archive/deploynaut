@@ -9,12 +9,14 @@
 			<ul class="collapse<% if $IsActive %> in<% end_if %>" id="collapseExample-$Pos">
 				<% with $Project %>
 					<% if $DNEnvironmentList %>
-						<li><a href="#">Environments</a></li>
-						<ul>
-						<% loop $DNEnvironmentList %>
-							<li<% if $IsSection %> class="active"<% end_if %>><a href="$Link">$Name</a></li>
-						<% end_loop %>
-						</ul>
+						<li>
+							<a class="nav-submenu" role="button" data-toggle="collapse" href="#collapseEnvs-$Pos" aria-controls="collapseEnvs-$Pos" href="#">Environments<span class="icon-arrow"></a>
+							<ul class="collapse<% if $Top.CurrentEnvironment %> in<% end_if %>" id="collapseEnvs-$Pos">
+							<% loop $DNEnvironmentList %>
+								<li<% if $IsSection %> class="active"<% end_if %>><a href="$Link">$Name</a></li>
+							<% end_loop %>
+							</ul>
+						</li>
 					<% end_if %>
 				<% end_with %>
 
