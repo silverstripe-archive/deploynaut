@@ -7,13 +7,11 @@
 			</a>
 
 			<ul class="collapse<% if $IsActive %> in<% end_if %>" id="collapseExample-$Pos">
-				<li<% if $Overview %> class="active"<% end_if %>><a href="$Project.Link">Overview</a></li>
-
 				<% with $Project %>
 					<% if $DNEnvironmentList %>
 						<li>
-							<a class="nav-submenu" role="button" data-toggle="collapse" href="#collapseEnvs-$Up.Pos" aria-controls="collapseEnvs-$Up.Pos" href="#">Environments<span class="icon-arrow"></a>
-							<ul class="collapse<% if $Top.CurrentEnvironment %> in<% end_if %>" id="collapseEnvs-$Up.Pos">
+							<a role="button" href="$Link">Environments</a>
+							<ul class="collapse in" >
 							<% loop $DNEnvironmentList %>
 								<li<% if $IsSection %> class="active"<% end_if %>><a href="$Link">$Name</a></li>
 							<% end_loop %>

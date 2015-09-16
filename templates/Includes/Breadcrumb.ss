@@ -1,15 +1,19 @@
 <ol class="breadcrumb">
 	<% if $CurrentEnvironment %>
-		<li>$CurrentProject.Title &raquo; Environments</li>
+		<li>$CurrentProject.Title</li>
+		<li><a href="$CurrentProject.Link">Environments</a></li>
 	<% else %>
 		<li>$CurrentProject.Title</li>
 	<% end_if %>
 </ol>
 <h1 class="page-heading">
-
 	<% if $CurrentEnvironment %>
 		$CurrentEnvironment.Title
 	<% else %>
-		$CurrentProject.CurrentMenu.Title
+		<% if $CurrentProject.CurrentMenu %>
+			$CurrentProject.CurrentMenu.Title
+		<% else %>
+			Environments
+		<% end_if %>
 	<% end_if %>
 </h1>

@@ -11,9 +11,6 @@
 <div class="content">
 
 	<% with $CurrentProject %>
-
-		<h3 id="env">Environments</h3>
-
 		<div class="table-responsive">
 			<table class="table table-striped table-hover">
 				<thead>
