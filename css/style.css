@@ -9906,6 +9906,8 @@ button.sidebar-open {
   overflow: hidden; }
   .deploy-form-outer .deploy-form, .deploy-form-loading .deploy-form {
     position: relative; }
+    .deploy-form-outer .deploy-form .transitionIcon, .deploy-form-loading .deploy-form .transitionIcon {
+      width: 40px; }
     .deploy-form-outer .deploy-form .changeAction, .deploy-form-loading .deploy-form .changeAction {
       width: 80px; }
     .deploy-form-outer .deploy-form .deploy-button small, .deploy-form-loading .deploy-form .deploy-button small {
