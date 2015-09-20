@@ -115,7 +115,7 @@ class DNDataArchive extends DataObject {
 	 * Returns a unique token to correlate an offline item (posted DVD)
 	 * with a specific archive placeholder.
 	 *
-	 * @return String
+	 * @return string
 	 */
 	public static function generate_upload_token($chars = 8) {
 		$generator = new RandomGenerator();
@@ -345,7 +345,7 @@ class DNDataArchive extends DataObject {
 	 * Does not create the path on the filesystem. Can be used to store files related to this transfer.
 	 *
 	 * @param DNDataTransfer
-	 * @return String Absolute file path
+	 * @return string Absolute file path
 	 */
 	public function generateFilepath(DNDataTransfer $dataTransfer) {
 		$data = DNData::inst();
