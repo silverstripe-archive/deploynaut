@@ -13,6 +13,11 @@ class DNCreateEnvironment extends DataObject {
 	);
 
 	/**
+	 * @var DNEnvironment
+	 */
+	protected $environment;
+
+	/**
 	 *
 	 * @param int $int
 	 * @return string
@@ -132,4 +137,24 @@ class DNCreateEnvironment extends DataObject {
 		$log->write($message);
 	}
 
+	public function createEnvironment() {
+		$backend = $this->getBackend();
+		if($backend) {
+			return $backend->createEnvironment($this);
+		}
+		throw new Exception("Unable to find backend.");
+	}
+
+	public function getBackend() {
+		$data = unserialize($this->Data);
+		if(isset($data['EnvironmentType']) && class_exists($data['EnvironmentType'])) {
+			$env = Injector::inst()->get($data['EnvironmentType']);
+			if($env instanceof EnvironmentCreateBackend) {
+				return $env;
+			} else {
+				throw new Exception("Invalid backend: " . $data['EnvironmentType']);
+			}
+		}
+		return null;
+	}
 }

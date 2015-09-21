@@ -62,6 +62,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'pipeline',
 		'pipelinelog',
 		'metrics',
+		'createenvlog',
 		'createenv',
 		'getDeployForm',
 		'doDeploy',
@@ -111,6 +112,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'project/$Project/transfer/$Identifier/log' => 'transferlog',
 		'project/$Project/transfer/$Identifier' => 'transfer',
 		'project/$Project/environment/$Environment' => 'environment',
+		'project/$Project/createenv/$Identifier/log' => 'createenvlog',
 		'project/$Project/createenv/$Identifier' => 'createenv',
 		'project/$Project/CreateEnvironmentForm' => 'getCreateEnvironmentForm',
 		'project/$Project/branch' => 'branch',
@@ -863,6 +865,36 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		));
 	}
 
+
+	public function createenvlog(SS_HTTPRequest $request) {
+		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
+
+		$params = $request->params();
+		$env = DNCreateEnvironment::get()->byId($params['Identifier']);
+
+		if(!$env || !$env->ID) {
+			throw new SS_HTTPResponse_Exception('Log not found', 404);
+		}
+		if(!$env->canView()) {
+			return Security::permissionFailure();
+		}
+
+		$project = $env->Project();
+
+		if($project->Name != $params['Project']) {
+			throw new LogicException("Project in URL doesn't match this deploy");
+		}
+
+		$log = $env->log();
+		if($log->exists()) {
+			$content = $log->content();
+		} else {
+			$content = 'Waiting for action to start';
+		}
+
+		return $this->sendResponse($env->ResqueStatus(), $content);
+	}
+
 	/**
 	 * @param SS_HTTPRequest $request
 	 * @return Form
@@ -875,7 +907,18 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return $this->project404Response();
 		}
 
-		$fields = $project->getCreateEnvironmentFields();
+		$envType = $project->AllowedEnvironmentType;
+		if(!$envType || !class_exists($envType)) {
+			return null;
+		}
+
+		$backend = Injector::inst()->get($envType);
+		if(!($backend instanceof EnvironmentCreateBackend)) {
+			// Only allow this for supported backends.
+			return null;
+		}
+
+		$fields = $backend->getCreateEnvironmentFields();
 		if(!$fields) return null;
 
 		if(!$project->canCreateEnvironments()) {
@@ -889,7 +932,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			new FieldList(
 				$action = new FormAction('doCreateEnvironment', 'Create')
 			),
-			$project->getCreateEnvironmentRequiredFields()
+			$backend->getCreateEnvironmentValidator()
 		);
 
 		$action->addExtraClass('btn');
@@ -918,11 +961,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return new SS_HTTPResponse('Not allowed to create environments for this project', 401);
 		}
 
+		// Set the environment type so we know what we're creating.
+		$data['EnvironmentType'] = $project->AllowedEnvironmentType;
+
 		$job = DNCreateEnvironment::create();
 		$environment = DNEnvironment::create();
 		$environment->ProjectID = $project->ID;
-		$environment->Usage = ''; // todo fill out proper usage here
-		$environment->Name = $project->Cluster . '-' . $project->Name . '-' . $data['Usage'] . '-';
+		$environment->Usage = $datap['Usage'];
 		$environment->write();
 
 		$job->Data = serialize($data);
