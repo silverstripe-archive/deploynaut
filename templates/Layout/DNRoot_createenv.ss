@@ -12,7 +12,6 @@
 			<a href="$CurrentProject.Link"><i class="fa fa-long-arrow-left"></i> Back to overview</a>
 		</div>
 	</div>
-
 <% if $CreateEnvironment %>
 	<% with $CreateEnvironment %>
 		<div class="deployment-status">
@@ -33,6 +32,18 @@
 		<h5>Create log:</h5>
 		<pre id="queue_log" class="log-content" data-loglink="$LogLink">$LogContent</pre>
 	<% end_with %>
+<% else_if $CurrentProject.canCreateEnvironments %>
+	<h4>Create an environment</h4>
+	<% if $CreateEnvironmentsMessages %>
+		<p class="alert alert-danger">$CreateEnvironmentsMessages</p>
+	<% end_if %>
+
+	<% if not $CreateEnvironmentsMessages %>
+		<% with CreateEnvironmentForm %>
+			$addExtraClass('create-form')
+		<% end_with %>
+	<% end_if %>
 <% end_if %>
+
 
 </div>

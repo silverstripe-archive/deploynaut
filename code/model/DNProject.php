@@ -448,6 +448,16 @@ class DNProject extends DataObject {
 	}
 
 	/**
+	 * @return string|null
+	 */
+	public function CreateEnvironmentLink() {
+		if($this->canCreateEnvironments()) {
+			return $this->Link('createenv');
+		}
+		return null;
+	}
+
+	/**
 	 * @return string
 	 */
 	public function ToggleStarLink() {
@@ -832,21 +842,5 @@ class DNProject extends DataObject {
 		return $this->DNData()->getEnvironmentDir().'/'.$this->Name;
 	}
 
-	/**
-	 * Create an empty environment based on AllowedEnvironmentType.
-	 *
-	 * @return DNEnvironment
-	 */
-	public function createEmptyEnvironment() {
-		if($this->AllowedEnvironmentType && class_exists($this->AllowedEnvironmentType)) {
-			$env = Injector::inst()->create($this->AllowedEnvironmentType);
-			if($env instanceof DNEnvironment) {
-				return $env;
-			} else {
-				throw new Exception(get_class($env) . ' is not an instance of DNEnvironment.');
-			}
-		}
-
-		throw new Exception("No allowed environment type set.");
-	}
 }
+

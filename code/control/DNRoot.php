@@ -842,27 +842,30 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function createenv(SS_HTTPRequest $request) {
 		$params = $request->params();
-		$record = DNCreateEnvironment::get()->byId($params['Identifier']);
+		if($params['Identifier']) {
+			$record = DNCreateEnvironment::get()->byId($params['Identifier']);
 
-		if(!$record || !$record->ID) {
-			throw new SS_HTTPResponse_Exception('Create environment not found', 404);
-		}
-		if(!$record->canView()) {
-			return Security::permissionFailure();
-		}
+			if(!$record || !$record->ID) {
+				throw new SS_HTTPResponse_Exception('Create environment not found', 404);
+			}
+			if(!$record->canView()) {
+				return Security::permissionFailure();
+			}
 
-		$project = $this->getCurrentProject();
-		if(!$project) {
-			return $this->project404Response();
-		}
+			$project = $this->getCurrentProject();
+			if(!$project) {
+				return $this->project404Response();
+			}
 
-		if($project->Name != $params['Project']) {
-			throw new LogicException("Project in URL doesn't match this creation");
-		}
+			if($project->Name != $params['Project']) {
+				throw new LogicException("Project in URL doesn't match this creation");
+			}
 
-		return $this->render(array(
-			'CreateEnvironment' => $record,
-		));
+			return $this->render(array(
+				'CreateEnvironment' => $record,
+			));
+		}
+		return $this->render();
 	}
 
 
@@ -936,7 +939,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		);
 
 		$action->addExtraClass('btn');
-		$form->addExtraClass('fields-wide');
 		// Tweak the action so it plays well with our fake URL structure.
 		$form->setFormAction($project->Link() . '/CreateEnvironmentForm');
 
@@ -965,13 +967,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$data['EnvironmentType'] = $project->AllowedEnvironmentType;
 
 		$job = DNCreateEnvironment::create();
-		$environment = DNEnvironment::create();
-		$environment->ProjectID = $project->ID;
-		$environment->Usage = $datap['Usage'];
-		$environment->write();
 
 		$job->Data = serialize($data);
-		$job->EnvironmentID = $environment->ID;
+		$job->ProjectID = $project->ID;
 		$job->write();
 		$job->start();
 

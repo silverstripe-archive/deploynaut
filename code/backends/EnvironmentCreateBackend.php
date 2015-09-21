@@ -3,9 +3,12 @@
 interface EnvironmentCreateBackend {
 
 	/**
-	 * @param DNCreateEnvironment $environment
+	 * @param DNCreateEnvironment $job
+	 *
+	 * @return true
+	 * @throws Exception
 	 */
-	public function createEnvironment(DNCreateEnvironment $environment);
+	public function createEnvironment(DNCreateEnvironment $job);
 
 	/**
 	 * Returns form fields for the create form.

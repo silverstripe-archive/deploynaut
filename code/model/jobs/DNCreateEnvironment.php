@@ -8,14 +8,9 @@ class DNCreateEnvironment extends DataObject {
 	);
 
 	private static $has_one = array(
-		'Environment' => 'DNEnvironment',
+		'Project' => 'DNProject',
 		'Creator' => 'Member'
 	);
-
-	/**
-	 * @var DNEnvironment
-	 */
-	protected $environment;
 
 	/**
 	 *
@@ -34,7 +29,7 @@ class DNCreateEnvironment extends DataObject {
 	}
 
 	public function Link() {
-		return Controller::join_links($this->Environment()->Project()->Link(), 'createenv', $this->ID);
+		return Controller::join_links($this->Project()->Link(), 'createenv', $this->ID);
 	}
 
 	public function LogLink() {
@@ -42,7 +37,7 @@ class DNCreateEnvironment extends DataObject {
 	}
 
 	public function canView($member = null) {
-		return $this->Environment()->Project()->canView($member);
+		return $this->Project()->canView($member);
 	}
 
 	/**
@@ -52,7 +47,7 @@ class DNCreateEnvironment extends DataObject {
 	protected function logfile() {
 		return sprintf(
 			'%s.createenv.%s.log',
-			$this->Environment()->Project()->Name,
+			$this->Project()->Name,
 			$this->ID
 		);
 	}
@@ -97,13 +92,12 @@ class DNCreateEnvironment extends DataObject {
 	 * @return string Resque token
 	 */
 	protected function enqueueCreation() {
-		$project = $this->Environment()->Project();
+		$project = $this->Project();
 		$log = $this->log();
 
 		$args = array(
 			'createID' => $this->ID,
 			'logfile' => $this->logfile(),
-			'envName' => $this->Environment()->Name,
 			'projectName' => $project->Name
 		);
 
@@ -145,6 +139,11 @@ class DNCreateEnvironment extends DataObject {
 		throw new Exception("Unable to find backend.");
 	}
 
+	/**
+	 * Fetches the EnvironmentCreateBackend based on the EnvironmentType saved to this job.
+	 *
+	 * @return EnvironmentCreateBackend|null
+	 */
 	public function getBackend() {
 		$data = unserialize($this->Data);
 		if(isset($data['EnvironmentType']) && class_exists($data['EnvironmentType'])) {
@@ -158,3 +157,4 @@ class DNCreateEnvironment extends DataObject {
 		return null;
 	}
 }
+
