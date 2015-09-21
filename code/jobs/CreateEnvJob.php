@@ -43,6 +43,7 @@ class CreateEnvJob {
 				))
 				->exclude('ID', $this->args['createID']);
 
+			/*
 			if($running->count()) {
 				$existing = $running->first();
 				$log->write(sprintf(
@@ -56,13 +57,13 @@ class CreateEnvJob {
 					$existing->Creator()->Title
 				));
 			}
-
-			$envCreate = DNCreateEnvironment::get()->byId($args['createID']);
+			*/
+			$envCreate = DNCreateEnvironment::get()->byId($this->args['createID']);
 			if(!($envCreate && $envCreate->exists())) {
 				throw new RuntimeException(sprintf('Could not find create environment record %s', $args['createID']));
 			}
 
-			// TODO hook in backend here, with the data for the DNCreateEnvironment in $envCreate
+			$envCreate->createEnvironment();
 
 		} catch(Exception $e) {
 			$this->updateStatus('Failed');
