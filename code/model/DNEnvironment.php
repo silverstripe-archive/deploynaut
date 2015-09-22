@@ -1310,8 +1310,9 @@ PHP
 
 	protected function validate() {
 		$result = parent::validate();
+		$backend = $this->Backend();
 
-		if(strcasecmp('test', $this->Name) === 0) {
+		if(strcasecmp('test', $this->Name) === 0 && get_class($backend) == 'CapistranoDeploymentBackend') {
 			$result->error('"test" is not a valid environment name when using Capistrano backend.');
 		}
 
