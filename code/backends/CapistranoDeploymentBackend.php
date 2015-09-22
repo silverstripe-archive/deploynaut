@@ -257,8 +257,8 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	 * Backs up database and/or assets to a designated folder,
 	 * and packs up the files into a single sspak.
 	 *
-	 * @param  DNDataTransfer    $dataTransfer
-	 * @param  DeploynautLogFile $log
+	 * @param DNDataTransfer    $dataTransfer
+	 * @param DeploynautLogFile $log
 	 */
 	protected function dataTransferBackup(DNDataTransfer $dataTransfer, DeploynautLogFile $log) {
 		$environment = $dataTransfer->Environment();
