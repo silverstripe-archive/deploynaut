@@ -127,7 +127,7 @@ class SmokeTestPipelineStep extends PipelineStep {
 		curl_setopt($ch, CURLOPT_URL, $test['URL']);
 
 		// Allow individual tests to override number of attempts
-		$attempts = (int)$this->getConfigSetting('Attempts');
+		$attempts = (int) $this->getConfigSetting('Attempts');
 		if(!empty($test['Attempts'])) {
 			$attempts = $test['Attempts'];
 		}
