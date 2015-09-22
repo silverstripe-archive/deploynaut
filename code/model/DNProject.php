@@ -20,7 +20,8 @@ class DNProject extends DataObject {
 	public static $db = array(
 		"Name" => "Varchar",
 		"CVSPath" => "Varchar(255)",
-		"DiskQuotaMB" => "Int"
+		"DiskQuotaMB" => "Int",
+		"AllowedEnvironmentType" => "Varchar(255)",
 	);
 
 	/**
@@ -286,6 +287,20 @@ class DNProject extends DataObject {
 	}
 
 	/**
+	 * This is a permission check for the front-end only.
+	 *
+	 * Only admins can create environments for now. Also, we need to check the value
+	 * of AllowedEnvironmentType which dictates which backend to use to render the form.
+	 *
+	 * @param Member|null $member
+	 *
+	 * @return bool
+	 */
+	public function canCreateEnvironments($member = null) {
+		return Permission::checkMember($member, 'ADMIN');
+	}
+
+	/**
 	 * @return DataList
 	 */
 	public function DataArchives() {
@@ -433,6 +448,16 @@ class DNProject extends DataObject {
 	}
 
 	/**
+	 * @return string|null
+	 */
+	public function CreateEnvironmentLink() {
+		if($this->canCreateEnvironments()) {
+			return $this->Link('createenv');
+		}
+		return null;
+	}
+
+	/**
 	 * @return string
 	 */
 	public function ToggleStarLink() {
@@ -502,6 +527,22 @@ class DNProject extends DataObject {
 
 		$this->setCreateProjectFolderField($fields);
 		$this->setEnvironmentFields($fields, $environments);
+
+
+		$environmentTypes = ClassInfo::implementorsOf('EnvironmentCreateBackend');
+		$types = array();
+		foreach($environmentTypes as $type) {
+			$types[$type] = $type;
+		}
+		$fields->addFieldToTab('Root.Main',
+			DropdownField::create(
+				'AllowedEnvironmentType', 
+				'Allowed Environment Type',
+				$types
+			)->setDescription('This defined which form to show on the front end for '
+			. 'environment creation. This will not affect backend functionality.')
+			->setEmptyString(' - None - ')
+		);
 
 		return $fields;
 	}
@@ -800,4 +841,6 @@ class DNProject extends DataObject {
 	protected function getProjectFolderPath() {
 		return $this->DNData()->getEnvironmentDir().'/'.$this->Name;
 	}
+
 }
+

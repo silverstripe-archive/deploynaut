@@ -11,6 +11,18 @@
 <div class="content">
 
 	<% with $CurrentProject %>
+
+		<% if $CreateEnvironmentLink %>
+			<div class="row">
+				<div class="col-md-12">
+					<a href="$CreateEnvironmentLink" class="btn btn-primary pull-right">
+						<i class="fa fa-plus"></i>
+						Create Environment
+					</a>
+				</div>
+			</div>
+		<% end_if %>
+
 		<div class="table-responsive">
 			<table class="table table-striped table-hover">
 				<thead>
@@ -64,15 +76,6 @@
 			<h4>Deploy key</h4>
 			<p>Permit us access to your private repositories by adding this deployment key.</p>
 			<pre class="deploy-key">$PublicKey</pre>
-		<% end_if %>
-
-		<% if $canCreateEnvironments %>
-			<h4>Create an environment</h4>
-			<% if $CreateEnvironmentsMessages %><p class="alert alert-danger">$CreateEnvironmentsMessages</p><% end_if %>
-
-			<% if not $CreateEnvironmentsMessages %>
-				$Top.CreateEnvironmentForm
-			<% end_if %>
 		<% end_if %>
 
 	<% end_with %>

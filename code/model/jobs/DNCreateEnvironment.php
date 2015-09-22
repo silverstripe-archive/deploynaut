@@ -8,7 +8,7 @@ class DNCreateEnvironment extends DataObject {
 	);
 
 	private static $has_one = array(
-		'Environment' => 'DNEnvironment',
+		'Project' => 'DNProject',
 		'Creator' => 'Member'
 	);
 
@@ -29,7 +29,7 @@ class DNCreateEnvironment extends DataObject {
 	}
 
 	public function Link() {
-		return Controller::join_links($this->Environment()->Project()->Link(), 'createenv', $this->ID);
+		return Controller::join_links($this->Project()->Link(), 'createenv', $this->ID);
 	}
 
 	public function LogLink() {
@@ -37,7 +37,7 @@ class DNCreateEnvironment extends DataObject {
 	}
 
 	public function canView($member = null) {
-		return $this->Environment()->Project()->canView($member);
+		return $this->Project()->canView($member);
 	}
 
 	/**
@@ -47,7 +47,7 @@ class DNCreateEnvironment extends DataObject {
 	protected function logfile() {
 		return sprintf(
 			'%s.createenv.%s.log',
-			$this->Environment()->Project()->Name,
+			$this->Project()->Name,
 			$this->ID
 		);
 	}
@@ -92,13 +92,12 @@ class DNCreateEnvironment extends DataObject {
 	 * @return string Resque token
 	 */
 	protected function enqueueCreation() {
-		$project = $this->Environment()->Project();
+		$project = $this->Project();
 		$log = $this->log();
 
 		$args = array(
 			'createID' => $this->ID,
 			'logfile' => $this->logfile(),
-			'envName' => $this->Environment()->Name,
 			'projectName' => $project->Name
 		);
 
@@ -132,4 +131,30 @@ class DNCreateEnvironment extends DataObject {
 		$log->write($message);
 	}
 
+	public function createEnvironment() {
+		$backend = $this->getBackend();
+		if($backend) {
+			return $backend->createEnvironment($this);
+		}
+		throw new Exception("Unable to find backend.");
+	}
+
+	/**
+	 * Fetches the EnvironmentCreateBackend based on the EnvironmentType saved to this job.
+	 *
+	 * @return EnvironmentCreateBackend|null
+	 */
+	public function getBackend() {
+		$data = unserialize($this->Data);
+		if(isset($data['EnvironmentType']) && class_exists($data['EnvironmentType'])) {
+			$env = Injector::inst()->get($data['EnvironmentType']);
+			if($env instanceof EnvironmentCreateBackend) {
+				return $env;
+			} else {
+				throw new Exception("Invalid backend: " . $data['EnvironmentType']);
+			}
+		}
+		return null;
+	}
 }
+
