@@ -1074,7 +1074,7 @@ class Pipeline extends DataObject implements PipelineData {
 	/**
 	 * @param string|null $action
 	 *
-	 * @return String
+	 * @return string
 	 */
 	public function Link($action = null) {
 		return Controller::join_links($this->Environment()->Link(), 'pipeline', $this->ID, $action);
