@@ -24,7 +24,7 @@ class DeploymentStrategy extends ViewableData {
 	protected $actionCode = 'default';
 
 	/**
-	 * @var int 
+	 * @var int
 	 */
 	protected $estimatedTime = 0;
 

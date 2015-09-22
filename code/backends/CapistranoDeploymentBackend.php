@@ -23,7 +23,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	 */
 	public function planDeploy(DNEnvironment $environment, $options) {
 		$strategy = new DeploymentStrategy($environment, $options);
-		
+
 		$currentBuild = $environment->CurrentBuild();
 		$currentSha = $currentBuild ? $currentBuild->SHA : '-';
 		if($currentSha !== $options['sha']) {
