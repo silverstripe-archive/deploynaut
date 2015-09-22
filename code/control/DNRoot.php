@@ -921,7 +921,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return null;
 		}
 
-		$fields = $backend->getCreateEnvironmentFields();
+		$fields = $backend->getCreateEnvironmentFields($project);
 		if(!$fields) return null;
 
 		if(!$project->canCreateEnvironments()) {
