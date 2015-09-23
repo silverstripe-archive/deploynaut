@@ -2032,7 +2032,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return DNProject|null
 	 */
 	public function getCurrentProject() {
-		$projectName = trim($this->getRequest()->latestParam('Project'));
+		$projectName = trim($this->getRequest()->param('Project'));
 		if(!$projectName) {
 			return null;
 		}
@@ -2048,7 +2048,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return DNEnvironment|null
 	 */
 	public function getCurrentEnvironment(DNProject $project = null) {
-		if($this->getRequest()->latestParam('Environment') === null) {
+		if($this->getRequest()->param('Environment') === null) {
 			return null;
 		}
 		if($project === null) {
@@ -2058,7 +2058,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		if($project === null) {
 			return null;
 		}
-		return $project->DNEnvironmentList()->filter('Name', $this->getRequest()->latestParam('Environment'))->First();
+		return $project->DNEnvironmentList()->filter('Name', $this->getRequest()->param('Environment'))->First();
 	}
 
 	/**
@@ -2201,7 +2201,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	protected function project404Response() {
 		return new SS_HTTPResponse(
-			"Project '" . Convert::raw2xml($this->getRequest()->latestParam('Project')) . "' not found.",
+			"Project '" . Convert::raw2xml($this->getRequest()->param('Project')) . "' not found.",
 			404
 		);
 	}
@@ -2210,7 +2210,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return SS_HTTPResponse
 	 */
 	protected function environment404Response() {
-		$envName = Convert::raw2xml($this->getRequest()->latestParam('Environment'));
+		$envName = Convert::raw2xml($this->getRequest()->param('Environment'));
 		return new SS_HTTPResponse("Environment '" . $envName . "' not found.", 404);
 	}
 
