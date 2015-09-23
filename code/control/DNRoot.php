@@ -288,7 +288,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * Action
 	 *
-	 * @param  SS_HTTPRequest $request
+	 * @param SS_HTTPRequest $request
 	 * @return SS_HTTPResponse - HTML
 	 */
 	public function snapshots(SS_HTTPRequest $request) {
@@ -1535,8 +1535,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * Note: Submits to the same action as {@link getDataTransferForm()},
 	 * but with a Direction=push and an archive reference.
 	 *
-	 * @param  SS_HTTPRequest $request
-	 * @param  DNDataArchive|null $dataArchive Only set when method is called manually in {@link restore()},
+	 * @param SS_HTTPRequest $request
+	 * @param DNDataArchive|null $dataArchive Only set when method is called manually in {@link restore()},
 	 *                            otherwise the state is inferred from the request data.
 	 * @return Form
 	 */
