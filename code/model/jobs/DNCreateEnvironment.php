@@ -28,6 +28,11 @@ class DNCreateEnvironment extends DataObject {
 		return $remap[$int];
 	}
 
+	public function Name() {
+		$data = unserialize($this->Data);
+		return !empty($data['Name']) ? Convert::raw2xml($data['Name']) : '';
+	}
+
 	public function Link() {
 		return Controller::join_links($this->Project()->Link(), 'createenv', $this->ID);
 	}
