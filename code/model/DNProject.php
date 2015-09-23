@@ -30,6 +30,7 @@ class DNProject extends DataObject {
 	 */
 	public static $has_many = array(
 		"Environments" => "DNEnvironment",
+		"CreateEnvironments" => "DNCreateEnvironment"
 	);
 
 	/**
@@ -105,6 +106,10 @@ class DNProject extends DataObject {
 			$project->Viewers()->add($adminGroup);
 		}
 		return $project;
+	}
+
+	public function CreateEnvironmentList() {
+		return $this->CreateEnvironments()->sort('Created', 'DESC');
 	}
 
 	/**
