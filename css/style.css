@@ -10083,6 +10083,18 @@ button.sidebar-open {
 
 .deploy-history {
   margin-top: 10px; }
+  .deploy-history .full-deploy-info:hover {
+    cursor: pointer;
+    cursor: hand; }
+  .deploy-history .full-deploy-info-item {
+    background: #f0ad4e;
+    width: 20px;
+    display: inline-block; }
+  .deploy-history .popover-content div {
+    margin-bottom: 2px; }
+    .deploy-history .popover-content div span {
+      top: -2px;
+      position: relative; }
 
 .environment-details {
   margin-bottom: 10px; }
