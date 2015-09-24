@@ -124,11 +124,12 @@ class Pipeline extends DataObject implements PipelineData {
 	const ALERT_ROLLBACK_FAILURE = 'RollbackFailure';
 
 	/**
-	 * @var array
 	 * - Status: Current status of this Pipeline. Running means 'currently executing a {@link PipelineStep}'.
 	 *           See the {@link PipelineControllerTask} class for why this is important.
 	 * - SHA:    This is the Git SHA that the pipeline is acting on. This is passed into the {@link PipelineStep}
 	 *           objects so that the steps know what to smoketest, deploy, etc.
+	 *
+	 * @var array
 	 */
 	private static $db = array(
 		'Status' => 'Enum("Running,Complete,Failed,Aborted,Rollback,Queued", "Queued")',
@@ -139,11 +140,12 @@ class Pipeline extends DataObject implements PipelineData {
 	);
 
 	/**
-	 * @var array
 	 * - Author:      The {@link Member} object that started this pipeline running.
 	 * - Environment: The {@link DNEnvironment} that this Pipeline is associated to.
 	 * - CurrentStep: The current {@link PipelineStep} object that is keeping this pipeline alive. This should be
 	 *                cleared when the last step is complete.
+	 *
+	 * @var array
 	 */
 	private static $has_one = array(
 		'Author' => 'Member',
@@ -158,13 +160,17 @@ class Pipeline extends DataObject implements PipelineData {
 	);
 
 	/**
-	 * @var array
 	 * - Steps: These are ordered by the `PipelineStep`.`Order` attribute.
+	 *
+	 * @var array
 	 */
 	private static $has_many = array(
 		'Steps' => 'PipelineStep'
 	);
 
+	/**
+	 * @var array
+	 */
 	private static $summary_fields = array(
 		'ID' => 'ID',
 		'Status' => 'Status',
@@ -175,8 +181,14 @@ class Pipeline extends DataObject implements PipelineData {
 		'LastEdited' => 'Last Updated'
 	);
 
+	/**
+	 * @var string
+	 */
 	private static $default_sort = '"Created" DESC';
 
+	/**
+	 * @var array
+	 */
 	private static $cast = array(
 		'RunningDescription' => 'HTMLText'
 	);
@@ -404,16 +416,20 @@ class Pipeline extends DataObject implements PipelineData {
 	 */
 	public function getConfigSetting($setting) {
 		$source = $this->getConfigData();
+
 		foreach(func_get_args() as $setting) {
 			if(empty($source[$setting])) {
 				return null;
 			}
 			$source = $source[$setting];
 		}
+
 		return $source;
 	}
 
-
+	/**
+	 * @return FieldList
+	 */
 	public function getCMSFields() {
 		$fields = new FieldList(new TabSet('Root'));
 
@@ -472,6 +488,7 @@ class Pipeline extends DataObject implements PipelineData {
 
 	/**
 	 * Return a dependent {@link DNEnvironment} based on this pipeline's dependent environment configuration.
+	 *
 	 * @return DNEnvironment
 	 */
 	public function getDependentEnvironment() {
@@ -506,11 +523,11 @@ class Pipeline extends DataObject implements PipelineData {
 	/**
 	 * Generate a step from a name, config, and sort order
 	 *
+	 * @throws Exception
 	 * @param string $name
 	 * @param array $stepConfig
 	 * @param int $order
 	 * @return PipelineStep
-	 * @throws Exception
 	 */
 	protected function generateStep($name, $stepConfig, $order = 0) {
 		$stepClass = isset($stepConfig['Class']) ? $stepConfig['Class'] : $stepConfig;
@@ -534,6 +551,7 @@ class Pipeline extends DataObject implements PipelineData {
 		$step->Status = 'Queued';
 		$step->Config = serialize($stepConfig);
 		$step->write();
+
 		return $step;
 	}
 
@@ -545,6 +563,9 @@ class Pipeline extends DataObject implements PipelineData {
 	 *
 	 * Note that this method doesn't actually start any {@link PipelineStep} objects, that is handled by
 	 * {@link self::checkPipelineStatus()}, and the daemon running the process.
+	 *
+	 * @throws LogicException
+	 * @return boolean
 	 */
 	public function start() {
 		// Ensure there are no other running {@link Pipeline} objects for this {@link DNEnvironment}
@@ -575,7 +596,6 @@ class Pipeline extends DataObject implements PipelineData {
 
 	/**
 	 * Mark this Pipeline as completed.
-	 *
 	 */
 	public function markComplete() {
 		$this->Status = "Complete";
@@ -614,6 +634,10 @@ class Pipeline extends DataObject implements PipelineData {
 
 	/**
 	 * Push a step to the end of a pipeline
+	 *
+	 * @param string $name
+	 * @param array $stepConfig
+	 * @return PipelineStep
 	 */
 	private function pushPipelineStep($name, $stepConfig) {
 		$lastStep = $this->Steps()->sort("Order DESC")->first();
@@ -649,7 +673,6 @@ class Pipeline extends DataObject implements PipelineData {
 		// Finish off the pipeline - rollback will only be triggered on a failed pipeline.
 		$this->Status = 'Failed';
 		$this->write();
-
 	}
 
 	/**
@@ -681,6 +704,8 @@ class Pipeline extends DataObject implements PipelineData {
 	/**
 	 * Check if pipeline currently permits a rollback.
 	 * This could be influenced by both the current state and by the specific configuration.
+	 *
+	 * @return boolean
 	 */
 	protected function canStartRollback() {
 		// The rollback cannot run twice.
@@ -755,7 +780,6 @@ class Pipeline extends DataObject implements PipelineData {
 
 	/**
 	 * Mark this Pipeline as aborted
-	 *
 	 */
 	public function markAborted() {
 		$this->Status = 'Aborted';
@@ -817,6 +841,8 @@ class Pipeline extends DataObject implements PipelineData {
 			array_values($substitutions),
 			$message ?: $subject
 		);
+
+
 		return array($subjectText, $messageText);
 	}
 
@@ -978,6 +1004,7 @@ class Pipeline extends DataObject implements PipelineData {
 	protected function findNextStep() {
 		// otherwise get next step in chain
 		$currentStep = $this->CurrentStep();
+
 		return $this
 			->Steps()
 			->filter("Status", "Queued")
@@ -995,6 +1022,7 @@ class Pipeline extends DataObject implements PipelineData {
 	public function findPreviousStep() {
 		// otherwise get previous step in chain
 		$currentStep = $this->CurrentStep();
+
 		return $this
 			->Steps()
 			->filter("Status", "Finished")
@@ -1036,7 +1064,13 @@ class Pipeline extends DataObject implements PipelineData {
 			$caller['type'] = '';
 		}
 
-		$log->write(sprintf("[%s::%s() (line %d)] %s", $caller['class'], $caller['function'], $caller['line'], $message));
+		$log->write(sprintf(
+			"[%s::%s() (line %d)] %s",
+			$caller['class'],
+			$caller['function'],
+			$caller['line'],
+			$message
+		));
 	}
 
 	/**

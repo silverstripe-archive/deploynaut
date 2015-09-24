@@ -93,7 +93,6 @@ class DNPing extends DataObject {
 
 	/**
 	 * Queue a ping job
-	 *
 	 */
 	public function start() {
 		$environment = $this->Environment();
