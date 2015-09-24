@@ -12,7 +12,6 @@
 class DNPing extends DataObject {
 
 	/**
-	 *
 	 * @var array
 	 */
 	private static $db = array(
@@ -20,7 +19,6 @@ class DNPing extends DataObject {
 	);
 
 	/**
-	 *
 	 * @var array
 	 */
 	private static $has_one = array(
@@ -29,7 +27,6 @@ class DNPing extends DataObject {
 	);
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function Link() {
@@ -37,7 +34,6 @@ class DNPing extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function LogLink() {
@@ -45,7 +41,6 @@ class DNPing extends DataObject {
 	}
 
 	/**
-	 *
 	 * @param Member|null $member
 	 * @return bool
 	 */
@@ -66,7 +61,6 @@ class DNPing extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return \DeploynautLogFile
 	 */
 	public function log() {
@@ -74,7 +68,6 @@ class DNPing extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function LogContent() {
@@ -82,7 +75,6 @@ class DNPing extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function ResqueStatus() {

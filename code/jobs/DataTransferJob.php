@@ -107,7 +107,6 @@ class DataTransferJob {
 	}
 
 	/**
-	 *
 	 * @param string $status
 	 * @global array $databaseConfig
 	 */
@@ -120,7 +119,6 @@ class DataTransferJob {
 	}
 
 	/**
-	 *
 	 * @return DNData
 	 */
 	protected function DNData() {

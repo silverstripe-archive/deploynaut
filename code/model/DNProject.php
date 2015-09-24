@@ -14,7 +14,6 @@
 class DNProject extends DataObject {
 
 	/**
-	 *
 	 * @var array
 	 */
 	public static $db = array(
@@ -24,7 +23,6 @@ class DNProject extends DataObject {
 	);
 
 	/**
-	 *
 	 * @var array
 	 */
 	public static $has_many = array(
@@ -32,7 +30,6 @@ class DNProject extends DataObject {
 	);
 
 	/**
-	 *
 	 * @var array
 	 */
 	public static $many_many = array(
@@ -41,7 +38,6 @@ class DNProject extends DataObject {
 	);
 
 	/**
-	 *
 	 * @var array
 	 */
 	public static $summary_fields = array(
@@ -50,7 +46,6 @@ class DNProject extends DataObject {
 	);
 
 	/**
-	 *
 	 * @var array
 	 */
 	public static $searchable_fields = array(
@@ -62,7 +57,6 @@ class DNProject extends DataObject {
 	private static $plural_name = 'Projects';
 
 	/**
-	 *
 	 * @var string
 	 */
 	private static $default_sort = 'Name';
@@ -345,7 +339,6 @@ class DNProject extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return DNData
 	 */
 	public function DNData() {
@@ -380,7 +373,6 @@ class DNProject extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return Gitonomy\Git\Repository
 	 */
 	public function getRepository() {
@@ -432,7 +424,6 @@ class DNProject extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function Link($action='') {
@@ -462,7 +453,6 @@ class DNProject extends DataObject {
 	}
 
 	/**
-	 *
 	 * @param string $action
 	 * @return string
 	 */
@@ -471,7 +461,6 @@ class DNProject extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return FieldList
 	 */
 	public function getCMSFields() {
@@ -537,7 +526,6 @@ class DNProject extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return boolean
 	 */
 	public function projectFolderExists() {
@@ -548,7 +536,6 @@ class DNProject extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return bool
 	 */
 	public function repoExists() {
@@ -568,7 +555,6 @@ class DNProject extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function getLocalCVSPath() {
@@ -801,7 +787,6 @@ class DNProject extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	protected function getProjectFolderPath() {

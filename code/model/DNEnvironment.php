@@ -74,7 +74,6 @@ class DNEnvironment extends DataObject {
 	private static $allowed_backends = array();
 
 	/**
-	 *
 	 * @var array
 	 */
 	public static $db = array(
@@ -87,7 +86,6 @@ class DNEnvironment extends DataObject {
 	);
 
 	/**
-	 *
 	 * @var array
 	 */
 	public static $has_one = array(
@@ -95,7 +93,6 @@ class DNEnvironment extends DataObject {
 	);
 
 	/**
-	 *
 	 * @var array
 	 */
 	public static $has_many = array(
@@ -105,7 +102,6 @@ class DNEnvironment extends DataObject {
 	);
 
 	/**
-	 *
 	 * @var array
 	 */
 	public static $many_many = array(
@@ -130,7 +126,6 @@ class DNEnvironment extends DataObject {
 	);
 
 	/**
-	 *
 	 * @var array
 	 */
 	public static $summary_fields = array(
@@ -152,7 +147,6 @@ class DNEnvironment extends DataObject {
 	private static $plural_name = 'Capistrano Environments';
 
 	/**
-	 *
 	 * @var array
 	 */
 	public static $searchable_fields = array(
@@ -160,7 +154,6 @@ class DNEnvironment extends DataObject {
 	);
 
 	/**
-	 *
 	 * @var string
 	 */
 	private static $default_sort = 'Name';
@@ -667,7 +660,6 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return DNData
 	 */
 	public function DNData() {
@@ -727,7 +719,6 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
-	 *
 	 * @param string $sha
 	 * @return array
 	 */
@@ -804,7 +795,6 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return FieldList
 	 */
 	public function getCMSFields() {
@@ -984,7 +974,6 @@ PHP
 	}
 
 	/**
-	 *
 	 * @param FieldList $fields
 	 */
 	protected function setDeployConfigurationFields(&$fields) {
@@ -1038,7 +1027,6 @@ PHP
 	}
 
 	/**
-	 *
 	 */
 	public function onBeforeWrite() {
 		parent::onBeforeWrite();
@@ -1127,7 +1115,6 @@ PHP
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	protected function getEnvironmentConfig() {
@@ -1138,7 +1125,6 @@ PHP
 	}
 
 	/**
-	 *
 	 * @return boolean
 	 */
 	protected function envFileExists() {

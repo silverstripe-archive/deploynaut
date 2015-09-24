@@ -7,13 +7,11 @@
 class PingJob {
 
 	/**
-	 *
 	 * @var array
 	 */
 	public $args;
 
 	/**
-	 *
 	 * @global array $databaseConfig
 	 */
 	public function setUp() {
@@ -23,7 +21,6 @@ class PingJob {
 	}
 
 	/**
-	 *
 	 * @return DNData
 	 */
 	public function DNData() {

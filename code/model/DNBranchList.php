@@ -39,7 +39,6 @@ class DNBranchList extends ArrayList {
 	}
 
 	/**
-	 *
 	 * @param DNProject $project
 	 * @param DNData $data
 	 */

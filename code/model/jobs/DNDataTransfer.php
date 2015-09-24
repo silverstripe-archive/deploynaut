@@ -90,7 +90,6 @@ class DNDataTransfer extends DataObject {
 	protected $backupBeforePush = true;
 
 	/**
-	 *
 	 * @param int $int
 	 * @return string
 	 */
@@ -197,7 +196,6 @@ class DNDataTransfer extends DataObject {
 	}
 
 	/**
-	 *
 	 * @param Member|null $member
 	 * @return bool
 	 */
@@ -218,7 +216,6 @@ class DNDataTransfer extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return \DeploynautLogFile
 	 */
 	public function log() {
@@ -226,7 +223,6 @@ class DNDataTransfer extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function LogContent() {

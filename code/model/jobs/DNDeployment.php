@@ -15,7 +15,6 @@
 class DNDeployment extends DataObject {
 
 	/**
-	 *
 	 * @var array
 	 */
 	private static $db = array(
@@ -29,7 +28,6 @@ class DNDeployment extends DataObject {
 	);
 
 	/**
-	 *
 	 * @var array
 	 */
 	private static $has_one = array(
@@ -51,7 +49,6 @@ class DNDeployment extends DataObject {
 	);
 
 	/**
-	 *
 	 * @param int $int
 	 * @return string
 	 */

@@ -25,7 +25,6 @@ class ResqueReport extends LeftAndMain {
 	);
 
 	/**
-	 *
 	 * @param int|null $id
 	 * @param array|null $fields
 	 * @return \Form
