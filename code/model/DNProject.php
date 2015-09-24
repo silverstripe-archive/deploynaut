@@ -109,10 +109,6 @@ class DNProject extends DataObject {
 		return $project;
 	}
 
-	public function CreateEnvironmentList() {
-		return $this->CreateEnvironments()->sort('Created', 'DESC');
-	}
-
 	/**
 	 * Return the used quota in MB.
 	 *
