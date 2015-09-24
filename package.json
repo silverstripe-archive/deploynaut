@@ -1,0 +1,39 @@
+{
+  "name": "deploynaut",
+  "version": "1.0.0",
+  "description": "[![Build Status](https://secure.travis-ci.org/silverstripe/deploynaut.png)](https://travis-ci.org/silverstripe/deploynaut)",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "build": "echo run 'gulp sass' instead",
+    "watch": "echo run 'gulp watch' instead",
+    "jsx": "echo run 'gulp jsx' instead",
+    "jsx-watch": "echo run 'gulp watch' instead"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/silverstripe/deploynaut.git"
+  },
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/silverstripe/deploynaut/issues"
+  },
+  "homepage": "https://github.com/silverstripe/deploynaut#readme",
+  "devDependencies": {
+    "babel": "5.8.23",
+    "bootstrap-sass": "^3.3.5",
+    "font-awesome": "^4.3.0",
+    "gulp": "^3.9.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-plumber": "^1.0.1",
+    "gulp-react": "^3.0.1",
+    "gulp-sass": "2.0.4",
+    "gulp-sourcemaps": "^1.5.2",
+    "gulp-uglify": "^1.4.0",
+    "gulp-util": "^3.0.6",
+    "node-sass": "^3.3.2"
+  }
+}

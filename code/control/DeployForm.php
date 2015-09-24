@@ -8,6 +8,11 @@
  */
 abstract class DeployForm_ValidatorBase extends Validator {
 
+	/**
+	 * @param string $fieldName
+	 * @param string $message
+	 * @param string $messageType
+	 */
 	public function validationError($fieldName, $message, $messageType = '') {
 		// Just make any error use the form message
 		$this->form->sessionMessage($message, $messageType);
@@ -18,6 +23,7 @@ abstract class DeployForm_ValidatorBase extends Validator {
 	 * Validate a commit sha
 	 *
 	 * @param string $sha
+	 * @param string $field
 	 * @return boolean
 	 */
 	protected function validateCommit($sha, $field) {
@@ -32,7 +38,7 @@ abstract class DeployForm_ValidatorBase extends Validator {
 		}
 
 		// Check validity of commit
-		if (!preg_match('/^[a-f0-9]{40}$/', $sha)) {
+		if(!preg_match('/^[a-f0-9]{40}$/', $sha)) {
 			$this->validationError(
 				$field,
 				"Invalid release SHA: " . Convert::raw2xml($sha),
@@ -100,74 +106,102 @@ class DeployForm_PipelineValidator extends DeployForm_ValidatorBase {
  */
 class DeployForm extends Form {
 
+	/**
+	 * @param DNRoot $controller
+	 * @param string $name
+	 * @param DNEnvironment $environment
+	 * @param DNProject $project
+	 */
 	public function __construct($controller, $name, DNEnvironment $environment, DNProject $project) {
 		if($environment->HasPipelineSupport()) {
-			// Determine if commits are filtered
-			$canBypass = Permission::check(DNRoot::DEPLOYNAUT_BYPASS_PIPELINE);
-			$canDryrun = $environment->DryRunEnabled && Permission::check(DNRoot::DEPLOYNAUT_DRYRUN_PIPELINE);
-			$commits = $environment->getDependentFilteredCommits();
-			if(empty($commits)) {
-				// There are no filtered commits, so show all commits
-				$field = $this->buildCommitSelector($project);
-				$validator = new DeployForm_CommitValidator();
-			} elseif($canBypass) {
-				// Build hybrid selector that allows users to follow pipeline or use any commit
-				$field = $this->buildCommitSelector($project, $commits);
-				$validator = new DeployForm_CommitValidator();
-			} else {
-				// Restrict user to only select pipeline filtered commits
-				$field = $this->buildPipelineField($commits);
-				$validator = new DeployForm_PipelineValidator();
-			}
-
-			// Generate actions allowed for this user
-			$actions = new FieldList(
-				FormAction::create('startPipeline', "Begin the release process on " . $environment->Name)
-					->addExtraClass('btn btn-primary')
-					->setAttribute('onclick', "return confirm('This will begin a release pipeline. Continue?');")
-			);
-			if($canDryrun) {
-				$actions->push(
-					FormAction::create('doDryRun', "Dry-run release process")
-						->addExtraClass('btn btn-info')
-						->setAttribute('onclick',
-							"return confirm('This will begin a release pipeline, but with the following exclusions:\\n" .
-							" - No messages will be sent\\n" .
-							" - No capistrano actions will be invoked\\n".
-							" - No deployments or snapshots will be created.');"
-						)
-				);
-			}
-			if($canBypass) {
-				$actions->push(
-					FormAction::create('doDeploy', "Direct deployment (bypass pipeline)")
-						->addExtraClass('btn btn-warning')
-						->setAttribute('onclick',
-							"return confirm('This will start a direct deployment, bypassing the pipeline ".
-							"process in place.\\n\\nAre you sure this is necessary?');"
-						)
-				);
-			}
+			list($field, $validator, $actions) = $this->setupPipeline($environment, $project);
 		} else {
-			// without a pipeline simply allow any commit to be selected
+			list($field, $validator, $actions) = $this->setupSimpleDeploy($project);
+		}
+		parent::__construct($controller, $name, new FieldList($field), $actions, $validator);
+	}
+
+	/**
+	 * @param DNProject $project
+	 *
+	 * @return array
+	 */
+	protected function setupSimpleDeploy(DNProject $project) {
+		// without a pipeline simply allow any commit to be selected
+		$field = $this->buildCommitSelector($project);
+		$validator = new DeployForm_CommitValidator();
+		$actions = new FieldList(
+			new FormAction('showDeploySummary', 'Plan deployment', 'Show deployment plan'),
+			new FormAction('doDeploy', 'Do deploy', 'Do deploy')
+		);
+		return array($field, $validator, $actions);
+	}
+
+	/**
+	 * @param DNEnvironment $environment
+	 * @param DNProject $project
+	 *
+	 * @return array
+	 * @throws Exception
+	 */
+	protected function setupPipeline(DNEnvironment $environment, DNProject $project) {
+		// Determine if commits are filtered
+		$canBypass = Permission::check(DNRoot::DEPLOYNAUT_BYPASS_PIPELINE);
+		$canDryrun = $environment->DryRunEnabled && Permission::check(DNRoot::DEPLOYNAUT_DRYRUN_PIPELINE);
+		$commits = $environment->getDependentFilteredCommits();
+		if(empty($commits)) {
+			// There are no filtered commits, so show all commits
 			$field = $this->buildCommitSelector($project);
 			$validator = new DeployForm_CommitValidator();
-			$actions = new FieldList(
-				FormAction::create('doDeploy', "Deploy to " . $environment->Name)
-					->addExtraClass('btn btn-primary')
-					->setAttribute('onclick',
-						"return confirm('This will start a direct deployment.\\n\\nContinue?');"
+		} elseif($canBypass) {
+			// Build hybrid selector that allows users to follow pipeline or use any commit
+			$field = $this->buildCommitSelector($project, $commits);
+			$validator = new DeployForm_CommitValidator();
+		} else {
+			// Restrict user to only select pipeline filtered commits
+			$field = $this->buildPipelineField($commits);
+			$validator = new DeployForm_PipelineValidator();
+		}
+
+		// Generate actions allowed for this user
+		$actions = new FieldList(
+			FormAction::create('startPipeline', "Begin the release process on " . $environment->Name)
+				->addExtraClass('btn btn-primary')
+				->setAttribute('onclick', "return confirm('This will begin a release pipeline. Continue?');")
+		);
+		if($canDryrun) {
+			$actions->push(
+				FormAction::create('doDryRun', "Dry-run release process")
+					->addExtraClass('btn btn-info')
+					->setAttribute(
+						'onclick',
+						"return confirm('This will begin a release pipeline, but with the following exclusions:\\n" .
+						" - No messages will be sent\\n" .
+						" - No capistrano actions will be invoked\\n" .
+						" - No deployments or snapshots will be created.');"
 					)
 			);
 		}
-		parent::__construct($controller, $name, new FieldList($field), $actions, $validator);
+		if($canBypass) {
+			$actions->push(
+				FormAction::create('showDeploySummary', "Direct deployment (bypass pipeline)")
+					->addExtraClass('btn btn-warning')
+					->setAttribute(
+						'onclick',
+						"return confirm('This will start a direct deployment, bypassing the pipeline " .
+						"process in place.\\n\\nAre you sure this is necessary?');"
+					)
+			);
+			return array($field, $validator, $actions);
+		}
+		return array($field, $validator, $actions);
 	}
 
 	/**
 	 * Construct fields to select any commit
 	 *
 	 * @param DNProject $project
-	 * @param DataList $pipelineCommits Optional list of pipeline-filtered commits to include
+	 * @param DataList|null $pipelineCommits Optional list of pipeline-filtered commits to include
 	 * @return FormField
 	 */
 	protected function buildCommitSelector($project, $pipelineCommits = null) {
@@ -176,7 +210,12 @@ class DeployForm extends Form {
 		foreach($project->DNBranchList() as $branch) {
 			$sha = $branch->SHA();
 			$name = $branch->Name();
-			$branches[$sha . '-' . $name] = $name . ' (' . substr($sha,0,8) . ', ' . $branch->LastUpdated()->TimeDiff() . ' old)';
+			$branchValue = sprintf("%s (%s, %s old)",
+				$name,
+				substr($sha, 0, 8),
+				$branch->LastUpdated()->TimeDiff()
+			);
+			$branches[$sha . '-' . $name] = $branchValue;
 		}
 
 		// Tags
@@ -184,7 +223,12 @@ class DeployForm extends Form {
 		foreach($project->DNTagList()->setLimit(null) as $tag) {
 			$sha = $tag->SHA();
 			$name = $tag->Name();
-			$tags[$sha . '-' . $tag] = $name . ' (' . substr($sha,0,8) . ', ' . $tag->Created()->TimeDiff() . ' old)';
+			$tagValue = sprintf("%s (%s, %s old)",
+				$name,
+				substr($sha, 0, 8),
+				$branch->LastUpdated()->TimeDiff()
+			);
+			$tags[$sha . '-' . $tag] = $tagValue;
 		}
 		$tags = array_reverse($tags);
 
@@ -198,7 +242,11 @@ class DeployForm extends Form {
 					$redeploy[$envName] = array();
 				}
 				if(!isset($redeploy[$envName][$sha])) {
-					$redeploy[$envName][$sha] = substr($sha,0,8) . ' (deployed ' . $deploy->obj('LastEdited')->Ago() . ')';
+					$pastValue = sprintf("%s (deployed %s)",
+						substr($sha, 0, 8),
+						$deploy->obj('LastEdited')->Ago()
+					);
+					$redeploy[$envName][$sha] = $pastValue;
 				}
 			}
 		}
@@ -212,24 +260,24 @@ class DeployForm extends Form {
 				'Deploy a commit prepared for this pipeline'
 			);
 		}
-		if($branches) {
+		if(!empty($branches)) {
 			$releaseMethods[] = new SelectionGroup_Item(
 				'Branch',
-				new DropdownField('Branch', '', $branches),
+				new DropdownField('Branch', 'Select a branch', $branches),
 				'Deploy the latest version of a branch'
 			);
 		}
 		if($tags) {
 			$releaseMethods[] = new SelectionGroup_Item(
 				'Tag',
-				new DropdownField('Tag', '', $tags),
+				new DropdownField('Tag', 'Select a tag', $tags),
 				'Deploy a tagged release'
 			);
 		}
 		if($redeploy) {
 			$releaseMethods[] = new SelectionGroup_Item(
 				'Redeploy',
-				new GroupedDropdownField('Redeploy', '', $redeploy),
+				new GroupedDropdownField('Redeploy', 'Redeploy', $redeploy),
 				'Redeploy a release that was previously deployed (to any environment)'
 			);
 		}
@@ -240,7 +288,7 @@ class DeployForm extends Form {
 			'Deploy a specific SHA'
 		);
 
-		$field = new SelectionGroup('SelectRelease', $releaseMethods);
+		$field = new TabbedSelectionGroup('SelectRelease', $releaseMethods);
 		$field->setValue(reset($releaseMethods)->getValue());
 		return $field;
 	}
@@ -248,18 +296,17 @@ class DeployForm extends Form {
 	/**
 	 * Generate fields necessary to select from a filtered commit list
 	 *
-	 * @param DNEnvironment $environment
 	 * @param DataList $commits List of commits
 	 * @return FormField
 	 */
 	protected function buildPipelineField($commits) {
 		// Get filtered commits
 		$filteredCommits = array();
-		foreach ($commits as $commit) {
+		foreach($commits as $commit) {
 			$title = sprintf(
 				"%s (%s, %s old)",
 				$commit->Message,
-				substr($commit->SHA,0,8),
+				substr($commit->SHA, 0, 8),
 				$commit->dbObject('Created')->TimeDiff()
 			);
 			$filteredCommits[$commit->SHA] = $title;

@@ -3,7 +3,6 @@
 class APIEnvironment extends APINoun {
 
 	/**
-	 *
 	 * @var array
 	 */
 	private static $allowed_actions = array(
@@ -12,7 +11,6 @@ class APIEnvironment extends APINoun {
 	);
 
 	/**
-	 *
 	 * @param SS_HTTPRequest $request
 	 * @return SS_HTTPResponse
 	 */
@@ -38,20 +36,17 @@ class APIEnvironment extends APINoun {
 							"href" => "$href/deploy",
 							"type" => "application/json",
 							"fields" => array(
-								array( "name" => "release", "type" => "text" ),
+								array("name" => "release", "type" => "text"),
 							),
 						)
 					)
 				));
-				break;
 			default:
 				return $this->message('API not found', 404);
-				break;
 		}
 	}
 
 	/**
-	 *
 	 * @param SS_HTTPRequest $request
 	 * @return SS_HTTPResponse
 	 */
@@ -62,18 +57,14 @@ class APIEnvironment extends APINoun {
 		switch($request->httpMethod()) {
 			case 'GET':
 				return $this->getPing($this->getRequest()->param('ID'));
-				break;
 			case 'POST':
 				return $this->createPing();
-				break;
 			default:
 				return $this->message('API not found', 404);
-				break;
 		}
 	}
 
 	/**
-	 *
 	 * @param SS_HTTPRequest $request
 	 * @return SS_HTTPResponse
 	 */
@@ -84,13 +75,10 @@ class APIEnvironment extends APINoun {
 		switch($request->httpMethod()) {
 			case 'GET':
 				return $this->getDeploy($this->getRequest()->param('ID'));
-				break;
 			case 'POST':
 				return $this->createDeploy();
-				break;
 			default:
 				return $this->message('API not found', 404);
-				break;
 		}
 	}
 
@@ -106,7 +94,6 @@ class APIEnvironment extends APINoun {
 	}
 
 	/**
-	 *
 	 * @return SS_HTTPResponse
 	 */
 	protected function showRecord() {
@@ -114,7 +101,6 @@ class APIEnvironment extends APINoun {
 	}
 
 	/**
-	 *
 	 * @return SS_HTTPResponse
 	 */
 	protected function createPing() {
@@ -126,7 +112,7 @@ class APIEnvironment extends APINoun {
 		$ping->write();
 		$ping->start();
 
-		$location = Director::absoluteBaseURL().$this->Link().'/ping/'.$ping->ID;
+		$location = Director::absoluteBaseURL() . $this->Link() . '/ping/' . $ping->ID;
 		$output = array(
 			'message' => 'Ping queued as job ' . $ping->ResqueToken,
 			'href' => $location,
@@ -139,7 +125,6 @@ class APIEnvironment extends APINoun {
 	}
 
 	/**
-	 *
 	 * @param int $ID
 	 * @return SS_HTTPResponse
 	 */
@@ -157,7 +142,6 @@ class APIEnvironment extends APINoun {
 	}
 
 	/**
-	 *
 	 * @return SS_HTTPResponse
 	 */
 	protected function createDeploy() {
@@ -175,12 +159,12 @@ class APIEnvironment extends APINoun {
 			return $this->message('deploy requires a {"release": "sha1"} in the body of the request.', 400);
 		}
 
-		$deploy = DNDeployment::create();
-		$deploy->EnvironmentID = $this->record->ID;
-		$deploy->SHA = $reqBody['release'];
-		$deploy->write();
+		$strategy = new DeploymentStrategy($this->record, array(
+			'sha' => $reqBody['release']
+		));
+		$deploy = $strategy->createDeployment();
 		$deploy->start();
-		$location = Director::absoluteBaseURL().$this->Link().'/deploy/'.$deploy->ID;
+		$location = Director::absoluteBaseURL() . $this->Link() . '/deploy/' . $deploy->ID;
 		$output = array(
 			'message' => 'Deploy queued as job ' . $deploy->ResqueToken,
 			'href' => $location,
@@ -192,7 +176,6 @@ class APIEnvironment extends APINoun {
 }
 
 	/**
-	 *
 	 * @param int $id
 	 * @return SS_HTTPResponse
 	 */

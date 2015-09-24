@@ -2,24 +2,32 @@
 
 /**
  * Class representing a single deplyoment (passed or failed) at a time to a particular environment
+ *
+ * @property string $SHA
+ * @property string $ResqueToken
+ * @property string $Status
+ *
+ * @method DNEnvironment Environment()
+ * @property int EnvironmentID
+ * @method Member Deployer()
+ * @property int DeployerID
  */
 class DNDeployment extends DataObject {
 
 	/**
-	 *
 	 * @var array
 	 */
 	private static $db = array(
-		"SHA" => "Varchar(255)",
+		"SHA" => "GitSHA",
 		"ResqueToken" => "Varchar(255)",
 		// Observe that this is not the same as Resque status, since ResqueStatus is not persistent
 		// It's used for finding successful deployments and displaying that in history views in the frontend
 		"Status" => "Enum('Queued, Started, Finished, Failed, n/a', 'n/a')",
-		"LeaveMaintenacePage" => "Boolean"
+		// JSON serialised DeploymentStrategy.
+		"Strategy" => "Text"
 	);
 
 	/**
-	 *
 	 * @var array
 	 */
 	private static $has_one = array(
@@ -41,7 +49,6 @@ class DNDeployment extends DataObject {
 	);
 
 	/**
-	 *
 	 * @param int $int
 	 * @return string
 	 */
@@ -115,6 +122,90 @@ class DNDeployment extends DataObject {
 		return self::map_resque_status($statusCode);
 	}
 
+
+	/**
+	 * Fetch the git repository
+	 *
+	 * @return \Gitonomy\Git\Repository|null
+	 */
+	public function getRepository() {
+		if(!$this->SHA) {
+			return null;
+		}
+		return $this->Environment()->Project()->getRepository();
+	}
+
+
+	/**
+	 * Gets the commit from source. The result is cached upstream in Repository.
+	 *
+	 * @return \Gitonomy\Git\Commit|null
+	 */
+	public function getCommit() {
+		$repo = $this->getRepository();
+		if($repo) {
+			try {
+				return $repo->getCommit($this->SHA);
+			} catch(Gitonomy\Git\Exception\ReferenceNotFoundException $ex) {
+				return null;
+			}
+		}
+
+		return null;
+	}
+
+
+	/**
+	 * Gets the commit message.
+	 *
+	 * @return string|null
+	 */
+	public function getCommitMessage() {
+		$commit = $this->getCommit();
+		if($commit) {
+			try {
+				return Convert::raw2xml($commit->getMessage());
+			} catch(Gitonomy\Git\Exception\ReferenceNotFoundException $e) {
+				return null;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Return all tags for the deployed commit.
+	 *
+	 * @return ArrayList
+	 */
+	public function getTags() {
+		$returnTags = array();
+		$repo = $this->getRepository();
+		if($repo) {
+			$tags = $repo->getReferences()->resolveTags($this->SHA);
+			if(!empty($tags)) {
+				foreach($tags as $tag) {
+					$field = Varchar::create('Tag', '255');
+					$field->setValue($tag->getName());
+					$returnTags[] = $field;
+				}
+			}
+		}
+		return new ArrayList($returnTags);
+	}
+
+	/**
+	 * Fetches the latest tag for the deployed commit
+	 *
+	 * @return \Varchar|null
+	 */
+	public function getTag() {
+		$tags = $this->getTags();
+		if($tags->count() > 0) {
+			return $tags->last();
+		}
+		return null;
+	}
+
 	/**
 	 * Start a resque job for this deployment
 	 *
@@ -127,14 +218,19 @@ class DNDeployment extends DataObject {
 
 		$args = array(
 			'environmentName' => $environment->Name,
-			'sha' => $this->SHA,
-			'repository' => $project->LocalCVSPath,
+			'repository' => $project->getLocalCVSPath(),
 			'logfile' => $this->logfile(),
 			'projectName' => $project->Name,
 			'env' => $project->getProcessEnv(),
-			'deploymentID' => $this->ID,
-			'leaveMaintenacePage' => $this->LeaveMaintenacePage
+			'deploymentID' => $this->ID
 		);
+
+		$strategy = new DeploymentStrategy($environment);
+		$strategy->fromJSON($this->Strategy);
+		// Inject options.
+		$args = array_merge($args, $strategy->getOptions());
+		// Make sure we use the SHA as it was written into this DNDeployment.
+		$args['sha'] = $this->SHA;
 
 		if(!$this->DeployerID) {
 			$this->DeployerID = Member::currentUserID();

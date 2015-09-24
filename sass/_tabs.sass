@@ -1,0 +1,115 @@
+//Scrolling tabs
+.wrapper
+	position:relative
+	margin:0 auto
+	overflow:hidden
+	height:42px
+
+.list
+	position:absolute
+	left:0px
+	top:0px
+	min-width:3000px
+	margin-top:0px
+
+.list li
+	display:table-cell
+	position:relative
+	text-align:center
+	cursor:grab
+	cursor:-webkit-grab
+	color:#efefef
+	vertical-align:middle
+
+.scroller
+	text-align:center
+	cursor:pointer
+	display:none
+	padding:11px
+	white-space:no-wrap
+	vertical-align:middle
+	background-color:#fff
+	box-shadow: 0 0 2px #ddd
+
+.scroller-right
+	float:right
+	margin-right: -30px
+	box-shadow: -2px 1px 2px #eee
+
+.scroller-left 
+	float:left
+	margin-left: -30px
+	box-shadow: 2px 1px 2px #eee
+
+//Scrolling tabs end
+
+
+
+// http://stackoverflow.com/questions/18432577/stacked-tabs-in-bootstrap-3
+.tabs-below, .tabs-right, .tabs-left
+	.nav-tabs
+		border-bottom: 0
+
+
+.tab-content > .tab-pane,
+.pill-content > .pill-pane
+	display: none
+
+
+.tab-content > .active,
+.pill-content > .active
+	display: block
+
+
+.tabs-below
+	> .nav-tabs
+		border-top: 1px solid #ddd
+
+		> li
+			margin-top: -1px
+			margin-bottom: 0
+
+		> .active a
+			&, &:hover, &:focus
+				border-color: transparent #ddd #ddd #ddd
+
+
+.tabs-left, .tabs-right
+	> .nav-tabs > li
+		float: none
+
+	> a
+			min-width: 74px
+			margin-right: 0
+			margin-bottom: 3px
+
+
+.tabs-left > .nav-tabs
+	float: left
+	margin-right: 19px
+	border-right: 1px solid #ddd
+
+	> li > a
+		margin-right: -1px
+		-webkit-border-radius: 4px 0 0 4px
+			-moz-border-radius: 4px 0 0 4px
+				border-radius: 4px 0 0 4px
+
+		&:hover, &:focus
+			border-color: #eee #ddd #eee #eee
+
+	> .active a
+		&, &:hover, &:focus
+			border-color: #ddd transparent #ddd #ddd
+			*border-right-color: #fff
+
+
+.tabs-right > .nav-tabs
+	float: right
+	margin-left: 19px
+
+	> li > a
+		margin-left: -1px
+		-webkit-border-radius: 0 4px 4px 0
+			-moz-border-radius: 0 4px 4px 0
+				border-radius: 0 4px 4px 0

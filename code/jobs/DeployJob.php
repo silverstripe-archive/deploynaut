@@ -6,13 +6,11 @@
 class DeployJob {
 
 	/**
-	 *
 	 * @var array
 	 */
 	public $args;
 
 	/**
-	 *
 	 */
 	public function setUp() {
 		$this->updateStatus('Started');
@@ -20,7 +18,6 @@ class DeployJob {
 	}
 
 	/**
-	 *
 	 * @global array $databaseConfig
 	 */
 	public function tearDown() {
@@ -29,7 +26,6 @@ class DeployJob {
 	}
 
 	/**
-	 *
 	 */
 	public function perform() {
 		echo "[-] DeployJob starting" . PHP_EOL;
@@ -64,10 +60,11 @@ class DeployJob {
 
 			$DNEnvironment->Backend()->deploy(
 				$DNEnvironment,
-				$this->args['sha'],
 				$log,
 				$DNProject,
-				isset($this->args['leaveMaintenacePage']) ? $this->args['leaveMaintenacePage'] : false
+				// Pass all args to give the backend full visibility. These args also contain
+				// all options from the DeploymentStrategy merged in, including sha.
+				$this->args
 			);
 		} catch(Exception $e) {
 			$this->updateStatus('Failed');
@@ -78,7 +75,6 @@ class DeployJob {
 	}
 
 	/**
-	 *
 	 * @param string $status
 	 * @global array $databaseConfig
 	 */
@@ -91,7 +87,6 @@ class DeployJob {
 	}
 
 	/**
-	 *
 	 * @return DNData
 	 */
 	protected function DNData() {

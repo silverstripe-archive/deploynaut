@@ -1,6 +1,5 @@
 .navbar .navbar-inner .nav > li.active > a {
 	color: #2c5b87;
-	text-shadow: 0 1px 0 #e5e5e5;
 }
 .navbar .divider-vertical {
 	border-right: 1px solid #999;
@@ -266,7 +265,7 @@ ul li pre {
 	border-bottom: 1px solid #eee;
 	padding: 8px 0;
 }
-#Form_DeployForm select, #Form_DeployForm input[type=text] {
+#DeployForm_DeployForm select, #DeployForm_DeployForm input[type=text] {
 	width: 450px;
 }
 
@@ -317,7 +316,7 @@ form.fields-wide .field label.left {
 	margin-top: 60px;
 }
 
-#Form_DeployForm .SelectionGroup {
+#DeployForm_DeployForm .SelectionGroup {
 	overflow: hidden;
 }
 

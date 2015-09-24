@@ -3,7 +3,6 @@
 class DNReference extends ViewableData {
 
 	/**
-	 *
 	 * @var Gitonomy\Git\Reference
 	 */
 	protected $reference;

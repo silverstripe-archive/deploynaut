@@ -46,6 +46,7 @@
  * </code>
  *
  * @method Member Responder() Member who has given an approval for this request
+ * @property int $ResponderID
  * @property string $Approval
  * @property int $NotifiedGroup
  * @package deploynaut
@@ -67,6 +68,9 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 	const ROLE_REQUESTER = 'Requester';
 	const ROLE_RECIPIENT = 'Recipient';
 
+	/**
+	 * @var array
+	 */
 	private static $db = array(
 		// A finished step is approved and a failed step is rejected.
 		// Aborted confirmation is left as None
@@ -78,11 +82,17 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 		'NotifiedGroup' => 'Int'
 	);
 
+	/**
+	 * @var array
+	 */
 	private static $defaults = array(
 		'Approval' => 'None',
 		'NotifiedGroup' => 0
 	);
 
+	/**
+	 * @var array
+	 */
 	private static $has_one = array(
 		'Responder' => 'Member'
 	);
@@ -157,7 +167,7 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 	/**
 	 * Can the current user approve this pipeline?
 	 *
-	 * @param Member $member
+	 * @param Member|null $member
 	 * @return boolean
 	 */
 	public function canApprove($member = null) {
@@ -179,7 +189,9 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 		}
 
 		// Skip subsequent approvals if already approved / rejected
-		if($this->hasResponse()) return;
+		if($this->hasResponse()) {
+			return;
+		}
 
 		// Approve
 		$this->Approval = 'Approved';
@@ -205,7 +217,9 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 		}
 
 		// Skip subsequent approvals if already approved / rejected
-		if($this->hasResponse()) return;
+		if($this->hasResponse()) {
+			return;
+		}
 
 		// Reject
 		$this->Approval = 'Rejected';
@@ -226,7 +240,9 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 		// a reasonable time-elapsed to consider this job inactive
 		if($this->isTimedOut()) {
 			$days = round($this->MaxDuration / (24.0 * 3600.0), 1);
-			$this->log("{$this->Title} took longer than {$this->MaxDuration} seconds ($days days) to be approved and has timed out");
+			$logMessage = "{$this->Title} took longer than {$this->MaxDuration} seconds ($days days) to be approved "
+				. "and has timed out";
+			$this->log($logMessage);
 			$this->markFailed();
 			$this->sendMessage(self::ALERT_TIMEOUT);
 			return false;
@@ -319,7 +335,7 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 	 * @param string $messageID Message ID. One of 'Reject', 'Approve', 'TimeOut' or 'Request'
 	 * @param mixed $recipientGroup Either a numeric index of the next recipient to send to, or "all" for all
 	 * This is used for delayed notification so that failover recipients can be notified.
-	 * @return boolean True if successful
+	 * @return boolean|null True if successful
 	 */
 	protected function sendMessage($messageID, $recipientGroup = 'all') {
 		// Add additionally configured arguments
@@ -363,7 +379,9 @@ class UserConfirmationStep extends LongRunningPipelineStep {
 	public function getRunningDescription() {
 
 		// Don't show options if this step has already been confirmed
-		if($this->hasResponse() || !$this->isRunning()) return;
+		if($this->hasResponse() || !$this->isRunning()) {
+			return;
+		}
 
 		return 'This deployment is currently awaiting approval before it can complete.';
 	}

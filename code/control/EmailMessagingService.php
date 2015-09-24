@@ -75,7 +75,9 @@ class EmailMessagingService implements ConfirmationMessagingService {
 	 * @param string $body
 	 */
 	protected function sendMessageTo($source, $from, $to, $subject, $body) {
-		if($to instanceof Member) $to = $to->Email;
+		if($to instanceof Member) {
+			$to = $to->Email;
+		}
 		$this->sendViaEmail($source, $from, $to, $subject, $body);
 	}
 
@@ -84,7 +86,7 @@ class EmailMessagingService implements ConfirmationMessagingService {
 	 *
 	 * @param PipelineStep $source Client step
 	 * @param string $from
-	 * @param string|Member $to
+	 * @param string $to
 	 * @param string $subject
 	 * @param string $body
 	 */
