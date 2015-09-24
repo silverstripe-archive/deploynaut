@@ -303,7 +303,14 @@ class DNProject extends DataObject {
 	 * @return bool
 	 */
 	public function canCreateEnvironments($member = null) {
-		return Permission::checkMember($member, 'ADMIN');
+		$envType = $this->AllowedEnvironmentType;
+		if($envType) {
+			$env = Injector::inst()->get($envType);
+			if($env instanceof EnvironmentCreateBackend) {
+				return Permission::checkMember($member, 'ADMIN');
+			}
+		}
+		return false;
 	}
 
 	/**
