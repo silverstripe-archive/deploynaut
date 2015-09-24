@@ -79,9 +79,10 @@
 		<% end_if %>
 	<% else %>
 		<% if $CurrentEnvironment.CanDeploy %>
-			<div id="deploy_form"></div>
+			<div id="deployment-dialog-holder"></div>
+
 			<script>
-				var context = {
+				var environmentConfigContext = {
 					projectUrl: "{$absoluteBaseURL}naut/api/$CurrentProject.Name",
 					envUrl: "{$absoluteBaseURL}{$CurrentEnvironment.Link}",
 					envName: "{$CurrentEnvironment.Name}",
