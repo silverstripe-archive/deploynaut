@@ -2,9 +2,7 @@
 
 
 class DNProjectTest extends DeploynautTest {
-
 	/**
-	 *
 	 * @var DNProject
 	 */
 	protected $project = null;
@@ -43,7 +41,10 @@ class DNProjectTest extends DeploynautTest {
 	}
 
 	public function testSetCreateProjectFolderFieldFolderExists() {
-		$this->assertFalse(file_exists($this->envPath.'/'.$this->project->Name), 'project folder shouldnt exist prior to save');
+		$this->assertFalse(
+			file_exists($this->envPath.'/'.$this->project->Name),
+			'project folder shouldnt exist prior to save'
+		);
 		$this->project->CreateEnvFolder = true;
 		$this->project->onBeforeWrite();
 		$fields = new FieldList();
@@ -72,5 +73,4 @@ class DNProjectTest extends DeploynautTest {
 		$this->project->DiskQuotaMB = 2;
 		$this->assertTrue($this->project->HasDiskQuota());
 	}
-
 }

@@ -52,8 +52,14 @@ class DNProject extends DataObject {
 		"Name",
 	);
 
+	/**
+	 * @var string
+	 */
 	private static $singular_name = 'Project';
 
+	/**
+	 * @var string
+	 */
 	private static $plural_name = 'Projects';
 
 	/**
@@ -139,6 +145,7 @@ class DNProject extends DataObject {
 
 	/**
 	 * Has the disk quota been exceeded?
+	 *
 	 * @return boolean
 	 */
 	public function HasExceededDiskQuota() {
@@ -147,6 +154,7 @@ class DNProject extends DataObject {
 
 	/**
 	 * Is there a disk quota set for this project?
+	 *
 	 * @return boolean
 	 */
 	public function HasDiskQuota() {
@@ -200,6 +208,7 @@ class DNProject extends DataObject {
 
 	/**
 	 * Is this project currently at the root level of the controller that handles it?
+	 *
 	 * @return bool
 	 */
 	public function isCurrent() {
@@ -209,6 +218,8 @@ class DNProject extends DataObject {
 	/**
 	 * Return the current object from $this->Menu()
 	 * Good for making titles and things
+	 *
+	 * @return DataObject
 	 */
 	public function CurrentMenu() {
 		return $this->Menu()->filter('IsSection', true)->First();
@@ -216,6 +227,7 @@ class DNProject extends DataObject {
 
 	/**
 	 * Is this project currently in a controller that is handling it or performing a sub-task?
+	 *
 	 * @return bool
 	 */
 	public function isSection() {
@@ -255,7 +267,6 @@ class DNProject extends DataObject {
 
 	/**
 	 * @param Member|null $member
-	 *
 	 * @return bool
 	 */
 	public function canBackup($member = null) {
@@ -266,7 +277,6 @@ class DNProject extends DataObject {
 
 	/**
 	 * @param Member|null $member
-	 *
 	 * @return bool
 	 */
 	public function canUploadArchive($member = null) {
@@ -277,7 +287,6 @@ class DNProject extends DataObject {
 
 	/**
 	 * @param Member|null $member
-	 *
 	 * @return bool
 	 */
 	public function canDownloadArchive($member = null) {
@@ -325,6 +334,7 @@ class DNProject extends DataObject {
 			$processEnv = array();
 		}
 		$this->extend('updateProcessEnv', $processEnv);
+
 		return $processEnv;
 	}
 
@@ -333,7 +343,6 @@ class DNProject extends DataObject {
 	 *
 	 * @return string
 	 */
-
 	public function getViewersList() {
 		return implode(", ", $this->Viewers()->column("Title"));
 	}
@@ -347,6 +356,8 @@ class DNProject extends DataObject {
 
 	/**
 	 * Provides a DNBuildList of builds found in this project.
+	 *
+	 * @return DNReferenceList
 	 */
 	public function DNBuildList() {
 		return DNReferenceList::create($this, $this->DNData());
@@ -354,6 +365,8 @@ class DNProject extends DataObject {
 
 	/**
 	 * Provides a list of the branches in this project.
+	 *
+	 * @return DNBranchList
 	 */
 	public function DNBranchList() {
 		if($this->CVSPath && !$this->repoExists()) {
@@ -364,6 +377,8 @@ class DNProject extends DataObject {
 
 	/**
 	 * Provides a list of the tags in this project.
+	 *
+	 * @return DNReferenceList
 	 */
 	public function DNTagList() {
 		if($this->CVSPath && !$this->repoExists()) {
@@ -373,12 +388,13 @@ class DNProject extends DataObject {
 	}
 
 	/**
-	 * @return Gitonomy\Git\Repository
+	 * @return false|Gitonomy\Git\Repository
 	 */
 	public function getRepository() {
 		if(!$this->repoExists()) {
 			return false;
 		}
+
 		return new Gitonomy\Git\Repository($this->getLocalCVSPath());
 	}
 
@@ -405,12 +421,18 @@ class DNProject extends DataObject {
 			});
 	}
 
+	/**
+	 * @param string $usage
+	 * @return ArrayList
+	 */
 	public function EnvironmentsByUsage($usage) {
 		return $this->DNEnvironmentList()->filter('Usage', $usage);
 	}
 
 	/**
 	 * Returns a map of envrionment name to build name
+	 *
+	 * @return false|DNDeployment
 	 */
 	public function currentBuilds() {
 		if(!isset(self::$relation_cache['currentBuilds.'.$this->ID])) {
@@ -424,9 +446,10 @@ class DNProject extends DataObject {
 	}
 
 	/**
+	 * @param string
 	 * @return string
 	 */
-	public function Link($action='') {
+	public function Link($action = '') {
 		return Controller::join_links("naut", "project", $this->Name, $action);
 	}
 
@@ -544,7 +567,6 @@ class DNProject extends DataObject {
 
 	/**
 	 * Setup a asyncronous resque job to clone a git repository
-	 *
 	 */
 	public function cloneRepo() {
 		Resque::enqueue('git', 'CloneGitRepo', array(
@@ -563,7 +585,6 @@ class DNProject extends DataObject {
 
 	/**
 	 * Checks for missing folders folder and schedules a git clone if the necessary
-	 *
 	 */
 	public function onBeforeWrite() {
 		parent::onBeforeWrite();
@@ -617,6 +638,8 @@ class DNProject extends DataObject {
 
 	/**
 	 * Fetch the public key for this project.
+	 *
+	 * @return string|void
 	 */
 	public function getPublicKey() {
 		$key = $this->getPublicKeyPath();
@@ -625,7 +648,6 @@ class DNProject extends DataObject {
 			return file_get_contents($key);
 		}
 	}
-
 
 	/**
 	 * This returns that path of the public key if a key directory is set. It doesn't check whether the file exists.
@@ -638,7 +660,6 @@ class DNProject extends DataObject {
 		}
 		return null;
 	}
-
 
 	/**
 	 * This returns that path of the private key if a key directory is set. It doesn't check whether the file exists.
@@ -654,7 +675,6 @@ class DNProject extends DataObject {
 		}
 		return null;
 	}
-
 
 	/**
 	 * Returns the location of the projects key dir if one exists.
@@ -700,6 +720,8 @@ class DNProject extends DataObject {
 
 	/**
 	 * Provide current repository URL to the users.
+	 *
+	 * @return void|string
 	 */
 	public function getRepositoryURL() {
 		$showUrl = Config::inst()->get($this->class, 'show_repository_url');
@@ -746,6 +768,7 @@ class DNProject extends DataObject {
 
 	/**
 	 * Get a ViewableData structure describing the UI tool that lets the user view the repository code
+	 *
 	 * @return ArrayData
 	 */
 	public function getRepositoryInterface() {
@@ -773,7 +796,10 @@ class DNProject extends DataObject {
 				if(array_key_exists('commit', $interface) && $interface['commit'] == false) {
 					$commiturl = false;
 				} else {
-					$commiturl = Controller::join_links($uxurl, isset($interface['commit']) ? $interface['commit'] : 'commit');
+					$commiturl = Controller::join_links(
+						$uxurl,
+						isset($interface['commit']) ? $interface['commit'] : 'commit'
+					);
 				}
 
 				return new ArrayData(array(

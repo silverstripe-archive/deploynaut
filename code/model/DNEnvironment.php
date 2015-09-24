@@ -672,7 +672,7 @@ class DNEnvironment extends DataObject {
 	 * Dear people of the future: If you are looking to optimize this, simply create a CurrentBuildSHA(), which can be
 	 * a lot faster. I presume you came here because of the Project display template, which only needs a SHA.
 	 *
-	 * @return string
+	 * @return false|DNDeployment
 	 */
 	public function CurrentBuild() {
 		// The DeployHistory function is far too slow to use for this

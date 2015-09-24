@@ -3,7 +3,9 @@
  *
  */
 class DNEnvironmentTest extends DeploynautTest {
-
+	/**
+	 * @var string
+	 */
 	protected static $fixture_file = 'DNEnvironmentTest.yml';
 
 	/**
@@ -18,7 +20,7 @@ class DNEnvironmentTest extends DeploynautTest {
 	 */
 	public function testGetConfigFilename() {
 		$environment = $this->getEnvironment();
-		$expected = $this->envPath.'/testproject/uat.rb';
+		$expected = $this->envPath . '/testproject/uat.rb';
 		$this->assertEquals($expected, $environment->getConfigFilename());
 	}
 
@@ -131,7 +133,5 @@ class DNEnvironmentTest extends DeploynautTest {
 
 		$fields = $environment->getCMSFields();
 		$this->assertNull($fields->dataFieldByName('BackendIdentifier'));
-
 	}
-
 }
