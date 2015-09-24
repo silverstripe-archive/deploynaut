@@ -120,6 +120,19 @@
 					<tr>
 						<td><span>$LastEdited.Nice</span></td>
 						<td>
+							<% if $FullDeployMessages %>
+								<a class="full-deploy-info"
+									data-toggle="popover"
+									data-trigger="manual"
+									data-placement="bottom"
+									data-html="true"
+									title="Full deployment"
+									data-content="
+										<% loop $FullDeployMessages %>
+											<div><% if $Flag %>$Flag.ATT <% end_if %>$Text.ATT</div>
+										<% end_loop %>
+									"><i class="fa fa-flag"></i></a>
+							<% end_if %>
 							<% include GitBuildReference %>
 						</td>
 						<td>$Deployer.Name <% if $Deployer.Email %>&lt;$Deployer.Email&gt; <% end_if %></td>
