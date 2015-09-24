@@ -22,7 +22,7 @@ class DNAdmin extends ModelAdmin {
 	);
 
 	/**
-	 * @var string
+	 * @var int
 	 */
 	private static $menu_priority = 100;
 
