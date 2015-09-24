@@ -120,17 +120,28 @@
 					<tr>
 						<td><span>$LastEdited.Nice</span></td>
 						<td>
+							<% if $FullDeployMessages %>
+								<a class="full-deploy-info"
+									data-toggle="popover"
+									data-trigger="click"
+									data-placement="bottom"
+									data-html="true"
+									title="Full deployment"
+									data-content="
+										<% loop $FullDeployMessages %>
+											<div><% if $Flag %>$Flag.ATT <% end_if %>$Text.ATT</div>
+										<% end_loop %>
+									"><i class="fa fa-flag"></i></a>
+							<% end_if %>
 							<% include GitBuildReference %>
 						</td>
 						<td>$Deployer.Name <% if $Deployer.Email %>&lt;$Deployer.Email&gt; <% end_if %></td>
 						<td class="text-center">
-						<% if $Status = 'Queued' %><span class="label label-info">Queued</span><% end_if %>
-						<% if $Status = 'Started' %><span class="label label-info">Running</span><% end_if %>
-						<% if $Status = 'Finished' %><span class="label label-success">Finished</span><% end_if %>
-						<% if $Status = 'Failed' %><span class="label label-danger">Failed</span><% end_if %>
-						<% if $Status = 'n/a' %><span class="label label-warning">n/a</span><% end_if %>
+							<span class="label label-$StatusClass">$StatusFriendly</span>
 						</td>
-						<td class="text-center"><% if $Link %><a href="$Link">Details <i class="fa fa-angle-right"></i></a><% end_if %></td>
+						<td class="text-center">
+							<% if $Link %><a href="$Link">Details <i class="fa fa-angle-right"></i></a><% end_if %>
+						</td>
 					</tr>
 				<% end_loop %>
 				<% else %>
