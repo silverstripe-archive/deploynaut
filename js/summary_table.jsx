@@ -42,15 +42,6 @@ var SummaryTable = React.createClass({
 
 		return (
 			<table className="table table-striped table-hover">
-				<thead>
-					<tr>
-						<th>&nbsp;</th>
-						<th>&nbsp;</th>
-						<th className="transitionIcon">&nbsp;</th>
-						<th>&nbsp;</th>
-						<th className="changeAction">&nbsp;</th>
-					</tr>
-				</thead>
 				<tbody>
 					{summaryLines}
 				</tbody>
