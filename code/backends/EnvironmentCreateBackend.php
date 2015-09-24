@@ -13,9 +13,10 @@ interface EnvironmentCreateBackend {
 	/**
 	 * Returns form fields for the create form.
 	 *
+	 * @param DNProject $project
 	 * @return FieldList
 	 */
-	public function getCreateEnvironmentFields();
+	public function getCreateEnvironmentFields(DNProject $project);
 
 	/**
 	 * Returns validator for the create form.
