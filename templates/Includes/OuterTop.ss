@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
 
-	<% require themedCSS(style,deploynaut) %>
 	<% require themedCSS(theme-style,platform) %>
 
     <script src="//use.typekit.net/opf7opz.js"></script>
