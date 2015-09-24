@@ -197,6 +197,49 @@ class DNDeployment extends DataObject {
 	}
 
 	/**
+	 * Collate the list of additional flags to affix to this deployment.
+	 * Elements of the array will be rendered literally.
+	 *
+	 * @return ArrayList
+	 */
+	public function getExtraFlags() {
+		$flags = array();
+		$this->extend('extendExtraFlags', $flags);
+		$flags = array_map(function($value) {
+			return [
+				'LiteralFlag' => $value
+			];
+		}, $flags);
+		return new ArrayList($flags);
+	}
+
+	/**
+	 * Get bootstrape-y class for the frontend.
+	 *
+	 * @return string
+	 */
+	public function getStatusClass() {
+		switch ($this->Status) {
+			case 'Finished': return 'success';
+			case 'Failed': return 'danger';
+			case 'n/a': return 'warning';
+			default: return 'info';
+		}
+	}
+
+	/**
+	 * Convert status to a friendly form, shown on the frontend.
+	 *
+	 * @return string
+	 */
+	public function getStatusFriendly() {
+		switch ($this->Status) {
+			case 'Started': return 'Running';
+			default: return $this->Status;
+		}
+	}
+
+	/**
 	 * Fetches the latest tag for the deployed commit
 	 *
 	 * @return \Varchar|null
@@ -207,6 +250,16 @@ class DNDeployment extends DataObject {
 			return $tags->last();
 		}
 		return null;
+	}
+
+	/**
+	 * @return DeploymentStrategy
+	 */
+	public function getDeploymentStrategy() {
+		$environment = $this->Environment();
+		$strategy = new DeploymentStrategy($environment);
+		$strategy->fromJSON($this->Strategy);
+		return $strategy;
 	}
 
 	/**
@@ -228,8 +281,7 @@ class DNDeployment extends DataObject {
 			'deploymentID' => $this->ID
 		);
 
-		$strategy = new DeploymentStrategy($environment);
-		$strategy->fromJSON($this->Strategy);
+		$strategy = $this->getDeploymentStrategy();
 		// Inject options.
 		$args = array_merge($args, $strategy->getOptions());
 		// Make sure we use the SHA as it was written into this DNDeployment.
