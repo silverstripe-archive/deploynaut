@@ -3,7 +3,6 @@
 class APIEnvironment extends APINoun {
 
 	/**
-	 *
 	 * @var array
 	 */
 	private static $allowed_actions = array(
@@ -12,7 +11,6 @@ class APIEnvironment extends APINoun {
 	);
 
 	/**
-	 *
 	 * @param SS_HTTPRequest $request
 	 * @return SS_HTTPResponse
 	 */
@@ -49,7 +47,6 @@ class APIEnvironment extends APINoun {
 	}
 
 	/**
-	 *
 	 * @param SS_HTTPRequest $request
 	 * @return SS_HTTPResponse
 	 */
@@ -68,7 +65,6 @@ class APIEnvironment extends APINoun {
 	}
 
 	/**
-	 *
 	 * @param SS_HTTPRequest $request
 	 * @return SS_HTTPResponse
 	 */
@@ -98,7 +94,6 @@ class APIEnvironment extends APINoun {
 	}
 
 	/**
-	 *
 	 * @return SS_HTTPResponse
 	 */
 	protected function showRecord() {
@@ -106,7 +101,6 @@ class APIEnvironment extends APINoun {
 	}
 
 	/**
-	 *
 	 * @return SS_HTTPResponse
 	 */
 	protected function createPing() {
@@ -131,7 +125,6 @@ class APIEnvironment extends APINoun {
 	}
 
 	/**
-	 *
 	 * @param int $ID
 	 * @return SS_HTTPResponse
 	 */
@@ -149,7 +142,6 @@ class APIEnvironment extends APINoun {
 	}
 
 	/**
-	 *
 	 * @return SS_HTTPResponse
 	 */
 	protected function createDeploy() {
@@ -184,7 +176,6 @@ class APIEnvironment extends APINoun {
 }
 
 	/**
-	 *
 	 * @param int $id
 	 * @return SS_HTTPResponse
 	 */

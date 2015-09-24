@@ -14,7 +14,6 @@
 class DNGitFetch extends DataObject {
 
 	/**
-	 *
 	 * @var array
 	 */
 	private static $db = array(
@@ -22,7 +21,6 @@ class DNGitFetch extends DataObject {
 	);
 
 	/**
-	 *
 	 * @var array
 	 */
 	private static $has_one = array(
@@ -67,7 +65,6 @@ class DNGitFetch extends DataObject {
 	}
 
 	/**
-	 *
 	 * @param Member|null $member
 	 * @return bool
 	 */
@@ -88,7 +85,6 @@ class DNGitFetch extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return \DeploynautLogFile
 	 */
 	public function log() {
@@ -96,7 +92,6 @@ class DNGitFetch extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function LogContent() {
@@ -104,7 +99,6 @@ class DNGitFetch extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function ResqueStatus() {

@@ -8,19 +8,16 @@
 class DNBranch extends ViewableData {
 
 	/**
-	 *
 	 * @var Gitonomy\Git\Reference\Branch
 	 */
 	protected $branch = null;
 
 	/**
-	 *
 	 * @var DNProject
 	 */
 	protected $project = null;
 
 	/**
-	 *
 	 * @var DNData
 	 */
 	protected $data = null;
@@ -36,7 +33,6 @@ class DNBranch extends ViewableData {
 	protected $_lastUpdatedCache = '';
 
 	/**
-	 *
 	 * @param DNProject $project
 	 * @param DNData $data
 	 */
@@ -51,7 +47,6 @@ class DNBranch extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function Name() {
@@ -64,7 +59,6 @@ class DNBranch extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function SHA() {
@@ -80,7 +74,6 @@ class DNBranch extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @return SS_Datetime
 	 */
 	public function LastUpdated() {
@@ -107,7 +100,6 @@ class DNBranch extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function IsOpenByDefault() {

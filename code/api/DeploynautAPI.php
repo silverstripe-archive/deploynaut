@@ -26,7 +26,6 @@ class DeploynautAPI extends APINoun {
 	);
 
 	/**
-	 *
 	 * @var array
 	 */
 	public static $allowed_actions = array(
@@ -36,13 +35,11 @@ class DeploynautAPI extends APINoun {
 	);
 
 	/**
-	 *
 	 * @var string
 	 */
 	protected $link = 'deploynaut/api';
 
 	/**
-	 *
 	 * @param SS_HTTPRequest $request
 	 * @return SS_HTTPResponse
 	 */
@@ -140,7 +137,6 @@ class DeploynautAPI extends APINoun {
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function Link() {

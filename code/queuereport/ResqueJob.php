@@ -9,13 +9,11 @@
 class ResqueJob extends ViewableData {
 
 	/**
-	 *
 	 * @var array
 	 */
 	protected $record = array();
 
 	/**
-	 *
 	 * @param array $data
 	 */
 	public function __construct($data = array()) {
@@ -23,7 +21,6 @@ class ResqueJob extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function i18n_singular_name() {
@@ -31,7 +28,6 @@ class ResqueJob extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @return boolean
 	 */
 	public function canView() {
@@ -39,7 +35,6 @@ class ResqueJob extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @return bool
 	 */
 	public function canEdit() {
@@ -47,7 +42,6 @@ class ResqueJob extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @return bool
 	 */
 	public function candelete() {
@@ -55,7 +49,6 @@ class ResqueJob extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @return bool
 	 */
 	public function cancreate() {
@@ -63,7 +56,6 @@ class ResqueJob extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @param string $property
 	 * @return mixed
 	 */

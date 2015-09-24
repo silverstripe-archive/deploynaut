@@ -3,7 +3,6 @@
 class APIProject extends APINoun {
 
 	/**
-	 *
 	 * @var array
 	 */
 	private static $allowed_actions = array(
@@ -12,7 +11,6 @@ class APIProject extends APINoun {
 	);
 
 	/**
-	 *
 	 * @param SS_HTTPRequest $request
 	 * @return SS_HTTPResponse
 	 */
@@ -45,7 +43,6 @@ class APIProject extends APINoun {
 	}
 
 	/**
-	 *
 	 * @param SS_HTTPRequest $request
 	 * @return SS_HTTPResponse
 	 */
@@ -64,7 +61,6 @@ class APIProject extends APINoun {
 	}
 
 	/**
-	 *
 	 * @param int $ID
 	 * @return SS_HTTPResponse
 	 */
@@ -82,7 +78,6 @@ class APIProject extends APINoun {
 	}
 
 	/**
-	 *
 	 * @return SS_HTTPResponse
 	 */
 	protected function createFetch() {

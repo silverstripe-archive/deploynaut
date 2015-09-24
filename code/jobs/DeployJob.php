@@ -6,13 +6,11 @@
 class DeployJob {
 
 	/**
-	 *
 	 * @var array
 	 */
 	public $args;
 
 	/**
-	 *
 	 */
 	public function setUp() {
 		$this->updateStatus('Started');
@@ -20,7 +18,6 @@ class DeployJob {
 	}
 
 	/**
-	 *
 	 * @global array $databaseConfig
 	 */
 	public function tearDown() {
@@ -29,7 +26,6 @@ class DeployJob {
 	}
 
 	/**
-	 *
 	 */
 	public function perform() {
 		echo "[-] DeployJob starting" . PHP_EOL;
@@ -79,7 +75,6 @@ class DeployJob {
 	}
 
 	/**
-	 *
 	 * @param string $status
 	 * @global array $databaseConfig
 	 */
@@ -92,7 +87,6 @@ class DeployJob {
 	}
 
 	/**
-	 *
 	 * @return DNData
 	 */
 	protected function DNData() {

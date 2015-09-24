@@ -5,7 +5,6 @@ use Gitonomy\Git\Tag;
 class DNTag extends ViewableData {
 
 	/**
-	 *
 	 * @var Gitonomy\Git\Reference\Tag
 	 */
 	protected $tag = null;

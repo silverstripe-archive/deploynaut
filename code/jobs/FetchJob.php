@@ -5,7 +5,6 @@ class FetchJob {
 	public $args;
 
 	/**
-	 *
 	 * @global array $databaseConfig
 	 */
 	public function setUp() {

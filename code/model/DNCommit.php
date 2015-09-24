@@ -2,7 +2,6 @@
 class DNCommit extends ViewableData {
 
 	/**
-	 *
 	 * @var Gitonomy\Git\Commit
 	 */
 	protected $commit = null;
@@ -57,7 +56,6 @@ class DNCommit extends ViewableData {
 	);
 
 	/**
-	 *
 	 * @param Gitonomy\Git\Commit $commit
 	 * @param DNProject $project
 	 * @param DNData $data
@@ -112,7 +110,6 @@ class DNCommit extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @return ArrayList
 	 */
 	public function References() {
@@ -135,7 +132,6 @@ class DNCommit extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function FullName() {
@@ -143,7 +139,6 @@ class DNCommit extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function Filename() {
@@ -151,7 +146,6 @@ class DNCommit extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @return ArrayList
 	 */
 	public function CurrentlyDeployedTo() {
@@ -174,7 +168,6 @@ class DNCommit extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @param string $environmentName
 	 * @return boolean True if this release has ever been deployed to the given environment
 	 */
@@ -198,7 +191,6 @@ class DNCommit extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @return SS_Datetime
 	 */
 	public function Created() {

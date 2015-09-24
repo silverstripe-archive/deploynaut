@@ -5,7 +5,6 @@ class CloneGitRepo {
 	public $args;
 
 	/**
-	 *
 	 * @global array $databaseConfig
 	 */
 	public function setUp() {

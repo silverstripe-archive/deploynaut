@@ -5,19 +5,16 @@
 class APINoun extends Controller {
 
 	/**
-	 *
 	 * @var controller
 	 */
 	protected $parent = null;
 
 	/**
-	 *
 	 * @var DataObject
 	 */
 	protected $record = null;
 
 	/**
-	 *
 	 * @var Member
 	 */
 	protected $member = null;
@@ -43,7 +40,6 @@ class APINoun extends Controller {
 	}
 
 	/**
-	 *
 	 * @return DataObject
 	 */
 	public function getRecord() {
@@ -51,7 +47,6 @@ class APINoun extends Controller {
 	}
 
 	/**
-	 *
 	 * @return Member
 	 */
 	public function getMember() {
@@ -59,7 +54,6 @@ class APINoun extends Controller {
 	}
 
 	/**
-	 *
 	 * @return SS_HTTPResponse
 	 */
 	protected function getAPIResponse($output) {
@@ -76,7 +70,6 @@ class APINoun extends Controller {
 	}
 
 	/**
-	 *
 	 * @return boolean
 	 */
 	protected function respondWithJSON() {
@@ -90,7 +83,6 @@ class APINoun extends Controller {
 	}
 
 	/**
-	 *
 	 * @return boolean
 	 */
 	protected function respondWithText() {
@@ -104,7 +96,6 @@ class APINoun extends Controller {
 	}
 
 	/**
-	 *
 	 * @return array|null
 	 */
 	protected function getRequestBody() {

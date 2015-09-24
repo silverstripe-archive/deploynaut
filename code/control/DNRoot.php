@@ -45,7 +45,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	const DEPLOYNAUT_ADVANCED_DEPLOY_OPTIONS = 'DEPLOYNAUT_ADVANCED_DEPLOY_OPTIONS';
 
 	/**
-	 *
 	 * @var array
 	 */
 	public static $allowed_actions = array(
@@ -147,7 +146,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	);
 
 	/**
-	 *
 	 * @var DNData
 	 */
 	protected $data;
@@ -209,7 +207,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 *
 	 * @return array
 	 */
 	public static function get_template_global_variables() {
@@ -222,7 +219,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 *
 	 */
 	public function init() {
 		parent::init();
@@ -238,7 +234,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function Link() {
@@ -269,7 +264,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 *
 	 * @param SS_HTTPRequest $request
 	 * @return HTMLText
 	 */
@@ -646,7 +640,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 *
 	 * @param SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse
 	 */
@@ -684,7 +677,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 *
 	 * @param SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse
 	 */
@@ -706,7 +698,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 *
 	 * @param SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse
 	 */
@@ -827,7 +818,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 *
 	 * @param SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse
 	 */
@@ -1852,7 +1842,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 *
 	 * @return array
 	 */
 	public function providePermissions() {
@@ -1879,7 +1868,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 *
 	 * @return DNProject|null
 	 */
 	public function getCurrentProject() {
@@ -1894,7 +1882,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 *
 	 * @param DNProject|null $project
 	 * @return DNEnvironment|null
 	 */
