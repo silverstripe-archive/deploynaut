@@ -2,7 +2,7 @@
  * Helper class to concatinate strings depeding on a true or false.
  *
  * Example:
- * var classes = classNames({
+ * var classes = Helpers.classNames({
  *     "deploy-dropdown": true,
  *     "loading": false,
  *     "open": true,
@@ -12,9 +12,8 @@
  *
  * @returns {string}
  */
-var classNames = (function () {
-
-	function classNames () {
+module.exports = {
+	classNames: function () {
 		var classes = '';
 		for (var i = 0; i < arguments.length; i++) {
 			var arg = arguments[i];
@@ -38,5 +37,4 @@ var classNames = (function () {
 		}
 		return classes.substr(1);
 	}
-	return classNames;
-}());
+}
