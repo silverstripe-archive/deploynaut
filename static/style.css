@@ -9844,10 +9844,15 @@ button.sidebar-open {
 
 .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th {
   border-bottom: 1px solid #eee;
+  border-top: 1px solid #eee;
   font-size: 14px;
   font-weight: 600;
   padding: 16px 10px 12px;
   text-transform: uppercase; }
+
+.table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+  border-bottom: 1px solid #eee;
+  border-top: 1px solid #eee; }
 
 .table-large > tbody > tr > td {
   padding-top: 20px;
