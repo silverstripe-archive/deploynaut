@@ -185,6 +185,7 @@ class DNEnvironment extends DataObject {
 
 	/**
 	 * Get the deployment backend used for this environment.
+	 *
 	 * Enforces compliance with the allowed_backends setting; if the DNEnvironment.BackendIdentifier value is
 	 * illegal then that value is ignored.
 	 *
@@ -210,6 +211,8 @@ class DNEnvironment extends DataObject {
 					$backend = $backends[0];
 				}
 		}
+
+		if (!class_exists($backend)) $backend = "DeploymentBackend";
 
 		return Injector::inst()->get($backend);
 	}
@@ -1317,6 +1320,65 @@ PHP
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Helper for getting all permission codes available for the groups.
+	 * Similar to Permission::permissions_for_member.
+	 *
+	 * @param array|string $groupIDs Array of group IDs, or a single group ID.
+	 * @return array
+	 */
+	public static function permissions_for_groups($groupIDs) {
+		if (!is_array($groupIDs)) $groupIDs = array($groupIDs);
+		$groupCSV = implode(", ", $groupIDs);
+
+		$allowed = array_unique(DB::query("
+			SELECT \"Code\"
+			FROM \"Permission\"
+			WHERE \"Type\" = " . Permission::GRANT_PERMISSION . " AND \"GroupID\" IN ($groupCSV)
+
+			UNION
+
+			SELECT \"Code\"
+			FROM \"PermissionRoleCode\" PRC
+			INNER JOIN \"PermissionRole\" PR ON PRC.\"RoleID\" = PR.\"ID\"
+			INNER JOIN \"Group_Roles\" GR ON GR.\"PermissionRoleID\" = PR.\"ID\"
+			WHERE \"GroupID\" IN ($groupCSV)
+		")->column());
+
+		$denied = array_unique(DB::query("
+			SELECT \"Code\"
+			FROM \"Permission\"
+			WHERE \"Type\" = " . Permission::DENY_PERMISSION . " AND \"GroupID\" IN ($groupCSV)
+		")->column());
+
+		return array_diff($allowed, $denied);
+	}
+
+	/**
+	 * Looks through member's ViewerGroups to see if any code is associated with the current environment.
+	 * Permissions applied to groups on other environments are not taken into account here.
+	 *
+	 * @param string $code
+	 * @param Member|null $member
+	 *
+	 * @return bool
+	 */
+	public function allowed($code, $member = null) {
+		if(!$member) {
+			$member = Member::currentUser();
+			if(!$member) {
+				return false;
+			}
+		}
+
+		foreach ($this->ViewerGroups() as $group) {
+			if ($member->inGroup($group)
+				&& in_array($code, self::permissions_for_groups($group->ID))) return true;
+		}
+
+		return false;
 	}
 
 }

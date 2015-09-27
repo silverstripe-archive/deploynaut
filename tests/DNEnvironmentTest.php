@@ -99,6 +99,34 @@ class DNEnvironmentTest extends DeploynautTest {
 		$this->assertTrue($environment->canAbort($cancellerbygroup));
 	}
 
+	public function testPermissionsForGroups() {
+		$group1 = $this->objFromFixture('Group', 'withCode');
+		$perms = DNEnvironment::permissions_for_groups($group1->ID);
+		$this->assertContains('FOO_PERMISSION', $perms);
+		$this->assertEquals(count($perms), 1);
+
+		$group2 = $this->objFromFixture('Group', 'withRole');
+		$perms = DNEnvironment::permissions_for_groups($group2->ID);
+		$this->assertContains('BAR_PERMISSION', $perms);
+		$this->assertEquals(count($perms), 1);
+	}
+
+	public function testAllowed() {
+		$uat = $this->objFromFixture('DNEnvironment', 'uat');
+		$viewer = $this->objFromFixture('Member', 'viewer');
+
+		$this->assertTrue(
+			$uat->allowed('FOO_PERMISSION', $viewer),
+			'Allowed member\'s group that is in ViewerGroups and has the permission'
+		);
+
+		$dev = $this->objFromFixture('DNEnvironment', 'dev');
+		$this->assertFalse(
+			$dev->allowed('FOO_PERMISSION', $viewer),
+			'Disallowed member\'s group that is in another environment\' ViewerGroups and has the permission'
+		);
+	}
+
 	public function testViewerPermissionInheritedFromProjectIfNotConfigured() {
 		$environment = $this->objFromFixture('DNEnvironment', 'dev');
 		$viewerbygroup = $this->objFromFixture('Member', 'viewerbygroup');
