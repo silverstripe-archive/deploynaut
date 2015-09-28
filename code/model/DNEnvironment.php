@@ -1373,6 +1373,8 @@ PHP
 			}
 		}
 
+		if(Permission::checkMember($member, 'ADMIN')) return true;
+
 		foreach ($this->ViewerGroups() as $group) {
 			if ($member->inGroup($group)
 				&& in_array($code, self::permissions_for_groups($group->ID))) return true;
