@@ -173,7 +173,7 @@ class APIEnvironment extends APINoun {
 		$response->setStatusCode(201);
 		$response->addHeader('Location', $location);
 		return $response;
-}
+	}
 
 	/**
 	 * @param int $id

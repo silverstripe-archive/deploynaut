@@ -54,6 +54,7 @@ class APINoun extends Controller {
 	}
 
 	/**
+	 * @param array $output
 	 * @return SS_HTTPResponse
 	 */
 	protected function getAPIResponse($output) {

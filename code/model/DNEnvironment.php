@@ -69,7 +69,9 @@ class DNEnvironment extends DataObject {
 
 	/**
 	 * Allowed backends. A map of Injector identifier to human-readable label.
+	 *
 	 * @config
+	 * @var array
 	 */
 	private static $allowed_backends = array();
 
@@ -585,7 +587,8 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
-	 * Get a string of groups/people that are allowed to upload {@link DNDataArchive} objects linked to this environment.
+	 * Get a string of groups/people that are allowed to upload {@link DNDataArchive}
+	 *  objects linked to this environment.
 	 *
 	 * @return string
 	 */

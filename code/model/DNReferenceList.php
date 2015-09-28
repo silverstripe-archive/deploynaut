@@ -87,8 +87,7 @@ class DNReferenceList extends ArrayList {
 
 	/**
 	 * @param int $limit
-	 *
-	 * @return $this
+	 * @return DNReferenceList
 	 */
 	public function setLimit($limit) {
 		$this->limit = $limit;
@@ -153,7 +152,9 @@ class DNReferenceList extends ArrayList {
 
 	/**
 	 * Find a build in this set by hash.
+	 *
 	 * @param string $hash
+	 * @return DNCommit
 	 */
 	public function byName($hash) {
 		if($this->loaded === false) {

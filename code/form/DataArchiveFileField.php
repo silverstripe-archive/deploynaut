@@ -10,6 +10,10 @@
  */
 class DataArchiveFileField extends FileField {
 
+	/**
+	 * @param  DataObjectInterface $record
+	 * @return bool|DataArchiveFileField
+	 */
 	public function saveInto(DataObjectInterface $record) {
 		if(!isset($_FILES[$this->name])) {
 			return false;
@@ -29,7 +33,8 @@ class DataArchiveFileField extends FileField {
 
 		$fileClass = File::get_class_for_file_extension(pathinfo($_FILES[$this->name]['name'], PATHINFO_EXTENSION));
 		$file = new $fileClass();
-		// Hack: loadIntoFile assumes paths relative to assets, otherwise it creates the whole structure *within* that folder
+		// Hack: loadIntoFile assumes paths relative to assets,
+		//  otherwise it creates the whole structure *within* that folder
 		$absolutePath = $dataArchive->generateFilepath($dataTransfer);
 		$relativePath = preg_replace('#^' . preg_quote(ASSETS_PATH) . '/#', '', $absolutePath);
 		$this->upload->loadIntoFile($_FILES[$this->name], $file, $relativePath);

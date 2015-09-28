@@ -4,7 +4,9 @@
  * more or less is exactly is the same as the Name but with .rb
  */
 class DNMigrate1_1to1_2 extends BuildTask {
-
+	/**
+	 * @param  SS_HTTPRequest $request
+	 */
 	public function run($request = null) {
 
 		$projects = DNProject::get();
