@@ -23,7 +23,7 @@
 					<% end_if %>
 					$ResqueStatus" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" id="queue_action">
 
-					Creating environment
+					Creating environment $Name
 					<span class="status">$ResqueStatus</span>
 				</div>
 			</div>
