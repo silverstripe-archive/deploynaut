@@ -17,6 +17,8 @@ class DeploynautAPI extends APINoun {
 
 	/**
 	 * Default URL handlers - (Action)/(ID)//(OtherID)
+	 *
+	 * @var array
 	 */
 	private static $url_handlers = array(
 		'' => 'listProjects',

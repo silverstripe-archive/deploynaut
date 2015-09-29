@@ -2,6 +2,9 @@
 
 class TabbedSelectionGroup extends SelectionGroup {
 
+	/**
+	 * @return ArrayList
+	 */
 	public function FieldList() {
 		$items = CompositeField::FieldList()->toArray();
 		$fields = new ArrayList();
@@ -17,5 +20,4 @@ class TabbedSelectionGroup extends SelectionGroup {
 
 		return $fields;
 	}
-
 }
