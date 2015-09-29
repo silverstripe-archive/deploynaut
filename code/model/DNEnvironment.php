@@ -392,8 +392,10 @@ class DNEnvironment extends DataObject {
 		}
 		// Must be logged in to check permissions
 
-		if(Permission::checkMember($member, 'ADMIN')) {
-			return true;
+		if ($this->Usage==='Production' || $this->Usage==='Unspecified') {
+			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_DEPLOYMENT, $member)) return true;
+		} else {
+			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_DEPLOYMENT, $member)) return true;
 		}
 
 		return $this->Deployers()->byID($member->ID)
@@ -416,8 +418,10 @@ class DNEnvironment extends DataObject {
 		}
 		// Must be logged in to check permissions
 
-		if(Permission::checkMember($member, 'ADMIN')) {
-			return true;
+		if ($this->Usage==='Production' || $this->Usage==='Unspecified') {
+			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) return true;
+		} else {
+			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) return true;
 		}
 
 		return $this->CanRestoreMembers()->byID($member->ID)
@@ -445,8 +449,10 @@ class DNEnvironment extends DataObject {
 			return false;
 		}
 
-		if(Permission::checkMember($member, 'ADMIN')) {
-			return true;
+		if ($this->Usage==='Production' || $this->Usage==='Unspecified') {
+			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) return true;
+		} else {
+			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) return true;
 		}
 
 		return $this->CanBackupMembers()->byID($member->ID)
@@ -478,8 +484,10 @@ class DNEnvironment extends DataObject {
 		}
 		// Must be logged in to check permissions
 
-		if(Permission::checkMember($member, 'ADMIN')) {
-			return true;
+		if ($this->Usage==='Production' || $this->Usage==='Unspecified') {
+			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) return true;
+		} else {
+			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) return true;
 		}
 
 		return $this->ArchiveUploaders()->byID($member->ID)
@@ -502,9 +510,12 @@ class DNEnvironment extends DataObject {
 		}
 		// Must be logged in to check permissions
 
-		if(Permission::checkMember($member, 'ADMIN')) {
-			return true;
+		if ($this->Usage==='Production' || $this->Usage==='Unspecified') {
+			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) return true;
+		} else {
+			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) return true;
 		}
+
 		return $this->ArchiveDownloaders()->byID($member->ID)
 			|| $member->inGroups($this->ArchiveDownloaderGroups());
 	}
@@ -568,8 +579,10 @@ class DNEnvironment extends DataObject {
 		}
 		// Must be logged in to check permissions
 
-		if(Permission::checkMember($member, 'ADMIN')) {
-			return true;
+		if ($this->Usage==='Production' || $this->Usage==='Unspecified') {
+			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) return true;
+		} else {
+			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) return true;
 		}
 
 		return $this->ArchiveDeleters()->byID($member->ID)
@@ -1320,67 +1333,6 @@ PHP
 		}
 
 		return $result;
-	}
-
-	/**
-	 * Helper for getting all permission codes available for the groups.
-	 * Similar to Permission::permissions_for_member.
-	 *
-	 * @param array|string $groupIDs Array of group IDs, or a single group ID.
-	 * @return array
-	 */
-	public static function permissions_for_groups($groupIDs) {
-		if (!is_array($groupIDs)) $groupIDs = array($groupIDs);
-		$groupCSV = implode(", ", $groupIDs);
-
-		$allowed = array_unique(DB::query("
-			SELECT \"Code\"
-			FROM \"Permission\"
-			WHERE \"Type\" = " . Permission::GRANT_PERMISSION . " AND \"GroupID\" IN ($groupCSV)
-
-			UNION
-
-			SELECT \"Code\"
-			FROM \"PermissionRoleCode\" PRC
-			INNER JOIN \"PermissionRole\" PR ON PRC.\"RoleID\" = PR.\"ID\"
-			INNER JOIN \"Group_Roles\" GR ON GR.\"PermissionRoleID\" = PR.\"ID\"
-			WHERE \"GroupID\" IN ($groupCSV)
-		")->column());
-
-		$denied = array_unique(DB::query("
-			SELECT \"Code\"
-			FROM \"Permission\"
-			WHERE \"Type\" = " . Permission::DENY_PERMISSION . " AND \"GroupID\" IN ($groupCSV)
-		")->column());
-
-		return array_diff($allowed, $denied);
-	}
-
-	/**
-	 * Looks through member's ViewerGroups to see if any code is associated with the current environment.
-	 * Permissions applied to groups on other environments are not taken into account here.
-	 *
-	 * @param string $code
-	 * @param Member|null $member
-	 *
-	 * @return bool
-	 */
-	public function allowed($code, $member = null) {
-		if(!$member) {
-			$member = Member::currentUser();
-			if(!$member) {
-				return false;
-			}
-		}
-
-		if(Permission::checkMember($member, 'ADMIN')) return true;
-
-		foreach ($this->ViewerGroups() as $group) {
-			if ($member->inGroup($group)
-				&& in_array($code, self::permissions_for_groups($group->ID))) return true;
-		}
-
-		return false;
 	}
 
 }

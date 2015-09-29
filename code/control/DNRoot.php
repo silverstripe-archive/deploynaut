@@ -46,6 +46,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	const DEPLOYNAUT_ADVANCED_DEPLOY_OPTIONS = 'DEPLOYNAUT_ADVANCED_DEPLOY_OPTIONS';
 
+	const ALLOW_PROD_DEPLOYMENT = 'ALLOW_PROD_DEPLOYMENT';
+	const ALLOW_NON_PROD_DEPLOYMENT = 'ALLOW_NON_PROD_DEPLOYMENT';
+	const ALLOW_PROD_SNAPSHOT = 'ALLOW_PROD_SNAPSHOT';
+	const ALLOW_NON_PROD_SNAPSHOT = 'ALLOW_NON_PROD_SNAPSHOT';
+	const ALLOW_CREATE_ENVIRONMENT = 'ALLOW_CREATE_ENVIRONMENT';
+
 	/**
 	 *
 	 * @var array
@@ -177,7 +183,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				'deploynaut/javascript/q.js',
 				'deploynaut/javascript/tablefilter.js',
 				'deploynaut/javascript/deploynaut.js',
-				'deploynaut/javascript/react-with-addons.min.js',
+				'deploynaut/javascript/react-with-addons.js',
 				'deploynaut/javascript/bootstrap.file-input.js',
 				'deploynaut/thirdparty/select2/dist/js/select2.min.js',
 				'deploynaut/javascript/material.js',
@@ -2031,6 +2037,28 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			),
 			self::DEPLOYNAUT_ADVANCED_DEPLOY_OPTIONS => array(
 				'name' => "Access to advanced deploy options",
+				'category' => "Deploynaut",
+			),
+
+			// Permissions that are intended to be added to the roles.
+			self::ALLOW_PROD_DEPLOYMENT => array(
+				'name' => "Ability to deploy to production environments",
+				'category' => "Deploynaut",
+			),
+			self::ALLOW_NON_PROD_DEPLOYMENT => array(
+				'name' => "Ability to deploy to non-production environments",
+				'category' => "Deploynaut",
+			),
+			self::ALLOW_PROD_SNAPSHOT => array(
+				'name' => "Ability to make production snapshots",
+				'category' => "Deploynaut",
+			),
+			self::ALLOW_NON_PROD_SNAPSHOT => array(
+				'name' => "Ability to make non-production snapshots",
+				'category' => "Deploynaut",
+			),
+			self::ALLOW_CREATE_ENVIRONMENT => array(
+				'name' => "Ability to create environments",
 				'category' => "Deploynaut",
 			),
 		);
