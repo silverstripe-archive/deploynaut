@@ -99,32 +99,25 @@ class DNEnvironmentTest extends DeploynautTest {
 		$this->assertTrue($environment->canAbort($cancellerbygroup));
 	}
 
-	public function testPermissionsForGroups() {
-		$group1 = $this->objFromFixture('Group', 'withCode');
-		$perms = DNEnvironment::permissions_for_groups($group1->ID);
-		$this->assertContains('FOO_PERMISSION', $perms);
-		$this->assertEquals(count($perms), 1);
-
-		$group2 = $this->objFromFixture('Group', 'withRole');
-		$perms = DNEnvironment::permissions_for_groups($group2->ID);
-		$this->assertContains('BAR_PERMISSION', $perms);
-		$this->assertEquals(count($perms), 1);
+	private function checkSnapshots($assert, $env, $member) {
+		$this->$assert($env->canRestore($member));
+		$this->$assert($env->canBackup($member));
+		$this->$assert($env->canDownloadArchive($member));
+		$this->$assert($env->canDeleteArchive($member));
 	}
 
-	public function testAllowed() {
-		$uat = $this->objFromFixture('DNEnvironment', 'uat');
-		$viewer = $this->objFromFixture('Member', 'viewer');
+	public function testAllows() {
+		$prod = $this->objFromFixture('DNEnvironment', 'allowtest-prod');
+		$uat = $this->objFromFixture('DNEnvironment', 'allowtest-uat');
+		$this->assertTrue($prod->canDeploy($this->objFromFixture('Member', 'allowProdDeployment')));
+		$this->assertFalse($prod->canDeploy($this->objFromFixture('Member', 'allowNonProdDeployment')));
+		$this->assertFalse($uat->canDeploy($this->objFromFixture('Member', 'allowProdDeployment')));
+		$this->assertTrue($uat->canDeploy($this->objFromFixture('Member', 'allowNonProdDeployment')));
 
-		$this->assertTrue(
-			$uat->allowed('FOO_PERMISSION', $viewer),
-			'Allowed member\'s group that is in ViewerGroups and has the permission'
-		);
-
-		$dev = $this->objFromFixture('DNEnvironment', 'dev');
-		$this->assertFalse(
-			$dev->allowed('FOO_PERMISSION', $viewer),
-			'Disallowed member\'s group that is in another environment\' ViewerGroups and has the permission'
-		);
+		$this->checkSnapshots('assertTrue', $prod, $this->objFromFixture('Member', 'allowProdSnapshot'));
+		$this->checkSnapshots('assertFalse', $prod, $this->objFromFixture('Member', 'allowNonProdSnapshot'));
+		$this->checkSnapshots('assertFalse', $uat, $this->objFromFixture('Member', 'allowProdSnapshot'));
+		$this->checkSnapshots('assertTrue', $uat, $this->objFromFixture('Member', 'allowNonProdSnapshot'));
 	}
 
 	public function testViewerPermissionInheritedFromProjectIfNotConfigured() {
