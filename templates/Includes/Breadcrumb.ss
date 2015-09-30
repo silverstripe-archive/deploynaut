@@ -13,7 +13,11 @@
 		<% if $CurrentProject.CurrentMenu %>
 			$CurrentProject.CurrentMenu.Title
 		<% else %>
-			Environments
+			<% if $CurrentTitle %>
+				$CurrentTitle
+			<% else %>
+				Environments
+			<% end_if %>
 		<% end_if %>
 	<% end_if %>
 </h1>

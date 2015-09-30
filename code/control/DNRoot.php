@@ -2322,4 +2322,26 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		return $this->customise($data)->render();
 	}
 
+	/**
+	 * Get items for the ambient menu that should be accessible from all pages.
+	 *
+	 * @return ArrayList
+	 */
+	public function AmbientMenu() {
+		$list = new ArrayList();
+
+		if (Member::currentUserID()) {
+			$list->push(new ArrayData(array(
+				'FaIcon' => 'sign-out',
+				'Link' => 'Security/logout',
+				'Title' => 'Log out',
+				'IsCurrent' => false,
+				'IsSection' => false
+			)));
+		}
+
+		$this->extend('updateAmbientMenu', $list);
+		return $list;
+	}
+
 }

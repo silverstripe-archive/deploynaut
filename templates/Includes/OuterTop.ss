@@ -25,13 +25,16 @@
 		<% include Header %>
     </nav>
 
-    <% if $CurrentUser %>
-    <header class="header-navbar">
-        <ul class="nav pull-right">
-            <li><a href="Security/logout"><i class="fa fa-sign-out"></i>
- Log out</a></li>
-        </ul>
-    </header>
+    <% if $AmbientMenu %>
+		<header class="header-navbar">
+			<ul class="nav pull-right">
+				<% loop $AmbientMenu %>
+					<li class="pull-right <% if $IsSection %>active<% end_if %>">
+						<a href="$Link"><i class="fa fa-$FaIcon"></i>$Title</a>
+					</li>
+				<% end_loop %>
+			</ul>
+		</header>
     <% end_if %>
 
     <div class="main-container">
