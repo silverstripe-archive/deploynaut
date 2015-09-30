@@ -10083,9 +10083,6 @@ button.sidebar-open {
   .environment-details h3 .fa, .environment-details h3 .icon-star, .environment-details h3 .deploy-dropdown .status-icon, .deploy-dropdown .environment-details h3 .status-icon, .environment-details h3 .deploy-form-outer .deploy-form .header.loading .status-icon, .deploy-form-outer .deploy-form .header.loading .environment-details h3 .status-icon, .environment-details h3 .deploy-form-loading .deploy-form .header.loading .status-icon, .deploy-form-loading .deploy-form .header.loading .environment-details h3 .status-icon {
     font-size: 14px;
     vertical-align: super; }
-  .environment-details .build-details span.git-sha,
-  .environment-details .build-details a.git-sha {
-    font-size: 14px; }
 
 .project-links {
   text-align: right;
