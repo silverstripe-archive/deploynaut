@@ -9484,6 +9484,15 @@ textarea[readonly],
   outline: 0;
   box-shadow: none; }
 
+.form-inline .btn, .form-inline .action, .form-inline .deploy-dropdown {
+  margin-bottom: 0; }
+
+.form-inline label {
+  margin-right: 1em; }
+
+.form-inline .form-control, .form-inline input.text, .form-inline select, .form-inline textarea, .form-inline .readonly span.readonly, .readonly .form-inline span.readonly {
+  width: 250px; }
+
 h1 {
   font-weight: 700;
   letter-spacing: -1px; }
