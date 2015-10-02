@@ -9615,6 +9615,9 @@ body .userswitcher fieldset .middleColumn {
 .message.bad {
   display: block; }
 
+.popover {
+  max-width: 800px; }
+
 .progress-bar {
   width: 100%; }
 
