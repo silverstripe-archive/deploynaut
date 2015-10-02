@@ -194,6 +194,40 @@ class DNDeployment extends DataObject {
 	}
 
 	/**
+	 * Collate the list of additional flags to affix to this deployment.
+	 * Elements of the array will be rendered literally.
+	 *
+	 * @return ArrayList
+	 */
+	public function getFullDeployMessages() {
+		$strategy = $this->getDeploymentStrategy();
+		if ($strategy->getActionCode()!=='full') return null;
+
+		$changes = $strategy->getChangesModificationNeeded();
+		$messages = [];
+		foreach ($changes as $change => $details) {
+			if ($change==='Code version') continue;
+
+			$messages[] = [
+				'Flag' => sprintf(
+					'<span class="label label-default full-deploy-info-item">%s</span>',
+					$change[0]
+				),
+				'Text' => sprintf('%s changed', $change)
+			];
+		}
+
+		if (empty($messages)) {
+			$messages[] = [
+				'Flag' => '',
+				'Text' => '<i>Environment changes have been made.</i>'
+			];
+		}
+
+		return new ArrayList($messages);
+	}
+
+	/**
 	 * Fetches the latest tag for the deployed commit
 	 *
 	 * @return \Varchar|null
@@ -204,6 +238,16 @@ class DNDeployment extends DataObject {
 			return $tags->last();
 		}
 		return null;
+	}
+
+	/**
+	 * @return DeploymentStrategy
+	 */
+	public function getDeploymentStrategy() {
+		$environment = $this->Environment();
+		$strategy = new DeploymentStrategy($environment);
+		$strategy->fromJSON($this->Strategy);
+		return $strategy;
 	}
 
 	/**
@@ -225,8 +269,7 @@ class DNDeployment extends DataObject {
 			'deploymentID' => $this->ID
 		);
 
-		$strategy = new DeploymentStrategy($environment);
-		$strategy->fromJSON($this->Strategy);
+		$strategy = $this->getDeploymentStrategy();
 		// Inject options.
 		$args = array_merge($args, $strategy->getOptions());
 		// Make sure we use the SHA as it was written into this DNDeployment.

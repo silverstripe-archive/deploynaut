@@ -19,7 +19,9 @@ class DNProject extends DataObject {
 	public static $db = array(
 		"Name" => "Varchar",
 		"CVSPath" => "Varchar(255)",
-		"DiskQuotaMB" => "Int"
+		"DiskQuotaMB" => "Int",
+		"AllowedEnvironmentType" => "Varchar(255)",
+		"Client" => "Varchar(255)",
 	);
 
 	/**
@@ -27,6 +29,7 @@ class DNProject extends DataObject {
 	 */
 	public static $has_many = array(
 		"Environments" => "DNEnvironment",
+		"CreateEnvironments" => "DNCreateEnvironment"
 	);
 
 	/**
@@ -185,13 +188,6 @@ class DNProject extends DataObject {
 		$controller = Controller::curr();
 		$actionType = $controller->getField('CurrentActionType');
 
-		$list->push(new ArrayData(array(
-			'Link' => sprintf('naut/project/%s', $this->Name),
-			'Title' => 'Deployments',
-			'IsCurrent' => $this->isCurrent(),
-			'IsSection' => $this->isSection() && $actionType == DNRoot::ACTION_DEPLOY
-		)));
-
 		if(DNRoot::FlagSnapshotsEnabled()) {
 			$list->push(new ArrayData(array(
 				'Link' => sprintf('naut/project/%s/snapshots', $this->Name),
@@ -260,6 +256,16 @@ class DNProject extends DataObject {
 	 * @return bool
 	 */
 	public function canRestore($member = null) {
+		if ($this->allowedAny(
+			array(
+				DNRoot::ALLOW_PROD_SNAPSHOT,
+				DNRoot::ALLOW_NON_PROD_SNAPSHOT
+			),
+			$member
+		)) {
+			return true;
+		}
+
 		return (bool)$this->Environments()->filterByCallback(function($env) use($member) {
 			return $env->canRestore($member);
 		})->Count();
@@ -270,6 +276,16 @@ class DNProject extends DataObject {
 	 * @return bool
 	 */
 	public function canBackup($member = null) {
+		if ($this->allowedAny(
+			array(
+				DNRoot::ALLOW_PROD_SNAPSHOT,
+				DNRoot::ALLOW_NON_PROD_SNAPSHOT
+			),
+			$member
+		)) {
+			return true;
+		}
+
 		return (bool)$this->Environments()->filterByCallback(function($env) use($member) {
 			return $env->canBackup($member);
 		})->Count();
@@ -280,6 +296,16 @@ class DNProject extends DataObject {
 	 * @return bool
 	 */
 	public function canUploadArchive($member = null) {
+		if ($this->allowedAny(
+			array(
+				DNRoot::ALLOW_PROD_SNAPSHOT,
+				DNRoot::ALLOW_NON_PROD_SNAPSHOT
+			),
+			$member
+		)) {
+			return true;
+		}
+
 		return (bool)$this->Environments()->filterByCallback(function($env) use($member) {
 			return $env->canUploadArchive($member);
 		})->Count();
@@ -290,9 +316,40 @@ class DNProject extends DataObject {
 	 * @return bool
 	 */
 	public function canDownloadArchive($member = null) {
+		if ($this->allowedAny(
+			array(
+				DNRoot::ALLOW_PROD_SNAPSHOT,
+				DNRoot::ALLOW_NON_PROD_SNAPSHOT
+			),
+			$member
+		)) {
+			return true;
+		}
+
 		return (bool)$this->Environments()->filterByCallback(function($env) use($member) {
 			return $env->canDownloadArchive($member);
 		})->Count();
+	}
+
+	/**
+	 * This is a permission check for the front-end only.
+	 *
+	 * Only admins can create environments for now. Also, we need to check the value
+	 * of AllowedEnvironmentType which dictates which backend to use to render the form.
+	 *
+	 * @param Member|null $member
+	 *
+	 * @return bool
+	 */
+	public function canCreateEnvironments($member = null) {
+		$envType = $this->AllowedEnvironmentType;
+		if($envType) {
+			$env = Injector::inst()->get($envType);
+			if($env instanceof EnvironmentCreateBackend) {
+				return $this->allowed(DNRoot::ALLOW_CREATE_ENVIRONMENT, $member);
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -454,6 +511,16 @@ class DNProject extends DataObject {
 	}
 
 	/**
+	 * @return string|null
+	 */
+	public function CreateEnvironmentLink() {
+		if($this->canCreateEnvironments()) {
+			return $this->Link('createenv');
+		}
+		return null;
+	}
+
+	/**
 	 * @return string
 	 */
 	public function ToggleStarLink() {
@@ -521,6 +588,23 @@ class DNProject extends DataObject {
 
 		$this->setCreateProjectFolderField($fields);
 		$this->setEnvironmentFields($fields, $environments);
+
+		$environmentTypes = ClassInfo::implementorsOf('EnvironmentCreateBackend');
+		$types = array();
+		foreach($environmentTypes as $type) {
+			$types[$type] = $type;
+		}
+
+		$fields->addFieldsToTab('Root.Main', array(
+			DropdownField::create(
+				'AllowedEnvironmentType', 
+				'Allowed Environment Type',
+				$types
+			)->setDescription('This defined which form to show on the front end for '
+				. 'environment creation. This will not affect backend functionality.')
+			->setEmptyString(' - None - '),
+			TextField::create('Client', 'Client'),
+		));
 
 		return $fields;
 	}
@@ -818,4 +902,72 @@ class DNProject extends DataObject {
 	protected function getProjectFolderPath() {
 		return $this->DNData()->getEnvironmentDir().'/'.$this->Name;
 	}
+
+	/**
+	 * Convenience wrapper for a single permission code.
+	 *
+	 * @param string $code
+	 * @return SS_List
+	 */
+	public function whoIsAllowed($code) {
+		return $this->whoIsAllowedAny(array($code));
+	}
+
+	/**
+	 * List members who have $codes on this project.
+	 * Does not support Permission::DENY_PERMISSION malarky, same as Permission::get_groups_by_permission anyway...
+	 *
+	 * @param array|string $codes
+	 * @return SS_List
+	 */
+	public function whoIsAllowedAny($codes) {
+		if(!is_array($codes)) $codes = array($codes);
+
+		$SQLa_codes = Convert::raw2sql($codes);
+		$SQL_codes = join("','", $SQLa_codes);
+
+		return DataObject::get('Member')
+			->where("\"PermissionRoleCode\".\"Code\" IN ('$SQL_codes') OR \"Permission\".\"Code\" IN ('$SQL_codes')")
+			->filter("DNProject_Viewers.DNProjectID", $this->ID)
+			->leftJoin('Group_Members', "\"Group_Members\".\"MemberID\" = \"Member\".\"ID\"")
+			->leftJoin('Group', "\"Group_Members\".\"GroupID\" = \"Group\".\"ID\"")
+			->leftJoin('DNProject_Viewers', "\"DNProject_Viewers\".\"GroupID\" = \"Group\".\"ID\"")
+			->leftJoin('Permission', "\"Permission\".\"GroupID\" = \"Group\".\"ID\"")
+			->leftJoin('Group_Roles', "\"Group_Roles\".\"GroupID\" = \"Group\".\"ID\"")
+			->leftJoin('PermissionRole', "\"Group_Roles\".\"PermissionRoleID\" = \"PermissionRole\".\"ID\"")
+			->leftJoin('PermissionRoleCode', "\"PermissionRoleCode\".\"RoleID\" = \"PermissionRole\".\"ID\"");
+	}
+
+	/**
+	 * Convenience wrapper for a single permission code.
+	 *
+	 * @param string $code
+	 * @param Member|null $member
+	 *
+	 * @return bool
+	 */
+	public function allowed($code, $member = null) {
+		return $this->allowedAny(array($code), $member);
+	}
+
+	/**
+	 * Check if member has a permission code in this project.
+	 *
+	 * @param string $code
+	 * @param Member|null $member
+	 *
+	 * @return bool
+	 */
+	public function allowedAny($codes, $member = null) {
+		if (!$member) {
+			$member = Member::currentUser();
+		}
+
+		if(Permission::checkMember($member, 'ADMIN')) return true;
+
+		$hits = $this->whoIsAllowedAny($codes)->filter('Member.ID', $member->ID)->count();
+		return ($hits>0 ? true : false);
+	}
+
 }
+

@@ -91,7 +91,8 @@ class DNEnvironment extends DataObject {
 	 * @var array
 	 */
 	public static $has_one = array(
-		"Project" => "DNProject"
+		"Project" => "DNProject",
+		"CreateEnvironment" => "DNCreateEnvironment"
 	);
 
 	/**
@@ -179,6 +180,7 @@ class DNEnvironment extends DataObject {
 
 	/**
 	 * Get the deployment backend used for this environment.
+	 *
 	 * Enforces compliance with the allowed_backends setting; if the DNEnvironment.BackendIdentifier value is
 	 * illegal then that value is ignored.
 	 *
@@ -205,7 +207,35 @@ class DNEnvironment extends DataObject {
 				}
 		}
 
+		if (!class_exists($backend)) $backend = "DeploymentBackend";
+
 		return Injector::inst()->get($backend);
+	}
+
+	public function Menu() {
+		$list = new ArrayList();
+
+		$controller = Controller::curr();
+		$actionType = $controller->getField('CurrentActionType');
+
+		$list->push(new ArrayData(array(
+			'Link' => sprintf('naut/project/%s/environment/%s', $this->Project()->Name, $this->Name),
+			'Title' => 'Deployments',
+			'IsCurrent' => $this->isCurrent(),
+			'IsSection' => $this->isSection() && $actionType == DNRoot::ACTION_DEPLOY
+		)));
+
+		$this->extend('updateMenu', $list);
+
+		return $list;
+	}
+
+	/**
+	 * Return the current object from $this->Menu()
+	 * Good for making titles and things
+	 */
+	public function CurrentMenu() {
+		return $this->Menu()->filter('IsSection', true)->First();
 	}
 
 	/**
@@ -357,8 +387,10 @@ class DNEnvironment extends DataObject {
 		}
 		// Must be logged in to check permissions
 
-		if(Permission::checkMember($member, 'ADMIN')) {
-			return true;
+		if ($this->Usage==='Production' || $this->Usage==='Unspecified') {
+			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_DEPLOYMENT, $member)) return true;
+		} else {
+			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_DEPLOYMENT, $member)) return true;
 		}
 
 		return $this->Deployers()->byID($member->ID)
@@ -381,8 +413,10 @@ class DNEnvironment extends DataObject {
 		}
 		// Must be logged in to check permissions
 
-		if(Permission::checkMember($member, 'ADMIN')) {
-			return true;
+		if ($this->Usage==='Production' || $this->Usage==='Unspecified') {
+			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) return true;
+		} else {
+			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) return true;
 		}
 
 		return $this->CanRestoreMembers()->byID($member->ID)
@@ -410,8 +444,10 @@ class DNEnvironment extends DataObject {
 			return false;
 		}
 
-		if(Permission::checkMember($member, 'ADMIN')) {
-			return true;
+		if ($this->Usage==='Production' || $this->Usage==='Unspecified') {
+			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) return true;
+		} else {
+			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) return true;
 		}
 
 		return $this->CanBackupMembers()->byID($member->ID)
@@ -443,8 +479,10 @@ class DNEnvironment extends DataObject {
 		}
 		// Must be logged in to check permissions
 
-		if(Permission::checkMember($member, 'ADMIN')) {
-			return true;
+		if ($this->Usage==='Production' || $this->Usage==='Unspecified') {
+			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) return true;
+		} else {
+			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) return true;
 		}
 
 		return $this->ArchiveUploaders()->byID($member->ID)
@@ -467,9 +505,12 @@ class DNEnvironment extends DataObject {
 		}
 		// Must be logged in to check permissions
 
-		if(Permission::checkMember($member, 'ADMIN')) {
-			return true;
+		if ($this->Usage==='Production' || $this->Usage==='Unspecified') {
+			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) return true;
+		} else {
+			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) return true;
 		}
+
 		return $this->ArchiveDownloaders()->byID($member->ID)
 			|| $member->inGroups($this->ArchiveDownloaderGroups());
 	}
@@ -533,8 +574,10 @@ class DNEnvironment extends DataObject {
 		}
 		// Must be logged in to check permissions
 
-		if(Permission::checkMember($member, 'ADMIN')) {
-			return true;
+		if ($this->Usage==='Production' || $this->Usage==='Unspecified') {
+			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) return true;
+		} else {
+			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) return true;
 		}
 
 		return $this->ArchiveDeleters()->byID($member->ID)
@@ -1272,8 +1315,9 @@ PHP
 
 	protected function validate() {
 		$result = parent::validate();
+		$backend = $this->Backend();
 
-		if(strcasecmp('test', $this->Name) === 0) {
+		if(strcasecmp('test', $this->Name) === 0 && get_class($backend) == 'CapistranoDeploymentBackend') {
 			$result->error('"test" is not a valid environment name when using Capistrano backend.');
 		}
 

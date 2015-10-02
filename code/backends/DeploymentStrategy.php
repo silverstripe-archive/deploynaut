@@ -114,6 +114,37 @@ class DeploymentStrategy extends ViewableData {
 	}
 
 	/**
+	 * @param string $title
+	 * @param string $desc
+	 */
+	public function setChangeDescriptionOnly($title, $desc) {
+		return $this->changes[$title] = array(
+			'description' => $desc
+		);
+	}
+
+	/**
+	 * Filter the changeset where modification was not required.
+	 *
+	 * @return array
+	 */
+	public function getChangesModificationNeeded() {
+		$filtered = [];
+		foreach ($this->changes as $change => $details) {
+			if (array_key_exists('description', $details)) {
+				$filtered[$change] = $details;
+			} else if (
+				(array_key_exists('from', $details) || array_key_exists('to', $details))
+				&& $details['from']!==$details['to']
+			) {
+				$filtered[$change] = $details;
+			}
+		}
+
+		return $filtered;
+	}
+
+	/**
 	 * @return string Associative array of changes, e.g.
 	 *	array(
 	 *		'SHA' => array(

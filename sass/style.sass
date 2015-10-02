@@ -40,6 +40,11 @@ $textarea-transition-time: 0.6s
 		padding-bottom: 10px
 		list-style: disc
 
+.message.bad
+    @extend .alert
+    @extend.alert-error
+    display: block
+
 .progress-bar
 	width: 100% /* default */
 
@@ -154,6 +159,9 @@ $textarea-transition-time: 0.6s
 		padding: 0
 		margin: 0
 		overflow: hidden
+
+		ul a
+			padding-left: 64px
 
 		a
 			opacity: .8
@@ -305,6 +313,13 @@ $textarea-transition-time: 0.6s
 	.nav a
 		padding: 18px 30px 22px
 
+		i
+			margin-right: 10px
+
+	.nav li.active a
+		color: $gray-darker
+		border-bottom: 3px solid $platform-blue
+
 	.nav-header
 		margin-left: 30px
 
@@ -370,10 +385,15 @@ button.sidebar-open
 // TYPE
 .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th
 	border-bottom: 1px solid $UI-border
+	border-top: 1px solid $UI-border
 	font-size: 14px
 	font-weight: 600
 	padding: 16px 10px 12px
 	text-transform: uppercase
+
+.table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td
+	border-bottom: 1px solid $UI-border
+	border-top: 1px solid $UI-border
 
 .table-large > tbody > tr > td
 	padding-top: 20px
@@ -469,6 +489,9 @@ button.sidebar-open
 
 	.deploy-form
 		position: relative
+
+		.transitionIcon
+			width: 40px
 
 		.changeAction
 			width: 80px
@@ -685,6 +708,22 @@ button.sidebar-open
 .deploy-history
 	margin-top: $padding-large-vertical
 
+	.full-deploy-info:hover
+		cursor: pointer
+		cursor: hand
+
+	.full-deploy-info-item
+		background: $platform-secondary
+		width: 20px
+		display: inline-block
+
+	.popover-content div
+		margin-bottom: 2px
+
+		span
+			top: -2px
+			position: relative
+
 .environment-details
 	margin-bottom: $padding-large-vertical
 
@@ -897,3 +936,6 @@ td > .deployment-tag
 
 .popover-content
 	word-wrap: break-word
+
+.create-form
+    width: 50%;

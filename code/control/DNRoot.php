@@ -19,6 +19,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	const ACTION_SNAPSHOT = 'snapshot';
 
+	const ACTION_ENVIRONMENTS = 'createenv';
+
 	/**
 	 * @var string
 	 */
@@ -44,6 +46,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	const DEPLOYNAUT_ADVANCED_DEPLOY_OPTIONS = 'DEPLOYNAUT_ADVANCED_DEPLOY_OPTIONS';
 
+	const ALLOW_PROD_DEPLOYMENT = 'ALLOW_PROD_DEPLOYMENT';
+	const ALLOW_NON_PROD_DEPLOYMENT = 'ALLOW_NON_PROD_DEPLOYMENT';
+	const ALLOW_PROD_SNAPSHOT = 'ALLOW_PROD_SNAPSHOT';
+	const ALLOW_NON_PROD_SNAPSHOT = 'ALLOW_NON_PROD_SNAPSHOT';
+	const ALLOW_CREATE_ENVIRONMENT = 'ALLOW_CREATE_ENVIRONMENT';
+
 	/**
 	 * @var array
 	 */
@@ -59,6 +67,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'pipeline',
 		'pipelinelog',
 		'metrics',
+		'createenvlog',
+		'createenv',
 		'getDeployForm',
 		'doDeploy',
 		'deploy',
@@ -70,6 +80,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'createsnapshot',
 		'snapshotslog',
 		'uploadsnapshot',
+		'getCreateEnvironmentForm',
 		'getUploadSnapshotForm',
 		'getPostSnapshotForm',
 		'getDataTransferRestoreForm',
@@ -106,6 +117,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'project/$Project/transfer/$Identifier/log' => 'transferlog',
 		'project/$Project/transfer/$Identifier' => 'transfer',
 		'project/$Project/environment/$Environment' => 'environment',
+		'project/$Project/createenv/$Identifier/log' => 'createenvlog',
+		'project/$Project/createenv/$Identifier' => 'createenv',
+		'project/$Project/CreateEnvironmentForm' => 'getCreateEnvironmentForm',
 		'project/$Project/branch' => 'branch',
 		'project/$Project/build/$Build' => 'build',
 		'project/$Project/restoresnapshot/$DataArchiveID' => 'restoresnapshot',
@@ -165,14 +179,22 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				'deploynaut/javascript/jquery.js',
 				'deploynaut/javascript/bootstrap.js',
 				'deploynaut/javascript/q.js',
+				'deploynaut/javascript/tablefilter.js',
 				'deploynaut/javascript/deploynaut.js',
-				'deploynaut/javascript/react-with-addons.min.js',
-				'deploynaut/javascript/deploy.min.js',
+				'deploynaut/javascript/react-with-addons.js',
 				'deploynaut/javascript/bootstrap.file-input.js',
 				'deploynaut/thirdparty/select2/dist/js/select2.min.js',
 				'deploynaut/javascript/material.js',
 			)
 		);
+
+		if (\Director::isDev()) {
+			\Requirements::javascript('deploynaut/static/bundle-debug.js');
+		} else {
+			\Requirements::javascript('deploynaut/static/bundle.js');
+		}
+
+		Requirements::css('deploynaut/static/style.css');
 	}
 
 	/**
@@ -818,6 +840,149 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
+	 * Shows the creation log.
+	 *
+	 * @param SS_HTTPRequest $request
+	 * @return string
+	 */
+	public function createenv(SS_HTTPRequest $request) {
+		$params = $request->params();
+		if($params['Identifier']) {
+			$record = DNCreateEnvironment::get()->byId($params['Identifier']);
+
+			if(!$record || !$record->ID) {
+				throw new SS_HTTPResponse_Exception('Create environment not found', 404);
+			}
+			if(!$record->canView()) {
+				return Security::permissionFailure();
+			}
+
+			$project = $this->getCurrentProject();
+			if(!$project) {
+				return $this->project404Response();
+			}
+
+			if($project->Name != $params['Project']) {
+				throw new LogicException("Project in URL doesn't match this creation");
+			}
+
+			return $this->render(array(
+				'CreateEnvironment' => $record,
+			));
+		}
+		return $this->render();
+	}
+
+
+	public function createenvlog(SS_HTTPRequest $request) {
+		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
+
+		$params = $request->params();
+		$env = DNCreateEnvironment::get()->byId($params['Identifier']);
+
+		if(!$env || !$env->ID) {
+			throw new SS_HTTPResponse_Exception('Log not found', 404);
+		}
+		if(!$env->canView()) {
+			return Security::permissionFailure();
+		}
+
+		$project = $env->Project();
+
+		if($project->Name != $params['Project']) {
+			throw new LogicException("Project in URL doesn't match this deploy");
+		}
+
+		$log = $env->log();
+		if($log->exists()) {
+			$content = $log->content();
+		} else {
+			$content = 'Waiting for action to start';
+		}
+
+		return $this->sendResponse($env->ResqueStatus(), $content);
+	}
+
+	/**
+	 * @param SS_HTTPRequest $request
+	 * @return Form
+	 */
+	public function getCreateEnvironmentForm(SS_HTTPRequest $request) {
+		$this->setCurrentActionType(self::ACTION_ENVIRONMENTS);
+
+		$project = $this->getCurrentProject();
+		if(!$project) {
+			return $this->project404Response();
+		}
+
+		$envType = $project->AllowedEnvironmentType;
+		if(!$envType || !class_exists($envType)) {
+			return null;
+		}
+
+		$backend = Injector::inst()->get($envType);
+		if(!($backend instanceof EnvironmentCreateBackend)) {
+			// Only allow this for supported backends.
+			return null;
+		}
+
+		$fields = $backend->getCreateEnvironmentFields($project);
+		if(!$fields) return null;
+
+		if(!$project->canCreateEnvironments()) {
+			return new SS_HTTPResponse('Not allowed to create environments for this project', 401);
+		}
+
+		$form = new Form(
+			$this,
+			'CreateEnvironmentForm',
+			$fields,
+			new FieldList(
+				$action = new FormAction('doCreateEnvironment', 'Create')
+			),
+			$backend->getCreateEnvironmentValidator()
+		);
+
+		$action->addExtraClass('btn');
+		// Tweak the action so it plays well with our fake URL structure.
+		$form->setFormAction($project->Link() . '/CreateEnvironmentForm');
+
+		return $form;
+	}
+
+	/**
+	 * @param array $data
+	 * @param Form $form
+	 *
+	 * @return bool|HTMLText|SS_HTTPResponse
+	 */
+	public function doCreateEnvironment($data, Form $form) {
+		$this->setCurrentActionType(self::ACTION_ENVIRONMENTS);
+
+		$project = $this->getCurrentProject();
+		if(!$project) {
+			return $this->project404Response();
+		}
+
+		if(!$project->canCreateEnvironments()) {
+			return new SS_HTTPResponse('Not allowed to create environments for this project', 401);
+		}
+
+		// Set the environment type so we know what we're creating.
+		$data['EnvironmentType'] = $project->AllowedEnvironmentType;
+
+		$job = DNCreateEnvironment::create();
+
+		$job->Data = serialize($data);
+		$job->ProjectID = $project->ID;
+		$job->write();
+		$job->start();
+
+		return $this->redirect($project->Link('createenv') . '/' . $job->ID);
+	}
+
+	/**
+	 *
 	 * @param SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse
 	 */
@@ -949,7 +1114,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				}
 			}
 		}
-
 
 		return $navigation;
 	}
@@ -1203,10 +1367,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		);
 		$data = $strategy->toArray();
 
-		// Add in a URL for comparing from->to code changes.
+		// Add in a URL for comparing from->to code changes. Ensure that we have
+		// two proper 40 character SHAs, otherwise we can't show the compare link.
 		if(
-			!empty($data['changes']['Code version']['from'])
-			&& !empty($data['changes']['Code version']['to'])
+			strlen($data['changes']['Code version']['from']) == '40'
+			&& strlen($data['changes']['Code version']['to']) == '40'
 		) {
 			$interface = $project->getRepositoryInterface();
 			$compareurl = sprintf(
@@ -1864,6 +2029,28 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				'name' => "Access to advanced deploy options",
 				'category' => "Deploynaut",
 			),
+
+			// Permissions that are intended to be added to the roles.
+			self::ALLOW_PROD_DEPLOYMENT => array(
+				'name' => "Ability to deploy to production environments",
+				'category' => "Deploynaut",
+			),
+			self::ALLOW_NON_PROD_DEPLOYMENT => array(
+				'name' => "Ability to deploy to non-production environments",
+				'category' => "Deploynaut",
+			),
+			self::ALLOW_PROD_SNAPSHOT => array(
+				'name' => "Ability to make production snapshots",
+				'category' => "Deploynaut",
+			),
+			self::ALLOW_NON_PROD_SNAPSHOT => array(
+				'name' => "Ability to make non-production snapshots",
+				'category' => "Deploynaut",
+			),
+			self::ALLOW_CREATE_ENVIRONMENT => array(
+				'name' => "Ability to create environments",
+				'category' => "Deploynaut",
+			),
 		);
 	}
 
@@ -1871,7 +2058,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return DNProject|null
 	 */
 	public function getCurrentProject() {
-		$projectName = trim($this->getRequest()->latestParam('Project'));
+		$projectName = trim($this->getRequest()->param('Project'));
 		if(!$projectName) {
 			return null;
 		}
@@ -1886,7 +2073,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return DNEnvironment|null
 	 */
 	public function getCurrentEnvironment(DNProject $project = null) {
-		if($this->getRequest()->latestParam('Environment') === null) {
+		if($this->getRequest()->param('Environment') === null) {
 			return null;
 		}
 		if($project === null) {
@@ -1896,7 +2083,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		if($project === null) {
 			return null;
 		}
-		return $project->DNEnvironmentList()->filter('Name', $this->getRequest()->latestParam('Environment'))->First();
+		return $project->DNEnvironmentList()->filter('Name', $this->getRequest()->param('Environment'))->First();
 	}
 
 	/**
@@ -1960,6 +2147,19 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				}
 			}
 		}
+	}
+
+	/**
+	 * Returns a list of attempted environment creations.
+	 *
+	 * @return PaginatedList
+	 */
+	public function CreateEnvironmentList() {
+		$project = $this->getCurrentProject();
+		if($project) {
+			return new PaginatedList($project->CreateEnvironments()->sort("Created DESC"), $this->request);
+		}
+		return new PaginatedList(new ArrayList(), $this->request);
 	}
 
 	/**
@@ -2039,7 +2239,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	protected function project404Response() {
 		return new SS_HTTPResponse(
-			"Project '" . Convert::raw2xml($this->getRequest()->latestParam('Project')) . "' not found.",
+			"Project '" . Convert::raw2xml($this->getRequest()->param('Project')) . "' not found.",
 			404
 		);
 	}
@@ -2048,7 +2248,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return SS_HTTPResponse
 	 */
 	protected function environment404Response() {
-		$envName = Convert::raw2xml($this->getRequest()->latestParam('Environment'));
+		$envName = Convert::raw2xml($this->getRequest()->param('Environment'));
 		return new SS_HTTPResponse("Environment '" . $envName . "' not found.", 404);
 	}
 
@@ -2108,6 +2308,28 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		return $this->customise($data)->render();
+	}
+
+	/**
+	 * Get items for the ambient menu that should be accessible from all pages.
+	 *
+	 * @return ArrayList
+	 */
+	public function AmbientMenu() {
+		$list = new ArrayList();
+
+		if (Member::currentUserID()) {
+			$list->push(new ArrayData(array(
+				'FaIcon' => 'sign-out',
+				'Link' => 'Security/logout',
+				'Title' => 'Log out',
+				'IsCurrent' => false,
+				'IsSection' => false
+			)));
+		}
+
+		$this->extend('updateAmbientMenu', $list);
+		return $list;
 	}
 
 }

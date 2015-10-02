@@ -8,6 +8,13 @@
 		$('[data-toggle="popover"]').popover()
 	});
 
+	// Ensure no more than one full-deploy-info popover is open.
+	$('.deploy-history').on('click', 'a.full-deploy-info', function() {
+		$('a.full-deploy-info').not(this).popover('hide');
+		$(this).popover('toggle');
+		return false;
+	});
+
 	// Openclose nav
 	$('button.sidebar-open').on('click', function(e) {
 		$('.page-container').toggleClass("open"); // you can list several class names
