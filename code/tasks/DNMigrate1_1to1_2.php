@@ -5,7 +5,7 @@
  */
 class DNMigrate1_1to1_2 extends BuildTask {
 	/**
-	 * @param  SS_HTTPRequest $request
+	 * @param SS_HTTPRequest $request
 	 */
 	public function run($request = null) {
 
