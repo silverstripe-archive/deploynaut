@@ -597,7 +597,7 @@ class DNProject extends DataObject {
 
 		$fields->addFieldsToTab('Root.Main', array(
 			DropdownField::create(
-				'AllowedEnvironmentType', 
+				'AllowedEnvironmentType',
 				'Allowed Environment Type',
 				$types
 			)->setDescription('This defined which form to show on the front end for '
