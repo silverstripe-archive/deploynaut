@@ -11,7 +11,7 @@
 class DataArchiveFileField extends FileField {
 
 	/**
-	 * @param  DataObjectInterface $record
+	 * @param DataObjectInterface $record
 	 * @return bool|DataArchiveFileField
 	 */
 	public function saveInto(DataObjectInterface $record) {

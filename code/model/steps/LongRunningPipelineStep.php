@@ -20,6 +20,9 @@ class LongRunningPipelineStep extends PipelineStep {
 		return $this->getConfigSetting('MaxDuration') ?: null;
 	}
 
+	/**
+	 * @var array
+	 */
 	private static $db = array(
 		'Started' => 'SS_Datetime'
 	);
