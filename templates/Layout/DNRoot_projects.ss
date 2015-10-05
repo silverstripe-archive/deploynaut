@@ -65,7 +65,7 @@
 			<% end_loop %>
 			<% else %>
 				<tr>
-					<td>No projects available yet!</td>
+					<td colspan="5">No stacks are currently available to you.</td>
 				</tr>
 			<% end_if %>
 			</tbody>
