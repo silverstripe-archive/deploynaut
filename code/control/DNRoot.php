@@ -240,7 +240,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	public function init() {
 		parent::init();
 
-		if(!Member::currentUser()) {
+		if(!Member::currentUser() && !Session::get('AutoLoginHash')) {
 			return Security::permissionFailure();
 		}
 
