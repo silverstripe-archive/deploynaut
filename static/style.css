@@ -10289,3 +10289,6 @@ td > .deployment-tag {
 
 .create-form {
   width: 50%; }
+
+.form-inline .btn, .form-inline .action, .form-inline .deploy-dropdown {
+  margin-top: 22px; }
