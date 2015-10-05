@@ -240,6 +240,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	public function init() {
 		parent::init();
 
+		if(!Member::currentUser()) {
+			return Security::permissionFailure();
+		}
+
 		// Block framework jquery
 		Requirements::block(FRAMEWORK_DIR . '/thirdparty/jquery/jquery.js');
 
