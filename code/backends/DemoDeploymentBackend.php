@@ -10,9 +10,33 @@
 class DemoDeploymentBackend extends Object implements DeploymentBackend {
 
 	/**
-	 * Deploy the given build to the given environment
+	 * Create a deployment strategy.
+	 *
+	 * @param DNEnvironment $environment
+	 * @param array $options
+	 *
+	 * @return DeploymentStrategy
 	 */
-	public function deploy(DNEnvironment $environment, $sha, DeploynautLogFile $log, DNProject $project, $leaveMaintenancePage = false) {
+	public function planDeploy(DNEnvironment $environment, $options = array()) {
+		return new DeploymentStrategy($environment, $options);
+	}
+
+	/**
+	 * Deploy the given build to the given environment
+	 *
+	 * @param DNEnvironment $environment
+	 * @param DeploynautLogFile $log
+	 * @param DNProject $project
+	 * @param array $options
+	 */
+	public function deploy(
+		DNEnvironment $environment,
+		DeploynautLogFile $log,
+		DNProject $project,
+		$options
+	) {
+		$sha = $options['sha'];
+
 		$this->extend('deployStart', $environment, $sha, $log, $project);
 
 		$file = sprintf('%s/%s.deploy-history.txt', DEPLOYNAUT_LOG_PATH, $environment->getFullName());
@@ -30,7 +54,7 @@ class DemoDeploymentBackend extends Object implements DeploymentBackend {
 		$log->write("Well, that was a waste of time");
 
 		// Once the deployment has run it's necessary to update the maintenance page status
-		if($leaveMaintenancePage) {
+		if(!empty($options['leaveMaintenancePage'])) {
 			$this->enableMaintenance($environment, $log, $project);
 		} else {
 			// Remove maintenance page if we want it to

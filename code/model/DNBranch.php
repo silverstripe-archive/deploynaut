@@ -1,21 +1,23 @@
 <?php
 
+/**
+ * Class DNBranch
+ *
+ * @method string getName()
+ */
 class DNBranch extends ViewableData {
 
 	/**
-	 *
 	 * @var Gitonomy\Git\Reference\Branch
 	 */
 	protected $branch = null;
 
 	/**
-	 *
 	 * @var DNProject
 	 */
 	protected $project = null;
 
 	/**
-	 *
 	 * @var DNData
 	 */
 	protected $data = null;
@@ -26,8 +28,11 @@ class DNBranch extends ViewableData {
 	);
 
 	/**
-	 *
-	 * @param Gitonomy\Git\Commit $commit
+	 * @var SS_Datetime
+	 */
+	protected $_lastUpdatedCache = '';
+
+	/**
 	 * @param DNProject $project
 	 * @param DNData $data
 	 */
@@ -42,7 +47,6 @@ class DNBranch extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function Name() {
@@ -51,11 +55,10 @@ class DNBranch extends ViewableData {
 
 	public function Link() {
 		// Use a get-var for branch so that it can handle unsafe chars better
-		return Controller::join_links($this->project->Link(), 'branch?name='.urlencode($this->Name()));
+		return Controller::join_links($this->project->Link(), 'branch?name=' . urlencode($this->Name()));
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function SHA() {
@@ -71,34 +74,40 @@ class DNBranch extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @return SS_Datetime
 	 */
 	public function LastUpdated() {
+
+		if($this->_lastUpdatedCache) {
+			return $this->_lastUpdatedCache;
+		}
 		try {
 			$created = $this->branch->getCommit()->getCommitterDate();
 		} catch(Exception $e) {
 			//occasionally parsing will fail this is a fallback to make it still work
 			return new SS_Datetime();
 		}
-			// gitonomy sets the time to UTC, so now we set the timezone to
-			// whatever PHP is set to (date.timezone). This will change in the future if each
-		
+		// gitonomy sets the time to UTC, so now we set the timezone to
+		// whatever PHP is set to (date.timezone). This will change in the future if each
 		// deploynaut user has their own timezone
+
 		$created->setTimezone(new DateTimeZone(date_default_timezone_get()));
 
-		$d = new SS_Datetime();
-		$d->setValue($created->format('Y-m-d H:i:s'));
-		return $d;
+		$date = new SS_Datetime();
+		$date->setValue($created->format('Y-m-d H:i:s'));
+		$this->_lastUpdatedCache = $date;
+		return $date;
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function IsOpenByDefault() {
-		if($this->Name() == 'master') return " open";
-		else return "";
+		if($this->Name() == 'master') {
+			return " open";
+		} else {
+			return "";
+		}
 	}
 
 }

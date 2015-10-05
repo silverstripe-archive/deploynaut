@@ -1,15 +1,21 @@
 <?php
 
+/**
+ * Class ResqueQueue
+ *
+ * Used in the Resque report admin
+ *
+ * @property string $Name
+ * @property int $Size
+ */
 class ResqueQueue extends ViewableData {
 
 	/**
-	 *
 	 * @var array
 	 */
 	protected $record = array();
 
 	/**
-	 *
 	 * @param array $data
 	 */
 	public function __construct($data = array()) {
@@ -17,7 +23,6 @@ class ResqueQueue extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @return \FieldList
 	 */
 	public function getCMSFields() {
@@ -35,7 +40,6 @@ class ResqueQueue extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function i18n_singular_name() {
@@ -56,9 +60,12 @@ class ResqueQueue extends ViewableData {
 		foreach($resqueJobs as $idx => $job) {
 			$stdClass = json_decode($job);
 			if($stdClass->class === 'CapistranoDeploy' || $stdClass->class === 'DeployJob') {
+				$value = $stdClass->args[0]->projectName
+					. ':' . $stdClass->args[0]->environment
+					. ' - ' . $stdClass->args[0]->sha;
 				$jobs->push(new ResqueJob(array(
 					'Name' => $stdClass->class,
-					'Value' => $stdClass->args[0]->projectName . ':' . $stdClass->args[0]->environment . ' - ' . $stdClass->args[0]->sha,
+					'Value' => $value,
 				)));
 			} else {
 				$jobs->push(new ResqueJob(array(
@@ -72,7 +79,6 @@ class ResqueQueue extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @return boolean
 	 */
 	public function canView() {
@@ -80,7 +86,6 @@ class ResqueQueue extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @return bool
 	 */
 	public function canEdit() {
@@ -88,7 +93,6 @@ class ResqueQueue extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @return bool
 	 */
 	public function candelete() {
@@ -96,7 +100,6 @@ class ResqueQueue extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @return bool
 	 */
 	public function cancreate() {
@@ -104,7 +107,6 @@ class ResqueQueue extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @param string $property
 	 * @return mixed
 	 */

@@ -14,11 +14,45 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	}
 
 	/**
-	 * Deploy the given build to the given environment.
+	 * Create a deployment strategy.
+	 *
+	 * @param DNEnvironment $environment
+	 * @param array $options
+	 *
+	 * @return DeploymentStrategy
 	 */
-	public function deploy(DNEnvironment $environment, $sha, DeploynautLogFile $log, DNProject $project, $leaveMaintenancePage = false) {
+	public function planDeploy(DNEnvironment $environment, $options) {
+		$strategy = new DeploymentStrategy($environment, $options);
+
+		$currentBuild = $environment->CurrentBuild();
+		$currentSha = $currentBuild ? $currentBuild->SHA : '-';
+		if($currentSha !== $options['sha']) {
+			$strategy->setChange('Code version', $currentSha, $options['sha']);
+		}
+		$strategy->setActionTitle('Confirm deployment');
+		$strategy->setActionCode('fast');
+		$strategy->setEstimatedTime('2');
+
+		return $strategy;
+	}
+
+	/**
+	 * Deploy the given build to the given environment.
+	 *
+	 * @param DNEnvironment $environment
+	 * @param DeploynautLogFile $log
+	 * @param DNProject $project
+	 * @param array $options
+	 */
+	public function deploy(
+		DNEnvironment $environment,
+		DeploynautLogFile $log,
+		DNProject $project,
+		$options
+	) {
 		$name = $environment->getFullName();
-		$repository = $project->LocalCVSPath;
+		$repository = $project->getLocalCVSPath();
+		$sha = $options['sha'];
 
 		$args = array(
 			'branch' => $sha,
@@ -60,7 +94,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		};
 
 		// Once the deployment has run it's necessary to update the maintenance page status
-		if($leaveMaintenancePage) {
+		if(!empty($options['leaveMaintenancePage'])) {
 			$this->enableMaintenance($environment, $log, $project);
 		}
 
@@ -71,7 +105,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		}
 
 		// Check if maintenance page should be removed
-		if(!$leaveMaintenancePage) {
+		if(empty($options['leaveMaintenancePage'])) {
 			$this->disableMaintenance($environment, $log, $project);
 		}
 
@@ -168,7 +202,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	 * @param string $action Capistrano action to be executed
 	 * @param string $roles Defining a server role is required to target only the required servers.
 	 * @param DNEnvironment $environment
-	 * @param array $args Additional arguments for process
+	 * @param array<string>|null $args Additional arguments for process
 	 * @param DeploynautLogFile $log
 	 * @return \Symfony\Component\Process\Process
 	 */
@@ -176,8 +210,10 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		$name = $environment->getFullName();
 		$env = $environment->Project()->getProcessEnv();
 
-		if(!$args) $args = array();
-		$args['history_path'] = realpath(DEPLOYNAUT_LOG_PATH.'/');
+		if(!$args) {
+			$args = array();
+		}
+		$args['history_path'] = realpath(DEPLOYNAUT_LOG_PATH . '/');
 
 		// Inject env string directly into the command.
 		// Capistrano doesn't like the $process->setEnv($env) we'd normally do below.
@@ -191,7 +227,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 
 		$data = DNData::inst();
 		// Generate a capfile from a template
-		$capTemplate = file_get_contents(BASE_PATH.'/deploynaut/Capfile.template');
+		$capTemplate = file_get_contents(BASE_PATH . '/deploynaut/Capfile.template');
 		$cap = str_replace(
 			array('<config root>', '<ssh key>', '<base path>'),
 			array($data->getEnvironmentDir(), DEPLOYNAUT_SSH_KEY, BASE_PATH),
@@ -201,7 +237,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		if(defined('DEPLOYNAUT_CAPFILE')) {
 			$capFile = DEPLOYNAUT_CAPFILE;
 		} else {
-			$capFile = ASSETS_PATH.'/Capfile';
+			$capFile = ASSETS_PATH . '/Capfile';
 		}
 		file_put_contents($capFile, $cap);
 
@@ -213,8 +249,6 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		$log->write(sprintf('Running command: %s', $command));
 
 		$process = new Process($command);
-		// Capistrano doesn't like it - see comment above.
-		//$process->setEnv($env);
 		$process->setTimeout(3600);
 		return $process;
 	}
@@ -223,8 +257,8 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	 * Backs up database and/or assets to a designated folder,
 	 * and packs up the files into a single sspak.
 	 *
-	 * @param  DNDataTransfer    $dataTransfer
-	 * @param  DeploynautLogFile $log
+	 * @param DNDataTransfer    $dataTransfer
+	 * @param DeploynautLogFile $log
 	 */
 	protected function dataTransferBackup(DNDataTransfer $dataTransfer, DeploynautLogFile $log) {
 		$environment = $dataTransfer->Environment();
@@ -300,6 +334,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	/**
 	 * Utility function for triggering the db rebuild and flush.
 	 * Also cleans up and generates new error pages.
+	 * @param DeploynautLogFile $log
 	 */
 	public function rebuild(DNEnvironment $environment, $log) {
 		$name = $environment->getFullName();

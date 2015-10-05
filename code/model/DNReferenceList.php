@@ -1,25 +1,64 @@
 <?php
 
+use Gitonomy\Git\Reference;
+
 class DNReferenceList extends ArrayList {
 
+	/**
+	 * @var string
+	 */
 	protected static $refs_dir = '';
 
+	/**
+	 * @var bool
+	 */
 	protected $loaded = false;
 
+	/**
+	 * @var Reference|null
+	 */
 	protected $reference = null;
 
+	/**
+	 * @var null|string
+	 */
 	protected $blockBranch;
 
+	/**
+	 * @var array
+	 */
 	protected $builds = array();
 
+	/**
+	 * @var int
+	 */
 	protected $limit = 10;
 
+	/**
+	 * @var bool
+	 */
 	protected $getTags = false;
 
+	/**
+	 * @var DNProject
+	 */
+	protected $project;
+
+	/**
+	 * @var DNData
+	 */
+	protected $data;
+
+	/**
+	 * @param $refsDir
+	 */
 	public static function set_refs_dir($refsDir) {
 		self::$refs_dir = $refsDir;
 	}
 
+	/**
+	 * @return string
+	 */
 	public static function get_refs_dir() {
 		return self::$refs_dir;
 	}
@@ -27,14 +66,14 @@ class DNReferenceList extends ArrayList {
 	/**
 	 * @param DNProject $project
 	 * @param DNData $data
-	 * @param Gitonomy\Git\Reference $reference
-	 * @param string $blockBranch
+	 * @param Reference|null $reference
+	 * @param string|null $blockBranch
 	 * @param bool $getTags
 	 */
 	public function __construct(
 		DNProject $project,
 		DNData $data,
-		Gitonomy\Git\Reference $reference = null,
+		Reference $reference = null,
 		$blockBranch = null,
 		$getTags = false
 	) {
@@ -48,6 +87,7 @@ class DNReferenceList extends ArrayList {
 
 	/**
 	 * @param int $limit
+	 * @return DNReferenceList
 	 */
 	public function setLimit($limit) {
 		$this->limit = $limit;
@@ -55,13 +95,19 @@ class DNReferenceList extends ArrayList {
 	}
 
 	/**
-	 * @param int $limit - defaults to the ten lates
-	 * @return array()
+	 * @return array
 	 */
 	protected function getReferences() {
-		$repository = new Gitonomy\Git\Repository($this->project->LocalCVSPath);
+		try {
+			$repository = new Gitonomy\Git\Repository($this->project->getLocalCVSPath());
+		} catch(Exception $e) {
+			return array();
+		}
+
 		if($this->getTags) {
-			if($this->reference) throw new LogicException("Can't have \$reference and \$getTags both set");
+			if($this->reference) {
+				throw new LogicException("Can't have \$reference and \$getTags both set");
+			}
 			$log = $repository->getReferences()->getTags();
 
 		} else if($this->reference) {
@@ -83,7 +129,7 @@ class DNReferenceList extends ArrayList {
 		// cache them for look up in byName
 		$builds = array();
 		foreach($limitedLog as $reference) {
-			if($this->blockBranch) {
+			if(!empty($this->blockBranch)) {
 				$branchesIncluding = GitonomyCache::getIncludingBranches($reference);
 				foreach($branchesIncluding as $candidate) {
 					if($candidate->getName() == $this->blockBranch) {
@@ -94,33 +140,45 @@ class DNReferenceList extends ArrayList {
 			}
 
 			if($this->getTags) {
-				$builds[$reference->getCommitHash()] = DNTag::create($reference, $this->project, $this->data);
-
+				$builds[] = DNTag::create($reference, $this->project, $this->data);
 			} else {
 				$name = $this->reference ? $this->reference->getName() : '';
-				$builds[$reference->getHash()] = DNCommit::create($reference, $this->project, $this->data, $name);
+				$builds[] = DNCommit::create($reference, $this->project, $this->data, $name);
 			}
 		}
+
 		return $builds;
 	}
 
 	/**
 	 * Find a build in this set by hash.
+	 *
+	 * @param string $hash
+	 * @return DNCommit
 	 */
 	public function byName($hash) {
-		if($this->loaded == false) {
+		if($this->loaded === false) {
 			$this->items = $this->getReferences();
 			$this->loaded = true;
 		}
+
 		// The item might not be in the list because of the limit, try to find
 		// in an older version and add it to the list.
-		if(!isset($this->items[$hash])) {
-			$repository = new Gitonomy\Git\Repository($this->project->LocalCVSPath);
-			$commit = new Gitonomy\Git\Commit($repository, $hash);
-			$this->items[$hash] = DNCommit::create($commit, $this->project, $this->data);
-		};
+		$found = null;
+		foreach($this->items as $item) {
+			if($item->SHA() == $hash) {
+				$found = $item;
+				break;
+			}
+		}
 
-		return $this->items[$hash];
+		if($found === null) {
+			$repository = new Gitonomy\Git\Repository($this->project->getLocalCVSPath());
+			$commit = new Gitonomy\Git\Commit($repository, $hash);
+			$found = DNCommit::create($commit, $this->project, $this->data);
+		}
+
+		return $found;
 	}
 
 	public function Count() {
@@ -135,12 +193,14 @@ class DNReferenceList extends ArrayList {
 	 * @return ArrayIterator
 	 */
 	public function getIterator() {
-		if($this->loaded == false) {
+		if($this->loaded === false) {
 			$this->items = $this->getReferences();
 			$this->loaded = true;
 		}
-		foreach($this->items as $i => $item) {
-			if(is_array($item)) $this->items[$i] = new ArrayData($item);
+		foreach($this->items as $item) {
+			if(is_array($item)) {
+				$this->items[] = new ArrayData($item);
+			}
 		}
 		return new ArrayIterator($this->items);
 	}

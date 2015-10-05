@@ -43,7 +43,7 @@ class DNFilteredCommits extends Object {
 	}
 
 	public function getCommits() {
-		if (!isset($this->env)) {
+		if(!isset($this->env)) {
 			$this->environmentNotSetException();
 		}
 		$successfulCommits =
@@ -54,7 +54,7 @@ class DNFilteredCommits extends Object {
 	}
 
 	public function getLatestCommit() {
-		if (!isset($this->env)) {
+		if(!isset($this->env)) {
 			$this->environmentNotSetException();
 		}
 		$commits = $this->getCommits();

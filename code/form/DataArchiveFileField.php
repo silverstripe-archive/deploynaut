@@ -1,5 +1,8 @@
 <?php
+
 /**
+ * Class DataArchiveFileField
+ *
  * Overwrite field to save into a {@link DataArchive}, using generateFilepath().
  * This mainly just works around the limitation
  * of FileField to set the folder path *before* uploading the file,
@@ -7,8 +10,14 @@
  */
 class DataArchiveFileField extends FileField {
 
+	/**
+	 * @param DataObjectInterface $record
+	 * @return bool|DataArchiveFileField
+	 */
 	public function saveInto(DataObjectInterface $record) {
-		if(!isset($_FILES[$this->name])) return false;
+		if(!isset($_FILES[$this->name])) {
+			return false;
+		}
 
 		if(!($record instanceof DNDataArchive)) {
 			throw new LogicException('Saving into wrong type, expected DNDataArchive');
@@ -16,6 +25,7 @@ class DataArchiveFileField extends FileField {
 
 		$dataArchive = $record;
 
+		/** @var DNDataTransfer $dataTransfer */
 		$dataTransfer = $dataArchive->DataTransfers()->First();
 		if(!$dataTransfer) {
 			throw new LogicException('No transfer found');
@@ -23,11 +33,14 @@ class DataArchiveFileField extends FileField {
 
 		$fileClass = File::get_class_for_file_extension(pathinfo($_FILES[$this->name]['name'], PATHINFO_EXTENSION));
 		$file = new $fileClass();
-		// Hack: loadIntoFile assumes paths relative to assets, otherwise it creates the whole structure *within* that folder
+		// Hack: loadIntoFile assumes paths relative to assets,
+		//  otherwise it creates the whole structure *within* that folder
 		$absolutePath = $dataArchive->generateFilepath($dataTransfer);
 		$relativePath = preg_replace('#^' . preg_quote(ASSETS_PATH) . '/#', '', $absolutePath);
 		$this->upload->loadIntoFile($_FILES[$this->name], $file, $relativePath);
-		if($this->upload->isError()) return false;
+		if($this->upload->isError()) {
+			return false;
+		}
 
 		$file = $this->upload->getFile();
 		if($this->relationAutoSetting) {

@@ -85,15 +85,31 @@
  *
  * @see docs/en/pipelines.md for further information
  *
- * @method DNEnvironment Environment()
- * @method Member Author()
- * @method PipelineStep CurrentStep()
- * @method DataList Steps()
+ *
  * @property string $Status
  * @property string $Config
  * @property string $SHA
  * @property bool $DryRun
  * @property string $LastMessageSent
+ *
+ * @method Member Author()
+ * @property int AuthorID
+ * @method DNEnvironment Environment()
+ * @property int EnvironmentID
+ * @method PipelineStep CurrentStep()
+ * @property int CurrentStepID
+ * @method DNDataTransfer PreviousSnapshot()
+ * @property int PreviousSnapshotID
+ * @method DNDeployment PreviousDeployment()
+ * @property int PreviousDeploymentID
+ * @method DNDeployment CurrentDeployment()
+ * @property int CurrentDeploymentID
+ * @method PipelineStep RollbackStep1()
+ * @property int RollbackStep1ID
+ * @method PipelineStep RollbackStep2()
+ * @property int RollbackStep2ID
+ *
+ * @method HasManyList Steps()
  */
 class Pipeline extends DataObject implements PipelineData {
 
@@ -108,11 +124,12 @@ class Pipeline extends DataObject implements PipelineData {
 	const ALERT_ROLLBACK_FAILURE = 'RollbackFailure';
 
 	/**
-	 * @var array
 	 * - Status: Current status of this Pipeline. Running means 'currently executing a {@link PipelineStep}'.
 	 *           See the {@link PipelineControllerTask} class for why this is important.
 	 * - SHA:    This is the Git SHA that the pipeline is acting on. This is passed into the {@link PipelineStep}
 	 *           objects so that the steps know what to smoketest, deploy, etc.
+	 *
+	 * @var array
 	 */
 	private static $db = array(
 		'Status' => 'Enum("Running,Complete,Failed,Aborted,Rollback,Queued", "Queued")',
@@ -123,11 +140,12 @@ class Pipeline extends DataObject implements PipelineData {
 	);
 
 	/**
-	 * @var array
 	 * - Author:      The {@link Member} object that started this pipeline running.
 	 * - Environment: The {@link DNEnvironment} that this Pipeline is associated to.
 	 * - CurrentStep: The current {@link PipelineStep} object that is keeping this pipeline alive. This should be
 	 *                cleared when the last step is complete.
+	 *
+	 * @var array
 	 */
 	private static $has_one = array(
 		'Author' => 'Member',
@@ -142,13 +160,17 @@ class Pipeline extends DataObject implements PipelineData {
 	);
 
 	/**
-	 * @var array
 	 * - Steps: These are ordered by the `PipelineStep`.`Order` attribute.
+	 *
+	 * @var array
 	 */
 	private static $has_many = array(
 		'Steps' => 'PipelineStep'
 	);
 
+	/**
+	 * @var array
+	 */
 	private static $summary_fields = array(
 		'ID' => 'ID',
 		'Status' => 'Status',
@@ -159,8 +181,14 @@ class Pipeline extends DataObject implements PipelineData {
 		'LastEdited' => 'Last Updated'
 	);
 
+	/**
+	 * @var string
+	 */
 	private static $default_sort = '"Created" DESC';
 
+	/**
+	 * @var array
+	 */
 	private static $cast = array(
 		'RunningDescription' => 'HTMLText'
 	);
@@ -197,7 +225,9 @@ class Pipeline extends DataObject implements PipelineData {
 	public function __isset($property) {
 		// Workaround fixed in https://github.com/silverstripe/silverstripe-framework/pull/3201
 		// Remove this once we update to a version of framework which supports this
-		if($property === 'MessagingService') return !empty($this->messagingService);
+		if($property === 'MessagingService') {
+			return !empty($this->messagingService);
+		}
 		return parent::__isset($property);
 	}
 
@@ -230,11 +260,18 @@ class Pipeline extends DataObject implements PipelineData {
 		return "Pipeline {$this->ID} (Status: {$this->Status})";
 	}
 
+	/**
+	 * @param Member $member
+	 */
 	public function canAbort($member = null) {
 		// Owner can abort
 		$member = $member ?: Member::currentUser();
-		if(!$member) return false;
-		if($member->ID == $this->AuthorID) return true;
+		if(!$member) {
+			return false;
+		}
+		if($member->ID == $this->AuthorID) {
+			return true;
+		}
 
 		// Check environment permission
 		return $this->Environment()->canAbort($member);
@@ -262,7 +299,9 @@ class Pipeline extends DataObject implements PipelineData {
 	 * @return ArrayList List of items with a Link and Title attribute
 	 */
 	public function RunningOptions() {
-		if(!$this->isActive()) return null;
+		if(!$this->isActive()) {
+			return null;
+		}
 		$actions = array();
 
 		// Let current step update the current list of options
@@ -278,7 +317,12 @@ class Pipeline extends DataObject implements PipelineData {
 	 * @return ArrayList List of logs with a Link and Title attribute
 	 */
 	public function LogOptions() {
-		if(!$this->isActive()) return null;
+		if(!$this->isActive()) {
+			return null;
+		}
+
+		$logs = array();
+
 		$logs[] = array(
 			'ButtonText' => 'Pipeline Log',
 			'Link' => $this->Link()
@@ -300,8 +344,8 @@ class Pipeline extends DataObject implements PipelineData {
 
 		// Get logs from rollback steps (only for RollbackSteps).
 		$rollbackSteps = array($this->RollbackStep1(), $this->RollbackStep2());
-		foreach ($rollbackSteps as $rollback) {
-			if($rollback->exists() && $rollback->ClassName=='RollbackStep') {
+		foreach($rollbackSteps as $rollback) {
+			if($rollback->exists() && $rollback->ClassName == 'RollbackStep') {
 				if($rollback->RollbackDeploymentID > 0) {
 					$logs[] = array(
 						'ButtonText' => 'Rollback Log',
@@ -324,7 +368,7 @@ class Pipeline extends DataObject implements PipelineData {
 	/**
 	 * Cached of config merged with defaults
 	 *
-	 * @var array
+	 * @var array|null
 	 */
 	protected $mergedConfig;
 
@@ -334,6 +378,7 @@ class Pipeline extends DataObject implements PipelineData {
 	 * it'll read the YAML file directly and return that instead.
 	 *
 	 * @return array
+	 * @throws Exception
 	 */
 	public function getConfigData() {
 		// Lazy load if necessary
@@ -367,19 +412,24 @@ class Pipeline extends DataObject implements PipelineData {
 	 * Retrieve the value of a specific config setting
 	 *
 	 * @param string $setting Settings
-	 * @param string $setting,... Sub-settings
 	 * @return mixed Value of setting, or null if not set
 	 */
 	public function getConfigSetting($setting) {
 		$source = $this->getConfigData();
+
 		foreach(func_get_args() as $setting) {
-			if(empty($source[$setting])) return null;
+			if(empty($source[$setting])) {
+				return null;
+			}
 			$source = $source[$setting];
 		}
+
 		return $source;
 	}
 
-
+	/**
+	 * @return FieldList
+	 */
 	public function getCMSFields() {
 		$fields = new FieldList(new TabSet('Root'));
 
@@ -438,6 +488,7 @@ class Pipeline extends DataObject implements PipelineData {
 
 	/**
 	 * Return a dependent {@link DNEnvironment} based on this pipeline's dependent environment configuration.
+	 *
 	 * @return DNEnvironment
 	 */
 	public function getDependentEnvironment() {
@@ -472,11 +523,11 @@ class Pipeline extends DataObject implements PipelineData {
 	/**
 	 * Generate a step from a name, config, and sort order
 	 *
+	 * @throws Exception
 	 * @param string $name
 	 * @param array $stepConfig
 	 * @param int $order
 	 * @return PipelineStep
-	 * @throws Exception
 	 */
 	protected function generateStep($name, $stepConfig, $order = 0) {
 		$stepClass = isset($stepConfig['Class']) ? $stepConfig['Class'] : $stepConfig;
@@ -500,6 +551,7 @@ class Pipeline extends DataObject implements PipelineData {
 		$step->Status = 'Queued';
 		$step->Config = serialize($stepConfig);
 		$step->write();
+
 		return $step;
 	}
 
@@ -511,6 +563,9 @@ class Pipeline extends DataObject implements PipelineData {
 	 *
 	 * Note that this method doesn't actually start any {@link PipelineStep} objects, that is handled by
 	 * {@link self::checkPipelineStatus()}, and the daemon running the process.
+	 *
+	 * @throws LogicException
+	 * @return boolean
 	 */
 	public function start() {
 		// Ensure there are no other running {@link Pipeline} objects for this {@link DNEnvironment}
@@ -541,8 +596,6 @@ class Pipeline extends DataObject implements PipelineData {
 
 	/**
 	 * Mark this Pipeline as completed.
-	 *
-	 * @return void
 	 */
 	public function markComplete() {
 		$this->Status = "Complete";
@@ -581,6 +634,10 @@ class Pipeline extends DataObject implements PipelineData {
 
 	/**
 	 * Push a step to the end of a pipeline
+	 *
+	 * @param string $name
+	 * @param array $stepConfig
+	 * @return PipelineStep
 	 */
 	private function pushPipelineStep($name, $stepConfig) {
 		$lastStep = $this->Steps()->sort("Order DESC")->first();
@@ -597,11 +654,15 @@ class Pipeline extends DataObject implements PipelineData {
 		$success = true;
 		$rollback1 = $this->RollbackStep1();
 		$rollback2 = $this->RollbackStep2();
-		if (!empty($rollback1) && $rollback1->Status=='Failed') $success = false;
-		if (!empty($rollback2) && $rollback2->Status=='Failed') $success = false;
+		if(!empty($rollback1) && $rollback1->Status == 'Failed') {
+			$success = false;
+		}
+		if(!empty($rollback2) && $rollback2->Status == 'Failed') {
+			$success = false;
+		}
 
 		// Send messages.
-		if ($success) {
+		if($success) {
 			$this->log("Pipeline failed, but rollback completed successfully.");
 			$this->sendMessage(self::ALERT_ROLLBACK_SUCCESS);
 		} else {
@@ -612,7 +673,6 @@ class Pipeline extends DataObject implements PipelineData {
 		// Finish off the pipeline - rollback will only be triggered on a failed pipeline.
 		$this->Status = 'Failed';
 		$this->write();
-
 	}
 
 	/**
@@ -631,7 +691,7 @@ class Pipeline extends DataObject implements PipelineData {
 
 		// Add smoke test step, if available, for later processing.
 		$configRollback2 = $this->getConfigSetting('RollbackStep2');
-		if ($configRollback2) {
+		if($configRollback2) {
 			$stepRollback2 = $this->pushPipelineStep('RollbackStep2', $configRollback2);
 			$this->RollbackStep2ID = $stepRollback2->ID;
 		}
@@ -644,21 +704,31 @@ class Pipeline extends DataObject implements PipelineData {
 	/**
 	 * Check if pipeline currently permits a rollback.
 	 * This could be influenced by both the current state and by the specific configuration.
+	 *
+	 * @return boolean
 	 */
 	protected function canStartRollback() {
 		// The rollback cannot run twice.
-		if ($this->isRollback()) return false;
+		if($this->isRollback()) {
+			return false;
+		}
 
 		// Rollbacks must be configured.
-		if (!$this->getConfigSetting('RollbackStep1')) return false;
+		if(!$this->getConfigSetting('RollbackStep1')) {
+			return false;
+		}
 
 		// On dryrun let rollback run
-		if($this->DryRun) return true;
+		if($this->DryRun) {
+			return true;
+		}
 
 		// Pipeline must have ran a deployment to be able to rollback.
 		$deploy = $this->CurrentDeployment();
 		$previous = $this->PreviousDeployment();
-		if (!$deploy->exists() || !$previous->exists()) return false;
+		if(!$deploy->exists() || !$previous->exists()) {
+			return false;
+		}
 
 		return true;
 	}
@@ -674,19 +744,23 @@ class Pipeline extends DataObject implements PipelineData {
 		// Abort all running or queued steps.
 		$steps = $this->Steps();
 		foreach($steps as $step) {
-			if ($step->isQueued() || $step->isRunning()) $step->abort();
+			if($step->isQueued() || $step->isRunning()) {
+				$step->abort();
+			}
 		}
 
 		if($this->canStartRollback()) {
 			$this->beginRollback();
-		} else if ($this->isRollback()) {
+		} else if($this->isRollback()) {
 			$this->finaliseRollback();
 		} else {
 			// Not able to roll back - fail immediately.
 			$this->Status = 'Failed';
 			$this->log("Pipeline failed, not running rollback (not configured or not applicable yet).");
 			$this->write();
-			if($notify) $this->sendMessage(self::ALERT_FAILURE);
+			if($notify) {
+				$this->sendMessage(self::ALERT_FAILURE);
+			}
 		}
 	}
 
@@ -706,8 +780,6 @@ class Pipeline extends DataObject implements PipelineData {
 
 	/**
 	 * Mark this Pipeline as aborted
-	 *
-	 * @return void
 	 */
 	public function markAborted() {
 		$this->Status = 'Aborted';
@@ -722,7 +794,9 @@ class Pipeline extends DataObject implements PipelineData {
 		// Abort all running or queued steps.
 		$steps = $this->Steps();
 		foreach($steps as $step) {
-			if ($step->isQueued() || $step->isRunning()) $step->abort();
+			if($step->isQueued() || $step->isRunning()) {
+				$step->abort();
+			}
 		}
 
 		// Send notification to users about this event
@@ -737,7 +811,7 @@ class Pipeline extends DataObject implements PipelineData {
 	 */
 	protected function generateMessageTemplate($messageID) {
 		$subject = $this->getConfigSetting('PipelineConfig', 'Subjects', $messageID);
-		$message = $this->getConfigSetting('PipelineConfig', 'Messages',  $messageID);
+		$message = $this->getConfigSetting('PipelineConfig', 'Messages', $messageID);
 		$substitutions = $this->getReplacements();
 		return $this->injectMessageReplacements($message, $subject, $substitutions);
 	}
@@ -752,7 +826,9 @@ class Pipeline extends DataObject implements PipelineData {
 	 */
 	public function injectMessageReplacements($message, $subject, $substitutions) {
 		// Handle empty messages
-		if(empty($subject) && empty($message)) return array(null, null);
+		if(empty($subject) && empty($message)) {
+			return array(null, null);
+		}
 
 		// Check if there's a role specific message
 		$subjectText = str_replace(
@@ -765,6 +841,8 @@ class Pipeline extends DataObject implements PipelineData {
 			array_values($substitutions),
 			$message ?: $subject
 		);
+
+
 		return array($subjectText, $messageText);
 	}
 
@@ -772,7 +850,7 @@ class Pipeline extends DataObject implements PipelineData {
 	 * Sends a specific message to all marked recipients, including the author of this pipeline
 	 *
 	 * @param string $messageID Message ID. One of 'Abort', 'Success', or 'Failure', or some custom message
-	 * @return boolean True if successful
+	 * @return boolean|null True if successful
 	 */
 	public function sendMessage($messageID) {
 		// Check message, subject, and additional arguments to include
@@ -886,7 +964,7 @@ class Pipeline extends DataObject implements PipelineData {
 			if(!$nextStep) {
 
 				// Special handling, since the main pipeline has already failed at this stage.
-				if ($this->isRollback()) {
+				if($this->isRollback()) {
 					$this->finaliseRollback();
 					return false;
 				}
@@ -896,7 +974,7 @@ class Pipeline extends DataObject implements PipelineData {
 					'PipelineID' => $this->ID,
 					'Status' => 'Failed'
 				))->count();
-				if ($failedSteps) {
+				if($failedSteps) {
 					$this->log('At least one of the steps has failed marking the pipeline as failed');
 					$this->markFailed();
 					return false;
@@ -921,11 +999,12 @@ class Pipeline extends DataObject implements PipelineData {
 	/**
 	 * Finds the next {@link PipelineStep} that needs to execute. Relies on $this->CurrentStep() being a valid step.
 	 *
-	 * @return PipelineStep|null The next step in the pipeline, or null if none remain.
+	 * @return DataObject|null The next step in the pipeline, or null if none remain.
 	 */
 	protected function findNextStep() {
 		// otherwise get next step in chain
 		$currentStep = $this->CurrentStep();
+
 		return $this
 			->Steps()
 			->filter("Status", "Queued")
@@ -938,11 +1017,12 @@ class Pipeline extends DataObject implements PipelineData {
 	/**
 	 * Finds the previous {@link PipelineStep} that executed. Relies on $this->CurrentStep() being a valid step.
 	 *
-	 * @return PipelineStep|null The previous step in the pipeline, or null if this is the first.
+	 * @return DataObject|null The previous step in the pipeline, or null if this is the first.
 	 */
 	public function findPreviousStep() {
 		// otherwise get previous step in chain
 		$currentStep = $this->CurrentStep();
+
 		return $this
 			->Steps()
 			->filter("Status", "Finished")
@@ -962,7 +1042,6 @@ class Pipeline extends DataObject implements PipelineData {
 	 *
 	 * @param string $message The message to log
 	 * @throws LogicException Thrown if we can't log yet because we don't know what to log to (no db record yet).
-	 * @return void
 	 */
 	public function log($message = "") {
 		$log = $this->getLogger();
@@ -976,10 +1055,22 @@ class Pipeline extends DataObject implements PipelineData {
 		$caller = $bt[$index];
 		$caller['line'] = $bt[($index - 1)]['line']; // Overwrite line and file to be the the line/file that actually
 		$caller['file'] = $bt[($index - 1)]['file']; // called the function, not where the function is defined.
-		if(!isset($caller['class'])) $caller['class'] = ''; // In case it wasn't called from a class
-		if(!isset($caller['type'])) $caller['type'] = ''; // In case it doesn't have a type (wasn't called from class)
+		// In case it wasn't called from a class
+		if(!isset($caller['class'])) {
+			$caller['class'] = '';
+		}
+		// In case it doesn't have a type (wasn't called from class)
+		if(!isset($caller['type'])) {
+			$caller['type'] = '';
+		}
 
-		$log->write(sprintf("[%s::%s() (line %d)] %s", $caller['class'], $caller['function'], $caller['line'], $message));
+		$log->write(sprintf(
+			"[%s::%s() (line %d)] %s",
+			$caller['class'],
+			$caller['function'],
+			$caller['line'],
+			$message
+		));
 	}
 
 	/**
@@ -1002,16 +1093,23 @@ class Pipeline extends DataObject implements PipelineData {
 		}
 
 		$environment = $this->Environment();
-		$project = $this->Environment()->Project();
 		$filename = sprintf('%s.pipeline.%d.log', $environment->getFullName('.'), $this->ID);
 
 		return Injector::inst()->createWithArgs('DeploynautLogFile', array($filename));
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function getDryRun() {
 		return $this->getField('DryRun');
 	}
 
+	/**
+	 * @param string|null $action
+	 *
+	 * @return string
+	 */
 	public function Link($action = null) {
 		return Controller::join_links($this->Environment()->Link(), 'pipeline', $this->ID, $action);
 	}
@@ -1019,25 +1117,36 @@ class Pipeline extends DataObject implements PipelineData {
 	/**
 	 * Link to an action on the current step
 	 *
-	 * @param string $action
+	 * @param string|null $action
 	 * @return string
 	 */
 	public function StepLink($action = null) {
 		return Controller::join_links($this->Link('step'), $action);
 	}
 
+	/**
+	 * @return string
+	 */
 	public function AbortLink() {
 		return $this->Link('abort');
 	}
 
+	/**
+	 * @return string
+	 */
 	public function LogLink() {
 		return $this->Link('log');
 	}
 
+	/**
+	 * @return string
+	 */
 	public function LogContent() {
 		if($this->exists() && $this->Environment()) {
 			$logger = $this->getLogger();
-			if($logger->exists()) return $logger->content();
+			if($logger->exists()) {
+				return $logger->content();
+			}
 		}
 	}
 

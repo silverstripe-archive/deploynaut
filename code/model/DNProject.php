@@ -4,37 +4,43 @@
  * DNProject represents a project that relates to a group of target
  * environments.
  *
+ * @property string Name
+ * @property string CVSPath
+ * @property int DiskQuotaMB
+ *
+ * @method HasManyList Environments()
+ * @method ManyManyList Viewers()
  */
 class DNProject extends DataObject {
 
 	/**
-	 *
 	 * @var array
 	 */
 	public static $db = array(
 		"Name" => "Varchar",
 		"CVSPath" => "Varchar(255)",
-		"DiskQuotaMB" => "Int"
+		"DiskQuotaMB" => "Int",
+		"AllowedEnvironmentType" => "Varchar(255)",
+		"Client" => "Varchar(255)",
 	);
 
 	/**
-	 *
 	 * @var array
 	 */
 	public static $has_many = array(
 		"Environments" => "DNEnvironment",
+		"CreateEnvironments" => "DNCreateEnvironment"
 	);
 
 	/**
-	 *
 	 * @var array
 	 */
 	public static $many_many = array(
 		"Viewers" => "Group",
+		'StarredBy' => "Member"
 	);
 
 	/**
-	 *
 	 * @var array
 	 */
 	public static $summary_fields = array(
@@ -43,19 +49,23 @@ class DNProject extends DataObject {
 	);
 
 	/**
-	 *
 	 * @var array
 	 */
 	public static $searchable_fields = array(
 		"Name",
 	);
 
+	/**
+	 * @var string
+	 */
 	private static $singular_name = 'Project';
 
+	/**
+	 * @var string
+	 */
 	private static $plural_name = 'Projects';
 
 	/**
-	 *
 	 * @var string
 	 */
 	private static $default_sort = 'Name';
@@ -74,6 +84,11 @@ class DNProject extends DataObject {
 	 * @var array
 	 */
 	protected static $relation_cache = array();
+
+	/**
+	 * @var bool|Member
+	 */
+	protected static $_current_member_cache = null;
 
 	/**
 	 * Used by the sync task
@@ -97,8 +112,8 @@ class DNProject extends DataObject {
 	/**
 	 * Return the used quota in MB.
 	 *
-	 * @param mixed $round Number of decimal places to round to
-	 * @return string|int The used quota size in MB
+	 * @param integer $round Number of decimal places to round to
+	 * @return double The used quota size in MB
 	 */
 	public function getUsedQuotaMB($round = 2) {
 		$size = 0;
@@ -133,6 +148,7 @@ class DNProject extends DataObject {
 
 	/**
 	 * Has the disk quota been exceeded?
+	 *
 	 * @return boolean
 	 */
 	public function HasExceededDiskQuota() {
@@ -141,10 +157,24 @@ class DNProject extends DataObject {
 
 	/**
 	 * Is there a disk quota set for this project?
+	 *
 	 * @return boolean
 	 */
 	public function HasDiskQuota() {
 		return $this->getDiskQuotaMB() > 0;
+	}
+
+	/**
+	 * Returns the current disk quota usage as a percentage
+	 *
+	 * @return int
+	 */
+	public function DiskQuotaUsagePercent() {
+		$quota = $this->getDiskQuotaMB();
+		if($quota > 0) {
+			return $this->getUsedQuotaMB() * 100 / $quota;
+		}
+		return 100;
 	}
 
 	/**
@@ -155,17 +185,15 @@ class DNProject extends DataObject {
 	public function Menu() {
 		$list = new ArrayList();
 
-		$list->push(new ArrayData(array(
-			'Link' => sprintf('naut/project/%s', $this->Name),
-			'Title' => 'Deploy',
-			'IsActive' => Controller::curr()->getAction() == 'project'
-		)));
+		$controller = Controller::curr();
+		$actionType = $controller->getField('CurrentActionType');
 
 		if(DNRoot::FlagSnapshotsEnabled()) {
 			$list->push(new ArrayData(array(
 				'Link' => sprintf('naut/project/%s/snapshots', $this->Name),
 				'Title' => 'Snapshots',
-				'IsActive' => Controller::curr()->getAction() == 'snapshots'
+				'IsCurrent' => $this->isSection() && $controller->getAction() == 'snapshots',
+				'IsSection' => $this->isSection() && $actionType == DNRoot::ACTION_SNAPSHOT
 			)));
 		}
 
@@ -175,43 +203,158 @@ class DNProject extends DataObject {
 	}
 
 	/**
+	 * Is this project currently at the root level of the controller that handles it?
+	 *
+	 * @return bool
+	 */
+	public function isCurrent() {
+		return $this->isSection() && Controller::curr()->getAction() == 'project';
+	}
+
+	/**
+	 * Return the current object from $this->Menu()
+	 * Good for making titles and things
+	 *
+	 * @return DataObject
+	 */
+	public function CurrentMenu() {
+		return $this->Menu()->filter('IsSection', true)->First();
+	}
+
+	/**
+	 * Is this project currently in a controller that is handling it or performing a sub-task?
+	 *
+	 * @return bool
+	 */
+	public function isSection() {
+		$controller = Controller::curr();
+		$project = $controller->getField('CurrentProject');
+		return $project && $this->ID == $project->ID;
+	}
+
+	/**
 	 * Restrict access to viewing this project
 	 *
-	 * @param Member $member
+	 * @param Member|null $member
 	 * @return boolean
 	 */
 	public function canView($member = null) {
-		if(!$member) $member = Member::currentUser();
+		if(!$member) {
+			$member = Member::currentUser();
+		}
 
-		if(Permission::checkMember($member, 'ADMIN')) return true;
+		if(Permission::checkMember($member, 'ADMIN')) {
+			return true;
+		}
 
 		return $member->inGroups($this->Viewers());
 	}
 
+	/**
+	 * @param Member|null $member
+	 *
+	 * @return bool
+	 */
 	public function canRestore($member = null) {
+		if ($this->allowedAny(
+			array(
+				DNRoot::ALLOW_PROD_SNAPSHOT,
+				DNRoot::ALLOW_NON_PROD_SNAPSHOT
+			),
+			$member
+		)) {
+			return true;
+		}
+
 		return (bool)$this->Environments()->filterByCallback(function($env) use($member) {
 			return $env->canRestore($member);
 		})->Count();
 	}
 
+	/**
+	 * @param Member|null $member
+	 * @return bool
+	 */
 	public function canBackup($member = null) {
+		if ($this->allowedAny(
+			array(
+				DNRoot::ALLOW_PROD_SNAPSHOT,
+				DNRoot::ALLOW_NON_PROD_SNAPSHOT
+			),
+			$member
+		)) {
+			return true;
+		}
+
 		return (bool)$this->Environments()->filterByCallback(function($env) use($member) {
 			return $env->canBackup($member);
 		})->Count();
 	}
 
+	/**
+	 * @param Member|null $member
+	 * @return bool
+	 */
 	public function canUploadArchive($member = null) {
+		if ($this->allowedAny(
+			array(
+				DNRoot::ALLOW_PROD_SNAPSHOT,
+				DNRoot::ALLOW_NON_PROD_SNAPSHOT
+			),
+			$member
+		)) {
+			return true;
+		}
+
 		return (bool)$this->Environments()->filterByCallback(function($env) use($member) {
 			return $env->canUploadArchive($member);
 		})->Count();
 	}
 
+	/**
+	 * @param Member|null $member
+	 * @return bool
+	 */
 	public function canDownloadArchive($member = null) {
+		if ($this->allowedAny(
+			array(
+				DNRoot::ALLOW_PROD_SNAPSHOT,
+				DNRoot::ALLOW_NON_PROD_SNAPSHOT
+			),
+			$member
+		)) {
+			return true;
+		}
+
 		return (bool)$this->Environments()->filterByCallback(function($env) use($member) {
 			return $env->canDownloadArchive($member);
 		})->Count();
 	}
 
+	/**
+	 * This is a permission check for the front-end only.
+	 *
+	 * Only admins can create environments for now. Also, we need to check the value
+	 * of AllowedEnvironmentType which dictates which backend to use to render the form.
+	 *
+	 * @param Member|null $member
+	 *
+	 * @return bool
+	 */
+	public function canCreateEnvironments($member = null) {
+		$envType = $this->AllowedEnvironmentType;
+		if($envType) {
+			$env = Injector::inst()->get($envType);
+			if($env instanceof EnvironmentCreateBackend) {
+				return $this->allowed(DNRoot::ALLOW_CREATE_ENVIRONMENT, $member);
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @return DataList
+	 */
 	public function DataArchives() {
 		$envIds = $this->Environments()->column('ID');
 		return DNDataArchive::get()->filter('EnvironmentID', $envIds);
@@ -221,7 +364,7 @@ class DNProject extends DataObject {
 	 * Return all archives which are "manual upload requests",
 	 * meaning they don't have a file attached to them (yet).
 	 *
-	 * @return ArrayList
+	 * @return DataList
 	 */
 	public function PendingManualUploadDataArchives() {
 		return $this->DataArchives()->filter('ArchiveFileID', null);
@@ -238,7 +381,7 @@ class DNProject extends DataObject {
 	 * @return array
 	 */
 	public function getProcessEnv() {
-		if (file_exists($this->getPrivateKeyPath())) {
+		if(file_exists($this->getPrivateKeyPath())) {
 			// Key-pair is available, use it.
 			$processEnv = array(
 				'IDENT_KEY' => $this->getPrivateKeyPath(),
@@ -248,6 +391,7 @@ class DNProject extends DataObject {
 			$processEnv = array();
 		}
 		$this->extend('updateProcessEnv', $processEnv);
+
 		return $processEnv;
 	}
 
@@ -256,13 +400,11 @@ class DNProject extends DataObject {
 	 *
 	 * @return string
 	 */
-
 	public function getViewersList() {
 		return implode(", ", $this->Viewers()->column("Title"));
 	}
 
 	/**
-	 *
 	 * @return DNData
 	 */
 	public function DNData() {
@@ -271,6 +413,8 @@ class DNProject extends DataObject {
 
 	/**
 	 * Provides a DNBuildList of builds found in this project.
+	 *
+	 * @return DNReferenceList
 	 */
 	public function DNBuildList() {
 		return DNReferenceList::create($this, $this->DNData());
@@ -278,6 +422,8 @@ class DNProject extends DataObject {
 
 	/**
 	 * Provides a list of the branches in this project.
+	 *
+	 * @return DNBranchList
 	 */
 	public function DNBranchList() {
 		if($this->CVSPath && !$this->repoExists()) {
@@ -288,6 +434,8 @@ class DNProject extends DataObject {
 
 	/**
 	 * Provides a list of the tags in this project.
+	 *
+	 * @return DNReferenceList
 	 */
 	public function DNTagList() {
 		if($this->CVSPath && !$this->repoExists()) {
@@ -297,14 +445,14 @@ class DNProject extends DataObject {
 	}
 
 	/**
-	 *
-	 * @return Gitonomy\Git\Repository
+	 * @return false|Gitonomy\Git\Repository
 	 */
 	public function getRepository() {
 		if(!$this->repoExists()) {
 			return false;
 		}
-		return new Gitonomy\Git\Repository($this->LocalCVSPath);
+
+		return new Gitonomy\Git\Repository($this->getLocalCVSPath());
 	}
 
 	/**
@@ -314,14 +462,34 @@ class DNProject extends DataObject {
 	 * @return ArrayList
 	 */
 	public function DNEnvironmentList() {
+
+		if(!self::$_current_member_cache) {
+			self::$_current_member_cache = Member::currentUser();
+		}
+
+		if(self::$_current_member_cache === false) {
+			return new ArrayList();
+		}
+
+		$currentMember = self::$_current_member_cache;
 		return $this->Environments()
-			->filterByCallBack(function($item) {
-				return $item->canView();
+			->filterByCallBack(function($item) use ($currentMember) {
+				return $item->canView($currentMember);
 			});
 	}
 
 	/**
+	 * @param string $usage
+	 * @return ArrayList
+	 */
+	public function EnvironmentsByUsage($usage) {
+		return $this->DNEnvironmentList()->filter('Usage', $usage);
+	}
+
+	/**
 	 * Returns a map of envrionment name to build name
+	 *
+	 * @return false|DNDeployment
 	 */
 	public function currentBuilds() {
 		if(!isset(self::$relation_cache['currentBuilds.'.$this->ID])) {
@@ -335,15 +503,46 @@ class DNProject extends DataObject {
 	}
 
 	/**
-	 *
+	 * @param string
 	 * @return string
 	 */
-	public function Link($action='') {
+	public function Link($action = '') {
 		return Controller::join_links("naut", "project", $this->Name, $action);
 	}
 
 	/**
-	 *
+	 * @return string|null
+	 */
+	public function CreateEnvironmentLink() {
+		if($this->canCreateEnvironments()) {
+			return $this->Link('createenv');
+		}
+		return null;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function ToggleStarLink() {
+		return $this->Link('/star');
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function IsStarred() {
+		$member = Member::currentUser();
+		if($member === null) {
+			return false;
+		}
+		$favourited = $this->StarredBy()->filter('MemberID', $member->ID);
+		if($favourited->count() == 0) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
 	 * @param string $action
 	 * @return string
 	 */
@@ -352,23 +551,27 @@ class DNProject extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return FieldList
 	 */
 	public function getCMSFields() {
 		$fields = parent::getCMSFields();
 
+		/** @var GridField $environments */
 		$environments = $fields->dataFieldByName("Environments");
 
 		$fields->fieldByName("Root")->removeByName("Viewers");
 		$fields->fieldByName("Root")->removeByName("Environments");
 		$fields->fieldByName("Root")->removeByName("LocalCVSPath");
 
-		$fields->dataFieldByName('DiskQuotaMB')->setDescription('This is the maximum amount of disk space (in megabytes) that all environments within this project can use for stored snapshots');
+		$diskQuotaDesc = 'This is the maximum amount of disk space (in megabytes) that all environments within this '
+			. 'project can use for stored snapshots';
+		$fields->dataFieldByName('DiskQuotaMB')->setDescription($diskQuotaDesc);
 
+		$projectNameDesc = 'Changing the name will <strong>reset</strong> the deploy configuration and avoid using non'
+			. 'alphanumeric characters';
 		$fields->fieldByName('Root.Main.Name')
 			->setTitle('Project name')
-			->setDescription('Changing the name will <strong>reset</strong> the deploy configuration and avoid using non alphanumeric characters');
+			->setDescription($projectNameDesc);
 
 		$fields->fieldByName('Root.Main.CVSPath')
 			->setTitle('Git repository')
@@ -385,6 +588,23 @@ class DNProject extends DataObject {
 
 		$this->setCreateProjectFolderField($fields);
 		$this->setEnvironmentFields($fields, $environments);
+
+		$environmentTypes = ClassInfo::implementorsOf('EnvironmentCreateBackend');
+		$types = array();
+		foreach($environmentTypes as $type) {
+			$types[$type] = $type;
+		}
+
+		$fields->addFieldsToTab('Root.Main', array(
+			DropdownField::create(
+				'AllowedEnvironmentType', 
+				'Allowed Environment Type',
+				$types
+			)->setDescription('This defined which form to show on the front end for '
+				. 'environment creation. This will not affect backend functionality.')
+			->setEmptyString(' - None - '),
+			TextField::create('Client', 'Client'),
+		));
 
 		return $fields;
 	}
@@ -413,7 +633,6 @@ class DNProject extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return boolean
 	 */
 	public function projectFolderExists() {
@@ -424,7 +643,6 @@ class DNProject extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return bool
 	 */
 	public function repoExists() {
@@ -433,7 +651,6 @@ class DNProject extends DataObject {
 
 	/**
 	 * Setup a asyncronous resque job to clone a git repository
-	 *
 	 */
 	public function cloneRepo() {
 		Resque::enqueue('git', 'CloneGitRepo', array(
@@ -444,7 +661,6 @@ class DNProject extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function getLocalCVSPath() {
@@ -453,7 +669,6 @@ class DNProject extends DataObject {
 
 	/**
 	 * Checks for missing folders folder and schedules a git clone if the necessary
-	 *
 	 */
 	public function onBeforeWrite() {
 		parent::onBeforeWrite();
@@ -477,10 +692,10 @@ class DNProject extends DataObject {
 	 */
 	protected function checkCVSPath() {
 		$changedFields = $this->getChangedFields(true, 2);
-		if (!$this->CVSPath) {
+		if(!$this->CVSPath) {
 			return;
 		}
-		if (isset($changedFields['CVSPath']) || isset($changedFields['Name'])) {
+		if(isset($changedFields['CVSPath']) || isset($changedFields['Name'])) {
 			$this->cloneRepo();
 		}
 	}
@@ -507,15 +722,16 @@ class DNProject extends DataObject {
 
 	/**
 	 * Fetch the public key for this project.
+	 *
+	 * @return string|void
 	 */
 	public function getPublicKey() {
 		$key = $this->getPublicKeyPath();
 
-		if (file_exists($key)) {
+		if(file_exists($key)) {
 			return file_get_contents($key);
 		}
 	}
-
 
 	/**
 	 * This returns that path of the public key if a key directory is set. It doesn't check whether the file exists.
@@ -529,22 +745,20 @@ class DNProject extends DataObject {
 		return null;
 	}
 
-
 	/**
 	 * This returns that path of the private key if a key directory is set. It doesn't check whether the file exists.
 	 *
 	 * @return string|null
 	 */
 	public function getPrivateKeyPath() {
-		if($keyDir = $this->getKeyDir()) {
+		$keyDir = $this->getKeyDir();
+		if(!empty($keyDir)) {
 			$filter = FileNameFilter::create();
 			$name = $filter->filter($this->Name);
-
-			return $this->getKeyDir() . '/' . $name;
+			return $keyDir . '/' . $name;
 		}
 		return null;
 	}
-
 
 	/**
 	 * Returns the location of the projects key dir if one exists.
@@ -553,7 +767,9 @@ class DNProject extends DataObject {
 	 */
 	public function getKeyDir() {
 		$keyDir = $this->DNData()->getKeyDir();
-		if(!$keyDir) return null;
+		if(!$keyDir) {
+			return null;
+		}
 
 		$filter = FileNameFilter::create();
 		$name = $filter->filter($this->Name);
@@ -565,8 +781,7 @@ class DNProject extends DataObject {
 	 * Setup a gridfield for the environment configs
 	 *
 	 * @param FieldList $fields
-	 * @param $environments
-	 * @return void
+	 * @param GridField $environments
 	 */
 	protected function setEnvironmentFields(&$fields, $environments) {
 		if(!$environments) {
@@ -589,19 +804,170 @@ class DNProject extends DataObject {
 
 	/**
 	 * Provide current repository URL to the users.
+	 *
+	 * @return void|string
 	 */
 	public function getRepositoryURL() {
 		$showUrl = Config::inst()->get($this->class, 'show_repository_url');
-		if ($showUrl) {
+		if($showUrl) {
 			return $this->CVSPath;
 		}
 	}
 
 	/**
+	 * Whitelist configuration that describes how to convert a repository URL into a link
+	 * to a web user interface for that URL
 	 *
+	 * Consists of a hash of "full.lower.case.domain" => {configuration} key/value pairs
+	 *
+	 * {configuration} can either be boolean true to auto-detect both the host and the
+	 * name of the UI provider, or a nested array that overrides either one or both
+	 * of the auto-detected valyes
+	 *
+	 * @var array
+	 */
+	static private $repository_interfaces = array(
+		'github.com' => array(
+			'icon' => 'deploynaut/img/github.png'
+		),
+		'bitbucket.org' => array(
+			'commit' => 'commits'
+		),
+		'repo.or.cz' => array(
+			'scheme' => 'http',
+			'name' => 'repo.or.cz',
+			'regex' => array('^(.*)$' => '/w$1')
+		),
+
+		/* Example for adding your own gitlab repository and override all auto-detected values (with their defaults)
+		'gitlab.mysite.com' => array(
+			'icon' => 'deploynaut/img/git.png',
+			'host' => 'gitlab.mysite.com',
+			'name' => 'Gitlab',
+			'regex' => array('.git$' => ''),
+			'commit' => "commit"
+		),
+		*/
+	);
+
+	/**
+	 * Get a ViewableData structure describing the UI tool that lets the user view the repository code
+	 *
+	 * @return ArrayData
+	 */
+	public function getRepositoryInterface() {
+		$interfaces = $this->config()->repository_interfaces;
+
+		/* Look for each whitelisted hostname */
+		foreach($interfaces as $host => $interface) {
+			/* See if the CVS Path is for this hostname, followed by some junk (maybe a port), then the path */
+			if(preg_match('{^[^.]*' . $host . '(.*?)([/a-zA-Z].+)}', $this->CVSPath, $match)) {
+
+				$path = $match[2];
+
+				$scheme = isset($interface['scheme']) ? $interface['scheme'] : 'https';
+				$host = isset($interface['host']) ? $interface['host'] : $host;
+				$regex = isset($interface['regex']) ? $interface['regex'] : array('\.git$' => '');
+
+				$components = explode('.', $host);
+
+				foreach($regex as $pattern => $replacement) {
+					$path = preg_replace('/' . $pattern . '/', $replacement, $path);
+				}
+
+				$uxurl = Controller::join_links($scheme . '://', $host, $path);
+
+				if(array_key_exists('commit', $interface) && $interface['commit'] == false) {
+					$commiturl = false;
+				} else {
+					$commiturl = Controller::join_links(
+						$uxurl,
+						isset($interface['commit']) ? $interface['commit'] : 'commit'
+					);
+				}
+
+				return new ArrayData(array(
+					'Name'      => isset($interface['name']) ? $interface['name'] : ucfirst($components[0]),
+					'Icon'      => isset($interface['icon']) ? $interface['icon'] : 'deploynaut/img/git.png',
+					'URL'       => $uxurl,
+					'CommitURL' => $commiturl
+				));
+			}
+		}
+	}
+
+	/**
 	 * @return string
 	 */
 	protected function getProjectFolderPath() {
 		return $this->DNData()->getEnvironmentDir().'/'.$this->Name;
 	}
+
+	/**
+	 * Convenience wrapper for a single permission code.
+	 *
+	 * @param string $code
+	 * @return SS_List
+	 */
+	public function whoIsAllowed($code) {
+		return $this->whoIsAllowedAny(array($code));
+	}
+
+	/**
+	 * List members who have $codes on this project.
+	 * Does not support Permission::DENY_PERMISSION malarky, same as Permission::get_groups_by_permission anyway...
+	 *
+	 * @param array|string $codes
+	 * @return SS_List
+	 */
+	public function whoIsAllowedAny($codes) {
+		if(!is_array($codes)) $codes = array($codes);
+
+		$SQLa_codes = Convert::raw2sql($codes);
+		$SQL_codes = join("','", $SQLa_codes);
+
+		return DataObject::get('Member')
+			->where("\"PermissionRoleCode\".\"Code\" IN ('$SQL_codes') OR \"Permission\".\"Code\" IN ('$SQL_codes')")
+			->filter("DNProject_Viewers.DNProjectID", $this->ID)
+			->leftJoin('Group_Members', "\"Group_Members\".\"MemberID\" = \"Member\".\"ID\"")
+			->leftJoin('Group', "\"Group_Members\".\"GroupID\" = \"Group\".\"ID\"")
+			->leftJoin('DNProject_Viewers', "\"DNProject_Viewers\".\"GroupID\" = \"Group\".\"ID\"")
+			->leftJoin('Permission', "\"Permission\".\"GroupID\" = \"Group\".\"ID\"")
+			->leftJoin('Group_Roles', "\"Group_Roles\".\"GroupID\" = \"Group\".\"ID\"")
+			->leftJoin('PermissionRole', "\"Group_Roles\".\"PermissionRoleID\" = \"PermissionRole\".\"ID\"")
+			->leftJoin('PermissionRoleCode', "\"PermissionRoleCode\".\"RoleID\" = \"PermissionRole\".\"ID\"");
+	}
+
+	/**
+	 * Convenience wrapper for a single permission code.
+	 *
+	 * @param string $code
+	 * @param Member|null $member
+	 *
+	 * @return bool
+	 */
+	public function allowed($code, $member = null) {
+		return $this->allowedAny(array($code), $member);
+	}
+
+	/**
+	 * Check if member has a permission code in this project.
+	 *
+	 * @param string $code
+	 * @param Member|null $member
+	 *
+	 * @return bool
+	 */
+	public function allowedAny($codes, $member = null) {
+		if (!$member) {
+			$member = Member::currentUser();
+		}
+
+		if(Permission::checkMember($member, 'ADMIN')) return true;
+
+		$hits = $this->whoIsAllowedAny($codes)->filter('Member.ID', $member->ID)->count();
+		return ($hits>0 ? true : false);
+	}
+
 }
+
