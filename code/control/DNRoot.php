@@ -27,11 +27,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	private $actionType = self::ACTION_DEPLOY;
 
 	/**
-	 * Access permission code
-	 */
-	const DEPLOYNAUT_ACCESS = 'DEPLOYNAUT_ACCESS';
-
-	/**
 	 * Bypass pipeline permission code
 	 */
 	const DEPLOYNAUT_BYPASS_PIPELINE = 'DEPLOYNAUT_BYPASS_PIPELINE';
@@ -247,10 +242,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		// Block framework jquery
 		Requirements::block(FRAMEWORK_DIR . '/thirdparty/jquery/jquery.js');
-
-		if(!Permission::check(self::DEPLOYNAUT_ACCESS)) {
-			return Security::permissionFailure();
-		}
 
 		self::include_requirements();
 	}
@@ -2011,10 +2002,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function providePermissions() {
 		return array(
-			self::DEPLOYNAUT_ACCESS => array(
-				'name' => "Access to Deploynaut",
-				'category' => "Deploynaut",
-			),
 			self::DEPLOYNAUT_BYPASS_PIPELINE => array(
 				'name' => "Bypass Pipeline",
 				'category' => "Deploynaut",
