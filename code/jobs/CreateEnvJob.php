@@ -43,7 +43,7 @@ class CreateEnvJob {
 				))
 				->exclude('ID', $this->args['createID']);
 
-			
+
 			if($running->count()) {
 				$existing = $running->first();
 				$log->write(sprintf(
@@ -57,7 +57,7 @@ class CreateEnvJob {
 					$existing->Creator()->Title
 				));
 			}
-			
+
 			$envCreate = DNCreateEnvironment::get()->byId($this->args['createID']);
 			if(!($envCreate && $envCreate->exists())) {
 				throw new RuntimeException(sprintf('Could not find create environment record %s', $args['createID']));
