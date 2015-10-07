@@ -112,7 +112,7 @@ class DNProject extends DataObject {
 	/**
 	 * Return the used quota in MB.
 	 *
-	 * @param integer $round Number of decimal places to round to
+	 * @param int $round Number of decimal places to round to
 	 * @return double The used quota size in MB
 	 */
 	public function getUsedQuotaMB($round = 2) {
