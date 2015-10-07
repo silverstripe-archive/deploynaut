@@ -250,7 +250,7 @@ class DeploymentStrategy extends ViewableData {
 	 * @return string
 	 */
 	public function toJSON() {
-			return json_encode($this->toArray(), JSON_PRETTY_PRINT);
+		return json_encode($this->toArray(), JSON_PRETTY_PRINT);
 	}
 
 	/**
