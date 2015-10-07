@@ -29,9 +29,9 @@ class DeploymentStrategy extends ViewableData {
 	protected $estimatedTime = 0;
 
 	/**
-	 * @var string
+	 * @var array
 	 */
-	protected $changes;
+	protected $changes = [];
 
 	/**
 	 * @var string
@@ -48,7 +48,7 @@ class DeploymentStrategy extends ViewableData {
 	/**
 	 * @var array
 	 */
-	protected $messages = array();
+	protected $messages = [];
 
 
 	/**
@@ -135,7 +135,7 @@ class DeploymentStrategy extends ViewableData {
 				$filtered[$change] = $details;
 			} else if (
 				(array_key_exists('from', $details) || array_key_exists('to', $details))
-				&& $details['from']!==$details['to']
+				&& $details['from'] !== $details['to']
 			) {
 				$filtered[$change] = $details;
 			}
@@ -145,7 +145,7 @@ class DeploymentStrategy extends ViewableData {
 	}
 
 	/**
-	 * @return string Associative array of changes, e.g.
+	 * @return array Associative array of changes, e.g.
 	 *	array(
 	 *		'SHA' => array(
 	 *			'from' => 'abc',
