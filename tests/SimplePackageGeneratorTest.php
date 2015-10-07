@@ -8,14 +8,14 @@ class SimplePackageGeneratorTest extends SapphireTest {
 
 	protected $tempPath = null;
 
-	function setUp() {
+	public function setUp() {
 		// We muck with the filesystem, create one folder that contains all the stuff we create,
 		// and delete it entirely on tearDown()
 		$this->tempPath = TEMP_FOLDER . '/SimplePackageGeneratorTest-' . rand(1000000,9999999);
 		mkdir($this->tempPath);
 
 	}
-	function tearDown() {
+	public function tearDown() {
 		if($this->tempPath) Filesystem::removeFolder($this->tempPath);
 	}
 
@@ -23,7 +23,7 @@ class SimplePackageGeneratorTest extends SapphireTest {
 	 * Test that generatePackage produces a .tar.gz containing the git repo.
 	 * Test that the build script is executed.
 	 */
-	function testGeneratePackage() {
+	public function testGeneratePackage() {
 		// Build some precursor state for the test
 		$gitPath = $this->tempPath .'/git-repo';
 		$packagePath = $this->tempPath .'/test.tar.gz';
