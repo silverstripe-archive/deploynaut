@@ -403,20 +403,22 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$fileField->getValidator()->setAllowedExtensions(array('sspak'));
 		$fileField->getValidator()->setAllowedMaxFileSize(array('*' => $maxSize));
 
-		$form = new Form(
+		$form = Form::create(
 			$this,
 			'UploadSnapshotForm',
-			new FieldList(
+			FieldList::create(
 				$fileField,
 				DropdownField::create('Mode', 'What does this file contain?', DNDataArchive::get_mode_map()),
 				DropdownField::create('EnvironmentID', 'Initial ownership of the file', $envsMap)
+					->setEmptyString('Select an environment')
 			),
-			new FieldList(
-				$action = new FormAction('doUploadSnapshot', "Upload File")
+			FieldList::create(
+				FormAction::create('doUploadSnapshot', 'Upload File')
+					->addExtraClass('btn')
 			),
-			new RequiredFields('ArchiveFile')
+			RequiredFields::create('ArchiveFile')
 		);
-		$action->addExtraClass('btn');
+
 		$form->disableSecurityToken();
 		$form->addExtraClass('fields-wide');
 		// Tweak the action so it plays well with our fake URL structure.
@@ -552,19 +554,21 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			$envsMap[$env->ID] = $env->Name;
 		}
 
-		$form = new Form(
+		$form = Form::create(
 			$this,
 			'PostSnapshotForm',
-			new FieldList(
+			FieldList::create(
 				DropdownField::create('Mode', 'What does this file contain?', DNDataArchive::get_mode_map()),
 				DropdownField::create('EnvironmentID', 'Initial ownership of the file', $envsMap)
+					->setEmptyString('Select an environment')
 			),
-			new FieldList(
-				$action = new FormAction('doPostSnapshot', "Submit request")
+			FieldList::create(
+				FormAction::create('doPostSnapshot', 'Submit request')
+					->addExtraClass('btn')
 			),
-			new RequiredFields('File')
+			RequiredFields::create('File')
 		);
-		$action->addExtraClass('btn');
+
 		$form->disableSecurityToken();
 		$form->addExtraClass('fields-wide');
 		// Tweak the action so it plays well with our fake URL structure.
@@ -928,17 +932,17 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return new SS_HTTPResponse('Not allowed to create environments for this project', 401);
 		}
 
-		$form = new Form(
+		$form = Form::create(
 			$this,
 			'CreateEnvironmentForm',
 			$fields,
-			new FieldList(
-				$action = new FormAction('doCreateEnvironment', 'Create')
+			FieldList::create(
+				FormAction::create('doCreateEnvironment', 'Create')
+					->addExtraClass('btn')
 			),
 			$backend->getCreateEnvironmentValidator()
 		);
 
-		$action->addExtraClass('btn');
 		// Tweak the action so it plays well with our fake URL structure.
 		$form->setFormAction($project->Link() . '/CreateEnvironmentForm');
 
@@ -1520,16 +1524,18 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return $this->environment404Response();
 		}
 
-		$form = new Form(
+		$form = Form::create(
 			$this,
 			'DataTransferForm',
-			new FieldList(
-				new HiddenField('Direction', null, 'get'),
-				new DropdownField('EnvironmentID', 'Environment', $envs->map()),
-				new DropdownField('Mode', 'Transfer', DNDataArchive::get_mode_map())
+			FieldList::create(
+				HiddenField::create('Direction', null, 'get'),
+				DropdownField::create('EnvironmentID', 'Environment', $envs->map())
+					->setEmptyString('Select an environment'),
+				DropdownField::create('Mode', 'Transfer', DNDataArchive::get_mode_map())
 			),
-			new FieldList(
-				FormAction::create('doDataTransfer', 'Create')->addExtraClass('btn')
+			FieldList::create(
+				FormAction::create('doDataTransfer', 'Create')
+					->addExtraClass('btn')
 			)
 		);
 		$form->setFormAction($this->getRequest()->getURL() . '/DataTransferForm');
@@ -1716,19 +1722,22 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		$alertMessage = '<div class="alert alert-warning"><strong>Warning:</strong> '
 			. 'This restore will overwrite the data on the chosen environment below</div>';
-		$form = new Form(
+
+		$form = Form::create(
 			$this,
 			'DataTransferRestoreForm',
-			new FieldList(
-				new HiddenField('DataArchiveID', null, $dataArchive->ID),
-				new HiddenField('Direction', null, 'push'),
-				new LiteralField('Warning', $alertMessage),
-				new DropdownField('EnvironmentID', 'Environment', $envs->map()),
-				new DropdownField('Mode', 'Transfer', $modesMap),
-				new CheckboxField('BackupBeforePush', 'Backup existing data', '1')
+			FieldList::create(
+				HiddenField::create('DataArchiveID', null, $dataArchive->ID),
+				HiddenField::create('Direction', null, 'push'),
+				LiteralField::create('Warning', $alertMessage),
+				DropdownField::create('EnvironmentID', 'Environment', $envs->map())
+					->setEmptyString('Select an environment'),
+				DropdownField::create('Mode', 'Transfer', $modesMap),
+				CheckboxField::create('BackupBeforePush', 'Backup existing data', '1')
 			),
-			new FieldList(
-				FormAction::create('doDataTransfer', 'Restore Data')->addExtraClass('btn')
+			FieldList::create(
+				FormAction::create('doDataTransfer', 'Restore Data')
+					->addExtraClass('btn')
 			)
 		);
 		$form->setFormAction($project->Link() . '/DataTransferRestoreForm');
@@ -1817,15 +1826,16 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			. 'Are you sure you want to permanently delete this snapshot from this archive area?'
 			. '</div>';
 
-		$form = new Form(
+		$form = Form::create(
 			$this,
 			'DeleteForm',
-			new FieldList(
-				new HiddenField('DataArchiveID', null, $dataArchive->ID),
-				new LiteralField('Warning', $snapshotDeleteWarning)
+			FieldList::create(
+				HiddenField::create('DataArchiveID', null, $dataArchive->ID),
+				LiteralField::create('Warning', $snapshotDeleteWarning)
 			),
-			new FieldList(
-				FormAction::create('doDelete', 'Delete')->addExtraClass('btn')
+			FieldList::create(
+				FormAction::create('doDelete', 'Delete')
+					->addExtraClass('btn')
 			)
 		);
 		$form->setFormAction($project->Link() . '/DeleteForm');
@@ -1919,16 +1929,19 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$warningMessage = '<div class="alert alert-warning"><strong>Warning:</strong> This will make the snapshot '
 			. 'available to people with access to the target environment.<br>By pressing "Change ownership" you '
 			. 'confirm that you have considered data confidentiality regulations.</div>';
-		$form = new Form(
+
+		$form = Form::create(
 			$this,
 			'MoveForm',
-			new FieldList(
-				new HiddenField('DataArchiveID', null, $dataArchive->ID),
-				new LiteralField('Warning', $warningMessage),
-				new DropdownField('EnvironmentID', 'Environment', $envs->map())
+			FieldList::create(
+				HiddenField::create('DataArchiveID', null, $dataArchive->ID),
+				LiteralField::create('Warning', $warningMessage),
+				DropdownField::create('EnvironmentID', 'Environment', $envs->map())
+					->setEmptyString('Select an environment')
 			),
-			new FieldList(
-				FormAction::create('doMove', 'Change ownership')->addExtraClass('btn')
+			FieldList::create(
+				FormAction::create('doMove', 'Change ownership')
+					->addExtraClass('btn')
 			)
 		);
 		$form->setFormAction($this->getCurrentProject()->Link() . '/MoveForm');
