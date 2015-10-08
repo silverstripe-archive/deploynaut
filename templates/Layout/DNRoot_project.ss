@@ -76,6 +76,12 @@
 		</div>
 	<% end_with %>
 
+	<% if $CurrentProject.PublicKey %>
+		<h4>Deploy key</h4>
+		<p>Permit us access to your private repositories by adding this deployment key.</p>
+		<pre class="deploy-key">$CurrentProject.PublicKey</pre>
+	<% end_if %>
+
 	<% if $CurrentProject.canCreateEnvironments %>
 		<% if $CreateEnvironmentList %>
 			<h4>Environment creation log</h4>
@@ -113,11 +119,5 @@
 				</div>
 			</div>
 		<% end_if %>
-	<% end_if %>
-
-	<% if $CurrentProject.PublicKey %>
-		<h4>Deploy key</h4>
-		<p>Permit us access to your private repositories by adding this deployment key.</p>
-		<pre class="deploy-key">$CurrentProject.PublicKey</pre>
 	<% end_if %>
 </div>
