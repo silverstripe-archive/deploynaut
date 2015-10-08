@@ -262,7 +262,7 @@ class PipelineTest_Environment extends DNEnvironment implements TestOnly {
 	 *
 	 * @var string
 	 */
-	function Backend() {
+	public function Backend() {
 		return new DemoDeploymentBackend;
 	}
 
