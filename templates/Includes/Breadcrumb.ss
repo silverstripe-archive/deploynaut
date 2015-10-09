@@ -21,3 +21,6 @@
 		<% end_if %>
 	<% end_if %>
 </h1>
+<% if $Subtitle %>
+	<p>$Subtitle</p>
+<% end_if %>

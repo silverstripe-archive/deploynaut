@@ -1,3 +1,4 @@
+<% if $CurrentProject %>
 <ul class="project-links">
 	<% if $CurrentProject.RepositoryInterface %><% with $CurrentProject.RepositoryInterface %>
 		<li>
@@ -13,3 +14,4 @@
 		</li>
 	<% end_if %>
 </ul>
+<% end_if %>

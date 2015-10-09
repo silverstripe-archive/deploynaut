@@ -9092,14 +9092,14 @@ button.close {
   overflow: hidden;
   height: 42px; }
 
-.list {
+.tabs {
   position: absolute;
   left: 0px;
   top: 0px;
   min-width: 3000px;
   margin-top: 0px; }
 
-.list li {
+.tab li {
   display: table-cell;
   position: relative;
   text-align: center;
@@ -9603,6 +9603,17 @@ body .userswitcher .Actions {
 body .userswitcher fieldset label,
 body .userswitcher fieldset .middleColumn {
   float: none; }
+
+ul.list,
+ol.list {
+  list-style: none; }
+  ul.list li,
+  ol.list li {
+    background: url(../img/bg-list.png) left 1px no-repeat;
+    padding-left: 15px; }
+    ul.list li + li,
+    ol.list li + li {
+      margin-top: 8px; }
 
 .alert .fa, .message.bad .fa, .disk-quota .fa, .deploy-dropdown.error .fa, .deploy-dropdown-errors .fa, .alert .icon-star, .message.bad .icon-star, .disk-quota .icon-star, .deploy-dropdown.error .icon-star, .deploy-dropdown-errors .icon-star, .alert .deploy-dropdown .status-icon, .deploy-dropdown .alert .status-icon, .message.bad .deploy-dropdown .status-icon, .deploy-dropdown .message.bad .status-icon, .disk-quota .deploy-dropdown .status-icon, .deploy-dropdown .disk-quota .status-icon, .deploy-dropdown.error .status-icon, .deploy-dropdown-errors .deploy-dropdown .status-icon, .deploy-dropdown .deploy-dropdown-errors .status-icon, .alert .deploy-form-outer .deploy-form .header.loading .status-icon, .deploy-form-outer .deploy-form .header.loading .alert .status-icon, .message.bad .deploy-form-outer .deploy-form .header.loading .status-icon, .deploy-form-outer .deploy-form .header.loading .message.bad .status-icon, .disk-quota .deploy-form-outer .deploy-form .header.loading .status-icon, .deploy-form-outer .deploy-form .header.loading .disk-quota .status-icon, .deploy-dropdown.error .deploy-form-outer .deploy-form .header.loading .status-icon, .deploy-form-outer .deploy-form .header.loading .deploy-dropdown.error .status-icon, .deploy-dropdown-errors .deploy-form-outer .deploy-form .header.loading .status-icon, .deploy-form-outer .deploy-form .header.loading .deploy-dropdown-errors .status-icon, .alert .deploy-form-loading .deploy-form .header.loading .status-icon, .deploy-form-loading .deploy-form .header.loading .alert .status-icon, .message.bad .deploy-form-loading .deploy-form .header.loading .status-icon, .deploy-form-loading .deploy-form .header.loading .message.bad .status-icon, .disk-quota .deploy-form-loading .deploy-form .header.loading .status-icon, .deploy-form-loading .deploy-form .header.loading .disk-quota .status-icon, .deploy-dropdown.error .deploy-form-loading .deploy-form .header.loading .status-icon, .deploy-form-loading .deploy-form .header.loading .deploy-dropdown.error .status-icon, .deploy-dropdown-errors .deploy-form-loading .deploy-form .header.loading .status-icon, .deploy-form-loading .deploy-form .header.loading .deploy-dropdown-errors .status-icon {
   margin-right: 4px; }
