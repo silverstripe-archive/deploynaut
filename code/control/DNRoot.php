@@ -2324,6 +2324,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		if (Member::currentUserID()) {
 			$list->push(new ArrayData(array(
+				'Classes' => 'logout',
 				'FaIcon' => 'sign-out',
 				'Link' => 'Security/logout',
 				'Title' => 'Log out',
