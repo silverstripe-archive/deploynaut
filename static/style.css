@@ -9805,12 +9805,12 @@ ol.list {
     text-transform: uppercase; }
 
 .header-navbar {
-  min-height: 59px;
+  min-height: 58px;
   background-color: #fff;
   min-width: 320px;
   left: 230px; }
   .header-navbar .nav a, .header-navbar .deploy-form-outer .deploy-form .SelectionGroup a, .deploy-form-outer .deploy-form .header-navbar .SelectionGroup a, .header-navbar .deploy-form-loading .deploy-form .SelectionGroup a, .deploy-form-loading .deploy-form .header-navbar .SelectionGroup a {
-    padding: 18px 25px 22px; }
+    padding: 18px 25px 21px; }
     .header-navbar .nav a i, .header-navbar .deploy-form-outer .deploy-form .SelectionGroup a i, .deploy-form-outer .deploy-form .header-navbar .SelectionGroup a i, .header-navbar .deploy-form-loading .deploy-form .SelectionGroup a i, .deploy-form-loading .deploy-form .header-navbar .SelectionGroup a i {
       margin-right: 10px; }
   .header-navbar .nav li.active a, .header-navbar .deploy-form-outer .deploy-form .SelectionGroup li.active a, .deploy-form-outer .deploy-form .header-navbar .SelectionGroup li.active a, .header-navbar .deploy-form-loading .deploy-form .SelectionGroup li.active a, .deploy-form-loading .deploy-form .header-navbar .SelectionGroup li.active a {
