@@ -9805,18 +9805,16 @@ ol.list {
     text-transform: uppercase; }
 
 .header-navbar {
-  min-height: 60px;
+  min-height: 59px;
   background-color: #fff;
   min-width: 320px;
-  left: 230px;
-  border-bottom: 1px solid #eee; }
+  left: 230px; }
   .header-navbar .nav a, .header-navbar .deploy-form-outer .deploy-form .SelectionGroup a, .deploy-form-outer .deploy-form .header-navbar .SelectionGroup a, .header-navbar .deploy-form-loading .deploy-form .SelectionGroup a, .deploy-form-loading .deploy-form .header-navbar .SelectionGroup a {
-    padding: 18px 30px 22px; }
+    padding: 18px 25px 22px; }
     .header-navbar .nav a i, .header-navbar .deploy-form-outer .deploy-form .SelectionGroup a i, .deploy-form-outer .deploy-form .header-navbar .SelectionGroup a i, .header-navbar .deploy-form-loading .deploy-form .SelectionGroup a i, .deploy-form-loading .deploy-form .header-navbar .SelectionGroup a i {
       margin-right: 10px; }
   .header-navbar .nav li.active a, .header-navbar .deploy-form-outer .deploy-form .SelectionGroup li.active a, .deploy-form-outer .deploy-form .header-navbar .SelectionGroup li.active a, .header-navbar .deploy-form-loading .deploy-form .SelectionGroup li.active a, .deploy-form-loading .deploy-form .header-navbar .SelectionGroup li.active a {
-    color: #222222;
-    border-bottom: 3px solid #3aaef9; }
+    color: #222222; }
   .header-navbar .nav-header {
     margin-left: 30px; }
 
