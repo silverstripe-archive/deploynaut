@@ -29,8 +29,8 @@
 		<header class="header-navbar">
 			<ul class="nav pull-right">
 				<% loop $AmbientMenu %>
-					<li class="pull-right <% if $IsSection %>active<% end_if %>">
-						<a href="$Link"><i class="fa fa-$FaIcon"></i>$Title</a>
+					<li class="pull-right<% if $IsSection %> active<% end_if %><% if $Classes %> $Classes<% end_if %>">
+						<a href="$Link"><i class="fa fa-$FaIcon"></i><span class="title">$Title</span></a>
 					</li>
 				<% end_loop %>
 			</ul>
