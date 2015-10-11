@@ -9817,6 +9817,16 @@ ol.list {
     color: #222222; }
   .header-navbar .nav-header {
     margin-left: 30px; }
+  .header-navbar .badge-base {
+    position: relative; }
+    .header-navbar .badge-base .badge {
+      position: absolute;
+      top: -1.2em;
+      right: -1.6em;
+      padding: 2px 7px;
+      color: white;
+      background: #f0ad4e;
+      font-weight: normal; }
 
 button.sidebar-open {
   margin-top: 12px; }
