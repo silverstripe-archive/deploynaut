@@ -61,7 +61,7 @@
 						</tbody>
 					</table>
 				</div>
-				
+
 				<% include Pagination Pagination=$CompleteDataArchives %>
 			<% else %>
 				<div class="alert alert-info">
