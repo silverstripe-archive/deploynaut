@@ -1369,8 +1369,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Add in a URL for comparing from->to code changes. Ensure that we have
 		// two proper 40 character SHAs, otherwise we can't show the compare link.
 		if(
-			(!empty($data['changes']['Code version']['from']) && strlen($data['changes']['Code version']['from']) == '40')
-			&& (!empty($data['changes']['Code version']['to'] && strlen($data['changes']['Code version']['to']) == '40'))
+			!empty($data['changes']['Code version']['from'])
+			&& strlen($data['changes']['Code version']['from']) == '40'
+			&& !empty($data['changes']['Code version']['to'])
+			&& strlen($data['changes']['Code version']['to']) == '40'
 		) {
 			$interface = $project->getRepositoryInterface();
 			$compareurl = sprintf(
