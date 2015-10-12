@@ -17,7 +17,7 @@
 					<a href="{$Environment.Project.RepositoryInterface.CommitURL}/{$SHA}" class="git-sha tooltip-hint">
 						$SHA.ShortHash
 					</a>
-					<% if $Committer %><span class="commit-message"> - $Message</span><% end_if %>
+					<% if $Message %><span class="commit-message"> - $Message</span><% end_if %>
 				</li>
 			<% else %>
 				<li><span class="git-sha tooltip-hint">
@@ -26,7 +26,7 @@
 							<span class="deployment-tag">$Me</span>
 						<% end_loop %>
 					<% end_if %>
-					$SHA.ShortHash<% if $Committer %><span class="commit-message"> - $Message</span><% end_if %>
+					$SHA.ShortHash<% if $Message %><span class="commit-message"> - $Message</span><% end_if %>
 				</span></li>
 			<% end_if %>
 
