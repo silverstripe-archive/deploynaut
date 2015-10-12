@@ -207,8 +207,6 @@ class DNEnvironment extends DataObject {
 				}
 		}
 
-		if (!class_exists($backend)) $backend = "DeploymentBackend";
-
 		return Injector::inst()->get($backend);
 	}
 
