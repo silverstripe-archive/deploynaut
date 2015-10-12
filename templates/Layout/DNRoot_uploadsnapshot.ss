@@ -23,7 +23,7 @@
 <div class="content">
 	<div class="row">
 		<div class="col-md-8 col-md-offset-2">
-			
+
 			<% if $DataArchive %>
 				<h3>Successfully uploaded your snapshot</h3>
 				<p>Your snapshot has been saved.</p>

@@ -3,7 +3,7 @@
 		<% if $BareURL %>$BareURL<% else %>$URL<% end_if %>
 	</a>
 </h3>
-	
+
 <div class="row">
 	<div class="col-md-6">
 		<ul class="build-details">
