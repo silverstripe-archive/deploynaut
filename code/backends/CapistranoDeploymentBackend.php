@@ -69,7 +69,14 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		// if build_filename isn't specified
 		if($this->packageGenerator) {
 			$log->write(sprintf('Using package generator "%s"', get_class($this->packageGenerator)));
-			$args['build_filename'] = $this->packageGenerator->getPackageFilename($project->Name, $sha, $repository, $log);
+
+			try {
+				$args['build_filename'] = $this->packageGenerator->getPackageFilename($project->Name, $sha, $repository, $log);
+			} catch (Exception $e) {
+				$log->write($e->getMessage());
+				throw $e;
+			}
+
 			if(empty($args['build_filename'])) {
 				throw new RuntimeException('Failed to generate package.');
 			}
