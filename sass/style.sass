@@ -406,13 +406,16 @@ button.sidebar-open
 
 
 // TYPE
-.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th
+.table > thead > tr > th, .table > tfoot > tr > th
 	border-bottom: 1px solid $UI-border
 	border-top: 1px solid $UI-border
 	font-size: 14px
 	font-weight: 600
 	padding: 16px 10px 12px
 	text-transform: uppercase
+
+.table > tbody > tr > th
+    padding: 12px 10px
 
 .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td
 	border-bottom: 1px solid $UI-border
@@ -983,3 +986,10 @@ td > .deployment-tag
         margin-top: 5px
         color: #999
         font-weight: 300
+
+.current-build-data
+    margin-top: 10px
+
+#deployment-dialog-holder
+    margin-top: 20px
+

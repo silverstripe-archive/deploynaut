@@ -8,6 +8,11 @@
 		$('[data-toggle="popover"]').popover()
 	});
 
+	$('#current-build-toggle').on('click', function() {
+		$(this).next('.current-build-data').toggleClass('hide');
+		$(this).find('i').toggleClass('fa-caret-down').toggleClass('fa-caret-up');
+	});
+
 	// Ensure no more than one full-deploy-info popover is open.
 	$('.deploy-history').on('click', 'a.full-deploy-info', function() {
 		$('a.full-deploy-info').not(this).popover('hide');

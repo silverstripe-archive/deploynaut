@@ -158,6 +158,19 @@ class DeploymentStrategy extends ViewableData {
 	}
 
 	/**
+	 * Returns a change or a given key.
+	 *
+	 * @return ArrayData|null
+	 */
+	public function getChange($key) {
+		$changes = $this->getChanges();
+		if(array_key_exists($key, $changes)) {
+			return new ArrayData($changes[$key]);
+		}
+		return null;
+	}
+
+	/**
 	 * @param string $option
 	 * @param string $value
 	 */

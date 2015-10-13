@@ -3,46 +3,70 @@
 		<% if $BareURL %>$BareURL<% else %>$URL<% end_if %>
 	</a>
 </h3>
+<% if $Environment.CurrentBuild %>
 
-<div class="row">
-	<div class="col-md-6">
-		<ul class="build-details">
-			<% if $Environment.Project.RepositoryInterface.CommitURL %>
-				<li>
-					<% if $Tags %>
-						<% loop $Tags %>
-							<span class="deployment-tag">$Me</span>
-						<% end_loop %>
+	<div class="row">
+		<div class="col-md-6">
+			<a href="#" id="current-build-toggle">Current Build Details <i class="fa fa-caret-down"></i></a>
+			<div class="table-responsive hide current-build-data">
+				<table class="table">
+					<tr>
+						<th>Code version</th>
+						<td>
+							<% if $Tags %>
+								<% loop $Tags %>
+									<span class="deployment-tag">$Me</span>
+								<% end_loop %>
+							<% end_if %>
+							<% if $Environment.Project.RepositoryInterface.CommitURL %>
+								<a href="{$Environment.Project.RepositoryInterface.CommitURL}/{$SHA}" class="git-sha tooltip-hint">$SHA.ShortHash</a>
+							<% else %>
+								$SHA.ShortHash
+							<% end_if %>
+						</td>
+					</tr>
+					<% if $Message %>
+						<tr>
+							<th>Commit message</th>
+							<td>$Message</td>
+						</tr>
 					<% end_if %>
-					<a href="{$Environment.Project.RepositoryInterface.CommitURL}/{$SHA}" class="git-sha tooltip-hint">
-						$SHA.ShortHash
-					</a>
-					<% if $Message %><span class="commit-message"> - $Message</span><% end_if %>
-				</li>
-			<% else %>
-				<li><span class="git-sha tooltip-hint">
-					<% if $Tags %>
-						<% loop $Tags %>
-							<span class="deployment-tag">$Me</span>
-						<% end_loop %>
+					<% if $Environment.CurrentBuild.DeploymentStrategy.getChange("Infrastructure version") %>
+						<tr>
+							<th>Infrastructure version</th>
+							<td>$Environment.CurrentBuild.DeploymentStrategy.getChange("Infrastructure version").to</td>
+						</tr>
 					<% end_if %>
-					$SHA.ShortHash<% if $Message %><span class="commit-message"> - $Message</span><% end_if %>
-				</span></li>
-			<% end_if %>
+					<% if $Environment.CurrentBuild.DeploymentStrategy.getChange("Base image") %>
+						<tr>
+							<th>Base image</th>
+							<td>$Environment.CurrentBuild.DeploymentStrategy.getChange("Base image").to</td>
+						</tr>
+					<% end_if %>
+					<tr>
+						<th>Deployment date</th>
+						<td>$LastEdited.Nice</td>
+					</tr>
+					<% if $Environment.CurrentBuild.Link %>
+						<tr>
+							<td colspan="2" class="text-center">
+								<a href="$Environment.CurrentBuild.Link">View deployment log</a>
+							</td>
+						</tr>
+					<% end_if %>
+				</table>
+			</div>
+		</div>
 
-			<li><span class="deploy-date">Deployed on $LastEdited.Nice</span></li>
-			<li><a href="$Environment.CurrentBuild.Link">View Deploy Log</a></li>
-		</ul>
+		<div class="col-md-6">
+			<ul>
+				<%-- Display logs link for environment --%>
+				<% if $Environment.LogsLink %>
+					<li>
+						<a href="$Environment.LogsLink"><i class="fa fa-table i-push"></i>Server logs for $Environment.Name</a>
+					</li>
+				<% end_if %>
+			</ul>
+		</div>
 	</div>
-
-	<div class="col-md-6">
-		<ul>
-			<%-- Display logs link for environment --%>
-			<% if $Environment.LogsLink %>
-				<li>
-					<a href="$Environment.LogsLink"><i class="fa fa-table i-push"></i>Server logs for $Environment.Name</a>
-				</li>
-			<% end_if %>
-		</ul>
-	</div>
-</div>
+<% end_if %>
