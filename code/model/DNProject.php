@@ -969,5 +969,30 @@ class DNProject extends DataObject {
 		return ($hits>0 ? true : false);
 	}
 
+	/**
+	 * @return ValidationResult
+	 */
+	protected function validate() {
+		$validation = parent::validate();
+		if($validation->valid()) {
+			if(empty($this->Name)) {
+				return $validation->error('The stack must have a name.');
+			}
+
+			if(empty($this->CVSPath)) {
+				return $validation->error('You must provide a repository URL.');
+			}
+
+			$existing = DNProject::get()->filter('Name', $this->Name);
+			if($this->ID) {
+				$existing = $existing->exclude('ID', $this->ID);
+			}
+			if($existing->count() > 0) {
+				return $validation->error('A stack already exists with that name.');
+			}
+		}
+		return $validation;
+	}
+
 }
 
