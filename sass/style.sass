@@ -966,3 +966,20 @@ td > .deployment-tag
 .form-inline .btn
     margin-top: 22px
 
+.form-group
+
+    .validation-message
+        color: #a94442
+        padding-bottom: 4px
+        font-weight: 300
+
+    .form-control
+        &.validation-error
+            border-color: lighten(#a94442, 20%)
+            &:focus
+                border-color: #646464
+
+    .help-text
+        margin-top: 5px
+        color: #999
+        font-weight: 300
