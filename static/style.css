@@ -10311,3 +10311,30 @@ td > .deployment-tag {
 
 .form-inline .btn, .form-inline .action, .form-inline .deploy-dropdown {
   margin-top: 22px; }
+
+.form-group .validation-message, .field.text .validation-message,
+.field.dropdown .validation-message {
+  color: #a94442;
+  padding-bottom: 4px;
+  font-weight: 300; }
+
+.form-group .form-control.validation-error, .field.text .form-control.validation-error,
+.field.dropdown .form-control.validation-error, .form-group input.validation-error.text, .field.text input.validation-error.text,
+.field.dropdown input.validation-error.text, .form-group select.validation-error, .field.text select.validation-error,
+.field.dropdown select.validation-error, .form-group textarea.validation-error, .field.text textarea.validation-error,
+.field.dropdown textarea.validation-error, .form-group .readonly span.validation-error.readonly, .readonly .form-group span.validation-error.readonly, .field.text .readonly span.validation-error.readonly,
+.readonly .field.text span.validation-error.readonly, .field.dropdown .readonly span.validation-error.readonly, .readonly .field.dropdown span.validation-error.readonly {
+  border-color: #ce8483; }
+  .form-group .form-control.validation-error:focus, .field.text .form-control.validation-error:focus,
+  .field.dropdown .form-control.validation-error:focus, .form-group input.validation-error.text:focus, .field.text input.validation-error.text:focus,
+  .field.dropdown input.validation-error.text:focus, .form-group select.validation-error:focus, .field.text select.validation-error:focus,
+  .field.dropdown select.validation-error:focus, .form-group textarea.validation-error:focus, .field.text textarea.validation-error:focus,
+  .field.dropdown textarea.validation-error:focus, .form-group .readonly span.validation-error.readonly:focus, .readonly .form-group span.validation-error.readonly:focus, .field.text .readonly span.validation-error.readonly:focus,
+  .readonly .field.text span.validation-error.readonly:focus, .field.dropdown .readonly span.validation-error.readonly:focus, .readonly .field.dropdown span.validation-error.readonly:focus {
+    border-color: #646464; }
+
+.form-group .help-text, .field.text .help-text,
+.field.dropdown .help-text {
+  margin-top: 5px;
+  color: #999;
+  font-weight: 300; }
