@@ -1,5 +1,13 @@
 <% if $CurrentProject %>
 <ul class="project-links">
+	<% if $HasPerm(ADMIN) %>
+		<li>
+			<i class="fa fa-stethoscope"></i>
+			<a target="deploynaut-backend" href="admin/naut/DNProject/EditForm/field/DNProject/item/{$CurrentProject.ID}/ItemEditForm/field/Environments/item/{$CurrentEnvironment.ID}/edit">
+				Edit in CMS
+			</a>
+		</li>
+	<% end_if %>
 	<% if $CurrentProject.RepositoryInterface %><% with $CurrentProject.RepositoryInterface %>
 		<li>
 			<div class="repo-ux">

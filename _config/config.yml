@@ -7,3 +7,6 @@ DNProject:
 Group:
   belongs_many_many:
     "Projects": "DNProject"
+GridFieldDetailForm_ItemRequest:
+  extensions:
+    - FrontendLink
