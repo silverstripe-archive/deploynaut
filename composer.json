@@ -21,8 +21,5 @@
 			"dev-master": "2.x-dev"
 		}
 	},
-	"suggest": {
-		"silverstripe/deploynaut-graphite": "Graphite intergration"
-	},
 	"minimum-stability": "dev"
 }
