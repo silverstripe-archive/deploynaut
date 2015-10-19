@@ -78,7 +78,7 @@ class DNProjectTest extends DeploynautTest {
 	}
 
 	public function testAllowed() {
-		$project = $this->objFromFixture('DNProject', 'project');
+		$project = $this->objFromFixture('DNProject', 'firstProject');
 		$viewer = $this->objFromFixture('Member', 'viewer');
 
 		$this->assertTrue(
@@ -102,7 +102,7 @@ class DNProjectTest extends DeploynautTest {
 	}
 
 	public function testAllowedAny() {
-		$project = $this->objFromFixture('DNProject', 'project');
+		$project = $this->objFromFixture('DNProject', 'firstProject');
 		$viewer = $this->objFromFixture('Member', 'viewer');
 
 		$this->assertTrue(
@@ -117,7 +117,7 @@ class DNProjectTest extends DeploynautTest {
 	}
 
 	public function testWhoIsAllowed() {
-		$project = $this->objFromFixture('DNProject', 'project');
+		$project = $this->objFromFixture('DNProject', 'firstProject');
 		$this->assertCount(0, $project->whoIsAllowed('NONEXISTENT_PERMISSION'));
 		$this->assertDOSEquals(array(
 			array('Email' =>'viewer@example.com')
@@ -132,7 +132,7 @@ class DNProjectTest extends DeploynautTest {
 	}
 
 	public function testWhoIsAllowedAny() {
-		$project = $this->objFromFixture('DNProject', 'project');
+		$project = $this->objFromFixture('DNProject', 'firstProject');
 		$this->assertCount(0, $project->whoIsAllowedAny(array('NONEXISTENT_PERMISSION', 'NONEXISTENT_PERMISSION_2')));
 		$this->assertDOSEquals(array(
 			array('Email' =>'viewer@example.com')
@@ -140,5 +140,43 @@ class DNProjectTest extends DeploynautTest {
 		$this->assertDOSEquals(array(
 			array('Email' =>'viewer@example.com')
 		), $project->whoIsAllowedAny(array('BAR_PERMISSION', 'NONEXISTENT_PERMISSION')));
+	}
+
+	/**
+	 *
+	 */
+	public function testFooGroupIsAllowedToFooPermission() {
+		$firstProject = $this->objFromFixture('DNProject', 'firstProject');
+		$firstGroup = $this->objFromFixture('Group', 'firstWithCodeFoo');
+		$isAllowed = $firstProject->groupAllowed('FOO_PERMISSION', $firstGroup);
+		$this->assertTrue($isAllowed, 'Expected that foo group is allowed to foo perm');
+	}
+
+	public function testFooGroupIsNotAllowedToBarPermission() {
+		$project = $this->objFromFixture('DNProject', 'firstProject');
+		$fooGroup = $this->objFromFixture('Group', 'firstWithCodeFoo');
+		$isAllowed = $project->groupAllowed('BAR_PERMISSION', $fooGroup);
+		$this->assertFalse($isAllowed, 'Expected that foo group should not have access to bar perm');
+	}
+
+	public function testBarGroupIsAllowedToBarPermission() {
+		$firstProject = $this->objFromFixture('DNProject', 'firstProject');
+		$secondGroup = $this->objFromFixture('Group', 'secondWithRoleBar');
+		$isAllowed = $firstProject->groupAllowed('BAR_PERMISSION', $secondGroup);
+		$this->assertTrue($isAllowed, 'Group should have "bar" PermissionRoleCode');
+	}
+
+	public function testSecondGroupIsNotAllowedToFirstProject() {
+		$firstProject = $this->objFromFixture('DNProject', 'firstProject');
+		$thirdGroup = $this->objFromFixture('Group', 'thirdWithCodeFoo');
+		$isAllowed = $firstProject->groupAllowed('FOO_PERMISSION', $thirdGroup);
+		$this->assertFalse($isAllowed, 'Expected that non project group should be denied');
+	}
+
+	public function testNonViewerGroupAllowedIsFalse() {
+		$otherProject = $this->objFromFixture('DNProject', 'otherproject');
+		$firstGroup = $this->objFromFixture('Group', 'firstWithCodeFoo');
+		$isAllowed = $otherProject->groupAllowed('FOO_PERMISSION', $firstGroup);
+		$this->assertFalse($isAllowed, 'Expected that non project group should be denied');
 	}
 }
