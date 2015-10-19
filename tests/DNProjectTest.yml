@@ -4,6 +4,8 @@ Member:
 Permission:
   foo:
     Code: FOO_PERMISSION
+  second_foo:
+    Code: FOO_PERMISSION
 PermissionRoleCode:
   bar:
     Code: BAR_PERMISSION
@@ -12,17 +14,23 @@ PermissionRole:
     Title: Bar
     Codes: =>PermissionRoleCode.bar
 Group:
-  withCode:
-    Title: withCode
+  firstWithCodeFoo:
+    Title: firstWithCodeFoo
     Members: =>Member.viewer
     Permissions: =>Permission.foo
-  withRole:
-    Title: withRole
+  secondWithRoleBar:
+    Title: secondWithRoleBar
     Members: =>Member.viewer
     Roles: =>PermissionRole.bar
+  thirdWithCodeFoo:
+    Title: thirdWithCodeFoo
+    Permissions: =>Permission.second_foo
 DNProject:
-  project:
-    Name: project
-    Viewers: =>Group.withCode, =>Group.withRole
+  firstProject:
+    Name: firstProject
+    Viewers: =>Group.firstWithCodeFoo, =>Group.secondWithRoleBar
+  secondProject:
+    Name: secondProject
+    Viewers: =>Group.thirdWithCodeFoo
   otherproject:
-    Name: otherproject
+      Name: otherproject

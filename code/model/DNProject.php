@@ -951,9 +951,29 @@ class DNProject extends DataObject {
 	}
 
 	/**
+	 * Checks if a group is allowed to the project and the permission code
+	 *
+	 * @param string $permissionCode
+	 * @param Group $group
+	 *
+	 * @return bool
+	 */
+	public function groupAllowed($permissionCode, Group $group) {
+		$viewers = $this->Viewers();
+		if(!$viewers->find('ID', $group->ID)) {
+			return false;
+		}
+		$groups = Permission::get_groups_by_permission($permissionCode);
+		if(!$groups->find('ID', $group->ID)) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
 	 * Check if member has a permission code in this project.
 	 *
-	 * @param string $code
+	 * @param array|string $codes
 	 * @param Member|null $member
 	 *
 	 * @return bool
