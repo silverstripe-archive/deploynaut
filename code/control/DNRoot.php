@@ -50,7 +50,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * @var array
 	 */
-	public static $allowed_actions = array(
+	private static $allowed_actions = array(
 		'projects',
 		'nav',
 		'update',
@@ -88,12 +88,14 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'gitRevisions',
 		'deploySummary',
 		'startDeploy',
+		'createproject',
+		'CreateProjectForm',
 	);
 
 	/**
 	 * URL handlers pretending that we have a deep URL structure.
 	 */
-	public static $url_handlers = array(
+	private static $url_handlers = array(
 		'project/$Project/environment/$Environment/DeployForm' => 'getDeployForm',
 		'project/$Project/createsnapshot/DataTransferForm' => 'getDataTransferForm',
 		'project/$Project/DataTransferForm' => 'getDataTransferForm',
@@ -2337,6 +2339,103 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		$this->extend('updateAmbientMenu', $list);
 		return $list;
+	}
+
+	/**
+	 * Create project action.
+	 *
+	 * @return SS_HTTPResponse
+	 */
+	public function createproject(SS_HTTPRequest $request) {
+		if($this->canCreateProjects()) {
+			return $this->render(['CurrentTitle' => 'Create Stack']);
+		}
+		return $this->httpError(403);
+	}
+
+	/**
+	 * Checks whether the user can create a project.
+	 *
+	 * @return bool
+	 */
+	protected function canCreateProjects($member = null) {
+		if(!$member) $member = Member::currentUser();
+		if(!$member) return false;
+
+		return Permission::checkMember($member, 'ADMIN');
+	}
+		
+	/**
+	 * @return Form
+	 */
+	public function CreateProjectForm() {
+		$form = Form::create(
+			$this, 
+			__FUNCTION__, 
+			$this->getCreateProjectFormFields(), 
+			$this->getCreateProjectFormActions(),
+			new RequiredFields('Name', 'CVSPath')
+		);
+		$this->extend('updateCreateProjectForm', $form);
+		return $form;
+	}
+
+	/**
+	 * @return FieldList
+	 */
+	protected function getCreateProjectFormFields() {
+		$fields = FieldList::create();
+		$fields->merge([
+			TextField::create('Name', 'Title'),
+			TextField::create('CVSPath', 'Git URL'),
+			TextField::create('Client', 'Client'),
+		]);
+		$this->extend('updateCreateProjectFormFields', $fields);
+		return $fields;
+	}
+
+	/**
+	 * @return FieldList
+	 */
+	protected function getCreateProjectFormActions() {
+		$fields = FieldList::create(
+			FormAction::create('doCreateProject', 'Create Stack')
+		);
+		$this->extend('updateCreateProjectFormActions', $fields);
+		return $fields;
+	}
+
+	/**
+	 * Does the actual project creation.
+	 *
+	 * @param $data array
+	 * @param $form Form
+	 *
+	 * @return SS_HTTPResponse
+	 */
+	public function doCreateProject($data, $form) {
+		$form->loadDataFrom($data);
+		$project = DNProject::create();
+
+		$form->saveInto($project);
+		$this->extend('onBeforeCreateProject', $project, $data, $form);
+		try {
+			if($project->write() > 0) {
+				$this->extend('onAfterCreateProject', $project, $data, $form);
+
+				// If an extension hasn't redirected us, we'll redirect to the project.
+				if(!$this->redirectedTo()) {
+					return $this->redirect($project->Link());
+				} else {
+					return $this->response;
+				}
+			} else {
+				$form->sessionMessage('Unable to write the stack to the database.', 'bad');
+			}
+		} catch (ValidationException $e) {
+			$form->sessionMessage($e->getMessage(), 'bad');
+		}
+		return $this->redirectBack();
 	}
 
 }

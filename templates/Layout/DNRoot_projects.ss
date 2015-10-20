@@ -6,9 +6,17 @@
 	</div>
 </div>
 <div class="content">
+
+	<% if $canCreateProjects %>
+		<a href="{$Link}createproject" class="btn btn-primary pull-right">
+			<i class="fa fa-plus"></i>
+			Create Stack
+		</a>
+	<% end_if %>
+
 	<%-- Dont show the search/filter if there are less than 5 projects in the list --%>
 	<% if $DNProjectList.count > 5 %>
-	<input type="search" class="table-filter form-control" data-table="table-projects" placeholder="Search for project">
+	<input type="search" class="table-filter form-control" data-table="table-projects" placeholder="Search for stack">
 	<% end_if %>
 
 	<div class="table-responsive">
