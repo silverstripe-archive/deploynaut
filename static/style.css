@@ -10732,3 +10732,8 @@ td > .deployment-tag {
 .project-build-in-progress .gitlab-icon {
   height: 14px;
   margin-top: -3px; }
+
+.alert.failed-environments ul, .failed-environments.message.bad ul,
+.failed-environments.message.required ul, .failed-environments.disk-quota ul, .failed-environments.deploy-dropdown.error ul, .failed-environments.deploy-dropdown-errors ul {
+  margin: 0;
+  padding-bottom: 0; }

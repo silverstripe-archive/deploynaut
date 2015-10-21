@@ -2453,31 +2453,39 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return $this->httpError(404);
 		}
 
-		$envs = $project->Environments();
-		$complete = [];
-		if($envs->count() > 0) {
-			foreach($envs as $env) {
-				$complete[$env->ID] = $env->Name;
-			}
-		}
-
-		$envCreations = $project->getRunningInitialEnvironmentCreations();
-		$inProgress = [];
+		$envCreations = $project->getInitialEnvironmentCreations();
+		$complete = array();
+		$inProgress = array();
+		$failed = array();
 		if($envCreations->count() > 0) {
 			foreach($envCreations as $env) {
 				$data = unserialize($env->Data);
 				if(!isset($data['Name'])) {
 					$data['Name'] = 'Unknown';
 				}
-				$inProgress[$env->ID] = Convert::raw2xml($data['Name']);
+				switch($env->ResqueStatus()) {
+					case "Queued":
+					case "Running":
+						$inProgress[$env->ID] = Convert::raw2xml($env->ResqueStatus());
+						break;
+					case "Complete":
+						$complete[$env->ID] = Convert::raw2xml($data['Name']);
+						break;
+					case "Failed":
+					case "Invalid":
+					default:
+						$failed[$env->ID] = Convert::raw2xml($data['Name']);
+				}
 			}
 		}
+
 		$data = [
 			'complete' => $project->isProjectReady(),
 			'progress' => [
 				'environments' => [
 					'complete' => $complete,
 					'inProgress' => $inProgress,
+					'failed' => $failed,
 				]
 			]
 		];
