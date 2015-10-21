@@ -33,16 +33,17 @@
 		<pre id="queue_log" class="log-content" data-loglink="$LogLink">$LogContent</pre>
 	<% end_with %>
 <% else_if $CurrentProject.canCreateEnvironments %>
-	<h4>Create an environment</h4>
-	<% if $CreateEnvironmentsMessages %>
-		<p class="alert alert-danger">$CreateEnvironmentsMessages</p>
-	<% end_if %>
+	<div class="row">
+		<div class="col-md-8">
+			<% if $CreateEnvironmentsMessages %>
+				<p class="alert alert-danger">$CreateEnvironmentsMessages</p>
+			<% end_if %>
 
-	<% if not $CreateEnvironmentsMessages %>
-		<% with CreateEnvironmentForm %>
-			$addExtraClass('create-form')
-		<% end_with %>
-	<% end_if %>
+			<% if not $CreateEnvironmentsMessages %>
+				$CreateEnvironmentForm
+			<% end_if %>
+		</div>
+	</div>
 <% end_if %>
 
 
