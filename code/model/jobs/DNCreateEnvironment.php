@@ -5,6 +5,7 @@ class DNCreateEnvironment extends DataObject {
 		'Data' => 'Text',
 		'ResqueToken' => 'Varchar(255)',
 		"Status" => "Enum('Queued, Started, Finished, Failed, n/a', 'n/a')",
+		'IsInitialEnvironment' => 'Boolean',
 	);
 
 	private static $has_one = array(

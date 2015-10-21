@@ -1254,7 +1254,7 @@ mark,
 .text-right {
   text-align: right; }
 
-.text-center {
+.text-center, .project-build-in-progress {
   text-align: center; }
 
 .text-justify {
@@ -10075,8 +10075,10 @@ ol.list {
     padding: 0;
     margin: 0;
     overflow: hidden; }
-    .side-content ul.nav ul ul a, .side-content .deploy-form-outer .deploy-form ul.SelectionGroup ul ul a, .deploy-form-outer .deploy-form .side-content ul.SelectionGroup ul ul a, .side-content .deploy-form-loading .deploy-form ul.SelectionGroup ul ul a, .deploy-form-loading .deploy-form .side-content ul.SelectionGroup ul ul a {
+    .side-content ul.nav ul ul li, .side-content .deploy-form-outer .deploy-form ul.SelectionGroup ul ul li, .deploy-form-outer .deploy-form .side-content ul.SelectionGroup ul ul li, .side-content .deploy-form-loading .deploy-form ul.SelectionGroup ul ul li, .deploy-form-loading .deploy-form .side-content ul.SelectionGroup ul ul li {
       padding-left: 64px; }
+    .side-content ul.nav ul ul li a, .side-content .deploy-form-outer .deploy-form ul.SelectionGroup ul ul li a, .deploy-form-outer .deploy-form .side-content ul.SelectionGroup ul ul li a, .side-content .deploy-form-loading .deploy-form ul.SelectionGroup ul ul li a, .deploy-form-loading .deploy-form .side-content ul.SelectionGroup ul ul li a {
+      padding-left: 0px; }
     .side-content ul.nav ul a, .side-content .deploy-form-outer .deploy-form ul.SelectionGroup ul a, .deploy-form-outer .deploy-form .side-content ul.SelectionGroup ul a, .side-content .deploy-form-loading .deploy-form ul.SelectionGroup ul a, .deploy-form-loading .deploy-form .side-content ul.SelectionGroup ul a {
       opacity: .8;
       padding-left: 54px; }
@@ -10716,3 +10718,17 @@ td > .deployment-tag {
 
 #deployment-dialog-holder {
   margin-top: 20px; }
+
+.project-build-in-progress .progress-icon {
+  color: #3aaef9;
+  margin-bottom: 2em; }
+
+.project-build-in-progress p {
+  font-size: 16px; }
+
+.project-build-in-progress .add-deploy-key {
+  margin-top: 3em; }
+
+.project-build-in-progress .gitlab-icon {
+  height: 14px;
+  margin-top: -3px; }

@@ -52,7 +52,6 @@ class CloneGitRepo {
 		}
 
 		fwrite($fh, sprintf('[%s] Cloning repository %s to %s', date('Y-m-d H:i:s'), $repo, $path) . PHP_EOL);
-		echo "[-] CloneGitRepo starting" . PHP_EOL;
 
 		$command = array();
 		if(!empty($user)) {
