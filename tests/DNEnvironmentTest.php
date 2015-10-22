@@ -3,7 +3,9 @@
  *
  */
 class DNEnvironmentTest extends DeploynautTest {
-
+	/**
+	 * @var string
+	 */
 	protected static $fixture_file = 'DNEnvironmentTest.yml';
 
 	/**
@@ -18,7 +20,7 @@ class DNEnvironmentTest extends DeploynautTest {
 	 */
 	public function testGetConfigFilename() {
 		$environment = $this->getEnvironment();
-		$expected = $this->envPath.'/testproject/uat.rb';
+		$expected = $this->envPath . '/testproject/uat.rb';
 		$this->assertEquals($expected, $environment->getConfigFilename());
 	}
 
@@ -99,6 +101,27 @@ class DNEnvironmentTest extends DeploynautTest {
 		$this->assertTrue($environment->canAbort($cancellerbygroup));
 	}
 
+	private function checkSnapshots($assert, $env, $member) {
+		$this->$assert($env->canRestore($member));
+		$this->$assert($env->canBackup($member));
+		$this->$assert($env->canDownloadArchive($member));
+		$this->$assert($env->canDeleteArchive($member));
+	}
+
+	public function testAllows() {
+		$prod = $this->objFromFixture('DNEnvironment', 'allowtest-prod');
+		$uat = $this->objFromFixture('DNEnvironment', 'allowtest-uat');
+		$this->assertTrue($prod->canDeploy($this->objFromFixture('Member', 'allowProdDeployment')));
+		$this->assertFalse($prod->canDeploy($this->objFromFixture('Member', 'allowNonProdDeployment')));
+		$this->assertFalse($uat->canDeploy($this->objFromFixture('Member', 'allowProdDeployment')));
+		$this->assertTrue($uat->canDeploy($this->objFromFixture('Member', 'allowNonProdDeployment')));
+
+		$this->checkSnapshots('assertTrue', $prod, $this->objFromFixture('Member', 'allowProdSnapshot'));
+		$this->checkSnapshots('assertFalse', $prod, $this->objFromFixture('Member', 'allowNonProdSnapshot'));
+		$this->checkSnapshots('assertFalse', $uat, $this->objFromFixture('Member', 'allowProdSnapshot'));
+		$this->checkSnapshots('assertTrue', $uat, $this->objFromFixture('Member', 'allowNonProdSnapshot'));
+	}
+
 	public function testViewerPermissionInheritedFromProjectIfNotConfigured() {
 		$environment = $this->objFromFixture('DNEnvironment', 'dev');
 		$viewerbygroup = $this->objFromFixture('Member', 'viewerbygroup');
@@ -131,7 +154,5 @@ class DNEnvironmentTest extends DeploynautTest {
 
 		$fields = $environment->getCMSFields();
 		$this->assertNull($fields->dataFieldByName('BackendIdentifier'));
-
 	}
-
 }

@@ -13,8 +13,9 @@ abstract class PackageGenerator {
 	/**
 	 * Generate the package file, saving to the given location
 	 *
-	 * @param $baseDir string The base directory of the project, checked out from git.
+	 * @param string $baseDir string The base directory of the project, checked out from git.
 	 * @param $outputFilename string The filename to write to.
+	 * @param string $sha
 	 *
 	 * @return boolean True on success
 	 */
@@ -44,8 +45,10 @@ abstract class PackageGenerator {
 	 * @param string $sha The SHA of the commit to be deployed
 	 * @param string $repositoryDir The directory where the repository resides
 	 * @param DeploynautLogFile $log The log to write status output to, including package-generation commands
+	 *
+	 * @return string
 	 */
-	function getPackageFilename($identifier, $sha, $repositoryDir, DeploynautLogFile $log) {
+	public function getPackageFilename($identifier, $sha, $repositoryDir, DeploynautLogFile $log) {
 		// Fetch through the cache
 		if($this->cache) {
 			$identifier .= '-' . get_class($this) . '-' . $this->getIdentifier();
@@ -53,7 +56,7 @@ abstract class PackageGenerator {
 
  		// Default, cacheless implementation
  		} else {
- 			$filename = TEMP_FOLDER .'/' . $sha . '.tar.gz';
+ 			$filename = TEMP_FOLDER . '/' . $sha . '.tar.gz';
  			if($this->generatePackage($sha, $repositoryDir, $outputFilename, $log)) {
  				return $filename;
  			}

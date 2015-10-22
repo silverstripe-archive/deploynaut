@@ -5,7 +5,6 @@ class CloneGitRepo {
 	public $args;
 
 	/**
-	 *
 	 * @global array $databaseConfig
 	 */
 	public function setUp() {
@@ -30,7 +29,9 @@ class CloneGitRepo {
 
 		if(file_exists($path)) {
 			$command = array();
-			if($user) $command[] = sprintf('sudo -u %s', $user);
+			if(!empty($user)) {
+				$command[] = sprintf('sudo -u %s', $user);
+			}
 			$command[] = sprintf('rm -rf %s', $path);
 
 			fwrite($fh, sprintf('[%s] Cleaning up existing repository %s', date('Y-m-d H:i:s'), $path) . PHP_EOL);
@@ -41,16 +42,21 @@ class CloneGitRepo {
 			$process->setTimeout(3600);
 			$process->run();
 			if(!$process->isSuccessful()) {
-				fwrite($fh, sprintf('[%s] Error cleaning up existing repository: %s', date('Y-m-d H:i:s'), $process->getErrorOutput()) . PHP_EOL);
+				fwrite($fh, sprintf(
+					'[%s] Error cleaning up existing repository: %s',
+					date('Y-m-d H:i:s'),
+					$process->getErrorOutput()
+				) . PHP_EOL);
 				throw new RuntimeException($process->getErrorOutput());
 			}
 		}
 
 		fwrite($fh, sprintf('[%s] Cloning repository %s to %s', date('Y-m-d H:i:s'), $repo, $path) . PHP_EOL);
-		echo "[-] CloneGitRepo starting" . PHP_EOL;
 
 		$command = array();
-		if($user) $command[] = sprintf('sudo -u %s', $user);
+		if(!empty($user)) {
+			$command[] = sprintf('sudo -u %s', $user);
+		}
 		$command[] = sprintf('git clone --bare -q %s %s', $repo, $path);
 
 		fwrite($fh, sprintf('[%s] Running command: %s', date('Y-m-d H:i:s'), implode(' ', $command)) . PHP_EOL);
@@ -60,11 +66,22 @@ class CloneGitRepo {
 		$process->setTimeout(3600);
 		$process->run();
 		if(!$process->isSuccessful()) {
-			fwrite($fh, sprintf('[%s] Error cloning repository %s to %s: %s', date('Y-m-d H:i:s'), $repo, $path, $process->getErrorOutput()) . PHP_EOL);
+			fwrite($fh, sprintf(
+				'[%s] Error cloning repository %s to %s: %s',
+				date('Y-m-d H:i:s'),
+				$repo,
+				$path,
+				$process->getErrorOutput()
+			) . PHP_EOL);
 			throw new RuntimeException($process->getErrorOutput());
 		}
 
-		fwrite($fh, sprintf('[%s] Successfully cloned repository %s to %s', date('Y-m-d H:i:s'), $repo, $path) . PHP_EOL);
+		fwrite($fh, sprintf(
+			'[%s] Successfully cloned repository %s to %s',
+			date('Y-m-d H:i:s'),
+			$repo,
+			$path
+		) . PHP_EOL);
 	}
 
 }

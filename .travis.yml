@@ -13,11 +13,6 @@ env:
   matrix:
     - DB=MYSQL
 
-matrix:
-  include:
-    - php: 5.3
-      env: DB=MYSQL
-
 before_script:
  - composer self-update || true
  - phpenv rehash

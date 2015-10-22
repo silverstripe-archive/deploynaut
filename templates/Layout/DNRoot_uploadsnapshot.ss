@@ -1,42 +1,55 @@
-<h2>$Project.Title</h2>
+<div class="content page-header">
+	<div class="row">
+		<div class="col-md-9">
+			<% include Breadcrumb %>
 
-<% if $CurrentProject %>
-<ul class="nav nav-tabs">
-	<% loop $CurrentProject.Menu %>
-	<li<% if $IsActive %> class="active"<% end_if %>><a href="$Link">$Title</a></li>
-	<% end_loop %>
-</ul>
-<ul class="nav level-2">
-	<% if $Project.canBackup %>
-	<li><a href="$CurrentProject.Link('createsnapshot')">Create Snapshot</a></li>
-	<% end_if %>
-	<% if $Project.canUploadArchive %>
-	<li class="active"><a href="$CurrentProject.Link('uploadsnapshot')">Upload Snapshot</a></li>
-	<% end_if %>
-	<li><a href="$CurrentProject.Link('snapshotslog')">Log</a></li>
-</ul>
-<% end_if %>
+			<% if $CurrentProject %>
+			<ul class="nav nav-tabs">
+				<li><a href="$CurrentProject.Link('snapshots')">Overview</a></li>
 
-<% if DataArchive %>
-    <h3>Successfully uploaded your snapshot</h3>
-    <p>Your snapshot has been saved in Deploynaut.</p>
-    <p>Please view the <a href="$BackURL">snapshots list</a> to restore this snapshot to an environment.</p>
-<% else %>
-<ul class="nav nav-pills switch-tabs">
-    <li class="active"><a href="#tab1" data-toggle="tab">Upload Data Snapshot</a></li>
-    <li class="join"><p>or</p></li>
-    <li><a href="#tab2" data-toggle="tab">Provide externally</a></li>
-</ul>
-
-<div class="tab-content">
-	<div class="tab-pane active" id="tab1">
-		<p>Choose a local snapshot file to transfer to deploynaut (up to $UploadLimit). See below how to create this file. Once uploaded, you can choose to restore this file into an actual environment.</p>
-		$UploadSnapshotForm
-	</div>
-	<div class="tab-pane" id="tab2">
-		<p>For large files (more than $UploadLimit), you can provide the file to us outside of Deploynaut - we will then upload it on your behalf. Submit a request below to start this process.</p>
-		$PostSnapshotForm
+				<% if $CurrentProject.canBackup %>
+				<li><a href="$CurrentProject.Link('createsnapshot')">Create Snapshot</a></li>
+				<% end_if %>
+				<% if $CurrentProject.canUploadArchive %>
+				<li class="active"><a href="$CurrentProject.Link('uploadsnapshot')">Upload Snapshot</a></li>
+				<% end_if %>
+				<li><a href="$CurrentProject.Link('snapshotslog')">Log</a></li>
+			</ul>
+			<% end_if %>
+		</div>
 	</div>
 </div>
-	<% include SnapshotCreateInstructions %>
-<% end_if %>
+
+<div class="content">
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2">
+
+			<% if $DataArchive %>
+				<h3>Successfully uploaded your snapshot</h3>
+				<p>Your snapshot has been saved.</p>
+				<p>Please view the <a href="$BackURL">snapshots list</a> to restore this snapshot to an environment.</p>
+			<% else %>
+				<div class="tab-content">
+					<div class="tab-pane active" id="uploadform">
+						<h3>Upload a snapshot</h3>
+						<a href="#" data-target="#manualform" class="pull-right upload-exceed-link btn btn-warning">File exceeds <% if $UploadLimit %>$UploadLimit<% else %>2GB<% end_if %>?</a>
+						<p>Choose a local snapshot file to transfer<% if $UploadLimit %> (up to $UploadLimit)<% end_if %> (see below how to create this file). Once uploaded, you can choose to restore this file into an actual environment.</p>
+						$UploadSnapshotForm
+					</div>
+					<div class="tab-pane " id="manualform">
+						<h3>Upload a snapshot</h3>
+						<div class="panel panel-warning upload-exceed-container">
+							<div class="panel-body">
+								<a href="#" data-target="#uploadform" class="pull-right upload-exceed-link btn btn-warning"><i class="fa fa-times"></i> Close</a>
+								<h4 class="font-w600">Large files</h4>
+								<p>For large files <% if $UploadLimit %>exceeding $UploadLimit,<% end_if %> you can provide the file to us - we will then upload it on your behalf. Submit a request below to start this process.</p>
+								$PostSnapshotForm
+							</div>
+						</div>
+					</div>
+				</div>
+				<% include SnapshotCreateInstructions %>
+			<% end_if %>
+		</div>
+	</div>
+</div>

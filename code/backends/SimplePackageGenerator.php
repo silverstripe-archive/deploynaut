@@ -25,7 +25,7 @@ class SimplePackageGenerator extends PackageGenerator {
 
 	public function getIdentifier() {
 		// If the build script changes, don't re-use cached items
-		return substr(sha1($this->buildScript),0,8);
+		return substr(sha1($this->buildScript), 0, 8);
 	}
 
 	/**
@@ -33,22 +33,28 @@ class SimplePackageGenerator extends PackageGenerator {
 	 */
 	public function generatePackage($sha, $baseDir, $outputFilename, DeploynautLogFile $log) {
 		$tempPath = TEMP_FOLDER . "/" . str_replace(".tar.gz", "", basename($outputFilename));
-		if(!file_exists($tempPath)) mkdir($tempPath);
+		if(!file_exists($tempPath)) {
+			mkdir($tempPath);
+		}
+
+		$escapedTempPath = escapeshellarg($tempPath);
+		$escapedOutputFile = escapeshellarg($outputFilename);
+		$escapedTempDir = escapeshellarg(basename($tempPath));
 
 		// Execute these in sequence until there's a failure
 		$processes = array(
 			// Export the relevant SHA into a temp folder
-			new Process("git archive $sha | tar -x -C " . escapeshellarg($tempPath), $baseDir),
+			new Process("git archive $sha | tar -x -C " . $escapedTempPath, $baseDir),
 			// Run build script
 			new Process($this->buildScript, $tempPath, null, null, 3600),
 			// Compress the result
-			new Process("tar -czf " . escapeshellarg($outputFilename) . " " . escapeshellarg(basename($tempPath)), dirname($tempPath)),
+			new Process("tar -czf " . $escapedOutputFile . " " . $escapedTempDir, dirname($tempPath)),
 		);
 
 		// Call at the end, regardless of success or failure
 		$cleanup = array(
 			// Delete the temporary staging folder
-			new Process("rm -rf " . escapeshellarg($tempPath)),
+			new Process("rm -rf " . $escapedTempPath),
 		);
 
 		try {
@@ -72,7 +78,7 @@ class SimplePackageGenerator extends PackageGenerator {
 	 */
 	protected function executeProcesses($processes, DeploynautLogFile $log) {
 		foreach($processes as $process) {
-			$process->mustRun(function ($type, $buffer) use($log) {
+			$process->mustRun(function($type, $buffer) use($log) {
 				$log->write($buffer);
 			});
 		}

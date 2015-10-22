@@ -3,6 +3,9 @@
 /**
  * Represents a long running pipeline step with a timeout
  *
+ * @property int $MaxDuration
+ * @property SS_DateTime Started
+ *
  * @package deploynaut
  * @subpackage pipeline
  */
@@ -17,6 +20,9 @@ class LongRunningPipelineStep extends PipelineStep {
 		return $this->getConfigSetting('MaxDuration') ?: null;
 	}
 
+	/**
+	 * @var array
+	 */
 	private static $db = array(
 		'Started' => 'SS_Datetime'
 	);
@@ -41,7 +47,9 @@ class LongRunningPipelineStep extends PipelineStep {
 		if($this->Started) {
 			$started = intval($this->dbObject('Started')->Format('U'));
 			$now = intval(SS_Datetime::now()->Format('U'));
-			if($started && $now) return $now - $started;
+			if($started && $now) {
+				return $now - $started;
+			}
 		}
 		return 0;
 	}

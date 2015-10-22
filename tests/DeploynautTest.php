@@ -3,15 +3,14 @@
 abstract class DeploynautTest extends SapphireTest {
 
 	/**
-	 *
-	 * @var type
+	 * @var string
 	 */
 	protected $envPath = '';
 
 	/**
 	 * Setup the environment to point to a temporary location
 	 *
-	 * @param type $path
+	 * @param string $path
 	 */
 	protected function setTemporaryPath($path) {
 		$this->envPath = $path;

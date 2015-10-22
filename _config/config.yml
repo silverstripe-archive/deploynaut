@@ -4,3 +4,9 @@ Name: deploynautconfig
 DNProject:
   defaults:
     DiskQuotaMB: "1024"
+Group:
+  belongs_many_many:
+    "Projects": "DNProject"
+GridFieldDetailForm_ItemRequest:
+  extensions:
+    - FrontendLink

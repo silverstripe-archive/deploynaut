@@ -2,21 +2,31 @@
 
 class ResqueReport extends LeftAndMain {
 
+	/**
+	 * @var string
+	 */
 	public static $url_segment = 'resque';
+
+	/**
+	 * @var string
+	 */
 	public static $url_rule = '/$ModelClass/$Action';
+
+	/**
+	 * @var string
+	 */
 	public static $menu_title = 'Resque Report';
+
+	/**
+	 * @var array
+	 */
 	public static $allowed_actions = array(
 		'EditForm',
 	);
 
-	public function init() {
-		parent::init();
-	}
-
 	/**
-	 *
-	 * @param int $id
-	 * @param array $fields
+	 * @param int|null $id
+	 * @param array|null $fields
 	 * @return \Form
 	 */
 	public function getEditForm($id = null, $fields = null) {

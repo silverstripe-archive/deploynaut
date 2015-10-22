@@ -1,9 +1,19 @@
 <?php
 
+/**
+ * Class DNGitFetch
+ *
+ * @property string $ResqueToken
+ *
+ * @method DNProject Project()
+ * @property int $ProjectID
+ * @method Member Deployer()
+ * @property int $DeployerID
+ *
+ */
 class DNGitFetch extends DataObject {
 
 	/**
-	 *
 	 * @var array
 	 */
 	private static $db = array(
@@ -11,7 +21,6 @@ class DNGitFetch extends DataObject {
 	);
 
 	/**
-	 *
 	 * @var array
 	 */
 	private static $has_one = array(
@@ -56,8 +65,7 @@ class DNGitFetch extends DataObject {
 	}
 
 	/**
-	 *
-	 * @param Member $member
+	 * @param Member|null $member
 	 * @return bool
 	 */
 	public function canView($member = null) {
@@ -77,7 +85,6 @@ class DNGitFetch extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return \DeploynautLogFile
 	 */
 	public function log() {
@@ -85,7 +92,6 @@ class DNGitFetch extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function LogContent() {
@@ -93,7 +99,6 @@ class DNGitFetch extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function ResqueStatus() {

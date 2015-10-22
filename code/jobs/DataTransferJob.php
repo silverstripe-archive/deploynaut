@@ -9,6 +9,11 @@
  */
 class DataTransferJob {
 
+	/**
+	 * set by a resque worker
+	 */
+	public $args = array();
+
 	public function setUp() {
 		$this->updateStatus('Started');
 		chdir(BASE_PATH);
@@ -102,7 +107,6 @@ class DataTransferJob {
 	}
 
 	/**
-	 *
 	 * @param string $status
 	 * @global array $databaseConfig
 	 */
@@ -115,7 +119,6 @@ class DataTransferJob {
 	}
 
 	/**
-	 *
 	 * @return DNData
 	 */
 	protected function DNData() {
