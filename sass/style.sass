@@ -174,8 +174,11 @@ ol.list
 		margin: 0
 		overflow: hidden
 
-		ul a
+		ul li
 			padding-left: 64px
+
+		ul li a
+			padding-left: 0px
 
 		a
 			opacity: .8
@@ -993,4 +996,25 @@ td > .deployment-tag
 
 #deployment-dialog-holder
     margin-top: 20px
+
+.project-build-in-progress
+    @extend .text-center
+
+    .progress-icon
+        color: $platform-blue
+        margin-bottom: 2em
+
+    p
+        font-size: 16px
+
+    .add-deploy-key
+        margin-top: 3em
+
+    .gitlab-icon
+        height: 14px
+        margin-top: -3px
+
+.alert.failed-environments ul
+    margin: 0
+    padding-bottom: 0
 

@@ -188,7 +188,7 @@ class DNProject extends DataObject {
 		$controller = Controller::curr();
 		$actionType = $controller->getField('CurrentActionType');
 
-		if(DNRoot::FlagSnapshotsEnabled()) {
+		if(DNRoot::FlagSnapshotsEnabled() && $this->isProjectReady()) {
 			$list->push(new ArrayData(array(
 				'Link' => sprintf('naut/project/%s/snapshots', $this->Name),
 				'Title' => 'Snapshots',
@@ -651,9 +651,11 @@ class DNProject extends DataObject {
 
 	/**
 	 * Setup a asyncronous resque job to clone a git repository
+	 *
+	 * @return string resque token
 	 */
 	public function cloneRepo() {
-		Resque::enqueue('git', 'CloneGitRepo', array(
+		return Resque::enqueue('git', 'CloneGitRepo', array(
 			'repo' => $this->CVSPath,
 			'path' => $this->getLocalCVSPath(),
 			'env' => $this->getProcessEnv()
@@ -729,7 +731,7 @@ class DNProject extends DataObject {
 		$key = $this->getPublicKeyPath();
 
 		if(file_exists($key)) {
-			return file_get_contents($key);
+			return trim(file_get_contents($key));
 		}
 	}
 
@@ -987,6 +989,62 @@ class DNProject extends DataObject {
 
 		$hits = $this->whoIsAllowedAny($codes)->filter('Member.ID', $member->ID)->count();
 		return ($hits>0 ? true : false);
+	}
+
+	/**
+	 * Checks if the environment has been fully built.
+	 *
+	 * @return bool
+	 */
+	public function isProjectReady() {
+		if($this->getRunningInitialEnvironmentCreations()->count() > 0) {
+			// We're still creating the initial environments for this project so we're 
+			// not quite done
+			return false;
+		}
+
+		// Provide a hook for further checks. Logic stolen from 
+		// {@see DataObject::extendedCan()}
+		$isDone = $this->extend('isProjectReady');
+		if($isDone && is_array($isDone)) {
+			$isDone = array_filter($isDone, function($val) {
+				return !is_null($val);
+			});
+
+			// If anything returns false then we're not ready.
+			if($isDone) return min($isDone);
+		}
+
+		return true;
+	}
+
+	/**
+	 * Returns a list of initial environments created for this project.
+	 * 
+	 * @return DataList
+	 */
+	public function getInitialEnvironmentCreations() {
+		return $this->CreateEnvironments()->filter('IsInitialEnvironment', true);
+	}
+
+	/**
+	 * Only returns initial environments that are being created.
+	 *
+	 * @return DataList
+	 */
+	public function getRunningInitialEnvironmentCreations() {
+		return $this->getInitialEnvironmentCreations()
+			->filter('Status', ['Queued', 'Started']);
+	}
+
+	/**
+	 * Returns a list of completed initial environment creations. This includes failed tasks.
+	 *
+	 * @return DataList
+	 */
+	public function getCompleteInitialEnvironmentCreations() {
+		return $this->getInitialEnvironmentCreations()
+			->exclude('Status', ['Queued', 'Started']);
 	}
 
 	/**

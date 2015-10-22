@@ -8,16 +8,20 @@
 
 			<ul class="collapse<% if $IsActive %> in<% end_if %>" id="collapseExample-$Pos">
 				<% with $Project %>
-					<% if $DNEnvironmentList %>
-						<li>
-							<a role="button" href="$Link">Environments</a>
+					<li>
+						<a role="button" href="$Link">Environments</a>
+						<% if $IsProjectReady && $DNEnvironmentList %>
 							<ul class="collapse in" >
 							<% loop $DNEnvironmentList %>
 								<li<% if $IsSection %> class="active"<% end_if %>><a href="$Link">$Name</a></li>
 							<% end_loop %>
 							</ul>
-						</li>
-					<% end_if %>
+						<% else_if not $IsProjectReady && $CreateEnvironments %>
+							<ul class="collapse in">
+								<li><i class="fa fa-cog fa-spin"></i> Build in progress</li>
+							</ul>
+						<% end_if %>
+					</li>
 				<% end_with %>
 
 				<% loop $Project.Menu %>

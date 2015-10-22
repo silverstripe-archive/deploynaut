@@ -90,6 +90,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'startDeploy',
 		'createproject',
 		'CreateProjectForm',
+		'createprojectprogress',
+		'checkrepoaccess',
 	);
 
 	/**
@@ -129,6 +131,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'project/$Project/snapshotslog' => 'snapshotslog',
 		'project/$Project/postsnapshotsuccess/$DataArchiveID' => 'postsnapshotsuccess',
 		'project/$Project/star' => 'toggleprojectstar',
+		'project/$Project/createprojectprogress' => 'createprojectprogress',
+		'project/$Project/checkrepoaccess' => 'checkrepoaccess',
 		'project/$Project' => 'project',
 		'projects' => 'projects',
 	);
@@ -667,7 +671,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return \SS_HTTPResponse
 	 */
 	public function project(SS_HTTPRequest $request) {
-		return $this->getCustomisedViewSection('ProjectOverview');
+		return $this->getCustomisedViewSection('ProjectOverview', '', array('IsAdmin' => Permission::check('ADMIN')));
 	}
 
 	/**
@@ -2301,21 +2305,19 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 *
 	 * @return SS_HTTPResponse
 	 */
-	protected function getCustomisedViewSection($sectionName, $title = '') {
+	protected function getCustomisedViewSection($sectionName, $title = '', $data = array()) {
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if(!$project) {
 			return $this->project404Response();
 		}
-		$data = array(
-			$sectionName => 1,
-		);
+		$data[$sectionName] = 1;
 
 		if($this !== '') {
 			$data['Title'] = $title;
 		}
 
-		return $this->customise($data)->render();
+		return $this->render($data);
 	}
 
 	/**
@@ -2438,4 +2440,93 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		return $this->redirectBack();
 	}
 
+	/**
+	 * Returns the state of a current project build.
+	 *
+	 * @param SS_HTTPRequest $request
+	 *
+	 * @return SS_HTTPResponse
+	 */
+	public function createprojectprogress(SS_HTTPRequest $request) {
+		$project = $this->getCurrentProject();
+		if(!$project) {
+			return $this->httpError(404);
+		}
+
+		$envCreations = $project->getInitialEnvironmentCreations();
+		$complete = array();
+		$inProgress = array();
+		$failed = array();
+		if($envCreations->count() > 0) {
+			foreach($envCreations as $env) {
+				$data = unserialize($env->Data);
+				if(!isset($data['Name'])) {
+					$data['Name'] = 'Unknown';
+				}
+				switch($env->ResqueStatus()) {
+					case "Queued":
+					case "Running":
+						$inProgress[$env->ID] = Convert::raw2xml($env->ResqueStatus());
+						break;
+					case "Complete":
+						$complete[$env->ID] = Convert::raw2xml($data['Name']);
+						break;
+					case "Failed":
+					case "Invalid":
+					default:
+						$failed[$env->ID] = Convert::raw2xml($data['Name']);
+				}
+			}
+		}
+
+		$data = [
+			'complete' => $project->isProjectReady(),
+			'progress' => [
+				'environments' => [
+					'complete' => $complete,
+					'inProgress' => $inProgress,
+					'failed' => $failed,
+				]
+			]
+		];
+		$this->extend('updateCreateProjectProgressData', $data);	
+
+		$response = $this->getResponse();
+		$response->addHeader('Content-Type', 'application/json');
+		$response->setBody(json_encode($data));
+		return $response;
+	}
+
+	public function checkrepoaccess(SS_HTTPRequest $request) {
+		$project = $this->getCurrentProject();
+		if(!$project) {
+			return $this->httpError(404);
+		}
+
+		if($project->CVSPath) {
+			$clone = new CloneGitRepo();
+			$clone->args = array(
+				'repo' => $project->CVSPath,
+				'path' => $project->getLocalCVSPath(),
+				'env' => $project->getProcessEnv(),
+			);
+
+			try {
+				$clone->perform();
+				$canAccessRepo = true;
+			} catch (RuntimeException $e) {
+				$canAccessRepo = false;
+			}
+			$data = ['canAccessRepo' => $canAccessRepo];
+		} else {
+			$data = ['canAccessRepo' => false];
+		}
+
+		$response = $this->getResponse();
+		$response->addHeader("Content-Type", "application/json");
+		$response->setBody(json_encode($data));
+		return $response;
+	}
+
 }
+
