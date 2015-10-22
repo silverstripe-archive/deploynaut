@@ -10737,3 +10737,15 @@ td > .deployment-tag {
 .failed-environments.message.required ul, .failed-environments.disk-quota ul, .failed-environments.deploy-dropdown.error ul, .failed-environments.deploy-dropdown-errors ul {
   margin: 0;
   padding-bottom: 0; }
+
+.plat-icon.fa-cog {
+  margin-right: 15px;
+  text-align: center;
+  line-height: 19px;
+  font-size: 15px;
+  color: #768094; }
+
+.table-projects .plat-icon {
+  color: #646464;
+  margin-right: 0px;
+  float: none; }
