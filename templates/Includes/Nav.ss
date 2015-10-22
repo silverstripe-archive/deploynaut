@@ -3,7 +3,11 @@
 	<% loop $Navigation(5) %>
 		<li class="active">
 			<a class="nav-submenu<% if $IsActive %> open<% end_if %>" role="button" data-toggle="collapse" href="#collapseExample-$Pos" aria-controls="collapseExample-$Pos">
-				<span class="plat-icon icon-stack"></span>$Project.Name<span class="icon-arrow"></span>
+				<% if $Project.RunningEnvironmentCreations.count>0 %>
+					<span class="plat-icon fa fa-cog fa-spin tooltip-hint" data-original-title="Environment build in progress"></span>$Project.Name<span class="icon-arrow"></span>
+				<% else %>
+					<span class="plat-icon icon-stack"></span>$Project.Name<span class="icon-arrow"></span>
+				<% end_if %>
 			</a>
 
 			<ul class="collapse<% if $IsActive %> in<% end_if %>" id="collapseExample-$Pos">
@@ -15,10 +19,6 @@
 							<% loop $DNEnvironmentList %>
 								<li<% if $IsSection %> class="active"<% end_if %>><a href="$Link">$Name</a></li>
 							<% end_loop %>
-							</ul>
-						<% else_if not $IsProjectReady && $CreateEnvironments %>
-							<ul class="collapse in">
-								<li><i class="fa fa-cog fa-spin"></i> Build in progress</li>
 							</ul>
 						<% end_if %>
 					</li>
