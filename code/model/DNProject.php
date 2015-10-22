@@ -1019,6 +1019,16 @@ class DNProject extends DataObject {
 	}
 
 	/**
+	 * Returns a list of environments still being created.
+	 *
+	 * @return SS_List
+	 */
+	public function getRunningEnvironmentCreations() {
+		return $this->CreateEnvironments()
+			->filter('Status', ['Queued', 'Started']);
+	}
+
+	/**
 	 * Returns a list of initial environments created for this project.
 	 * 
 	 * @return DataList
