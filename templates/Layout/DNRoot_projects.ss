@@ -8,10 +8,14 @@
 <div class="content">
 
 	<% if $canCreateProjects %>
-		<a href="{$Link}createproject" class="btn btn-primary pull-right">
-			<i class="fa fa-plus"></i>
-			Create Stack
-		</a>
+		<div class="row">
+			<div class="col-md-12">
+				<a href="{$Link}createproject" class="btn btn-primary pull-right">
+					<i class="fa fa-plus"></i>
+					Create Stack
+				</a>
+			</div>
+		</div>
 	<% end_if %>
 
 	<%-- Dont show the search/filter if there are less than 5 projects in the list --%>
