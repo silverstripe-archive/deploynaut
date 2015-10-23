@@ -43,7 +43,6 @@ var DeployKeyTest = React.createClass({
 			cache: false,
 			type: 'GET',
 			success: function(data) {
-				console.log(data.canAccessRepo);
 				self.setState({
 					loading: false,
 					tested: true,

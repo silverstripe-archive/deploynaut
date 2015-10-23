@@ -74,9 +74,9 @@ var CreateProjectProgress = React.createClass({
 			// If no enivronments have built then we don't want to show the link to env page
 			var successCount = Object.keys(this.state.progress.environments.complete).length;
 			if(successCount == 0) {
-				var environmentLink = 'Take me to my environments!';
-			} else {
 				var environmentLinkText = 'Go to stack overview';
+			} else {
+				var environmentLinkText = 'Take me to my environments!';
 			}
 
 			var environmentLink = (
