@@ -14,7 +14,7 @@ var createProjectProgressHolder = document.getElementById('create-project-progre
 if(createProjectProgressHolder) {
 	React.render(
 		<CreateProjectProgress statusUrl={createProjectStatusUrl}
-	   		deployKey={deployKey}
+			deployKey={deployKey}
 			deployKeyTestUrl={deployKeyTestUrl}
 			initalCanAccessRepo={canAccessRepo}	/>,
 		createProjectProgressHolder

@@ -9,6 +9,18 @@ var DeployKeyTest = React.createClass({
 	},
 
 	render: function() {
+
+		if (this.props.deployKey) {
+			var key = <pre className="deploy-key">{this.props.deployKey}</pre>;
+		} else {
+			var key = (
+				<div className="alert alert-error">
+					Something bad happened and we were not able to create your deploy key - support has been alerted.
+					Please contact the helpdesk if the key does not appear on your stack page soon.
+				</div>
+			);
+		}
+
 		return (
 			<div className="add-deploy-key">
 				<h2>Add your deploy key...</h2>
@@ -23,7 +35,7 @@ var DeployKeyTest = React.createClass({
 					</div>
 				</div>
 				<div className="col-md-8 col-md-offset-2 text-left" id="deploy-key-test-holder">
-					<pre className="deploy-key">{this.props.deployKey}</pre>
+					{key}
 				</div>
 				<div className="row">
 					<div className="col-md-8 col-md-offset-2">
@@ -68,7 +80,10 @@ var DeployKeyTest = React.createClass({
 		var buttonText = { __html: 'Test Access' };
 		var buttonDisabled = false;
 		var buttonClass = 'btn btn-primary';
-		if(this.state.loading) {
+		if (!this.props.deployKey) {
+			buttonDisabled = true;
+			buttonClass = 'btn';
+		} else if(this.state.loading) {
 			buttonText = { __html: '<i class="fa fa-cog fa-spin"></i> Attempting to clone repository...' };
 			buttonDisabled = true;
 		} else if(this.state.canAccessRepo) {
