@@ -1071,7 +1071,16 @@ class DNProject extends DataObject {
 				return $validation->error('You must provide a repository URL.');
 			}
 
-			$existing = DNProject::get()->filter('Name', $this->Name);
+			// Because we allow spaces in names and folders are converted to non-spaces, its
+			// possible that projects can have different names but can be served from the same
+			// directory ("My Project" and "My-Project" will both be served from "My-Project".
+			//
+			// If we don't validate both the name and the folder it could result in the wrong
+			// repo being deployed to a site.
+			$filter = FilenameFilter::create();
+			$name = array($this->Name, $filter->filter($this->Name));
+
+			$existing = DNProject::get()->filter('Name', $name);
 			if($this->ID) {
 				$existing = $existing->exclude('ID', $this->ID);
 			}
