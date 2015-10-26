@@ -126,16 +126,14 @@
 	<div class="content project-build-in-progress">
 		<div id="create-project-progress-holder"></div>
 
-		<% if $CurrentProject.PublicKey %>
-			<div class="add-deploy-key">
-				<div id="deploy-key-test-holder"></div>
-				<script type="text/javascript">
-					var deployKey = "$CurrentProject.PublicKey";
-					var deployKeyTestUrl = "{$CurrentProject.Link}/checkrepoaccess";
-					var canAccessRepo = false;
-					var createProjectStatusUrl = "{$CurrentProject.Link}/createprojectprogress";
-				</script>
-			</div>
-		<% end_if %>
+		<div class="add-deploy-key">
+			<div id="deploy-key-test-holder"></div>
+			<script type="text/javascript">
+				var deployKey = "$CurrentProject.PublicKey";
+				var deployKeyTestUrl = "{$CurrentProject.Link}/checkrepoaccess";
+				var canAccessRepo = false;
+				var createProjectStatusUrl = "{$CurrentProject.Link}/createprojectprogress";
+			</script>
+		</div>
 	</div>
 <% end_if %>
