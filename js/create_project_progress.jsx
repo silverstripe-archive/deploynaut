@@ -1,6 +1,17 @@
 var _ = require('underscore');
 var DeployKeyTest = require('./deploy_key_test.jsx');
 
+var external = {
+	reloadSideMenu: function() {
+		var navEl = $('.side-content .nav');
+		if (navEl.length>0 && navEl.data('nav')) {
+			$.get(navEl.data('nav'), function(data) {
+				navEl.html(data);
+			})
+		}
+	}
+}
+
 var CreateProjectProgress = React.createClass({
 
 	checkInterval: false,
@@ -44,6 +55,7 @@ var CreateProjectProgress = React.createClass({
 			type: 'GET',
 			success: function(data) {
 				if(data.complete) {
+					external.reloadSideMenu();
 					self.setState({complete: true});
 					window.clearInterval(this.checkInterval);
 				}
@@ -92,12 +104,10 @@ var CreateProjectProgress = React.createClass({
 			var failCount = Object.keys(this.state.progress.environments.failed).length;
 			if(failCount > 0) {
 				var failedList = _.map(this.state.progress.environments.failed, function(name) {
-				   return (
-					   <li>{name}</li>
+					return (
+						<li>{name}</li>
 					);
-				});	   
-
-
+				});
 
 				var completeMessage = (
 					<div>
