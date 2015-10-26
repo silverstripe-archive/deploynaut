@@ -134,6 +134,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'project/$Project/createprojectprogress' => 'createprojectprogress',
 		'project/$Project/checkrepoaccess' => 'checkrepoaccess',
 		'project/$Project' => 'project',
+		'nav/$Project' => 'nav',
 		'projects' => 'projects',
 	);
 
@@ -299,7 +300,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return string
 	 */
 	public function NavLink() {
-		return Controller::join_links(Director::absoluteBaseURL(), 'naut', 'nav');
+		$currentProject = $this->getCurrentProject();
+		$projectName = $currentProject ? $currentProject->Name : null;
+		return Controller::join_links(Director::absoluteBaseURL(), 'naut', 'nav', $projectName);
 	}
 
 	/**
