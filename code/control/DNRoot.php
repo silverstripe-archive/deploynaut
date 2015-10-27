@@ -2393,7 +2393,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$fields->merge([
 			TextField::create('Name', 'Title'),
 			TextField::create('CVSPath', 'Git URL'),
-			TextField::create('Client', 'Client'),
 		]);
 		$this->extend('updateCreateProjectFormFields', $fields);
 		return $fields;
