@@ -5,7 +5,7 @@
 	"license": "BSD-3-Clause",
 	"keywords": ["silverstripe", "capistrano", "deploy"],
 	"require": {
-		"php": ">=5.3.2",
+		"php": ">=5.4.0",
 		"silverstripe/framework": "~3.1",
 		"stojg/silverstripe-resque": "1.1.*",
 		"gitonomy/gitlib": "dev-master",
