@@ -1067,6 +1067,11 @@ class DNProject extends DataObject {
 				return $validation->error('The stack must have a name.');
 			}
 
+			// The name is used to build filepaths so should be restricted
+			if(!preg_match('/^[a-zA-Z9-0][a-zA-Z0-9\-\_]+$/', $this->Name)) {
+				return $validation->error('Project name can only contain alpha-numeric, hyphens and underscores.');
+			}
+
 			if(empty($this->CVSPath)) {
 				return $validation->error('You must provide a repository URL.');
 			}
