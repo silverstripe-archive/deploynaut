@@ -21,7 +21,6 @@ class DNProject extends DataObject {
 		"CVSPath" => "Varchar(255)",
 		"DiskQuotaMB" => "Int",
 		"AllowedEnvironmentType" => "Varchar(255)",
-		"Client" => "Varchar(255)",
 	);
 
 	/**
@@ -603,7 +602,6 @@ class DNProject extends DataObject {
 			)->setDescription('This defined which form to show on the front end for '
 				. 'environment creation. This will not affect backend functionality.')
 			->setEmptyString(' - None - '),
-			TextField::create('Client', 'Client'),
 		));
 
 		return $fields;
