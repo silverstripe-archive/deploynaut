@@ -2367,7 +2367,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		if(!$member) $member = Member::currentUser();
 		if(!$member) return false;
 
-		return Permission::checkMember($member, 'ADMIN');
+		return singleton('DNProject')->canCreate($member);
 	}
 		
 	/**

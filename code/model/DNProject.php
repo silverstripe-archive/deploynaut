@@ -1085,5 +1085,22 @@ class DNProject extends DataObject {
 		return $validation;
 	}
 
+	/**
+	 * @param Member $member
+	 *
+	 * @return bool
+	 */
+	public function canCreate($member = null) {
+		if(!$member) $member = Member::currentUser();
+		if(!$member) return false;
+
+		if(Permission::checkMember($member, 'ADMIN')) {
+			return true;
+		}
+
+		// This calls canCreate on extensions.
+		return parent::canCreate($member);
+	}
+
 }
 
