@@ -9968,7 +9968,8 @@ body .userswitcher fieldset .middleColumn {
 
 ul.list,
 ol.list {
-  list-style: none; }
+  list-style: none;
+  padding-left: 0; }
   ul.list li,
   ol.list li {
     background: url(../img/bg-list.png) left 1px no-repeat;
