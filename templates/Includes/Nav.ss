@@ -1,5 +1,10 @@
 <% if $DNProjectList %>
-	<li class="nav-main-heading">Stacks</li>
+	<li class="nav-main-heading">
+		Stacks
+		<% if $canCreateProjects %>
+			<a href="{$Link}createproject" class="badge nav-add-stack">+</a>
+		<% end_if %>
+	</li>
 	<% loop $Navigation(5) %>
 		<li class="active">
 
