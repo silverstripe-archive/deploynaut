@@ -10175,7 +10175,7 @@ ol.list {
       background: #222222;
       color: rgba(255, 255, 255, 0.5);
       vertical-align: middle;
-      padding: 2px 6px 4px 7px;
+      padding: 3px 6px;
       border-bottom: #777777 solid 1px; }
       .side-content .nav > li a.nav-add-stack:hover, .side-content .deploy-form-outer .deploy-form .SelectionGroup > li a.nav-add-stack:hover, .deploy-form-outer .deploy-form .side-content .SelectionGroup > li a.nav-add-stack:hover, .side-content .deploy-form-loading .deploy-form .SelectionGroup > li a.nav-add-stack:hover, .deploy-form-loading .deploy-form .side-content .SelectionGroup > li a.nav-add-stack:hover, .side-content .nav > li a.nav-add-stack:focus, .side-content .deploy-form-outer .deploy-form .SelectionGroup > li a.nav-add-stack:focus, .deploy-form-outer .deploy-form .side-content .SelectionGroup > li a.nav-add-stack:focus, .side-content .deploy-form-loading .deploy-form .SelectionGroup > li a.nav-add-stack:focus, .deploy-form-loading .deploy-form .side-content .SelectionGroup > li a.nav-add-stack:focus {
         background: #3aaef9;
