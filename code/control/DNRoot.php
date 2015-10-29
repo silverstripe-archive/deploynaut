@@ -2363,7 +2363,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 *
 	 * @return bool
 	 */
-	protected function canCreateProjects($member = null) {
+	public function canCreateProjects($member = null) {
 		if(!$member) $member = Member::currentUser();
 		if(!$member) return false;
 
@@ -2391,8 +2391,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	protected function getCreateProjectFormFields() {
 		$fields = FieldList::create();
 		$fields->merge([
-			TextField::create('Name', 'Title'),
-			TextField::create('CVSPath', 'Git URL'),
+			TextField::create('Name', 'Title')->setDescription('Limited to alpha-numeric characters, underscores and hyphens.'),
+			TextField::create('CVSPath', 'Git URL')->setDescription('Your repository URL so we can clone your code (eg. git@github.com:silverstripe/silverstripe-installer.git)')
 		]);
 		$this->extend('updateCreateProjectFormFields', $fields);
 		return $fields;
