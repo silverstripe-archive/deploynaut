@@ -10169,10 +10169,20 @@ ol.list {
     .side-content .nav > li a:hover, .side-content .deploy-form-outer .deploy-form .SelectionGroup > li a:hover, .deploy-form-outer .deploy-form .side-content .SelectionGroup > li a:hover, .side-content .deploy-form-loading .deploy-form .SelectionGroup > li a:hover, .deploy-form-loading .deploy-form .side-content .SelectionGroup > li a:hover, .side-content .nav > li a:focus, .side-content .deploy-form-outer .deploy-form .SelectionGroup > li a:focus, .deploy-form-outer .deploy-form .side-content .SelectionGroup > li a:focus, .side-content .deploy-form-loading .deploy-form .SelectionGroup > li a:focus, .deploy-form-loading .deploy-form .side-content .SelectionGroup > li a:focus {
       color: rgba(255, 255, 255, 0.5);
       background-color: rgba(0, 0, 0, 0.2); }
+    .side-content .nav > li a.nav-add-stack, .side-content .deploy-form-outer .deploy-form .SelectionGroup > li a.nav-add-stack, .deploy-form-outer .deploy-form .side-content .SelectionGroup > li a.nav-add-stack, .side-content .deploy-form-loading .deploy-form .SelectionGroup > li a.nav-add-stack, .deploy-form-loading .deploy-form .side-content .SelectionGroup > li a.nav-add-stack {
+      float: right;
+      background: #222222;
+      color: rgba(255, 255, 255, 0.5);
+      vertical-align: middle;
+      padding: 2px 6px 4px 7px;
+      border-bottom: #777777 solid 1px; }
+      .side-content .nav > li a.nav-add-stack:hover, .side-content .deploy-form-outer .deploy-form .SelectionGroup > li a.nav-add-stack:hover, .deploy-form-outer .deploy-form .side-content .SelectionGroup > li a.nav-add-stack:hover, .side-content .deploy-form-loading .deploy-form .SelectionGroup > li a.nav-add-stack:hover, .deploy-form-loading .deploy-form .side-content .SelectionGroup > li a.nav-add-stack:hover, .side-content .nav > li a.nav-add-stack:focus, .side-content .deploy-form-outer .deploy-form .SelectionGroup > li a.nav-add-stack:focus, .deploy-form-outer .deploy-form .side-content .SelectionGroup > li a.nav-add-stack:focus, .side-content .deploy-form-loading .deploy-form .SelectionGroup > li a.nav-add-stack:focus, .deploy-form-loading .deploy-form .side-content .SelectionGroup > li a.nav-add-stack:focus {
+        background: #3aaef9;
+        color: #fff; }
   .side-content .nav > li.nav-main-heading, .side-content .deploy-form-outer .deploy-form .SelectionGroup > li.nav-main-heading, .deploy-form-outer .deploy-form .side-content .SelectionGroup > li.nav-main-heading, .side-content .deploy-form-loading .deploy-form .SelectionGroup > li.nav-main-heading, .deploy-form-loading .deploy-form .side-content .SelectionGroup > li.nav-main-heading {
     font-size: 12px;
     font-weight: 400;
-    padding: 22px 35px 6px 20px;
+    padding: 22px 13px 6px 20px;
     text-transform: uppercase; }
 
 .header-navbar {
