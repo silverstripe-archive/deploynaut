@@ -77,6 +77,8 @@
 			</div>
 		<% end_with %>
 
+		<% include EnvironmentMessages %>
+
 		<% if $CurrentProject.PublicKey %>
 			<h4>Deploy key</h4>
 			<p>Permit us access to your private repositories by adding this deployment key.</p>
