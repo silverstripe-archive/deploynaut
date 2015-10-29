@@ -2,6 +2,7 @@
 	<div class="row">
 		<div class="col-md-7">
 			<h1 class="page-heading">Stack overview</h1>
+			<% include StackOverviewDescription %>
 		</div>
 	</div>
 </div>
