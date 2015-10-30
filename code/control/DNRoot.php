@@ -2391,7 +2391,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	protected function getCreateProjectFormFields() {
 		$fields = FieldList::create();
 		$fields->merge([
-			TextField::create('Name', 'Title')->setDescription('Limited to alpha-numeric characters, underscores and hyphens.'),
+			TextField::create('Name', 'Title')->setDescription('Limited to alphanumeric characters, underscores and hyphens.'),
 			TextField::create('CVSPath', 'Git URL')->setDescription('Your repository URL so we can clone your code (eg. git@github.com:silverstripe/silverstripe-installer.git)')
 		]);
 		$this->extend('updateCreateProjectFormFields', $fields);
