@@ -9585,10 +9585,13 @@ fieldset + .Actions {
 
 #MemberLoginForm_LoginForm .radio input[type="radio"],
 #MemberLoginForm_LoginForm .radio-inline input[type="radio"],
+#MemberLoginForm_LoginForm .checkbox input[type="checkbox"],
 #MemberLoginForm_LoginForm .checkbox-inline input[type="checkbox"], #MemberLoginForm_LostPasswordForm .radio input[type="radio"],
 #MemberLoginForm_LostPasswordForm .radio-inline input[type="radio"],
+#MemberLoginForm_LostPasswordForm .checkbox input[type="checkbox"],
 #MemberLoginForm_LostPasswordForm .checkbox-inline input[type="checkbox"], #LDAPLoginForm_LoginForm .radio input[type="radio"],
 #LDAPLoginForm_LoginForm .radio-inline input[type="radio"],
+#LDAPLoginForm_LoginForm .checkbox input[type="checkbox"],
 #LDAPLoginForm_LoginForm .checkbox-inline input[type="checkbox"] {
   margin-left: 0; }
 
@@ -10618,9 +10621,6 @@ td > .deployment-tag {
 
 .well {
   box-shadow: none; }
-
-.well p {
-  margin-bottom: 0; }
 
 .vertical-center {
   min-height: 100%;
