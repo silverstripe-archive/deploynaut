@@ -9978,6 +9978,11 @@ ol.list {
     ol.list li + li {
       margin-top: 8px; }
 
+.description {
+  line-height: 3em;
+  font-style: italic;
+  color: #BFBFBF; }
+
 .alert .fa, .message.bad .fa,
 .message.required .fa, .disk-quota .fa, .deploy-dropdown.error .fa, .deploy-dropdown-errors .fa, .alert .icon-star, .message.bad .icon-star,
 .message.required .icon-star, .disk-quota .icon-star, .deploy-dropdown.error .icon-star, .deploy-dropdown-errors .icon-star, .alert .deploy-dropdown .status-icon, .deploy-dropdown .alert .status-icon, .message.bad .deploy-dropdown .status-icon,
