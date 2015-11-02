@@ -31,7 +31,6 @@
 					<th>Stack title</th>
 					<th>Production URL</th>
 					<th>UAT URL</th>
-					<th class="text-center">Environments</th>
 					<th>Code</th>
 				</tr>
 			</thead>
@@ -41,13 +40,7 @@
 				<tr>
 					<td class="project-name">
 						<a href="$Link">$Name</a>
-						<% if $IsStarred %>
-							<a class="tooltip-hint" data-toggle="tooltip" data-original-title="Unstar this project" href="$ToggleStarLink"><i class="icon-star"></i></a>
-						<% else %>
-							<a class="tooltip-hint" data-toggle="tooltip" data-original-title="Star this project so it shows in the side navigation for quick access" href="$ToggleStarLink"><i class="icon-star hollow"></i></a>
-						<% end_if %>
-
-
+						<% include ProjectIcons %>
 					</td>
 					<td>
 						<% if $EnvironmentsByUsage("Production").First %>
@@ -62,14 +55,6 @@
 						<% else %>
 							-
 						<% end_if %>
-					</td>
-					<td class="text-center">
-						<a href="$Link">
-							<% if $RunningEnvironmentCreations.count>0 %>
-								<span class="tooltip-hint plat-icon fa fa-cog fa-spin" data-original-title="Environments are currently being built"></span>
-							<% end_if %>
-							$Environments.count
-						</a>
 					</td>
 					<td>
 						<% if $RepositoryInterface %>

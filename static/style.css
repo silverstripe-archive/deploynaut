@@ -10140,10 +10140,9 @@ ol.list {
     color: #fff;
     text-decoration: none; }
 
-.project-name .icon-star {
+.project-name .icons {
   float: left;
-  margin-right: 3px;
-  margin-top: 2px; }
+  margin-right: 3px; }
 
 .icon-star {
   color: #FECB58; }
