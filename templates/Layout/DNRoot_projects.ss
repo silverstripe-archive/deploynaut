@@ -39,7 +39,7 @@
 			<% loop $DNProjectList %>
 				<tr>
 					<td class="project-name">
-						<a href="$Link">$Name</a>
+						<a class="title" href="$Link">$Name</a>
 						<% include ProjectIcons %>
 					</td>
 					<td>
