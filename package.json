@@ -34,6 +34,7 @@
     "node-sass": "^3.3.2",
     "reactify": "^1.1.1",
     "underscore": "^1.8.3",
+    "validator": "^4.2.1",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
   }
