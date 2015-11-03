@@ -36,6 +36,20 @@ abstract class Dispatcher extends DNRoot {
 	}
 
 	/**
+	 * Convert validator errors to JSON response.
+	 * [{"fieldName":"Name","message":"Message.","messageType":"bad"}]
+	 *
+	 * @return \SS_HTTPResponse
+	 */
+	public function asJSONValidatorErrors($code, $validatorErrors) {
+		$fieldErrors = [];
+		foreach ($validatorErrors as $error) {
+			$fieldErrors[$error['fieldName']] = $error['message'];
+		}
+		return $this->asJSONFormFieldErrors($code, $fieldErrors);
+	}
+
+	/**
 	 * Return field-specific errors.
 	 *
 	 * @param int $code HTTP status code.
