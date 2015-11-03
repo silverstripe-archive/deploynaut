@@ -34,7 +34,7 @@ class DeploymentStrategy extends ViewableData {
 	protected $changes = [];
 
 	/**
-	 * @var string
+	 * @var array
 	 */
 	protected $options;
 

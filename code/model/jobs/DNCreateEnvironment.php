@@ -1,4 +1,18 @@
 <?php
+
+/**
+ * DNCreateEnvironment
+ *
+ * @property string Data
+ * @property string ResqueToken
+ * @property string Status
+ * @property bool IsInitialEnvironment
+ *
+ * @method DNProject Project()
+ * @property int $ProjectID
+ * @method Member Creator()
+ * @property int $CreatorID
+ */
 class DNCreateEnvironment extends DataObject {
 
 	private static $db = array(
