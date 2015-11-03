@@ -768,23 +768,27 @@ class DNEnvironment extends DataObject {
 	 */
 	protected function getCommitData($sha) {
 		try {
-			$commit = new \Gitonomy\Git\Commit($this->Project()->getRepository(), $sha);
-			return array(
-				'AuthorName' => (string)Convert::raw2xml($commit->getAuthorName()),
-				'AuthorEmail' => (string)Convert::raw2xml($commit->getAuthorEmail()),
-				'Message' => (string)Convert::raw2xml($commit->getMessage()),
-				'ShortHash' => Convert::raw2xml($commit->getFixedShortHash(8)),
-				'Hash' => Convert::raw2xml($commit->getHash())
-			);
+			$repo = $this->Project()->getRepository();
+			if($repo !== false) {
+				$commit = new \Gitonomy\Git\Commit($repo, 'asdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasd');
+				return [
+					'AuthorName' => (string)Convert::raw2xml($commit->getAuthorName()),
+					'AuthorEmail' => (string)Convert::raw2xml($commit->getAuthorEmail()),
+					'Message' => (string)Convert::raw2xml($commit->getMessage()),
+					'ShortHash' => Convert::raw2xml($commit->getFixedShortHash(8)),
+					'Hash' => Convert::raw2xml($commit->getHash())
+				];
+			}
 		} catch(\Gitonomy\Git\Exception\ReferenceNotFoundException $exc) {
-			return array(
-				'AuthorName' => '(unknown)',
-				'AuthorEmail' => '(unknown)',
-				'Message' => '(unknown)',
-				'ShortHash' => $sha,
-				'Hash' => '(unknown)',
-			);
+			SS_Log::log($exc, SS_Log::WARN);
 		}
+		return array(
+			'AuthorName' => '(unknown)',
+			'AuthorEmail' => '(unknown)',
+			'Message' => '(unknown)',
+			'ShortHash' => $sha,
+			'Hash' => '(unknown)',
+		);
 	}
 
 	/**
