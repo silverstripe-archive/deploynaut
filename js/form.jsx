@@ -2,7 +2,7 @@ var validator = require("validator");
 var _ = require('underscore');
 
 // Create a validation method that can be used as:
-// equalsField:"firstFieldID":"secondFieldID"
+// equalsField|"firstFieldID"|"secondFieldID"
 validator.extend('equalsField', function (string, firstFieldID, secondFieldID ) {
 	var first = document.getElementById(firstFieldID);
 	var second = document.getElementById(secondFieldID);
@@ -15,6 +15,10 @@ validator.extend('equalsField', function (string, firstFieldID, secondFieldID ) 
 		secondValue = second.value;
 	}
 	return firstValue === secondValue;
+});
+
+validator.extend('isGit', function (string) {
+	return string.match(/((git|ssh|http(s)?)|(git@[\w\.]+))(:(\/\/)?)([\w\.@\:\/\-~]+)(\.git)(\/)?/);
 });
 
 var Form = React.createClass({
@@ -67,8 +71,8 @@ var Form = React.createClass({
 		var validations = child.props.validations;
 		// Dynamically add a 'required' validation
 		if(child.props.required) {
-			validations = validations ? validations + ',' : '';
-			validations += 'isLength:1';
+			validations = validations ? validations + '/' : '';
+			validations += 'isLength|1';
 		}
 
 		return React.addons.cloneWithProps(child, {
@@ -112,15 +116,15 @@ var Form = React.createClass({
 
 		if (component.state.value || component.props.required) {
 
-			component.props.validations.split(',').forEach(function (validation) {
-				// By splitting on ":"" we get an array of arguments that we pass
-				// to the validator. ex.: isLength:5 -> ['isLength', '5']
-				var args = validation.split(':');
+			component.props.validations.split('/').forEach(function (validation) {
+				// By splitting on "|" we get an array of arguments that we pass
+				// to the validator. ex.: isLength|5 -> ['isLength', '5']
+				var args = validation.split('|');
 
 				var validateMethod = args.shift();
 
 				// We use JSON.parse to convert the string values passed to the
-				// correct type. Ex. 'isLength:1' will make '1' actually a number
+				// correct type. Ex. 'isLength|1' will make '1' actually a number
 				args = args.map(function (arg) {
 					return JSON.parse(arg);
 				});
@@ -381,6 +385,7 @@ var PasswordConfirm = React.createClass({
 });
 
 exports.Form = Form;
+exports.InputMixin = InputMixin;
 exports.Input = Input;
 exports.Password = Password;
 exports.PasswordConfirm = PasswordConfirm;
