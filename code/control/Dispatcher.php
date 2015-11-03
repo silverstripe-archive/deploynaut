@@ -36,6 +36,20 @@ abstract class Dispatcher extends DNRoot {
 	}
 
 	/**
+	 * Convert validator errors to JSON response.
+	 * [{"fieldName":"Name","message":"Message.","messageType":"bad"}]
+	 *
+	 * @return \SS_HTTPResponse
+	 */
+	public function asJSONValidatorErrors($code, $validatorErrors) {
+		$fieldErrors = [];
+		foreach ($validatorErrors as $error) {
+			$fieldErrors[$error['fieldName']] = $error['message'];
+		}
+		return $this->asJSONFormFieldErrors($code, $fieldErrors);
+	}
+
+	/**
 	 * Return field-specific errors.
 	 *
 	 * @param int $code HTTP status code.
@@ -50,15 +64,27 @@ abstract class Dispatcher extends DNRoot {
 		]));
 		$response->setStatusCode($code);
 		return $response;
-
 	}
 
-	public function asJSON($data) {
+	public function asJSON($data = []) {
 		$securityToken = $this->getSecurityToken();
 		$securityToken->reset();
 		$data['NewSecurityID'] = $securityToken->getValue();
 
 		$response = $this->getResponse();
+
+		// If we received an AJAX request, we can't redirect in an ordinary way: the browser will
+		// interpret the 302 responses internally and the response will never reach JS.
+		//
+		// To get around that, upon spotting an active redirect, we change the response code to 200,
+		// and move the redirect into the "RedirectTo" field in the JSON response. Frontend can
+		// then interpret this and trigger a redirect.
+		if ($this->redirectedTo()) {
+			$data['RedirectTo'] = $this->response->getHeader('Location');
+			// Pop off the header - we are no longer redirecting via the usual mechanism.
+			$this->response->removeHeader('Location');
+		}
+
 		$response->addHeader('Content-Type', 'application/json');
 		$response->setBody(json_encode($data));
 		$response->setStatusCode(200);
@@ -78,6 +104,10 @@ abstract class Dispatcher extends DNRoot {
 		}
 
 		\Requirements::css(sprintf('%s/style.css', $this->getRelativeStaticPath()));
+	}
+
+	protected function getFormData() {
+		return json_decode($this->request->postVar('Details'), true);
 	}
 
 }
