@@ -135,6 +135,8 @@
 				var deployKeyTestUrl = "{$CurrentProject.Link}/checkrepoaccess";
 				var canAccessRepo = false;
 				var createProjectStatusUrl = "{$CurrentProject.Link}/createprojectprogress";
+				var gitUrl = "{$CurrentProject.CVSPath}";
+				var repoInterface = "{$CurrentProject.RepositoryInterface.Name}";
 			</script>
 		</div>
 	</div>

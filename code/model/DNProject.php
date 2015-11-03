@@ -828,15 +828,17 @@ class DNProject extends DataObject {
 	 */
 	static private $repository_interfaces = array(
 		'github.com' => array(
-			'icon' => 'deploynaut/img/github.png'
+			'icon' => 'deploynaut/img/github.png',
+			'name' => 'Github.com',
 		),
 		'bitbucket.org' => array(
-			'commit' => 'commits'
+			'commit' => 'commits',
+			'name' => 'Bitbucket.org',
 		),
 		'repo.or.cz' => array(
 			'scheme' => 'http',
 			'name' => 'repo.or.cz',
-			'regex' => array('^(.*)$' => '/w$1')
+			'regex' => array('^(.*)$' => '/w$1'),
 		),
 
 		/* Example for adding your own gitlab repository and override all auto-detected values (with their defaults)

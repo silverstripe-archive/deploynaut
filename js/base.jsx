@@ -16,7 +16,9 @@ if(createProjectProgressHolder) {
 		<CreateProjectProgress statusUrl={createProjectStatusUrl}
 			deployKey={deployKey}
 			deployKeyTestUrl={deployKeyTestUrl}
-			initalCanAccessRepo={canAccessRepo}	/>,
+			initalCanAccessRepo={canAccessRepo}
+			gitUrl={gitUrl}
+			repoInterface={repoInterface} />,
 		createProjectProgressHolder
 	);
 }
