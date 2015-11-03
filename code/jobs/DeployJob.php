@@ -10,23 +10,16 @@ class DeployJob {
 	 */
 	public $args;
 
-	/**
-	 */
 	public function setUp() {
 		$this->updateStatus('Started');
 		chdir(BASE_PATH);
 	}
 
-	/**
-	 * @global array $databaseConfig
-	 */
 	public function tearDown() {
 		$this->updateStatus('Finished');
 		chdir(BASE_PATH);
 	}
 
-	/**
-	 */
 	public function perform() {
 		echo "[-] DeployJob starting" . PHP_EOL;
 		$log = new DeploynautLogFile($this->args['logfile']);

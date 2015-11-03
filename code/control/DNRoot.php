@@ -2491,7 +2491,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				]
 			]
 		];
-		$this->extend('updateCreateProjectProgressData', $data);	
+		$this->extend('updateCreateProjectProgressData', $data);
 
 		$response = $this->getResponse();
 		$response->addHeader('Content-Type', 'application/json');
@@ -2506,15 +2506,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		if($project->CVSPath) {
-			$clone = new CloneGitRepo();
-			$clone->args = array(
-				'repo' => $project->CVSPath,
-				'path' => $project->getLocalCVSPath(),
-				'env' => $project->getProcessEnv(),
-			);
-
+			$fetch = new FetchJob();
+			$fetch->args = array('projectID' => $project->ID);
 			try {
-				$clone->perform();
+				$fetch->perform();
 				$canAccessRepo = true;
 			} catch (RuntimeException $e) {
 				$canAccessRepo = false;

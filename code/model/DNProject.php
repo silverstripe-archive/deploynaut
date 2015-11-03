@@ -85,6 +85,12 @@ class DNProject extends DataObject {
 	protected static $relation_cache = array();
 
 	/**
+	 * In-memory cache to determine whether clone repo was called.
+	 * @var array
+	 */
+	private static $has_cloned_cache = array();
+
+	/**
 	 * @var bool|Member
 	 */
 	protected static $_current_member_cache = null;
@@ -634,67 +640,59 @@ class DNProject extends DataObject {
 	 * @return boolean
 	 */
 	public function projectFolderExists() {
-		if(file_exists($this->DNData()->getEnvironmentDir().'/'.$this->Name)) {
-			return true;
-		}
-		return false;
+		return file_exists($this->getProjectFolderPath());
 	}
 
 	/**
 	 * @return bool
 	 */
 	public function repoExists() {
-		return file_exists(DEPLOYNAUT_LOCAL_VCS_PATH . '/' . $this->Name.'/HEAD');
+		return file_exists(sprintf('%s/HEAD', $this->getLocalCVSPath()));
 	}
 
 	/**
-	 * Setup a asyncronous resque job to clone a git repository
-	 *
+	 * Setup a job to clone a git repository.
 	 * @return string resque token
 	 */
 	public function cloneRepo() {
-		return Resque::enqueue('git', 'CloneGitRepo', array(
-			'repo' => $this->CVSPath,
-			'path' => $this->getLocalCVSPath(),
-			'env' => $this->getProcessEnv()
-		));
+		// Avoid this being called multiple times in the same request
+		if(!isset(self::$has_cloned_cache[$this->ID])) {
+			$fetch = DNGitFetch::create();
+			$fetch->ProjectID = $this->ID;
+			$fetch->write();
+
+			// passing true here tells DNGitFetch to force a git clone, otherwise
+			// it will just update the repo if it already exists. We want to ensure
+			// we're always cloning a new repo in this case, as the git URL may have changed.
+			$fetch->start(true);
+
+			self::$has_cloned_cache[$this->ID] = true;
+		}
 	}
 
 	/**
 	 * @return string
 	 */
 	public function getLocalCVSPath() {
-		return DEPLOYNAUT_LOCAL_VCS_PATH . '/' . $this->Name;
+		return sprintf('%s/%s', DEPLOYNAUT_LOCAL_VCS_PATH, $this->Name);
 	}
 
-	/**
-	 * Checks for missing folders folder and schedules a git clone if the necessary
-	 */
 	public function onBeforeWrite() {
 		parent::onBeforeWrite();
 
-		$this->checkProjectPath();
-		$this->checkCVSPath();
-	}
-
-	/**
-	 * Ensure the path for this project has been created
-	 */
-	protected function checkProjectPath() {
-		// Create the project capistrano folder
 		if($this->CreateEnvFolder && !file_exists($this->getProjectFolderPath())) {
-			mkdir($this->DNData()->getEnvironmentDir().'/'.$this->Name);
+			mkdir($this->getProjectFolderPath());
 		}
 	}
 
-	/**
-	 * Check if the CVSPath has been changed, and if so, ensure the repository has been updated
-	 */
-	protected function checkCVSPath() {
-		$changedFields = $this->getChangedFields(true, 2);
+	public function onAfterWrite() {
+		parent::onAfterWrite();
+
 		if(!$this->CVSPath) {
 			return;
 		}
+
+		$changedFields = $this->getChangedFields(true, 2);
 		if(isset($changedFields['CVSPath']) || isset($changedFields['Name'])) {
 			$this->cloneRepo();
 		}
@@ -711,12 +709,14 @@ class DNProject extends DataObject {
 			$env->delete();
 		}
 
-		if(!file_exists($this->getProjectFolderPath())) {
-			return;
+		// Delete local repository
+		if(file_exists($this->getLocalCVSPath())) {
+			Filesystem::removeFolder($this->getLocalCVSPath());
 		}
-		// Create a basic new environment config from a template
-		if(Config::inst()->get('DNEnvironment', 'allow_web_editing')) {
-			FileSystem::removeFolder($this->getProjectFolderPath());
+
+		// Delete project template
+		if(file_exists($this->getProjectFolderPath()) && Config::inst()->get('DNEnvironment', 'allow_web_editing')) {
+			Filesystem::removeFolder($this->getProjectFolderPath());
 		}
 	}
 
@@ -902,7 +902,7 @@ class DNProject extends DataObject {
 	 * @return string
 	 */
 	protected function getProjectFolderPath() {
-		return $this->DNData()->getEnvironmentDir().'/'.$this->Name;
+		return sprintf('%s/%s', $this->DNData()->getEnvironmentDir(), $this->Name);
 	}
 
 	/**

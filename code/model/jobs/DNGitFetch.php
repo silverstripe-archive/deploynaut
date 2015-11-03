@@ -18,6 +18,9 @@ class DNGitFetch extends DataObject {
 	 */
 	private static $db = array(
 		"ResqueToken" => "Varchar(255)",
+		// Observe that this is not the same as Resque status, since ResqueStatus is not persistent
+		// It's used for finding successful deployments and displaying that in history views in the frontend
+		"Status" => "Enum('Queued, Started, Finished, Failed, n/a', 'n/a')",
 	);
 
 	/**
@@ -25,21 +28,31 @@ class DNGitFetch extends DataObject {
 	 */
 	private static $has_one = array(
 		"Project" => "DNProject",
-		"Deployer" =>"Member",
+		"Deployer" => "Member"
 	);
 
 	/**
-	 * Queue a fetch job
+	 * @param int $int
+	 * @return string
 	 */
-	public function start() {
+	public static function map_resque_status($int) {
+		$remap = array(
+			Resque_Job_Status::STATUS_WAITING => "Queued",
+			Resque_Job_Status::STATUS_RUNNING => "Running",
+			Resque_Job_Status::STATUS_FAILED => "Failed",
+			Resque_Job_Status::STATUS_COMPLETE => "Complete",
+			false => "Invalid",
+		);
+		return $remap[$int];
+	}
+
+	/**
+	 * Queue a fetch job
+	 * @param bool $forceClone Force repository to be re-cloned
+	 */
+	public function start($forceClone = false) {
 		$project = $this->Project();
 		$log = $this->log();
-
-		$args = array(
-			'projectName' => $project->Name,
-			'logfile' => $this->logfile(),
-			'env' => $project->getProcessEnv()
-		);
 
 		if(!$this->DeployerID) {
 			$this->DeployerID = Member::currentUserID();
@@ -55,6 +68,17 @@ class DNGitFetch extends DataObject {
 			);
 			$log->write($message);
 		}
+
+		// write first, so we have the ID. We have to write again
+		// later once we have the resque token.
+		$this->write();
+
+		$args = array(
+			'projectID' => $project->ID,
+			'logfile' => $this->logfile(),
+			'fetchID' => $this->ID,
+			'forceClone' => $forceClone
+		);
 
 		$token = Resque::enqueue('git', 'FetchJob', $args, true);
 		$this->ResqueToken = $token;
@@ -99,19 +123,26 @@ class DNGitFetch extends DataObject {
 	}
 
 	/**
+	 * Returns the status of the resque job
+	 *
 	 * @return string
 	 */
 	public function ResqueStatus() {
 		$status = new Resque_Job_Status($this->ResqueToken);
-
-		$remap = array(
-			Resque_Job_Status::STATUS_WAITING => "Queued",
-			Resque_Job_Status::STATUS_RUNNING => "Running",
-			Resque_Job_Status::STATUS_FAILED => "Failed",
-			Resque_Job_Status::STATUS_COMPLETE => "Complete",
-			false => "Invalid",
-		);
-
-		return $remap[$status->get()];
+		$statusCode = $status->get();
+		// The Resque job can no longer be found, fallback to the DNDeployment.Status
+		if($statusCode === false) {
+			// Translate from the DNDeployment.Status to the Resque job status for UI purposes
+			switch($this->Status) {
+				case 'Finished':
+					return 'Complete';
+				case 'Started':
+					return 'Running';
+				default:
+					return $this->Status;
+			}
+		}
+		return self::map_resque_status($statusCode);
 	}
+
 }
