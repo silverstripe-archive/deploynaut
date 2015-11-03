@@ -770,7 +770,7 @@ class DNEnvironment extends DataObject {
 		try {
 			$repo = $this->Project()->getRepository();
 			if($repo !== false) {
-				$commit = new \Gitonomy\Git\Commit($repo, 'asdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasd');
+				$commit = new \Gitonomy\Git\Commit($repo, $sha);
 				return [
 					'AuthorName' => (string)Convert::raw2xml($commit->getAuthorName()),
 					'AuthorEmail' => (string)Convert::raw2xml($commit->getAuthorEmail()),
