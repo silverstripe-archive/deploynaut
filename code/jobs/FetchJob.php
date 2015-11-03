@@ -23,27 +23,33 @@ class FetchJob {
 		$path = $project->getLocalCVSPath();
 		$env = $this->args['env'];
 
-		$log->write('Starting git fetch for project "' . $project->Name . '"');
+		try {
+			$log->write('Starting git fetch for project "' . $project->Name . '"');
 
-		// if an alternate user has been configured for clone, run the command as that user
-		// @todo Gitonomy doesn't seem to have any way to prefix the command properly, if you
-		// set 'sudo -u composer git' as the "command" parameter, it tries to run the whole
-		// thing as a single command and fails
-		$user = DNData::inst()->getGitUser();
-		if(!empty($user)) {
-			$command = sprintf('cd %s && sudo -u %s git fetch -p origin +refs/heads/*:refs/heads/* --tags', $path, $user);
-			$process = new \Symfony\Component\Process\Process($command);
-			$process->setEnv($env);
-			$process->setTimeout(3600);
-			$process->run();
-			if(!$process->isSuccessful()) {
-				throw new RuntimeException($process->getErrorOutput());
+			// if an alternate user has been configured for clone, run the command as that user
+			// @todo Gitonomy doesn't seem to have any way to prefix the command properly, if you
+			// set 'sudo -u composer git' as the "command" parameter, it tries to run the whole
+			// thing as a single command and fails
+			$user = DNData::inst()->getGitUser();
+			if(!empty($user)) {
+				$command = sprintf('cd %s && sudo -u %s git fetch -p origin +refs/heads/*:refs/heads/* --tags', $path, $user);
+				$process = new \Symfony\Component\Process\Process($command);
+				$process->setEnv($env);
+				$process->setTimeout(3600);
+				$process->run();
+				if(!$process->isSuccessful()) {
+					throw new RuntimeException($process->getErrorOutput());
+				}
+			} else {
+				$repository = new Gitonomy\Git\Repository($path, array('environment_variables' => $env));
+				$repository->run('fetch', array('-p', 'origin', '+refs/heads/*:refs/heads/*', '--tags'));
 			}
-		} else {
-			$repository = new Gitonomy\Git\Repository($path, array('environment_variables' => $env));
-			$repository->run('fetch', array('-p', 'origin', '+refs/heads/*:refs/heads/*', '--tags'));
+		} catch(Exception $e) {
+			$log->write($e->getMessage());
+			throw $e;
 		}
 
 		$log->write('Git fetch is finished');
 	}
+
 }
