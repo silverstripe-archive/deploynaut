@@ -57,7 +57,7 @@ abstract class PackageGenerator {
  		// Default, cacheless implementation
  		} else {
  			$filename = TEMP_FOLDER . '/' . $sha . '.tar.gz';
- 			if($this->generatePackage($sha, $repositoryDir, $outputFilename, $log)) {
+ 			if($this->generatePackage($sha, $repositoryDir, $filename, $log)) {
  				return $filename;
  			}
  		}
