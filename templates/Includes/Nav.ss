@@ -1,7 +1,7 @@
 <li class="nav-main-heading">
 	Stacks
 	<% if $canCreateProjects %>
-		<a href="{$Link}createproject" class="badge nav-add-stack">+</a>
+		<a href="naut/createstack" class="badge nav-add-stack">+</a>
 	<% end_if %>
 </li>
 
