@@ -21,17 +21,41 @@ var DeployKeyTest = React.createClass({
 			);
 		}
 
+		if(this.props.repoInterface == 'Github') {
+			var deployKeyHelp = (
+				<p>
+					<i className="fa fa-github"></i> <a href="https://developer.github.com/guides/managing-deploy-keys/#deploy-keys" target="_blank">Deploy key help</a>
+				</p>
+			);
+		}  else if (this.props.repoInterface == 'Bitbucket') {
+			var deployKeyHelp = (
+				<p>
+					<i className="fa fa-bitbucket"></i> <a href="https://confluence.atlassian.com/bitbucket/use-deployment-keys-294486051.html" target="_blank">Deploy key help</a>
+				</p>
+			);
+		} else if (this.props.repoInterface == 'Gitlab') {
+			var deployKeyHelp = (
+				<p>
+					<img src="deploynaut/img/gitlab.png" alt="Gitlab" className="gitlab-icon" /> <a href="http://doc.gitlab.com/ce/ssh/README.html#deploy-keys" target="_blank">Deploy key help</a>
+				</p>
+			);
+		} else {
+			var deployKeyHelp = (
+				<ul className="list-inline">
+					<li><i className="fa fa-github"></i> <a href="https://developer.github.com/guides/managing-deploy-keys/#deploy-keys" target="_blank">Github</a></li>
+					<li><i className="fa fa-bitbucket"></i> <a href="https://confluence.atlassian.com/bitbucket/use-deployment-keys-294486051.html" target="_blank">Bitbucket</a></li>
+					<li><img src="deploynaut/img/gitlab.png" alt="Gitlab" className="gitlab-icon" /> <a href="http://doc.gitlab.com/ce/ssh/README.html#deploy-keys" target="_blank">Gitlab</a></li>
+				</ul>
+			);
+		}
+
 		return (
 			<div className="add-deploy-key">
-				<h2>Add your deploy key...</h2>
+				<h2>One more thing...</h2>
 				<div className="row">
 					<div className="col-md-6 col-md-offset-3">
-						<p>To give us access to your private repositories you will need to add the deploy key below. How you add this will differ depending on what platform you host your GIT repository on:</p>
-						<ul className="list-inline">
-							<li><i className="fa fa-github"></i> <a href="https://developer.github.com/guides/managing-deploy-keys/#deploy-keys" target="_blank">Github</a></li>
-							<li><i className="fa fa-bitbucket"></i> <a href="https://confluence.atlassian.com/bitbucket/use-deployment-keys-294486051.html" target="_blank">Bitbucket</a></li>
-							<li><img src="deploynaut/img/gitlab.png" alt="Gitlab" className="gitlab-icon" /> <a href="http://doc.gitlab.com/ce/ssh/README.html#deploy-keys" target="_blank">Gitlab</a></li>
-						</ul>
+						<p>Whilst your environments are being built, please ensure we can access your private repositories by adding the deploy key below and testing access.</p>
+						{deployKeyHelp}
 					</div>
 				</div>
 				<div className="col-md-8 col-md-offset-2 text-left" id="deploy-key-test-holder">

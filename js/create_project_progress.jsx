@@ -78,7 +78,7 @@ var CreateProjectProgress = React.createClass({
 	render: function() {
 		if(!this.state.complete) {
 			var deployKey = (
-				<DeployKeyTest deployKey={this.props.deployKey} initialCanAccessRepo={this.props.canAccessRepo} deployKeyTestUrl={this.props.deployKeyTestUrl} />
+				<DeployKeyTest deployKey={this.props.deployKey} initialCanAccessRepo={this.props.canAccessRepo} deployKeyTestUrl={this.props.deployKeyTestUrl} repoInterface={this.props.repoInterface} />
 			);
 		}
 
@@ -150,6 +150,11 @@ var CreateProjectProgress = React.createClass({
 
 					<h1>Your environments are on their way!</h1>
 					<p>We're currently building your environments which can take 15-45 minutes, depending on current traffic.</p>
+					<div className="row">
+						<div className="col-md-4 col-md-offset-4">
+							<pre>{this.props.gitUrl}</pre>
+						</div>
+					</div>
 					{deployKey}
 				</div>
 			);
