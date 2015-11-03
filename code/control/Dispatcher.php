@@ -1,7 +1,32 @@
 <?php
+/**
+ * Dispatcher provides functionality to make it easier to work with frontend React components.
+ *
+ * First, create your own dispatcher:
+ *	class Dispatcher extends \Dispatcher {...}
+ *
+ * Then render a template:
+ *	$getReactComponent(SomeForm)
+ *
+ * Provide initial model:
+ *  public function getSomeFormModel() {
+ *      return [
+ *          'Key' => 'Value'
+ *      ];
+ *  }
+ *
+ * Then hook up JS. This will automatically make the model available as this.props.model, and render the component
+ * in the spot specified in the template:
+ *	var Tools = require('../../deploynaut/js/tools.jsx');
+ *	var TrialStackCreator = require('./SomeForm.jsx');
+ *  Tools.install(SomeForm, 'SomeForm');
+ */
 
 abstract class Dispatcher extends DNRoot {
 
+	/**
+	 * Specify path where your gulp outputs live.
+	 */
 	abstract public function getRelativeStaticPath();
 
 	public function init() {
@@ -9,6 +34,14 @@ abstract class Dispatcher extends DNRoot {
 		$this->includeFrontend();
 	}
 
+	/**
+	 * Renders the initial HTML needed to bootstrap the react component.
+	 *
+	 * Usage: $getReactComponent(YourFormOrWhatever);
+	 *
+	 * @param string $name Used to name the DOM elements and obtain the initial model.
+	 * @return string A snippet good for adding to a SS template.
+	 */
 	public function getReactComponent($name) {
 		$modelName = sprintf('get%sModel', $name);
 		if ($this->hasMethod($modelName)) {
@@ -39,6 +72,8 @@ abstract class Dispatcher extends DNRoot {
 	 * Convert validator errors to JSON response.
 	 * [{"fieldName":"Name","message":"Message.","messageType":"bad"}]
 	 *
+	 * @param int $code HTTP status code.
+	 * @param array $validatorErrors Result of calling Validator::validate
 	 * @return \SS_HTTPResponse
 	 */
 	public function asJSONValidatorErrors($code, $validatorErrors) {
@@ -66,6 +101,12 @@ abstract class Dispatcher extends DNRoot {
 		return $response;
 	}
 
+	/**
+	 * Return JSON response, good for responding to AJAX requests.
+	 * It will magically update the security token and proxy pending redirects.
+	 *
+	 * @param array $data Data to be passed to the frontend.
+	 */
 	public function asJSON($data = []) {
 		$securityToken = $this->getSecurityToken();
 		$securityToken->reset();
@@ -106,6 +147,11 @@ abstract class Dispatcher extends DNRoot {
 		\Requirements::css(sprintf('%s/style.css', $this->getRelativeStaticPath()));
 	}
 
+	/**
+	 * Decode the data submitted by the form.jsx control.
+	 *
+	 * @return array
+	 */
 	protected function getFormData() {
 		return json_decode($this->request->postVar('Details'), true);
 	}

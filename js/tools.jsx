@@ -10,6 +10,10 @@ module.exports = {
 		return JSON.parse(decodeElement.value);
 	},
 
+	/**
+	 * Render the specified react component onto the DOM Dispatcher shim named "name".
+	 * See Dispatcher for description.
+	 */
 	install: function (reactElement, name) {
 		containerId = name;
 
