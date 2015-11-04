@@ -1304,11 +1304,11 @@ a.text-warning:focus {
   color: #66512c; }
 
 .text-danger {
-  color: #a94442; }
+  color: #ce4844; }
 
 a.text-danger:hover,
 a.text-danger:focus {
-  color: #843534; }
+  color: #b1322e; }
 
 .bg-primary {
   color: #fff; }
@@ -2835,24 +2835,24 @@ select[multiple].input-lg, .input-group-lg > select[multiple],
 .has-error.checkbox label,
 .has-error.radio-inline label,
 .has-error.checkbox-inline label {
-  color: #a94442; }
+  color: #ce4844; }
 
 .has-error .form-control, .has-error input.text, .has-error select, .has-error textarea, .has-error .readonly span.readonly, .readonly .has-error span.readonly {
-  border-color: #a94442;
+  border-color: #ce4844;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); }
   .has-error .form-control:focus, .has-error input.text:focus, .has-error select:focus, .has-error textarea:focus, .has-error .readonly span.readonly:focus, .readonly .has-error span.readonly:focus {
-    border-color: #843534;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ce8483;
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ce8483; }
+    border-color: #b1322e;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #e39795;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #e39795; }
 
 .has-error .input-group-addon {
-  color: #a94442;
-  border-color: #a94442;
+  color: #ce4844;
+  border-color: #ce4844;
   background-color: #f2dede; }
 
 .has-error .form-control-feedback {
-  color: #a94442; }
+  color: #ce4844; }
 
 .has-feedback label ~ .form-control-feedback {
   top: 25px; }
@@ -5320,7 +5320,7 @@ a.thumbnail.active {
 .message.required, .alert-error.disk-quota, .alert-error.deploy-dropdown-errors, .alert.Failed, .Failed.disk-quota, .Failed.deploy-dropdown-errors, .disk-quota.danger, .deploy-dropdown.error, .deploy-dropdown-errors {
   background-color: #f2dede;
   border-color: #ebccd1;
-  color: #a94442; }
+  color: #ce4844; }
   .alert-danger hr, .alert.alert-error hr,
   .message.bad hr,
   .message.required hr, .alert-error.disk-quota hr, .alert-error.deploy-dropdown-errors hr, .alert.Failed hr, .Failed.disk-quota hr, .Failed.deploy-dropdown-errors hr, .disk-quota.danger hr, .deploy-dropdown.error hr, .deploy-dropdown-errors hr {
@@ -5328,7 +5328,7 @@ a.thumbnail.active {
   .alert-danger .alert-link, .alert.alert-error .alert-link,
   .message.bad .alert-link,
   .message.required .alert-link, .alert-error.disk-quota .alert-link, .alert.Failed .alert-link, .Failed.disk-quota .alert-link, .disk-quota.danger .alert-link, .deploy-dropdown.error .alert-link, .deploy-dropdown-errors .alert-link {
-    color: #843534; }
+    color: #b1322e; }
 
 @-webkit-keyframes progress-bar-stripes {
   from {
@@ -5612,12 +5612,12 @@ button.list-group-item-warning {
     border-color: #8a6d3b; }
 
 .list-group-item-danger {
-  color: #a94442;
+  color: #ce4844;
   background-color: #f2dede; }
 
 a.list-group-item-danger,
 button.list-group-item-danger {
-  color: #a94442; }
+  color: #ce4844; }
   a.list-group-item-danger .list-group-item-heading,
   button.list-group-item-danger .list-group-item-heading {
     color: inherit; }
@@ -5625,7 +5625,7 @@ button.list-group-item-danger {
   a.list-group-item-danger:focus,
   button.list-group-item-danger:hover,
   button.list-group-item-danger:focus {
-    color: #a94442;
+    color: #ce4844;
     background-color: #ebcccc; }
   a.list-group-item-danger.active,
   a.list-group-item-danger.active:hover,
@@ -5634,8 +5634,8 @@ button.list-group-item-danger {
   button.list-group-item-danger.active:hover,
   button.list-group-item-danger.active:focus {
     color: #fff;
-    background-color: #a94442;
-    border-color: #a94442; }
+    background-color: #ce4844;
+    border-color: #ce4844; }
 
 .list-group-item-heading {
   margin-top: 0;
@@ -5937,14 +5937,14 @@ button.list-group-item-danger {
 .panel-danger {
   border-color: #ebccd1; }
   .panel-danger > .panel-heading {
-    color: #a94442;
+    color: #ce4844;
     background-color: #f2dede;
     border-color: #ebccd1; }
     .panel-danger > .panel-heading + .panel-collapse > .panel-body {
       border-top-color: #ebccd1; }
     .panel-danger > .panel-heading .badge {
       color: #f2dede;
-      background-color: #a94442; }
+      background-color: #ce4844; }
   .panel-danger > .panel-footer + .panel-collapse > .panel-body {
     border-bottom-color: #ebccd1; }
 
@@ -10702,7 +10702,7 @@ td > .deployment-tag {
 .field.dropdown select.validation-error, .form-group textarea.validation-error, .field.text textarea.validation-error,
 .field.dropdown textarea.validation-error, .form-group .readonly span.validation-error.readonly, .readonly .form-group span.validation-error.readonly, .field.text .readonly span.validation-error.readonly,
 .readonly .field.text span.validation-error.readonly, .field.dropdown .readonly span.validation-error.readonly, .readonly .field.dropdown span.validation-error.readonly {
-  border-color: #ce8483; }
+  border-color: #ce4844; }
   .form-group .form-control.validation-error:focus, .field.text .form-control.validation-error:focus,
   .field.dropdown .form-control.validation-error:focus, .form-group input.validation-error.text:focus, .field.text input.validation-error.text:focus,
   .field.dropdown input.validation-error.text:focus, .form-group select.validation-error:focus, .field.text select.validation-error:focus,
