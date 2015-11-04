@@ -13,16 +13,7 @@
 
 		<% with $CurrentProject %>
 
-			<% if $CreateEnvironmentLink %>
-				<div class="row">
-					<div class="col-md-12">
-						<a href="$CreateEnvironmentLink" class="btn btn-primary pull-right">
-							<i class="fa fa-plus"></i>
-							Create Environment
-						</a>
-					</div>
-				</div>
-			<% end_if %>
+			<% include ProjectActions %>
 
 			<div class="table-responsive">
 				<table class="table table-striped table-hover">
