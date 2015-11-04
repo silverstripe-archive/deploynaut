@@ -4,7 +4,7 @@ class GitSHA extends Varchar {
 
 	/**
 	 * @param string|null $name
-	 * @param array|null $options
+	 * @param array $options
 	 */
 	public function __construct($name = null, $options = array()) {
 		// Size should probably be 40, but to avoid schema change leave for now

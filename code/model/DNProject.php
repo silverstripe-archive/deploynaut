@@ -10,6 +10,7 @@
  *
  * @method HasManyList Environments()
  * @method ManyManyList Viewers()
+ * @method ManyManyList StarredBy()
  */
 class DNProject extends DataObject {
 

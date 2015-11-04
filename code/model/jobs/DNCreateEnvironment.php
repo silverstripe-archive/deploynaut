@@ -1,6 +1,23 @@
 <?php
+
+/**
+ * DNCreateEnvironment
+ *
+ * @property string Data
+ * @property string ResqueToken
+ * @property string Status
+ * @property bool IsInitialEnvironment
+ *
+ * @method DNProject Project()
+ * @property int $ProjectID
+ * @method Member Creator()
+ * @property int $CreatorID
+ */
 class DNCreateEnvironment extends DataObject {
 
+	/**
+	 * @var array
+	 */
 	private static $db = array(
 		'Data' => 'Text',
 		'ResqueToken' => 'Varchar(255)',
@@ -8,6 +25,9 @@ class DNCreateEnvironment extends DataObject {
 		'IsInitialEnvironment' => 'Boolean',
 	);
 
+	/**
+	 * @var array
+	 */
 	private static $has_one = array(
 		'Project' => 'DNProject',
 		'Creator' => 'Member'
@@ -29,19 +49,31 @@ class DNCreateEnvironment extends DataObject {
 		return $remap[$int];
 	}
 
+	/**
+	 * @return string
+	 */
 	public function Name() {
 		$data = unserialize($this->Data);
 		return !empty($data['Name']) ? Convert::raw2xml($data['Name']) : '';
 	}
 
+	/**
+	 * @return string
+	 */
 	public function Link() {
 		return Controller::join_links($this->Project()->Link(), 'createenv', $this->ID);
 	}
 
+	/**
+	 * @return string
+	 */
 	public function LogLink() {
 		return $this->Link() . '/log';
 	}
 
+	/**
+	 * @return boolean
+	 */
 	public function canView($member = null) {
 		return $this->Project()->canView($member);
 	}
@@ -149,6 +181,7 @@ class DNCreateEnvironment extends DataObject {
 	 * Fetches the EnvironmentCreateBackend based on the EnvironmentType saved to this job.
 	 *
 	 * @return EnvironmentCreateBackend|null
+	 * @throws Exception
 	 */
 	public function getBackend() {
 		$data = unserialize($this->Data);

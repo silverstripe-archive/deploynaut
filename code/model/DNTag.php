@@ -1,6 +1,6 @@
 <?php
 
-use Gitonomy\Git\Tag;
+use Gitonomy\Git\Reference\Tag;
 
 class DNTag extends ViewableData {
 
