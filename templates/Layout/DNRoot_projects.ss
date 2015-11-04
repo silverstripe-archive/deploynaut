@@ -8,7 +8,7 @@
 </div>
 <div class="content">
 
-	<% include ProjectActions %>
+	<% include ProjectsActions %>
 
 	<%-- Dont show the search/filter if there are less than 5 projects in the list --%>
 	<% if $DNProjectList.count > 5 %>
