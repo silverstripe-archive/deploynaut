@@ -17,10 +17,6 @@ validator.extend('equalsField', function (string, firstFieldID, secondFieldID ) 
 	return firstValue === secondValue;
 });
 
-validator.extend('isGit', function (string) {
-	return string.match(/((git|ssh|http(s)?)|(git@[\w\.]+))(:(\/\/)?)([\w\.@\:\/\-~]+)(\.git)(\/)?/);
-});
-
 var Form = React.createClass({
 
 	getInitialState: function () {
