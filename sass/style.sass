@@ -333,11 +333,21 @@ ol.list
 	.nav a
 		padding: 18px 16px 21px
 
+		.title
+			@media (max-width: $screen-sm)
+				display: none !important
+
 		i
 			margin-right: 5px
+			font-size: 16px
+
+			@media (max-width: $screen-sm)
+				margin-right: 0
+				font-size: 18px
+				line-height: 24px
 
 	.nav li.pull-right:first-child a
-		padding-right: 32px
+		margin-right: $grid-gutter-width
 
 	.nav li.active a
 		color: $gray-darker
