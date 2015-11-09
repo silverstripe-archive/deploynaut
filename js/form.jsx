@@ -253,6 +253,7 @@ var Form = React.createClass({
 	 * Triggers errors on form fields matching passed object's keys.
 	 */
 	setErrorsOnInputs: function (errors) {
+		var formError = [];
 		_.keys(errors).forEach(function (name) {
 
 			if (typeof this.inputs[name]!=='undefined' && this.inputs[name]) {
@@ -262,9 +263,16 @@ var Form = React.createClass({
 					isValid: false,
 					serverError: errors[name]
 				});
+			} else {
+				// If the field does not exist, fall back to the global form error.
+				formError.push(errors[name]);
 			}
 
 		}.bind(this));
+
+		if (formError.length>0) {
+			this.setErrorOnForm(formError.join('<br/>'));
+		}
 	},
 
 	render: function () {
