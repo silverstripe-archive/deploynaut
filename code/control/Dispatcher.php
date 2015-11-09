@@ -153,7 +153,35 @@ abstract class Dispatcher extends DNRoot {
 	 * @return array
 	 */
 	protected function getFormData() {
-		return json_decode($this->request->postVar('Details'), true);
+		return $this->stripNonPrintables(json_decode($this->request->postVar('Details'), true));
+	}
+
+	/**
+	 * @param string|array
+	 * @return string
+	 */
+	protected function trimWhitespace($val) {
+		if(is_array($val)) {
+			foreach($val as $k => $v) $val[$k] = $this->trimWhitespace($v);
+			return $val;
+		} else {
+			return trim($val);
+		}
+	}
+
+	/**
+	 * Remove control characters from the input.
+	 *
+	 * @param string|array
+	 * @return string
+	 */
+	protected function stripNonPrintables($val) {
+		if(is_array($val)) {
+			foreach($val as $k => $v) $val[$k] = $this->stripNonPrintables($v);
+			return $val;
+		} else {
+			return preg_replace('/[[:cntrl:]]/', '', $val);
+		}
 	}
 
 }
