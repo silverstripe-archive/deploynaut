@@ -138,12 +138,6 @@ abstract class Dispatcher extends DNRoot {
 	 * TODO this is questionable because it relies on a certain layout of the gulpfile builder.
 	 */
 	protected function includeFrontend() {
-		if(\Director::isDev()) {
-			\Requirements::javascript(sprintf('%s/bundle-debug.js', $this->getRelativeStaticPath()));
-		} else {
-			\Requirements::javascript(sprintf('%s/bundle.js', $this->getRelativeStaticPath()));
-		}
-
 		\Requirements::css(sprintf('%s/style.css', $this->getRelativeStaticPath()));
 	}
 
