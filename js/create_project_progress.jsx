@@ -151,8 +151,11 @@ var CreateProjectProgress = React.createClass({
 					<h1>Your environments are on their way!</h1>
 					<p>We're currently building your environments which can take 15-45 minutes, depending on current traffic.</p>
 					<div className="row">
-						<div className="col-md-4 col-md-offset-4">
-							<pre>{this.props.gitUrl}</pre>
+						<div className="col-md-6 col-md-offset-3">
+							<div className="create-page-git">
+								<span className="title">Repository</span>
+								<input type="readonly" value={this.props.gitUrl} />
+							</div>
 						</div>
 					</div>
 					{deployKey}
