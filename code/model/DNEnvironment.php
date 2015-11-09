@@ -1160,6 +1160,11 @@ PHP
 		if($this->config()->get('allow_web_editing') && $this->envFileExists()) {
 			unlink($this->getConfigFilename());
 		}
+
+		$create = $this->CreateEnvironment();
+		if($create && $create->exists()) {
+			$create->delete();
+		}
 	}
 
 	/**
