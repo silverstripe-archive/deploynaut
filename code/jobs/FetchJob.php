@@ -43,6 +43,10 @@ class FetchJob {
 		}
 
 		$this->project = DNProject::get()->byId($this->args['projectID']);
+		if(!($this->project && $this->project->exists())) {
+			throw new RuntimeException(sprintf('Project ID %s not found', $this->args['projectID']));
+		}
+
 		$this->user = DNData::inst()->getGitUser() ?: null;
 
 		// Disallow concurrent git fetches on the same project.
