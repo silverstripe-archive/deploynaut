@@ -20,7 +20,7 @@ var onError = function (err) {
 // Dedicated task for debug - propagating maps from reactify via sourcemaps+uglify
 // prevented the ability to debug local scope variables.
 gulp.task('js-debug', function() {
-	browserify('js/base.jsx', {debug: true})
+	browserify('js/platform.jsx', {debug: true})
 		.transform('reactify')
 		// For now we are loading react from the global state.
 		.exclude('react')
@@ -31,7 +31,7 @@ gulp.task('js-debug', function() {
 });
 
 gulp.task('js', function() {
-	browserify('js/base.jsx')
+	browserify('js/platform.jsx')
 		.transform('reactify')
 		// For now we are loading react from the global state.
 		.exclude('react')

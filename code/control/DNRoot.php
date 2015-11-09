@@ -190,10 +190,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			)
 		);
 
-		if (\Director::isDev()) {
-			\Requirements::javascript('deploynaut/static/bundle-debug.js');
-		} else {
-			\Requirements::javascript('deploynaut/static/bundle.js');
+		// Load the buildable dependencies only if not loaded centrally.
+		if (!is_dir(BASE_PATH . DIRECTORY_SEPARATOR . 'static')) {
+			if (\Director::isDev()) {
+				\Requirements::javascript('deploynaut/static/bundle-debug.js');
+			} else {
+				\Requirements::javascript('deploynaut/static/bundle.js');
+			}
 		}
 
 		Requirements::css('deploynaut/static/style.css');
