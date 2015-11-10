@@ -146,8 +146,10 @@ class FetchJob {
 
 		if(!empty($this->args['fetchID'])) {
 			$fetch = DNGitFetch::get()->byID($this->args['fetchID']);
-			$fetch->Status = $status;
-			$fetch->write();
+			if($fetch && $fetch->exists()) {
+				$fetch->Status = $status;
+				$fetch->write();
+			}
 		}
 	}
 
