@@ -175,20 +175,18 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// puts them halfway through the page to the nearest <script> tag. We don't want that.
 		Requirements::set_force_js_to_bottom(true);
 
-		Requirements::combine_files(
-			'deploynaut.js',
-			array(
-				'deploynaut/javascript/jquery.js',
-				'deploynaut/javascript/bootstrap.js',
-				'deploynaut/javascript/q.js',
-				'deploynaut/javascript/tablefilter.js',
-				'deploynaut/javascript/deploynaut.js',
-				'deploynaut/javascript/react-with-addons.js',
-				'deploynaut/javascript/bootstrap.file-input.js',
-				'deploynaut/thirdparty/select2/dist/js/select2.min.js',
-				'deploynaut/javascript/material.js',
-			)
-		);
+		// todo these should be bundled into the same JS as the others in "static" below.
+		// We've deliberately not used combined_files as it can mess with some of the JS used
+		// here and cause sporadic errors.
+		Requirements::javascript('deploynaut/javascript/jquery.js');
+		Requirements::javascript('deploynaut/javascript/bootstrap.js');
+		Requirements::javascript('deploynaut/javascript/q.js');
+		Requirements::javascript('deploynaut/javascript/tablefilter.js');
+		Requirements::javascript('deploynaut/javascript/deploynaut.js');
+		Requirements::javascript('deploynaut/javascript/react-with-addons.js');
+		Requirements::javascript('deploynaut/javascript/bootstrap.file-input.js');
+		Requirements::javascript('deploynaut/thirdparty/select2/dist/js/select2.min.js');
+		Requirements::javascript('deploynaut/javascript/material.js');
 
 		// Load the buildable dependencies only if not loaded centrally.
 		if (!is_dir(BASE_PATH . DIRECTORY_SEPARATOR . 'static')) {
