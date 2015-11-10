@@ -719,6 +719,11 @@ class DNProject extends DataObject {
 		if(file_exists($this->getProjectFolderPath()) && Config::inst()->get('DNEnvironment', 'allow_web_editing')) {
 			Filesystem::removeFolder($this->getProjectFolderPath());
 		}
+
+		// Delete the deploy key
+		if(file_exists($this->getKeyDir())) {
+			Filesystem::removeFolder($this->getKeyDir());
+		}
 	}
 
 	/**
