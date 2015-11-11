@@ -28,7 +28,7 @@ var Form = React.createClass({
 
 	componentWillReceiveProps: function(nextProps) {
 		if(!nextProps.securityID) {
-			return
+			return;
 		}
 		this.setState({
 			securityID: nextProps.securityID
@@ -42,6 +42,11 @@ var Form = React.createClass({
 		this.inputs = {};
 		// these are the child components that will be rendered
 		this.amendedChildren = React.Children.map(this.props.children, this.amendChildren);
+	},
+
+	componentWillUpdate: function(nextProps, nextState) {
+		// these are the child components that will be rendered
+		this.amendedChildren = React.Children.map(nextProps.children, this.amendChildren);
 	},
 
 	// We will need to clone the child component(s) because we need to add and
@@ -308,6 +313,13 @@ var Form = React.createClass({
 	}
 });
 
+/**
+ * Provides generic form input functionality that can be used to build your own form controls.
+ *
+ * @prop value Gets set as the initial value on the form control (like defaultValue in normal React inputs)
+ * @prop onSetValue Handler called when the value changes, including when the initial value is set. The new value
+ *	is passed as a parameter.
+ */
 var InputMixin = {
 	getInitialState: function () {
 		return {
@@ -318,6 +330,12 @@ var InputMixin = {
 	},
 	componentWillMount: function () {
 		this.props.attachToForm(this);
+		if (_.has(this.props, 'onSetValue')) this.props.onSetValue(this.props.value);
+	},
+	componentWillUpdate: function(nextProps, nextState) {
+		if (this.state.value!=nextState.value) {
+			if (_.has(this.props, 'onSetValue')) this.props.onSetValue(nextState.value);
+		}
 	},
 	componentWillUnmount: function () {
 		this.props.detachFromForm(this);
@@ -327,7 +345,6 @@ var InputMixin = {
 			value: event.currentTarget.value,
 			isValid: true
 		});
-
 	}
 };
 
