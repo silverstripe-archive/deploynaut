@@ -367,6 +367,43 @@ var Input = React.createClass({
 	}
 });
 
+/**
+ * Requires an array of objects containing "id" and "value" props.
+ */
+var Select = React.createClass({
+	mixins: [InputMixin],
+
+	componentDidMount: function() {
+		// Trigger handler only needed if there is no explicit button.
+		$(React.findDOMNode(this.refs.selector)).select2().on("change", this.setValue);
+	},
+
+	render: function () {
+		var className = 'form-control';
+		var alert;
+		if (!this.state.isValid) {
+			alert = <div className='validation-message'>{this.state.serverError || this.props.validationError}</div>;
+			className += ' validation-error';
+		}
+
+		var self = this;
+		var options = this.props.options.map(function(option) {
+			return (
+				<option key={option.id} value={option.id}>{option.value}</option>
+			);
+		});
+
+		return (
+			<div>
+				{alert}
+				<select ref="selector" id={this.props.name} className={className} name={this.props.name} onChange={this.setValue} value={this.state.value}>
+					{options}
+				</select>
+			</div>
+		);
+	}
+});
+
 var Password = React.createClass({
 	mixins: [InputMixin],
 	render: function () {
@@ -408,5 +445,6 @@ var PasswordConfirm = React.createClass({
 exports.Form = Form;
 exports.InputMixin = InputMixin;
 exports.Input = Input;
+exports.Select = Select;
 exports.Password = Password;
 exports.PasswordConfirm = PasswordConfirm;
