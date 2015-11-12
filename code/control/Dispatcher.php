@@ -1,54 +1,32 @@
 <?php
 /**
  * Dispatcher provides functionality to make it easier to work with frontend React components.
+ * See deploynaut/docs/dispatcher.md for more information.
  *
- * First, create your own dispatcher:
- *	class Dispatcher extends \Dispatcher {...}
- *
- * Then render a template:
- *	$getReactComponent(SomeForm)
- *
- * Provide initial model:
- *  public function getSomeFormModel() {
- *      return [
- *          'Key' => 'Value'
- *      ];
- *  }
- *
- * Then hook up JS. This will automatically make the model available as this.props.model, and render the component
- * in the spot specified in the template:
- *	var Tools = require('../../deploynaut/js/tools.jsx');
- *	var TrialStackCreator = require('./SomeForm.jsx');
- *  Tools.install(SomeForm, 'SomeForm');
+ * @todo: currently we can't have more than one component mounted in parallel on any given Dispatcher,
+ * because the SecurityID will diverge as soon as one of these components submit.
  */
 
 abstract class Dispatcher extends DNRoot {
 
 	/**
-	 * Specify path where your gulp outputs live.
+	 * Generate the data structure used by the frontend component.
+	 *
+	 * @param string $name of the component
+	 * @return array
 	 */
-	abstract public function getRelativeStaticPath();
-
-	public function init() {
-		parent::init();
-		$this->includeFrontend();
-	}
+	abstract public function getModel($name);
 
 	/**
 	 * Renders the initial HTML needed to bootstrap the react component.
 	 *
-	 * Usage: $getReactComponent(YourFormOrWhatever);
+	 * Usage: $getReactComponent(YourComponent);
 	 *
 	 * @param string $name Used to name the DOM elements and obtain the initial model.
 	 * @return string A snippet good for adding to a SS template.
 	 */
 	public function getReactComponent($name) {
-		$modelName = sprintf('get%sModel', $name);
-		if ($this->hasMethod($modelName)) {
-			$model = $this->$modelName();
-		} else {
-			$model = [];
-		}
+		$model = $this->getModel($name);
 		$model['InitialSecurityID'] = $this->getSecurityToken()->getValue();
 
 		return $this->customise([
@@ -71,11 +49,11 @@ abstract class Dispatcher extends DNRoot {
 	}
 
 	/**
-	 * Convert validator errors to JSON response.
-	 * [{"fieldName":"Name","message":"Message.","messageType":"bad"}]
+	 * Return the validator errors as AJAX response.
 	 *
 	 * @param int $code HTTP status code.
-	 * @param array $validatorErrors Result of calling Validator::validate
+	 * @param array $validatorErrors Result of calling Validator::validate, e.g.
+	 *	[{"fieldName":"Name","message":"Message.","messageType":"bad"}]
 	 * @return \SS_HTTPResponse
 	 */
 	public function asJSONValidatorErrors($code, $validatorErrors) {
@@ -87,7 +65,7 @@ abstract class Dispatcher extends DNRoot {
 	}
 
 	/**
-	 * Return field-specific errors.
+	 * Return field-specific errors as AJAX response.
 	 *
 	 * @param int $code HTTP status code.
 	 * @param array $fieldErrors FieldName => message structure.
@@ -104,8 +82,8 @@ abstract class Dispatcher extends DNRoot {
 	}
 
 	/**
-	 * Return JSON response, good for responding to AJAX requests.
-	 * It will magically update the security token and proxy pending redirects.
+	 * Respond to an AJAX request.
+	 * Automatically updates the security token and proxy pending redirects.
 	 *
 	 * @param array $data Data to be passed to the frontend.
 	 */
@@ -132,15 +110,6 @@ abstract class Dispatcher extends DNRoot {
 		$response->setBody(json_encode($data));
 		$response->setStatusCode(200);
 		return $response;
-	}
-
-	/**
-	 * Include the javascript and CSS for this controller
-	 *
-	 * TODO this is questionable because it relies on a certain layout of the gulpfile builder.
-	 */
-	protected function includeFrontend() {
-		\Requirements::css(sprintf('%s/style.css', $this->getRelativeStaticPath()));
 	}
 
 	/**
