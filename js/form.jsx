@@ -21,8 +21,9 @@ var Form = React.createClass({
 
 	getInitialState: function () {
 		return {
-			isSubmitting: false,
-			securityID: this.props.securityID
+			isSubmitting: this.props.initialIsSubmitting || false,
+			securityID: this.props.securityID,
+			securityTokenName: this.props.securityTokenName || 'SecurityID'
 		};
 	},
 
@@ -177,13 +178,14 @@ var Form = React.createClass({
 		this.setState({ isSubmitting: true });
 
 		var self = this;
+		var data = {
+			Details: JSON.stringify(this.model)
+		};
+		data[this.state.securityTokenName] = this.state.securityID;
 		Q($.ajax({
 			type: "POST",
 			url: this.props.url,
-			data: {
-				Details: JSON.stringify(this.model),
-				SecurityID: this.state.securityID
-			}
+			data: data 
 		})).then(function(data) {
 			if(data.NewSecurityID) {
 				self.setState({ securityID: data.NewSecurityID });
