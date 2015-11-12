@@ -57,13 +57,15 @@ abstract class Dispatcher extends DNRoot {
 		])->renderWith('ReactTemplate');
 	}
 
-	protected function getSecurityToken() {
-		return new \SecurityToken(sprintf('%sSecurityID', $this->class));
+	protected function getSecurityToken($name = null) {
+		if(is_null($name)) $name = sprintf('%sSecurityID', get_class($this));
+		return new \SecurityToken($name);
 	}
 
-	protected function checkSecurityToken() {
-		$securityToken = $this->getSecurityToken();
-		if(!$securityToken->check($this->request->postVar('SecurityID'))) {
+	protected function checkSecurityToken($name = null) {
+		if(is_null($name)) $name = sprintf('%sSecurityID', get_class($this));
+		$securityToken = $this->getSecurityToken($name);
+		if(!$securityToken->check($this->request->postVar($name))) {
 			$this->httpError(400, 'Invalid security token, try reloading the page.');
 		}
 	}
