@@ -41,9 +41,14 @@ abstract class Dispatcher extends DNRoot {
 	}
 
 	protected function checkSecurityToken($name = null) {
+		$postVar = is_null($name) ? 'SecurityID' : $name;
 		if(is_null($name)) $name = sprintf('%sSecurityID', get_class($this));
 		$securityToken = $this->getSecurityToken($name);
-		if(!$securityToken->check($this->request->postVar($name))) {
+
+		// By default the security token is always represented by a "SecurityID" post var,
+		// even if the backend uses different names for the token. This too means only one security token
+		// can be managed by one dispatcher if the default is used.
+		if(!$securityToken->check($this->request->postVar($postVar))) {
 			$this->httpError(400, 'Invalid security token, try reloading the page.');
 		}
 	}
