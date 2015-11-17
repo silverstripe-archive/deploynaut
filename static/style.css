@@ -10567,6 +10567,10 @@ button.sidebar-open {
     text-align: left; }
     .deployment-status .deployment-progress .progress-bar .status {
       font-size: 26px; }
+      .deployment-status .deployment-progress .progress-bar .status a {
+        color: white;
+        font-size: 14px;
+        text-decoration: none; }
 
 .deployment-tag {
   position: relative;

@@ -15,8 +15,6 @@
 		</div>
 
 		<div class="deployment-status">
-			<h5>Status: $value</h5>
-
 			<div class="progress deployment-progress">
 				<div class="progress-bar
 						<% if $ResqueStatus == 'Started' || $ResqueStatus == 'Running' %>
@@ -29,7 +27,7 @@
 					<% else %>
 						 Restore $ModeNice to $Environment.Name
 					<% end_if %>
-					<span class="status">$ResqueStatus</span>
+					<span class="jobstatus">$ResqueStatus.LowerCase</span>
 				</div>
 			</div>
 		</div>

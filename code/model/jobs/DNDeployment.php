@@ -251,6 +251,31 @@ class DNDeployment extends DataObject {
 	}
 
 	/**
+	 * Return a list of things that are going to be deployed, such
+	 * as the code version, and any infrastrucutral changes.
+	 *
+	 * @return ArrayList
+	 */
+	public function getChanges() {
+		$list = new ArrayList();
+		$strategy = $this->getDeploymentStrategy();
+		foreach($strategy->getChanges() as $name => $change) {
+			if(empty($change['to'])) continue;
+
+			$list->push(new ArrayData([
+				'Name' => $name,
+				'From' => $change['from'],
+				'To' => $change['to'],
+				'Description' => isset($change['description']) ? $change['description'] : '',
+				'Changed' => $change['from'] != $change['to'],
+				'CompareUrl' => isset($change['compareUrl']) ? $change['compareUrl'] : ''
+			]));
+		}
+
+		return $list;
+	}
+
+	/**
 	 * Start a resque job for this deployment
 	 *
 	 * @return string Resque token
