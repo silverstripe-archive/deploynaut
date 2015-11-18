@@ -15,7 +15,6 @@
 <% if $CreateEnvironment %>
 	<% with $CreateEnvironment %>
 		<div class="deployment-status">
-			<h5>Status:</h5>
 			<div class="progress deployment-progress">
 				<div class="progress-bar
 					<% if $ResqueStatus == 'Started' || $ResqueStatus == 'Running' %>
@@ -24,7 +23,7 @@
 					$ResqueStatus" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" id="queue_action">
 
 					Creating environment $Name
-					<span class="status">$ResqueStatus</span>
+					<span class="jobstatus">$ResqueStatus.LowerCase</span>
 				</div>
 			</div>
 		</div>

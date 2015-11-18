@@ -9,7 +9,7 @@
 	});
 
 	$('#current-build-toggle').on('click', function() {
-		$(this).next('.current-build-data').toggleClass('hide');
+		$('.current-build-data').toggleClass('hide');
 		$(this).find('i').toggleClass('fa-caret-down').toggleClass('fa-caret-up');
 	});
 
@@ -101,7 +101,7 @@
 			});
 			$.getJSON(logLink, {randval: Math.random()},
 			function(data) {
-				status.text(data.status);
+				status.text(data.status.toLowerCase());
 				content.text(data.content);
 				//scroll the content to the bottom
 				if (self.autoScroll) {
@@ -136,7 +136,7 @@
 		_setupPinging: function() {
 			var self = this;
 			window._queue_refresh = window.setInterval(function() {
-				self.showlog($("#queue_action .status"), $("#queue_log"), $('#queue_log').data('loglink'));
+				self.showlog($("#queue_action .jobstatus"), $("#queue_log"), $('#queue_log').data('loglink'));
 			}, 3000);
 		},
 
