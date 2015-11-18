@@ -8,7 +8,9 @@
 </ol>
 <h1 class="page-heading">
 	<% if $CurrentEnvironment %>
-		$CurrentEnvironment.Title
+		<% with $CurrentEnvironment %>
+			$Title <a target="_blank" href="$URL.URL"><% if $BareURL %>$BareURL<% else %>$URL<% end_if %></a>
+		<% end_with %>
 	<% else %>
 		<% if $CurrentProject.CurrentMenu %>
 			$CurrentProject.CurrentMenu.Title

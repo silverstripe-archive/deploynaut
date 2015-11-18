@@ -10232,6 +10232,10 @@ button.sidebar-open {
 
 .main-container .page-heading {
   margin-bottom: 30px; }
+  .main-container .page-heading a {
+    font-weight: normal;
+    font-size: 14px;
+    letter-spacing: normal; }
 
 .main-container .nav.nav-tabs, .main-container .deploy-form-outer .deploy-form .nav-tabs.SelectionGroup, .deploy-form-outer .deploy-form .main-container .nav-tabs.SelectionGroup, .main-container .deploy-form-loading .deploy-form .nav-tabs.SelectionGroup, .deploy-form-loading .deploy-form .main-container .nav-tabs.SelectionGroup {
   border-bottom: none; }
