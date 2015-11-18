@@ -26,7 +26,7 @@
 					$ResqueStatus" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" id="queue_action">
 
 					Deployment to $Environment.Name <span class="jobstatus">$ResqueStatus.LowerCase</span>
-					<span class="status"><a href="#" id="current-build-toggle">View details <i class="fa fa-caret-up"></i></a></span>
+					<span class="status"><a href="#" id="current-build-toggle">View details <i class="fa fa-caret-down"></i></a></span>
 				</div>
 			</div>
 		</div>
