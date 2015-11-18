@@ -1,13 +1,7 @@
-<h3>
-	<a href="$URL.URL" target="_blank" class="text-muted">
-		<% if $BareURL %>$BareURL<% else %>$URL<% end_if %>
-	</a>
-</h3>
 <% if $Environment.CurrentBuild %>
-
 	<div class="row">
 		<div class="col-md-6">
-			<a href="#" id="current-build-toggle">Current Build Details <i class="fa fa-caret-down"></i></a>
+			<a href="#" id="current-build-toggle">Current build details <i class="fa fa-caret-down"></i></a>
 			<div class="table-responsive hide current-build-data">
 				<table class="table">
 					<tr>
