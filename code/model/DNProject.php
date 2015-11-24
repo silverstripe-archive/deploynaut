@@ -1004,12 +1004,12 @@ class DNProject extends DataObject {
 	 */
 	public function isProjectReady() {
 		if($this->getRunningInitialEnvironmentCreations()->count() > 0) {
-			// We're still creating the initial environments for this project so we're 
+			// We're still creating the initial environments for this project so we're
 			// not quite done
 			return false;
 		}
 
-		// Provide a hook for further checks. Logic stolen from 
+		// Provide a hook for further checks. Logic stolen from
 		// {@see DataObject::extendedCan()}
 		$isDone = $this->extend('isProjectReady');
 		if($isDone && is_array($isDone)) {
@@ -1036,7 +1036,7 @@ class DNProject extends DataObject {
 
 	/**
 	 * Returns a list of initial environments created for this project.
-	 * 
+	 *
 	 * @return DataList
 	 */
 	public function getInitialEnvironmentCreations() {
