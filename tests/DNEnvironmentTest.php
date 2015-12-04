@@ -156,3 +156,12 @@ class DNEnvironmentTest extends DeploynautTest {
 		$this->assertNull($fields->dataFieldByName('BackendIdentifier'));
 	}
 }
+
+class BackendOne extends DemoDeploymentBackend implements TestOnly {
+
+}
+
+class BackendTwo extends DemoDeploymentBackend implements TestOnly  {
+
+}
+
