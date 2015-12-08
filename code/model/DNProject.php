@@ -253,7 +253,29 @@ class DNProject extends DataObject {
 			return true;
 		}
 
-		return $member->inGroups($this->Viewers());
+		if($member->inGroups($this->Viewers())) {
+			return true;
+		}
+
+		// Calls extensions
+		return parent::canView($member);
+	}
+
+	/**
+	 * @param Member $member
+	 *
+	 * @return bool
+	 */
+	public function canCreate($member = null) {
+		if(!$member) $member = Member::currentUser();
+		if(!$member) return false;
+
+		if(Permission::checkMember($member, 'ADMIN')) {
+			return true;
+		}
+
+		// This calls canCreate on extensions.
+		return parent::canCreate($member);
 	}
 
 	/**
@@ -1092,23 +1114,5 @@ class DNProject extends DataObject {
 		}
 		return $validation;
 	}
-
-	/**
-	 * @param Member $member
-	 *
-	 * @return bool
-	 */
-	public function canCreate($member = null) {
-		if(!$member) $member = Member::currentUser();
-		if(!$member) return false;
-
-		if(Permission::checkMember($member, 'ADMIN')) {
-			return true;
-		}
-
-		// This calls canCreate on extensions.
-		return parent::canCreate($member);
-	}
-
 }
 
