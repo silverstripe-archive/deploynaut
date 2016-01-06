@@ -219,6 +219,8 @@ class RollbackStep extends LongRunningPipelineStep {
 	 * @return boolean
 	 */
 	protected function doRestoreDB() {
+		if ($this->Pipeline()->SkipSnapshot) return false;
+
 		return $this->getConfigSetting('RestoreDB') && $this->Pipeline()->PreviousSnapshot();
 	}
 

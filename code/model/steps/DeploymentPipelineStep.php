@@ -45,7 +45,11 @@ class DeploymentPipelineStep extends LongRunningPipelineStep {
 						return false;
 				}
 			case 'Queued':
-				return $this->createSnapshot();
+				if ($this->Pipeline()->SkipSnapshot) {
+					return $this->startDeploy();
+				} else {
+					return $this->createSnapshot();
+				}
 			default:
 				$this->log("Unable to process {$this->Title} with status of {$this->Status}");
 				$this->markFailed();
