@@ -120,6 +120,28 @@ class DeployForm extends Form {
 				$validator = new DeployForm_PipelineValidator();
 			}
 
+			$skipSnapshotTip = <<<END
+				In the unusual occurence of your deployment containing database changes that are
+				not reversible without a snapshot, rollback will not be able to restore your site proprely.
+				The site will remain in maintenance mode - please contact the Service Desk for assistance.
+END;
+
+			$fieldList = new FieldList(array(
+				HeaderField::create('Label1', '1. Choose a commit to deploy', 4),
+				$field,
+				HeaderField::create('Label2', '2. Advanced options', 4),
+				CheckboxField::create(
+					'SkipSnapshot',
+					sprintf(
+						'Skip database snapshot and use existing database for rollbacks '
+						. '(<span class="tooltip-hint" href="#" data-toggle="tooltip" data-placement="bottom" title="%s">'
+						. 'understand the risk'
+						. '</span>)',
+						$skipSnapshotTip
+					)
+				)
+			));
+
 			// Generate actions allowed for this user
 			$actions = new FieldList(
 				FormAction::create('startPipeline', "Begin the release process on " . $environment->Name)
@@ -159,8 +181,10 @@ class DeployForm extends Form {
 						"return confirm('This will start a direct deployment.\\n\\nContinue?');"
 					)
 			);
+
+			$fieldList = new FieldList($field);
 		}
-		parent::__construct($controller, $name, new FieldList($field), $actions, $validator);
+		parent::__construct($controller, $name, $fieldList, $actions, $validator);
 	}
 
 	/**
@@ -242,6 +266,7 @@ class DeployForm extends Form {
 
 		$field = new SelectionGroup('SelectRelease', $releaseMethods);
 		$field->setValue(reset($releaseMethods)->getValue());
+		$field->addExtraClass('clearfix');
 		return $field;
 	}
 

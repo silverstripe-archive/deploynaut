@@ -9,7 +9,7 @@ class DeploymentPipelineStepTest extends PipelineTest {
 	 *
 	 * @return DeploymentPipelineStep
 	 */
-	public function getDummyDeployment($newEnv = false) {
+	public function getDummyDeployment($newEnv = false, $skipSnapshot = false) {
 		$deployStep = $this->objFromFixture('DeploymentPipelineStep', 'testdeploy');
 		$deployStep->Config = serialize(array('MaxDuration' => '3600'));
 		$deployStep->write();
@@ -20,6 +20,7 @@ class DeploymentPipelineStepTest extends PipelineTest {
 			$pipeline->EnvironmentID = $this->idFromFixture('PipelineTest_Environment', 'newenvironment');
 		}
 
+		$pipeline->SkipSnapshot = $skipSnapshot;
 		$pipeline->Config = serialize(array());
 		$pipeline->write();
 		return $deployStep;
@@ -98,7 +99,22 @@ class DeploymentPipelineStepTest extends PipelineTest {
 
 		// Mark the service as completed and check result
 		$snapshot = $step->Pipeline()->PreviousSnapshot();
-		$this->assertFalse($snapshot->exists(), 'No snapshot was created');
+		$this->assertFalse($snapshot->exists());
+	}
+
+	/**
+	 * Test snapshot is skipped upon user request.
+	 */
+	public function testSnapshotSkippedByUser() {
+		$step = $this->getDummyDeployment(false, true);
+		$step->start();
+
+		// Assert not error at startup
+		$this->assertEquals('Started', $step->Status);
+		$this->assertEquals('Deployment', $step->Doing);
+		$this->assertFalse(PipelineTest_MockLog::has_message('TestDeployStep:Snapshot creating snapshot of database'));
+		$snapshot = $step->Pipeline()->PreviousSnapshot();
+		$this->assertFalse($snapshot->exists());
 	}
 
 	/**

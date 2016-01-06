@@ -639,6 +639,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$sha = $project->DNBuildList()->byName($buildName);
 		$pipeline = Pipeline::create();
 		$pipeline->DryRun = $isDryRun;
+		$pipeline->SkipSnapshot = !empty($data['SkipSnapshot']) && $data['SkipSnapshot'];
 		$pipeline->EnvironmentID = $environment->ID;
 		$pipeline->AuthorID = Member::currentUserID();
 		$pipeline->SHA = $sha->FullName();

@@ -119,6 +119,7 @@ class Pipeline extends DataObject implements PipelineData {
 		'Config' => 'Text', // serialized array of configuration for this pipeline
 		'SHA' => 'Varchar(255)',
 		'DryRun' => 'Boolean', // Try if this deployment is a test dryrun
+		'SkipSnapshot' => 'Boolean', // User can elect to skip the db backup. Rollback will run dev/build on existing DB
 		'LastMessageSent' => 'Varchar(255)' // ID of last message sent
 	);
 

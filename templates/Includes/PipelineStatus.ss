@@ -23,6 +23,12 @@
 	</div>
 </div>
 
+<% if $SkipSnapshot %>
+<p class="alert alert-warning running-description">
+	This pipeline is set to skip the database snapshot and use existing database for rollbacks.<br/>
+	Please contact the Service Desk for assistance if the rollback occurs and is unsuccessful.
+</p>
+<% end_if %>
 <% if $RunningDescription %>
 	<p class="alert alert-info running-description">$RunningDescription</p>
 <% end_if %>
