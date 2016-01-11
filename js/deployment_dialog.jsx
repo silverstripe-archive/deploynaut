@@ -502,6 +502,16 @@ var AdvancedOptions = React.createClass({
 						Force full deployment
 					</label>
 				</div>
+				<div className="fieldcheckbox">
+					<label>
+						<input
+							type="checkbox"
+							name="norollback"
+							onChange={this.props.changeHandler}
+						/>
+						No rollback on deploy failure
+					</label>
+				</div>
 			</div>
 		);
 	}
