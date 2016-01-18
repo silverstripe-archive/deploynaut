@@ -26,4 +26,19 @@ class DNAdmin extends ModelAdmin {
 	 */
 	private static $menu_priority = 100;
 
+	public function getEditForm($id = null, $fields = null) {
+		$form = parent::getEditForm($id, $fields);
+		$gridField = $form->Fields()->dataFieldByName('DNProject');
+		if($gridField) {
+			$gridField->getConfig()
+				->removeComponentsByType('GridFieldExportButton')
+				->removeComponentsByType('GridFieldPrintButton')
+				->removeComponentsByType('GridFieldAddNewButton')
+				->addComponent(new GridFieldAddNewMultiClass('buttons-before-left'))
+				->addComponent(new GridFieldExportButton('buttons-before-right'))
+				->addComponent(new GridFieldPrintButton('buttons-before-right'));
+		}
+		return $form;
+	}
+
 }
