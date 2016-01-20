@@ -22,7 +22,9 @@
 						<% if $IsProjectReady && $DNEnvironmentList %>
 							<ul class="collapse in" >
 							<% loop $DNEnvironmentList %>
-								<li<% if $IsSection %> class="active"<% end_if %>><a href="$Link">$Name</a></li>
+								<li<% if $IsSection && $Up.ID == $Project.ID %> class="active"<% end_if %>>
+									<a href="$Up.Link/environment/$Name">$Name</a>
+								</li>
 							<% end_loop %>
 							</ul>
 						<% end_if %>
