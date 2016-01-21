@@ -452,14 +452,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return $this->project404Response();
 		}
 
-		$validEnvs = $project->DNEnvironmentList()
-			->filterByCallback(function($item) {
-				return $item->canUploadArchive();
-			});
-
-		// Validate $data['EnvironmentID'] by checking against $validEnvs.
-		$environment = $validEnvs->find('ID', $data['EnvironmentID']);
-		if(!$environment) {
+		$environment = $project->DNEnvironmentList()->byId($data['EnvironmentID']);
+		if(!$environment || !$environment->canUploadArchive()) {
 			throw new LogicException('Invalid environment');
 		}
 
