@@ -363,7 +363,9 @@ class DNProject extends DataObject {
 	 */
 	public function DataArchives() {
 		$envIds = $this->Environments()->column('ID');
-		return DNDataArchive::get()->filter('EnvironmentID', $envIds);
+		$archives = DNDataArchive::get()->filter('EnvironmentID', $envIds);
+		$this->extend('updateDataArchives', $archives);
+		return $archives;
 	}
 
 	/**
