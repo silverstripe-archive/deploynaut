@@ -47,14 +47,14 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 
 		// Deployment cleanup. We assume it is always safe to run this at the end, regardless of the outcome.
 		$self = $this;
-		$cleanupFn = function() use($self, $environment, $args, $log) {
+		$cleanupFn = function() use($self, $environment, $args, $log, $sha, $project) {
 			$command = $self->getCommand('deploy:cleanup', 'web', $environment, $args, $log);
 			$command->run(function($type, $buffer) use($log) {
 				$log->write($buffer);
 			});
 
 			if(!$command->isSuccessful()) {
-				$this->extend('cleanupFailure', $environment, $sha, $log, $project);
+				$self->extend('cleanupFailure', $environment, $sha, $log, $project);
 				$log->write('Warning: Cleanup failed, but fine to continue. Needs manual cleanup sometime.');
 			}
 		};
