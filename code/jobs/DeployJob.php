@@ -23,15 +23,17 @@ class DeployJob {
 	public function perform() {
 		echo "[-] DeployJob starting" . PHP_EOL;
 		$log = new DeploynautLogFile($this->args['logfile']);
-		$DNProject = $this->DNData()->DNProjectList()->filter('Name', $this->args['projectName'])->First();
-		$DNEnvironment = $DNProject->Environments()->filter('Name', $this->args['environmentName'])->First();
+
+		$deployment = DNDeployment::get()->byID($this->args['deploymentID']);
+		$environment = $deployment->Environment();
+		$project = $environment->Project();
 		// This is a bit icky, but there is no easy way of capturing a failed deploy by using the PHP Resque
 		try {
 			// Disallow concurrent deployments (don't rely on queuing implementation to restrict this)
 			// Only consider deployments started in the last 30 minutes (older jobs probably got stuck)
 			$runningDeployments = DNDeployment::get()
 				->filter(array(
-					'EnvironmentID' => $DNEnvironment->ID,
+					'EnvironmentID' => $environment->ID,
 					'Status' => array('Queued', 'Started'),
 					'Created:GreaterThan' => strtotime('-30 minutes')
 				))
@@ -51,10 +53,10 @@ class DeployJob {
 				));
 			}
 
-			$DNEnvironment->Backend()->deploy(
-				$DNEnvironment,
+			$environment->Backend()->deploy(
+				$environment,
 				$log,
-				$DNProject,
+				$project,
 				// Pass all args to give the backend full visibility. These args also contain
 				// all options from the DeploymentStrategy merged in, including sha.
 				$this->args
