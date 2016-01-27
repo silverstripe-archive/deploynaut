@@ -103,7 +103,8 @@ class DNPing extends DataObject {
 			'environmentName' => $environment->Name,
 			'logfile' => $this->logfile(),
 			'projectName' => $project->Name,
-			'env' => $project->getProcessEnv()
+			'env' => $project->getProcessEnv(),
+			'pingID' => $this->ID
 		);
 
 		if(!$this->DeployerID) {

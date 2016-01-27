@@ -33,8 +33,10 @@ class PingJob {
 	public function perform() {
 		echo "[-] PingJob starting" . PHP_EOL;
 		$log = new DeploynautLogFile($this->args['logfile']);
-		$DNProject = $this->DNData()->DNProjectList()->filter('Name', $this->args['projectName'])->First();
-		$DNEnvironment = $DNProject->Environments()->filter('Name', $this->args['environmentName'])->First();
-		$DNEnvironment->Backend()->ping($DNEnvironment, $log, $DNProject);
+
+		$ping = DNDeployment::get()->byID($this->args['pingID']);
+		$environment = $ping->Environment();
+		$project = $environment->Project();
+		$environment->Backend()->ping($environment, $log, $project);
 	}
 }
