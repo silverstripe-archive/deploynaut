@@ -9993,7 +9993,7 @@ ol.list {
 
 .alert ul, .message.bad ul,
 .message.required ul, .disk-quota ul, .deploy-dropdown.error ul, .deploy-dropdown-errors ul {
-  margin: 10px 0 10px 20px;
+  margin: 10px 0 0 20px;
   padding-bottom: 10px;
   list-style: disc; }
 
