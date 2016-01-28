@@ -396,6 +396,15 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
+	 * Provide reason why the user cannot deploy.
+	 *
+	 * @return string
+	 */
+	public function getCannotDeployMessage() {
+		return 'You cannot deploy to this environment.';
+	}
+
+	/**
 	 * Allows only selected {@link Member} objects to restore {@link DNDataArchive} objects into this
 	 * {@link DNEnvironment}.
 	 *

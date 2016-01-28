@@ -94,6 +94,8 @@
 					<% end_if %>
 				};
 			</script>
+		<% else %>
+			<% include CannotDeploy Environment=$CurrentEnvironment %>
 		<% end_if %>
 	<% end_if %>
 
