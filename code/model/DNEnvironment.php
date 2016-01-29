@@ -1340,4 +1340,20 @@ PHP
 		return $result;
 	}
 
+	/**
+	 * Fetchs all deployments in progress. Limits to 1 hour to prevent deployments
+	 * if an old deployment is stuck.
+	 *
+	 * @return DataList
+	 */
+	public function runningDeployments() {
+		return DNDeployment::get()
+			->filter([
+				'EnvironmentID' => $this->ID,
+				'Status' => ['Queued', 'Started'],
+				'Created:GreaterThan' => strtotime('-1 hour')
+			]);
+	}
+
 }
+

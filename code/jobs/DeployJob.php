@@ -31,14 +31,7 @@ class DeployJob {
 		try {
 			// Disallow concurrent deployments (don't rely on queuing implementation to restrict this)
 			// Only consider deployments started in the last 30 minutes (older jobs probably got stuck)
-			$runningDeployments = DNDeployment::get()
-				->filter(array(
-					'EnvironmentID' => $environment->ID,
-					'Status' => array('Queued', 'Started'),
-					'Created:GreaterThan' => strtotime('-30 minutes')
-				))
-				->exclude('ID', $this->args['deploymentID']);
-
+			$runningDeployments = $environment->runningDeployments()->exclude('ID', $this->args['deploymentID']);
 			if($runningDeployments->count()) {
 				$runningDeployment = $runningDeployments->first();
 				$log->write(sprintf(
