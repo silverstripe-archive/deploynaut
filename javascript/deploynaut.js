@@ -162,7 +162,7 @@
 
 		// Menu expand collapse
 		$('a.nav-submenu').click(function() {
-			$(this).toggleClass( "open" );
+			$(this).parent().toggleClass( "open" );
 		});
 
 		// Deployment screen

@@ -179,16 +179,20 @@ ol.list
 		padding: 0
 		margin: 0
 		overflow: hidden
+		font-size: 13px
 
-		ul li
-			padding-left: 64px
+		ul 
+			padding-left: 12px
 
-		ul li a
-			padding-left: 0px
+			li 
+				position: relative
+
+				a
+					padding-left: 0px
 
 		a
 			opacity: .8
-			padding-left: 54px
+			padding-left: 0
 
 			&:hover
 				color: #fff
@@ -199,22 +203,23 @@ ol.list
 		li.active a
 			color: #fff
 
+		li a.active
+			color: #fff
+
 	li > a
 		&:hover,
 		&:focus
 			color: #fff
 			text-decoration: none
 
-
 .btn-security
 	margin-bottom: 0
 
 
 .nav-submenu
-	font-weight: bold
 	position: relative
 
-	&.open .icon-arrow
+	.open & .icon-arrow
 		-ms-transform: rotate(180deg) /* IE 9 */
 		-webkit-transform: rotate(180deg) /* Chrome, Safari, Opera */
 		transform: rotate(180deg)
@@ -286,6 +291,46 @@ ol.list
 	margin: 0 -20px
 	padding: 0
 
+	a:active, 
+	a:hover,
+	a:focus
+		outline: 0 none
+
+	.collapse,
+	.collapse.in 
+		display: block
+
+
+	ul 
+		height: 0
+
+		> li 
+			opacity: 0
+			transform: translateX(-15px)
+			transition: all 0.25s ease-out 0s
+
+	li.open 
+		> ul
+			height: auto
+
+			> li
+				opacity: 1
+				transform: translateX(0px)
+
+		> a
+			background-color: transparent
+			color: #fff
+
+	li 
+		.nav-submenu
+			max-height: 40px
+
+		a:focus
+			background-color: transparent
+
+	ul
+		list-style: none
+
 	> li
 		a
 			color: $navbar-inverse-link-color
@@ -293,7 +338,7 @@ ol.list
 			display: block
 			transition: color 0.12s ease-out 0s
 
-			&:hover, &:focus
+			&:hover
 				color: $navbar-inverse-link-color
 				background-color: rgba(0, 0, 0, 0.2)
 
@@ -314,6 +359,12 @@ ol.list
 			font-weight: 400
 			padding: 22px 13px 6px 20px
 			text-transform: uppercase
+
+		> ul
+			padding-left: 50px
+
+	
+
 
 // MAIN
 // Header bar
@@ -347,7 +398,7 @@ ol.list
 				line-height: 24px
 
 	.nav li.pull-right:first-child a
-		margin-right: $grid-gutter-width
+		margin-right: $grid-gutter-width/2
 
 	.nav li.active a
 		color: $gray-darker
@@ -384,7 +435,10 @@ button.sidebar-open
 	.breadcrumb
 		padding-left: 0
 		padding-right: 0
-		margin-bottom: -25px
+		margin-bottom: -28px
+		font-size: 16px
+		font-weight: bold
+		color: $breadcrumb-color
 
 	.page-heading
 		margin-bottom: 30px
