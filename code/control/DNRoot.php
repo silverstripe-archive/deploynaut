@@ -21,6 +21,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 	const ACTION_ENVIRONMENTS = 'createenv';
 
+	const PROJECT_OVERVIEW = 'overview';
+
 	/**
 	 * @var string
 	 */
@@ -158,7 +160,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	private static $action_types = array(
 		self::ACTION_DEPLOY,
-		self::ACTION_SNAPSHOT
+		self::ACTION_SNAPSHOT,
+		self::PROJECT_OVERVIEW
 	);
 
 	/**
@@ -675,6 +678,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return \SS_HTTPResponse
 	 */
 	public function project(SS_HTTPRequest $request) {
+		$this->setCurrentActionType(self::PROJECT_OVERVIEW);
 		return $this->getCustomisedViewSection('ProjectOverview', '', array('IsAdmin' => Permission::check('ADMIN')));
 	}
 
@@ -1086,6 +1090,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$navigation = new ArrayList();
 
 		$currentProject = $this->getCurrentProject();
+		$currentEnvironment = $this->getCurrentEnvironment();
+		$actionType = $this->getCurrentActionType();
 
 		$projects = $this->getStarredProjects();
 		if($projects->count() < 1) {
@@ -1109,17 +1115,31 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 					$activeProject = true;
 				}
 
+				$isCurrentEnvironment = false;
+				if($project && $currentEnvironment) {
+					$isCurrentEnvironment = (bool) $project->DNEnvironmentList()->find('ID', $currentEnvironment->ID);
+				}
+
 				$navigation->push(array(
 					'Project' => $project,
+					'IsCurrentEnvironment' => $isCurrentEnvironment,
 					'IsActive' => $currentProject && $currentProject->ID == $project->ID,
+					'IsOverview' => $actionType == self::PROJECT_OVERVIEW && $currentProject->ID == $project->ID
 				));
 			}
 
 			// Ensure the current project is in the list
 			if(!$activeProject && $currentProject) {
+				$isCurrentEnvironment = false;
+				if($currentEnvironment) {
+					$isCurrentEnvironment = (bool) $activeProject->DNEnvironmentList()->find('ID', $currentEnvironment->ID);
+				}
+
 				$navigation->unshift(array(
 					'Project' => $currentProject,
+					'IsCurrentEnvironment' => $isCurrentEnvironment,
 					'IsActive' => true,
+					'IsOverview' => $actionType == self::PROJECT_OVERVIEW
 				));
 				if($limit > 0 && $navigation->count() > $limit) {
 					$navigation->pop();
