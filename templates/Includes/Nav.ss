@@ -24,7 +24,7 @@
 					</li>
 
 					<li class="<% if $IsActive %>open<% end_if %>">
-						<a class="nav-submenu <% if $IsActive %>open<% end_if %>" role="button" data-toggle="collapse" href="#collapseLevel2-$Pos" aria-controls="collapseLevel2-$Pos">Environments <span class="icon-arrow"></span></a>
+						<a class="nav-submenu level2 <% if $IsActive %>open<% end_if %>" role="button" data-toggle="collapse" href="#collapseLevel2-$Pos" aria-controls="collapseLevel2-$Pos">Environments <span class="icon-arrow"></span></a>
 						<% if $IsProjectReady && $DNEnvironmentList %>
 							<ul class="collapse <% if $IsActive %> in<% end_if %>" id="collapseLevel2-$Pos">
 							<% loop $DNEnvironmentList %>
