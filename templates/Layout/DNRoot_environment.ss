@@ -10,6 +10,8 @@
 
 <div class="content">
 
+	<% include EnvironmentActions_Before %>
+
 	<% with $CurrentEnvironment %>
 		<div class="row environment-details">
 			<div class="col-md-12 clearfix">
