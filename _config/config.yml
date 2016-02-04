@@ -4,3 +4,10 @@ Name: deploynautconfig
 DNProject:
   defaults:
     DiskQuotaMB: "1024"
+Deploynaut:
+  snapshot_post_address: |
+    SilverStripe Ltd
+    c/o Might Ops
+    101-103 Courtenay Place
+    Level 5
+    6011 Wellington
