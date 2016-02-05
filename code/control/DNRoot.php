@@ -452,14 +452,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return $this->project404Response();
 		}
 
-		$validEnvs = $project->DNEnvironmentList()
-			->filterByCallback(function($item) {
-				return $item->canUploadArchive();
-			});
-
-		// Validate $data['EnvironmentID'] by checking against $validEnvs.
-		$environment = $validEnvs->find('ID', $data['EnvironmentID']);
-		if(!$environment) {
+		$environment = $project->DNEnvironmentList()->byId($data['EnvironmentID']);
+		if(!$environment || !$environment->canUploadArchive()) {
 			throw new LogicException('Invalid environment');
 		}
 
@@ -2191,7 +2185,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$project = $this->getCurrentProject();
 		$archives = new ArrayList();
 
-		$archiveList = $project->Environments()->relation("DataArchives");
+		$archiveList = $project->DataArchives();
 		if($archiveList->count() > 0) {
 			foreach($archiveList as $archive) {
 				if($archive->canView() && !$archive->isPending()) {
@@ -2209,13 +2203,14 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	public function PendingDataArchives() {
 		$project = $this->getCurrentProject();
 		$archives = new ArrayList();
-		foreach($project->DNEnvironmentList() as $env) {
-			foreach($env->DataArchives() as $archive) {
-				if($archive->canView() && $archive->isPending()) {
-					$archives->push($archive);
-				}
+
+		$archiveList = $project->DataArchives();
+		foreach($archiveList as $archive) {
+			if($archive->canView() && $archive->isPending()) {
+				$archives->push($archive);
 			}
 		}
+
 		return new PaginatedList($archives->sort("Created", "DESC"), $this->request);
 	}
 
@@ -2236,7 +2231,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				);
 		});
 
-		return new PaginatedList($transfers->sort("Created", "DESC"), $this->request);
+		$transfers = DNDataTransfer::get()
+			->byIds($transfers->column('ID'))
+			->sort("Created", "DESC");
+		$this->extend('updateDataTransferLogs', $transfers);
+		return new PaginatedList($transfers, $this->request);
 	}
 
 	/**
