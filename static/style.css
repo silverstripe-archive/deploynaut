@@ -10079,7 +10079,7 @@ ol.list {
     left: 0; } }
 
 .side-content {
-  padding: 13px 20px 1px; }
+  padding: 0 20px 1px; }
   .side-content ul.nav ul, .side-content .deploy-form-outer .deploy-form ul.SelectionGroup ul, .deploy-form-outer .deploy-form .side-content ul.SelectionGroup ul, .side-content .deploy-form-loading .deploy-form ul.SelectionGroup ul, .deploy-form-loading .deploy-form .side-content ul.SelectionGroup ul {
     background-color: rgba(0, 0, 0, 0.15);
     padding: 0;

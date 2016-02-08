@@ -17,14 +17,11 @@
 
 			<ul class="collapse<% if $IsActive %> in<% end_if %>" id="collapseExample-$Pos">
 				<% with $Project %>
-					
 					<li>
-						<%-- should only be active when overview is selected --%>
-						<a <% if $IsSection %>class="active"<% end_if %> href="$Link">Overview</a>
+						<a<% if $Up.IsOverview %> class="active"<% end_if %> href="$Link">Overview</a>
 					</li>
-
-					<li class="<% if $IsActive %>open<% end_if %>">
-						<a class="nav-submenu level2 <% if $IsActive %>open<% end_if %>" role="button" data-toggle="collapse" href="#collapseLevel2-$Pos" aria-controls="collapseLevel2-$Pos">Environments <span class="icon-arrow"></span></a>
+					<li<% if $Up.IsCurrentEnvironment %> class="open"<% end_if %>>
+						<a class="nav-submenu level2" role="button" href="#collapseLevel2-$Pos" aria-controls="collapseLevel2-$Pos">Environments <span class="icon-arrow"></span></a>
 						<% if $IsProjectReady && $DNEnvironmentList %>
 							<ul class="collapse <% if $IsActive %> in<% end_if %>" id="collapseLevel2-$Pos">
 							<% loop $DNEnvironmentList %>
