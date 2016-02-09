@@ -163,13 +163,12 @@
 		// Menu 1 expand collapse
 		$('a.nav-submenu.level1').click(function() {
 			$(this).parent().siblings().removeClass('open');
-			$(this).parent().toggleClass( "open" );
+			$(this).parent().toggleClass('open');
 		});
 
 		// Menu 2 expand collapse
 		$('a.nav-submenu.level2').click(function() {
-			$('.nav-submenu.level2').parent().siblings().removeClass('open');
-			$(this).parent().toggleClass( "open" );
+			$(this).parent().toggleClass('open');
 		});
 
 		// Deployment screen
