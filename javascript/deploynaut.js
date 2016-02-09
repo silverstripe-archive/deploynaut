@@ -160,9 +160,15 @@
 		// Enable select2
 		$('select:not(.disable-select2)').select2();
 
-		// Menu expand collapse
-		$('a.nav-submenu').click(function() {
-			$(this).toggleClass( "open" );
+		// Menu 1 expand collapse
+		$('a.nav-submenu.level1').click(function() {
+			$(this).parent().siblings().removeClass('open');
+			$(this).parent().toggleClass('open');
+		});
+
+		// Menu 2 expand collapse
+		$('a.nav-submenu.level2').click(function() {
+			$(this).parent().toggleClass('open');
 		});
 
 		// Deployment screen
