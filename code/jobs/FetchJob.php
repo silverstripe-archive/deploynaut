@@ -51,32 +51,32 @@ class FetchJob {
 
 		// Disallow concurrent git fetches on the same project.
 		// Only consider fetches started in the last 30 minutes (older jobs probably got stuck)
-		if(!empty($this->args['fetchID'])) {
-			$runningFetches = DNGitFetch::get()
-				->filter(array(
-					'ProjectID' => $this->project->ID,
-					'Status' => array('Queued', 'Started'),
-					'Created:GreaterThan' => strtotime('-30 minutes')
-				))
-				->exclude('ID', $this->args['fetchID']);
-
-			if($runningFetches->count()) {
-				$runningFetch = $runningFetches->first();
-				$message = sprintf(
-					'Another fetch is in progress (started at %s by %s)',
-					$runningFetch->dbObject('Created')->Nice(),
-					$runningFetch->Deployer()->Title
-				);
-				if($this->log) {
-					$this->log->write($message);
-				}
-				throw new RuntimeException($message);
-			}
-		}
-
-		// Decide whether we need to just update what we already have
-		// or initiate a clone if no local repo exists.
 		try {
+			if(!empty($this->args['fetchID'])) {
+				$runningFetches = DNGitFetch::get()
+					->filter(array(
+						'ProjectID' => $this->project->ID,
+						'Status' => array('Queued', 'Started'),
+						'Created:GreaterThan' => strtotime('-30 minutes')
+					))
+					->exclude('ID', $this->args['fetchID']);
+
+				if($runningFetches->count()) {
+					$runningFetch = $runningFetches->first();
+					$message = sprintf(
+						'Another fetch is in progress (started at %s by %s)',
+						$runningFetch->dbObject('Created')->Nice(),
+						$runningFetch->Deployer()->Title
+					);
+					if($this->log) {
+						$this->log->write($message);
+					}
+					throw new RuntimeException($message);
+				}
+			}
+
+			// Decide whether we need to just update what we already have
+			// or initiate a clone if no local repo exists.
 			if($this->project->repoExists() && empty($this->args['forceClone'])) {
 				$this->fetchRepo();
 			} else {
