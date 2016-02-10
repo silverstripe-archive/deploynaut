@@ -161,14 +161,16 @@
 		$('select:not(.disable-select2)').select2();
 
 		// Menu 1 expand collapse
-		$('a.nav-submenu.level1').click(function() {
+		$('a.nav-submenu.level1').click(function(e) {
 			$(this).parent().siblings().removeClass('open');
 			$(this).parent().toggleClass('open');
+			e.preventDefault();
 		});
 
 		// Menu 2 expand collapse
-		$('a.nav-submenu.level2').click(function() {
+		$('a.nav-submenu.level2').click(function(e) {
 			$(this).parent().toggleClass('open');
+			e.preventDefault();
 		});
 
 		// Deployment screen
