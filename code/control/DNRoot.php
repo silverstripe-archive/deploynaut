@@ -1130,14 +1130,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 			// Ensure the current project is in the list
 			if(!$activeProject && $currentProject) {
-				$isCurrentEnvironment = false;
-				if($currentEnvironment) {
-					$isCurrentEnvironment = (bool) $activeProject->DNEnvironmentList()->find('ID', $currentEnvironment->ID);
-				}
-
 				$navigation->unshift(array(
 					'Project' => $currentProject,
-					'IsCurrentEnvironment' => $isCurrentEnvironment,
 					'IsActive' => true,
 					'IsOverview' => $actionType == self::PROJECT_OVERVIEW
 				));
