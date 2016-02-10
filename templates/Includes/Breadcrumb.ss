@@ -1,7 +1,6 @@
 <ol class="breadcrumb">
 	<% if $CurrentEnvironment %>
 		<li>$CurrentProject.Title</li>
-		<li><a href="$CurrentProject.Link">Environments</a></li>
 	<% else %>
 		<li>$CurrentProject.Title</li>
 	<% end_if %>
@@ -18,7 +17,7 @@
 			<% if $CurrentTitle %>
 				$CurrentTitle
 			<% else %>
-				Environments
+				Overview
 			<% end_if %>
 		<% end_if %>
 	<% end_if %>

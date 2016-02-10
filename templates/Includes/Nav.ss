@@ -11,16 +11,19 @@
 </li>
 <% else %>
 	<% loop $Navigation(5) %>
-		<li class="active">
+		<li class="<% if $IsActive %>open<% end_if %>">
 
 			<% include NavProjectLabel IsActive=$IsActive, Project=$Project, Pos=$Pos %>
 
 			<ul class="collapse<% if $IsActive %> in<% end_if %>" id="collapseExample-$Pos">
 				<% with $Project %>
 					<li>
-						<a role="button" href="$Link">Environments</a>
+						<a<% if $Up.IsOverview %> class="active"<% end_if %> href="$Link">Overview</a>
+					</li>
+					<li<% if $Up.IsCurrentEnvironment %> class="open"<% end_if %>>
+						<a class="nav-submenu level2" role="button" href="#collapseLevel2-$Pos" aria-controls="collapseLevel2-$Pos">Environments <span class="icon-arrow"></span></a>
 						<% if $IsProjectReady && $DNEnvironmentList %>
-							<ul class="collapse in" >
+							<ul class="collapse <% if $IsActive %> in<% end_if %>" id="collapseLevel2-$Pos">
 							<% loop $DNEnvironmentList %>
 								<li<% if $IsSection && $Up.ID == $Project.ID %> class="active"<% end_if %>>
 									<a href="$Up.Link/environment/$Name">$Name</a>
