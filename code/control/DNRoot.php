@@ -635,7 +635,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function snapshotslog(SS_HTTPRequest $request) {
 		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
-		return $this->getCustomisedViewSection('SnapshotsSection', 'Data Snapshots Log');
+		return $this->getCustomisedViewSection('SnapshotsSection', 'Snapshots log');
 	}
 
 	/**
