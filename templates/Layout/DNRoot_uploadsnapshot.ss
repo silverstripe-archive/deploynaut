@@ -8,10 +8,10 @@
 				<li><a href="$CurrentProject.Link('snapshots')">Overview</a></li>
 
 				<% if $CurrentProject.canBackup %>
-				<li><a href="$CurrentProject.Link('createsnapshot')">Create Snapshot</a></li>
+				<li><a href="$CurrentProject.Link('createsnapshot')">Create snapshot</a></li>
 				<% end_if %>
 				<% if $CurrentProject.canUploadArchive %>
-				<li class="active"><a href="$CurrentProject.Link('uploadsnapshot')">Upload Snapshot</a></li>
+				<li class="active"><a href="$CurrentProject.Link('uploadsnapshot')">Upload snapshot</a></li>
 				<% end_if %>
 				<li><a href="$CurrentProject.Link('snapshotslog')">Log</a></li>
 			</ul>
