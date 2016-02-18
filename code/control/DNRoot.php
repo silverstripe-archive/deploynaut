@@ -89,11 +89,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'postsnapshotsuccess',
 		'gitRevisions',
 		'deploySummary',
-		'startDeploy',
-		'createproject',
-		'CreateProjectForm',
-		'createprojectprogress',
-		'checkrepoaccess',
+		'startDeploy'
 	);
 
 	/**
@@ -133,8 +129,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'project/$Project/snapshotslog' => 'snapshotslog',
 		'project/$Project/postsnapshotsuccess/$DataArchiveID' => 'postsnapshotsuccess',
 		'project/$Project/star' => 'toggleprojectstar',
-		'project/$Project/createprojectprogress' => 'createprojectprogress',
-		'project/$Project/checkrepoaccess' => 'checkrepoaccess',
 		'project/$Project' => 'project',
 		'nav/$Project' => 'nav',
 		'projects' => 'projects',
@@ -2367,18 +2361,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 * Create project action.
-	 *
-	 * @return SS_HTTPResponse
-	 */
-	public function createproject(SS_HTTPRequest $request) {
-		if($this->canCreateProjects()) {
-			return $this->render(['CurrentTitle' => 'Create Stack']);
-		}
-		return $this->httpError(403);
-	}
-
-	/**
 	 * Checks whether the user can create a project.
 	 *
 	 * @return bool
@@ -2388,161 +2370,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		if(!$member) return false;
 
 		return singleton('DNProject')->canCreate($member);
-	}
-
-	/**
-	 * @return Form
-	 */
-	public function CreateProjectForm() {
-		$form = Form::create(
-			$this,
-			__FUNCTION__,
-			$this->getCreateProjectFormFields(),
-			$this->getCreateProjectFormActions(),
-			new RequiredFields('Name', 'CVSPath')
-		);
-		$this->extend('updateCreateProjectForm', $form);
-		return $form;
-	}
-
-	/**
-	 * @return FieldList
-	 */
-	protected function getCreateProjectFormFields() {
-		$fields = FieldList::create();
-		$fields->merge([
-			TextField::create('Name', 'Title')->setDescription('Limited to alphanumeric characters, underscores and hyphens.'),
-			TextField::create('CVSPath', 'Git URL')->setDescription('Your repository URL so we can clone your code (eg. git@github.com:silverstripe/silverstripe-installer.git)')
-		]);
-		$this->extend('updateCreateProjectFormFields', $fields);
-		return $fields;
-	}
-
-	/**
-	 * @return FieldList
-	 */
-	protected function getCreateProjectFormActions() {
-		$fields = FieldList::create(
-			FormAction::create('doCreateProject', 'Create Stack')
-		);
-		$this->extend('updateCreateProjectFormActions', $fields);
-		return $fields;
-	}
-
-	/**
-	 * Does the actual project creation.
-	 *
-	 * @param $data array
-	 * @param $form Form
-	 *
-	 * @return SS_HTTPResponse
-	 */
-	public function doCreateProject($data, $form) {
-		$form->loadDataFrom($data);
-		$project = DNProject::create();
-
-		$form->saveInto($project);
-		$this->extend('onBeforeCreateProject', $project, $data, $form);
-		try {
-			if($project->write() > 0) {
-				$this->extend('onAfterCreateProject', $project, $data, $form);
-
-				// If an extension hasn't redirected us, we'll redirect to the project.
-				if(!$this->redirectedTo()) {
-					return $this->redirect($project->Link());
-				} else {
-					return $this->response;
-				}
-			} else {
-				$form->sessionMessage('Unable to write the stack to the database.', 'bad');
-			}
-		} catch (ValidationException $e) {
-			$form->sessionMessage($e->getMessage(), 'bad');
-		}
-		return $this->redirectBack();
-	}
-
-	/**
-	 * Returns the state of a current project build.
-	 *
-	 * @param SS_HTTPRequest $request
-	 *
-	 * @return SS_HTTPResponse
-	 */
-	public function createprojectprogress(SS_HTTPRequest $request) {
-		$project = $this->getCurrentProject();
-		if(!$project) {
-			return $this->httpError(404);
-		}
-
-		$envCreations = $project->getInitialEnvironmentCreations();
-		$complete = array();
-		$inProgress = array();
-		$failed = array();
-		if($envCreations->count() > 0) {
-			foreach($envCreations as $env) {
-				$data = unserialize($env->Data);
-				if(!isset($data['Name'])) {
-					$data['Name'] = 'Unknown';
-				}
-				switch($env->ResqueStatus()) {
-					case "Queued":
-					case "Running":
-						$inProgress[$env->ID] = Convert::raw2xml($env->ResqueStatus());
-						break;
-					case "Complete":
-						$complete[$env->ID] = Convert::raw2xml($data['Name']);
-						break;
-					case "Failed":
-					case "Invalid":
-					default:
-						$failed[$env->ID] = Convert::raw2xml($data['Name']);
-				}
-			}
-		}
-
-		$data = [
-			'complete' => $project->isProjectReady(),
-			'progress' => [
-				'environments' => [
-					'complete' => $complete,
-					'inProgress' => $inProgress,
-					'failed' => $failed,
-				]
-			]
-		];
-		$this->extend('updateCreateProjectProgressData', $data);
-
-		$response = $this->getResponse();
-		$response->addHeader('Content-Type', 'application/json');
-		$response->setBody(json_encode($data));
-		return $response;
-	}
-
-	public function checkrepoaccess(SS_HTTPRequest $request) {
-		$project = $this->getCurrentProject();
-		if(!$project) {
-			return $this->httpError(404);
-		}
-
-		if($project->CVSPath) {
-			$fetch = new FetchJob();
-			$fetch->args = array('projectID' => $project->ID);
-			try {
-				$fetch->perform();
-				$canAccessRepo = true;
-			} catch (RuntimeException $e) {
-				$canAccessRepo = false;
-			}
-			$data = ['canAccessRepo' => $canAccessRepo];
-		} else {
-			$data = ['canAccessRepo' => false];
-		}
-
-		$response = $this->getResponse();
-		$response->addHeader("Content-Type", "application/json");
-		$response->setBody(json_encode($data));
-		return $response;
 	}
 
 }
