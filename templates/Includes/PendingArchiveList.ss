@@ -2,7 +2,7 @@
 	<% if $PendingDataArchives %>
 		<div class="row">
 			<div class="col-md-12">
-				<h3>Snapshot Upload Requests</h3>
+				<h3>Snapshot upload requests</h3>
 
 				<p>Lists any requests which are waiting for a file to be processed manually.</p>
 
