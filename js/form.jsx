@@ -111,7 +111,7 @@ var Form = React.createClass({
 	validate: function (component) {
 
 		if (!component.props.validations) {
-			return;
+			return true;
 		}
 
 		var isValid = true;
