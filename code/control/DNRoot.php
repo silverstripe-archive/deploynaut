@@ -2186,9 +2186,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	public function CreateEnvironmentList() {
 		$project = $this->getCurrentProject();
 		if($project) {
-			return new PaginatedList($project->CreateEnvironments()->sort("Created DESC"), $this->request);
+			$dataList = $project->CreateEnvironments()->sort('Created DESC');
+		} else {
+			$dataList = new ArrayList();
 		}
-		return new PaginatedList(new ArrayList(), $this->request);
+
+		$this->extend('updateCreateEnvironmentList', $dataList);
+		return new PaginatedList($dataList, $this->request);
 	}
 
 	/**
