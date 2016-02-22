@@ -10768,9 +10768,6 @@ td > .deployment-tag {
   .table-data-archives .archive-list-extended #Form_MoveForm fieldset > .field + .field,
   .table-data-archives .archive-list-extended #Form_DataTransferRestoreForm fieldset > .field + .field {
     margin-top: 20px; }
-  .table-data-archives .archive-list-extended #Form_MoveForm fieldset > .field.checkbox input,
-  .table-data-archives .archive-list-extended #Form_DataTransferRestoreForm fieldset > .field.checkbox input {
-    margin-left: 0; }
 
 .table-data-archives .btn, .table-data-archives .action, .table-data-archives input[type="submit"], .table-data-archives input[type="button"], .table-data-archives input[type="reset"], .table-data-archives .deploy-dropdown {
   margin-bottom: 0; }
