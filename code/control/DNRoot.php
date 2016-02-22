@@ -882,8 +882,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 
 	public function createenvlog(SS_HTTPRequest $request) {
-		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
-
 		$params = $request->params();
 		$env = DNCreateEnvironment::get()->byId($params['Identifier']);
 
