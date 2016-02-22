@@ -2289,7 +2289,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 *
 	 * @return string
 	 */
-	protected function sendResponse($status, $content) {
+	public function sendResponse($status, $content) {
 		// strip excessive newlines
 		$content = preg_replace('/(?:(?:\r\n|\r|\n)\s*){2}/s', "\n", $content);
 
