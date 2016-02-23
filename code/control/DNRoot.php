@@ -882,8 +882,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 
 	public function createenvlog(SS_HTTPRequest $request) {
-		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
-
 		$params = $request->params();
 		$env = DNCreateEnvironment::get()->byId($params['Identifier']);
 
@@ -2186,9 +2184,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	public function CreateEnvironmentList() {
 		$project = $this->getCurrentProject();
 		if($project) {
-			return new PaginatedList($project->CreateEnvironments()->sort("Created DESC"), $this->request);
+			$dataList = $project->CreateEnvironments();
+		} else {
+			$dataList = new ArrayList();
 		}
-		return new PaginatedList(new ArrayList(), $this->request);
+
+		$this->extend('updateCreateEnvironmentList', $dataList);
+		return new PaginatedList($dataList->sort('Created DESC'), $this->request);
 	}
 
 	/**
@@ -2287,7 +2289,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 *
 	 * @return string
 	 */
-	protected function sendResponse($status, $content) {
+	public function sendResponse($status, $content) {
 		// strip excessive newlines
 		$content = preg_replace('/(?:(?:\r\n|\r|\n)\s*){2}/s', "\n", $content);
 
