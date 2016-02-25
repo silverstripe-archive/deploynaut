@@ -246,8 +246,22 @@ class DNEnvironment extends DataObject {
 		return sprintf('%s%s%s', $this->Project()->Name, $separator, $this->Name);
 	}
 
+	/**
+	 * URL for the environment that can be used if no explicit URL is set.
+	 */
+	public function getDefaultURL() {
+		return null;
+	}
+
 	public function getBareURL() {
 		$url = parse_url($this->URL);
+		if(isset($url['host'])) {
+			return strtolower($url['host']);
+		}
+	}
+
+	public function getBareDefaultURL() {
+		$url = parse_url($this->getDefaultURL());
 		if(isset($url['host'])) {
 			return strtolower($url['host']);
 		}
