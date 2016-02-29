@@ -30,15 +30,6 @@ class FetchJob extends DeploynautJob {
 		chdir(BASE_PATH);
 	}
 
-	public function tearDown() {
-		$this->updateStatus('Finished');
-		chdir(BASE_PATH);
-	}
-
-	public function onFailure(Exception $exception) {
-		$this->updateStatus('Failed');
-	}
-
 	public function perform() {
 		set_time_limit(0);
 

@@ -15,10 +15,6 @@ class CreateEnvJob extends DeploynautJob {
 		chdir(BASE_PATH);
 	}
 
-	public function onFailure(Exception $exception) {
-		$this->updateStatus('Failed');
-	}
-
 	/**
 	 *
 	 */

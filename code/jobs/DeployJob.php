@@ -15,10 +15,6 @@ class DeployJob extends DeploynautJob {
 		chdir(BASE_PATH);
 	}
 
-	public function onFailure(Exception $exception) {
-		$this->updateStatus('Failed');
-	}
-
 	public function perform() {
 		echo "[-] DeployJob starting" . PHP_EOL;
 		$log = new DeploynautLogFile($this->args['logfile']);
