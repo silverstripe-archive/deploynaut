@@ -3,7 +3,7 @@
 /**
  * Runs a deployment via the most appropriate backend
  */
-class DeployJob {
+class DeployJob extends DeploynautJob {
 
 	/**
 	 * @var array
@@ -18,6 +18,10 @@ class DeployJob {
 	public function tearDown() {
 		$this->updateStatus('Finished');
 		chdir(BASE_PATH);
+	}
+
+	public function onFailure() {
+		$this->updateStatus('Failed');
 	}
 
 	public function perform() {
@@ -55,7 +59,6 @@ class DeployJob {
 				$this->args
 			);
 		} catch(Exception $e) {
-			$this->updateStatus('Failed');
 			echo "[-] DeployJob failed" . PHP_EOL;
 			throw $e;
 		}

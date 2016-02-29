@@ -1,5 +1,5 @@
 <?php
-class CreateEnvJob {
+class CreateEnvJob extends DeploynautJob {
 
 	/**
 	 *
@@ -24,6 +24,10 @@ class CreateEnvJob {
 		chdir(BASE_PATH);
 	}
 
+	public function onFailure(Exception $exception) {
+		$this->updateStatus('Failed');
+	}
+
 	/**
 	 *
 	 */
@@ -40,7 +44,6 @@ class CreateEnvJob {
 			$envCreate->createEnvironment();
 
 		} catch(Exception $e) {
-			$this->updateStatus('Failed');
 			echo "[-] CreateEnvJob failed" . PHP_EOL;
 			throw $e;
 		}

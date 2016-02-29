@@ -187,7 +187,7 @@ class DNDataTransfer extends DataObject {
 			$log->write($message);
 		}
 
-		$token = Resque::enqueue('git', 'DataTransferJob', $args, true);
+		$token = Resque::enqueue('snapshot', 'DataTransferJob', $args, true);
 		$this->ResqueToken = $token;
 		$this->write();
 
