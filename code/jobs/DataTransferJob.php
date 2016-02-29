@@ -7,7 +7,7 @@
  * @package deploynaut
  * @subpackage jobs
  */
-class DataTransferJob {
+class DataTransferJob extends DeploynautJob {
 
 	/**
 	 * set by a resque worker
@@ -88,19 +88,8 @@ class DataTransferJob {
 		} catch(RuntimeException $exc) {
 			$log->write($exc->getMessage());
 
-			if($backupDataTransfer) {
-				$backupDataTransfer->Status = 'Failed';
-				$backupDataTransfer->write();
-			}
-
-			$this->updateStatus('Failed');
 			echo "[-] DataTransferJob failed" . PHP_EOL;
 			throw $exc;
-		}
-
-		if($backupDataTransfer) {
-			$backupDataTransfer->Status = 'Finished';
-			$backupDataTransfer->write();
 		}
 
 		echo "[-] DataTransferJob finished" . PHP_EOL;
@@ -116,6 +105,12 @@ class DataTransferJob {
 		$env = DNDataTransfer::get()->byID($this->args['dataTransferID']);
 		$env->Status = $status;
 		$env->write();
+
+		$backup = $env->BackupDataTransfer();
+		if($backup && $backup->exists()) {
+			$backup->Status = $status;
+			$backup->write();
+		}
 	}
 
 	/**

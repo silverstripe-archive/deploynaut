@@ -1,6 +1,6 @@
 <?php
 
-class FetchJob {
+class FetchJob extends DeploynautJob {
 
 	public $args;
 
@@ -33,6 +33,10 @@ class FetchJob {
 	public function tearDown() {
 		$this->updateStatus('Finished');
 		chdir(BASE_PATH);
+	}
+
+	public function onFailure(Exception $exception) {
+		$this->updateStatus('Failed');
 	}
 
 	public function perform() {
@@ -83,7 +87,6 @@ class FetchJob {
 				$this->cloneRepo();
 			}
 		} catch(Exception $e) {
-			$this->updateStatus('Failed');
 			if($this->log) {
 				$this->log->write($e->getMessage());
 			}
