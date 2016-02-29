@@ -8,7 +8,8 @@
 		$('[data-toggle="popover"]').popover()
 	});
 
-	$('#current-build-toggle').on('click', function() {
+	$('#current-build-toggle').on('click', function(evt) {
+		evt.stopPropagation();
 		$('.current-build-data').toggleClass('hide');
 		$(this).find('i').toggleClass('fa-caret-down').toggleClass('fa-caret-up');
 	});
