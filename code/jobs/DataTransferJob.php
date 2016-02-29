@@ -19,11 +19,6 @@ class DataTransferJob extends DeploynautJob {
 		chdir(BASE_PATH);
 	}
 
-	public function tearDown() {
-		$this->updateStatus('Finished');
-		chdir(BASE_PATH);
-	}
-
 	public function perform() {
 		echo "[-] DataTransferJob starting" . PHP_EOL;
 		$log = new DeploynautLogFile($this->args['logfile']);
@@ -92,6 +87,7 @@ class DataTransferJob extends DeploynautJob {
 			throw $exc;
 		}
 
+		$this->updateStatus('Finished');
 		echo "[-] DataTransferJob finished" . PHP_EOL;
 	}
 
