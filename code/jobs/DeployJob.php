@@ -15,12 +15,7 @@ class DeployJob extends DeploynautJob {
 		chdir(BASE_PATH);
 	}
 
-	public function tearDown() {
-		$this->updateStatus('Finished');
-		chdir(BASE_PATH);
-	}
-
-	public function onFailure() {
+	public function onFailure(Exception $exception) {
 		$this->updateStatus('Failed');
 	}
 
@@ -62,6 +57,7 @@ class DeployJob extends DeploynautJob {
 			echo "[-] DeployJob failed" . PHP_EOL;
 			throw $e;
 		}
+		$this->updateStatus('Finished');
 		echo "[-] DeployJob finished" . PHP_EOL;
 	}
 
