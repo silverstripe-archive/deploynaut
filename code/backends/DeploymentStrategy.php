@@ -107,6 +107,12 @@ class DeploymentStrategy extends ViewableData {
 	 * @param string $to
 	 */
 	public function setChange($title, $from, $to) {
+		// Normalise "empty" values into dashes so comparisons are done properly.
+		// This means there is no diference between an empty string and a null
+		// but "0" is considered to be non-empty.
+		if(empty($from) && !strlen($from)) $from = '-';
+		if(empty($to) && !strlen($from)) $to = '-';
+
 		return $this->changes[$title] = array(
 			'from' => $from,
 			'to' => $to
