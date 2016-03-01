@@ -29,7 +29,7 @@
 		</div>
 
 		<h5>Create log:</h5>
-		<pre id="queue_log" class="log-content" data-loglink="$LogLink">$LogContent</pre>
+		<pre id="queue_log" class="log-content" data-loglink="$LogLink">$LogContent.XML</pre>
 	<% end_with %>
 <% else_if $CurrentProject.canCreateEnvironments %>
 	<div class="row">

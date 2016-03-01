@@ -52,7 +52,7 @@
 		</div>
 
 		<h5>Deploy log:</h5>
-		<pre id="queue_log" class="log-content" data-loglink="$LogLink">$LogContent</pre>
+		<pre id="queue_log" class="log-content" data-loglink="$LogLink">$LogContent.XML</pre>
 	<% end_with %>
 <% end_if %>
 
