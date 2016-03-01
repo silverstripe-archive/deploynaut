@@ -5,5 +5,5 @@
 	<pre id="queue_action" class="$Status">$Status</pre>
 
 	<h5>Pipeline log:</h5>
-	<pre id="queue_log" data-loglink="$LogLink">$LogContent</pre>
+	<pre id="queue_log" data-loglink="$LogLink">$LogContent.XML</pre>
 <% end_with %>
