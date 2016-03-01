@@ -83,6 +83,8 @@ class FetchJob extends DeploynautJob {
 			}
 			throw $e;
 		}
+
+		$this->updateStatus('Finished');
 	}
 
 	protected function fetchRepo() {
