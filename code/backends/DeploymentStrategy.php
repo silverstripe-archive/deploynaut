@@ -111,7 +111,7 @@ class DeploymentStrategy extends ViewableData {
 		// This means there is no diference between an empty string and a null
 		// but "0" is considered to be non-empty.
 		if(empty($from) && !strlen($from)) $from = '-';
-		if(empty($to) && !strlen($from)) $to = '-';
+		if(empty($to) && !strlen($to)) $to = '-';
 
 		return $this->changes[$title] = array(
 			'from' => $from,
