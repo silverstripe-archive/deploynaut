@@ -107,12 +107,6 @@ class DeploymentStrategy extends ViewableData {
 	 * @param string $to
 	 */
 	public function setChange($title, $from, $to) {
-		// Normalise "empty" values into dashes so comparisons are done properly.
-		// This means there is no diference between an empty string and a null
-		// but "0" is considered to be non-empty.
-		if(empty($from) && !strlen($from)) $from = '-';
-		if(empty($to) && !strlen($from)) $to = '-';
-
 		return $this->changes[$title] = array(
 			'from' => $from,
 			'to' => $to
@@ -136,7 +130,7 @@ class DeploymentStrategy extends ViewableData {
 	 */
 	public function getChangesModificationNeeded() {
 		$filtered = [];
-		foreach ($this->changes as $change => $details) {
+		foreach ($this->getChanges() as $change => $details) {
 			if (array_key_exists('description', $details)) {
 				$filtered[$change] = $details;
 			} else if (
@@ -160,7 +154,18 @@ class DeploymentStrategy extends ViewableData {
 	 *	)
 	 */
 	public function getChanges() {
-		return $this->changes;
+		// Normalise "empty" values into empty strings so comparisons are done properly.
+		// This means there is no diference between an empty string and a null
+		// but "0" is considered to be non-empty.
+		$changes = $this->changes;
+		foreach($changes as $field => $events) {
+			foreach($events as $event => $value) {
+				if(empty($value) && !strlen($value) || $value === '-') {
+					$changes[$field][$event] = '';
+				}
+			}
+		}
+		return $changes;
 	}
 
 	/**
@@ -260,7 +265,11 @@ class DeploymentStrategy extends ViewableData {
 
 		$output = array();
 		foreach($fields as $field) {
-			$output[$field] = $this->$field;
+			if(method_exists($this, 'get' . $field)) {
+				$output[$field] = $this->{'get' . $field}();
+			} else {
+				$output[$field] = $this->$field;
+			}
 		}
 		return $output;
 	}
