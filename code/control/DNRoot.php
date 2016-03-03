@@ -19,8 +19,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	const ACTION_SNAPSHOT = 'snapshot';
 
-	const ACTION_ENVIRONMENTS = 'createenv';
-
 	const PROJECT_OVERVIEW = 'overview';
 
 	/**
@@ -64,8 +62,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'pipeline',
 		'pipelinelog',
 		'metrics',
-		'createenvlog',
-		'createenv',
 		'getDeployForm',
 		'doDeploy',
 		'deploy',
@@ -77,7 +73,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'createsnapshot',
 		'snapshotslog',
 		'uploadsnapshot',
-		'getCreateEnvironmentForm',
 		'getUploadSnapshotForm',
 		'getPostSnapshotForm',
 		'getDataTransferRestoreForm',
@@ -114,9 +109,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'project/$Project/transfer/$Identifier/log' => 'transferlog',
 		'project/$Project/transfer/$Identifier' => 'transfer',
 		'project/$Project/environment/$Environment' => 'environment',
-		'project/$Project/createenv/$Identifier/log' => 'createenvlog',
-		'project/$Project/createenv/$Identifier' => 'createenv',
-		'project/$Project/CreateEnvironmentForm' => 'getCreateEnvironmentForm',
 		'project/$Project/branch' => 'branch',
 		'project/$Project/build/$Build' => 'build',
 		'project/$Project/restoresnapshot/$DataArchiveID' => 'restoresnapshot',
@@ -844,146 +836,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		// Delegate to sub-requesthandler
 		return PipelineController::create($this, $pipeline);
-	}
-
-	/**
-	 * Shows the creation log.
-	 *
-	 * @param SS_HTTPRequest $request
-	 * @return string
-	 */
-	public function createenv(SS_HTTPRequest $request) {
-		$params = $request->params();
-		if($params['Identifier']) {
-			$record = DNCreateEnvironment::get()->byId($params['Identifier']);
-
-			if(!$record || !$record->ID) {
-				throw new SS_HTTPResponse_Exception('Create environment not found', 404);
-			}
-			if(!$record->canView()) {
-				return Security::permissionFailure();
-			}
-
-			$project = $this->getCurrentProject();
-			if(!$project) {
-				return $this->project404Response();
-			}
-
-			if($project->Name != $params['Project']) {
-				throw new LogicException("Project in URL doesn't match this creation");
-			}
-
-			return $this->render(array(
-				'CreateEnvironment' => $record,
-			));
-		}
-		return $this->render(array('CurrentTitle' => 'Create an environment'));
-	}
-
-
-	public function createenvlog(SS_HTTPRequest $request) {
-		$params = $request->params();
-		$env = DNCreateEnvironment::get()->byId($params['Identifier']);
-
-		if(!$env || !$env->ID) {
-			throw new SS_HTTPResponse_Exception('Log not found', 404);
-		}
-		if(!$env->canView()) {
-			return Security::permissionFailure();
-		}
-
-		$project = $env->Project();
-
-		if($project->Name != $params['Project']) {
-			throw new LogicException("Project in URL doesn't match this deploy");
-		}
-
-		$log = $env->log();
-		if($log->exists()) {
-			$content = $log->content();
-		} else {
-			$content = 'Waiting for action to start';
-		}
-
-		return $this->sendResponse($env->ResqueStatus(), $content);
-	}
-
-	/**
-	 * @param SS_HTTPRequest $request
-	 * @return Form
-	 */
-	public function getCreateEnvironmentForm(SS_HTTPRequest $request) {
-		$this->setCurrentActionType(self::ACTION_ENVIRONMENTS);
-
-		$project = $this->getCurrentProject();
-		if(!$project) {
-			return $this->project404Response();
-		}
-
-		$envType = $project->AllowedEnvironmentType;
-		if(!$envType || !class_exists($envType)) {
-			return null;
-		}
-
-		$backend = Injector::inst()->get($envType);
-		if(!($backend instanceof EnvironmentCreateBackend)) {
-			// Only allow this for supported backends.
-			return null;
-		}
-
-		$fields = $backend->getCreateEnvironmentFields($project);
-		if(!$fields) return null;
-
-		if(!$project->canCreateEnvironments()) {
-			return new SS_HTTPResponse('Not allowed to create environments for this project', 401);
-		}
-
-		$form = Form::create(
-			$this,
-			'CreateEnvironmentForm',
-			$fields,
-			FieldList::create(
-				FormAction::create('doCreateEnvironment', 'Create')
-					->addExtraClass('btn')
-			),
-			$backend->getCreateEnvironmentValidator()
-		);
-
-		// Tweak the action so it plays well with our fake URL structure.
-		$form->setFormAction($project->Link() . '/CreateEnvironmentForm');
-
-		return $form;
-	}
-
-	/**
-	 * @param array $data
-	 * @param Form $form
-	 *
-	 * @return bool|HTMLText|SS_HTTPResponse
-	 */
-	public function doCreateEnvironment($data, Form $form) {
-		$this->setCurrentActionType(self::ACTION_ENVIRONMENTS);
-
-		$project = $this->getCurrentProject();
-		if(!$project) {
-			return $this->project404Response();
-		}
-
-		if(!$project->canCreateEnvironments()) {
-			return new SS_HTTPResponse('Not allowed to create environments for this project', 401);
-		}
-
-		// Set the environment type so we know what we're creating.
-		$data['EnvironmentType'] = $project->AllowedEnvironmentType;
-
-		$job = DNCreateEnvironment::create();
-
-		$job->Data = serialize($data);
-		$job->ProjectID = $project->ID;
-		$job->write();
-		$job->start();
-
-		return $this->redirect($project->Link('createenv') . '/' . $job->ID);
 	}
 
 	/**
@@ -2174,23 +2026,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				}
 			}
 		}
-	}
-
-	/**
-	 * Returns a list of attempted environment creations.
-	 *
-	 * @return PaginatedList
-	 */
-	public function CreateEnvironmentList() {
-		$project = $this->getCurrentProject();
-		if($project) {
-			$dataList = $project->CreateEnvironments();
-		} else {
-			$dataList = new ArrayList();
-		}
-
-		$this->extend('updateCreateEnvironmentList', $dataList);
-		return new PaginatedList($dataList->sort('Created DESC'), $this->request);
 	}
 
 	/**
