@@ -77,7 +77,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'createsnapshot',
 		'snapshotslog',
 		'uploadsnapshot',
-		'getCreateEnvironmentForm',
 		'getUploadSnapshotForm',
 		'getPostSnapshotForm',
 		'getDataTransferRestoreForm',
@@ -116,7 +115,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'project/$Project/environment/$Environment' => 'environment',
 		'project/$Project/createenv/$Identifier/log' => 'createenvlog',
 		'project/$Project/createenv/$Identifier' => 'createenv',
-		'project/$Project/CreateEnvironmentForm' => 'getCreateEnvironmentForm',
 		'project/$Project/branch' => 'branch',
 		'project/$Project/build/$Build' => 'build',
 		'project/$Project/restoresnapshot/$DataArchiveID' => 'restoresnapshot',
@@ -906,53 +904,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		return $this->sendResponse($env->ResqueStatus(), $content);
-	}
-
-	/**
-	 * @param SS_HTTPRequest $request
-	 * @return Form
-	 */
-	public function getCreateEnvironmentForm(SS_HTTPRequest $request) {
-		$this->setCurrentActionType(self::ACTION_ENVIRONMENTS);
-
-		$project = $this->getCurrentProject();
-		if(!$project) {
-			return $this->project404Response();
-		}
-
-		$envType = $project->AllowedEnvironmentType;
-		if(!$envType || !class_exists($envType)) {
-			return null;
-		}
-
-		$backend = Injector::inst()->get($envType);
-		if(!($backend instanceof EnvironmentCreateBackend)) {
-			// Only allow this for supported backends.
-			return null;
-		}
-
-		$fields = $backend->getCreateEnvironmentFields($project);
-		if(!$fields) return null;
-
-		if(!$project->canCreateEnvironments()) {
-			return new SS_HTTPResponse('Not allowed to create environments for this project', 401);
-		}
-
-		$form = Form::create(
-			$this,
-			'CreateEnvironmentForm',
-			$fields,
-			FieldList::create(
-				FormAction::create('doCreateEnvironment', 'Create')
-					->addExtraClass('btn')
-			),
-			$backend->getCreateEnvironmentValidator()
-		);
-
-		// Tweak the action so it plays well with our fake URL structure.
-		$form->setFormAction($project->Link() . '/CreateEnvironmentForm');
-
-		return $form;
 	}
 
 	/**
