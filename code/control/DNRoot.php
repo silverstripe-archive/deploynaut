@@ -1380,10 +1380,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		// Plan the deployment.
-		$strategy = $environment->Backend()->planDeploy(
-			$environment,
-			$request->requestVars()
-		);
+		$strategy = $environment->getDeployStrategy($request);
 		$data = $strategy->toArray();
 
 		// Add in a URL for comparing from->to code changes. Ensure that we have

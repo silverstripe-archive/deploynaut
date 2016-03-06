@@ -210,6 +210,15 @@ class DNEnvironment extends DataObject {
 		return Injector::inst()->get($backend);
 	}
 
+	/**
+	 * @param SS_HTTPRequest $request
+	 *
+	 * @return DeploymentStrategy
+	 */
+	public function getDeployStrategy(\SS_HTTPRequest $request) {
+		return $this->Backend()->planDeploy($this, $request);
+	}
+
 	public function Menu() {
 		$list = new ArrayList();
 
