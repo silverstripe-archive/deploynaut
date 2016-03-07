@@ -216,7 +216,7 @@ class DNEnvironment extends DataObject {
 	 * @return DeploymentStrategy
 	 */
 	public function getDeployStrategy(\SS_HTTPRequest $request) {
-		return $this->Backend()->planDeploy($this, $request);
+		return $this->Backend()->planDeploy($this, $request->requestVars());
 	}
 
 	public function Menu() {
