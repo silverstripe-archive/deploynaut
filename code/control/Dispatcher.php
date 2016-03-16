@@ -128,7 +128,7 @@ abstract class Dispatcher extends DNRoot {
 
 	/**
 	 * @param string|array
-	 * @return string
+	 * @return string|array
 	 */
 	protected function trimWhitespace($val) {
 		if(is_array($val)) {
@@ -143,7 +143,7 @@ abstract class Dispatcher extends DNRoot {
 	 * Remove control characters from the input.
 	 *
 	 * @param string|array
-	 * @return string
+	 * @return string|array
 	 */
 	protected function stripNonPrintables($val) {
 		if(is_array($val)) {
