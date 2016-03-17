@@ -190,7 +190,7 @@ var Form = React.createClass({
 		Q($.ajax({
 			type: "POST",
 			url: this.props.url,
-			data: data 
+			data: data
 		})).then(function(data) {
 			if(data.NewSecurityID) {
 				self.setState({ securityID: data.NewSecurityID });
@@ -203,9 +203,8 @@ var Form = React.createClass({
 		},function(response) {
 			self.afterFailure(response);
 			self.setState({ isSubmitting: false });
-		}).catch(function(response) {
-			self.afterFailure(response);
-			self.setState({ isSubmitting: false });
+		}).catch(function(errorMessage) {
+			console.error(errorMessage);
 		});
 	},
 
