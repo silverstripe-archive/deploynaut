@@ -190,9 +190,9 @@ var Form = React.createClass({
 		Q($.ajax({
 			type: "POST",
 			url: this.props.url,
-			data: data 
+			data: data
 		})).then(function(data) {
-			if(data.NewSecurityID) {
+			if(data.NewSecurityID && this.isMounted()) {
 				self.setState({ securityID: data.NewSecurityID });
 			}
 			if(self.props.afterSuccess) {
@@ -216,7 +216,9 @@ var Form = React.createClass({
 	},
 
 	afterFailure: function(response) {
-		this.setState({ isSubmitting: false });
+		if(!this.isMounted()) {
+			return;
+		}
 
 		var ct = response.getResponseHeader("content-type") || "";
 		if (ct.indexOf('json') > -1) {
