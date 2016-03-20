@@ -499,17 +499,22 @@ var CheckboxSet = React.createClass({
 	},
 
 	render: function() {
-		var className = 'form-control';
 		var alert;
 		if (!this.state.isValid) {
 			alert = <div className='validation-message'>{this.state.serverError || this.props.validationError}</div>;
-			className += ' validation-error';
+		}
+
+		var wrapperCss = 'checkbox';
+		if(this.props.inline) {
+			wrapperCss = 'checkbox-inline';
 		}
 
 		var inputs = this.state.data.map(function(item) {
 			return (
-				<div className={className} key={this.name + "_" + item.value}>
+				<div className={wrapperCss}>
+				<label htmlFor={this.name + "_" + item.value} key={this.name + "_" + item.value}>
 					<input
+						className="checkbox"
 						type="checkbox"
 						id={this.name + "_" + item.value}
 						name={this.name + "[]"}
@@ -517,7 +522,8 @@ var CheckboxSet = React.createClass({
 						onChange={this.handleCheckboxChange.bind(this, item.value)}
 						checked={item.selected}
 					/>
-					<label htmlFor={this.name + "_" + item.value}>{item.title}</label>
+					{item.title}
+				</label>
 				</div>
 			);
 		}.bind(this));
