@@ -31,3 +31,5 @@ Injector:
     properties: 
       BaseDir: "../deploynaut-resources/build-cache"
       CacheSize: 5
+DNEnvironment:
+    allow_web_editing: true
