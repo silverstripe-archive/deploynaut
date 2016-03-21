@@ -511,8 +511,8 @@ var CheckboxSet = React.createClass({
 
 		var inputs = this.state.data.map(function(item) {
 			return (
-				<div className={wrapperCss}>
-				<label htmlFor={this.name + "_" + item.value} key={this.name + "_" + item.value}>
+				<div className={wrapperCss} key={this.name + "_" + item.value}>
+				<label htmlFor={this.name + "_" + item.value}>
 					<input
 						className="checkbox"
 						type="checkbox"
