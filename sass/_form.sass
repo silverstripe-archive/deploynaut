@@ -15,6 +15,12 @@
 .btn 
 	margin-bottom: 20px;
 
+	.fa 
+		margin-right: 6px
+
+	.no-text
+		margin-right: 0
+
 input[type="submit"],
 input[type="button"],
 input[type="reset"]
@@ -23,23 +29,12 @@ input[type="reset"]
 
 input.text,
 select,
-textarea,
 .readonly span.readonly
 	@extend .form-control
 
 .readonly span.readonly
 	color: #888
 	line-height: 36px
-
-.textarea
-	transition: height $textarea-transition-time;
-	-webkit-transition: height $textarea-transition-time
-	-moz-transition: height $textarea-transition-time
-	-ms-transition: height $textarea-transition-time
-	-o-transition: height $textarea-transition-time
-
-	&:focus
-		height: 100px
 
 .field.dataarchivefile 
 	margin-bottom: 15px
@@ -50,8 +45,12 @@ textarea,
 .field + .field
 	margin-top: 25px
 
-fieldset + .Actions
-	margin-top: 35px
+fieldset
+	margin-bottom: $padding-large-vertical
+
+	+ .Actions,
+	+ .btn-toolbar
+		margin-top: $padding-large-vertical * 2
 
 // Security page
 
@@ -70,7 +69,7 @@ fieldset + .Actions
 	.radio-inline input[type="radio"], 
 	.checkbox input[type="checkbox"], 
 	.checkbox-inline input[type="checkbox"]
-		margin-left: 0
+		margin-left: -20px
 
 	.field.checkbox
 		margin-bottom: 30px
@@ -79,16 +78,6 @@ fieldset + .Actions
 	fieldset + .Actions
 		margin-top: 0
 
-
-
-// Alerts
-.alert-special
-	background-color: $platform-blue
-	margin-bottom: $line-height-computed;
-	margin: -30px -30px 0;
-	padding-left: 30px
-	padding-right: 30px
-	color: #fff
 
 
 // Select dropdown
@@ -133,6 +122,21 @@ fieldset + .Actions
 	background-color: transparent
 	box-shadow: none
 	border-bottom: 1px solid $input-border
+
+textarea,
+textarea.form-control
+	border-radius: $border-radius-base !important
+	font-size: $font-size-base
+	border: 1px solid $input-border
+	color: $input-color
+	padding: $padding-base-vertical $padding-base-horizontal
+	width: 100%
+
+	&:focus 
+		border-color: $input-border-focus
+
+.vert
+	resize: vertical
 
 .input-group .form-control
 	position: relative;
@@ -279,24 +283,24 @@ label
 /* -- highlighter animation --------------------------- */
 @-webkit-keyframes inputHighlighter
 	from
-		background:#5264AE; 
+		background: #5264AE; 
 	to
-		width:0; 
-		background:transparent;
+		width: 0; 
+		background: transparent;
 
 @-moz-keyframes inputHighlighter
 	form-control
-  		background:#5264AE;
+  		background: #5264AE;
 	to
-  		width:0; 
-  		background:transparent;
+  		width: 0; 
+  		background: transparent;
 
 @keyframes inputHighlighter
 	from
-		background:#5264AE; 
+		background: #5264AE; 
 	to
-		width:0; 
-		background:transparent; 
+		width: 0; 
+		background: transparent; 
 
 
 

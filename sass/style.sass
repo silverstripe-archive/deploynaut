@@ -16,22 +16,26 @@ $textarea-transition-time: 0.6s
 
 ul.list,
 ol.list
-	list-style: none;
-	padding-left: 0;
+	list-style: none
+	padding-left: 0
 
 	li
-		background: url(../img/bg-list.png) left 1px no-repeat;
+		background: url(../img/bg-list.png) left 1px no-repeat
 		padding-left: 15px
 
 		+ li
 			margin-top: 8px
 
 .description
-    line-height: 3em
-    font-style: italic
-    color: #BFBFBF
+	line-height: 3em
+	font-style: italic
+	color: #BFBFBF
+
+
+// Alerts
 
 .alert
+
 	&.alert-error,
 	&.Failed
 		@extend .alert-danger
@@ -56,14 +60,27 @@ ol.list
 		padding-bottom: 10px
 		list-style: disc
 
+	.btn
+		margin-bottom: 0
+
+.alert-special
+	background-color: $platform-blue
+	margin-bottom: $line-height-computed;
+	margin: -30px -30px 0;
+	padding-left: 30px
+	padding-right: 30px
+	color: #fff
+
 .message.bad,
 .message.required
-    @extend .alert
-    @extend.alert-error
-    display: block
+	@extend .alert
+	@extend.alert-danger
+	display: block
+
+
 
 .popover
-    max-width: 800px;
+	max-width: 800px;
 
 .progress-bar
 	width: 100% /* default */
@@ -96,6 +113,7 @@ ol.list
 
 .page-container
 	padding-left: $nav-width
+	padding-bottom: 70px
 	margin: 0 auto
 
 	@media (max-width: $screen-md)
@@ -130,18 +148,10 @@ ol.list
 		background-color: #d7d7d7
 
 
-.disk-quota
-	@extend .alert
+.alert-full
 	margin: -30px -30px 0
-
-	&.success
-		@extend .alert-success
-
-	&.warning
-		@extend .alert-warning
-
-	&.danger
-		@extend .alert-danger
+	padding-left: 30px
+	border-radius: 0
 
 
 // SIDEBAR
@@ -196,7 +206,6 @@ ol.list
 					padding-left: 0px
 
 		a
-			opacity: .8
 			padding-left: 0
 
 			&:hover
@@ -388,7 +397,6 @@ ol.list
 				color: $navbar-inverse-link-color
 				vertical-align: middle
 				padding: 3px 6px
-				border-bottom: $gray-light solid 1px
 
 				&:hover, &:focus
 					background: $platform-blue
@@ -529,17 +537,18 @@ button.sidebar-open
 
 
 
-// TYPE
+// Tables
+
 .table > thead > tr > th, .table > tfoot > tr > th
 	border-bottom: 1px solid $UI-border
 	border-top: 1px solid $UI-border
-	font-size: 14px
+	font-size: 12px
 	font-weight: 600
 	padding: 16px 10px 12px
 	text-transform: uppercase
 
 .table > tbody > tr > th
-    padding: 12px 10px
+	padding: 12px 10px
 
 .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td
 	border-bottom: 1px solid $UI-border
@@ -616,14 +625,14 @@ button.sidebar-open
 .deploy-form-loading
 	@extend .deploy-form-outer
 	display: table
-	width:100%
+	width: 100%
 
 	> .icon-holder
 		display: table-cell
 		color: $platform-blue
 		vertical-align: middle
 		text-align: center
-		height:15em
+		height: 15em
 
 		> .fa
 			font-size: 52px
@@ -1032,7 +1041,10 @@ td > .deployment-tag
 		margin: 0 auto
 
 .i-push
-	margin-right: 4px
+	margin-right: 6px
+
+.space-before
+	margin-left: 6px
 
 .no-wrap
 	white-space: nowrap
@@ -1082,55 +1094,55 @@ td > .deployment-tag
 	word-wrap: break-word
 
 .create-form
-    width: 50%
+	width: 50%
 
 .form-inline .btn
-    margin-top: 22px
+	margin-top: 22px
 
 .form-group
 
-    .validation-message
-        color: $state-danger-text
-        padding-bottom: 4px
-        font-weight: 300
+	.validation-message
+		color: $state-danger-text
+		padding-bottom: 4px
+		font-weight: 300
 
-    .form-control
-        &.validation-error
-            border-color: $state-danger-text
-            &:focus
-                border-color: #646464
+	.form-control
+		&.validation-error
+			border-color: $state-danger-text
+			&:focus
+				border-color: #646464
 
-    .help-text
-        margin-top: 5px
-        color: #999
-        font-weight: 300
+	.help-text
+		margin-top: 5px
+		color: #999
+		font-weight: 300
 
 .current-build-data
-    margin-top: 10px
+	margin-top: 10px
 
 #deployment-dialog-holder
-    margin-top: 20px
+	margin-top: 20px
 
 .project-build-in-progress
-    @extend .text-center
+	@extend .text-center
 
-    .progress-icon
-        color: $platform-blue
-        margin-bottom: 2em
+	.progress-icon
+		color: $platform-blue
+		margin-bottom: 2em
 
-    p
-        font-size: 16px
+	p
+		font-size: 16px
 
-    .add-deploy-key
-        margin-top: 2em
+	.add-deploy-key
+		margin-top: 2em
 
-    .gitlab-icon
-        height: 14px
-        margin-top: -3px
+	.gitlab-icon
+		height: 14px
+		margin-top: -3px
 
 .alert.failed-environments ul
-    margin: 0
-    padding-bottom: 0
+	margin: 0
+	padding-bottom: 0
 
 .plat-icon
 	&.fa-cog
@@ -1147,3 +1159,28 @@ td > .deployment-tag
 
 .button-row a
 	margin-left: 10px
+
+
+// Platform modals
+.modal-content 
+	border: none
+	box-shadow: 0 3px 9px rgba(0,0,0,.2)
+
+.modal-header
+	background-color: $platform-blue
+	border-radius: $border-radius-base $border-radius-base 0 0
+	color: #fff
+	border-bottom: 1px solid #eee
+
+	.close
+		text-shadow: none			
+		opacity: .5
+		font-weight: lighter
+		font-size: 32px
+
+	p, h1, h2, h3, h4, h5, .h1, .h2, .h3, .h4, .h5, .close
+		color: #fff
+
+.content .variables-description p
+	max-width: none
+

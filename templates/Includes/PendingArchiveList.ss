@@ -7,7 +7,7 @@
 				<p>Lists any requests which are waiting for a file to be processed manually.</p>
 
 				<div class="table-responsive">
-					<table class="table table-bordered table-striped table-data-archives">
+					<table class="table table-data-archives">
 						<thead>
 							<tr>
 								<th>Date Created</th>

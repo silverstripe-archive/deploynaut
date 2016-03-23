@@ -67,7 +67,7 @@ $font-size-h5:            ceil(($font-size-base * 1.13)) // ~16px
 $font-size-h6:            ceil(($font-size-base * 0.85)) // ~12px
 
 //** Unit-less `line-height` for use in components like buttons.
-// $line-height-base:        1.428571429 // 20/14
+$line-height-base:        1.428571429 // 20/14
 //** Computed "line-height" (`font-size` * `line-height`) for use with `margin`, `padding`, etc.
 // $line-height-computed:    floor(($font-size-base * $line-height-base)) // ~20px
 
@@ -100,7 +100,7 @@ $headings-color:          $gray
 //## Define common padding and border radius sizes and more. Values based on 14px text and 1.428 line-height (~20px to start).
 
 $padding-base-vertical:     6px
-$padding-base-horizontal:   12px
+$padding-base-horizontal:   14px
 
 $padding-large-vertical:    10px
 $padding-large-horizontal:  16px
@@ -114,9 +114,9 @@ $padding-xs-horizontal:     5px
 $line-height-large:         1.3333333 // extra decimals for Win 8.1 Chrome
 $line-height-small:         1.5
 
-$border-radius-base:        2px
+$border-radius-base:        3px
 $border-radius-large:       6px
-$border-radius-small:       0px
+$border-radius-small:       2px
 
 //** Global color for active items (e.g., navs or dropdowns).
 // $component-active-color:    #fff
@@ -212,20 +212,20 @@ $input-border:                   #e6e6e6
 // $input-border-radius-small:      $border-radius-small
 
 //** Border color for inputs on focus
-$input-border-focus:             #646464
+$input-border-focus:             #999
 
 //** Placeholder text color
 $input-color-placeholder:        #999
 
 //** Default `.form-control` height
-// $input-height-base:              ($line-height-computed + ($padding-base-vertical * 2) + 2)
+//$input-height-base:              ($line-height-computed + ($padding-base-vertical * 2) + 2)
 //** Large `.form-control` height
 // $input-height-large:             (ceil($font-size-large * $line-height-large) + ($padding-large-vertical * 2) + 2)
 //** Small `.form-control` height
 // $input-height-small:             (floor($font-size-small * $line-height-small) + ($padding-small-vertical * 2) + 2)
 
 //** `.form-group` margin
-// $form-group-margin-bottom:       15px
+$form-group-margin-bottom:       15px
 
 // $legend-color:                   $gray-dark
 // $legend-border-color:            #e5e5e5
@@ -602,32 +602,31 @@ $tooltip-max-width:           400px
 //##
 
 //** Padding applied to the modal body
-// $modal-inner-padding:         15px
-
+$modal-inner-padding:         20px
 //** Padding applied to the modal title
-// $modal-title-padding:         15px
+$modal-title-padding:         20px
 //** Modal title line-height
-// $modal-title-line-height:     $line-height-base
+$modal-title-line-height:     $line-height-base
 
 //** Background color of modal content area
-// $modal-content-bg:                             #fff
+$modal-content-bg:                             #fff
 //** Modal content border color
-// $modal-content-border-color:                   rgba(0,0,0,.2)
+$modal-content-border-color:                   rgba(0,0,0,.2)
 //** Modal content border color **for IE8**
-// $modal-content-fallback-border-color:          #999
+$modal-content-fallback-border-color:          #999
 
 //** Modal backdrop background color
-// $modal-backdrop-bg:           #000
+$modal-backdrop-bg:           #000
 //** Modal backdrop opacity
-// $modal-backdrop-opacity:      .5
+$modal-backdrop-opacity:      .5
 //** Modal header border color
-// $modal-header-border-color:   #e5e5e5
+$modal-header-border-color:   $platform-blue
 //** Modal footer border color
-// $modal-footer-border-color:   $modal-header-border-color
+$modal-footer-border-color:   $modal-header-border-color
 
-// $modal-lg:                    900px
-// $modal-md:                    600px
-// $modal-sm:                    300px
+$modal-lg:                    900px
+$modal-md:                    600px
+$modal-sm:                    300px
 
 
 //== Alerts
@@ -717,22 +716,22 @@ $alert-danger-border:         $state-danger-border
 //##
 
 $panel-bg:                    #fff
-// $panel-body-padding:          15px
-// $panel-heading-padding:       10px 15px
+$panel-body-padding:          15px
+$panel-heading-padding:       10px 15px
 // $panel-footer-padding:        $panel-heading-padding
-// $panel-border-radius:         $border-radius-base
+$panel-border-radius:         $border-radius-base
 
 //** Border color for elements within panels
 // $panel-inner-border:          #ddd
 // $panel-footer-bg:             #f5f5f5
 
-// $panel-default-text:          $gray-dark
-// $panel-default-border:        #ddd
-// $panel-default-heading-bg:    #f5f5f5
+$panel-default-text:          $gray-dark
+$panel-default-border:        #ddd
+$panel-default-heading-bg:    #f5f5f5
 
-// $panel-primary-text:          #fff
-// $panel-primary-border:        $brand-primary
-// $panel-primary-heading-bg:    $brand-primary
+$panel-primary-text:          #fff
+$panel-primary-border:        $navbar-inverse-bg
+$panel-primary-heading-bg:    $navbar-inverse-bg
 
 // $panel-success-text:          $state-success-text
 // $panel-success-border:        $state-success-border
