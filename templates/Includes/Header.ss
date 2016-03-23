@@ -1,5 +1,5 @@
 <div class="side-content side-header">
-	<button data-toggle="layout" type="button" class="btn btn-link sidebar-open pull-right hidden-md hidden-lg"><i class="fa fa-times"></i></button>
+	<button data-toggle="layout" type="button" class="btn btn-link sidebar-open pull-right hidden-md hidden-lg"><i class="fa fa-times no-text"></i></button>
 	<a class="brand" href="naut/projects">SilverStripe Platform</a>
 </div>
 

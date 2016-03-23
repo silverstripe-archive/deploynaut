@@ -2,9 +2,9 @@
 <ul class="project-links">
 	<% if $HasPerm(ADMIN) && $CurrentEnvironment %>
 		<li>
-			<i class="fa fa-stethoscope"></i>
+			<i class="fa fa-sign-in i-push"></i>
 			<a target="deploynaut-backend" href="admin/naut/DNProject/EditForm/field/DNProject/item/{$CurrentProject.ID}/ItemEditForm/field/Environments/item/{$CurrentEnvironment.ID}/edit">
-				Edit in CMS
+				 Edit in CMS
 			</a>
 		</li>
 	<% end_if %>

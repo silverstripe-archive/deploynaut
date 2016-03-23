@@ -27,7 +27,7 @@
 		<% if $DataTransferLogs %>
 
 		<div class="table-responsive">
-			<table class="table table-bordered table-striped">
+			<table class="table">
 				<thead>
 					<tr>
 						<th>Date Created</th>

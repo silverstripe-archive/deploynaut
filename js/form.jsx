@@ -307,8 +307,10 @@ var Form = React.createClass({
 			<form onSubmit={this.submit} className="form">
 				{message}
 				{this.amendedChildren}
-				<button className="btn btn-primary" type="submit" disabled={this.state.isSubmitting}>{this.state.isSubmitting?buttonSubmittingTitle:buttonTitle}</button>
-				{cancelButton}
+				<div className="btn-toolbar">
+					<button className="btn btn-primary" type="submit" disabled={this.state.isSubmitting}>{this.state.isSubmitting?buttonSubmittingTitle:buttonTitle}</button>
+					{cancelButton}
+				</div>
 			</form>
 		);
 	}

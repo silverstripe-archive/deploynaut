@@ -23,17 +23,17 @@
 	<% with $CurrentProject %>
 		<% if $HasDiskQuota %>
 			<% if $HasExceededDiskQuota %>
-				<div class="disk-quota danger">
+				<div class="alert alert-full alert-danger">
 					<i class="fa fa-exclamation-circle"></i>
 					The project has exceeded the total quota of $DiskQuotaMB MB. Delete old snapshots to free up space.
 				</div>
 			<% else_if $DiskQuotaUsagePercent > 85 %>
-				<div class="disk-quota warning">
+				<div class="alert alert-full alert-warning">
 					<i class="fa fa-exclamation-triangle"></i>
 					You have used $UsedQuotaMB MB out of your $DiskQuotaMB MB quota across all environments for this project.
 				</div>
 			<% else %>
-				<div class="disk-quota success">
+				<div class="alert alert-full alert-success">
 					<i class="fa fa-info-circle"></i>
 					You have used $UsedQuotaMB MB out of your $DiskQuotaMB MB quota across all environments for this project.
 				</div>
