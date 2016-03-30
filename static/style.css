@@ -9543,6 +9543,9 @@ input[type="reset"], .deploy-dropdown {
   input[type="reset"] .no-text, .deploy-dropdown .no-text {
     margin-right: 0; }
 
+.table .btn, .table .action, .table input[type="submit"], .table input[type="button"], .table input[type="reset"], .table .deploy-dropdown {
+  margin-bottom: 0; }
+
 .readonly span.readonly {
   color: #888;
   line-height: 36px; }
