@@ -72,7 +72,9 @@
 	<% if $CurrentProject.PublicKey %>
 		<h4>Deploy key</h4>
 		<p>Permit us access to your private repositories by adding this deployment key.</p>
-		<pre class="deploy-key">$CurrentProject.PublicKey</pre>
+		<textarea class="vert readonly deploy-key" rows="4" readonly="readonly">
+			$CurrentProject.PublicKey
+		</textarea>
 	<% end_if %>
 
 	<% if $CurrentProject.canCreateEnvironments %>

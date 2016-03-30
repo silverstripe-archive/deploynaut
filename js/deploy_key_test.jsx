@@ -11,7 +11,15 @@ var DeployKeyTest = React.createClass({
 	render: function() {
 
 		if (this.props.deployKey) {
-			var key = <pre className="deploy-key">{this.props.deployKey}</pre>;
+			var key = (
+				<textarea
+					className="vert readonly deploy-key"
+					rows="6"
+					readOnly
+				>
+					{this.props.deployKey}
+				</textarea>
+			);
 		} else {
 			var key = (
 				<div className="alert alert-error">
@@ -115,7 +123,7 @@ var DeployKeyTest = React.createClass({
 			buttonDisabled = true;
 			buttonClass = 'btn btn-success';
 		}
-		
+
 		var msg;
 		if(this.state.tested && !this.state.canAccessRepo && !this.state.loading) {
 			msg = (

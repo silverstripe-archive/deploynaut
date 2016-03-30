@@ -10818,6 +10818,15 @@ td > .deployment-tag {
   height: 14px;
   margin-top: -3px; }
 
+textarea.deploy-key {
+  display: inline-block;
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+  height: auto;
+  background: #f0f3f4;
+  border: 1px solid #ddd;
+  word-break: break-all;
+  white-space: normal; }
+
 .alert.failed-environments ul, .failed-environments.message.bad ul,
 .failed-environments.message.required ul, .failed-environments.deploy-dropdown.error ul, .failed-environments.deploy-dropdown-errors ul {
   margin: 0;
