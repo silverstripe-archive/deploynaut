@@ -20,6 +20,10 @@ class DNDeployment extends DataObject {
 	private static $db = array(
 		"SHA" => "GitSHA",
 		"ResqueToken" => "Varchar(255)",
+		// The branch that was used to deploy this. Can't really be inferred from Git history because
+		// the commit could appear in lots of branches that are irrelevant to the user when it comes
+		// to deployment history, and the branch may have been deleted.
+		"Branch" => "Varchar(255)",
 		// Observe that this is not the same as Resque status, since ResqueStatus is not persistent
 		// It's used for finding successful deployments and displaying that in history views in the frontend
 		"Status" => "Enum('Queued, Started, Finished, Failed, n/a', 'n/a')",

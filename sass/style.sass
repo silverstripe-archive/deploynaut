@@ -948,14 +948,21 @@ button.sidebar-open
 					font-size: 14px
 					text-decoration: none
 
-.deployment-tag
+.deployment-tag,
+.deployment-branch
 	@extend .label
-	@extend .label-info
 	position: relative
 	top: -2px
 
-td > .deployment-tag
+td > .deployment-tag,
+td > .deployment-branch
 	margin-right: 4px
+
+.deployment-tag
+	@extend .label-primary
+
+.deployment-branch
+	@extend .label-default
 
 .log-content
 	overflow-y: auto
