@@ -332,8 +332,18 @@ var DeployTab = React.createClass({
 
 		Events.publish('change_loading');
 
+		var sha = React.findDOMNode(this.refs.sha_selector.refs.sha).value;
+		var branch = null;
+
+		for (var i in this.props.tab.field_data) {
+			if (this.props.tab.field_data[i].id === sha) {
+				branch = this.props.tab.field_data[i].branch_name;
+			}
+		}
+
 		var summaryData = {
-			sha: React.findDOMNode(this.refs.sha_selector.refs.sha).value,
+			sha: sha,
+			branch: branch,
 			SecurityID: this.props.SecurityToken
 		};
 		// merge the 'advanced' options if they are set

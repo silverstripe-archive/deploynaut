@@ -315,6 +315,7 @@ class DeploymentStrategy extends ViewableData {
 		$deployment->EnvironmentID = $this->environment->ID;
 		// Pull out the SHA from the options so we can make it queryable.
 		$deployment->SHA = $this->getOption('sha');
+		$deployment->Branch = $this->getOption('branch');
 		$deployment->Strategy = $this->toJSON();
 		$deployment->write();
 

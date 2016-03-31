@@ -6,6 +6,12 @@
 	<% end_loop %>
 <% end_if %>
 
+<% if $Branch %>
+	<span class="deployment-branch">
+		$Branch
+	</span>
+<% end_if %>
+
 <% if $Environment.Project.RepositoryInterface.CommitURL %>
 	<a href="{$Environment.Project.RepositoryInterface.CommitURL}/{$SHA}"
 <% else %>

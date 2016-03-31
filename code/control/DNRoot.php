@@ -1231,7 +1231,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			);
 			$data['field_data'][] = array(
 				'id' => $sha,
-				'text' => $branchValue
+				'text' => $branchValue,
+				'branch_name' => $name // the raw branch name, not including the time etc
 			);
 		}
 		$tabs[] = $data;
