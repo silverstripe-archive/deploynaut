@@ -1,0 +1,43 @@
+.variables .variables-actions {
+  float: right; }
+  .variables .variables-actions button, .variables .variables-actions span, .variables .variables-actions input {
+    margin-left: 10px;
+    float: right;
+    margin-bottom: 5px; }
+
+.variables .alert {
+  float: left;
+  width: 75%; }
+
+.variables th.variable, .variables td.variable {
+  width: 30%; }
+  .variables th.variable:first-child, .variables td.variable:first-child {
+    padding-left: 0; }
+
+.variables th.actions, .variables td.actions {
+  width: 30px;
+  padding-right: 0; }
+
+.variables tr button {
+  margin: 0px;
+  padding-top: 4px;
+  padding-bottom: 4px; }
+
+.variables tr input {
+  width: 100%;
+  padding: 3px 10px;
+  border: 1px solid #ddd;
+  height: 31px;
+  border-radius: 3px !important; }
+
+.variables .variable-table td {
+  padding: 16px 16px 16px 18px; }
+
+.variables table {
+  clear: left; }
+  .variables table th small {
+    font-weight: normal;
+    font-size: 0.8em; }
+
+.variables .form-group {
+  margin-bottom: 0px; }
