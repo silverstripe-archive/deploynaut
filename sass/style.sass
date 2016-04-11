@@ -480,6 +480,14 @@ button.sidebar-open
 		padding-bottom: 0
 		padding-top: 20px
 
+	.btn-group
+		width: 100%
+
+	.page-title
+		display: inline-block
+		vertical-align: middle;
+		margin: 0
+
 	.breadcrumb
 		padding-left: 0
 		padding-right: 0
@@ -489,16 +497,22 @@ button.sidebar-open
 		color: $breadcrumb-color
 
 	.page-heading
-		margin-bottom: 30px
+		margin-bottom: 5px
 
-		a
+	.labels
+		display: inline-block
+		margin-left: 5px
+		vertical-align: middle;
+
+		.label
+			@extend .label
 			font-weight: normal
-			font-size: 14px
-			letter-spacing: normal
+			background: $gray-light
+			padding: 4px 8px
 
-		small
-			display: block
-			margin-top: -5px
+	.environment-url
+		display: block
+		margin-bottom: 20px
 
 	.nav.nav-tabs
 		border-bottom: none
