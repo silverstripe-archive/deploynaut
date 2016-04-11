@@ -29,6 +29,23 @@ var VariableTable = React.createClass({
 
 	render: function() {
 		var self = this;
+
+		var showStatusColumn = false;
+		if (this.props.readonlyVariables && !_.isEmpty(this.props.readonlyVariables)) {
+			showStatusColumn = true;
+		}
+
+		var readonlyRows = _.map(this.props.readonlyVariables, function(item) {
+			return (
+				<VariableReadonlyTableRow
+					key={item.variable + '_' + item.value}
+					variable={item.variable}
+					value={item.value}
+					showValues={self.props.showValues}
+				/>
+			);
+		});
+
 		var rows = _.map(this.props.variables, function(item) {
 			return (
 				<VariableTableRow
@@ -36,13 +53,19 @@ var VariableTable = React.createClass({
 					variable={item.variable}
 					value={item.value}
 					showValues={self.props.showValues}
-					/>
+					showStatusColumn={showStatusColumn}
+				/>
 			);
 		});
 
 		var valueHeading = null;
 		if (this.props.showValues) {
 			valueHeading = <th className="value" dangerouslySetInnerHTML={{__html:this.props.valueHeading}} />
+		}
+
+		var statusHeading = null;
+		if (showStatusColumn === true) {
+			statusHeading = <th className="status"></th>;
 		}
 
 		var heading = null;
@@ -52,6 +75,7 @@ var VariableTable = React.createClass({
 					<tr>
 						<th className="variable" dangerouslySetInnerHTML={{__html:this.props.variableHeading}} />
 						{valueHeading}
+						{statusHeading}
 					</tr>
 				</thead>
 			);
@@ -65,6 +89,7 @@ var VariableTable = React.createClass({
 				<table className="variable-table table">
 					{heading}
 					<tbody>
+						{readonlyRows}
 						{rows}
 					</tbody>
 				</table>
@@ -74,8 +99,32 @@ var VariableTable = React.createClass({
 });
 
 var VariableTableRow = React.createClass({
-	render: function() {
 
+	render: function() {
+		var value = null;
+		if (this.props.showValues) {
+			value = <td>{this.props.value}</td>;
+		}
+
+		var status = null;
+		if (this.props.showStatusColumn) {
+			status = <td className="status"></td>;
+		}
+
+		return (
+			<tr>
+				<td>{this.props.variable}</td>
+				{value}
+				{status}
+			</tr>
+		);
+	}
+
+});
+
+var VariableReadonlyTableRow = React.createClass({
+
+	render: function() {
 		var value = null;
 		if (this.props.showValues) {
 			value = <td>{this.props.value}</td>;
@@ -85,9 +134,11 @@ var VariableTableRow = React.createClass({
 			<tr>
 				<td>{this.props.variable}</td>
 				{value}
+				<td className="status"><i className="fa fa-lock"></i></td>
 			</tr>
 		);
 	}
+
 });
 
 module.exports = VariableTable;
