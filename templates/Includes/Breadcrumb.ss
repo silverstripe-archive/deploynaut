@@ -8,7 +8,7 @@
 <h1 class="page-heading">
 	<% if $CurrentEnvironment %>
 		<% with $CurrentEnvironment %>
-			$Title <a target="_blank" href="$URL.URL"><% if $BareURL %>$BareURL<% else %>$URL<% end_if %></a>
+			$Title
 		<% end_with %>
 	<% else %>
 		<% if $CurrentProject.CurrentMenu %>
@@ -22,3 +22,9 @@
 		<% end_if %>
 	<% end_if %>
 </h1>
+
+<% if $CurrentEnvironment %>
+	<% with $CurrentEnvironment %>
+		<a class="environment-url" target="_blank" href="$URL.URL"><% if $BareURL %>$BareURL<% else %>$URL<% end_if %></a>
+	<% end_with %>
+<% end_if %>

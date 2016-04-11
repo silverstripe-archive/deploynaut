@@ -229,7 +229,7 @@ th {
   .deploy-dropdown > .caret,
   .dropup > .btn > .caret, .dropup > .action > .caret, .dropup > input[type="submit"] > .caret, .dropup > input[type="button"] > .caret, .dropup > input[type="reset"] > .caret, .dropup > .deploy-dropdown > .caret {
     border-top-color: #000 !important; }
-  .label, .deployment-tag,
+  .label, .main-container .labels .label, .deployment-tag,
   .deployment-branch {
     border: 1px solid #000; }
   .table {
@@ -5037,7 +5037,7 @@ input[type="reset"] .caret, .deploy-dropdown .caret {
     background-color: #fff;
     cursor: not-allowed; }
 
-.label, .deployment-tag,
+.label, .main-container .labels .label, .deployment-tag,
 .deployment-branch {
   display: inline;
   padding: 0.2em 0.6em 0.3em;
@@ -5049,12 +5049,14 @@ input[type="reset"] .caret, .deploy-dropdown .caret {
   white-space: nowrap;
   vertical-align: baseline;
   border-radius: .25em; }
-  .label:empty, .deployment-tag:empty,
+  .label:empty, .main-container .labels .label:empty, .deployment-tag:empty,
   .deployment-branch:empty {
     display: none; }
   .btn .label, .action .label, input[type="submit"] .label,
   input[type="button"] .label,
-  input[type="reset"] .label, .deploy-dropdown .label, .btn .deployment-tag, .action .deployment-tag, input[type="submit"] .deployment-tag,
+  input[type="reset"] .label, .deploy-dropdown .label, .btn .main-container .labels .label, .main-container .labels .btn .label, .action .main-container .labels .label, .main-container .labels .action .label, input[type="submit"] .main-container .labels .label,
+  .main-container .labels input[type="submit"] .label, input[type="button"] .main-container .labels .label,
+  .main-container .labels input[type="button"] .label, input[type="reset"] .main-container .labels .label, .main-container .labels input[type="reset"] .label, .deploy-dropdown .main-container .labels .label, .main-container .labels .deploy-dropdown .label, .btn .deployment-tag, .action .deployment-tag, input[type="submit"] .deployment-tag,
   input[type="button"] .deployment-tag,
   input[type="reset"] .deployment-tag, .deploy-dropdown .deployment-tag, .btn .deployment-branch, .action .deployment-branch, input[type="submit"] .deployment-branch,
   input[type="button"] .deployment-branch,
@@ -5063,9 +5065,10 @@ input[type="reset"] .caret, .deploy-dropdown .caret {
     top: -1px; }
 
 a.label:hover,
+.main-container .labels a.label:hover,
 a.deployment-tag:hover,
 a.deployment-branch:hover,
-a.label:focus, a.deployment-tag:focus,
+a.label:focus, .main-container .labels a.label:focus, a.deployment-tag:focus,
 a.deployment-branch:focus {
   color: #fff;
   text-decoration: none;
@@ -10296,6 +10299,14 @@ button.sidebar-open {
   padding-bottom: 0;
   padding-top: 20px; }
 
+.main-container .btn-group {
+  width: 100%; }
+
+.main-container .page-title {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0; }
+
 .main-container .breadcrumb {
   padding-left: 0;
   padding-right: 0;
@@ -10305,14 +10316,20 @@ button.sidebar-open {
   color: #555555; }
 
 .main-container .page-heading {
-  margin-bottom: 30px; }
-  .main-container .page-heading a {
+  margin-bottom: 5px; }
+
+.main-container .labels {
+  display: inline-block;
+  margin-left: 5px;
+  vertical-align: middle; }
+  .main-container .labels .label, .main-container .labels .deployment-tag, .main-container .labels .deployment-branch {
     font-weight: normal;
-    font-size: 14px;
-    letter-spacing: normal; }
-  .main-container .page-heading small {
-    display: block;
-    margin-top: -5px; }
+    background: #777777;
+    padding: 4px 8px; }
+
+.main-container .environment-url {
+  display: block;
+  margin-bottom: 20px; }
 
 .main-container .nav.nav-tabs, .main-container .deploy-form-outer .deploy-form .nav-tabs.SelectionGroup, .deploy-form-outer .deploy-form .main-container .nav-tabs.SelectionGroup, .main-container .deploy-form-loading .deploy-form .nav-tabs.SelectionGroup, .deploy-form-loading .deploy-form .main-container .nav-tabs.SelectionGroup {
   border-bottom: none; }
