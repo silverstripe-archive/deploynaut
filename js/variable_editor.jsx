@@ -171,6 +171,7 @@ var VariableEditor = React.createClass({
 						}
 					}
 				}
+
 				self.state.variables[row].error = message ? true : false;
 				updateState();
 				return message;
@@ -193,6 +194,20 @@ var VariableEditor = React.createClass({
 
 		var self = this;
 		var i = 0;
+		var readonlyRows = _.map(this.props.readonlyVariables, function(item) {
+			var row = (
+				<VariableEditorReadonlyRow
+					showValues={self.props.showValues}
+					key={"readonly-" + i}
+					variable={item.variable}
+					value={item.value}
+				/>
+			);
+			i++;
+			return row;
+		});
+
+		var j = 0;
 		var rows = _.map(this.state.variables, function(item) {
 			var row;
 			if (!item.deleted) {
@@ -202,14 +217,15 @@ var VariableEditor = React.createClass({
 				row = (
 					<VariableEditorRow
 						showValues={self.props.showValues}
-						key={i}
+						key={j}
 						disabled={self.state.saving}
 						variable={item.variable}
 						value={item.value}
-						rowState={self.rowStateProxy(i)} />
+						rowState={self.rowStateProxy(j)}
+					/>
 				);
 			}
-			i++;
+			j++;
 			return row;
 		});
 
@@ -232,7 +248,8 @@ var VariableEditor = React.createClass({
 					<tr>
 						<th className="variable" dangerouslySetInnerHTML={{__html:this.props.variableHeading}} />
 						{valueHeading}
-						<th className="actions">&nbsp;</th></tr>
+						<th className="actions">&nbsp;</th>
+					</tr>
 				</thead>
 			);
 		}
@@ -248,6 +265,7 @@ var VariableEditor = React.createClass({
 					<table className="table">
 						{heading}
 						<tbody>
+							{readonlyRows}
 							{rows}
 						</tbody>
 					</table>
@@ -287,11 +305,12 @@ var VariableEditorRow = React.createClass({
 
 	render: function() {
 		var remove = null;
+
 		if (!this.props.rowState.isVacant() && !this.props.disabled) {
 			remove = (
-					<button type="button" className="btn btn-danger" onClick={this.props.rowState.remove} disabled={this.props.disabled}>
-						<span className="fa fa-times no-text" aria-hidden="true"></span>
-					</button>
+				<button type="button" className="btn btn-danger" onClick={this.props.rowState.remove} disabled={this.props.disabled}>
+					<span className="fa fa-times no-text" aria-hidden="true"></span>
+				</button>
 			);
 		}
 
@@ -316,6 +335,27 @@ var VariableEditorRow = React.createClass({
 			</tr>
 		);
 	}
+});
+
+var VariableEditorReadonlyRow = React.createClass({
+
+	render: function() {
+		var value = null;
+		if (this.props.showValues) {
+			value = <td className="value">{this.props.value}</td>;
+		}
+
+		return (
+			<tr>
+				<td className="variable">{this.props.variable}</td>
+				{value}
+				<td className="actions">
+					<i className="fa fa-lock"></i>
+				</td>
+			</tr>
+		);
+	}
+
 });
 
 /**
