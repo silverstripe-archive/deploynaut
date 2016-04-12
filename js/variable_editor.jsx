@@ -349,7 +349,7 @@ var VariableEditorReadonlyRow = React.createClass({
 			<tr>
 				<td className="variable">{this.props.variable}</td>
 				{value}
-				<td className="actions">
+				<td className="actions text-center">
 					<i className="fa fa-lock"></i>
 				</td>
 			</tr>

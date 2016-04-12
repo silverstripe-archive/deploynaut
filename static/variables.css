@@ -33,6 +33,10 @@
 .variables .variable-table td {
   padding: 16px 16px 16px 18px; }
 
+.variables .variable-table th.status {
+  width: 30px;
+  padding-right: 0; }
+
 .variables table {
   clear: left; }
   .variables table th small {

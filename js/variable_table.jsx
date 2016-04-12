@@ -108,7 +108,7 @@ var VariableTableRow = React.createClass({
 
 		var status = null;
 		if (this.props.showStatusColumn) {
-			status = <td className="status"></td>;
+			status = <td className="status text-center"></td>;
 		}
 
 		return (
