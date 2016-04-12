@@ -97,11 +97,15 @@ var VariableEditor = React.createClass({
 		var self = this;
 		this.props.submit(newVariables)
 			.fin(function() {
-				self.setState({
-					saving: false
-				});
+				// it's possible that the this.props.submit will unmount this
+				// component due to state changes, this guards against setting
+				// state on a unmounted component
+				if(self.isMounted()) {
+					self.setState({
+						saving: false
+					});
+				}
 			});
-
 	},
 
 	/**
