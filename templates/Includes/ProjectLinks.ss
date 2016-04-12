@@ -2,17 +2,13 @@
 <ul class="project-links">
 	<% if $HasPerm(ADMIN) && $CurrentEnvironment %>
 		<li>
-			<i class="fa fa-sign-in i-push"></i>
-			<a target="deploynaut-backend" href="admin/naut/DNProject/EditForm/field/DNProject/item/{$CurrentProject.ID}/ItemEditForm/field/Environments/item/{$CurrentEnvironment.ID}/edit">
-				 Edit in CMS
-			</a>
+			<i class="fa fa-sign-in i-push"></i><a target="deploynaut-backend" href="admin/naut/DNProject/EditForm/field/DNProject/item/{$CurrentProject.ID}/ItemEditForm/field/Environments/item/{$CurrentEnvironment.ID}/edit">Edit in CMS</a>
 		</li>
 	<% end_if %>
 	<% if $CurrentProject.RepositoryInterface %><% with $CurrentProject.RepositoryInterface %>
 		<li>
 			<div class="repo-ux">
-				<img class="i-push" src="$Icon" />
-				<a href="$URL" target="_blank">View code on $Name</a>
+				<img class="i-push" src="$Icon" /><a href="$URL" target="_blank">View code on $Name</a>
 			</div>
 		</li>
 	<% end_with %><% end_if %>
