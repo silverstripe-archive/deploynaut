@@ -178,7 +178,8 @@ var DeployForm = React.createClass({
 	getInitialState: function() {
 		return {
 			selectedTab: 1,
-			data: []
+			data: [],
+			preselectSha: null
 		};
 	},
 	componentDidMount: function() {
@@ -193,11 +194,13 @@ var DeployForm = React.createClass({
 		Q($.ajax({
 			type: "POST",
 			dataType: 'json',
-			url: this.props.context.envUrl + '/git_revisions'
+			url: this.props.context.gitRevisionsUrl
 		})).then(function(data) {
 			self.setState({
 				loading: false,
-				data: data.Tabs
+				data: data.Tabs,
+				selectedTab: data.preselect_tab ? parseInt(data.preselect_tab) : 1,
+				preselectSha: data.preselect_sha
 			});
 			self.props.lastFetchedHandler(data.last_fetched);
 		}, function(data){
@@ -219,7 +222,8 @@ var DeployForm = React.createClass({
 			<div className="deploy-form-outer clearfix">
 				<form className="form-inline deploy-form" action="POST" action="#">
 					<DeployTabSelector data={this.state.data} onSelect={this.selectHandler} selectedTab={this.state.selectedTab} />
-					<DeployTabs context={this.props.context} data={this.state.data} selectedTab={this.state.selectedTab} SecurityToken={this.state.SecurityToken} />
+					<DeployTabs context={this.props.context} data={this.state.data} selectedTab={this.state.selectedTab}
+						preselectSha={this.state.preselectSha} SecurityToken={this.state.SecurityToken} />
 				</form>
 			</div>
 		);
@@ -274,7 +278,9 @@ var DeployTabs = React.createClass({
 		var self = this;
 		var tabs = this.props.data.map(function(tab) {
 			return (
-				<DeployTab context={self.props.context} key={tab.id} tab={tab} selectedTab={self.props.selectedTab} SecurityToken={self.props.SecurityToken} />
+				<DeployTab context={self.props.context} key={tab.id} tab={tab} selectedTab={self.props.selectedTab}
+					preselectSha={self.props.selectedTab==tab.id ? self.props.preselectSha : null}
+					SecurityToken={self.props.SecurityToken} />
 			);
 		});
 
@@ -294,7 +300,7 @@ var DeployTab = React.createClass({
 		return {
 			summary: this.getInitialSummaryState(),
 			options: {},
-			sha: ''
+			sha: this.props.preselectSha ? this.props.preselectSha : ''
 		};
 	},
 	getInitialSummaryState: function() {
@@ -305,6 +311,11 @@ var DeployTab = React.createClass({
 			estimatedTime: null,
 			actionCode: null,
 			initialState: true
+		}
+	},
+	componentDidMount: function() {
+		if (this.shaChosen()) {
+			this.changeSha(this.state.sha);
 		}
 	},
 	OptionChangeHandler: function(event) {
@@ -319,20 +330,14 @@ var DeployTab = React.createClass({
 			sha: event.target.value
 		});
 	},
-	changeHandler: function(event) {
-		event.preventDefault();
+	changeSha: function(sha) {
 
 		this.setState({
 			summary: this.getInitialSummaryState()
 		});
 
-		if(event.target.value === "") {
-			return;
-		}
-
 		Events.publish('change_loading');
 
-		var sha = React.findDOMNode(this.refs.sha_selector.refs.sha).value;
 		var branch = null;
 
 		for (var i in this.props.tab.field_data) {
@@ -367,6 +372,15 @@ var DeployTab = React.createClass({
 		});
 	},
 
+	changeHandler: function(event) {
+		event.preventDefault();
+		if(event.target.value === "") {
+			return;
+		}
+		var sha = React.findDOMNode(this.refs.sha_selector.refs.sha).value;
+		return this.changeSha(sha);
+	},
+
 	showOptions: function() {
 		return this.props.tab.advanced_opts === 'true';
 	},
@@ -394,9 +408,11 @@ var DeployTab = React.createClass({
 		if (this.props.tab.field_type == 'dropdown') {
 			var changeHandler = this.changeHandler;
 			if(this.showVerifyButton()) { changeHandler = this.SHAChangeHandler }
-			selector = <SelectorDropdown ref="sha_selector" tab={this.props.tab} changeHandler={changeHandler} />
+			selector = <SelectorDropdown ref="sha_selector" tab={this.props.tab}
+				changeHandler={changeHandler} defaultValue={this.state.sha} />
 		} else if (this.props.tab.field_type == 'textfield') {
-			selector = <SelectorText ref="sha_selector" tab={this.props.tab} changeHandler={this.SHAChangeHandler} />
+			selector = <SelectorText ref="sha_selector" tab={this.props.tab}
+				changeHandler={this.SHAChangeHandler} defaultValue={this.state.sha} />
 		}
 
 		// 'Advanced' options
@@ -433,8 +449,8 @@ var SelectorDropdown = React.createClass({
 			// Load data into the select2.
 			// The format supports optgroups, and looks like this:
 			// [{text: 'optgroup text', children: [{id: '<sha>', text: '<inner text>'}]}]
-			data: this.props.tab.field_data
-		});
+			data: this.props.tab.field_data,
+		}).val(this.props.defaultValue);
 
 		// Trigger handler only needed if there is no explicit button.
 		if(this.props.changeHandler) {
@@ -475,6 +491,7 @@ var SelectorText = React.createClass({
 					id={this.props.tab.field_id}
 					name="sha"
 					className="text"
+					defaultValue={this.props.defaultValue}
 					onChange={this.props.changeHandler}
 				/>
 			</div>

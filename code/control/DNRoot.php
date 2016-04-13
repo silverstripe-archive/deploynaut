@@ -747,6 +747,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		return $this->render(array(
 			'DNEnvironmentList' => $this->getCurrentProject()->DNEnvironmentList(),
 			'FlagSnapshotsEnabled' => $this->FlagSnapshotsEnabled(),
+			'Redeploy' => (bool)$request->getVar('redeploy')
 		));
 	}
 
@@ -1330,7 +1331,36 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'last_fetched' => $lastFetched
 		);
 
+		$this->applyRedeploy($request, $data);
+
 		return json_encode($data, JSON_PRETTY_PRINT);
+	}
+
+	protected function applyRedeploy(SS_HTTPRequest $request, &$data) {
+		if (!$request->getVar('redeploy')) return;
+
+		$project = $this->getCurrentProject();
+		if(!$project) {
+			return $this->project404Response();
+		}
+
+		// Performs canView permission check by limiting visible projects
+		$env = $this->getCurrentEnvironment($project);
+		if(!$env) {
+			return $this->environment404Response();
+		}
+
+		$current = $env->CurrentBuild();
+		if ($current && $current->exists()) {
+			$data['preselect_tab'] = 3;
+			$data['preselect_sha'] = $current->SHA;
+		} else {
+			$master = $project->DNBranchList()->byName('master');
+			if ($master) {
+				$data['preselect_tab'] = 1;
+				$data['preselect_sha'] = $master->SHA();
+			}
+		}
 	}
 
 	/**

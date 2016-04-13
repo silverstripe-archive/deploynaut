@@ -88,6 +88,7 @@
 					var environmentConfigContext = {
 						projectUrl: "{$absoluteBaseURL}naut/api/$CurrentProject.Name",
 						envUrl: "{$absoluteBaseURL}{$CurrentEnvironment.Link}",
+						gitRevisionsUrl: "{$absoluteBaseURL}{$CurrentEnvironment.Link}/git_revisions<% if $Redeploy %>?redeploy=1<% end_if %>",
 						envName: "{$CurrentEnvironment.Name}",
 						siteUrl: "{$CurrentEnvironment.URL}",
 						<% if $PlatformSpecificStrings %>
