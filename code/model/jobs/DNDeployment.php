@@ -264,14 +264,12 @@ class DNDeployment extends DataObject {
 		$list = new ArrayList();
 		$strategy = $this->getDeploymentStrategy();
 		foreach($strategy->getChanges() as $name => $change) {
-			if(empty($change['to'])) continue;
-
 			$list->push(new ArrayData([
 				'Name' => $name,
-				'From' => $change['from'],
-				'To' => $change['to'],
+				'From' => isset($change['from']) ? $change['from'] : null,
+				'To' => isset($change['to']) ? $change['to'] : null,
 				'Description' => isset($change['description']) ? $change['description'] : '',
-				'Changed' => $change['from'] != $change['to'],
+				'Changed' => (isset($change['from']) && isset($change['to'])) ? $change['from'] != $change['to'] : null,
 				'CompareUrl' => isset($change['compareUrl']) ? $change['compareUrl'] : ''
 			]));
 		}
