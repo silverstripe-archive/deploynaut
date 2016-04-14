@@ -105,7 +105,7 @@
 	<% else %>
 		<div class="alert alert-warning">
 			<i class="fa fa-cog fa-spin"></i>
-			A deployment is in progress. <a href="$CurrentEnvironment.runningDeployments.first.Link">View progress</a>.
+			A deployment is <a href="$CurrentEnvironment.runningDeployments.first.Link" title="Click to view deployment progress.">in progress</a>.
 		</div>
 	<% end_if %>
 
