@@ -70,10 +70,8 @@ This simple example checks that the site is accessible after a deployment has co
 	  Tests:
 	    Home:
 	      URL: http://mysite.com/
-	      ExpectStatus: 200
 	    Admin:
 	      URL: http://mysite.com/admin
-	      ExpectStatus: 302
 	Steps:
 	  # Deploy the given code
 	  Deployment:
