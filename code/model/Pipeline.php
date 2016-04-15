@@ -36,10 +36,8 @@
  *   Tests: # Smoke tests used by both rollback and smoke test
  *     Home:
  *       URL: http://www.mysite.com/
- *       ExpectStatus: 200
  *     Videos:
  *       URL: http://www.mysite.com/videos/
- *       ExpectStatus: 200
  *   Recipients:
  *     Success:
  *       - success@silverstripe.com

@@ -17,10 +17,8 @@
  *   Tests: # Used by both rollback and smoke test
  *     Home:
  *       URL: http://www.mysite.com/
- *       ExpectStatus: 200
  *     Videos:
  *       URL: http://www.mysite.com/videos/
- *       ExpectStatus: 200
  *       Attempts: 1 # This test should only be attempted once
  * Steps:
  *   SmokeTest:
@@ -31,14 +29,12 @@
  *     Tests: # Tests only used by deployment smoketest
  *       ExtraTest:
  *         URL: http://www.mysite.com/another/
- *         ExpectStatus: 200
  * RollbackStep2:
  *   Class: SmokeTestPipelineStep
  *   Attempts: 3 # Allow more attempts on rollback
  *   Tests: # Tests only used by rollback smoketest
  *     RollbackTest:
  *       URL: http://www.mysite.com/check-status/
- *       ExpectedStatus: 200
  * </code>
  *
  * @package deploynaut
@@ -57,6 +53,12 @@ class SmokeTestPipelineStep extends PipelineStep {
 		'Attempts' => 1, // Number of attempts allowed
 		'AttemptDelay' => 10 // Timeout between requests
 	);
+
+	/**
+	 * @var array
+	 * @config
+	 */
+	private static $bad_status_codes = array(500, 501, 502, 503, 504);
 
 	/**
 	 * Get all tests to be run by this smoketest
@@ -84,7 +86,6 @@ class SmokeTestPipelineStep extends PipelineStep {
 			return array(
 				'default' => array(
 					'URL' => $url,
-					'ExpectStatus' => 200
 				)
 			);
 		}
@@ -162,8 +163,14 @@ class SmokeTestPipelineStep extends PipelineStep {
 				}
 			}
 
-			// Check response code
-			if($info['http_code'] != $test['ExpectStatus']) {
+			// check the HTTP response code
+			$statusSuccess = false;
+			$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			if($status && !in_array($status, $this->config()->bad_status_codes)) {
+				$statusSuccess = true;
+			}
+
+			if($statusSuccess === false) {
 				$this->log("=================================================================");
 				$this->log(sprintf(
 					"Printing output from smoke test '%s' (URL: '%s'):",
@@ -175,10 +182,9 @@ class SmokeTestPipelineStep extends PipelineStep {
 				$this->log("=================================================================");
 
 				$this->log(sprintf(
-					'Smoke test "%s" to URL %s failed. Expected status code %s, got %s. See above for HTML returned.',
+					'Smoke test "%s" to URL %s failed with HTTP status %s. See above for HTML returned.',
 					$name,
 					$test['URL'],
-					$test['ExpectStatus'],
 					$info['http_code']
 				));
 				continue;

@@ -9,7 +9,6 @@ PipelineConfig:
   Tests:
     Home:
       URL: https://github.com/
-      ExpectStatus: 200
   # Contacts to notify, as well as the author of this pipeline
   Recipients:
     Success:
@@ -68,14 +67,12 @@ Steps:
     Tests:
       Videos:
         URL: http://www.youtube.com/
-        ExpectStatus: 200
   FailTest:
     Class: SmokeTestPipelineStep
     MaxDuration: 3600
     Tests:
       BrokenPage:
         URL: http://bob.bob.bob.bob/
-        ExpectStatus: 200
   RepeatTest:
     Class: SmokeTestPipelineStep
     MaxDuration: 3600
@@ -84,7 +81,6 @@ Steps:
     Tests:
       BrokenPage:
         URL: http://bob.bob.bob.bob/
-        ExpectStatus: 200
   RequestDeploymentStep:
     Class: TriggerDeployStep
     MaxDuration: 86400 # Auto time out after a day
