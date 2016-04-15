@@ -72,6 +72,9 @@ class RollbackStepTest extends PipelineTest {
 		$this->assertEquals('Finished', $step->Status);
 		// confirm the maintenace page has been left up for a failed rollback
 		$this->assertFalse(PipelineTest_MockLog::has_message('Enabling maintenance page for failed rollback'));
+
+		// The deployment was considered a failure
+		$this->assertEquals('Failed', $pipeline->CurrentDeployment()->Status);
 	}
 
 	/**
@@ -155,5 +158,8 @@ class RollbackStepTest extends PipelineTest {
 
 		// Confirm that the maintenance page is not disabled
 		$this->assertNotLogged('Maintenance page disabled');
+
+		// The deployment was considered a failure
+		$this->assertEquals('Failed', $pipeline->CurrentDeployment()->Status);
 	}
 }

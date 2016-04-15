@@ -611,7 +611,6 @@ class Pipeline extends DataObject implements PipelineData {
 		// Finish off the pipeline - rollback will only be triggered on a failed pipeline.
 		$this->Status = 'Failed';
 		$this->write();
-
 	}
 
 	/**
@@ -686,6 +685,13 @@ class Pipeline extends DataObject implements PipelineData {
 			$this->log("Pipeline failed, not running rollback (not configured or not applicable yet).");
 			$this->write();
 			if($notify) $this->sendMessage(self::ALERT_FAILURE);
+		}
+
+		// Regardless of whether a rollback succeeded or not, we consider the deployment a failure.
+		$deployment = $this->CurrentDeployment();
+		if ($deployment) {
+			$deployment->Status = 'Failed';
+			$deployment->write();
 		}
 	}
 
