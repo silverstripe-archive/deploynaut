@@ -103,7 +103,7 @@ var VariableTableRow = React.createClass({
 	render: function() {
 		var value = null;
 		if (this.props.showValues) {
-			value = <td>{this.props.value}</td>;
+			value = <td className="value">{this.props.value}</td>;
 		}
 
 		var status = null;
@@ -113,7 +113,7 @@ var VariableTableRow = React.createClass({
 
 		return (
 			<tr>
-				<td>{this.props.variable}</td>
+				<td className="variable">{this.props.variable}</td>
 				{value}
 				{status}
 			</tr>
@@ -127,14 +127,14 @@ var VariableReadonlyTableRow = React.createClass({
 	render: function() {
 		var value = null;
 		if (this.props.showValues) {
-			value = <td>{this.props.value}</td>;
+			value = <td className="value">{this.props.value}</td>;
 		}
 
 		return (
 			<tr>
-				<td>{this.props.variable}</td>
+				<td className="variable">{this.props.variable}</td>
 				{value}
-				<td className="status"><i className="fa fa-lock"></i></td>
+				<td className="status text-center"><i className="fa fa-lock"></i></td>
 			</tr>
 		);
 	}
