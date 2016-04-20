@@ -10467,6 +10467,54 @@ body .userswitcher fieldset label,
 body .userswitcher fieldset .middleColumn {
   float: none; }
 
+.variables .variables-actions {
+  float: right; }
+  .variables .variables-actions button, .variables .variables-actions span, .variables .variables-actions input {
+    margin-left: 10px;
+    float: right;
+    margin-bottom: 5px; }
+
+.variables .alert, .variables .message.bad, .variables .message.required, .variables .deploy-dropdown.error, .variables .deploy-dropdown-errors {
+  float: left;
+  width: 75%; }
+
+.variables th.variable, .variables td.variable {
+  width: 30%; }
+  .variables th.variable:first-child, .variables td.variable:first-child {
+    padding-left: 0; }
+
+.variables th.actions, .variables td.actions {
+  width: 30px;
+  padding-right: 0; }
+
+.variables tr button {
+  margin: 0px;
+  padding-top: 4px;
+  padding-bottom: 4px; }
+
+.variables tr input {
+  width: 100%;
+  padding: 3px 10px;
+  border: 1px solid #ddd;
+  height: 31px;
+  border-radius: 3px !important; }
+
+.variables .variable-table td {
+  padding: 12px 10px; }
+
+.variables .variable-table th.status, .variables .variable-table td.status {
+  width: 30px;
+  padding-right: 0; }
+
+.variables table {
+  clear: left; }
+  .variables table th small {
+    font-weight: normal;
+    font-size: 0.8em; }
+
+.variables .form-group, .variables .field.text, .variables .field.dropdown {
+  margin-bottom: 0px; }
+
 ul.list,
 ol.list {
   list-style: none;
