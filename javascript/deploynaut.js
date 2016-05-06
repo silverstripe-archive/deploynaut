@@ -275,4 +275,23 @@
 		});
 
 	});
+
+	$('button.abort').click(function(event) {
+		event.preventDefault();
+		var button = $(this);
+		button.prop('disabled', true);
+		button.html('Requesting...');
+		Q($.ajax({
+			type: "POST",
+			dataType: 'json',
+			url: button.attr('data-url'),
+			data: {}
+		})).then(function(data) {
+			button.html(button.attr('data-terminate'));
+			button.prop('disabled', false);
+		}, function(data){
+			button.html('Failed - reload page to retry');
+			console.error(data);
+		});
+	});
 }(jQuery));

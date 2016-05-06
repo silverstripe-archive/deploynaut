@@ -20,6 +20,13 @@ class DNData extends ViewableData {
 	protected $keyDir = '';
 
 	/**
+	 * Path where the signal files are created.
+	 *
+	 * @var string
+	 */
+	protected $signalDir = '';
+
+	/**
 	 * Path where data transfers are stored.
 	 * Needs to be relative to webroot, and start with assets/
 	 * since all files are also referenced in the SilverStripe database
@@ -48,7 +55,7 @@ class DNData extends ViewableData {
 		return Injector::inst()->get('DNData');
 	}
 
-	public function __construct($environmentDir = null, $keyDir = null, $dataTransferDir = null, $gitUser = null) {
+	public function __construct($environmentDir = null, $keyDir = null, $signalDir = null, $dataTransferDir = null, $gitUser = null) {
 		parent::__construct();
 
 		// Better to use injector to set these
@@ -61,6 +68,7 @@ class DNData extends ViewableData {
 		);
 		$this->setEnvironmentDir($environmentDir);
 		$this->setKeyDir($keyDir);
+		$this->setSignalDir($signalDir);
 		$this->setDataTransferDir($dataTransferDir);
 		$this->setGitUser($gitUser);
 	}
@@ -105,6 +113,23 @@ class DNData extends ViewableData {
 			$keyDir = BASE_PATH . '/' . $keyDir;
 		}
 		$this->keyDir = realpath($keyDir) ?: $keyDir;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getSignalDir() {
+		return $this->signalDir;
+	}
+
+	/**
+	 * @param string $signalDir
+	 */
+	public function setSignalDir($signalDir) {
+		if($signalDir[0] != "/") {
+			$signalDir = BASE_PATH . '/' . $signalDir;
+		}
+		$this->signalDir = realpath($signalDir) ?: $signalDir;
 	}
 
 	/**

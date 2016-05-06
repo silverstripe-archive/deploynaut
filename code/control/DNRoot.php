@@ -70,6 +70,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'doDeploy',
 		'deploy',
 		'deploylog',
+		'abortDeploy',
 		'getDataTransferForm',
 		'transfer',
 		'transferlog',
@@ -110,6 +111,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'project/$Project/environment/$Environment/git_revisions' => 'gitRevisions',
 		'project/$Project/environment/$Environment/start-deploy' => 'startDeploy',
 		'project/$Project/environment/$Environment/deploy/$Identifier/log' => 'deploylog',
+		'project/$Project/environment/$Environment/deploy/$Identifier/abort-deploy' => 'abortDeploy',
 		'project/$Project/environment/$Environment/deploy/$Identifier' => 'deploy',
 		'project/$Project/transfer/$Identifier/log' => 'transferlog',
 		'project/$Project/transfer/$Identifier' => 'transfer',
@@ -1561,6 +1563,37 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		return $this->sendResponse($deployment->ResqueStatus(), $content);
+	}
+
+	public function abortDeploy(SS_HTTPRequest $request) {
+		$params = $request->params();
+		$deployment = DNDeployment::get()->byId($params['Identifier']);
+
+		if(!$deployment || !$deployment->ID) {
+			throw new SS_HTTPResponse_Exception('Deployment not found', 404);
+		}
+		if(!$deployment->canView()) {
+			return Security::permissionFailure();
+		}
+
+		// For now restrict to ADMINs only.
+		if(!Permission::check('ADMIN')) {
+			return Security::permissionFailure();
+		}
+
+		$environment = $deployment->Environment();
+		$project = $environment->Project();
+
+		if($environment->Name != $params['Environment']) {
+			throw new LogicException("Environment in URL doesn't match this deploy");
+		}
+		if($project->Name != $params['Project']) {
+			throw new LogicException("Project in URL doesn't match this deploy");
+		}
+
+		$deployment->abort();
+
+		return $this->sendResponse($deployment->ResqueStatus(), []);
 	}
 
 	/**

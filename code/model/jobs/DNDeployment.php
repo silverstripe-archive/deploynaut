@@ -26,7 +26,7 @@ class DNDeployment extends DataObject {
 		"Branch" => "Varchar(255)",
 		// Observe that this is not the same as Resque status, since ResqueStatus is not persistent
 		// It's used for finding successful deployments and displaying that in history views in the frontend
-		"Status" => "Enum('Queued, Started, Finished, Failed, n/a', 'n/a')",
+		"Status" => "Enum('Queued, Started, Aborting, Finished, Failed, n/a', 'n/a')",
 		// JSON serialised DeploymentStrategy.
 		"Strategy" => "Text"
 	);
@@ -118,6 +118,8 @@ class DNDeployment extends DataObject {
 				case 'Finished':
 					return 'Complete';
 				case 'Started':
+					return 'Running';
+				case 'Aborting':
 					return 'Running';
 				default:
 					return $this->Status;
@@ -303,7 +305,8 @@ class DNDeployment extends DataObject {
 			'logfile' => $this->logfile(),
 			'projectName' => $project->Name,
 			'env' => $project->getProcessEnv(),
-			'deploymentID' => $this->ID
+			'deploymentID' => $this->ID,
+			'sigFile' => DeployJob::sig_file_for_data_object($this)
 		);
 
 		$strategy = $this->getDeploymentStrategy();
@@ -338,7 +341,18 @@ class DNDeployment extends DataObject {
 		$this->Status = 'Queued';
 		$this->write();
 
-		$message = sprintf('Deploy queued as job %s', $token);
+		$message = sprintf('Deploy queued as job %s (sigFile is %s)', $token, DeployJob::sig_file_for_data_object($this));
 		$log->write($message);
+	}
+
+	public function abort() {
+		$this->Status = 'Aborting';
+		$this->write();
+		// 2 is SIGINT - we can't use SIGINT constant in the mod_apache context.
+		DeployJob::set_signal($this, 2);
+	}
+
+	public function isAborting() {
+		return $this->Status=='Aborting';
 	}
 }
