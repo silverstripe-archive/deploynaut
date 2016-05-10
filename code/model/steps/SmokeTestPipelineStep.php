@@ -58,7 +58,7 @@ class SmokeTestPipelineStep extends PipelineStep {
 	 * @var array
 	 * @config
 	 */
-	private static $bad_status_codes = array(500, 501, 502, 503, 504i, 404);
+	private static $bad_status_codes = array(500, 501, 502, 503, 504, 404);
 
 	/**
 	 * Get all tests to be run by this smoketest
