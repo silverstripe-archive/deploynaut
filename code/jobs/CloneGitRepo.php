@@ -51,7 +51,7 @@ class CloneGitRepo {
 
 		$command = array();
 		if($user) $command[] = sprintf('sudo -u %s', $user);
-		$command[] = sprintf('git clone --bare -q %s %s', $repo, $path);
+		$command[] = sprintf('/usr/bin/git clone --bare -q %s %s', $repo, $path);
 
 		fwrite($fh, sprintf('[%s] Running command: %s', date('Y-m-d H:i:s'), implode(' ', $command)) . PHP_EOL);
 
