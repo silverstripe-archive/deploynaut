@@ -32,7 +32,7 @@ class FetchJob {
 		// thing as a single command and fails
 		$user = DNData::inst()->getGitUser();
 		if($user) {
-			$command = sprintf('cd %s && sudo -u %s git fetch -p origin +refs/heads/*:refs/heads/* --tags', $path, $user);
+			$command = sprintf('cd %s && sudo -u %s /usr/bin/git fetch -p origin +refs/heads/*:refs/heads/* --tags', $path, $user);
 			$process = new \Symfony\Component\Process\Process($command);
 			$process->setEnv($env);
 			$process->setTimeout(3600);
