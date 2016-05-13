@@ -342,6 +342,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		$cleanupFn = function() use($workingDir, $dataTransfer, $dataArchive) {
 			$process = new Process(sprintf('rm -rf %s', escapeshellarg($workingDir)));
+			$process->setTimeout(120);
 			$process->run();
 			$dataTransfer->delete();
 			$dataArchive->delete();
@@ -382,6 +383,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		// cleanup any extracted sspak contents lying around
 		$process = new Process(sprintf('rm -rf %s', escapeshellarg($workingDir)));
+		$process->setTimeout(120);
 		$process->run();
 
 		return $this->customise(array(

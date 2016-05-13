@@ -387,6 +387,7 @@ class DNDataArchive extends DataObject {
 
 		$cleanupFn = function() use($workingDir) {
 			$process = new Process(sprintf('rm -rf %s', escapeshellarg($workingDir)));
+			$process->setTimeout(120);
 			$process->run();
 		};
 
