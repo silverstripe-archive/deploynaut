@@ -150,6 +150,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			if(!$result->valid()) {
 				// do some cleaning, get rid of the extracted archive lying around
 				$process = new Process(sprintf('rm -rf %s', escapeshellarg($workingDir)));
+				$process->setTimeout(120);
 				$process->run();
 
 				// log the reason why we can't restore the snapshot and halt the process
@@ -288,6 +289,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		// of the sspak file we just generated. Use --force to avoid errors when files don't exist,
 		// e.g. when just an assets backup has been requested and no database.sql exists.
 		$process = new Process(sprintf('rm -rf %s/assets && rm -f %s', $filepathBase, $databasePath));
+		$process->setTimeout(120);
 		$process->run();
 		if(!$process->isSuccessful()) {
 			$log->write('Could not delete temporary files');
@@ -332,6 +334,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			// Rebuild makes sense even if failed - maybe we can at least partly recover.
 			$self->rebuild($environment, $log);
 			$process = new Process(sprintf('rm -rf %s', escapeshellarg($workingDir)));
+			$process->setTimeout(120);
 			$process->run();
 		};
 
