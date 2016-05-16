@@ -10940,11 +10940,17 @@ button.sidebar-open {
 .table > tbody > tr > th {
   padding: 12px 10px; }
 
-.table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+.table > thead > tr > td,
+.table > tbody > tr > td,
+.table > tfoot > tr > td,
+.table > thead > tr > th,
+.table > tbody > tr > th,
+.table > tfoot > tr > th {
   border-bottom: 1px solid #eee;
   border-top: 1px solid #eee; }
 
-.table-large > tbody > tr > td {
+.table-large > tbody > tr > td,
+.table-large > tbody > tr > th {
   padding-top: 20px;
   padding-bottom: 20px; }
 
