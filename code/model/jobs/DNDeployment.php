@@ -264,13 +264,23 @@ class DNDeployment extends DataObject {
 		$list = new ArrayList();
 		$strategy = $this->getDeploymentStrategy();
 		foreach($strategy->getChanges() as $name => $change) {
+			$changed = (isset($change['from']) && isset($change['to'])) ? $change['from'] != $change['to'] : null;
+			$description = isset($change['description']) ? $change['description'] : '';
+			$compareUrl = null;
+
+			// if there is a compare URL, and a description or a change (something actually changed)
+			// then show the URL. Otherwise don't show anything, as there is no comparison to be made.
+			if ($changed || $description) {
+				$compareUrl = isset($change['compareUrl']) ? $change['compareUrl'] : '';
+			}
+
 			$list->push(new ArrayData([
 				'Name' => $name,
 				'From' => isset($change['from']) ? $change['from'] : null,
 				'To' => isset($change['to']) ? $change['to'] : null,
-				'Description' => isset($change['description']) ? $change['description'] : '',
-				'Changed' => (isset($change['from']) && isset($change['to'])) ? $change['from'] != $change['to'] : null,
-				'CompareUrl' => isset($change['compareUrl']) ? $change['compareUrl'] : ''
+				'Description' => $description,
+				'Changed' => $changed,
+				'CompareUrl' => $compareUrl
 			]));
 		}
 
