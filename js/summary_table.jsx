@@ -28,7 +28,7 @@ var SummaryTable = React.createClass({
 			if(typeof changes[key].description!=='undefined') {
 
 				if (changes[key].description!=="") {
-					return <DescriptionOnlySummaryLine key={idx} name={key} description={changes[key].description} />
+					return <DescriptionOnlySummaryLine key={idx} name={key} description={changes[key].description} compareUrl={compareUrl} />
 				} else {
 					return <UnchangedSummaryLine key={idx} name={key} value="" />
 				}
@@ -104,10 +104,18 @@ var UnchangedSummaryLine = React.createClass({
 
 var DescriptionOnlySummaryLine = React.createClass({
 	render: function() {
+		var compareColumn = null;
+		var colSpan = "4";
+		if(this.props.compareUrl !== null) {
+			compareColumn = <td className="changeAction"><a target="_blank" href={this.props.compareUrl}>View diff</a></td>;
+			colSpan = "3";
+		}
+
 		return (
 			<tr>
 				<th scope="row">{this.props.name}</th>
-				<td colSpan="4" dangerouslySetInnerHTML={{__html: this.props.description}} />
+				<td colSpan={colSpan} dangerouslySetInnerHTML={{__html: this.props.description}} />
+				{compareColumn}
 			</tr>
 		);
 	}
