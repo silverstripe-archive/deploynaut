@@ -1438,6 +1438,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$token = SecurityToken::inst();
 		$data['SecurityID'] = $token->getValue();
 
+		$this->extend('updateDeploySummary', $data);
+
 		return json_encode($data);
 	}
 
