@@ -274,6 +274,11 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			$log->write(sprintf('Backup of assets from "%s" done', $name));
 		}
 
+		// ensure the database connection is re-initialised, which is needed if the transfer
+		// above took a really long time because the handle to the db may have become invalid.
+		global $databaseConfig;
+		DB::connect($databaseConfig);
+
 		$sspakFilename = sprintf('%s.sspak', $dataArchive->generateFilename($dataTransfer));
 		$sspakFilepath = $filepathBase . DIRECTORY_SEPARATOR . $sspakFilename;
 
