@@ -385,7 +385,7 @@ class DNDataArchive extends DataObject {
 		// Extract *.sspak to a temporary location
 		$sspakFilename = $this->ArchiveFile()->FullPath;
 		$process = new Process(sprintf(
-			'sspak extract %s %s',
+			'tar -xf %s --directory %s',
 			escapeshellarg($sspakFilename),
 			escapeshellarg($workingDir)
 		));
@@ -506,16 +506,20 @@ class DNDataArchive extends DataObject {
 	 * @return bool
 	 */
 	public function setArchiveFromFiles($workingDir) {
-		$command = sprintf('sspak saveexisting %s 2>&1', $this->ArchiveFile()->FullPath);
+		$commands = array();
 		if($this->Mode == 'db') {
-			$command .= sprintf(' --db=%s/database.sql', $workingDir);
+			$commands[] = 'GZIP=-1 tar -czf database.sql.gz database.sql';
+			$commands[] = sprintf('tar -cf %s database.sql.gz', $this->ArchiveFile()->FullPath);
 		} elseif($this->Mode == 'assets') {
-			$command .= sprintf(' --assets=%s/assets', $workingDir);
+			$commands[] = 'GZIP=-1 tar --dereference -czf assets.tar.gz assets';
+			$commands[] = sprintf('tar -cf %s assets.tar.gz', $this->ArchiveFile()->FullPath);
 		} else {
-			$command .= sprintf(' --db=%s/database.sql --assets=%s/assets', $workingDir, $workingDir);
+			$commands[] = 'GZIP=-1 tar -czf database.sql.gz database.sql';
+			$commands[] = 'GZIP=-1 tar --dereference -czf assets.tar.gz assets';
+			$commands[] = sprintf('tar -cf %s database.sql.gz assets.tar.gz', $this->ArchiveFile()->FullPath);
 		}
 
-		$process = new Process($command, $workingDir);
+		$process = new Process(implode(' && ', $commands), $workingDir);
 		$process->setTimeout(3600);
 		$process->run();
 		if(!$process->isSuccessful()) {

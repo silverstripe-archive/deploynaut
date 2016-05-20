@@ -90,7 +90,10 @@ namespace :data do
 	DESC
 	task :getassets do
 		normalise_assets(:once => true)
-		download shared_path + "/assets", data_path, :recursive => true, :via => :scp, :once => true
+
+		server = find_servers_for_task(current_task)[0]
+		puts "Getting assets from #{server.host}..."
+		rsync_transfer server.host << ":#{shared_path}/assets", data_path
 	end
 
 	desc <<-DESC
@@ -111,12 +114,42 @@ namespace :data do
 			# ... but the webserver user may not have the write permission to the ".." directory.
 			run "rmdir #{shared_path}/assets"
 
-			upload data_path, shared_path, :recursive => true, :via => :scp
+			threads = []
+			find_servers_for_task(current_task).each do |server|
+				threads << Thread.new do
+					puts "Pushing assets to #{server.host}..."
+					rsync_transfer data_path, server.host << ":#{shared_path}/assets"
+				end
+			end
 
+			# Wait for all threads to finish before moving on
+			threads.each { |thread| thread.join }
 		ensure
 			# Now that we have uploaded new files we need to make sure they are readable by the webserver_user.
 			normalise_assets
 		end
+	end
+
+	# Transfer files via rsync from source to target by means of an SSH connection.
+	def rsync_transfer(source, target)
+		ssh_command = %w[/usr/bin/ssh]
+		ssh_command << fetch(:rsync_ssh_options)
+		ssh_command << "-p" << fetch(:ssh_options)[:port].to_s
+		ssh_command << "-l" << fetch(:ssh_options)[:username]
+		ssh_command << '-i' << fetch(:ssh_options)[:keys]
+		if fetch(:ssh_options)[:forward_agent] === true
+			ssh_command << "-A"
+		end
+		rsync_command = %w[/usr/bin/rsync]
+		rsync_command << fetch(:rsync_options)
+		rsync_command << "-e" << "'#{ssh_command.join(' ')}'"
+		rsync_command << source
+		rsync_command << target
+
+		command_str = rsync_command.join(' ')
+		puts "Running rsync command: " << command_str
+
+		system command_str or raise "rsync transfer failed"
 	end
 
 	# Apply permissions that will allow us to push and pull assets. This can only fix permissions on files owned
