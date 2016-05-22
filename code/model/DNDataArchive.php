@@ -33,7 +33,6 @@ class DNDataArchive extends DataObject {
 
 	private static $db = array(
 		'UploadToken' => 'Varchar(8)',
-		'ArchiveFileHash' => 'Varchar(32)',
 		"Mode" => "Enum('all, assets, db', '')",
 		"IsBackup" => "Boolean",
 		"IsManualUpload" => "Boolean",
@@ -356,14 +355,6 @@ class DNDataArchive extends DataObject {
 		// "Status" will be updated by the job execution
 		$dataTransfer->write();
 
-		// Get file hash to ensure consistency.
-		// Only do this when first associating the file since hashing large files is expensive.
-		// Note that with CapistranoDeploymentBackend the file won't be available yet, as it
-		// gets put in place immediately after this method gets called. In which case, it will
-		// be hashed in setArchiveFromFiles()
-		if(file_exists($file->FullPath)) {
-			$this->ArchiveFileHash = md5_file($file->FullPath);
-		}
 		$this->ArchiveFileID = $file->ID;
 		$this->DataTransfers()->add($dataTransfer);
 		$this->write();
@@ -531,7 +522,6 @@ class DNDataArchive extends DataObject {
 			throw new RuntimeException($process->getErrorOutput());
 		}
 
-		$this->ArchiveFileHash = md5_file($this->ArchiveFile()->FullPath);
 		$this->write();
 
 		return true;
