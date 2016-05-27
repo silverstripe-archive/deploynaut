@@ -512,13 +512,16 @@ class DNDataArchive extends DataObject {
 		if($this->Mode == 'db') {
 			$commands[] = 'tar -czf database.sql.gz database.sql';
 			$commands[] = sprintf('tar -cf %s database.sql.gz', $this->ArchiveFile()->FullPath);
+			$commands[] = 'rm -f database.sql.gz';
 		} elseif($this->Mode == 'assets') {
 			$commands[] = 'GZIP=-1 tar --dereference -czf assets.tar.gz assets';
 			$commands[] = sprintf('tar -cf %s assets.tar.gz', $this->ArchiveFile()->FullPath);
+			$commands[] = 'rm -f assets.tar.gz';
 		} else {
 			$commands[] = 'tar -czf database.sql.gz database.sql';
 			$commands[] = 'GZIP=-1 tar --dereference -czf assets.tar.gz assets';
 			$commands[] = sprintf('tar -cf %s database.sql.gz assets.tar.gz', $this->ArchiveFile()->FullPath);
+			$commands[] = 'rm -f database.sql.gz assets.tar.gz';
 		}
 
 		$process = new Process(implode(' && ', $commands), $workingDir);
