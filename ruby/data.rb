@@ -118,7 +118,7 @@ namespace :data do
 			find_servers_for_task(current_task).each do |server|
 				threads << Thread.new do
 					puts "Pushing assets to #{server.host}..."
-					rsync_transfer data_path, server.host << ":#{shared_path}/assets"
+					rsync_transfer data_path, server.host << ":#{shared_path}"
 				end
 			end
 
