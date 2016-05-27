@@ -279,6 +279,8 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		global $databaseConfig;
 		DB::connect($databaseConfig);
 
+		$log->write('Creating sspak...');
+
 		$sspakFilename = sprintf('%s.sspak', $dataArchive->generateFilename($dataTransfer));
 		$sspakFilepath = $filepathBase . DIRECTORY_SEPARATOR . $sspakFilename;
 
