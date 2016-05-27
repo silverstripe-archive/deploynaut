@@ -501,6 +501,8 @@ class DNDataArchive extends DataObject {
 	/**
 	 * Given extracted sspak contents, create an sspak from it
 	 * and overwrite the current ArchiveFile with it's contents.
+	 * Use GZIP=-1 for less compression on assets, which are already
+	 * heavily compressed to begin with.
 	 *
 	 * @param string|null $workingDir The path of where the sspak has been extracted to
 	 * @return bool
@@ -508,13 +510,13 @@ class DNDataArchive extends DataObject {
 	public function setArchiveFromFiles($workingDir) {
 		$commands = array();
 		if($this->Mode == 'db') {
-			$commands[] = 'GZIP=-1 tar -czf database.sql.gz database.sql';
+			$commands[] = 'tar -czf database.sql.gz database.sql';
 			$commands[] = sprintf('tar -cf %s database.sql.gz', $this->ArchiveFile()->FullPath);
 		} elseif($this->Mode == 'assets') {
 			$commands[] = 'GZIP=-1 tar --dereference -czf assets.tar.gz assets';
 			$commands[] = sprintf('tar -cf %s assets.tar.gz', $this->ArchiveFile()->FullPath);
 		} else {
-			$commands[] = 'GZIP=-1 tar -czf database.sql.gz database.sql';
+			$commands[] = 'tar -czf database.sql.gz database.sql';
 			$commands[] = 'GZIP=-1 tar --dereference -czf assets.tar.gz assets';
 			$commands[] = sprintf('tar -cf %s database.sql.gz assets.tar.gz', $this->ArchiveFile()->FullPath);
 		}
