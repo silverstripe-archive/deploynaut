@@ -510,7 +510,7 @@ class DNDataArchive extends DataObject {
 	public function setArchiveFromFiles($workingDir) {
 		$commands = array();
 		if($this->Mode == 'db') {
-			$commands[] = 'tar -czf database.sql.gz database.sql';
+			$commands[] = 'gzip database.sql';
 			$commands[] = sprintf('tar -cf %s database.sql.gz', $this->ArchiveFile()->FullPath);
 			$commands[] = 'rm -f database.sql.gz';
 		} elseif($this->Mode == 'assets') {
@@ -518,7 +518,7 @@ class DNDataArchive extends DataObject {
 			$commands[] = sprintf('tar -cf %s assets.tar.gz', $this->ArchiveFile()->FullPath);
 			$commands[] = 'rm -f assets.tar.gz';
 		} else {
-			$commands[] = 'tar -czf database.sql.gz database.sql';
+			$commands[] = 'gzip database.sql';
 			$commands[] = 'GZIP=-1 tar --dereference -czf assets.tar.gz assets';
 			$commands[] = sprintf('tar -cf %s database.sql.gz assets.tar.gz', $this->ArchiveFile()->FullPath);
 			$commands[] = 'rm -f database.sql.gz assets.tar.gz';
