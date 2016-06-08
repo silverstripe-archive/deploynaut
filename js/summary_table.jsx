@@ -35,7 +35,7 @@ var SummaryTable = React.createClass({
 
 			} else if(changes[key].from != changes[key].to) {
 				return <SummaryLine key={idx} name={key} from={changes[key].from} to={changes[key].to} compareUrl={compareUrl} />
-			} else {
+			} else if(typeof changes[key].from !== 'undefined') {
 				return <UnchangedSummaryLine key={idx} name={key} value={changes[key].from} />
 			}
 		});
