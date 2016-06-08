@@ -133,12 +133,10 @@ var DeployPlan = React.createClass({
 var QuickSummary = React.createClass({
 	render: function() {
 		var type = (this.props.summary.actionCode==='fast' ? 'code-only' : 'full');
-		var estimate = [];
+		var extraDefinitions = [];
 		if (this.props.summary.estimatedTime && this.props.summary.estimatedTime>0) {
-			estimate = [
-				<dt>Duration:</dt>,
-				<dd>{this.props.summary.estimatedTime} min approx.</dd>
-			];
+			extraDefinitions.push(<dt key="duration_term">Duration:</dt>);
+			extraDefinitions.push(<dd key="duration_definition">{this.props.summary.estimatedTime} min approx.</dd>);
 		}
 
 		var dlClasses = Helpers.classNames({
@@ -153,10 +151,11 @@ var QuickSummary = React.createClass({
 			);
 		}
 
+		var env;
 		if (this.props.context.siteUrl) {
-			var env = <a target="_blank" href={this.props.context.siteUrl}>{this.props.context.envName}</a>;
+			env = <a target="_blank" href={this.props.context.siteUrl}>{this.props.context.envName}</a>;
 		} else {
-			var env = <span>{this.props.context.envName}</span>;
+			env = <span>{this.props.context.envName}</span>;
 		}
 
 		return (
@@ -165,7 +164,7 @@ var QuickSummary = React.createClass({
 				<dd>{env}</dd>
 				<dt>Deploy type:</dt>
 				<dd>{type} {moreInfo}</dd>
-				{estimate}
+				{extraDefinitions}
 			</dl>
 		);
 	}
