@@ -93,7 +93,7 @@ namespace :data do
 
 		server = find_servers_for_task(current_task)[0]
 		puts "Getting assets from #{server.host}..."
-		rsync_transfer server.host << ":#{shared_path}/assets", data_path
+		rsync_transfer server, server.host << ":#{shared_path}/assets", data_path
 	end
 
 	desc <<-DESC
@@ -118,7 +118,7 @@ namespace :data do
 			find_servers_for_task(current_task).each do |server|
 				threads << Thread.new do
 					puts "Pushing assets to #{server.host}..."
-					rsync_transfer data_path, server.host << ":#{shared_path}"
+					rsync_transfer server, data_path, server.host << ":#{shared_path}"
 				end
 			end
 
@@ -131,11 +131,18 @@ namespace :data do
 	end
 
 	# Transfer files via rsync from source to target by means of an SSH connection.
-	def rsync_transfer(source, target)
+	def rsync_transfer(server, source, target)
 		ssh_command = %w[/usr/bin/ssh]
 		ssh_command << fetch(:rsync_ssh_options)
 		ssh_command << "-p" << fetch(:ssh_options)[:port].to_s
-		ssh_command << "-l" << fetch(:ssh_options)[:username]
+
+		if server.options[:ssh_options]
+			username = server.options[:ssh_options][:username]
+		else
+			username = fetch(:ssh_options)[:username]
+		end
+
+		ssh_command << "-l" << username
 		ssh_command << '-i' << fetch(:ssh_options)[:keys]
 		if fetch(:ssh_options)[:forward_agent] === true
 			ssh_command << "-A"
