@@ -10567,6 +10567,11 @@ ol.list {
 .message.required {
   display: block; }
 
+.icon-link,
+.icon-link:hover,
+.icon-link:focus {
+  text-decoration: none; }
+
 .popover {
   max-width: 800px; }
 
