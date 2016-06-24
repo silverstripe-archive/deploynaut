@@ -179,6 +179,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 
 		if(!$args) $args = array();
 		$args['history_path'] = realpath(DEPLOYNAUT_LOG_PATH.'/');
+		$args['environment_id'] = $environment->ID;
 
 		// Inject env string directly into the command.
 		// Capistrano doesn't like the $process->setEnv($env) we'd normally do below.
