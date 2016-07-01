@@ -1392,18 +1392,17 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	public function DataTransferLogs() {
-		$project = $this->getCurrentProject();
-
-		$transfers = DNDataTransfer::get()->filterByCallback(function($record) use($project) {
-			return
-				$record->Environment()->Project()->ID == $project->ID && // Ensure only the current Project is shown
-				(
-					$record->Environment()->canRestore() || // Ensure member can perform an action on the transfers env
-					$record->Environment()->canBackup() ||
-					$record->Environment()->canUploadArchive() ||
-					$record->Environment()->canDownloadArchive()
-				);
-		});
+		$environments = $this->getCurrentProject()->Environments()->column('ID');
+		$transfers = DNDataTransfer::get()
+			->filter('EnvironmentID', $environments)
+			->filterByCallback(
+				function($record) {
+					return
+						$record->Environment()->canRestore() || // Ensure member can perform an action on the transfers env
+						$record->Environment()->canBackup() ||
+						$record->Environment()->canUploadArchive() ||
+						$record->Environment()->canDownloadArchive();
+				});
 
 		return new PaginatedList($transfers->sort("Created", "DESC"), $this->request);
 	}
