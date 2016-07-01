@@ -96,6 +96,6 @@ If you would like to upload files from your computer to a new snapshot, click 'U
 	<% end_if %>
 <% else %>
 	<div class="alert">
-		There are currently no archived files that you can access
+		You currently have no access to snapshotting functionality on any of the environments.
 	</div>
 <% end_if %>

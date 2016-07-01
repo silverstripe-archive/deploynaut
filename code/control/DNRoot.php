@@ -1368,7 +1368,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$archiveList = $project->Environments()->relation("DataArchives");
 		if($archiveList->count() > 0) {
 			foreach($archiveList as $archive) {
-				if($archive->canView() && !$archive->isPending()) {
+				if(!$archive->isPending()) {
 					$archives->push($archive);
 				}
 			}
@@ -1385,7 +1385,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$archives = new ArrayList();
 		foreach($project->DNEnvironmentList() as $env) {
 			foreach($env->DataArchives() as $archive) {
-				if($archive->canView() && $archive->isPending()) $archives->push($archive);
+				if($archive->isPending()) $archives->push($archive);
 			}
 		}
 		return new PaginatedList($archives->sort("Created", "DESC"), $this->request);
