@@ -84,6 +84,6 @@
 	<% end_if %>
 <% else %>
 	<div class="alert">
-		There are currently no logged files that you can access
+		You currently have no access to snapshotting functionality on any of the environments.
 	</div>
 <% end_if %>
