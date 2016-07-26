@@ -4,7 +4,7 @@
  * Component test for SimplePackageGenerator
  * Writes to temporary locations in the filesystem
  */
-class SimplePackageGeneratorTest extends SapphireTest {
+class SimplePackageGeneratorTest extends DeploynautTest {
 
 	protected $tempPath = null;
 
@@ -31,8 +31,7 @@ class SimplePackageGeneratorTest extends SapphireTest {
 		$this->assertNotEmpty($sha);
 
 		// TO DO: DeploynautLogFile should be replaced with a generic interface (maybe PSR-3)
-		// and a generic memory-log or mock-log placed in here.
-		$log = new PipelineTest_MockLog(null);
+		$log = new DeploynautTest_MockLog(null);
 
 		// Create the generator and execute the script
 		$gen = new SimplePackageGenerator;

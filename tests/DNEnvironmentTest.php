@@ -83,22 +83,6 @@ class DNEnvironmentTest extends DeploynautTest {
 		$this->assertFalse($environment->canDeleteArchive($downloaderbygroup));
 		$this->assertTrue($environment->canDeleteArchive($deleter));
 		$this->assertTrue($environment->canDeleteArchive($deleterbygroup));
-
-		// Pipeline permissions
-		$approver = $this->objFromFixture('Member', 'approver');
-		$approverbygroup = $this->objFromFixture('Member', 'approverbygroup');
-		$canceller = $this->objFromFixture('Member', 'canceller');
-		$cancellerbygroup = $this->objFromFixture('Member', 'cancellerbygroup');
-
-		$this->assertTrue($environment->canApprove($approver));
-		$this->assertTrue($environment->canApprove($approverbygroup));
-		$this->assertFalse($environment->canApprove($canceller));
-		$this->assertFalse($environment->canApprove($cancellerbygroup));
-
-		$this->assertFalse($environment->canAbort($approver));
-		$this->assertFalse($environment->canAbort($approverbygroup));
-		$this->assertTrue($environment->canAbort($canceller));
-		$this->assertTrue($environment->canAbort($cancellerbygroup));
 	}
 
 	private function checkSnapshots($assert, $env, $member) {

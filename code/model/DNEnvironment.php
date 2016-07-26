@@ -10,7 +10,6 @@
  * @property string $Name
  * @property string $URL
  * @property string $BackendIdentifier
- * @property bool $DryRunEnabled
  * @property bool $Usage
  *
  * @method DNProject Project()
@@ -18,7 +17,6 @@
  *
  * @method HasManyList Deployments()
  * @method HasManyList DataArchives()
- * @method HasManyList Pipelines()
  *
  * @method ManyManyList Viewers()
  * @method ManyManyList ViewerGroups()
@@ -34,10 +32,6 @@
  * @method ManyManyList ArchiveDownloaderGroups()
  * @method ManyManyList ArchiveDeleters()
  * @method ManyManyList ArchiveDeleterGroups()
- * @method ManyManyList PipelineApprovers()
- * @method ManyManyList PipelineApproverGroups()
- * @method ManyManyList PipelineCancellers()
- * @method ManyManyList PipelineCancellerGroups()
  */
 class DNEnvironment extends DataObject {
 
@@ -83,7 +77,6 @@ class DNEnvironment extends DataObject {
 		"Name" => "Varchar(255)",
 		"URL" => "Varchar(255)",
 		"BackendIdentifier" => "Varchar(255)", // Injector identifier of the DeploymentBackend
-		"DryRunEnabled" => "Boolean", // True if the dry run button should be enabled on the frontend
 		"Usage" => "Enum('Production, UAT, Test, Unspecified', 'Unspecified')"
 	);
 
@@ -101,7 +94,6 @@ class DNEnvironment extends DataObject {
 	public static $has_many = array(
 		"Deployments" => "DNDeployment",
 		"DataArchives" => "DNDataArchive",
-		"Pipelines" => "Pipeline" // Only one Pipeline can be 'Running' at any one time. @see self::CurrentPipeline().
 	);
 
 	/**
@@ -122,10 +114,6 @@ class DNEnvironment extends DataObject {
 		"ArchiveDownloaderGroups" => "Group",
 		"ArchiveDeleters"    => "Member", // Who can delete archive files from this environment,
 		"ArchiveDeleterGroups" => "Group",
-		"PipelineApprovers"  => "Member", // Who can approve / reject pipelines from this environment
-		"PipelineApproverGroups" => "Group",
-		"PipelineCancellers"   => "Member", // Who can abort pipelines
-		"PipelineCancellerGroups" => "Group"
 	);
 
 	/**
@@ -141,8 +129,6 @@ class DNEnvironment extends DataObject {
 		"ArchiveUploadersList" => "Can Upload List",
 		"ArchiveDownloadersList" => "Can Download List",
 		"ArchiveDeletersList"  => "Can Delete List",
-		"PipelineApproversList" => "Can Approve List",
-		"PipelineCancellersList" => "Can Cancel List"
 	);
 
 	private static $singular_name = 'Capistrano Environment';
@@ -274,95 +260,6 @@ class DNEnvironment extends DataObject {
 		if(isset($url['host'])) {
 			return strtolower($url['host']);
 		}
-	}
-
-	/**
-	 * @return boolean true if there is a pipeline for the current environment.
-	 */
-	public function HasPipelineSupport() {
-		$config = $this->GenericPipelineConfig();
-		return $config instanceof ArrayData && isset($config->Steps);
-	}
-
-	/**
-	 * Returns a {@link Pipeline} object that is linked to this environment, but isn't saved into the database. This
-	 * shouldn't be saved into the database unless you plan on starting an actual pipeline.
-	 *
-	 * @return Pipeline
-	 */
-	public function GenericPipeline() {
-		$pipeline = Pipeline::create();
-		$pipeline->EnvironmentID = $this->ID;
-		return $pipeline;
-	}
-
-	/**
-	 * Returns the parsed config, based on a {@link Pipeline} being created for this {@link DNEnvironment}.
-	 *
-	 * @return ArrayData
-	 */
-	public function GenericPipelineConfig() {
-		$config = $this->loadPipelineConfig();
-		if($config) {
-			return self::array_to_viewabledata($config);
-		}
-	}
-
-	/**
-	 * Extract pipeline configuration data from the source yml file
-	 *
-	 * @return array
-	 */
-	public function loadPipelineConfig() {
-		require_once 'thirdparty/spyc/spyc.php';
-
-		$path = $this->getPipelineFilename();
-		if(file_exists($path)) {
-			return Spyc::YAMLLoad($path);
-		}
-	}
-
-	/**
-	 * Returns the {@link DNEnvironment} object relating to the pipeline config for this environment. The environment
-	 * YAML file (e.g. project1-uat.yml; see docs/en/pipelines.md) contains two variable called `DependsOnProject` and
-	 * `DependsOnEnvironment` - these are used together to find the {@link DNEnvironment} that this environment should
-	 * rely on.
-	 */
-	public function DependsOnEnvironment() {
-		if($this->HasPipelineSupport()) {
-			$pipeline = $this->GenericPipeline();
-			return $pipeline->getDependentEnvironment();
-		}
-
-		return null;
-	}
-
-	/**
-	 * @return bool true if there is a currently running Pipeline, and false if there isn't
-	 */
-	public function HasCurrentPipeline() {
-		return $this->CurrentPipeline() && $this->CurrentPipeline()->isInDB();
-	}
-
-	/**
-	 * This can be used to determine if there is a currently running pipeline (there can only be one running per
-	 * {@link DNEnvironment} at once), as well as getting the current pipeline to be shown in templates.
-	 *
-	 * @return DataObject|null The currently running pipeline, or null if there isn't any.
-	 */
-	public function CurrentPipeline() {
-		return $this->Pipelines()->filter('Status', array('Running', 'Rollback'))->first();
-	}
-
-	/**
-	 * @return bool true if the current user can cancel a running pipeline
-	 */
-	public function CanCancelPipeline() {
-		// do we have a current pipeline
-		if($this->HasCurrentPipeline()) {
-			return $this->CurrentPipeline()->canAbort();
-		}
-		return false;
 	}
 
 	/**
@@ -546,49 +443,6 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
-	 * Determine if the specified user can abort any pipelines
-	 *
-	 * @param Member|null $member
-	 * @return boolean
-	 */
-	public function canAbort($member = null) {
-		if(!$member) {
-			$member = Member::currentUser();
-		}
-		if(!$member) {
-			return false;
-		}
-
-		if(Permission::checkMember($member, 'ADMIN')) {
-			return true;
-		}
-
-		return $this->PipelineCancellers()->byID($member->ID)
-			|| $member->inGroups($this->PipelineCancellerGroups());
-	}
-
-	/**
-	 * Determine if the specified user can approve any pipelines
-	 *
-	 * @param Member|null $member
-	 * @return boolean
-	 */
-	public function canApprove($member = null) {
-		if(!$member) {
-			$member = Member::currentUser();
-		}
-		if(!$member) {
-			return false;
-		}
-
-		if(Permission::checkMember($member, 'ADMIN')) {
-			return true;
-		}
-		return $this->PipelineApprovers()->byID($member->ID)
-			|| $member->inGroups($this->PipelineApproverGroups());
-	}
-
-	/**
 	 * Allows only selected {@link Member} objects to delete {@link DNDataArchive} objects from this
 	 * {@link DNEnvironment}.
 	 *
@@ -701,36 +555,6 @@ class DNEnvironment extends DataObject {
 			array_merge(
 				$this->ArchiveDeleterGroups()->column("Title"),
 				$this->ArchiveDeleters()->column("FirstName")
-			)
-		);
-	}
-
-	/**
-	 * Get a string of groups/people that are allowed to approve pipelines
-	 *
-	 * @return string
-	 */
-	public function getPipelineApproversList() {
-		return implode(
-			", ",
-			array_merge(
-				$this->PipelineApproverGroups()->column("Title"),
-				$this->PipelineApprovers()->column("FirstName")
-			)
-		);
-	}
-
-	/**
-	 * Get a string of groups/people that are allowed to cancel pipelines
-	 *
-	 * @return string
-	 */
-	public function getPipelineCancellersList() {
-		return implode(
-			", ",
-			array_merge(
-				$this->PipelineCancellerGroups()->column("Title"),
-				$this->PipelineCancellers()->column("FirstName")
 			)
 		);
 	}
@@ -987,19 +811,8 @@ to other environments, alongside the "Who can restore" permission.<br>
 Should include all users with upload permissions, otherwise they can't download
 their own uploads.
 PHP
-				),
+				)
 
-			// The Main.PipelineApprovers
-			$this
-				->buildPermissionField('PipelineApproverGroups', 'PipelineApprovers', $groups, $members)
-				->setTitle('Who can approve pipelines?')
-				->setDescription('Users who can approve waiting deployment pipelines.'),
-
-			// The Main.PipelineCancellers
-			$this
-				->buildPermissionField('PipelineCancellerGroups', 'PipelineCancellers', $groups, $members)
-				->setTitle('Who can cancel pipelines?')
-				->setDescription('Users who can cancel in-progess deployment pipelines.')
 		));
 
 		// The Main.DeployConfig
@@ -1015,20 +828,6 @@ PHP
 		}
 		$dataArchive = GridField::create('DataArchives', 'Data Archives', $this->DataArchives(), $dataArchiveConfig);
 		$fields->addFieldToTab('Root.DataArchive', $dataArchive);
-
-		// Pipeline templates
-		$this->setPipelineConfigurationFields($fields);
-
-		// Pipelines
-		if($this->Pipelines()->Count()) {
-			$pipelinesConfig = GridFieldConfig_RecordEditor::create();
-			$pipelinesConfig->removeComponentsByType('GridFieldAddNewButton');
-			if(class_exists('GridFieldBulkManager')) {
-				$pipelinesConfig->addComponent(new GridFieldBulkManager());
-			}
-			$pipelines = GridField::create('Pipelines', 'Pipelines', $this->Pipelines(), $pipelinesConfig);
-			$fields->addFieldToTab('Root.Pipelines', $pipelines);
-		}
 
 		// Deployments
 		$deploymentsConfig = GridFieldConfig_RecordEditor::create();
@@ -1078,35 +877,6 @@ PHP
 	}
 
 	/**
-	 * @param FieldList $fields
-	 */
-	protected function setPipelineConfigurationFields($fields) {
-		if(!$this->config()->get('allow_web_editing')) {
-			return;
-		}
-		$config = $this->pipelineFileExists()
-			? file_get_contents($this->getPipelineFilename())
-			: '';
-		$deployConfig = new TextareaField('PipelineConfig', 'Pipeline config', $config);
-		$deployConfig->setRows(40);
-		if(!$this->pipelineFileExists()) {
-			$deployConfig->setDescription(
-				"No pipeline is configured for this environment. Saving content here will generate a new template."
-			);
-		}
-		$fields->addFieldsToTab('Root.PipelineSettings', array(
-			FieldGroup::create(
-				CheckboxField::create('DryRunEnabled', 'Enable dry-run?')
-			)
-				->setTitle('Pipeline Options')
-				->setDescription(
-					"Allows admins to run simulated pipelines without triggering deployments or notifications."
-				),
-			$deployConfig
-		));
-	}
-
-	/**
 	 */
 	public function onBeforeWrite() {
 		parent::onBeforeWrite();
@@ -1115,7 +885,6 @@ PHP
 		}
 		$this->checkEnvironmentPath();
 		$this->writeConfigFile();
-		$this->writePipelineFile();
 	}
 
 	public function onAfterWrite() {
@@ -1163,23 +932,6 @@ PHP
 			file_put_contents($this->getConfigFilename(), file_get_contents($templateFile));
 		} else if($this->envFileExists() && $this->DeployConfig) {
 			file_put_contents($this->getConfigFilename(), $this->DeployConfig);
-		}
-	}
-
-	/**
-	 * Write the pipeline config file to filesystem
-	 */
-	protected function writePipelineFile() {
-		if(!$this->config()->get('allow_web_editing')) {
-			return;
-		}
-		$path = $this->getPipelineFilename();
-		if($this->PipelineConfig) {
-			// Update file
-			file_put_contents($path, $this->PipelineConfig);
-		} elseif($this->isChanged('PipelineConfig') && file_exists($path)) {
-			// Remove file if deleted
-			unlink($path);
 		}
 	}
 
@@ -1235,36 +987,6 @@ PHP
 	}
 
 	/**
-	 * Returns the path to the {@link Pipeline} configuration for this environment.
-	 * Uses the same path and filename as the capistrano config, but with .yml extension.
-	 *
-	 * @return string
-	 */
-	public function getPipelineFilename() {
-		$name = $this->getConfigFilename();
-		if(!$name) {
-			return null;
-		}
-		$path = pathinfo($name);
-		if($path) {
-			return $path['dirname'] . '/' . $path['filename'] . '.yml';
-		}
-	}
-
-	/**
-	 * Does this environment have a pipeline config file
-	 *
-	 * @return boolean
-	 */
-	protected function pipelineFileExists() {
-		$filename = $this->getPipelineFilename();
-		if(empty($filename)) {
-			return false;
-		}
-		return file_exists($filename);
-	}
-
-	/**
 	 * Helper function to convert a multi-dimensional array (associative or indexed) to an {@link ArrayList} or
 	 * {@link ArrayData} object structure, so that values can be used in templates.
 	 *
@@ -1296,40 +1018,6 @@ PHP
 			}
 			return $list;
 		}
-	}
-
-
-
-	/**
-	 * Helper function to retrieve filtered commits from an environment
-	 * this environment depends on
-	 *
-	 * @return DataList
-	 */
-	public function getDependentFilteredCommits() {
-		// check if this environment depends on another environemnt
-		$dependsOnEnv = $this->DependsOnEnvironment();
-		if(empty($dependsOnEnv)) {
-			return null;
-		}
-
-		// Check if there is a filter
-		$config = $this->GenericPipelineConfig();
-		$filter = isset($config->PipelineConfig->FilteredCommits)
-			? $config->PipelineConfig->FilteredCommits
-			: null;
-		if(empty($filter)) {
-			return null;
-		}
-
-		// Create and execute filter
-		if(!class_exists($filter)) {
-			throw new Exception(sprintf("Class %s does not exist", $filter));
-		}
-		$commitClass = $filter::create();
-		// setup the environment to check for commits
-		$commitClass->env = $dependsOnEnv;
-		return $commitClass->getCommits();
 	}
 
 	/**

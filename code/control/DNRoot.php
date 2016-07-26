@@ -29,16 +29,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	private $actionType = self::ACTION_DEPLOY;
 
 	/**
-	 * Bypass pipeline permission code
-	 */
-	const DEPLOYNAUT_BYPASS_PIPELINE = 'DEPLOYNAUT_BYPASS_PIPELINE';
-
-	/**
-	 * Allow dryrun of pipelines
-	 */
-	const DEPLOYNAUT_DRYRUN_PIPELINE = 'DEPLOYNAUT_DRYRUN_PIPELINE';
-
-	/**
 	 * Allow advanced options on deployments
 	 */
 	const DEPLOYNAUT_ADVANCED_DEPLOY_OPTIONS = 'DEPLOYNAUT_ADVANCED_DEPLOY_OPTIONS';
@@ -60,9 +50,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'toggleprojectstar',
 		'branch',
 		'environment',
-		'abortpipeline',
-		'pipeline',
-		'pipelinelog',
 		'metrics',
 		'createenvlog',
 		'createenv',
@@ -105,7 +92,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'project/$Project/UploadSnapshotForm' => 'getUploadSnapshotForm',
 		'project/$Project/PostSnapshotForm' => 'getPostSnapshotForm',
 		'project/$Project/environment/$Environment/metrics' => 'metrics',
-		'project/$Project/environment/$Environment/pipeline/$Identifier//$Action/$ID/$OtherID' => 'pipeline',
 		'project/$Project/environment/$Environment/deploy_summary' => 'deploySummary',
 		'project/$Project/environment/$Environment/git_revisions' => 'gitRevisions',
 		'project/$Project/environment/$Environment/start-deploy' => 'startDeploy',
@@ -749,103 +735,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'FlagSnapshotsEnabled' => $this->FlagSnapshotsEnabled(),
 			'Redeploy' => (bool)$request->getVar('redeploy')
 		));
-	}
-
-
-	/**
-	 * Initiate a pipeline dry run
-	 *
-	 * @param array $data
-	 * @param DeployForm $form
-	 *
-	 * @return SS_HTTPResponse
-	 */
-	public function doDryRun($data, DeployForm $form) {
-		return $this->beginPipeline($data, $form, true);
-	}
-
-	/**
-	 * Initiate a pipeline
-	 *
-	 * @param array $data
-	 * @param DeployForm $form
-	 * @return \SS_HTTPResponse
-	 */
-	public function startPipeline($data, $form) {
-		return $this->beginPipeline($data, $form);
-	}
-
-	/**
-	 * Start a pipeline
-	 *
-	 * @param array $data
-	 * @param DeployForm $form
-	 * @param bool $isDryRun
-	 * @return \SS_HTTPResponse
-	 */
-	protected function beginPipeline($data, DeployForm $form, $isDryRun = false) {
-		$buildName = $form->getSelectedBuild($data);
-
-		// Performs canView permission check by limiting visible projects
-		$project = $this->getCurrentProject();
-		if(!$project) {
-			return $this->project404Response();
-		}
-
-		// Performs canView permission check by limiting visible projects
-		$environment = $this->getCurrentEnvironment($project);
-		if(!$environment) {
-			return $this->environment404Response();
-		}
-
-		if(!$environment->DryRunEnabled && $isDryRun) {
-			return new SS_HTTPResponse("Dry-run for pipelines is not enabled for this environment", 404);
-		}
-
-		// Initiate the pipeline
-		$sha = $project->DNBuildList()->byName($buildName);
-		$pipeline = Pipeline::create();
-		$pipeline->DryRun = $isDryRun;
-		$pipeline->EnvironmentID = $environment->ID;
-		$pipeline->AuthorID = Member::currentUserID();
-		$pipeline->SHA = $sha->FullName();
-		// Record build at time of execution
-		if($currentBuild = $environment->CurrentBuild()) {
-			$pipeline->PreviousDeploymentID = $currentBuild->ID;
-		}
-		$pipeline->start(); // start() will call write(), so no need to do it here as well.
-		return $this->redirect($environment->Link());
-	}
-
-	/**
-	 * @param SS_HTTPRequest $request
-	 *
-	 * @return SS_HTTPResponse
-	 * @throws SS_HTTPResponse_Exception
-	 */
-	public function pipeline(SS_HTTPRequest $request) {
-		$params = $request->params();
-		$pipeline = Pipeline::get()->byID($params['Identifier']);
-
-		if(!$pipeline || !$pipeline->ID || !$pipeline->Environment()) {
-			throw new SS_HTTPResponse_Exception('Pipeline not found', 404);
-		}
-		if(!$pipeline->Environment()->canView()) {
-			return Security::permissionFailure();
-		}
-
-		$environment = $pipeline->Environment();
-		$project = $pipeline->Environment()->Project();
-
-		if($environment->Name != $params['Environment']) {
-			throw new LogicException("Environment in URL doesn't match this pipeline");
-		}
-		if($project->Name != $params['Project']) {
-			throw new LogicException("Project in URL doesn't match this pipeline");
-		}
-
-		// Delegate to sub-requesthandler
-		return PipelineController::create($this, $pipeline);
 	}
 
 	/**
@@ -2073,16 +1962,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function providePermissions() {
 		return array(
-			self::DEPLOYNAUT_BYPASS_PIPELINE => array(
-				'name' => "Bypass Pipeline",
-				'category' => "Deploynaut",
-				'help' => "Enables users to directly initiate deployments, bypassing any pipeline",
-			),
-			self::DEPLOYNAUT_DRYRUN_PIPELINE => array(
-				'name' => 'Dry-run Pipeline',
-				'category' => 'Deploynaut',
-				'help' => 'Enable dry-run execution of pipelines for testing'
-			),
 			self::DEPLOYNAUT_ADVANCED_DEPLOY_OPTIONS => array(
 				'name' => "Access to advanced deploy options",
 				'category' => "Deploynaut",

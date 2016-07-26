@@ -119,10 +119,6 @@ DNEnvironment:
     ArchiveDownloaderGroups: =>Group.downloader
     ArchiveDeleters: =>Member.deleter
     ArchiveDeleterGroups: =>Group.deleter
-    PipelineApprovers: =>Member.approver
-    PipelineApproverGroups: =>Group.approver
-    PipelineCancellers: =>Member.canceller
-    PipelineCancellerGroups: =>Group.canceller
   dev:
     Name: dev
     Project: =>DNProject.testproject
