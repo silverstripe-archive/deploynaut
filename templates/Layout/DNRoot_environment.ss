@@ -30,77 +30,25 @@
 	<% end_with %>
 
 	<% if $CurrentEnvironment.runningDeployments.count == 0 %>
-		<% if $HasPipelineSupport %>
-			<% if $CurrentPipeline %>
-				<% with $CurrentPipeline %>
-					<div class="Pipeline-Status">
-						<% include PipelineStatus %>
-					</div>
-				<% end_with %>
-			<% else %>
-				<h3>Initiate the release process</h3>
-				<p class="alert alert-info">$GenericPipelineConfig.PipelineConfig.Description</p>
-				$DeployForm
-				<% if $DependentFilteredCommits %>
-					<% with $GenericPipelineConfig.PipelineConfig %>
-						<h3>Successful $CurrentEnvironment.DependsOnProject:$CurrentEnvironment.DependsOnEnvironment releases</h3>
-						<p>The following $CurrentEnvironment.DependsOnProject:$CurrentEnvironment.DependsOnEnvironment releases can be deployed</p>
-					<% end_with %>
+		<% if $CurrentEnvironment.CanDeploy %>
+			<div id="deployment-dialog-holder"></div>
 
-					<div class="table-responsive">
-						<table class="table-striped table table-bordered">
-							<thead>
-								<tr>
-									<th>Date deployed</th>
-									<th>Build</th>
-									<th>Deployer</th>
-									<th class="text-center">Status</th>
-									<th class="text-center">More info</th>
-								</tr>
-							</thead>
-							<tbody>
-							<% loop DependentFilteredCommits %>
-								<tr>
-									<td><span class="tooltip-hint" data-toggle="tooltip" data-original-title="$LastEdited.Nice ($LastEdited.Ago)">$LastEdited.Date</span></td>
-									<td><span class="tooltip-hint" data-toggle="tooltip" title="$Message" data-original-title="$Message">$SHA</span></td>
-									<td>$Deployer.Name <% if $Deployer.Email %>&lt;$Deployer.Email&gt; <% end_if %></td>
-									<td class="text-center">
-									<% if $Status = 'Queued' %><span class="label label-info">Queued</span><% end_if %>
-									<% if $Status = 'Started' %><span class="label label-info">Running</span><% end_if %>
-									<% if $Status = 'Finished' %><span class="label label-success">Finished</span><% end_if %>
-									<% if $Status = 'Failed' %><span class="label label-danger">Failed</span><% end_if %>
-									<% if $Status = 'n/a' %><span class="label label-inverse">n/a</span><% end_if %>
-									</td>
-									<td class="text-center"><% if $Link %><a class="no-wrap" href="$Link">Details <i class="fa fa-angle-right"></i></a><% end_if %></td>
-								</tr>
-							<% end_loop %>
-							</tbody>
-						</table>
-					</div>
-
-				<% end_if %>
-			<% end_if %>
+			<script>
+				var environmentConfigContext = {
+					projectUrl: "{$absoluteBaseURL}naut/api/$CurrentProject.Name",
+					envUrl: "{$absoluteBaseURL}{$CurrentEnvironment.Link}",
+					gitRevisionsUrl: "{$absoluteBaseURL}{$CurrentEnvironment.Link}/git_revisions<% if $Redeploy %>?redeploy=1<% end_if %>",
+					envName: "{$CurrentEnvironment.Name}",
+					siteUrl: "{$CurrentEnvironment.URL}",
+					<% if $PlatformSpecificStrings %>
+						<% loop $PlatformSpecificStrings %>
+							$Code: "$String",
+						<% end_loop %>
+					<% end_if %>
+				};
+			</script>
 		<% else %>
-			<% if $CurrentEnvironment.CanDeploy %>
-				<div id="deployment-dialog-holder"></div>
-
-				<script>
-					var environmentConfigContext = {
-						projectUrl: "{$absoluteBaseURL}naut/api/$CurrentProject.Name",
-						envUrl: "{$absoluteBaseURL}{$CurrentEnvironment.Link}",
-						gitRevisionsUrl: "{$absoluteBaseURL}{$CurrentEnvironment.Link}/git_revisions<% if $Redeploy %>?redeploy=1<% end_if %>",
-						envName: "{$CurrentEnvironment.Name}",
-						siteUrl: "{$CurrentEnvironment.URL}",
-						<% if $PlatformSpecificStrings %>
-							<% loop $PlatformSpecificStrings %>
-								$Code: "$String",
-							<% end_loop %>
-						<% end_if %>
-					};
-				</script>
-			<% else %>
-				<% include CannotDeploy Environment=$CurrentEnvironment %>
-			<% end_if %>
+			<% include CannotDeploy Environment=$CurrentEnvironment %>
 		<% end_if %>
 	<% else %>
 		<div class="alert alert-warning">

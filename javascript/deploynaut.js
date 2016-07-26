@@ -254,25 +254,5 @@
 			return false;
 		});
 
-		/**
-		 * Add a delay after clicking on Approve/Reject type buttons on a Pipeline. This is because there is a brief
-		 * gap between one PipelineStep ending and the next beginning, and it's preferable to not show the user a page
-		 * with no current step.
-		 *
-		 * @todo: Replace this with AJAX calls to the (not yet existing) Pipeline API so we can update automatically.
-		 */
-		$('.deployprogress-step .btn').click(function(e) {
-			$(this).siblings('.btn').prop('disabled', true);
-			$(this).toggleClass('active').html('<img src="deploynaut/images/ajax-loader.gif">');
-			var href = $(this).prop('href');
-			$.get($(this).prop('href'), function() {
-				setTimeout(function() {
-					window.location.reload();
-				}, 2000);
-			});
-
-			e.preventDefault();
-		});
-
 	});
 }(jQuery));

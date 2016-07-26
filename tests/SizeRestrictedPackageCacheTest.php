@@ -4,7 +4,7 @@
  * Component test for SizeRestrictedPackageCache
  * Writes to temporary locations in the filesystem
  */
-class SizeRestrictedPackageCacheTest extends SapphireTest {
+class SizeRestrictedPackageCacheTest extends DeploynautTest {
 
 	protected $tempPath = null;
 
@@ -23,13 +23,13 @@ class SizeRestrictedPackageCacheTest extends SapphireTest {
 
 		$this->gen = new PackageCacheTest_MockGenerator;
 		// To do: refactor so as not to be pipelinetest-specific (see also SimplePackageGeneratorTest)
-		$this->log = new PipelineTest_MockLog(null);
+		$this->log = new DeploynautTest_MockLog(null);
 
 	}
+
 	public function tearDown() {
 		if($this->tempPath) Filesystem::removeFolder($this->tempPath);
 	}
-
 
 	public function testSizeRestriction() {
 		// This testing relies on the fact that MockGenerator won't use the gitDir

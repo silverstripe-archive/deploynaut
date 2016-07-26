@@ -221,10 +221,6 @@ Set up feature flags in `_ss_environment.php`:
 	// Enable for everyone.
 	define('FLAG_SNAPSHOTS_ENABLED', true);
 
-## Pipelines
-
-See the [pipelines documentation](pipelines.md).
-
 ## Securing Snapshot Downloads
 
 Deploynaut provides the ability to backup database and/or assets from a specific environment
