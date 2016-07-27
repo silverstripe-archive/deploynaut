@@ -98,11 +98,15 @@
 						</td>
 						<td>$Deployer.Name <% if $Deployer.Email %>&lt;$Deployer.Email&gt; <% end_if %></td>
 						<td class="text-center">
-						<% if $Status = 'Queued' %><span class="label label-info">Queued</span><% end_if %>
-						<% if $Status = 'Started' %><span class="label label-info">Running</span><% end_if %>
-						<% if $Status = 'Finished' %><span class="label label-success">Finished</span><% end_if %>
-						<% if $Status = 'Failed' %><span class="label label-danger">Failed</span><% end_if %>
-						<% if $Status = 'n/a' %><span class="label label-warning">n/a</span><% end_if %>
+							<% if $Status = 'Completed' %>
+								<span class="label label-success">$Status</span>
+							<% else_if $Status = 'Failed' %>
+								<span class="label label-danger">$Status</span>
+							<% else_if $Status = 'Aborting' %>
+								<span class="label label-warning">$Status</span>
+							<% else %>
+								<span class="label label-info">$Status</span>
+							<% end_if %>
 						</td>
 						<td class="text-center"><% if $Link %><a href="$Link">Details <i class="fa fa-angle-right"></i></a><% end_if %></td>
 					</tr>

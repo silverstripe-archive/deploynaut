@@ -20,12 +20,19 @@
 		<div class="deployment-status">
 			<div class="progress deployment-progress">
 				<div class="progress-bar
-					<% if $ResqueStatus == 'Started' || $ResqueStatus == 'Running' %>
+					<% if $Status=='Deploying' || $Status=='Aborting' %>
 						progress-bar-striped active
 					<% end_if %>
-					$ResqueStatus" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" id="queue_action">
+					$Status" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" id="queue_action">
 
-					Deployment to $Environment.Name <span class="jobstatus">$ResqueStatus.LowerCase</span>
+					Deployment to $Environment.Name
+					<% if $Status=='Failed' || $Status=='Completed' %>
+						has
+					<% else %>
+						is now
+					<% end_if %>
+					<span class="jobstatus">$Status.LowerCase</span>
+
 					<span class="status"><a href="#" id="current-build-toggle">View details <i class="fa fa-caret-down"></i></a></span>
 				</div>
 			</div>
@@ -52,9 +59,13 @@
 		</div>
 
 		<% if $HasPerm(ADMIN) %>
-			<% if $ResqueStatus == 'Queued' || $ResqueStatus == 'Started' || $ResqueStatus == 'Running' %>
+			<% if $Status=='Queued' || $Status=='Deploying' || $Status=='Aborting' %>
 				<button value="Abort" class="btn btn-danger abort pull-right" data-url="$Link/abort-deploy" data-terminate="Force abort">
-					<% if $isAborting %>Force abort<% else %>Abort<% end_if %>
+					<% if $Status=='Aborting' %>
+						Force abort
+					<% else %>
+						Abort
+					<% end_if %>
 				</button>
 			<% end_if %>
 		<% end_if %>

@@ -5471,23 +5471,23 @@ a.thumbnail.active {
   -o-animation: progress-bar-stripes 2s linear infinite;
   animation: progress-bar-stripes 2s linear infinite; }
 
-.progress-bar-success, .progress-bar.Complete {
+.progress-bar-success, .progress-bar.Complete, .progress-bar.Completed {
   background-color: #5cb85c; }
-  .progress-striped .progress-bar-success, .progress-striped .progress-bar.Complete {
+  .progress-striped .progress-bar-success, .progress-striped .progress-bar.Complete, .progress-striped .progress-bar.Completed {
     background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
     background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
     background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent); }
 
-.progress-bar-info, .progress-bar.Started, .progress-bar.Queued, .progress-bar.Running {
+.progress-bar-info, .progress-bar.Started, .progress-bar.Queued, .progress-bar.Running, .progress-bar.Deploying {
   background-color: #5bc0de; }
-  .progress-striped .progress-bar-info, .progress-striped .progress-bar.Started, .progress-striped .progress-bar.Queued, .progress-striped .progress-bar.Running {
+  .progress-striped .progress-bar-info, .progress-striped .progress-bar.Started, .progress-striped .progress-bar.Queued, .progress-striped .progress-bar.Running, .progress-striped .progress-bar.Deploying {
     background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
     background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
     background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent); }
 
-.progress-bar-warning, .progress-bar.Invalid {
+.progress-bar-warning, .progress-bar.Aborting {
   background-color: #f0ad4e; }
-  .progress-striped .progress-bar-warning, .progress-striped .progress-bar.Invalid {
+  .progress-striped .progress-bar-warning, .progress-striped .progress-bar.Aborting {
     background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
     background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
     background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent); }

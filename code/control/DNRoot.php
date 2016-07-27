@@ -1373,7 +1373,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$strategy = new DeploymentStrategy($environment);
 		$strategy->fromArray($request->requestVar('strategy'));
 		$deployment = $strategy->createDeployment();
-		$deployment->start();
+		// Skip through the approval state for now.
+		$deployment->getMachine()->apply(DNDeployment::TR_SUBMIT);
+		$deployment->getMachine()->apply(DNDeployment::TR_QUEUE);
 
 		return json_encode(array(
 			'url' => Director::absoluteBaseURL() . $deployment->Link()
@@ -1480,7 +1482,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			throw new LogicException("Project in URL doesn't match this deploy");
 		}
 
-		$deployment->abort();
+		if (!in_array($deployment->Status, ['Queued', 'Deploying', 'Aborting'])) {
+			throw new LogicException(sprintf("Cannot abort from %s state.", $deployment->Status));
+		}
+
+		$deployment->getMachine()->apply(DNDeployment::TR_ABORT);
 
 		return $this->sendResponse($deployment->ResqueStatus(), []);
 	}
