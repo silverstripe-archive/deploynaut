@@ -51,6 +51,14 @@
 			</table>
 		</div>
 
+		<% if $HasPerm(ADMIN) %>
+			<% if $ResqueStatus == 'Queued' || $ResqueStatus == 'Started' || $ResqueStatus == 'Running' %>
+				<button value="Abort" class="btn btn-danger abort pull-right" data-url="$Link/abort-deploy" data-terminate="Force abort">
+					<% if $isAborting %>Force abort<% else %>Abort<% end_if %>
+				</button>
+			<% end_if %>
+		<% end_if %>
+
 		<h5>Deploy log:</h5>
 		<pre id="queue_log" class="log-content" data-loglink="$LogLink">$LogContent.XML</pre>
 	<% end_with %>
