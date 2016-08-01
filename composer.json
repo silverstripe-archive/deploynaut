@@ -12,7 +12,8 @@
 		"undefinedoffset/sortablegridfield": "*",
 		"silverstripe/secureassets": "dev-master",
 		"silverstripe-australia/gridfieldextensions": "dev-master",
-		"league/event": "^2.1"
+		"league/event": "^2.1",
+		"yohang/finite": "~1.1"
 	},
 	"require-dev": {
 		"phpunit/PHPUnit": "~3.7@stable"

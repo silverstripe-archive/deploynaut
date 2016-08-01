@@ -112,12 +112,12 @@
 				}
 				$(status).parent().addClass(data.status);
 				$('title').text(data.status + " | Deploynaut");
-				if (data.status == 'Complete' || data.status == 'Failed' || data.status == 'Invalid') {
-					$(status).parent().removeClass('Running Queued progress-bar-striped active');
+				if (data.status == 'Complete' || data.status == 'Completed' || data.status == 'Failed' || data.status == 'Invalid') {
+					$(status).parent().removeClass('Running Deploying Aborting Queued progress-bar-striped active');
 					//detach scroll listener
 					content.off('scroll');
 					self._clearInterval();
-				} else if (data.status == 'Running') {
+				} else if (data.status == 'Running' || data.status == 'Deploying' || data.status == 'Aborting') {
 					$(status).parent().addClass('progress-bar-striped active')
 					$(status).parent().removeClass('Queued');
 				}

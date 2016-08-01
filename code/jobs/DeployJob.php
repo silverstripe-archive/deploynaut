@@ -93,7 +93,7 @@ class DeployJob extends DeploynautJob {
 			}
 		}
 
-		$this->updateStatus('Started');
+		$this->updateStatus(DNDeployment::TR_DEPLOY);
 		chdir(BASE_PATH);
 	}
 
@@ -132,23 +132,27 @@ class DeployJob extends DeploynautJob {
 				$this->args
 			);
 		} catch(Exception $e) {
+			// DeploynautJob will automatically trigger onFailure.
 			echo "[-] DeployJob failed" . PHP_EOL;
 			throw $e;
 		}
-		$this->updateStatus('Finished');
+		$this->updateStatus(DNDeployment::TR_COMPLETE);
 		echo "[-] DeployJob finished" . PHP_EOL;
 	}
 
+	public function onFailure(Exception $exception) {
+		$this->updateStatus(DNDeployment::TR_FAIL);
+	}
+
 	/**
-	 * @param string $status
+	 * @param string $status Transition
 	 * @global array $databaseConfig
 	 */
 	protected function updateStatus($status) {
 		global $databaseConfig;
 		DB::connect($databaseConfig);
 		$dnDeployment = DNDeployment::get()->byID($this->args['deploymentID']);
-		$dnDeployment->Status = $status;
-		$dnDeployment->write();
+		$dnDeployment->getMachine()->apply($status);
 	}
 
 	/**

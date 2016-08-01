@@ -95,15 +95,18 @@ ol.list
 	&.Failed
 		@extend .progress-bar-danger
 
-	&.Complete
+	&.Complete,
+	&.Completed
 		@extend .progress-bar-success
 
 	&.Started,
 	&.Queued,
-	&.Running
+	&.Running,
+	&.Deploying
 		@extend .progress-bar-info
 
 	&.Invalid
+	&.Aborting
 		@extend .progress-bar-warning
 
 

@@ -1,18 +1,37 @@
 <?php
 
+use Finite\State\StateInterface;
+
 /**
  * Class representing a single deplyoment (passed or failed) at a time to a particular environment
  *
  * @property string $SHA
  * @property string $ResqueToken
- * @property string $Status
+ * @property string $State
  *
  * @method DNEnvironment Environment()
  * @property int EnvironmentID
  * @method Member Deployer()
  * @property int DeployerID
  */
-class DNDeployment extends DataObject {
+class DNDeployment extends DataObject implements Finite\StatefulInterface, HasStateMachine {
+
+	const STATE_NEW = 'New';
+	const STATE_SUBMITTED = 'Submitted';
+	const STATE_INVALID = 'Invalid';
+	const STATE_QUEUED = 'Queued';
+	const STATE_DEPLOYING = 'Deploying';
+	const STATE_ABORTING = 'Aborting';
+	const STATE_COMPLETED = 'Completed';
+	const STATE_FAILED = 'Failed';
+
+	const TR_SUBMIT = 'submit';
+	const TR_INVALIDATE = 'invalidate';
+	const TR_QUEUE = 'queue';
+	const TR_DEPLOY = 'deploy';
+	const TR_ABORT = 'abort';
+	const TR_COMPLETE = 'complete';
+	const TR_FAIL = 'fail';
 
 	/**
 	 * @var array
@@ -24,9 +43,7 @@ class DNDeployment extends DataObject {
 		// the commit could appear in lots of branches that are irrelevant to the user when it comes
 		// to deployment history, and the branch may have been deleted.
 		"Branch" => "Varchar(255)",
-		// Observe that this is not the same as Resque status, since ResqueStatus is not persistent
-		// It's used for finding successful deployments and displaying that in history views in the frontend
-		"Status" => "Enum('Queued, Started, Aborting, Finished, Failed, n/a', 'n/a')",
+		"State" => "Enum('New, Submitted, Invalid, Queued, Deploying, Aborting, Completed, Failed', 'New')",
 		// JSON serialised DeploymentStrategy.
 		"Strategy" => "Text"
 	);
@@ -48,25 +65,93 @@ class DNDeployment extends DataObject {
 	private static $summary_fields = array(
 		'LastEdited' => 'Last Edited',
 		'SHA' => 'SHA',
-		'Status' => 'Status',
+		'State' => 'State',
 		'Deployer.Name' => 'Deployer'
 	);
 
-	/**
-	 * @param int $int
-	 * @return string
-	 */
-	public static function map_resque_status($int) {
-		$remap = array(
-			Resque_Job_Status::STATUS_WAITING => "Queued",
-			Resque_Job_Status::STATUS_RUNNING => "Running",
-			Resque_Job_Status::STATUS_FAILED => "Failed",
-			Resque_Job_Status::STATUS_COMPLETE => "Complete",
-			false => "Invalid",
-		);
-		return $remap[$int];
+	public function getFiniteState() {
+        return $this->State;
+    }
+
+    public function setFiniteState($state) {
+		$this->State = $state;
+		$this->write();
+    }
+
+	public function getStatus() {
+		return $this->State;
 	}
 
+	public function getMachine() {
+		$loader = new Finite\Loader\ArrayLoader([
+			'class'   => 'DNDeployment',
+			'states'  => [
+				self::STATE_NEW => ['type' => StateInterface::TYPE_INITIAL],
+				self::STATE_SUBMITTED => ['type' => StateInterface::TYPE_NORMAL],
+				self::STATE_INVALID => ['type' => StateInterface::TYPE_NORMAL],
+				self::STATE_QUEUED => ['type' => StateInterface::TYPE_NORMAL],
+				self::STATE_DEPLOYING => ['type' => StateInterface::TYPE_NORMAL],
+				self::STATE_ABORTING => ['type' => StateInterface::TYPE_NORMAL],
+				self::STATE_COMPLETED => ['type' => StateInterface::TYPE_FINAL],
+				self::STATE_FAILED => ['type' => StateInterface::TYPE_FINAL],
+			],
+			'transitions' => [
+				self::TR_SUBMIT => ['from' => [self::STATE_NEW], 'to' => self::STATE_SUBMITTED],
+				self::TR_QUEUE => ['from' => [self::STATE_SUBMITTED], 'to' => self::STATE_QUEUED],
+				self::TR_INVALIDATE  => [
+					'from' => [self::STATE_NEW, self::STATE_SUBMITTED],
+					'to' => self::STATE_INVALID
+				],
+				self::TR_DEPLOY  => ['from' => [self::STATE_QUEUED], 'to' => self::STATE_DEPLOYING],
+				self::TR_ABORT => [
+					'from' => [
+						self::STATE_QUEUED,
+						self::STATE_DEPLOYING,
+						self::STATE_ABORTING
+					],
+					'to' => self::STATE_ABORTING
+				],
+				self::TR_COMPLETE => ['from' => [self::STATE_DEPLOYING], 'to' => self::STATE_COMPLETED],
+				self::TR_FAIL  => [
+					'from' => [
+						self::STATE_NEW,
+						self::STATE_SUBMITTED,
+						self::STATE_QUEUED,
+						self::STATE_INVALID,
+						self::STATE_DEPLOYING,
+						self::STATE_ABORTING
+					],
+					'to' => self::STATE_FAILED
+				],
+			],
+			'callbacks' => [
+				'after' => [
+					['to' => [self::STATE_QUEUED], 'do' => [$this, 'onQueue']],
+					['to' => [self::STATE_ABORTING], 'do' => [$this, 'onAbort']],
+				]
+			]
+		]);
+		$stateMachine = new Finite\StateMachine\StateMachine($this);
+		$loader->load($stateMachine);
+		$stateMachine->initialize();
+		return $stateMachine;
+	}
+
+
+	public function onQueue() {
+		$log = $this->log();
+		$token = $this->enqueueDeployment();
+		$this->ResqueToken = $token;
+		$this->write();
+
+		$message = sprintf('Deploy queued as job %s (sigFile is %s)', $token, DeployJob::sig_file_for_data_object($this));
+		$log->write($message);
+	}
+
+	public function onAbort() {
+		// 2 is SIGINT - we can't use SIGINT constant in the mod_apache context.
+		DeployJob::set_signal($this, 2);
+	}
 
 	public function Link() {
 		return Controller::join_links($this->Environment()->Link(), 'deploy', $this->ID);
@@ -104,28 +189,13 @@ class DNDeployment extends DataObject {
 	}
 
 	/**
-	 * Returns the status of the resque job
+	 * This remains here for backwards compatibility - we don't want to expose Resque status in here.
+	 * Resque job (DeployJob) will change statuses as part of its execution.
 	 *
 	 * @return string
 	 */
 	public function ResqueStatus() {
-		$status = new Resque_Job_Status($this->ResqueToken);
-		$statusCode = $status->get();
-		// The Resque job can no longer be found, fallback to the DNDeployment.Status
-		if($statusCode === false) {
-			// Translate from the DNDeployment.Status to the Resque job status for UI purposes
-			switch($this->Status) {
-				case 'Finished':
-					return 'Complete';
-				case 'Started':
-					return 'Running';
-				case 'Aborting':
-					return 'Running';
-				default:
-					return $this->Status;
-			}
-		}
-		return self::map_resque_status($statusCode);
+		return $this->State;
 	}
 
 
@@ -332,27 +402,5 @@ class DNDeployment extends DataObject {
 		}
 
 		return Resque::enqueue('deploy', 'DeployJob', $args, true);
-	}
-
-	public function start() {
-		$log = $this->log();
-		$token = $this->enqueueDeployment();
-		$this->ResqueToken = $token;
-		$this->Status = 'Queued';
-		$this->write();
-
-		$message = sprintf('Deploy queued as job %s (sigFile is %s)', $token, DeployJob::sig_file_for_data_object($this));
-		$log->write($message);
-	}
-
-	public function abort() {
-		$this->Status = 'Aborting';
-		$this->write();
-		// 2 is SIGINT - we can't use SIGINT constant in the mod_apache context.
-		DeployJob::set_signal($this, 2);
-	}
-
-	public function isAborting() {
-		return $this->Status=='Aborting';
 	}
 }
