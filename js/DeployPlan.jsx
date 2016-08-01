@@ -1,6 +1,6 @@
 var Events = require('./events.js');
 var Helpers = require('./helpers.js');
-var SummaryTable = require('./summary_table.jsx');
+var SummaryTable = require('./SummaryTable.jsx');
 
 var DeployPlan = React.createClass({
 	loadingSub: null,

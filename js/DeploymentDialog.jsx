@@ -1,14 +1,11 @@
 var Events = require('./events.js');
 var Helpers = require('./helpers.js');
-var DeployPlan = require('./deploy_plan.jsx');
+var DeployPlan = require('./DeployPlan.jsx');
 
 var DeploymentDialog = React.createClass({
 
-	loadingSub: null,
-
-	loadingDoneSub: null,
-
-	errorSub: null,
+	// subscribers to Events so we can unsubscribe on componentWillUnmount
+	subscriptions: [],
 
 	getInitialState: function() {
 		return {
@@ -20,36 +17,35 @@ var DeploymentDialog = React.createClass({
 		};
 	},
 	componentDidMount: function() {
-		var self = this;
-		// add subscribers
-		this.loadingSub = Events.subscribe('loading', function(text) {
-			self.setState({
+		this.subscriptions.push(Events.subscribe('loading', function(text) {
+			this.setState({
 				loading: true,
 				success: false,
 				loadingText: text
 			});
-		});
-		this.loadingDoneSub = Events.subscribe('loading/done', function() {
-			self.setState({
+		}.bind(this)));
+		this.subscriptions.push(Events.subscribe('loading/done', function() {
+			this.setState({
 				loading: false,
 				loadingText: '',
 				success: true
 			});
-		});
-		this.errorSub = Events.subscribe('error', function(text) {
-			self.setState({
+		}.bind(this)));
+		this.subscriptions.push(Events.subscribe('error', function(text) {
+			this.setState({
 				errorText: text,
 				loading: false,
 				loadingText: '',
 				success: false
 			});
-		});
+		}.bind(this)));
 	},
 	componentWillUnmount: function() {
 		// remove subscribers
-		this.loadingSub.remove();
-		this.loadingDoneSub.remove();
-		this.errorSub.remove();
+		for(var idx =0; i<this.subscriptions.length; idx++) {
+			this.subscriptions[idx].remove()
+			console.log('removing sub');
+		}
 	},
 	handleClick: function(e) {
 		e.preventDefault();
@@ -57,7 +53,7 @@ var DeploymentDialog = React.createClass({
 		this.setState({
 			fetched: false
 		});
-		var self = this;
+
 		Q($.ajax({
 			type: "POST",
 			dataType: 'json',
@@ -66,13 +62,12 @@ var DeploymentDialog = React.createClass({
 			.then(this.waitForFetchToComplete, this.fetchStatusError)
 			.then(function() {
 				Events.publish('loading/done');
-				self.setState({
+				this.setState({
 					fetched: true
 				})
-			}).catch(this.fetchStatusError).done();
+			}.bind(this)).catch(this.fetchStatusError).done();
 	},
 	waitForFetchToComplete:function (fetchData) {
-		var self = this;
 		return this.getFetchStatus(fetchData).then(function (data) {
 			if (data.status === "Complete") {
 				return data;
@@ -82,8 +77,8 @@ var DeploymentDialog = React.createClass({
 					return d.reject(data);
 				}).promise();
 			}
-			return self.waitForFetchToComplete(fetchData);
-		});
+			return this.waitForFetchToComplete(fetchData);
+		}.bind(this));
 	},
 	getFetchStatus: function (fetchData) {
 		return Q($.ajax({
@@ -187,8 +182,7 @@ var DeployForm = React.createClass({
 	},
 
 	gitData: function() {
-		var self = this;
-		self.setState({
+		this.setState({
 			loading: true
 		});
 		Q($.ajax({
@@ -196,14 +190,14 @@ var DeployForm = React.createClass({
 			dataType: 'json',
 			url: this.props.context.gitRevisionsUrl
 		})).then(function(data) {
-			self.setState({
+			this.setState({
 				loading: false,
 				data: data.Tabs,
 				selectedTab: data.preselect_tab ? parseInt(data.preselect_tab) : 1,
 				preselectSha: data.preselect_sha
 			});
-			self.props.lastFetchedHandler(data.last_fetched);
-		}, function(data){
+			this.props.lastFetchedHandler(data.last_fetched);
+		}.bind(this), function(data){
 			Events.publish('error', data);
 		});
 	},
@@ -235,12 +229,11 @@ var DeployForm = React.createClass({
  */
 var DeployTabSelector = React.createClass({
 	render: function () {
-		var self = this;
 		var selectors = this.props.data.map(function(tab) {
 			return (
-				<DeployTabSelect key={tab.id} tab={tab} onSelect={self.props.onSelect} selectedTab={self.props.selectedTab} />
+				<DeployTabSelect key={tab.id} tab={tab} onSelect={this.props.onSelect} selectedTab={this.props.selectedTab} />
 			);
-		});
+		}.bind(this));
 		return (
 			<ul className="SelectionGroup tabbedselectiongroup nolabel">
 				{selectors}
@@ -275,14 +268,13 @@ var DeployTabSelect = React.createClass({
  */
 var DeployTabs = React.createClass({
 	render: function () {
-		var self = this;
 		var tabs = this.props.data.map(function(tab) {
 			return (
-				<DeployTab context={self.props.context} key={tab.id} tab={tab} selectedTab={self.props.selectedTab}
-					preselectSha={self.props.selectedTab==tab.id ? self.props.preselectSha : null}
-					SecurityToken={self.props.SecurityToken} />
+				<DeployTab context={this.props.context} key={tab.id} tab={tab} selectedTab={this.props.selectedTab}
+					preselectSha={this.props.selectedTab==tab.id ? this.props.preselectSha : null}
+					SecurityToken={this.props.SecurityToken} />
 			);
-		});
+		}.bind(this));
 
 		return (
 			<div className="tab-content">
