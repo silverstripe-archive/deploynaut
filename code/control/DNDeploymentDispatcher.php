@@ -18,24 +18,30 @@ class DNDeploymentDispatcher extends Dispatcher {
 	];
 
 	public function getModel($name) {
-		$id = $this->request->param('Id');
-		$deployment = DNDeployment::get()->byId($id);
+		$deployment = $this->getDeployment();
+		if (!$deployment) {
+			return [];
+		}
+
 		return [
 			'State' => $deployment->State
 		];
 	}
 
+	public function getDeployment() {
+		$id = $this->request->param('Id');
+		$deployment = DNDeployment::get()->byId($id);
+		if (!$deployment || !$deployment->exists()) {
+			return false;
+		}
+		return $deployment;
+	}
+
 	public function apply(SS_HTTPRequest $request) {
 		$this->checkSecurityToken();
-
-		$project = $this->getCurrentProject();
-		if(!$project) {
-			return $this->project404Response();
-		}
-
-		$env = $this->getCurrentEnvironment($project);
-		if(!$env) {
-			return $this->environment404Response();
+		$response = $this->checkRequest();
+		if ($response) {
+			return $response;
 		}
 
 		$machine = $this->getMachine();
@@ -47,7 +53,17 @@ class DNDeploymentDispatcher extends Dispatcher {
 
 	public function canApply(SS_HTTPRequest $request) {
 		$this->checkSecurityToken();
+		$response = $this->checkRequest();
+		if ($response) {
+			return $response;
+		}
 
+		return $this->asJSON([
+			'Can' => $this->getMachine()->can($request->param('State'))
+		]);
+	}
+
+	protected function checkRequest() {
 		$project = $this->getCurrentProject();
 		if(!$project) {
 			return $this->project404Response();
@@ -58,14 +74,20 @@ class DNDeploymentDispatcher extends Dispatcher {
 			return $this->environment404Response();
 		}
 
-		return $this->asJSON([
-			'Can' => $this->getMachine()->can($request->param('State'))
-		]);
+		$deployment = $this->getDeployment();
+		if (!$deployment) {
+			return new SS_HTTPResponse('Deployment not found', 404);
+		}
+
+		return true;
 	}
 
 	protected function getMachine() {
-		$id = $this->request->param('Id');
-		$deployment = DNDeployment::get()->byId($id);
+		$deployment = $this->getDeployment();
+		if (!$deployment) {
+			return null;
+		}
+
 		$project = $deployment->Environment()->Project();
 		$machine = $deployment->getMachine();
 
