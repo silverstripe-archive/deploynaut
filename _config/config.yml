@@ -10,6 +10,13 @@ Group:
 GridFieldDetailForm_ItemRequest:
   extensions:
     - FrontendLink
+Injector:
+  Finite\StateMachine\StateMachine:
+    class: Finite\StateMachine\StateMachine
+    type: prototype
+  Email:
+    class: Email
+    type: prototype
 StateMachineFactory:
   handlers:
     DNDeployment:

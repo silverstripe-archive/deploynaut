@@ -10,30 +10,6 @@ class DeployJob extends DeploynautJob {
 	 */
 	public $args;
 
-	public static function sig_file_for_data_object($dataObject) {
-		$dir = DNData::inst()->getSignalDir();
-		if (!is_dir($dir)) {
-			`mkdir $dir`;
-		}
-		return sprintf(
-			'%s/deploynaut-signal-%s-%s',
-			DNData::inst()->getSignalDir(),
-			$dataObject->ClassName,
-			$dataObject->ID
-		);
-	}
-
-	/**
-	 * Signal the worker to self-abort. If we had a reliable way of figuring out the right PID,
-	 * we could posix_kill directly, but Resque seems to not provide a way to find out the PID
-	 * from the job nor worker.
-	 */
-	public static function set_signal($dataObject, $signal) {
-		$sigFile = DeployJob::sig_file_for_data_object($dataObject);
-		// 2 is SIGINT - we can't use SIGINT constant in the Apache context, only available in workers.
-		file_put_contents($sigFile, $signal);
-	}
-
 	/**
 	 * Poll the sigFile looking for a signal to self-deliver.
 	 * This is useful if we don't know the PID of the worker - we can easily deliver signals
