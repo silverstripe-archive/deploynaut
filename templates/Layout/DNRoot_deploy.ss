@@ -25,14 +25,11 @@
 					<% end_if %>
 					$Status" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" id="queue_action">
 
-					Deployment to $Environment.Name
-					<% if $Status=='Failed' || $Status=='Completed' %>
-						has
+					<% if $Status=='New' %>
+						New deployment to $Environment.Name
 					<% else %>
-						is now
+						Deployment to $Environment.Name <span class="jobstatus">$Status.LowerCase</span>
 					<% end_if %>
-					<span class="jobstatus">$Status.LowerCase</span>
-
 					<span class="status"><a href="#" id="current-build-toggle">View details <i class="fa fa-caret-down"></i></a></span>
 				</div>
 			</div>
