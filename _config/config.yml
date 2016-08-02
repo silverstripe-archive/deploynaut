@@ -10,3 +10,10 @@ Group:
 GridFieldDetailForm_ItemRequest:
   extensions:
     - FrontendLink
+StateMachineFactory:
+  handlers:
+    DNDeployment:
+      queue:
+        DNDeploymentHandlers: onQueue
+      abort:
+        DNDeploymentHandlers: onAbort
