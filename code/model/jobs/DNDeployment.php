@@ -44,6 +44,7 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 		"State" => "Enum('New, Submitted, Invalid, Queued, Deploying, Aborting, Completed, Failed', 'New')",
 		// JSON serialised DeploymentStrategy.
 		"Strategy" => "Text",
+		"Summary" => "Text",
 		"DatePlanned" => "SS_Datetime"
 	);
 
