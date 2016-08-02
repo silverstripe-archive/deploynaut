@@ -40,7 +40,7 @@ class DNDeploymentDispatcher extends Dispatcher {
 	public function apply(SS_HTTPRequest $request) {
 		$this->checkSecurityToken();
 		$response = $this->checkRequest();
-		if ($response) {
+		if ($response instanceof SS_HTTPResponse) {
 			return $response;
 		}
 
@@ -54,7 +54,7 @@ class DNDeploymentDispatcher extends Dispatcher {
 	public function canApply(SS_HTTPRequest $request) {
 		$this->checkSecurityToken();
 		$response = $this->checkRequest();
-		if ($response) {
+		if ($response instanceof SS_HTTPResponse) {
 			return $response;
 		}
 
