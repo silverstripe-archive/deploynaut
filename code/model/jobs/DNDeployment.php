@@ -1,7 +1,5 @@
 <?php
 
-use Finite\State\StateInterface;
-
 /**
  * Class representing a single deplyoment (passed or failed) at a time to a particular environment
  *
@@ -58,6 +56,10 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 
 	private static $default_sort = '"LastEdited" DESC';
 
+	private static $dependencies = [
+		'stateMachineFactory' => '%$StateMachineFactory'
+	];
+
 	public function getTitle() {
 		return "#{$this->ID}: {$this->SHA} (Status: {$this->Status})";
 	}
@@ -83,74 +85,7 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 	}
 
 	public function getMachine() {
-		$loader = new Finite\Loader\ArrayLoader([
-			'class'   => 'DNDeployment',
-			'states'  => [
-				self::STATE_NEW => ['type' => StateInterface::TYPE_INITIAL],
-				self::STATE_SUBMITTED => ['type' => StateInterface::TYPE_NORMAL],
-				self::STATE_INVALID => ['type' => StateInterface::TYPE_NORMAL],
-				self::STATE_QUEUED => ['type' => StateInterface::TYPE_NORMAL],
-				self::STATE_DEPLOYING => ['type' => StateInterface::TYPE_NORMAL],
-				self::STATE_ABORTING => ['type' => StateInterface::TYPE_NORMAL],
-				self::STATE_COMPLETED => ['type' => StateInterface::TYPE_FINAL],
-				self::STATE_FAILED => ['type' => StateInterface::TYPE_FINAL],
-			],
-			'transitions' => [
-				self::TR_SUBMIT => ['from' => [self::STATE_NEW], 'to' => self::STATE_SUBMITTED],
-				self::TR_QUEUE => ['from' => [self::STATE_SUBMITTED], 'to' => self::STATE_QUEUED],
-				self::TR_INVALIDATE  => [
-					'from' => [self::STATE_NEW, self::STATE_SUBMITTED],
-					'to' => self::STATE_INVALID
-				],
-				self::TR_DEPLOY  => ['from' => [self::STATE_QUEUED], 'to' => self::STATE_DEPLOYING],
-				self::TR_ABORT => [
-					'from' => [
-						self::STATE_QUEUED,
-						self::STATE_DEPLOYING,
-						self::STATE_ABORTING
-					],
-					'to' => self::STATE_ABORTING
-				],
-				self::TR_COMPLETE => ['from' => [self::STATE_DEPLOYING], 'to' => self::STATE_COMPLETED],
-				self::TR_FAIL  => [
-					'from' => [
-						self::STATE_NEW,
-						self::STATE_SUBMITTED,
-						self::STATE_QUEUED,
-						self::STATE_INVALID,
-						self::STATE_DEPLOYING,
-						self::STATE_ABORTING
-					],
-					'to' => self::STATE_FAILED
-				],
-			],
-			'callbacks' => [
-				'after' => [
-					['to' => [self::STATE_QUEUED], 'do' => [$this, 'onQueue']],
-					['to' => [self::STATE_ABORTING], 'do' => [$this, 'onAbort']],
-				]
-			]
-		]);
-		$stateMachine = new Finite\StateMachine\StateMachine($this);
-		$loader->load($stateMachine);
-		$stateMachine->initialize();
-		return $stateMachine;
-	}
-
-
-	public function onQueue() {
-		$log = $this->log();
-		$token = $this->enqueueDeployment();
-		$this->ResqueToken = $token;
-		$this->write();
-
-		$message = sprintf('Deploy queued as job %s (sigFile is %s)', $token, DeployJob::sig_file_for_data_object($this));
-		$log->write($message);
-	}
-
-	public function onAbort() {
-		// 2 is SIGINT - we can't use SIGINT constant in the mod_apache context.
-		DeployJob::set_signal($this, 2);
+		return $this->stateMachineFactory->forDNDeployment($this);
 	}
 
 	public function Link() {
@@ -364,7 +299,7 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 	 *
 	 * @return string Resque token
 	 */
-	protected function enqueueDeployment() {
+	public function enqueueDeployment() {
 		$environment = $this->Environment();
 		$project = $environment->Project();
 		$log = $this->log();
