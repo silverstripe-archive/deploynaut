@@ -17,19 +17,19 @@
 			<td>$DatePlanned.Format("jS F Y H:s")</td>
 		</tr>
 		<% loop $Changes %>
+			<% if $Changed || $Description %>
 			<tr>
 				<td>$Name</td>
 				<% if $Description %>
 					<td colspan="4">$Description</td>
 				<% else %>
-					<% if $Changed %>
-						<td>$From</th>
-						<td>&rarr;</td>
-						<td>$To</td>
-						<td><% if $CompareUrl %><a href="$CompareUrl">View diff</a><% else %>&nbsp;<% end_if %></td>
-					<% end_if %>
+					<td>$From</th>
+					<td>&rarr;</td>
+					<td>$To</td>
+					<td><% if $CompareUrl %><a href="$CompareUrl">View diff</a><% else %>&nbsp;<% end_if %></td>
 				<% end_if %>
 			</tr>
+			<% end_if %>
 		<% end_loop %>
 	</tbody>
 </table>
