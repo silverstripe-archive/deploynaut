@@ -13,6 +13,8 @@ GridFieldDetailForm_ItemRequest:
 StateMachineFactory:
   handlers:
     DNDeployment:
+      submit:
+        DNDeploymentHandlers: onSubmit
       queue:
         DNDeploymentHandlers: onQueue
       abort:
