@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Helper class to concatinate strings depeding on a true or false.
  *

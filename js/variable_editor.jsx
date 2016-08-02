@@ -1,6 +1,8 @@
 var trim = require('underscore.string/trim');
 var _ = require('underscore');
 
+var React = require("react");
+
 /**
  * VariableEditor allows editing variable => value pairs, with an inline "add" and "remove"
  * capability. Variables need to be kept unique.

@@ -1,3 +1,6 @@
+var React = require("react");
+var ReactDOM = require("react-dom");
+
 var Events = require('./events.js');
 var Helpers = require('./helpers.js');
 var DeployPlan = require('./DeployPlan.jsx');
@@ -369,7 +372,7 @@ var DeployTab = React.createClass({
 		if(event.target.value === "") {
 			return;
 		}
-		var sha = React.findDOMNode(this.refs.sha_selector.refs.sha).value;
+		var sha = ReactDOM.findDOMNode(this.refs.sha_selector.refs.sha).value;
 		return this.changeSha(sha);
 	},
 
@@ -437,7 +440,7 @@ var DeployTab = React.createClass({
 
 var SelectorDropdown = React.createClass({
 	componentDidMount: function() {
-		$(React.findDOMNode(this.refs.sha)).select2({
+		$(ReactDOM.findDOMNode(this.refs.sha)).select2({
 			// Load data into the select2.
 			// The format supports optgroups, and looks like this:
 			// [{text: 'optgroup text', children: [{id: '<sha>', text: '<inner text>'}]}]
@@ -446,7 +449,7 @@ var SelectorDropdown = React.createClass({
 
 		// Trigger handler only needed if there is no explicit button.
 		if(this.props.changeHandler) {
-			$(React.findDOMNode(this.refs.sha)).select2().on("change", this.props.changeHandler);
+			$(ReactDOM.findDOMNode(this.refs.sha)).select2().on("change", this.props.changeHandler);
 		}
 	},
 

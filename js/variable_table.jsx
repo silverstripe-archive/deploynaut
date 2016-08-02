@@ -1,5 +1,7 @@
 var _ = require('underscore');
 
+var React = require("react");
+
 /**
  * VariableTable displays variable => value pairs in a table. It also provides a button
  * to transition to the editing stage.

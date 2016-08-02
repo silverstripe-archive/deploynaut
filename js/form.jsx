@@ -1,6 +1,9 @@
 var validator = require("validator");
 var _ = require('underscore');
 
+var React = require("react");
+var ReactDOM = require("react-dom");
+
 // Create a validation method that can be used as:
 // equalsField|"firstFieldID"|"secondFieldID"
 validator.extend('equalsField', function (string, firstFieldID, secondFieldID ) {
@@ -67,7 +70,7 @@ var Form = React.createClass({
 
 		// Child is not a Input component so just change the (eventual) children props
 		if(typeof child.props.name === 'undefined') {
-			return React.addons.cloneWithProps(child, {children: children});
+			return React.cloneElement(child, {children: children});
 		}
 
 		var validations = child.props.validations;
@@ -77,7 +80,7 @@ var Form = React.createClass({
 			validations += 'isLength|1';
 		}
 
-		return React.addons.cloneWithProps(child, {
+		return React.cloneElement(child, {
 			attachToForm: this.attachToForm,
 			detachFromForm: this.detachFromForm,
 			validations: validations,
@@ -114,6 +117,9 @@ var Form = React.createClass({
 			return true;
 		}
 
+		//if (!component.isMounted()) {
+		//}
+
 		var isValid = true;
 
 		if (component.state.value || component.props.required) {
@@ -135,6 +141,7 @@ var Form = React.createClass({
 
 				if(typeof validator[validateMethod] === 'undefined') {
 					console.warn('Validation method "'+validateMethod+'" on component "'+component.props.name + '" doesn\'t exists');
+
 				} else {
 					// this is effectively a call to something like:
 					// `validator.isLength('valueFromInput', 5)`
@@ -407,7 +414,7 @@ var Select = React.createClass({
 
 	componentDidMount: function() {
 		// Trigger handler only needed if there is no explicit button.
-		$(React.findDOMNode(this.refs.selector)).select2().on("change", this.setValue);
+		$(ReactDOM.findDOMNode(this.refs.selector)).select2().on("change", this.setValue);
 	},
 
 	render: function () {

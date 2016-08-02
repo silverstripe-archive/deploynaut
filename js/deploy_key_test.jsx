@@ -1,3 +1,5 @@
+var React = require("react");
+
 var DeployKeyTest = React.createClass({
 
 	getInitialState: function() {

@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * A simple pub sub event handler for intercomponent communication
  */

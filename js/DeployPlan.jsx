@@ -1,3 +1,5 @@
+var React = require("react");
+
 var Events = require('./events.js');
 var Helpers = require('./helpers.js');
 var SummaryTable = require('./SummaryTable.jsx');

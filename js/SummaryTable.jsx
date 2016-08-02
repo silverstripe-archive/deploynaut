@@ -1,7 +1,5 @@
+var React = require("react");
 
-/**
- * @jsx React.DOM
- */
 var SummaryTable = React.createClass({
 	isEmpty: function(obj) {
 		for (var key in obj) {
