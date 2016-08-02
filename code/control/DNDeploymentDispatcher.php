@@ -4,7 +4,7 @@ use Finite\StateMachine\StateMachine;
 
 class DNDeploymentDispatcher extends Dispatcher {
 
-	const ALLOW_DNDEPLOYMENT_APPROVE = 'ALLOW_DNDEPLOYMENT_APPROVE';
+	const ALLOW_DNDEPLOYMENT_SUBMIT = 'ALLOW_DNDEPLOYMENT_SUBMIT';
 	const ALLOW_DNDEPLOYMENT_QUEUE = 'ALLOW_DNDEPLOYMENT_QUEUE';
 
 	private static $allowed_actions = [
@@ -100,10 +100,10 @@ class DNDeploymentDispatcher extends Dispatcher {
 				$code = null;
 
 				switch ($e->getTransition()->getName()) {
-				case 'approve':
-					$code = self::ALLOW_DNDEPLOYMENT_APPROVE;
+				case DNDeployment::TR_SUBMIT:
+					$code = self::ALLOW_DNDEPLOYMENT_SUBMIT;
 					break;
-				case 'queue':
+				case DNDeployment::TR_QUEUE:
 					$code = self::ALLOW_DNDEPLOYMENT_QUEUE;
 					break;
 				}
