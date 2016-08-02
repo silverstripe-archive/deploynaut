@@ -43,7 +43,8 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 		"Branch" => "Varchar(255)",
 		"State" => "Enum('New, Submitted, Invalid, Queued, Deploying, Aborting, Completed, Failed', 'New')",
 		// JSON serialised DeploymentStrategy.
-		"Strategy" => "Text"
+		"Strategy" => "Text",
+		"DatePlanned" => "SS_Datetime"
 	);
 
 	/**
@@ -52,6 +53,7 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 	private static $has_one = array(
 		"Environment" => "DNEnvironment",
 		"Deployer" => "Member",
+		"Approver" => "Member"
 	);
 
 	private static $default_sort = '"LastEdited" DESC';
@@ -72,13 +74,13 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 	);
 
 	public function getFiniteState() {
-        return $this->State;
-    }
+		return $this->State;
+	}
 
-    public function setFiniteState($state) {
+	public function setFiniteState($state) {
 		$this->State = $state;
 		$this->write();
-    }
+	}
 
 	public function getStatus() {
 		return $this->State;
