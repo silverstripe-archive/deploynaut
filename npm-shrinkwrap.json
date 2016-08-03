@@ -6095,7 +6095,7 @@
     },
     "react": {
       "version": "15.3.0",
-      "from": "react@>=0.14.0 <0.15.0||>=15.0.0-0 <16.0.0",
+      "from": "https://registry.npmjs.org/react/-/react-15.3.0.tgz",
       "resolved": "https://registry.npmjs.org/react/-/react-15.3.0.tgz",
       "dependencies": {
         "fbjs": {
@@ -6189,12 +6189,12 @@
     },
     "react-dom": {
       "version": "15.3.0",
-      "from": "react-dom@*",
+      "from": "https://registry.npmjs.org/react-dom/-/react-dom-15.3.0.tgz",
       "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-15.3.0.tgz"
     },
     "react-redux": {
       "version": "4.4.5",
-      "from": "react-redux@*",
+      "from": "https://registry.npmjs.org/react-redux/-/react-redux-4.4.5.tgz",
       "resolved": "https://registry.npmjs.org/react-redux/-/react-redux-4.4.5.tgz",
       "dependencies": {
         "hoist-non-react-statics": {
@@ -6264,6 +6264,23 @@
       "version": "1.8.3",
       "from": "https://registry.npmjs.org/underscore/-/underscore-1.8.3.tgz",
       "resolved": "https://registry.npmjs.org/underscore/-/underscore-1.8.3.tgz"
+    },
+    "underscore.string": {
+      "version": "3.3.4",
+      "from": "underscore.string@*",
+      "resolved": "https://registry.npmjs.org/underscore.string/-/underscore.string-3.3.4.tgz",
+      "dependencies": {
+        "sprintf-js": {
+          "version": "1.0.3",
+          "from": "sprintf-js@>=1.0.3 <2.0.0",
+          "resolved": "https://registry.npmjs.org/sprintf-js/-/sprintf-js-1.0.3.tgz"
+        },
+        "util-deprecate": {
+          "version": "1.0.2",
+          "from": "util-deprecate@>=1.0.2 <2.0.0",
+          "resolved": "https://registry.npmjs.org/util-deprecate/-/util-deprecate-1.0.2.tgz"
+        }
+      }
     },
     "validator": {
       "version": "4.9.0",

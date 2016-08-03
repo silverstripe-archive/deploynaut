@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * A simple pub sub event handler for intercomponent communication
  */
@@ -12,7 +10,7 @@ module.exports = {
 		if(!hOP.call(topics, topic)) topics[topic] = [];
 
 		// Add the listener to queue
-		var index = topics[topic].push(listener) -1;
+		var index = topics[topic].push(listener) - 1;
 
 		// Provide handle back for removal of topic
 		return {
@@ -28,7 +26,7 @@ module.exports = {
 
 		// Cycle through topics queue, fire!
 		topics[topic].forEach(function(item) {
-			item(info != undefined ? info : {});
+			item(info !== undefined ? info : {});
 		});
 	}
 };

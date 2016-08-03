@@ -1,3 +1,5 @@
+/* global environmentConfigContext */
+
 var React = require("react");
 var ReactDOM = require("react-dom");
 
@@ -7,9 +9,7 @@ var DeploymentDialog = require('./DeploymentDialog.jsx');
 var holder = document.getElementById('deployment-dialog-holder');
 if (holder) {
 	ReactDOM.render(
-		<DeploymentDialog context = {environmentConfigContext} />,
+		<DeploymentDialog context={environmentConfigContext} />,
 		holder
 	);
 }
-
-
