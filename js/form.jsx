@@ -179,6 +179,7 @@ var Form = React.createClass({
 		var self = this;
 		// Validate all the Input components
 		_.keys(inputs).forEach(function (name) {
+
 			if(!self.validate(inputs[name])) {
 				allIsValid = false;
 			}
@@ -207,22 +208,21 @@ var Form = React.createClass({
 				var validateMethod = args.shift();
 
 				// We use JSON.parse to convert the string values passed to the
-				// correct type. Ex. 'isLength|1' will make '1' actually a number
+				// correct type. Ex. 'isLength|1' will make '1' an actual number
 				args = args.map(function (arg) {
 					return JSON.parse(arg);
 				});
 
 				args = [component.state.value].concat(args);
 
-				if(typeof validator[validateMethod] === 'undefined') {
+				if(typeof validator[validateMethod] !== 'function') {
 					var debugWarning = 'Validation method "' + validateMethod;
 					debugWarning += '" on component "' + component.props.name + '" doesn\'t exists';
 					console.warn(debugWarning);
-
 				} else {
 					// this is effectively a call to something like:
 					// `validator.isLength('valueFromInput', 5)`
-					isValid = (!validator[validateMethod].apply(validator, args));
+					isValid = (validator[validateMethod].apply(validator, args));
 				}
 			});
 
