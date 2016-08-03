@@ -1,0 +1,33 @@
+var React = require("react");
+
+var InputMixin = require("./FormInputMixin.jsx");
+
+module.exports = React.createClass({
+	mixins: [InputMixin],
+	render: function () {
+		var className = 'form-control';
+		var alert;
+		if (!this.state.isValid) {
+			alert = (
+				<div className='validation-message'>
+					{this.state.serverError || this.props.validationError}
+				</div>
+			);
+			className += ' validation-error';
+		}
+
+		return (
+			<div>
+				<input
+					id={this.props.name}
+					type="password"
+					className={className}
+					name={this.props.name}
+					onChange={this.setValue}
+					value={this.state.value}
+				/>
+				{alert}
+			</div>
+		);
+	}
+});
