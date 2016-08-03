@@ -93,9 +93,8 @@ var DeployKeyTest = React.createClass({
 					className="vert readonly deploy-key"
 					rows="6"
 					readOnly
-				>
-					{this.props.deployKey}
-				</textarea>
+					defaultValue={this.props.deployKey}
+				/>
 			);
 		} else {
 			key = (

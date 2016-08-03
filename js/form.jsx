@@ -131,7 +131,7 @@ var Form = React.createClass({
 			self.afterFailure(response);
 			self.setState({ isSubmitting: false });
 		}).catch(function(errorMessage) {
-			console.error(errorMessage);
+			console.error(errorMessage); // eslint-disable-line no-console
 		});
 	},
 
@@ -218,7 +218,7 @@ var Form = React.createClass({
 				if(typeof validator[validateMethod] !== 'function') {
 					var debugWarning = 'Validation method "' + validateMethod;
 					debugWarning += '" on component "' + component.props.name + '" doesn\'t exists';
-					console.warn(debugWarning);
+					console.warn(debugWarning); // eslint-disable-line no-console
 				} else {
 					// this is effectively a call to something like:
 					// `validator.isLength('valueFromInput', 5)`
@@ -382,7 +382,6 @@ var Input = React.createClass({
 			);
 			className += ' validation-error';
 		}
-
 		return (
 			<div>
 				{alert}
