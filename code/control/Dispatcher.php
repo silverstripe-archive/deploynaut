@@ -118,7 +118,7 @@ abstract class Dispatcher extends DNRoot {
 	}
 
 	/**
-	 * Decode the data submitted by the form.jsx control.
+	 * Decode the data submitted by the Form.jsx control.
 	 *
 	 * @return array
 	 */

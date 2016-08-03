@@ -51,12 +51,12 @@ Tools.install(SomeForm, 'YourComponent');
 ## Further steps
 
 Your React component will get initialised and rendered into the template. The model is then available in props.
-Note that `form.jsx` requires some further scaffolding using the InitialSecurityID property, as included below.
+Note that `Form.jsx` requires some further scaffolding using the InitialSecurityID property, as included below.
 
 ```js
 'use strict';
 
-var form = require("../../deploynaut/js/form.jsx");
+var form = require("../../deploynaut/js/Form.jsx");
 
 var StackCreator = React.createClass({
 
