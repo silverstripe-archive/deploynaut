@@ -580,7 +580,7 @@ class DNEnvironment extends DataObject {
 		/** @var DNDeployment $deploy */
 		$deploy = DNDeployment::get()->filter(array(
 			'EnvironmentID' => $this->ID,
-			'Status' => 'Finished'
+			'State' => 'Completed'
 		))->sort('LastEdited DESC')->first();
 
 		if(!$deploy || (!$deploy->SHA)) {
@@ -1061,7 +1061,7 @@ PHP
 		return DNDeployment::get()
 			->filter([
 				'EnvironmentID' => $this->ID,
-				'Status' => ['Queued', 'Started'],
+				'State' => ['Queued', 'Deploying'],
 				'Created:GreaterThan' => strtotime('-1 hour')
 			]);
 	}
