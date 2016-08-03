@@ -1,3 +1,6 @@
+var React = require("react");
+var ReactDOM = require("react-dom");
+
 module.exports = {
 	/**
 	 * Parses html-encoded JSON data from a application/json script tag.
@@ -18,11 +21,10 @@ module.exports = {
 		var container = document.getElementById(name);
 		if(container) {
 			var modelId = container.getAttribute('data-model');
-			React.render(
+			ReactDOM.render(
 				React.createElement(reactElement, {model: this.readInlineData(modelId)}),
 				container
 			);
 		}
 	}
-}
-
+};

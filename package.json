@@ -32,8 +32,12 @@
     "gulp-uglify": "^1.4.1",
     "gulp-util": "^3.0.6",
     "node-sass": "^3.3.2",
-    "reactify": "^1.1.1",
+    "react": "https://registry.npmjs.org/react/-/react-15.3.0.tgz",
+    "react-dom": "https://registry.npmjs.org/react-dom/-/react-dom-15.3.0.tgz",
+    "react-redux": "https://registry.npmjs.org/react-redux/-/react-redux-4.4.5.tgz",
+    "redux": "^3.5.2",
     "underscore": "^1.8.3",
+    "underscore.string": "^3.3.4",
     "validator": "^4.2.1",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"

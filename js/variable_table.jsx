@@ -1,5 +1,7 @@
 var _ = require('underscore');
 
+var React = require("react");
+
 /**
  * VariableTable displays variable => value pairs in a table. It also provides a button
  * to transition to the editing stage.
@@ -31,7 +33,7 @@ var VariableTable = React.createClass({
 		var self = this;
 
 		var showStatusColumn = false;
-		if (this.props.readonlyVariables && !_.isEmpty(this.props.readonlyVariables)) {
+		if(this.props.readonlyVariables && !_.isEmpty(this.props.readonlyVariables)) {
 			showStatusColumn = true;
 		}
 
@@ -59,21 +61,29 @@ var VariableTable = React.createClass({
 		});
 
 		var valueHeading = null;
-		if (this.props.showValues) {
-			valueHeading = <th className="value" dangerouslySetInnerHTML={{__html:this.props.valueHeading}} />
+		if(this.props.showValues) {
+			valueHeading = (
+				<th
+					className="value"
+					dangerouslySetInnerHTML={{__html:this.props.valueHeading}}
+				/>
+			);
 		}
 
 		var statusHeading = null;
-		if (showStatusColumn === true) {
+		if(showStatusColumn === true) {
 			statusHeading = <th className="status"></th>;
 		}
 
 		var heading = null;
-		if (this.props.showHeading) {
+		if(this.props.showHeading) {
 			heading = (
 				<thead>
 					<tr>
-						<th className="variable" dangerouslySetInnerHTML={{__html:this.props.variableHeading}} />
+						<th
+							className="variable"
+							dangerouslySetInnerHTML={{__html:this.props.variableHeading}}
+						/>
 						{valueHeading}
 						{statusHeading}
 					</tr>
@@ -84,7 +94,13 @@ var VariableTable = React.createClass({
 		return (
 			<div className="variables">
 				<div className="variables-actions variable-table-actions">
-					<button type="button" className="btn btn-primary" onClick={this.props.edit}>Edit</button>
+					<button
+						type="button"
+						className="btn btn-primary"
+						onClick={this.props.edit}
+					>
+					Edit
+					</button>
 				</div>
 				<table className="variable-table table">
 					{heading}
@@ -98,47 +114,41 @@ var VariableTable = React.createClass({
 	}
 });
 
-var VariableTableRow = React.createClass({
+function VariableTableRow(props) {
 
-	render: function() {
-		var value = null;
-		if (this.props.showValues) {
-			value = <td className="value">{this.props.value}</td>;
-		}
-
-		var status = null;
-		if (this.props.showStatusColumn) {
-			status = <td className="status text-center"></td>;
-		}
-
-		return (
-			<tr>
-				<td className="variable">{this.props.variable}</td>
-				{value}
-				{status}
-			</tr>
-		);
+	var value = null;
+	if(props.showValues) {
+		value = <td className="value">{props.value}</td>;
 	}
 
-});
-
-var VariableReadonlyTableRow = React.createClass({
-
-	render: function() {
-		var value = null;
-		if (this.props.showValues) {
-			value = <td className="value">{this.props.value}</td>;
-		}
-
-		return (
-			<tr>
-				<td className="variable">{this.props.variable}</td>
-				{value}
-				<td className="status text-center"><i className="fa fa-lock"></i></td>
-			</tr>
-		);
+	var status = null;
+	if(props.showStatusColumn) {
+		status = <td className="status text-center"></td>;
 	}
 
-});
+	return (
+		<tr>
+			<td className="variable">{props.variable}</td>
+			{value}
+			{status}
+		</tr>
+	);
+}
 
 module.exports = VariableTable;
+
+function VariableReadonlyTableRow(props) {
+	var value = null;
+	if(props.showValues) {
+		value = <td className="value">{props.value}</td>;
+	}
+
+	return (
+		<tr>
+			<td className="variable">{props.variable}</td>
+			{value}
+			<td className="status text-center"><i className="fa fa-lock"></i>
+			</td>
+		</tr>
+	);
+}
