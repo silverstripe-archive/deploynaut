@@ -49,7 +49,7 @@ class StateMachineFactory extends Object {
 				],
 			]
 		]);
-		$stateMachine = new Finite\StateMachine\StateMachine($obj);
+		$stateMachine = Injector::inst()->get('Finite\StateMachine\StateMachine', true, [$obj]);
 		$loader->load($stateMachine);
 		$stateMachine->initialize();
 		$this->addHandlers($stateMachine);

@@ -16,7 +16,7 @@ class DNDeploymentHandlers extends Object {
 			return false;
 		}
 
-		$email = new Email();
+		$email = Injector::inst()->get('Email');
 		$email->setTo(sprintf('%s <%s>', $approver->Name, $approver->Email));
 		$email->replyTo(sprintf('%s <%s>', $deployer->Name, $deployer->Email));
 		$email->setSubject('Deployment has been submitted');
@@ -36,14 +36,14 @@ class DNDeploymentHandlers extends Object {
 		$deployment = $e->getStateMachine()->getObject();
 
 		$token = $deployment->enqueueDeployment();
-		$deployment->ResqueToken = $token;
+		$deployment->setResqueToken($token);
 		$deployment->write();
 
 		$log = $deployment->log();
 		$log->write(sprintf(
 			'Deploy queued as job %s (sigFile is %s)',
 			$token,
-			DeployJob::sig_file_for_data_object($obj)
+			$deployment->getSigFile()
 		));
 	}
 
@@ -51,6 +51,6 @@ class DNDeploymentHandlers extends Object {
 		$deployment = $e->getStateMachine()->getObject();
 
 		// 2 is SIGINT - we can't use SIGINT constant in the mod_apache context.
-		DeployJob::set_signal($deployment, 2);
+		$deployment->setSignal(2);
 	}
 }
