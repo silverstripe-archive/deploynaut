@@ -153,7 +153,7 @@ class DNCommit extends ViewableData {
 		$envList = new ArrayList();
 		foreach($environments as $environment) {
 			$deployments = DNDeployment::get()
-				->filter('Status', 'Finished')
+				->filter('State', 'Completed')
 				->filter('EnvironmentID', $environment->ID)
 				->sort('LastEdited DESC');
 			if(!$deployments->count()) {
@@ -180,7 +180,7 @@ class DNCommit extends ViewableData {
 		$environment = $environments->first();
 
 		$deployments = DNDeployment::get()
-				->filter('Status', 'Finished')
+				->filter('State', 'Completed')
 				->filter('EnvironmentID', $environment->ID);
 
 		if($deployments->count()) {
