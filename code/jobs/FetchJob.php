@@ -89,7 +89,7 @@ class FetchJob extends DeploynautJob {
 
 	protected function fetchRepo() {
 		$this->runCommand(
-			'git fetch -p origin +refs/heads/*:refs/heads/* --tags',
+			'/usr/bin/git fetch -p origin +refs/heads/*:refs/heads/* --tags',
 			$this->project->getLocalCVSPath()
 		);
 	}
@@ -103,7 +103,7 @@ class FetchJob extends DeploynautJob {
 		}
 
 		$this->runCommand(sprintf(
-			'git clone --bare -q %s %s',
+			'/usr/bin/git clone --bare -q %s %s',
 			escapeshellarg($this->project->CVSPath),
 			escapeshellarg($this->project->getLocalCVSPath())
 		));

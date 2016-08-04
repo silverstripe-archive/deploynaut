@@ -472,6 +472,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		$cleanupFn = function() use($workingDir, $dataTransfer, $dataArchive) {
 			$process = new Process(sprintf('rm -rf %s', escapeshellarg($workingDir)));
+			$process->setTimeout(120);
 			$process->run();
 			$dataTransfer->delete();
 			$dataArchive->delete();
@@ -512,6 +513,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		// cleanup any extracted sspak contents lying around
 		$process = new Process(sprintf('rm -rf %s', escapeshellarg($workingDir)));
+		$process->setTimeout(120);
 		$process->run();
 
 		return $this->customise(array(
@@ -2154,7 +2156,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$archiveList = $project->Environments()->relation("DataArchives");
 		if($archiveList->count() > 0) {
 			foreach($archiveList as $archive) {
-				if($archive->canView() && !$archive->isPending()) {
+				if(!$archive->isPending()) {
 					$archives->push($archive);
 				}
 			}
@@ -2171,7 +2173,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$archives = new ArrayList();
 		foreach($project->DNEnvironmentList() as $env) {
 			foreach($env->DataArchives() as $archive) {
-				if($archive->canView() && $archive->isPending()) {
+				if($archive->isPending()) {
 					$archives->push($archive);
 				}
 			}
@@ -2183,18 +2185,17 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return PaginatedList
 	 */
 	public function DataTransferLogs() {
-		$project = $this->getCurrentProject();
-
-		$transfers = DNDataTransfer::get()->filterByCallback(function($record) use($project) {
-			return
-				$record->Environment()->Project()->ID == $project->ID && // Ensure only the current Project is shown
-				(
-					$record->Environment()->canRestore() || // Ensure member can perform an action on the transfers env
-					$record->Environment()->canBackup() ||
-					$record->Environment()->canUploadArchive() ||
-					$record->Environment()->canDownloadArchive()
-				);
-		});
+		$environments = $this->getCurrentProject()->Environments()->column('ID');
+		$transfers = DNDataTransfer::get()
+			->filter('EnvironmentID', $environments)
+			->filterByCallback(
+				function($record) {
+					return
+						$record->Environment()->canRestore() || // Ensure member can perform an action on the transfers env
+						$record->Environment()->canBackup() ||
+						$record->Environment()->canUploadArchive() ||
+						$record->Environment()->canDownloadArchive();
+				});
 
 		return new PaginatedList($transfers->sort("Created", "DESC"), $this->request);
 	}
