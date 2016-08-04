@@ -3,7 +3,12 @@ var React = require("react");
 var SummaryTable = React.createClass({
 
 	propTypes: {
-		changes: React.PropTypes.object.isRequired
+		changes: React.PropTypes.objectOf(React.PropTypes.shape(
+			React.PropTypes.objectOf(React.PropTypes.shape({
+				from: React.PropTypes.string,
+				to: React.PropTypes.string
+			})).isRequired
+		)).isRequired
 	},
 
 	isEmpty: function(obj) {
@@ -65,6 +70,7 @@ var SummaryTable = React.createClass({
 					/>
 				);
 			}
+			return null;
 		});
 
 		return (

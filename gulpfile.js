@@ -17,33 +17,6 @@ var onError = function (err) {
 	console.log(err);
 };
 
-// Dedicated task for debug - propagating maps from reactify via sourcemaps+uglify
-// prevented the ability to debug local scope variables.
-gulp.task('js-debug', function() {
-	browserify('js/platform.jsx', {debug: true})
-		.transform('reactify')
-		// For now we are loading react from the global state.
-		.exclude('react')
-		.bundle()
-		.on('error', onError)
-		.pipe(source('bundle-debug.js'))
-		.pipe(gulp.dest(path.DEST));
-});
-
-gulp.task('js', function() {
-	browserify('js/platform.jsx')
-		.transform('reactify')
-		// For now we are loading react from the global state.
-		.exclude('react')
-		.bundle()
-		.on('error', onError)
-		.pipe(source('bundle.js'))
-		// We need to buffer the output, otherwise uglify will balk at the stream input.
-		.pipe(buffer())
-		.pipe(uglify())
-		.pipe(gulp.dest(path.DEST));
-});
-
 gulp.task('sass', function () {
 	gulp.src('sass/*.sass')
 		.pipe(sass().on('error', sass.logError))
@@ -57,4 +30,4 @@ gulp.task('watch', function () {
 });
 
 // the default task just compiles all the things
-gulp.task('default', ['js-debug', 'js', 'sass']);
+gulp.task('default', ['sass']);
