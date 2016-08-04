@@ -51,6 +51,7 @@ class DNDataArchive extends DataObject {
 
 	private static $db = array(
 		'UploadToken' => 'Varchar(8)',
+		'ArchiveFileHash' => 'Varchar(32)',
 		"Mode" => "Enum('all, assets, db', '')",
 		"IsBackup" => "Boolean",
 		"IsManualUpload" => "Boolean",
@@ -387,6 +388,14 @@ class DNDataArchive extends DataObject {
 		// "Status" will be updated by the job execution
 		$dataTransfer->write();
 
+		// Get file hash to ensure consistency.
+		// Only do this when first associating the file since hashing large files is expensive.
+		// Note that with CapistranoDeploymentBackend the file won't be available yet, as it
+		// gets put in place immediately after this method gets called. In which case, it will
+		// be hashed in setArchiveFromFiles()
+		if(file_exists($file->FullPath)) {
+			$this->ArchiveFileHash = md5_file($file->FullPath);
+		}
 		$this->ArchiveFileID = $file->ID;
 		$this->DataTransfers()->add($dataTransfer);
 		$this->write();
@@ -410,14 +419,13 @@ class DNDataArchive extends DataObject {
 
 		$cleanupFn = function() use($workingDir) {
 			$process = new Process(sprintf('rm -rf %s', escapeshellarg($workingDir)));
-			$process->setTimeout(120);
 			$process->run();
 		};
 
 		// Extract *.sspak to a temporary location
 		$sspakFilename = $this->ArchiveFile()->FullPath;
 		$process = new Process(sprintf(
-			'tar -xf %s --directory %s',
+			'sspak extract %s %s',
 			escapeshellarg($sspakFilename),
 			escapeshellarg($workingDir)
 		));
@@ -533,36 +541,28 @@ class DNDataArchive extends DataObject {
 	/**
 	 * Given extracted sspak contents, create an sspak from it
 	 * and overwrite the current ArchiveFile with it's contents.
-	 * Use GZIP=-1 for less compression on assets, which are already
-	 * heavily compressed to begin with.
 	 *
 	 * @param string|null $workingDir The path of where the sspak has been extracted to
 	 * @return bool
 	 */
 	public function setArchiveFromFiles($workingDir) {
-		$commands = array();
+		$command = sprintf('sspak saveexisting %s 2>&1', $this->ArchiveFile()->FullPath);
 		if($this->Mode == 'db') {
-			$commands[] = 'gzip database.sql';
-			$commands[] = sprintf('tar -cf %s database.sql.gz', $this->ArchiveFile()->FullPath);
-			$commands[] = 'rm -f database.sql.gz';
+			$command .= sprintf(' --db=%s/database.sql', $workingDir);
 		} elseif($this->Mode == 'assets') {
-			$commands[] = 'GZIP=-1 tar --dereference -czf assets.tar.gz assets';
-			$commands[] = sprintf('tar -cf %s assets.tar.gz', $this->ArchiveFile()->FullPath);
-			$commands[] = 'rm -f assets.tar.gz';
+			$command .= sprintf(' --assets=%s/assets', $workingDir);
 		} else {
-			$commands[] = 'gzip database.sql';
-			$commands[] = 'GZIP=-1 tar --dereference -czf assets.tar.gz assets';
-			$commands[] = sprintf('tar -cf %s database.sql.gz assets.tar.gz', $this->ArchiveFile()->FullPath);
-			$commands[] = 'rm -f database.sql.gz assets.tar.gz';
+			$command .= sprintf(' --db=%s/database.sql --assets=%s/assets', $workingDir, $workingDir);
 		}
 
-		$process = new Process(implode(' && ', $commands), $workingDir);
+		$process = new Process($command, $workingDir);
 		$process->setTimeout(3600);
 		$process->run();
 		if(!$process->isSuccessful()) {
 			throw new RuntimeException($process->getErrorOutput());
 		}
 
+		$this->ArchiveFileHash = md5_file($this->ArchiveFile()->FullPath);
 		$this->write();
 
 		return true;

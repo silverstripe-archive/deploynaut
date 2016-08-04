@@ -319,18 +319,6 @@ form.fields-wide .field label.left {
 #DeployForm_DeployForm .SelectionGroup {
 	overflow: hidden;
 }
-#DeployForm_DeployForm .field.checkbox {
-	margin: 0px 0px 10px 25px;
-}
-#DeployForm_DeployForm .field.checkbox input {
-	margin: 0px 4px 3px;
-	padding: 0;
-	display: inline-block;
-	height: 20px;
-}
-#DeployForm_DeployForm .field.checkbox label {
-	height: 20px;
-}
 
 /** end custom form styling **/
 

@@ -141,7 +141,6 @@ class DeployForm extends Form {
 
 		$field = new TabbedSelectionGroup('SelectRelease', $releaseMethods);
 		$field->setValue(reset($releaseMethods)->getValue());
-		$field->addExtraClass('clearfix');
 		return $field;
 	}
 

@@ -18,10 +18,6 @@ namespace :deploy do
 				logger.debug "Aborting: one of the shared_children exists and is not a symlink!"
 				raise e
 			end
-
-			# Namespace the clone directory with the environment id so that two parallel deployments don't clash.
-			environment_id = fetch(:environment_id, 'unknown')
-			_cset(:copy_dir) { "#{Dir.tmpdir}/capistrano/deployment-env-#{environment_id}" }
 		end
 	end
 
