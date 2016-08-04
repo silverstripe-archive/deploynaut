@@ -70,16 +70,16 @@
 			<% end_if %>
 		<% else %>
 			<div class="alert-warning">
-				<i class="fa fa-exclamation-circle"></i>You currently have no access to snapshotting functionality on any of the environments.
+				There are currently no archived files that you can access
 			</div>
 		<% end_if %>
 	<% else %>
 		<div class="alert alert-info">
-			<i class="fa fa-info-circle"></i>There are currently no archived files
+			<i class="fa fa-info-circle"> </i>There are currently no archived files
 		</div>
 	<% end_if %>
 <% else %>
 	<div class="alert-warning">
-		<i class="fa fa-exclamation-circle"></i>You currently have no access to snapshotting functionality on any of the environments.
+		<i class="fa fa-exclamation-circle"></i>There are currently no archived files that you can access
 	</div>
 </div>

@@ -26,35 +26,6 @@ set :use_sudo, false
 # ---- Prevent transfer of VCS files ----
 set :copy_exclude, ["**/.git", "**/.svn", "**/.DS_Store"]
 
-# ---- rsync/ssh options for asset transfers ----
-#
-# rsync options explained:
-# -l: Copy symlinks as symlinks
-# -t: Preserve times
-# -r: Recurse into directories
-# -p: Preserve permissions
-# -o: Preserve owner
-# -g: Preserve group
-# --stats: Show some transfer stats after transfer finished (speeds, number of files etc)
-#
-# Note the -z has deliberately been left out, as it's only useful
-# when network speeds are slow and files are more compressable.
-# In the case of most assets they are not very compressable; think
-# JPG, PNG, videos etc which are already highly compressed, and
-# network speed between deploynaut and the target instance fast (usually).
-# Turning this on would only increase the CPU usage for no benefit.
-#
-# ssh options explained:
-# -q: Quiet (specifically to not show SSH welcome text)
-# -T: Disable TTY since there is no interactivity required
-# -c: Use a different cipher to improve performance
-# -o: Disable compression (see -z reason above)
-#
-# NOTE: If you change these options, please update the notes above
-#
-set :rsync_options, %w[-ltrpog --stats]
-set :rsync_ssh_options, %w[-q -T -c arcfour -o Compression=no]
-
 # ---- SSH options ----
 ssh_options[:forward_agent] = true
 ssh_options[:keys] = '<ssh key>'
