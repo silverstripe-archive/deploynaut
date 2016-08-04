@@ -89,14 +89,14 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 
 		// Deployment cleanup. We assume it is always safe to run this at the end, regardless of the outcome.
 		$self = $this;
-		$cleanupFn = function() use($self, $environment, $args, $log) {
+		$cleanupFn = function() use($self, $environment, $args, $log, $sha, $project) {
 			$command = $self->getCommand('deploy:cleanup', 'web', $environment, $args, $log);
 			$command->run(function($type, $buffer) use($log) {
 				$log->write($buffer);
 			});
 
 			if(!$command->isSuccessful()) {
-				$this->extend('cleanupFailure', $environment, $sha, $log, $project);
+				$self->extend('cleanupFailure', $environment, $sha, $log, $project);
 				$log->write('Warning: Cleanup failed, but fine to continue. Needs manual cleanup sometime.');
 			}
 		};
@@ -192,6 +192,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			if(!$result->valid()) {
 				// do some cleaning, get rid of the extracted archive lying around
 				$process = new Process(sprintf('rm -rf %s', escapeshellarg($workingDir)));
+				$process->setTimeout(120);
 				$process->run();
 
 				// log the reason why we can't restore the snapshot and halt the process
@@ -222,6 +223,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			$args = array();
 		}
 		$args['history_path'] = realpath(DEPLOYNAUT_LOG_PATH . '/');
+		$args['environment_id'] = $environment->ID;
 
 		// Inject env string directly into the command.
 		// Capistrano doesn't like the $process->setEnv($env) we'd normally do below.
@@ -315,6 +317,13 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			$log->write(sprintf('Backup of assets from "%s" done', $name));
 		}
 
+		// ensure the database connection is re-initialised, which is needed if the transfer
+		// above took a really long time because the handle to the db may have become invalid.
+		global $databaseConfig;
+		DB::connect($databaseConfig);
+
+		$log->write('Creating sspak...');
+
 		$sspakFilename = sprintf('%s.sspak', $dataArchive->generateFilename($dataTransfer));
 		$sspakFilepath = $filepathBase . DIRECTORY_SEPARATOR . $sspakFilename;
 
@@ -329,7 +338,8 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		// Remove any assets and db files lying around, they're not longer needed as they're now part
 		// of the sspak file we just generated. Use --force to avoid errors when files don't exist,
 		// e.g. when just an assets backup has been requested and no database.sql exists.
-		$process = new Process(sprintf('rm -rf %s/assets && rm -f %s', $filepathBase, $databasePath));
+		$process = new Process(sprintf('rm -rf %s/assets && rm -f %s', escapeshellarg($filepathBase), escapeshellarg($databasePath)));
+		$process->setTimeout(120);
 		$process->run();
 		if(!$process->isSuccessful()) {
 			$log->write('Could not delete temporary files');
@@ -375,6 +385,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			// Rebuild makes sense even if failed - maybe we can at least partly recover.
 			$self->rebuild($environment, $log);
 			$process = new Process(sprintf('rm -rf %s', escapeshellarg($workingDir)));
+			$process->setTimeout(120);
 			$process->run();
 		};
 
