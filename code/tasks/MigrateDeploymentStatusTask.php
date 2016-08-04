@@ -46,7 +46,7 @@ class MigrateDeploymentStatusTask extends BuildTask {
 			$log(sprintf('DNDeployment record %s has been successfully migrated', $record['ID']));
 		}
 
-		DB::query('ALTER TABLE "DNDeployment" DROP COLUMN \'Status\'');
+		DB::query('ALTER TABLE "DNDeployment" DROP COLUMN "Status"');
 		$log('Finished');
 	}
 
