@@ -5,12 +5,23 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 
 	protected $packageGenerator;
 
+	protected $job;
+
 	public function getPackageGenerator() {
 		return $this->packageGenerator;
 	}
 
 	public function setPackageGenerator(PackageGenerator $packageGenerator) {
 		$this->packageGenerator = $packageGenerator;
+	}
+
+	public function getJob() {
+		return $this->job;
+	}
+
+	public function setJob(DeploynautJob $job) {
+		$this->job = $job;
+		return $this;
 	}
 
 	/**
@@ -53,6 +64,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		$name = $environment->getFullName();
 		$repository = $project->getLocalCVSPath();
 		$sha = $options['sha'];
+		$url = $environment->getBareURL();
 
 		$args = array(
 			'branch' => $sha,
@@ -104,6 +116,23 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		// Once the deployment has run it's necessary to update the maintenance page status
 		if(!empty($options['leaveMaintenancePage'])) {
 			$this->enableMaintenance($environment, $log, $project);
+		}
+
+		if ($url) {
+			$runner = $this->getJob()->runOp(
+				'Smoketest',
+				new \SilverStripe\Platform\Core\Rainforest\Anthill\Operations\Params\Smoketest([
+					'url' => $url,
+				]),
+				new DeploynautPsrOutputAdapter($log)
+			);
+			if ($runner->isSuccessful()) {
+				$log->write(sprintf('Smoketest to "%s" succeeded.', $url));
+
+			} else {
+				$log->write('Warning: smoketest has failed.');
+				$log->write($runner->getFailureException()->getMessage());
+			}
 		}
 
 		if(!$command->isSuccessful()) {

@@ -62,4 +62,14 @@ interface DeploymentBackend {
 	 * @param DNProject $project
 	 */
 	public function ping(DNEnvironment $environment, DeploynautLogFile $log, DNProject $project);
+
+	/**
+	 * @param DeploynautJob $job
+	 */
+	public function setJob(DeploynautJob $job);
+
+	/**
+	 * @return DeploynautJob
+	 */
+	public function getJob();
 }
