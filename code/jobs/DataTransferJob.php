@@ -70,13 +70,13 @@ class DataTransferJob extends DeploynautJob {
 			// before we push data to an environment, we'll make a backup first
 			if($backupDataTransfer) {
 				$log->write('Backing up existing data');
-				$environment->Backend()->dataTransfer(
+				$environment->Backend($this)->dataTransfer(
 					$backupDataTransfer,
 					$log
 				);
 			}
 
-			$environment->Backend()->dataTransfer(
+			$environment->Backend($this)->dataTransfer(
 				$dataTransfer,
 				$log
 			);

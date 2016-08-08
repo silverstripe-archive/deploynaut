@@ -172,7 +172,7 @@ class DNEnvironment extends DataObject {
 	 *
 	 * @return DeploymentBackend
 	 */
-	public function Backend() {
+	public function Backend(DeploynautJob $job = null) {
 		$backends = array_keys($this->config()->get('allowed_backends', Config::FIRST_SET));
 		switch(sizeof($backends)) {
 		// Nothing allowed, use the default value "DeploymentBackend"
@@ -193,7 +193,9 @@ class DNEnvironment extends DataObject {
 				}
 		}
 
-		return Injector::inst()->get($backend);
+		$backendObj = Injector::inst()->create($backend);
+		$backendObj->setJob($job);
+		return $backendObj;
 	}
 
 	/**

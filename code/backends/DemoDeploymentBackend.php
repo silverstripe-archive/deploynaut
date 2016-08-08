@@ -9,6 +9,17 @@
  */
 class DemoDeploymentBackend extends Object implements DeploymentBackend {
 
+	protected $job;
+
+	public function getJob() {
+		return $this->job;
+	}
+
+	public function setJob($job) {
+		$this->job = $job;
+		return $this;
+	}
+
 	/**
 	 * Create a deployment strategy.
 	 *

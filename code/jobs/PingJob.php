@@ -37,6 +37,6 @@ class PingJob {
 		$ping = DNPing::get()->byID($this->args['pingID']);
 		$environment = $ping->Environment();
 		$project = $environment->Project();
-		$environment->Backend()->ping($environment, $log, $project);
+		$environment->Backend($this)->ping($environment, $log, $project);
 	}
 }
