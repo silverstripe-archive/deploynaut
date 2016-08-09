@@ -106,7 +106,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			$this->enableMaintenance($environment, $log, $project);
 		}
 
-		if(!$command->isSuccessful()) {
+		if(!$command->isSuccessful() || !$this->smokeTest($environment, $log)) {
 			$cleanupFn();
 			$this->extend('deployFailure', $environment, $sha, $log, $project);
 			throw new RuntimeException($command->getErrorOutput());
@@ -425,6 +425,99 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 
 		$log->write('Rebuilding and cleaning up');
 		$cleanupFn();
+	}
+
+	/**
+	 * This is mostly copy-pasted from Anthill/Smoketest.
+	 *
+	 * @param DNEnvironment $environment
+	 * @param DeploynautLogFile $log
+	 * @return bool
+	 */
+	protected function smokeTest(DNEnvironment $environment, DeploynautLogFile $log) {
+		$url = $environment->getBareURL();
+		$timeout = 600;
+		$tick = 60;
+
+		if(!$url) {
+			$log->write('Skipping site accessible check: no URL found.');
+			return true;
+		}
+
+		$start = time();
+		$infoTick = time() + $tick;
+
+		$log->write(sprintf(
+			'Waiting for "%s" to become accessible... (timeout: %smin)',
+			$url,
+			$timeout / 60
+		));
+
+		// configure curl so that curl_exec doesn't wait a long time for a response
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($ch, CURLOPT_MAXREDIRS, 10); // set a high number of max redirects (but not infinite amount) to avoid a potential infinite loop
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_USERAGENT, 'Rainforest');
+		$success = false;
+
+		// query the site every second. Note that if the URL doesn't respond,
+		// curl_exec will take 5 seconds to timeout (see CURLOPT_CONNECTTIMEOUT and CURLOPT_TIMEOUT above)
+		do {
+			if(time() > $start + $timeout) {
+				$log->write(sprintf(' * Failed: check for %s timed out after %smin', $url, $timeout / 60));
+				return false;
+			}
+
+			$response = curl_exec($ch);
+
+			// check the HTTP response code for HTTP protocols
+			$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			if($status && !in_array($status, [500, 501, 502, 503, 504])) {
+				$success = true;
+			}
+
+			// check for any curl errors, mostly for checking the response state of non-HTTP protocols,
+			// but applies to checks of any protocol
+			if($response && !curl_errno($ch)) {
+				$success = true;
+			}
+
+			// Produce an informational ticker roughly every $tick
+			if (time() > $infoTick) {
+				$message = [];
+
+				// Collect status information from different sources.
+				if ($status) {
+					$message[] = sprintf('HTTP status code is %s', $status);
+				}
+				if (!$response) {
+					$message[] = 'response is empty';
+				}
+				if ($error = curl_error($ch)) {
+					$message[] = sprintf('request error: %s', $error);
+				}
+
+				$log->write(sprintf(
+					' * Still waiting: %s...',
+					implode(', ', $message)
+				));
+
+				$infoTick = time() + $tick;
+			}
+
+			sleep(1);
+		} while(!$success);
+
+		curl_close($ch);
+		$log->write(' * Success: site is accessible!');
+		return true;
 	}
 
 }
