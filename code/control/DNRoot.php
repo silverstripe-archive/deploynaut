@@ -1,5 +1,4 @@
 <?php
-use \Symfony\Component\Process\Process;
 
 /**
  * God controller for the deploynaut interface
@@ -471,7 +470,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$workingDir = TEMP_FOLDER . DIRECTORY_SEPARATOR . 'deploynaut-transfer-' . $dataTransfer->ID;
 
 		$cleanupFn = function() use($workingDir, $dataTransfer, $dataArchive) {
-			$process = new Process(sprintf('rm -rf %s', escapeshellarg($workingDir)));
+			$process = new AbortableProcess(sprintf('rm -rf %s', escapeshellarg($workingDir)));
 			$process->setTimeout(120);
 			$process->run();
 			$dataTransfer->delete();
@@ -512,7 +511,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		// cleanup any extracted sspak contents lying around
-		$process = new Process(sprintf('rm -rf %s', escapeshellarg($workingDir)));
+		$process = new AbortableProcess(sprintf('rm -rf %s', escapeshellarg($workingDir)));
 		$process->setTimeout(120);
 		$process->run();
 

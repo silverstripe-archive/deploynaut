@@ -1,5 +1,4 @@
 <?php
-use \Symfony\Component\Process\Process;
 
 /**
  * Represents a file archive of database and/or assets extracted from
@@ -409,14 +408,14 @@ class DNDataArchive extends DataObject {
 		}
 
 		$cleanupFn = function() use($workingDir) {
-			$process = new Process(sprintf('rm -rf %s', escapeshellarg($workingDir)));
+			$process = new AbortableProcess(sprintf('rm -rf %s', escapeshellarg($workingDir)));
 			$process->setTimeout(120);
 			$process->run();
 		};
 
 		// Extract *.sspak to a temporary location
 		$sspakFilename = $this->ArchiveFile()->FullPath;
-		$process = new Process(sprintf(
+		$process = new AbortableProcess(sprintf(
 			'tar -xf %s --directory %s',
 			escapeshellarg($sspakFilename),
 			escapeshellarg($workingDir)
@@ -430,7 +429,7 @@ class DNDataArchive extends DataObject {
 
 		// Extract database.sql.gz to <workingdir>/database.sql
 		if(file_exists($workingDir . DIRECTORY_SEPARATOR . 'database.sql.gz')) {
-			$process = new Process('gunzip database.sql.gz', $workingDir);
+			$process = new AbortableProcess('gunzip database.sql.gz', $workingDir);
 			$process->setTimeout(3600);
 			$process->run();
 			if(!$process->isSuccessful()) {
@@ -441,7 +440,7 @@ class DNDataArchive extends DataObject {
 
 		// Extract assets.tar.gz to <workingdir>/assets/
 		if(file_exists($workingDir . DIRECTORY_SEPARATOR . 'assets.tar.gz')) {
-			$process = new Process('tar xzf assets.tar.gz', $workingDir);
+			$process = new AbortableProcess('tar xzf assets.tar.gz', $workingDir);
 			$process->setTimeout(3600);
 			$process->run();
 			if(!$process->isSuccessful()) {
@@ -473,7 +472,7 @@ class DNDataArchive extends DataObject {
 			return $result;
 		}
 
-		$process = new Process(sprintf('tar -tf %s', escapeshellarg($file)));
+		$process = new AbortableProcess(sprintf('tar -tf %s', escapeshellarg($file)));
 		$process->setTimeout(120);
 		$process->run();
 		if(!$process->isSuccessful()) {
@@ -519,7 +518,7 @@ class DNDataArchive extends DataObject {
 		);
 
 		foreach($fixCmds as $cmd) {
-			$process = new Process($cmd);
+			$process = new AbortableProcess($cmd);
 			$process->setTimeout(3600);
 			$process->run();
 			if(!$process->isSuccessful()) {
@@ -556,7 +555,7 @@ class DNDataArchive extends DataObject {
 			$commands[] = 'rm -f database.sql.gz assets.tar.gz';
 		}
 
-		$process = new Process(implode(' && ', $commands), $workingDir);
+		$process = new AbortableProcess(implode(' && ', $commands), $workingDir);
 		$process->setTimeout(3600);
 		$process->run();
 		if(!$process->isSuccessful()) {
