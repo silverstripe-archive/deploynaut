@@ -1,7 +1,5 @@
 <?php
 
-use \Symfony\Component\Process\Process;
-
 /**
  * Generates the package directly on the deploynaut server
  */
@@ -44,17 +42,17 @@ class SimplePackageGenerator extends PackageGenerator {
 		// Execute these in sequence until there's a failure
 		$processes = array(
 			// Export the relevant SHA into a temp folder
-			new Process("git archive $sha | tar -x -C " . $escapedTempPath, $baseDir),
+			new AbortableProcess("git archive $sha | tar -x -C " . $escapedTempPath, $baseDir),
 			// Run build script
-			new Process($this->buildScript, $tempPath, null, null, 3600),
+			new AbortableProcess($this->buildScript, $tempPath, null, null, 3600),
 			// Compress the result
-			new Process("tar -czf " . $escapedOutputFile . " " . $escapedTempDir, dirname($tempPath)),
+			new AbortableProcess("tar -czf " . $escapedOutputFile . " " . $escapedTempDir, dirname($tempPath)),
 		);
 
 		// Call at the end, regardless of success or failure
 		$cleanup = array(
 			// Delete the temporary staging folder
-			new Process("rm -rf " . $escapedTempPath),
+			new AbortableProcess("rm -rf " . $escapedTempPath),
 		);
 
 		try {
