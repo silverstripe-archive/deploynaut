@@ -84,12 +84,6 @@ class DNDataTransfer extends DataObject {
 	);
 
 	/**
-	 * When running the transfer, should a backup be performed before pushing the data?
-	 * @var bool
-	 */
-	protected $backupBeforePush = true;
-
-	/**
 	 * @param int $int
 	 * @return string
 	 */
@@ -102,13 +96,6 @@ class DNDataTransfer extends DataObject {
 			false => "Invalid",
 		);
 		return $remap[$int];
-	}
-
-	/**
-	 * @param boolean $value
-	 */
-	public function setBackupBeforePush($value) {
-		$this->backupBeforePush = $value;
 	}
 
 	public function getTitle() {
@@ -165,8 +152,7 @@ class DNDataTransfer extends DataObject {
 
 		$args = array(
 			'dataTransferID' => $this->ID,
-			'logfile' => $this->logfile(),
-			'backupBeforePush' => $this->backupBeforePush
+			'logfile' => $this->logfile()
 		);
 
 		if(!$this->AuthorID) {
