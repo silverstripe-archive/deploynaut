@@ -1567,7 +1567,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		$this->validateSnapshotMode($data['Mode']);
 
-
 		// Only 'push' direction is allowed an association with an existing archive.
 		if(
 			$data['Direction'] == 'push'
@@ -1589,10 +1588,31 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$transfer->Direction = $data['Direction'];
 		$transfer->Mode = $data['Mode'];
 		$transfer->DataArchiveID = $dataArchive ? $dataArchive->ID : null;
-		if($data['Direction'] == 'push') {
-			$transfer->setBackupBeforePush(!empty($data['BackupBeforePush']));
-		}
 		$transfer->write();
+
+		$backupMode = null;
+		$backupTransfer = null;
+		// if we're only restoring the database, there's no need to backup the assets
+		if (!empty($data['BackupFirst']) && $data['Mode'] == 'db') {
+			$backupMode = 'db';
+		} elseif (!empty($data['BackupFirst'])) {
+			$backupMode = 'all';
+		}
+		if ($backupMode !== null && $data['Direction'] == 'push') {
+			$backupTransfer = DNDataTransfer::create();
+			$backupTransfer->EnvironmentID = $environment->ID;
+			$backupTransfer->Direction = 'get';
+			$backupTransfer->Mode = $backupMode;
+			$backupTransfer->AuthorID = $transfer->AuthorID;
+			$backupTransfer->write();
+
+			$transfer->BackupDataTransferID = $backupTransfer->ID;
+			$transfer->write();
+		}
+
+		if ($backupTransfer !== null) {
+			$backupTransfer->start();
+		}
 		$transfer->start();
 
 		return $this->redirect($transfer->Link());
@@ -1716,7 +1736,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				DropdownField::create('EnvironmentID', 'Environment', $envs->map())
 					->setEmptyString('Select an environment'),
 				DropdownField::create('Mode', 'Transfer', $modesMap),
-				CheckboxField::create('BackupBeforePush', 'Backup existing data', '1')
+				CheckboxField::create('BackupFirst', 'Backup existing data', '1')
 			),
 			FieldList::create(
 				FormAction::create('doDataTransfer', 'Restore Data')

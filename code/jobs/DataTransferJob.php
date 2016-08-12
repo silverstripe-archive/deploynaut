@@ -26,20 +26,6 @@ class DataTransferJob extends DeploynautJob {
 		$environment = $dataTransfer->Environment();
 		$backupDataTransfer = null;
 
-		if(!empty($this->args['backupBeforePush']) && $dataTransfer->Direction == 'push') {
-			$backupDataTransfer = DNDataTransfer::create();
-			$backupDataTransfer->EnvironmentID = $environment->ID;
-			$backupDataTransfer->Direction = 'get';
-			$backupDataTransfer->Mode = $dataTransfer->Mode;
-			$backupDataTransfer->DataArchiveID = null;
-			$backupDataTransfer->ResqueToken = $dataTransfer->ResqueToken;
-			$backupDataTransfer->AuthorID = $dataTransfer->AuthorID;
-			$backupDataTransfer->write();
-
-			$dataTransfer->BackupDataTransferID = $backupDataTransfer->ID;
-			$dataTransfer->write();
-		}
-
 		// This is a bit icky, but there is no easy way of capturing a failed run by using the PHP Resque
 		try {
 			// Disallow concurrent jobs (don't rely on queuing implementation to restrict this)
