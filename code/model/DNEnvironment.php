@@ -1061,7 +1061,7 @@ PHP
 		return DNDeployment::get()
 			->filter([
 				'EnvironmentID' => $this->ID,
-				'State' => ['Queued', 'Deploying'],
+				'State' => ['Queued', 'Deploying', 'Aborting'],
 				'Created:GreaterThan' => strtotime('-1 hour')
 			]);
 	}
