@@ -16,6 +16,7 @@ module.exports = {
 		selected_type: "",
 		selected_ref: "",
 		is_fetching: false,
+		is_updating: false,
 		last_updated: 0,
 		list: []
 	},

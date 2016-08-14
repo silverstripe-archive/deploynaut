@@ -5,16 +5,16 @@ var Button = require('../../components/Button.jsx');
 
 const mapStateToProps = function(state) {
 	return {
-		disabled: state.git.is_fetching || state.approval.request_sent,
+		disabled: state.git.is_updating || state.approval.request_sent,
 		style: "btn-default",
-		value: state.git.is_fetching ? "Fetching code..." : "Fetch code"
+		value: state.git.is_updating ? "Updating code..." : "Update code"
 	};
 };
 
 const mapDispatchToProps = function(dispatch) {
 	return {
 		onClick: function() {
-			dispatch(actions.getRevisions());
+			dispatch(actions.updateRepoAndGetRevisions());
 		}
 	};
 };
