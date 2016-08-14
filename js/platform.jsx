@@ -13,3 +13,8 @@ if (holder) {
 		holder
 	);
 }
+
+var Tools = require('../../deploynaut/js/tools.jsx');
+var Plan = require('./Plan.jsx');
+
+Tools.install(Plan, 'Plan');

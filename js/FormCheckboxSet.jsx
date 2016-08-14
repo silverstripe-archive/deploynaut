@@ -1,4 +1,5 @@
 var React = require("react");
+var _ = require('underscore');
 
 /**
  * Defines a set of checkbox inputs that will submit as one input.
