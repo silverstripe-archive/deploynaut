@@ -87,16 +87,13 @@ class DeployJob extends DeploynautJob {
 			$runningDeployments = $environment->runningDeployments()->exclude('ID', $this->args['deploymentID']);
 			if($runningDeployments->count()) {
 				$runningDeployment = $runningDeployments->first();
-				$log->write(sprintf(
-					'[-] Error: another deployment is in progress (started at %s by %s)',
+				$message = sprintf(
+					'Error: another deployment is in progress (started at %s by %s)',
 					$runningDeployment->dbObject('Created')->Nice(),
 					$runningDeployment->Deployer()->Title
-				));
-				throw new RuntimeException(sprintf(
-					'Another deployment is in progress (started at %s by %s)',
-					$runningDeployment->dbObject('Created')->Nice(),
-					$runningDeployment->Deployer()->Title
-				));
+				);
+				$log->write($message);
+				throw new \RuntimeException($message);
 			}
 
 			$environment->Backend()->deploy(

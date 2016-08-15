@@ -54,18 +54,14 @@ class DataTransferJob extends DeploynautJob {
 
 			if($runningTransfers->count()) {
 				$runningTransfer = $runningTransfers->first();
-				$log->write(sprintf(
-					'[-] Error: another transfer is in progress (started at %s by %s)',
+				$message = sprintf(
+					'Error: another transfer is in progress (started at %s by %s)',
 					$runningTransfer->dbObject('Created')->Nice(),
 					$runningTransfer->Author()->Title
-				));
-				throw new RuntimeException(sprintf(
-					'Another transfer is in progress (started at %s by %s)',
-					$runningTransfer->dbObject('Created')->Nice(),
-					$runningTransfer->Author()->Title
-				));
+				);
+				$log->write($message);
+				throw new \RuntimeException($message);
 			}
-
 
 			// before we push data to an environment, we'll make a backup first
 			if($backupDataTransfer) {
