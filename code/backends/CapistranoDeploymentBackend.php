@@ -124,6 +124,15 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function getDeployOptions() {
+		return [
+			new PredeployBackupOption(true),
+		];
+	}
+
+	/**
 	 * Enable a maintenance page for the given environment using the maintenance:enable Capistrano task.
 	 */
 	public function enableMaintenance(DNEnvironment $environment, DeploynautLogFile $log, DNProject $project) {

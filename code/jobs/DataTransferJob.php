@@ -31,7 +31,6 @@ class DataTransferJob extends DeploynautJob {
 			$backupDataTransfer->EnvironmentID = $environment->ID;
 			$backupDataTransfer->Direction = 'get';
 			$backupDataTransfer->Mode = $dataTransfer->Mode;
-			$backupDataTransfer->DataArchiveID = null;
 			$backupDataTransfer->ResqueToken = $dataTransfer->ResqueToken;
 			$backupDataTransfer->AuthorID = $dataTransfer->AuthorID;
 			$backupDataTransfer->write();
@@ -51,7 +50,6 @@ class DataTransferJob extends DeploynautJob {
 					'Created:GreaterThan' => strtotime('-30 minutes')
 				))
 				->exclude('ID', $dataTransfer->ID);
-
 			if($runningTransfers->count()) {
 				$runningTransfer = $runningTransfers->first();
 				$message = sprintf(
@@ -63,28 +61,36 @@ class DataTransferJob extends DeploynautJob {
 				throw new \RuntimeException($message);
 			}
 
-			// before we push data to an environment, we'll make a backup first
-			if($backupDataTransfer) {
-				$log->write('Backing up existing data');
-				$environment->Backend()->dataTransfer(
-					$backupDataTransfer,
-					$log
-				);
-			}
-
-			$environment->Backend()->dataTransfer(
-				$dataTransfer,
-				$log
-			);
-		} catch(RuntimeException $exc) {
-			$log->write($exc->getMessage());
-
+			$this->performBackup($backupDataTransfer, $log);
+			$environment->Backend()->dataTransfer($dataTransfer, $log);
+		} catch(Exception $e) {
 			echo "[-] DataTransferJob failed" . PHP_EOL;
-			throw $exc;
+			throw $e;
 		}
 
 		$this->updateStatus('Finished');
 		echo "[-] DataTransferJob finished" . PHP_EOL;
+	}
+
+	protected function performBackup($backupDataTransfer, DeploynautLogFile $log) {
+		if (!$backupDataTransfer) {
+			return false;
+		}
+
+		$log->write('Backing up existing data');
+		try {
+			$dataTransfer->Environment()->Backend()->dataTransfer($backupDataTransfer, $log);
+			global $databaseConfig;
+			DB::connect($databaseConfig);
+			$backupDataTransfer->Status = 'Finished';
+			$backupDataTransfer->write();
+		} catch(Exception $e) {
+			global $databaseConfig;
+			DB::connect($databaseConfig);
+			$backupDataTransfer->Status = 'Failed';
+			$backupDataTransfer->write();
+			throw $e;
+		}
 	}
 
 	/**
@@ -94,15 +100,9 @@ class DataTransferJob extends DeploynautJob {
 	protected function updateStatus($status) {
 		global $databaseConfig;
 		DB::connect($databaseConfig);
-		$env = DNDataTransfer::get()->byID($this->args['dataTransferID']);
-		$env->Status = $status;
-		$env->write();
-
-		$backup = $env->BackupDataTransfer();
-		if($backup && $backup->exists()) {
-			$backup->Status = $status;
-			$backup->write();
-		}
+		$transfer = DNDataTransfer::get()->byID($this->args['dataTransferID']);
+		$transfer->Status = $status;
+		$transfer->write();
 	}
 
 	/**

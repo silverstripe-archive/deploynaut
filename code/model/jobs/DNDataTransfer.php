@@ -255,14 +255,27 @@ class DNDataTransfer extends DataObject {
 	}
 
 	/**
-	 * Is this transfer an automated backup of a push transfer?
+	 * Is this transfer an automated backup prior to a push transfer or deployment?
 	 * @return boolean
 	 */
 	public function IsBackupDataTransfer() {
-		return DB::query(sprintf(
+		$deploymentBackup = DB::query(sprintf(
+			'SELECT COUNT("ID") FROM "DNDeployment" WHERE "BackupDataTransferID" = %d',
+			$this->ID
+		))->value();
+		if ($deploymentBackup) {
+			return true;
+		}
+
+		$transferBackup = DB::query(sprintf(
 			'SELECT COUNT("ID") FROM "DNDataTransfer" WHERE "BackupDataTransferID" = %d',
 			$this->ID
 		))->value();
+		if ($transferBackup) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**

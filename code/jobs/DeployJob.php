@@ -80,6 +80,26 @@ class DeployJob extends DeploynautJob {
 		$deployment = DNDeployment::get()->byID($this->args['deploymentID']);
 		$environment = $deployment->Environment();
 		$project = $environment->Project();
+		$backupDataTransfer = null;
+		$backupMode = !empty($this->args['backup_mode']) ? $this->args['backup_mode'] : 'db';
+
+		// Perform pre-deploy backup here if required. Note that the backup is done here within
+		// the deploy job, so that the order of backup is done before deployment, and so it
+		// doesn't tie up another worker. It also puts the backup output into
+		// the same log as the deployment so there is visibility on what is going on.
+		if(!empty($this->args['predeploy_backup'])) {
+			$backupDataTransfer = DNDataTransfer::create();
+			$backupDataTransfer->EnvironmentID = $environment->ID;
+			$backupDataTransfer->Direction = 'get';
+			$backupDataTransfer->Mode = $backupMode;
+			$backupDataTransfer->ResqueToken = $deployment->ResqueToken;
+			$backupDataTransfer->AuthorID = $deployment->DeployerID;
+			$backupDataTransfer->write();
+
+			$deployment->BackupDataTransferID = $backupDataTransfer->ID;
+			$deployment->write();
+		}
+
 		// This is a bit icky, but there is no easy way of capturing a failed deploy by using the PHP Resque
 		try {
 			// Disallow concurrent deployments (don't rely on queuing implementation to restrict this)
@@ -96,6 +116,7 @@ class DeployJob extends DeploynautJob {
 				throw new \RuntimeException($message);
 			}
 
+			$this->performBackup($backupDataTransfer, $log);
 			$environment->Backend()->deploy(
 				$environment,
 				$log,
@@ -109,12 +130,34 @@ class DeployJob extends DeploynautJob {
 			echo "[-] DeployJob failed" . PHP_EOL;
 			throw $e;
 		}
+
 		$this->updateStatus(DNDeployment::TR_COMPLETE);
 		echo "[-] DeployJob finished" . PHP_EOL;
 	}
 
 	public function onFailure(Exception $exception) {
 		$this->updateStatus(DNDeployment::TR_FAIL);
+	}
+
+	protected function performBackup($backupDataTransfer, DeploynautLogFile $log) {
+		if (!$backupDataTransfer) {
+			return false;
+		}
+
+		$log->write('Backing up existing data');
+		try {
+			$dataTransfer->Environment()->Backend()->dataTransfer($backupDataTransfer, $log);
+			global $databaseConfig;
+			DB::connect($databaseConfig);
+			$backupDataTransfer->Status = 'Finished';
+			$backupDataTransfer->write();
+		} catch(Exception $e) {
+			global $databaseConfig;
+			DB::connect($databaseConfig);
+			$backupDataTransfer->Status = 'Failed';
+			$backupDataTransfer->write();
+			throw $e;
+		}
 	}
 
 	/**
@@ -124,8 +167,8 @@ class DeployJob extends DeploynautJob {
 	protected function updateStatus($status) {
 		global $databaseConfig;
 		DB::connect($databaseConfig);
-		$dnDeployment = DNDeployment::get()->byID($this->args['deploymentID']);
-		$dnDeployment->getMachine()->apply($status);
+		$deployment = DNDeployment::get()->byID($this->args['deploymentID']);
+		$deployment->getMachine()->apply($status);
 	}
 
 	/**
