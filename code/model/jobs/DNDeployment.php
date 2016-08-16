@@ -54,7 +54,8 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 	private static $has_one = array(
 		"Environment" => "DNEnvironment",
 		"Deployer" => "Member",
-		"Approver" => "Member"
+		"Approver" => "Member",
+		"BackupDataTransfer" => "DNDataTransfer" // denotes an automated backup done for this deployment
 	);
 
 	private static $default_sort = '"LastEdited" DESC';

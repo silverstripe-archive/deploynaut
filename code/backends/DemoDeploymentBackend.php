@@ -65,6 +65,13 @@ class DemoDeploymentBackend extends Object implements DeploymentBackend {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function getDeployOptions() {
+		return [];
+	}
+
+	/**
 	 * @inheritdoc
 	 */
 	public function dataTransfer(DNDataTransfer $dataTransfer, DeploynautLogFile $log) {

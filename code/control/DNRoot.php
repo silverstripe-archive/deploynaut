@@ -1096,12 +1096,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return $this->environment404Response();
 		}
 
-		// For now only permit advanced options on one environment type, because we hacked the "full-deploy"
-		// checkbox in. Other environments such as the fast or capistrano one wouldn't know what to do with it.
-		if(get_class($env) === 'RainforestEnvironment') {
-			$advanced = Permission::check('DEPLOYNAUT_ADVANCED_DEPLOY_OPTIONS') ? 'true' : 'false';
-		} else {
-			$advanced = 'false';
+		$options = [];
+		foreach ($env->Backend()->getDeployOptions() as $option) {
+			$options[] = [
+				'name' => $option->getName(),
+				'title' => $option->getTitle(),
+				'defaultValue' => $option->getDefaultValue()
+			];
 		}
 
 		$tabs = array();
@@ -1112,8 +1113,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'field_type' => 'dropdown',
 			'field_label' => 'Choose a branch',
 			'field_id' => 'branch',
-			'field_data' => array(),
-			'advanced_opts' => $advanced
+			'field_data' => [],
+			'options' => $options
 		);
 		foreach($project->DNBranchList() as $branch) {
 			$sha = $branch->SHA();
@@ -1137,8 +1138,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'field_type' => 'dropdown',
 			'field_label' => 'Choose a tag',
 			'field_id' => 'tag',
-			'field_data' => array(),
-			'advanced_opts' => $advanced
+			'field_data' => [],
+			'options' => $options
 		);
 
 		foreach($project->DNTagList()->setLimit(null) as $tag) {
@@ -1161,8 +1162,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'field_type' => 'dropdown',
 			'field_label' => 'Choose a previously deployed release',
 			'field_id' => 'release',
-			'field_data' => array(),
-			'advanced_opts' => $advanced
+			'field_data' => [],
+			'options' => $options
 		);
 		// We are aiming at the format:
 		// [{text: 'optgroup text', children: [{id: '<sha>', text: '<inner text>'}]}]
@@ -1192,8 +1193,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			}
 		}
 		// Convert the array to the frontend format (i.e. keyed to regular array)
-		foreach($redeploy as $env => $descr) {
-			$data['field_data'][] = array('text'=>$env, 'children'=>$descr);
+		foreach($redeploy as $name => $descr) {
+			$data['field_data'][] = array('text'=>$name, 'children'=>$descr);
 		}
 		$tabs[] = $data;
 
@@ -1203,8 +1204,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'field_type' => 'textfield',
 			'field_label' => 'Choose a SHA',
 			'field_id' => 'SHA',
-			'field_data' => array(),
-			'advanced_opts' => $advanced
+			'field_data' => [],
+			'options' => $options
 		);
 		$tabs[] = $data;
 

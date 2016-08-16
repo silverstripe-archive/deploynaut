@@ -28,6 +28,12 @@ interface DeploymentBackend {
 	);
 
 	/**
+	 * Return a list of {@link DeployOption} for use on this environment.
+	 * @return array
+	 */
+	public function getDeployOptions();
+
+	/**
 	 * Transfer data from an environment to a local file, or from a local file
 	 * back into an environment. See {@link DNDataTransfer} for details.
 	 *

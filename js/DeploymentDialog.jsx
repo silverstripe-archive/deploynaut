@@ -299,9 +299,15 @@ function DeployTabs(props) {
 
 var DeployTab = React.createClass({
 	getInitialState: function() {
+		var defaultSelectedOptions = [];
+		for (var i in this.props.tab.options) {
+			var option = this.props.tab.options[i];
+			defaultSelectedOptions[option.name] = option.defaultValue;
+		}
+
 		return {
 			summary: this.getInitialSummaryState(),
-			options: {},
+			selectedOptions: defaultSelectedOptions,
 			sha: this.props.preselectSha ? this.props.preselectSha : ''
 		};
 	},
@@ -312,7 +318,8 @@ var DeployTab = React.createClass({
 			validationCode: '',
 			estimatedTime: null,
 			actionCode: null,
-			initialState: true
+			initialState: true,
+			backupChecked: true
 		};
 	},
 	componentDidMount: function() {
@@ -321,10 +328,10 @@ var DeployTab = React.createClass({
 		}
 	},
 	OptionChangeHandler: function(event) {
-		var options = this.state.options;
-		options[event.target.name] = event.target.checked;
+		var selectedOptions = this.state.selectedOptions;
+		selectedOptions[event.target.name] = event.target.checked;
 		this.setState({
-			options: options
+			selectedOptions: selectedOptions
 		});
 	},
 	SHAChangeHandler: function(event) {
@@ -333,7 +340,6 @@ var DeployTab = React.createClass({
 		});
 	},
 	changeSha: function(sha) {
-
 		this.setState({
 			summary: this.getInitialSummaryState()
 		});
@@ -354,9 +360,9 @@ var DeployTab = React.createClass({
 			SecurityID: this.props.SecurityToken
 		};
 		// merge the 'advanced' options if they are set
-		for (var attrname in this.state.options) {
-			if(this.state.options.hasOwnProperty(attrname)) {
-				summaryData[attrname] = this.state.options[attrname];
+		for (var attrname in this.state.selectedOptions) {
+			if(this.state.selectedOptions.hasOwnProperty(attrname)) {
+				summaryData[attrname] = this.state.selectedOptions[attrname];
 			}
 		}
 
@@ -384,17 +390,6 @@ var DeployTab = React.createClass({
 		return this.changeSha(sha);
 	},
 
-	showOptions: function() {
-		return this.props.tab.advanced_opts === 'true';
-	},
-
-	showVerifyButton: function() {
-		if(this.showOptions()) {
-			return true;
-		}
-		return this.props.tab.field_type === 'textfield';
-	},
-
 	shaChosen: function() {
 		return (this.state.sha !== '');
 	},
@@ -409,15 +404,11 @@ var DeployTab = React.createClass({
 		// setup the dropdown or the text input for selecting a SHA
 		var selector;
 		if (this.props.tab.field_type === 'dropdown') {
-			var changeHandler = this.changeHandler;
-			if(this.showVerifyButton()) {
-				changeHandler = this.SHAChangeHandler;
-			}
 			selector = (
 				<SelectorDropdown
 					ref="sha_selector"
 					tab={this.props.tab}
-					changeHandler={changeHandler}
+					changeHandler={this.SHAChangeHandler}
 					defaultValue={this.state.sha}
 				/>
 			);
@@ -432,18 +423,6 @@ var DeployTab = React.createClass({
 			);
 		}
 
-		// 'Advanced' options
-		var options = null;
-		if(this.showOptions()) {
-			options = <AdvancedOptions tab={this.props.tab} changeHandler={this.OptionChangeHandler} />;
-		}
-
-		// 'The verify button'
-		var verifyButton = null;
-		if(this.showVerifyButton()) {
-			verifyButton = <VerifyButton disabled={!this.shaChosen()} changeHandler={this.changeHandler} />;
-		}
-
 		return (
 			<div id={"deploy-tab-" + this.props.tab.id} className={classes}>
 				<div className="section">
@@ -451,8 +430,13 @@ var DeployTab = React.createClass({
 						<span className="numberCircle">1</span> {this.props.tab.field_label}
 					</div>
 					{selector}
-					{options}
-					{verifyButton}
+					<DeployOptions
+						tab={this.props.tab}
+						changeHandler={this.OptionChangeHandler}
+						options={this.props.tab.options}
+						selectedOptions={this.state.selectedOptions}
+					/>
+					<VerifyButton disabled={!this.shaChosen()} changeHandler={this.changeHandler} />
 				</div>
 				<DeployPlan context={this.props.context} summary={this.state.summary} />
 			</div>
@@ -469,7 +453,6 @@ var SelectorDropdown = React.createClass({
 			data: this.props.tab.field_data
 		}).val(this.props.defaultValue);
 
-		// Trigger handler only needed if there is no explicit button.
 		if(this.props.changeHandler) {
 			$(ReactDOM.findDOMNode(this.refs.sha)).select2().on("change", this.props.changeHandler);
 		}
@@ -532,31 +515,50 @@ function VerifyButton(props) {
 	);
 }
 
-function AdvancedOptions(props) {
+function DeployOptions(props) {
+	var options = [];
+	for (var i in props.options) {
+		var name = props.options[i].name;
+		var title = props.options[i].title;
+		var checked = false;
+
+		for (var optionName in props.selectedOptions) {
+			if (optionName === name) {
+				checked = props.selectedOptions[optionName];
+			}
+		}
+
+		options.push(
+			<DeployOption
+				key={i}
+				changeHandler={props.changeHandler}
+				name={name}
+				title={title}
+				checked={checked}
+			/>
+		);
+	}
+
 	return (
 		<div className="deploy-options">
-			<div className="fieldcheckbox">
-				<label htmlFor="force_full">
-					<input
-						type="checkbox"
-						name="force_full"
-						id="force_full"
-						onChange={props.changeHandler}
-					/>
-					Force full deployment
-				</label>
-			</div>
-			<div className="fieldcheckbox">
-				<label htmlFor="norollback">
-					<input
-						type="checkbox"
-						name="norollback"
-						id="norollback"
-						onChange={props.changeHandler}
-					/>
-					No rollback on deploy failure
-				</label>
-			</div>
+			{options}
+		</div>
+	);
+}
+
+function DeployOption(props) {
+	return (
+		<div className="fieldcheckbox">
+			<label htmlFor={props.name}>
+				<input
+					type="checkbox"
+					name={props.name}
+					id={props.name}
+					checked={props.checked}
+					onChange={props.changeHandler}
+				/>
+				{props.title}
+			</label>
 		</div>
 	);
 }
