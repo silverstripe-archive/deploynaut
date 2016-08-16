@@ -1,109 +1,108 @@
 // polyfills
 require('babel-polyfill');
-var fetch = require('isomorphic-fetch');
-
-// checks if a response from fetch worked
-function checkStatus(response) {
-	if (response.status >= 200 && response.status < 300) {
-		return response;
-	}
-	var error = new Error(response.statusText);
-	error.response = response;
-	throw error;
-}
-
-export const SET_MESSAGE = "SET_MESSAGE";
-export function setError(errorMessage) {
-	return {
-		type: SET_MESSAGE,
-		message: errorMessage,
-		message_type: "error"
-	};
-}
-
-export const SET_API_ENDPOINT = "SET_API_ENDPOINT";
-export function setAPIEndpoint(url) {
-	return {type: SET_API_ENDPOINT, url: url};
-}
+var api = require('./_api.js');
 
 export const SET_ACTIVE_STEP = "SET_ACTIVE_STEP";
 export function setActiveStep(id) {
 	return {type: SET_ACTIVE_STEP, id};
 }
 
-export const START_GIT_UPDATE = 'START_GIT_UPDATE';
-export function startGitUpdate() {
+export const START_REPO_UPDATE = 'START_REPO_UPDATE';
+export function startRepoUpdate() {
 	return {
-		type: START_GIT_UPDATE
+		type: START_REPO_UPDATE
 	};
 }
 
-export const FAIL_GIT_UPDATE = 'FAIL_GIT_UPDATE';
-export function failGitUpdate(message) {
+export const SUCCEED_REPO_UPDATE = 'SUCCEED_REPO_UPDATE';
+export function succeedRepoUpdate() {
 	return {
-		type: FAIL_GIT_UPDATE,
-		message: message
-	};
-}
-
-export const SUCCEED_GIT_UPDATE = 'SUCCEED_GIT_UPDATE';
-export function SucceedGitUpdate(json) {
-	return {
-		type: SUCCEED_GIT_UPDATE,
-		list: json.map(child => child),
+		type: SUCCEED_REPO_UPDATE,
 		receivedAt: Date.now()
 	};
 }
 
-export function updateGit() {
-	// Thunk middleware knows how to handle functions. It passes the dispatch
-	// method as an argument to the function, thus making it able to dispatch
-	// actions itself.
-	return function(dispatch, getState) {
-		// First dispatch: the app state is updated to inform that the API call is starting.
-		dispatch(startGitUpdate());
-
-		// The function called by the thunk middleware can return a value,
-		// that is passed on as the return value of the dispatch method.
-		// In this case, we return a promise to wait for.
-		// This is not required by thunk middleware, but it is convenient for us.
-		return fetch(`${getState().api_endpoint}/gitrefs`, {
-			credentials: 'same-origin', // send cookies
-			method: 'get'
-		})
-			.then(checkStatus)
-			.then(response => response.json())
-			// We can dispatch many times!
-			// Here, we update the app state with the results of the API call.
-			.then(json => dispatch(SucceedGitUpdate(json)))
-			.catch(function setFetchError(err) {
-				dispatch(failGitUpdate(err.toString()));
-			});
+export const FAIL_REPO_UPDATE = 'FAIL_REPO_UPDATE';
+export function failRepoUpdate(err) {
+	return {
+		type: FAIL_REPO_UPDATE,
+		error: err
 	};
 }
 
-export function updateGitIfNeeded() {
-	// Note that the function also receives getState() which lets you choose
-	// what to dispatch next. This is useful for avoiding a network request if
-	// a cached value is already available.
+export const START_REVISIONS_GET = 'START_REVISIONS_GET';
+export function startRevisionGet() {
+	return {
+		type: START_REVISIONS_GET
+	};
+}
+
+export const SUCCEED_REVISIONS_GET = 'SUCCEED_REVISIONS_GET';
+export function succeedRevisionsGet(revisions) {
+	return {
+		type: SUCCEED_REVISIONS_GET,
+		list: revisions
+	};
+}
+
+export const FAIL_REVISIONS_GET = 'FAIL_REVISIONS_GET';
+export function failRevisionsGet(err) {
+	return {
+		type: FAIL_REVISIONS_GET,
+		error: err
+	};
+}
+
+export function getRevisions() {
+	return (dispatch) => {
+		dispatch(startRevisionGet());
+		return api.getRevisions()
+			.then(json => dispatch(succeedRevisionsGet(json)))
+			.catch(err => dispatch(failRevisionsGet(err)));
+	};
+}
+
+export function getRevisionsIfNeeded() {
 	return (dispatch, getState) => {
 		if(!getState().git.length) {
-			// Dispatch a thunk from thunk!
-			return dispatch(updateGit());
+			dispatch(getRevisions());
 		}
-		// Let the calling code know there's nothing to wait for.
-		return Promise.resolve();
 	};
 }
 
-export const SET_GIT_REF_TYPE = "SET_GIT_REF_TYPE";
-export function setGitRefType(id) {
-	return {type: SET_GIT_REF_TYPE, id};
+export function updateRepo() {
+	return (dispatch) => {
+		dispatch(startRepoUpdate());
+		api.updateRepo()
+			.then(data => api.waitForSuccess(data.message.href))
+			.then(() => dispatch(succeedRepoUpdate()))
+			.catch(err => dispatch(failRepoUpdate(err)));
+	};
 }
 
-export const SET_GIT_REF = "SET_GIT_REF";
+// combines the updateRepo and revisionGet actions in one call
+export function updateRepoAndGetRevisions() {
+	return (dispatch) => {
+		dispatch(startRepoUpdate());
+		api.updateRepo()
+			.then(data => api.waitForSuccess(data.message.href))
+			.then(() => dispatch(succeedRepoUpdate()))
+			.catch(err => dispatch(failRepoUpdate(err)))
+			.then(() => dispatch(startRevisionGet()))
+			.then(() => api.getRevisions())
+			.then(json => dispatch(succeedRevisionsGet(json)))
+			.catch(err => dispatch(failRevisionsGet(err)));
+	};
+}
+
+export const SET_REVISION_TYPE = "SET_REVISION_TYPE";
+export function setGitRefType(id) {
+	return {type: SET_REVISION_TYPE, id};
+}
+
+export const SET_REVISION = "SET_REVISION";
 export function setGitRef(id) {
-	return {type: SET_GIT_REF, id};
+	return {type: SET_REVISION, id};
 }
 
 export const SET_SUMMARY = "SET_SUMMARY";
@@ -132,10 +131,7 @@ export function failApprovalSubmit() {
 }
 
 export function submitForApproval() {
-	// Thunk middleware knows how to handle functions. It passes the dispatch
-	// method as an argument to the function, thus making it able to dispatch
-	// actions itself.
-	return function(dispatch, getState) {
+	return function(dispatch) {
 		dispatch(startApprovalSubmit());
 		dispatch(succeedApprovalSubmit());
 	};

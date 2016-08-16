@@ -10,7 +10,7 @@ function ShaSelector(props) {
 
 	var dropdown = null;
 
-	if(props.type_selected !== "") {
+	if(props.typeSelected !== "") {
 		dropdown = (
 			<Dropdown
 				onSelect={props.onRefSelect}
@@ -34,6 +34,20 @@ function ShaSelector(props) {
 		</div>
 	);
 }
+
+ShaSelector.propTypes = {
+	types: React.PropTypes.array.isRequired,
+	typeSelected:  React.PropTypes.oneOfType([
+		React.PropTypes.string,
+		React.PropTypes.number
+	]).isRequired,
+	refList: React.PropTypes.array.isRequired,
+	refSelected: React.PropTypes.oneOfType([
+		React.PropTypes.string,
+		React.PropTypes.number
+	]).isRequired,
+	requestSent: React.PropTypes.bool.isRequired
+};
 
 const mapStateToProps = function(state) {
 

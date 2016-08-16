@@ -11,42 +11,56 @@ module.exports = function(state, action) {
 
 	switch(action.type) {
 
-		case actions.SET_MESSAGE:
-			return _.assign({}, state, {
-				message: action.message,
-				message_type: action.message_type
-			});
-
-		case actions.SET_API_ENDPOINT:
-			return _.assign({}, state, {
-				api_endpoint: action.url
-			});
-
 		case actions.SET_ACTIVE_STEP:
 			return _.assign({}, state, {
 				activeStep: action.id
 			});
 
-		case actions.SET_GIT_REF_TYPE:
+		case actions.SET_REVISION_TYPE:
 			return _.assign({}, state, {
 				git: _.assign({}, state.git, {
 					selected_type: action.id,
 					selected_ref: ""
 				})
 			});
-		case actions.SET_GIT_REF:
+		case actions.SET_REVISION:
 			return _.assign({}, state, {
 				git: _.assign({}, state.git, {
 					selected_ref: action.id
 				})
 			});
-		case actions.START_GIT_UPDATE:
+		case actions.START_REPO_UPDATE:
 			return _.assign({}, state, {
+				git: _.assign({}, state.git, {
+					is_updating: true
+				})
+			});
+
+		case actions.SUCCEED_REPO_UPDATE:
+			return _.assign({}, state, {
+				git: _.assign({}, state.git, {
+					is_updating: false,
+					last_updated: action.receivedAt
+				})
+			});
+
+		case actions.FAIL_REPO_UPDATE:
+			return _.assign({}, state, {
+				git: _.assign({}, state.git, {
+					is_updating: false
+				})
+			});
+
+		case actions.START_REVISIONS_GET:
+			return _.assign({}, state, {
+				message: "",
+				message_type: "",
 				git: _.assign({}, state.git, {
 					is_fetching: true
 				})
 			});
-		case actions.SUCCEED_GIT_UPDATE:
+
+		case actions.SUCCEED_REVISIONS_GET:
 			return _.assign({}, state, {
 				git: _.assign({}, state.git, {
 					is_fetching: false,
@@ -54,6 +68,13 @@ module.exports = function(state, action) {
 					last_updated: action.receivedAt,
 					selected_type: "",
 					selected_ref: ""
+				})
+			});
+
+		case actions.FAIL_REVISIONS_GET:
+			return _.assign({}, state, {
+				git: _.assign({}, state.git, {
+					is_fetching: false
 				})
 			});
 

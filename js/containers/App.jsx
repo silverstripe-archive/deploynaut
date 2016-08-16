@@ -4,6 +4,7 @@ var ReactRedux = require('react-redux');
 var StepMenu = require('../components/StepMenu.jsx');
 var GitRefSelector = require('./GitRefSelector.jsx');
 var ButtonGitFetch = require('./buttons/GitFetch.jsx');
+var ButtonGitUpdate = require('./buttons/GitUpdate.jsx');
 var SummaryOfChanges = require('./SummaryOfChanges.jsx');
 var Approval = require('./Approval.jsx');
 var Deployment = require('./Deployment.jsx');
@@ -21,6 +22,7 @@ function calculateSteps(props) {
 			content: (
 				<div>
 					<ButtonGitFetch />
+					<ButtonGitUpdate />
 					<GitRefSelector />
 				</div>
 			)
@@ -59,29 +61,44 @@ function calculateSteps(props) {
 	];
 }
 
+function Message(props) {
+
+	if(!props.message) {
+		return null;
+	}
+	var message = null;
+	if(typeof props.message === 'object') {
+		message = Object.keys(props.message).map(function(key) {
+			return <div key={key}>{props.message[key]}</div>;
+		});
+	} else {
+		message = props.message;
+	}
+	return (
+		<div className={"alert alert-" + props.type} >
+			{message}
+		</div>
+	);
+}
+
 function App(props) {
 
 	var steps = calculateSteps(props);
-
-	var message = null;
-	if(props.message) {
-		message = (
-			<div className={"alert alert-" + props.messageType} >
-				{props.message}
-			</div>
-		);
-	}
-
 	const content = (
 		<div className="deploy-form">
 			<div className="header">
 				<span className="numberCircle">{steps[props.activeStep].id}</span> {steps[props.activeStep].title}
 			</div>
+			<Message
+				message={props.message}
+				type={props.messageType}
+			/>
 			<div>
 				{steps[props.activeStep].content}
 			</div>
 		</div>
 	);
+
 	return (
 		<div className="row">
 			<div className="col-md-12">
@@ -95,7 +112,6 @@ function App(props) {
 				/>
 			</div>
 			<div className="col-md-9">
-				{message}
 				{content}
 			</div>
 		</div>

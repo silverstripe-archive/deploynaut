@@ -24,9 +24,9 @@ var store = Redux.createStore(
 
 var Plan = function(props) {
 
-	store.dispatch(actions.setAPIEndpoint(props.model.APIEndpoint));
+	window.api_url = props.model.APIEndpoint;
 
-	store.dispatch(actions.updateGitIfNeeded());
+	store.dispatch(actions.getRevisionsIfNeeded());
 
 	return (
 		<ReactRedux.Provider store={store}>

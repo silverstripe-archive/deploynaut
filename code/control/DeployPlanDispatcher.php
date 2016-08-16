@@ -16,6 +16,7 @@ class DeployPlanDispatcher extends Dispatcher {
 	 * @var array
 	 */
 	public static $allowed_actions = [
+		'gitupdate',
 		'gitrefs',
 	];
 
@@ -63,6 +64,21 @@ class DeployPlanDispatcher extends Dispatcher {
 		return $this->customise([
 			'Environment' => $this->environment
 		])->renderWith(['Plan', 'DNRoot']);
+	}
+
+	/**
+	 * @param SS_HTTPRequest $request
+	 * @return SS_HTTPResponse
+	 */
+	public function gitupdate(SS_HTTPRequest $request) {
+		switch($request->httpMethod()) {
+			case 'POST':
+				return $this->createFetch();
+			case 'GET':
+				return $this->getFetch($this->getRequest()->param('ID'));
+			default:
+				return $this->getAPIResponse('Method not allowed, requires POST or GET/{id}', 405);
+		}
 	}
 
 	/**
@@ -120,6 +136,45 @@ class DeployPlanDispatcher extends Dispatcher {
 		return [
 			'APIEndpoint' => Director::absoluteBaseURL().$this->Link()
 		];
+	}
+
+	/**
+	 * @param int $ID
+	 * @return SS_HTTPResponse
+	 */
+	protected function getFetch($ID) {
+		$ping = DNGitFetch::get()->byID($ID);
+		if(!$ping) {
+			return $this->getAPIResponse('Fetch not found', 404);
+		}
+		$output = [
+			'id' => $ID,
+			'status' => $ping->ResqueStatus(),
+			'message' => array_filter(explode(PHP_EOL, $ping->LogContent()))
+		];
+
+		return $this->getAPIResponse($output, 200);
+	}
+
+	/**
+	 * @return SS_HTTPResponse
+	 */
+	protected function createFetch() {
+		/** @var DNGitFetch $fetch */
+		$fetch = DNGitFetch::create();
+		$fetch->ProjectID = $this->project->ID;
+		$fetch->write();
+		$fetch->start();
+
+		$location = Director::absoluteBaseURL() . $this->Link() . '/gitupdate/' . $fetch->ID;
+		$output = array(
+			'message' => 'Fetch queued as job ' . $fetch->ResqueToken,
+			'href' => $location,
+		);
+
+		$response = $this->getAPIResponse($output, 201);
+		$response->addHeader('Location', $location);
+		return $response;
 	}
 
 	/**
@@ -185,5 +240,25 @@ class DeployPlanDispatcher extends Dispatcher {
 			}
 		}
 		return $redeploy;
+	}
+
+	/**
+	 * Return a simple response with a message
+	 *
+	 * @param string $message
+	 * @param int $statusCode
+	 * @return SS_HTTPResponse
+	 */
+	protected function getAPIResponse($message, $statusCode) {
+		$output = [
+			'message' => $message,
+			'status_code' => $statusCode
+		];
+		$body = json_encode($output, JSON_PRETTY_PRINT);
+		$response = $this->getResponse();
+		$response->addHeader('Content-Type', 'application/json');
+		$response->setBody($body);
+		$response->setStatusCode($statusCode);
+		return $response;
 	}
 }
