@@ -132,7 +132,7 @@ var DeployPlan = React.createClass({
 					<div className={headerClasses}>
 						<span className="status-icon"></span>
 						<span className="numberCircle">2</span>
-						Review changes
+						&nbsp;Review changes
 					</div>
 					<MessageList messages={messages} />
 					<SummaryTable changes={this.props.summary.changes} />
