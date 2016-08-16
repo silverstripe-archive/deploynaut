@@ -68,6 +68,12 @@ module.exports = function(state, action) {
 					last_updated: action.receivedAt,
 					selected_type: "",
 					selected_ref: ""
+				}),
+				plan: _.assign({}, state.plan, {
+					deployment_type: "",
+					deployment_estimate: "",
+					is_loading: false,
+					changes: {}
 				})
 			});
 
@@ -75,6 +81,43 @@ module.exports = function(state, action) {
 			return _.assign({}, state, {
 				git: _.assign({}, state.git, {
 					is_fetching: false
+				})
+			});
+
+		case actions.START_SUMMARY_GET:
+			return _.assign({}, state, {
+				plan: _.assign({}, state.plan, {
+					deployment_type: "",
+					deployment_estimate: "",
+					is_loading: true,
+					validation_code: "",
+					changes: {}
+				})
+			});
+
+		case actions.SUCCEED_SUMMARY_GET:
+			var changes = {};
+			// backend can sometimes return an empty array instead of an object
+			if(action.summary.changes.length !== 0) {
+				changes = action.summary.changes;
+			}
+			return _.assign({}, state, {
+				messages: action.summary.messages,
+				plan: _.assign({}, state.plan, {
+					deployment_type: action.summary.actionCode || "",
+					deployment_estimate: action.summary.estimatedTime || "",
+					is_loading: false,
+					changes: changes,
+					validation_code: action.summary.validationCode
+				})
+			});
+
+		case actions.FAIL_SUMMARY_GET:
+			return _.assign({}, state, {
+				message: action.error.toString || action.error,
+				message_type: "danger",
+				plan: _.assign({}, state.plan, {
+					is_loading: false
 				})
 			});
 

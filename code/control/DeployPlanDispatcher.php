@@ -18,6 +18,7 @@ class DeployPlanDispatcher extends Dispatcher {
 	public static $allowed_actions = [
 		'gitupdate',
 		'gitrefs',
+		'deploysummary'
 	];
 
 	/**
@@ -178,6 +179,48 @@ class DeployPlanDispatcher extends Dispatcher {
 	}
 
 	/**
+	 * @param SS_HTTPRequest $request
+	 *
+	 * @return SS_HTTPResponse
+	 */
+	public function deploysummary(SS_HTTPRequest $request) {
+		if(!trim($request->getBody())) {
+			return $this->getAPIResponse('no body was sent in the request', 400);
+		}
+
+		$jsonBody = json_decode($request->getBody(), true);
+		if(empty($jsonBody)) {
+			return $this->getAPIResponse('request did not contain a parsable JSON payload', 400);
+		}
+
+		$options = [
+			'sha' => $jsonBody['sha']
+		];
+
+		$strategy = $this->environment->Backend()->planDeploy($this->environment, $options);
+		$data = $strategy->toArray();
+
+		$interface = $this->project->getRepositoryInterface();
+		if($this->canCompareCodeVersions($interface, $data['changes']['Code version'])) {
+			$compareurl = sprintf(
+				'%s/compare/%s...%s',
+				$interface->URL,
+				$data['changes']['Code version']['from'],
+				$data['changes']['Code version']['to']
+			);
+			$data['changes']['Code version']['compareUrl'] = $compareurl;
+		}
+
+		// Append json to response
+		$token = SecurityToken::inst();
+		$data['SecurityID'] = $token->getValue();
+
+		$this->extend('updateDeploySummary', $data);
+
+		return json_encode($data);
+	}
+
+	/**
 	 * @param $project
 	 *
 	 * @return array
@@ -260,5 +303,27 @@ class DeployPlanDispatcher extends Dispatcher {
 		$response->setBody($body);
 		$response->setStatusCode($statusCode);
 		return $response;
+	}
+
+	/**
+	 * @param ArrayData $interface
+	 * @param array $codeVersion
+	 *
+	 * @return bool
+	 */
+	protected function canCompareCodeVersions(\ArrayData $interface, $codeVersion) {
+		if(empty($interface)) {
+			return false;
+		}
+		if(empty($interface->URL)) {
+			return false;
+		}
+		if(empty($codeVersion['from']) || empty($codeVersion['to'])) {
+			return false;
+		}
+		if(strlen($codeVersion['from']) !== 40 || strlen($codeVersion['to']) !== 40) {
+			return false;
+		}
+		return true;
 	}
 }

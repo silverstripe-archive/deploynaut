@@ -14,13 +14,24 @@ function sleep(time) {
 	return new Promise((resolve) => setTimeout(resolve, time));
 }
 
-export function call(uri, method) {
-	return fetch(`${uri}`, {
-		credentials: 'same-origin', // send cookies
+export function call(uri, method, payload) {
+
+	var options = {
+		credentials: 'same-origin',
 		method: method,
-		Accept: 'application/json',
-		'Content-Type': 'application/json'
-	})
+		headers: {
+			Accept: 'application/json',
+			'Content-Type': 'application/json'
+		}
+	};
+
+	if(payload) {
+		var data = new FormData();
+		data.append("json", JSON.stringify(payload));
+		options.body = JSON.stringify(payload);
+	}
+
+	return fetch(uri, options)
 		.then(response => {
 			if(response.ok) {
 				return response.json();
@@ -53,6 +64,10 @@ export function getRevisions() {
 
 export function updateRepo() {
 	return call(`${window.api_url}/gitupdate`, 'post');
+}
+
+export function getSummary(sha) {
+	return call(`${window.api_url}/deploysummary`, 'post', {sha: sha});
 }
 
 export function waitForSuccess(uri, retryInterval) {

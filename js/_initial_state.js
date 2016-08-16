@@ -1,10 +1,11 @@
 module.exports = {
 
+	messages: [
+	],
+
 	activeStep: 0,
 
 	environment: "production",
-	deployment_type: "Code only",
-	deployment_estimate: "2 min",
 
 	summary_of_changes: "",
 
@@ -45,43 +46,11 @@ module.exports = {
 		]
 	},
 
-	changes: {
-		"Code version": {
-			from: "ddbc36e7ff8336810540cb03ac571651bb4c43ff",
-			to: "ddbc36e7ff8336810540cb03ac571651bb4c43ff",
-			compareUrl: "https://github.com/random/project/compare/ddbc36e7ff8336810540cb03ac571651bb4c43ff...ddbc36e7ff8336810540cb03ac571651bb4c43ff"
-		},
-		"Infrastructure version": {
-			from: "3.6.4",
-			to: "3.6.4"
-		},
-		"Base image": {
-			from: "debian-jessie (ami-1234567)",
-			to: "debian-jessie (ami-1234567)"
-		},
-		"Primary domain": {
-			from: "www.example.com",
-			to: "www.example.com"
-		},
-		"SSL certificate": {
-			from: "bc:f1:84:38:a0:57...",
-			to: "bc:f1:84:38:a0:57..."
-		},
-		".platform.yml other": {
-			description: "",
-			compareUrl: "https://github.com/random/project/compare/ddbc36e7ff8336810540cb03ac571651bb4c43ff...ddbc36e7ff8336810540cb03ac571651bb4c43ff"
-		},
-		"Other domains": {
-			description: ""
-		},
-		Variables: {
-			description: ""
-		},
-		"Virtual environments": {
-			description: ""
-		},
-		Whitelist: {
-			description: ""
-		}
+	plan: {
+		is_loading: false,
+		deployment_type: "",
+		deployment_estimate: "",
+		changes: {},
+		validation_code: ""
 	}
 };

@@ -21,13 +21,23 @@ var Step = function(props) {
 		onclick = props.onClick;
 	}
 
+	var loading = null;
+	if(props.isLoading) {
+		loading = (<i className="fa fa-refresh fa-spin" aria-hidden="true"></i>);
+	}
+
+	var check = null;
+	if(props.isFinished) {
+		check = (<i className="fa fa-check" aria-hidden="true"></i>);
+	}
+
 	return (
 		<div
 			style={style}
 			onClick={onclick}
 			className={"alert " + classNames}
 		>
-			{props.id + 1}. {props.title}
+			{props.id + 1}. {props.title} {loading} {check}
 		</div>
 	);
 };
@@ -40,23 +50,26 @@ Step.propTypes = {
 };
 
 var StepMenu = function(props) {
-	var list = Object.keys(props.tabs).map(function(key, index) {
+	var list = Object.keys(props.steps).map(function(key, index) {
 		return (
 			<Step
 				active={props.value === index}
+				isFinished={props.steps[key].isFinished}
 				key={index}
 				onClick={function() { props.onClick(index); }}
-				title={props.tabs[key].title}
+				title={props.steps[key].title}
 				id={index}
-				show={props.tabs[key].show}
+				show={props.steps[key].show}
+				isLoading={props.steps[key].isLoading}
 			/>
 		);
 	});
+
 	return (<div> {list} </div>);
 };
 
 StepMenu.propTypes = {
-	tabs: React.PropTypes.arrayOf(React.PropTypes.shape({
+	steps: React.PropTypes.arrayOf(React.PropTypes.shape({
 		id: React.PropTypes.number.isRequired,
 		title: React.PropTypes.string.isRequired
 	}).isRequired).isRequired,
