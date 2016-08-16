@@ -146,7 +146,7 @@ class DeployJob extends DeploynautJob {
 
 		$log->write('Backing up existing data');
 		try {
-			$dataTransfer->Environment()->Backend()->dataTransfer($backupDataTransfer, $log);
+			$backupDataTransfer->Environment()->Backend()->dataTransfer($backupDataTransfer, $log);
 			global $databaseConfig;
 			DB::connect($databaseConfig);
 			$backupDataTransfer->Status = 'Finished';
