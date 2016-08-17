@@ -49,7 +49,7 @@ const mapStateToProps = function(state) {
 		bypassed: state.approval.bypassed,
 		approvedBy: approvers.shift(),
 		requestBy: state.approval.request_by,
-		environment: state.environment,
+		environment: state.environment.name,
 		deploymentType: state.plan.deployment_type,
 		deploymentEstimate: state.plan.deployment_estimate,
 		codeVersion: state.git.selected_ref

@@ -121,7 +121,7 @@ const mapStateToProps = function(state) {
 			state.deployment.enqueued
 		],
 		messages: state.messages,
-		activeStep: state.activeStep,
+		activeStep: state.navigation.active,
 		shaSelected: (state.git.selected_ref !== ""),
 		canDeploy: (state.approval.approved || state.approval.bypassed)
 	};
