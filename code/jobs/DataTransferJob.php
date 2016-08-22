@@ -26,7 +26,11 @@ class DataTransferJob extends DeploynautJob {
 		$environment = $dataTransfer->Environment();
 		$backupDataTransfer = null;
 
-		if(!empty($this->args['backupBeforePush']) && $dataTransfer->Direction == 'push') {
+		if(
+			!empty($this->args['backupBeforePush'])
+			&& $this->args['backupBeforePush'] !== 'false'
+			&& $dataTransfer->Direction == 'push'
+		) {
 			$backupDataTransfer = DNDataTransfer::create();
 			$backupDataTransfer->EnvironmentID = $environment->ID;
 			$backupDataTransfer->Direction = 'get';

@@ -79,6 +79,7 @@ class DeployJob extends DeploynautJob {
 
 		$deployment = DNDeployment::get()->byID($this->args['deploymentID']);
 		$environment = $deployment->Environment();
+		$currentBuild = $environment->CurrentBuild();
 		$project = $environment->Project();
 		$backupDataTransfer = null;
 		$backupMode = !empty($this->args['backup_mode']) ? $this->args['backup_mode'] : 'db';
@@ -87,7 +88,15 @@ class DeployJob extends DeploynautJob {
 		// the deploy job, so that the order of backup is done before deployment, and so it
 		// doesn't tie up another worker. It also puts the backup output into
 		// the same log as the deployment so there is visibility on what is going on.
-		if(!empty($this->args['predeploy_backup'])) {
+		// Note that the code has to be present for a backup to be performed, so the first
+		// deploy onto a clean environment will not be performing any backup regardless of
+		// whether the predeploy_backup option was passed or not.
+		// Sometimes predeploy_backup comes through as string false from the frontend.
+		if(
+			!empty($this->args['predeploy_backup'])
+			&& $this->args['predeploy_backup'] !== 'false'
+			&& !empty($currentBuild)
+		) {
 			$backupDataTransfer = DNDataTransfer::create();
 			$backupDataTransfer->EnvironmentID = $environment->ID;
 			$backupDataTransfer->Direction = 'get';
