@@ -101,20 +101,38 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		};
 
 		// Once the deployment has run it's necessary to update the maintenance page status
-		if(!empty($options['leaveMaintenancePage'])) {
-			$this->enableMaintenance($environment, $log, $project);
-		}
+		// as deploying removes .htaccess
+		$this->enableMaintenance($environment, $log, $project);
 
 		if(!$command->isSuccessful() || !$this->smokeTest($environment, $log)) {
 			$cleanupFn();
 			$this->extend('deployFailure', $environment, $sha, $log, $project);
-			throw new RuntimeException($command->getErrorOutput());
+
+			$currentBuild = $environment->CurrentBuild();
+			if (empty($currentBuild) || !empty($options['no_rollback'])) {
+				throw new RuntimeException($command->getErrorOutput());
+			}
+
+			// re-run deploy with the current build sha to rollback
+			$log->write('Deploy failed. Rolling back');
+			$rollbackArgs = array_merge($args, ['branch' => $currentBuild->SHA]);
+			$command = $this->getCommand('deploy', 'web', $environment, $rollbackArgs, $log);
+			$command->run(function($type, $buffer) use($log) {
+				$log->write($buffer);
+			});
+
+			// Once the deployment has run it's necessary to update the maintenance page status
+			// as deploying removes .htaccess
+			$this->enableMaintenance($environment, $log, $project);
+
+			if (!$command->isSuccessful() || !$this->smokeTest($environment, $log)) {
+				$this->extend('deployRollbackFailure', $environment, $currentBuild->SHA, $log, $project);
+				$log->write('Rollback failed');
+				throw new RuntimeException($command->getErrorOutput());
+			}
 		}
 
-		// Check if maintenance page should be removed
-		if(empty($options['leaveMaintenancePage'])) {
-			$this->disableMaintenance($environment, $log, $project);
-		}
+		$this->disableMaintenance($environment, $log, $project);
 
 		$cleanupFn();
 
@@ -129,6 +147,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	public function getDeployOptions() {
 		return [
 			new PredeployBackupOption(true),
+			new NoRollbackDeployOption()
 		];
 	}
 
