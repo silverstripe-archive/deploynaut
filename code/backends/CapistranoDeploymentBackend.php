@@ -109,7 +109,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			$this->extend('deployFailure', $environment, $sha, $log, $project);
 
 			$currentBuild = $environment->CurrentBuild();
-			if (empty($currentBuild) || !empty($options['no_rollback'])) {
+			if (empty($currentBuild) || (!empty($options['no_rollback']) && $options['no_rollback'] !== 'false')) {
 				throw new RuntimeException($command->getErrorOutput());
 			}
 
