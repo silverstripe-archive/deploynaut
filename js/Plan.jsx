@@ -9,13 +9,11 @@ var createLogger = require('redux-logger');
 
 var App = require('./containers/App.jsx');
 
-var rootReducer = require("./_reducers.js");
-var initialState = require('./_initial_state.js');
+var rootReducer = require("./reducers/index.js");
 var actions = require('./_actions.js');
 
 var store = Redux.createStore(
 	rootReducer,
-	initialState,
 	Redux.applyMiddleware(
 		thunkMiddleware,
 		createLogger()

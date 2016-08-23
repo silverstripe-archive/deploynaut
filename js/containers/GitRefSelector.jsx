@@ -72,6 +72,7 @@ const mapDispatchToProps = function(dispatch) {
 		},
 		onRefSelect: function(ref) {
 			dispatch(actions.setGitRef(ref));
+			dispatch(actions.getDeploySummary(ref));
 		}
 	};
 };

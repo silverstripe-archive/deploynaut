@@ -38,7 +38,7 @@ var summary = function(props) {
 
 const mapStateToProps = function(state) {
 	return {
-		summaryOfChanges: state.summary_of_changes,
+		summaryOfChanges: state.plan.summary_of_changes,
 		disabled: state.approval.request_sent
 	};
 };

@@ -1,10 +1,11 @@
 var ReactRedux = require('react-redux');
 
-var SummaryTable = require('../SummaryTable.jsx');
+var DeployDiff = require('../components/DeployDiff.jsx');
 
 const mapStateToProps = function(state) {
 	return {
-		changes: state.changes
+		changes: state.plan.changes,
+		isLoading: state.plan.is_loading
 	};
 };
 
@@ -12,5 +13,5 @@ const mapDispatchToProps = function() {
 	return {};
 };
 
-module.exports = ReactRedux.connect(mapStateToProps, mapDispatchToProps)(SummaryTable);
+module.exports = ReactRedux.connect(mapStateToProps, mapDispatchToProps)(DeployDiff);
 

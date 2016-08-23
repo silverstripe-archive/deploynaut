@@ -9,16 +9,18 @@ var SummaryOfChanges = require('./SummaryOfChanges.jsx');
 var Approval = require('./Approval.jsx');
 var Deployment = require('./Deployment.jsx');
 var DeployPlan = require('./DeployPlan.jsx');
+var Messages = require('../components/Messages.jsx');
 
 var actions = require('../_actions.js');
 
 function calculateSteps(props) {
-
 	return [
 		{
 			id: 1,
 			show: true,
 			title: "Target Release",
+			isLoading: props.isLoading[0],
+			isFinished: props.isFinished[0],
 			content: (
 				<div>
 					<ButtonGitFetch />
@@ -31,6 +33,8 @@ function calculateSteps(props) {
 			id: 2,
 			title: "Deployment Plan",
 			show: props.shaSelected,
+			isLoading: props.isLoading[1],
+			isFinished: props.isFinished[1],
 			content: (
 				<div>
 					<SummaryOfChanges />
@@ -42,6 +46,8 @@ function calculateSteps(props) {
 			id: 3,
 			title: "Approval",
 			show: props.shaSelected,
+			isLoading: props.isLoading[2],
+			isFinished: props.isFinished[2],
 			content: (
 				<div>
 					<Approval />
@@ -52,6 +58,8 @@ function calculateSteps(props) {
 			id: 4,
 			title: "Deployment",
 			show: props.shaSelected && props.canDeploy,
+			isLoading: props.isLoading[3],
+			isFinished: props.isFinished[3],
 			content: (
 				<div>
 					<Deployment />
@@ -61,37 +69,17 @@ function calculateSteps(props) {
 	];
 }
 
-function Message(props) {
-
-	if(!props.message) {
-		return null;
-	}
-	var message = null;
-	if(typeof props.message === 'object') {
-		message = Object.keys(props.message).map(function(key) {
-			return <div key={key}>{props.message[key]}</div>;
-		});
-	} else {
-		message = props.message;
-	}
-	return (
-		<div className={"alert alert-" + props.type} >
-			{message}
-		</div>
-	);
-}
-
 function App(props) {
 
 	var steps = calculateSteps(props);
+
 	const content = (
 		<div className="deploy-form">
 			<div className="header">
 				<span className="numberCircle">{steps[props.activeStep].id}</span> {steps[props.activeStep].title}
 			</div>
-			<Message
-				message={props.message}
-				type={props.messageType}
+			<Messages
+				messages={props.messages}
 			/>
 			<div>
 				{steps[props.activeStep].content}
@@ -106,7 +94,7 @@ function App(props) {
 			</div>
 			<div className="col-md-3">
 				<StepMenu
-					tabs={steps}
+					steps={steps}
 					value={props.activeStep}
 					onClick={props.onTabClick}
 				/>
@@ -120,11 +108,22 @@ function App(props) {
 
 const mapStateToProps = function(state) {
 	return {
-		message: state.message,
-		messageType: state.message_type,
-		activeStep: state.activeStep,
+		isLoading: [
+			state.git.is_loading || state.git.is_updating,
+			state.plan.is_loading,
+			false,
+			false
+		],
+		isFinished: [
+			state.git.selected_ref !== "",
+			state.plan.validation_code === 'success',
+			state.plan.validation_code === 'success' && (state.approval.approved || state.approval.bypassed),
+			state.deployment.enqueued
+		],
+		messages: state.messages,
+		activeStep: state.navigation.active,
 		shaSelected: (state.git.selected_ref !== ""),
-		canDeploy: (state.approval.approved || state.approval.bypassed),
+		canDeploy: (state.approval.approved || state.approval.bypassed)
 	};
 };
 
