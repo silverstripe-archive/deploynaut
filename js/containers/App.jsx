@@ -16,7 +16,6 @@ var actions = require('../_actions.js');
 function calculateSteps(props) {
 	return [
 		{
-			id: 1,
 			show: true,
 			title: "Target Release",
 			isLoading: props.isLoading[0],
@@ -30,7 +29,6 @@ function calculateSteps(props) {
 			)
 		},
 		{
-			id: 2,
 			title: "Deployment Plan",
 			show: props.shaSelected,
 			isLoading: props.isLoading[1],
@@ -43,9 +41,8 @@ function calculateSteps(props) {
 			)
 		},
 		{
-			id: 3,
 			title: "Approval",
-			show: props.shaSelected,
+			show: props.planSuccess,
 			isLoading: props.isLoading[2],
 			isFinished: props.isFinished[2],
 			content: (
@@ -55,7 +52,6 @@ function calculateSteps(props) {
 			)
 		},
 		{
-			id: 4,
 			title: "Deployment",
 			show: props.shaSelected && props.canDeploy,
 			isLoading: props.isLoading[3],
@@ -120,6 +116,7 @@ const mapStateToProps = function(state) {
 			state.plan.validation_code === 'success' && (state.approval.approved || state.approval.bypassed),
 			state.deployment.enqueued
 		],
+		planSuccess: state.plan.validation_code === 'success',
 		messages: state.messages,
 		activeStep: state.navigation.active,
 		shaSelected: (state.git.selected_ref !== ""),

@@ -68,6 +68,13 @@ module.exports = function approval(state, action) {
 				bypassed: false,
 				rejected: true
 			});
+		case actions.SUCCEED_APPROVAL_BYPASS:
+			return _.assign({}, state, {
+				approved: false,
+				bypassed: true,
+				rejected: false
+			});
+
 		default:
 			return state;
 	}

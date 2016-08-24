@@ -6,6 +6,7 @@ var RequestApproval = require('./buttons/RequestApproval.jsx');
 var CancelApprovalRequest = require('./buttons/CancelApprovalRequest.jsx');
 var ApproveRequest = require('./buttons/ApproveRequest.jsx');
 var RejectRequest = require('./buttons/RejectRequest.jsx');
+var Bypass = require('./buttons/Bypass.jsx');
 
 var actions = require('../_actions.js');
 
@@ -43,7 +44,7 @@ function Approval(props) {
 					options={props.approvers}
 					value={props.selectedApprover}
 					onSelect={props.onApproverSelect}
-					disabled={props.requestSent}
+					disabled={props.disabled}
 				/>
 				<small>
 					Only one request can be active at a time, approval can also
@@ -60,8 +61,27 @@ function Approval(props) {
 			<div>
 				<ApproveRequest /> <RejectRequest />
 			</div>
+			<div>
+				<Bypass />
+			</div>
 		</div>
 	);
+}
+
+function isDisabled(state) {
+	if(state.approval.request_sent) {
+		return true;
+	}
+	if(state.approval.approved) {
+		return true;
+	}
+	if(state.approval.bypassed) {
+		return true;
+	}
+	if(state.deployment.enqueued) {
+		return true;
+	}
+	return false;
 }
 
 const mapStateToProps = function(state) {
@@ -74,9 +94,7 @@ const mapStateToProps = function(state) {
 	});
 
 	return {
-		approved: state.approval.approved,
-		rejected: state.approval.rejected,
-		bypassed: state.approval.bypassed,
+		disabled: isDisabled(state),
 		requested: state.approval.requested,
 		requestSent: state.approval.request_sent,
 		requestSentTime: state.approval.request_sent_time,
