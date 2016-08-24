@@ -104,6 +104,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		// as deploying removes .htaccess
 		$this->enableMaintenance($environment, $log, $project);
 
+		$rolledBack = null;
 		if(!$command->isSuccessful() || !$this->smokeTest($environment, $log)) {
 			$cleanupFn();
 			$this->extend('deployFailure', $environment, $sha, $log, $project);
@@ -130,11 +131,20 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 				$log->write('Rollback failed');
 				throw new RuntimeException($command->getErrorOutput());
 			}
+
+			// By getting here, it means we have successfully rolled back without any errors
+			$rolledBack = true;
 		}
 
 		$this->disableMaintenance($environment, $log, $project);
 
 		$cleanupFn();
+
+		// Rolling back means the rollback succeeded, but ultimately the deployment
+		// has failed. Throw an exception so the job is marked as failed accordingly.
+		if ($rolledBack === true) {
+			throw new RuntimeException('Rollback successful');
+		}
 
 		$log->write(sprintf('Deploy of "%s" to "%s" finished', $sha, $name));
 
