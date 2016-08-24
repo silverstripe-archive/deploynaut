@@ -1,6 +1,8 @@
 ---
 Name: deploynautconfig
 ---
+AdminRootController:
+  default_panel: 'DNAdmin'
 DNProject:
   defaults:
     DiskQuotaMB: "1024"
