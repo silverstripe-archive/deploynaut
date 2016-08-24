@@ -3,32 +3,35 @@ var ReactRedux = require('react-redux');
 var actions = require('../../_actions.js');
 var Button = require('../../components/Button.jsx');
 
-function canDeploy(state) {
-	if(state.deployment.enqueued) {
+function canBypass(state) {
+	if(state.approval.bypassed) {
 		return false;
 	}
-	if(state.approval.bypassed) {
-		return true;
-	}
+
 	if(state.approval.approved) {
-		return true;
+		return false;
 	}
-	return false;
+
+	if(state.approval.request_sent) {
+		return false;
+	}
+
+	return true;
 }
 
 const mapStateToProps = function(state) {
+
 	return {
-		display: canDeploy(state),
-		disabled: false,
+		display: canBypass(state),
 		style: "btn-success",
-		value: "Deploy"
+		value: "Bypass"
 	};
 };
 
 const mapDispatchToProps = function(dispatch) {
 	return {
 		onClick: function() {
-			dispatch(actions.startDeploymentEnqueue());
+			dispatch(actions.bypassApproval());
 		}
 	};
 };

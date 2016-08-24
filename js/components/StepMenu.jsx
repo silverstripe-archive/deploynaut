@@ -70,7 +70,6 @@ var StepMenu = function(props) {
 
 StepMenu.propTypes = {
 	steps: React.PropTypes.arrayOf(React.PropTypes.shape({
-		id: React.PropTypes.number.isRequired,
 		title: React.PropTypes.string.isRequired
 	}).isRequired).isRequired,
 	value: React.PropTypes.number.isRequired,

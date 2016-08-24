@@ -36,10 +36,26 @@ var summary = function(props) {
 	);
 };
 
+function isDisabled(state) {
+	if(state.approval.request_sent) {
+		return true;
+	}
+	if(state.approval.approved) {
+		return true;
+	}
+	if(state.approval.bypassed) {
+		return true;
+	}
+	if(state.deployment.enqueued) {
+		return true;
+	}
+	return false;
+}
+
 const mapStateToProps = function(state) {
 	return {
 		summaryOfChanges: state.plan.summary_of_changes,
-		disabled: state.approval.request_sent
+		disabled: isDisabled(state)
 	};
 };
 

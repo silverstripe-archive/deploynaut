@@ -16,7 +16,7 @@ function ShaSelector(props) {
 				onSelect={props.onRefSelect}
 				options={props.refList}
 				value={props.refSelected}
-				disabled={props.requestSent}
+				disabled={props.disabled}
 				name="ref_selector"
 			/>
 		);
@@ -28,7 +28,7 @@ function ShaSelector(props) {
 				options={props.types}
 				value={props.typeSelected}
 				onRadioClick={props.onRadioClick}
-				disabled={props.requestSent}
+				disabled={props.disabled}
 			/>
 			{dropdown}
 		</div>
@@ -46,11 +46,26 @@ ShaSelector.propTypes = {
 		React.PropTypes.string,
 		React.PropTypes.number
 	]).isRequired,
-	requestSent: React.PropTypes.bool.isRequired
+	disabled: React.PropTypes.bool.isRequired
 };
 
-const mapStateToProps = function(state) {
+function isDisabled(state) {
+	if(state.approval.request_sent) {
+		return true;
+	}
+	if(state.approval.approved) {
+		return true;
+	}
+	if(state.approval.bypassed) {
+		return true;
+	}
+	if(state.deployment.enqueued) {
+		return true;
+	}
+	return false;
+}
 
+const mapStateToProps = function(state) {
 	var refs = [];
 	if(state.git.list[state.git.selected_type]) {
 		refs = state.git.list[state.git.selected_type].list;
@@ -61,7 +76,7 @@ const mapStateToProps = function(state) {
 		typeSelected: state.git.selected_type,
 		refList: refs,
 		refSelected: state.git.selected_ref,
-		requestSent: state.approval.request_sent
+		disabled: isDisabled(state)
 	};
 };
 

@@ -215,6 +215,28 @@ export function failApprovalReject() {
 	return {type: FAIL_APPROVAL_REJECT};
 }
 
+export const START_APPROVAL_BYPASS = "START_APPROVAL_BYPASS";
+export function startApprovalBypass() {
+	return {type: START_APPROVAL_BYPASS};
+}
+
+export const SUCCEED_APPROVAL_BYPASS = "SUCCEED_APPROVAL_BYPASS";
+export function succeedApprovalBypass() {
+	return {type: SUCCEED_APPROVAL_BYPASS};
+}
+
+export const FAIL_APPROVAL_BYPASS = "FAIL_APPROVAL_BYPASS";
+export function failApprovalBypass() {
+	return {type: FAIL_APPROVAL_BYPASS};
+}
+
+export function bypassApproval() {
+	return (dispatch) => {
+		dispatch(startApprovalBypass());
+		dispatch(succeedApprovalBypass());
+	};
+}
+
 export const START_DEPLOYMENT_ENQUEUE = "START_DEPLOYMENT_ENQUEUE";
 export function startDeploymentEnqueue() {
 	return {type: START_DEPLOYMENT_ENQUEUE};
