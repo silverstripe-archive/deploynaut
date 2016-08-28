@@ -29,9 +29,11 @@ interface DeploymentBackend {
 
 	/**
 	 * Return a list of {@link DeployOption} for use on this environment.
+	 *
+	 * @param DNEnvironment $environment
 	 * @return array
 	 */
-	public function getDeployOptions();
+	public function getDeployOptions(DNEnvironment $environment);
 
 	/**
 	 * Transfer data from an environment to a local file, or from a local file

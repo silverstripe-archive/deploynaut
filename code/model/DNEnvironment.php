@@ -147,6 +147,12 @@ class DNEnvironment extends DataObject {
 	 */
 	private static $default_sort = 'Name';
 
+	const UAT = 'UAT';
+
+	const PRODUCTION = 'Production';
+
+	const UNSPECIFIED = 'Unspecified';
+
 	/**
 	 * Used by the sync task
 	 *
@@ -305,7 +311,7 @@ class DNEnvironment extends DataObject {
 		}
 		// Must be logged in to check permissions
 
-		if ($this->Usage==='Production' || $this->Usage==='Unspecified') {
+		if ($this->Usage === self::PRODUCTION || $this->Usage === self::UNSPECIFIED) {
 			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_DEPLOYMENT, $member)) return true;
 		} else {
 			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_DEPLOYMENT, $member)) return true;
@@ -340,7 +346,7 @@ class DNEnvironment extends DataObject {
 		}
 		// Must be logged in to check permissions
 
-		if ($this->Usage==='Production' || $this->Usage==='Unspecified') {
+		if ($this->Usage === self::PRODUCTION || $this->Usage === self::UNSPECIFIED) {
 			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) return true;
 		} else {
 			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) return true;
@@ -371,7 +377,7 @@ class DNEnvironment extends DataObject {
 			return false;
 		}
 
-		if ($this->Usage==='Production' || $this->Usage==='Unspecified') {
+		if ($this->Usage === self::PRODUCTION || $this->Usage === self::UNSPECIFIED) {
 			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) return true;
 		} else {
 			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) return true;
@@ -406,7 +412,7 @@ class DNEnvironment extends DataObject {
 		}
 		// Must be logged in to check permissions
 
-		if ($this->Usage==='Production' || $this->Usage==='Unspecified') {
+		if ($this->Usage === self::PRODUCTION || $this->Usage === self::UNSPECIFIED) {
 			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) return true;
 		} else {
 			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) return true;
@@ -432,7 +438,7 @@ class DNEnvironment extends DataObject {
 		}
 		// Must be logged in to check permissions
 
-		if ($this->Usage==='Production' || $this->Usage==='Unspecified') {
+		if ($this->Usage === self::PRODUCTION || $this->Usage === self::UNSPECIFIED) {
 			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) return true;
 		} else {
 			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) return true;
@@ -458,7 +464,7 @@ class DNEnvironment extends DataObject {
 		}
 		// Must be logged in to check permissions
 
-		if ($this->Usage==='Production' || $this->Usage==='Unspecified') {
+		if ($this->Usage === self::PRODUCTION || $this->Usage === self::UNSPECIFIED) {
 			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) return true;
 		} else {
 			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) return true;
@@ -890,14 +896,14 @@ PHP
 	public function onAfterWrite() {
 		parent::onAfterWrite();
 
-		if($this->Usage == 'Production' || $this->Usage == 'UAT') {
+		if($this->Usage === self::PRODUCTION || $this->Usage === self::UAT) {
 			$conflicting = DNEnvironment::get()
 				->filter('ProjectID', $this->ProjectID)
 				->filter('Usage', $this->Usage)
 				->exclude('ID', $this->ID);
 
 			foreach($conflicting as $otherEnvironment) {
-				$otherEnvironment->Usage = 'Unspecified';
+				$otherEnvironment->Usage = self::UNSPECIFIED;
 				$otherEnvironment->write();
 			}
 		}

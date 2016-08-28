@@ -65,9 +65,10 @@ class DemoDeploymentBackend extends Object implements DeploymentBackend {
 	}
 
 	/**
+	 * @param DNEnvironment $environment
 	 * @return array
 	 */
-	public function getDeployOptions() {
+	public function getDeployOptions(DNEnvironment $environment) {
 		return [];
 	}
 
