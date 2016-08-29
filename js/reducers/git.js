@@ -47,7 +47,7 @@ module.exports = function git(state, action) {
 		case actions.SUCCEED_REVISIONS_GET:
 			return _.assign({}, state, {
 				is_fetching: false,
-				list: action.list,
+				list: action.list.refs,
 				last_updated: action.receivedAt,
 				selected_type: "",
 				selected_ref: ""

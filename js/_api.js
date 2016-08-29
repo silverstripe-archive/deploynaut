@@ -73,7 +73,7 @@ export function getSummary(sha) {
 export function waitForSuccess(uri, retryInterval) {
 	var retry = retryInterval || 100;
 	return call(uri, 'get').then(data => {
-		switch(data.message.status) {
+		switch(data.status) {
 			case 'Complete':
 				return data;
 			case 'Failed':

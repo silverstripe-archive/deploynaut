@@ -85,7 +85,7 @@ export function updateRepoAndGetRevisions() {
 	return (dispatch) => {
 		dispatch(startRepoUpdate());
 		api.updateRepo()
-			.then(data => api.waitForSuccess(data.message.href))
+			.then(data => api.waitForSuccess(data.href))
 			.then(() => dispatch(succeedRepoUpdate()))
 			.catch(err => dispatch(failRepoUpdate(err)))
 			.then(() => dispatch(startRevisionGet()))
