@@ -10,6 +10,7 @@ var Approval = require('./Approval.jsx');
 var Deployment = require('./Deployment.jsx');
 var DeployPlan = require('./DeployPlan.jsx');
 var Messages = require('../components/Messages.jsx');
+var Modal = require('../Modal.jsx');
 
 var actions = require('../_actions.js');
 
@@ -84,21 +85,23 @@ function App(props) {
 	);
 
 	return (
-		<div className="row">
-			<div className="col-md-12">
-				<h3>Deployment options for ...</h3>
+		<Modal closeHandler="" title="Deployment">
+			<div className="row">
+				<div className="col-md-12">
+					<h3>Deployment options for ...</h3>
+				</div>
+				<div className="col-md-3">
+					<StepMenu
+						steps={steps}
+						value={props.activeStep}
+						onClick={props.onTabClick}
+					/>
+				</div>
+				<div className="col-md-9">
+					{content}
+				</div>
 			</div>
-			<div className="col-md-3">
-				<StepMenu
-					steps={steps}
-					value={props.activeStep}
-					onClick={props.onTabClick}
-				/>
-			</div>
-			<div className="col-md-9">
-				{content}
-			</div>
-		</div>
+		</Modal>
 	);
 }
 
