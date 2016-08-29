@@ -78,7 +78,7 @@ class DeployPlanDispatcher extends Dispatcher {
 			case 'GET':
 				return $this->getFetch($this->getRequest()->param('ID'));
 			default:
-				return $this->getAPIResponse('Method not allowed, requires POST or GET/{id}', 405);
+				return $this->getAPIResponse(['message' => 'Method not allowed, requires POST or GET/{id}'], 405);
 		}
 	}
 
@@ -120,10 +120,7 @@ class DeployPlanDispatcher extends Dispatcher {
 			"list" => $prevDeploys
 		];
 
-		$body = json_encode($refs, JSON_PRETTY_PRINT);
-		$this->getResponse()->addHeader('Content-Type', 'application/json');
-		$this->getResponse()->setBody($body);
-		return $body;
+		return $this->getAPIResponse(['refs' => $refs], 200);
 	}
 
 	/**
@@ -146,7 +143,7 @@ class DeployPlanDispatcher extends Dispatcher {
 	protected function getFetch($ID) {
 		$ping = DNGitFetch::get()->byID($ID);
 		if(!$ping) {
-			return $this->getAPIResponse('Fetch not found', 404);
+			return $this->getAPIResponse(['message' => 'Fetch not found'], 404);
 		}
 		$output = [
 			'id' => $ID,
@@ -185,12 +182,12 @@ class DeployPlanDispatcher extends Dispatcher {
 	 */
 	public function deploysummary(SS_HTTPRequest $request) {
 		if(!trim($request->getBody())) {
-			return $this->getAPIResponse('no body was sent in the request', 400);
+			return $this->getAPIResponse(['message' => 'no body was sent in the request'], 400);
 		}
 
 		$jsonBody = json_decode($request->getBody(), true);
 		if(empty($jsonBody)) {
-			return $this->getAPIResponse('request did not contain a parsable JSON payload', 400);
+			return $this->getAPIResponse(['message' => 'request did not contain a parsable JSON payload'], 400);
 		}
 
 		$options = [
@@ -201,7 +198,7 @@ class DeployPlanDispatcher extends Dispatcher {
 		$data = $strategy->toArray();
 
 		$interface = $this->project->getRepositoryInterface();
-		if($this->canCompareCodeVersions($interface, $data['changes']['Code version'])) {
+		if($this->canCompareCodeVersions($interface, $data['changes'])) {
 			$compareurl = sprintf(
 				'%s/compare/%s...%s',
 				$interface->URL,
@@ -217,7 +214,7 @@ class DeployPlanDispatcher extends Dispatcher {
 
 		$this->extend('updateDeploySummary', $data);
 
-		return json_encode($data);
+		return $this->getAPIResponse($data, 201);
 	}
 
 	/**
@@ -288,15 +285,12 @@ class DeployPlanDispatcher extends Dispatcher {
 	/**
 	 * Return a simple response with a message
 	 *
-	 * @param string $message
+	 * @param array $output
 	 * @param int $statusCode
 	 * @return SS_HTTPResponse
 	 */
-	protected function getAPIResponse($message, $statusCode) {
-		$output = [
-			'message' => $message,
-			'status_code' => $statusCode
-		];
+	protected function getAPIResponse($output, $statusCode) {
+		$output['status_code'] = $statusCode;
 		$body = json_encode($output, JSON_PRETTY_PRINT);
 		$response = $this->getResponse();
 		$response->addHeader('Content-Type', 'application/json');
@@ -307,11 +301,16 @@ class DeployPlanDispatcher extends Dispatcher {
 
 	/**
 	 * @param ArrayData $interface
-	 * @param array $codeVersion
+	 * @param $changes
 	 *
 	 * @return bool
+	 *
 	 */
-	protected function canCompareCodeVersions(\ArrayData $interface, $codeVersion) {
+	protected function canCompareCodeVersions(\ArrayData $interface, $changes) {
+		if(empty($changes['Code version'])) {
+			return false;
+		}
+		$codeVersion = ['Code version'];
 		if(empty($interface)) {
 			return false;
 		}
