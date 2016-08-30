@@ -1,5 +1,3 @@
-/* global Q */
-
 var React = require("react");
 var Redux = require('redux');
 var ReactRedux = require('react-redux');
@@ -22,7 +20,8 @@ var store = Redux.createStore(
 
 var Plan = function(props) {
 
-	window.api_url = props.model.APIEndpoint;
+	window.api_url = props.model.api_endpoint;
+	window.api_auth = props.model.api_auth;
 
 	store.dispatch(actions.getRevisionsIfNeeded());
 

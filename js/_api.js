@@ -20,21 +20,27 @@ export function call(uri, method, payload) {
 		credentials: 'same-origin',
 		method: method,
 		headers: {
-			Accept: 'application/json',
-			'Content-Type': 'application/json'
+			Accept: 'application/json'
 		}
 	};
 
-	if(payload) {
-		var data = new FormData();
-		data.append("json", JSON.stringify(payload));
-		options.body = JSON.stringify(payload);
+	if(method.toLowerCase() === "post") {
+		options.body = new FormData();
+		options.body.append(window.api_auth.name, window.api_auth.value);
+
+		var data = payload || {};
+		Object.keys(data).forEach(function(key) {
+			options.body.append(key, payload[key]);
+		});
 	}
 
 	return fetch(uri, options)
 		.then(response => {
 			if(response.ok) {
-				return response.json();
+				return response.json().then(json => {
+					window.api_auth = json.api_auth;
+					return json;
+				});
 			}
 			// if the status code is outside of 200 - 299 we try to parse
 			// the error that can either be some unexpected error or a nicer
