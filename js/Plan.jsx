@@ -8,6 +8,7 @@ var createLogger = require('redux-logger');
 var App = require('./containers/App.jsx');
 
 var rootReducer = require("./reducers/index.js");
+var webAPI = require('./_api.js');
 var actions = require('./_actions.js');
 
 var store = Redux.createStore(
@@ -19,9 +20,11 @@ var store = Redux.createStore(
 );
 
 var Plan = function(props) {
-
-	window.api_url = props.model.api_endpoint;
-	window.api_auth = props.model.api_auth;
+	store.dispatch(webAPI.setAPI(
+		props.model.namespace,
+		props.model.api_endpoint,
+		props.model.api_auth
+	));
 
 	store.dispatch(actions.getRevisionsIfNeeded());
 

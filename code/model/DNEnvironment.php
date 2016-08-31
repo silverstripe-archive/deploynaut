@@ -654,10 +654,12 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
+	 * @param string $action
+	 *
 	 * @return string
 	 */
-	public function Link() {
-		return $this->Project()->Link() . "/environment/" . $this->Name;
+	public function Link($action = '') {
+		return \Controller::join_links($this->Project()->Link(), "environment", $this->Name, $action);
 	}
 
 	/**

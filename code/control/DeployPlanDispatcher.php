@@ -131,6 +131,7 @@ class DeployPlanDispatcher extends Dispatcher {
 	 */
 	public function getModel($name = '') {
 		return [
+			'namespace' => self::ACTION_PLAN,
 			'api_endpoint' => Director::absoluteBaseURL().$this->Link(),
 			'api_auth' => [
 				'name' => $this->getSecurityToken()->getName(),
@@ -284,12 +285,16 @@ class DeployPlanDispatcher extends Dispatcher {
 	 * @return SS_HTTPResponse
 	 */
 	protected function getAPIResponse($output, $statusCode) {
-		$secToken = $this->getSecurityToken();
-		$secToken->reset();
-		$output['api_auth'] = [
-			'name' => $secToken->getName(),
-			'value' => $secToken->getValue()
-		];
+		// GET and HEAD requests should not change state and therefore
+		// doesn't need to send new CSRF tokens.
+		$httpMethod = strtolower($this->getRequest()->httpMethod());
+		if(!in_array($httpMethod, ['get', 'head'])) {
+			$this->getRequest()->httpMethod();
+			$secToken = $this->getSecurityToken();
+			$secToken->reset();
+			$output = array_merge($this->getModel(), $output);
+		}
+
 		$output['status_code'] = $statusCode;
 		$body = json_encode($output, JSON_PRETTY_PRINT);
 		$response = $this->getResponse();

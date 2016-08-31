@@ -36,12 +36,17 @@ abstract class Dispatcher extends DNRoot {
 	}
 
 	protected function getSecurityToken($name = null) {
+		// We dynamically set a different name of the token instead of the default
+		// 'SecurityID' so that react forms don't invalidate `reset()` tokens for
+		// static SS forms
 		if(is_null($name)) $name = sprintf('%sSecurityID', get_class($this));
 		return new \SecurityToken($name);
 	}
 
 	protected function checkSecurityToken($name = null) {
 		$postVar = is_null($name) ? 'SecurityID' : $name;
+		// @see getSecurityToken() for the reason of the non default naming of
+		// the security token
 		if(is_null($name)) $name = sprintf('%sSecurityID', get_class($this));
 		$securityToken = $this->getSecurityToken($name);
 
