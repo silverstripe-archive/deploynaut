@@ -132,18 +132,38 @@ namespace :data do
 
 	# Transfer files via rsync from source to target by means of an SSH connection.
 	def rsync_transfer(server, source, target)
-		ssh_command = %w[/usr/bin/ssh]
-		ssh_command << fetch(:rsync_ssh_options)
-		ssh_command << "-p" << fetch(:ssh_options)[:port].to_s
-
+		ssh_command = %w[]
 		if server.options[:ssh_options]
 			username = server.options[:ssh_options][:username]
 		else
 			username = fetch(:ssh_options)[:username]
 		end
 
+		if exists?(:gateway)
+			puts "Using gateway to SSH into target instance"
+			# gateway is configured like this: "set :gateway, 'deploy@mygatewayserver.com:222'"
+			# so we need to split the 222 off the end if set, and pass that as the -p argument so
+			# SSH will accept it.
+			server = fetch(:gateway).split(':')
+			ssh_command << "/usr/bin/ssh"
+			ssh_command << server[0]
+			if server[1]
+				ssh_command << "-p" << server[1]
+			end
+			ssh_command << "-l" << username
+			ssh_command << "-i" << fetch(:ssh_options)[:keys]
+			ssh_command << "-A"
+		end
+
+		ssh_command << "/usr/bin/ssh"
+		ssh_command << fetch(:rsync_ssh_options)
+
+		if fetch(:ssh_options).key?(:port)
+			ssh_command << "-p" << fetch(:ssh_options)[:port].to_s
+		end
+
 		ssh_command << "-l" << username
-		ssh_command << '-i' << fetch(:ssh_options)[:keys]
+		ssh_command << "-i" << fetch(:ssh_options)[:keys]
 		if fetch(:ssh_options)[:forward_agent] === true
 			ssh_command << "-A"
 		end
