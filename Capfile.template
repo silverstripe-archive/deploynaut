@@ -1,4 +1,4 @@
-# ----  Load the default capistrano deploy recipe ---- 
+# ----  Load the default capistrano deploy recipe ----
 load 'deploy'
 
 # ---- Set where the environment specific configuration are ----
@@ -7,10 +7,10 @@ set :config_root, '<config root>'
 # ----  Load the recipes from the multiconfig gem ----
 require 'capistrano/multiconfig'
 
-# ---- load tasks from ./config dir ---- 
+# ---- load tasks from ./config dir ----
 Dir['<base path>/deploynaut/ruby/*.rb'].each { |task| load(task) }
 
-# ---- What directories are shared between releases ---- 
+# ---- What directories are shared between releases ----
 set :shared_children, %w(assets)
 
 # ---- change the effective symlink to www ----
@@ -47,13 +47,12 @@ set :copy_exclude, ["**/.git", "**/.svn", "**/.DS_Store"]
 # ssh options explained:
 # -q: Quiet (specifically to not show SSH welcome text)
 # -T: Disable TTY since there is no interactivity required
-# -c: Use a different cipher to improve performance
 # -o: Disable compression (see -z reason above)
 #
 # NOTE: If you change these options, please update the notes above
 #
 set :rsync_options, %w[-ltrpog --stats]
-set :rsync_ssh_options, %w[-q -T -c arcfour -o Compression=no]
+set :rsync_ssh_options, %w[-q -T -o Compression=no]
 
 # ---- SSH options ----
 ssh_options[:forward_agent] = true
