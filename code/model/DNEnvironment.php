@@ -1026,26 +1026,6 @@ PHP
 		}
 	}
 
-	/**
-	 * Enable the maintenance page
-	 *
-	 * @param DeploynautLogFile $log
-	 */
-	public function enableMaintenace($log) {
-		$this->Backend()
-			->enableMaintenance($this, $log, $this->Project());
-	}
-
-	/**
-	 * Disable maintenance page
-	 *
-	 * @param DeploynautLogFile $log
-	 */
-	public function disableMaintenance($log) {
-		$this->Backend()
-			->disableMaintenance($this, $log, $this->Project());
-	}
-
 	protected function validate() {
 		$result = parent::validate();
 		$backend = $this->Backend();
