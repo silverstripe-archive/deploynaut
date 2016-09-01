@@ -1,33 +1,46 @@
 var React = require("react");
-var ReactDOM = require("react-dom");
 
 var Modal = React.createClass({
 
-	getInitialState: function() {
+	propTypes: {
+		show: React.PropTypes.bool,
+		keyboard: React.PropTypes.bool,
+		closeHandler: React.PropTypes.func
+	},
+
+	getDefaultProps: function() {
 		return {
+			show: true,
+			keyboard: true
 		};
 	},
 
 	componentDidMount: function() {
-		this.modal({show: true, keyboard: true});
+		this.modal({show: this.props.show, keyboard: this.props.keyboard});
+	},
+
+	componentWillReceiveProps: function(props) {
+		this.modal({show: props.show, keyboard: props.keyboard});
 	},
 
 	componentWillUnmount: function() {
 		this.modal('hide');
 	},
 
+	selector: null,
+
 	modal: function(options) {
-		$(ReactDOM.findDOMNode(this)).modal(options);
-		$(ReactDOM.findDOMNode(this)).on('hidden.bs.modal', function() {
+		var selector = $(this.selector);
+		selector.modal(options);
+		selector.on('hidden.bs.modal', function() {
 			this.props.closeHandler();
 		}.bind(this));
 	},
 
 	render: function() {
-		// tabIndex -1 fixes esc key not working
-		// see http://stackoverflow.com/questions/12630156/how-do-you-enable-the-escape-key-close-functionality-in-a-twitter-bootstrap-moda
+		// tabIndex -1 fixes esc key not working. See http://stackoverflow.com/questions/12630156
 		return (
-			<div className="modal fade" tabIndex="-1">
+			<div className="modal fade" tabIndex="-1" ref={function(node) { this.selector = node; }.bind(this)}>
 				<div className="modal-dialog modal-lg">
 					<div className="modal-content">
 						<div className="modal-header">

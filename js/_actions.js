@@ -2,6 +2,16 @@
 require('babel-polyfill');
 var api = require('./_api.js');
 
+export const SET_OPEN_DIALOG = "SET_OPEN_DIALOG";
+export function openPlanDialog() {
+	return {type: SET_OPEN_DIALOG };
+}
+
+export const SET_CLOSE_DIALOG = "SET_CLOSE_DIALOG";
+export function closePlanDialog() {
+	return {type: SET_CLOSE_DIALOG };
+}
+
 export const SET_ACTIVE_STEP = "SET_ACTIVE_STEP";
 export function setActiveStep(id) {
 	return {type: SET_ACTIVE_STEP, id};

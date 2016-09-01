@@ -2,6 +2,7 @@ var React = require("react");
 var ReactRedux = require('react-redux');
 
 var StepMenu = require('../components/StepMenu.jsx');
+var NewDeployPlan = require('./buttons/NewDeployPlan.jsx');
 var GitRefSelector = require('./GitRefSelector.jsx');
 var ButtonGitFetch = require('./buttons/GitFetch.jsx');
 var ButtonGitUpdate = require('./buttons/GitUpdate.jsx');
@@ -85,23 +86,27 @@ function App(props) {
 	);
 
 	return (
-		<Modal closeHandler="" title="Deployment">
-			<div className="row">
-				<div className="col-md-12">
-					<h3>Deployment options for ...</h3>
+		<div>
+			<NewDeployPlan />
+
+			<Modal show={props.isOpen} closeHandler={props.onClose} title="Deployment">
+				<div className="row">
+					<div className="col-md-12">
+						<h3>Deployment options for ...</h3>
+					</div>
+					<div className="col-md-3">
+						<StepMenu
+							steps={steps}
+							value={props.activeStep}
+							onClick={props.onTabClick}
+						/>
+					</div>
+					<div className="col-md-9">
+						{content}
+					</div>
 				</div>
-				<div className="col-md-3">
-					<StepMenu
-						steps={steps}
-						value={props.activeStep}
-						onClick={props.onTabClick}
-					/>
-				</div>
-				<div className="col-md-9">
-					{content}
-				</div>
-			</div>
-		</Modal>
+			</Modal>
+		</div>
 	);
 }
 
@@ -119,6 +124,7 @@ const mapStateToProps = function(state) {
 			state.plan.validation_code === 'success' && (state.approval.approved || state.approval.bypassed),
 			state.deployment.enqueued
 		],
+		isOpen: state.navigation.open,
 		planSuccess: state.plan.validation_code === 'success',
 		messages: state.messages,
 		activeStep: state.navigation.active,
@@ -129,6 +135,9 @@ const mapStateToProps = function(state) {
 
 const mapDispatchToProps = function(dispatch) {
 	return {
+		onClose: function() {
+			dispatch(actions.closePlanDialog());
+		},
 		onTabClick: function(id) {
 			dispatch(actions.setActiveStep(id));
 		}
