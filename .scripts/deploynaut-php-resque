@@ -25,6 +25,7 @@ PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 USERNAME=www-data
 LOGFILE=/var/log/$NAME
+STATUSFILE=$ROOT/resque_status.sh
 
 # Load the VERBOSE setting and other rcS variables
 . /lib/init/vars.sh
@@ -58,12 +59,20 @@ do_start()
 #
 do_stop()
 {
+	if [ -f "$STATUSFILE" ]
+	then
+		echo "Checking for running jobs."
+		pre_stop_check
+	else
+		echo "No STATUSFILE found. Skipping pre-stop checks."
+	fi
+
 	# Return
 	#   0 if daemon has been stopped
 	#   1 if daemon was already stopped
 	#   2 if daemon could not be stopped
 	#   other if a failure occurred
-	start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile $PIDFILE --name $NAME
+	start-stop-daemon --stop --quiet --retry=TERM/5/KILL/5 --pidfile $PIDFILE --name $NAME
 	RETVAL="$?"
 	[ "$RETVAL" = 2 ] && return 2
 	# Wait for children to finish too if this is a daemon that forks
@@ -72,12 +81,33 @@ do_stop()
 	# that waits for the process to drop all resources that could be
 	# needed by services started subsequently.  A last resort is to
 	# sleep for some time.
-	start-stop-daemon --stop --quiet --oknodo --retry=0/30/KILL/5 --exec $DAEMON
+	start-stop-daemon --stop --quiet --oknodo --retry=0/5/KILL/5 --exec $DAEMON
 	[ "$?" = 2 ] && return 2
 	# Many daemons don't delete their pidfiles when they exit.
 	rm -f $PIDFILE
 	return "$RETVAL"
 }
+
+#
+# Does some checks before stopping to ensure no tasks are running.
+# This will force a loop until no tasks are running.
+#
+pre_stop_check()
+{
+	# We need to ensure we have no pending or working tasks.
+	bash $STATUSFILE | egrep "^(pending|working):\ [1-9]"
+
+	# if egrep finds something it means a task is working or pending. In this it will
+	# return a 0 exit code. If we get a 0 exit code, we need to prevent the service from stopping.
+	if [ $? -eq 0 ]
+	then
+		echo "Jobs are running. Unable to stop service."
+		echo "Sleeping for 10 seconds."
+		sleep 10
+		pre_stop_check
+	fi
+}
+
 
 case "$1" in
   start)

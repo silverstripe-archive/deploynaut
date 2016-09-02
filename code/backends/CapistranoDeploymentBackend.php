@@ -1,5 +1,4 @@
 <?php
-use \Symfony\Component\Process\Process;
 
 class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 
@@ -14,11 +13,45 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	}
 
 	/**
-	 * Deploy the given build to the given environment.
+	 * Create a deployment strategy.
+	 *
+	 * @param DNEnvironment $environment
+	 * @param array $options
+	 *
+	 * @return DeploymentStrategy
 	 */
-	public function deploy(DNEnvironment $environment, $sha, DeploynautLogFile $log, DNProject $project, $leaveMaintenancePage = false) {
+	public function planDeploy(DNEnvironment $environment, $options) {
+		$strategy = new DeploymentStrategy($environment, $options);
+
+		$currentBuild = $environment->CurrentBuild();
+		$currentSha = $currentBuild ? $currentBuild->SHA : '-';
+		if($currentSha !== $options['sha']) {
+			$strategy->setChange('Code version', $currentSha, $options['sha']);
+		}
+		$strategy->setActionTitle('Confirm deployment');
+		$strategy->setActionCode('fast');
+		$strategy->setEstimatedTime('2');
+
+		return $strategy;
+	}
+
+	/**
+	 * Deploy the given build to the given environment.
+	 *
+	 * @param DNEnvironment $environment
+	 * @param DeploynautLogFile $log
+	 * @param DNProject $project
+	 * @param array $options
+	 */
+	public function deploy(
+		DNEnvironment $environment,
+		DeploynautLogFile $log,
+		DNProject $project,
+		$options
+	) {
 		$name = $environment->getFullName();
-		$repository = $project->LocalCVSPath;
+		$repository = $project->getLocalCVSPath();
+		$sha = $options['sha'];
 
 		$args = array(
 			'branch' => $sha,
@@ -34,7 +67,15 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		// Use a package generator if specified, otherwise run a direct deploy, which is the default behaviour
 		// if build_filename isn't specified
 		if($this->packageGenerator) {
-			$args['build_filename'] = $this->packageGenerator->getPackageFilename($project->Name, $sha, $repository, $log);
+			$log->write(sprintf('Using package generator "%s"', get_class($this->packageGenerator)));
+
+			try {
+				$args['build_filename'] = $this->packageGenerator->getPackageFilename($project->Name, $sha, $repository, $log);
+			} catch (Exception $e) {
+				$log->write($e->getMessage());
+				throw $e;
+			}
+
 			if(empty($args['build_filename'])) {
 				throw new RuntimeException('Failed to generate package.');
 			}
@@ -60,26 +101,65 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		};
 
 		// Once the deployment has run it's necessary to update the maintenance page status
-		if($leaveMaintenancePage) {
-			$this->enableMaintenance($environment, $log, $project);
-		}
+		// as deploying removes .htaccess
+		$this->enableMaintenance($environment, $log, $project);
 
-		if(!$command->isSuccessful()) {
+		$rolledBack = null;
+		if(!$command->isSuccessful() || !$this->smokeTest($environment, $log)) {
 			$cleanupFn();
 			$this->extend('deployFailure', $environment, $sha, $log, $project);
-			throw new RuntimeException($command->getErrorOutput());
+
+			$currentBuild = $environment->CurrentBuild();
+			if (empty($currentBuild) || (!empty($options['no_rollback']) && $options['no_rollback'] !== 'false')) {
+				throw new RuntimeException($command->getErrorOutput());
+			}
+
+			// re-run deploy with the current build sha to rollback
+			$log->write('Deploy failed. Rolling back');
+			$rollbackArgs = array_merge($args, ['branch' => $currentBuild->SHA]);
+			$command = $this->getCommand('deploy', 'web', $environment, $rollbackArgs, $log);
+			$command->run(function($type, $buffer) use($log) {
+				$log->write($buffer);
+			});
+
+			// Once the deployment has run it's necessary to update the maintenance page status
+			// as deploying removes .htaccess
+			$this->enableMaintenance($environment, $log, $project);
+
+			if (!$command->isSuccessful() || !$this->smokeTest($environment, $log)) {
+				$this->extend('deployRollbackFailure', $environment, $currentBuild->SHA, $log, $project);
+				$log->write('Rollback failed');
+				throw new RuntimeException($command->getErrorOutput());
+			}
+
+			// By getting here, it means we have successfully rolled back without any errors
+			$rolledBack = true;
 		}
 
-		// Check if maintenance page should be removed
-		if(!$leaveMaintenancePage) {
-			$this->disableMaintenance($environment, $log, $project);
-		}
+		$this->disableMaintenance($environment, $log, $project);
 
 		$cleanupFn();
+
+		// Rolling back means the rollback succeeded, but ultimately the deployment
+		// has failed. Throw an exception so the job is marked as failed accordingly.
+		if ($rolledBack === true) {
+			throw new RuntimeException('Rollback successful');
+		}
 
 		$log->write(sprintf('Deploy of "%s" to "%s" finished', $sha, $name));
 
 		$this->extend('deployEnd', $environment, $sha, $log, $project);
+	}
+
+	/**
+	 * @param DNEnvironment $environment
+	 * @return array
+	 */
+	public function getDeployOptions(DNEnvironment $environment) {
+		return [
+			new PredeployBackupOption($environment->Usage === DNEnvironment::PRODUCTION),
+			new NoRollbackDeployOption()
+		];
 	}
 
 	/**
@@ -149,7 +229,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			$result = $archive->validateArchiveContents($dataTransfer->Mode);
 			if(!$result->valid()) {
 				// do some cleaning, get rid of the extracted archive lying around
-				$process = new Process(sprintf('rm -rf %s', escapeshellarg($workingDir)));
+				$process = new AbortableProcess(sprintf('rm -rf %s', escapeshellarg($workingDir)));
 				$process->setTimeout(120);
 				$process->run();
 
@@ -169,7 +249,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	 * @param string $action Capistrano action to be executed
 	 * @param string $roles Defining a server role is required to target only the required servers.
 	 * @param DNEnvironment $environment
-	 * @param array $args Additional arguments for process
+	 * @param array<string>|null $args Additional arguments for process
 	 * @param DeploynautLogFile $log
 	 * @return \Symfony\Component\Process\Process
 	 */
@@ -177,8 +257,10 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		$name = $environment->getFullName();
 		$env = $environment->Project()->getProcessEnv();
 
-		if(!$args) $args = array();
-		$args['history_path'] = realpath(DEPLOYNAUT_LOG_PATH.'/');
+		if(!$args) {
+			$args = array();
+		}
+		$args['history_path'] = realpath(DEPLOYNAUT_LOG_PATH . '/');
 		$args['environment_id'] = $environment->ID;
 
 		// Inject env string directly into the command.
@@ -193,7 +275,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 
 		$data = DNData::inst();
 		// Generate a capfile from a template
-		$capTemplate = file_get_contents(BASE_PATH.'/deploynaut/Capfile.template');
+		$capTemplate = file_get_contents(BASE_PATH . '/deploynaut/Capfile.template');
 		$cap = str_replace(
 			array('<config root>', '<ssh key>', '<base path>'),
 			array($data->getEnvironmentDir(), DEPLOYNAUT_SSH_KEY, BASE_PATH),
@@ -203,7 +285,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		if(defined('DEPLOYNAUT_CAPFILE')) {
 			$capFile = DEPLOYNAUT_CAPFILE;
 		} else {
-			$capFile = ASSETS_PATH.'/Capfile';
+			$capFile = ASSETS_PATH . '/Capfile';
 		}
 		file_put_contents($capFile, $cap);
 
@@ -214,9 +296,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 
 		$log->write(sprintf('Running command: %s', $command));
 
-		$process = new Process($command);
-		// Capistrano doesn't like it - see comment above.
-		//$process->setEnv($env);
+		$process = new AbortableProcess($command);
 		$process->setTimeout(3600);
 		return $process;
 	}
@@ -225,8 +305,8 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	 * Backs up database and/or assets to a designated folder,
 	 * and packs up the files into a single sspak.
 	 *
-	 * @param  DNDataTransfer    $dataTransfer
-	 * @param  DeploynautLogFile $log
+	 * @param DNDataTransfer    $dataTransfer
+	 * @param DeploynautLogFile $log
 	 */
 	protected function dataTransferBackup(DNDataTransfer $dataTransfer, DeploynautLogFile $log) {
 		$environment = $dataTransfer->Environment();
@@ -296,7 +376,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		// Remove any assets and db files lying around, they're not longer needed as they're now part
 		// of the sspak file we just generated. Use --force to avoid errors when files don't exist,
 		// e.g. when just an assets backup has been requested and no database.sql exists.
-		$process = new Process(sprintf('rm -rf %s/assets && rm -f %s', escapeshellarg($filepathBase), escapeshellarg($databasePath)));
+		$process = new AbortableProcess(sprintf('rm -rf %s/assets && rm -f %s', escapeshellarg($filepathBase), escapeshellarg($databasePath)));
 		$process->setTimeout(120);
 		$process->run();
 		if(!$process->isSuccessful()) {
@@ -310,6 +390,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	/**
 	 * Utility function for triggering the db rebuild and flush.
 	 * Also cleans up and generates new error pages.
+	 * @param DeploynautLogFile $log
 	 */
 	public function rebuild(DNEnvironment $environment, $log) {
 		$name = $environment->getFullName();
@@ -341,7 +422,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		$cleanupFn = function() use($self, $workingDir, $environment, $log) {
 			// Rebuild makes sense even if failed - maybe we can at least partly recover.
 			$self->rebuild($environment, $log);
-			$process = new Process(sprintf('rm -rf %s', escapeshellarg($workingDir)));
+			$process = new AbortableProcess(sprintf('rm -rf %s', escapeshellarg($workingDir)));
 			$process->setTimeout(120);
 			$process->run();
 		};
@@ -382,6 +463,99 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 
 		$log->write('Rebuilding and cleaning up');
 		$cleanupFn();
+	}
+
+	/**
+	 * This is mostly copy-pasted from Anthill/Smoketest.
+	 *
+	 * @param DNEnvironment $environment
+	 * @param DeploynautLogFile $log
+	 * @return bool
+	 */
+	protected function smokeTest(DNEnvironment $environment, DeploynautLogFile $log) {
+		$url = $environment->getBareURL();
+		$timeout = 600;
+		$tick = 60;
+
+		if(!$url) {
+			$log->write('Skipping site accessible check: no URL found.');
+			return true;
+		}
+
+		$start = time();
+		$infoTick = time() + $tick;
+
+		$log->write(sprintf(
+			'Waiting for "%s" to become accessible... (timeout: %smin)',
+			$url,
+			$timeout / 60
+		));
+
+		// configure curl so that curl_exec doesn't wait a long time for a response
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($ch, CURLOPT_MAXREDIRS, 10); // set a high number of max redirects (but not infinite amount) to avoid a potential infinite loop
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_USERAGENT, 'Rainforest');
+		$success = false;
+
+		// query the site every second. Note that if the URL doesn't respond,
+		// curl_exec will take 5 seconds to timeout (see CURLOPT_CONNECTTIMEOUT and CURLOPT_TIMEOUT above)
+		do {
+			if(time() > $start + $timeout) {
+				$log->write(sprintf(' * Failed: check for %s timed out after %smin', $url, $timeout / 60));
+				return false;
+			}
+
+			$response = curl_exec($ch);
+
+			// check the HTTP response code for HTTP protocols
+			$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			if($status && !in_array($status, [500, 501, 502, 503, 504])) {
+				$success = true;
+			}
+
+			// check for any curl errors, mostly for checking the response state of non-HTTP protocols,
+			// but applies to checks of any protocol
+			if($response && !curl_errno($ch)) {
+				$success = true;
+			}
+
+			// Produce an informational ticker roughly every $tick
+			if (time() > $infoTick) {
+				$message = [];
+
+				// Collect status information from different sources.
+				if ($status) {
+					$message[] = sprintf('HTTP status code is %s', $status);
+				}
+				if (!$response) {
+					$message[] = 'response is empty';
+				}
+				if ($error = curl_error($ch)) {
+					$message[] = sprintf('request error: %s', $error);
+				}
+
+				$log->write(sprintf(
+					' * Still waiting: %s...',
+					implode(', ', $message)
+				));
+
+				$infoTick = time() + $tick;
+			}
+
+			sleep(1);
+		} while(!$success);
+
+		curl_close($ch);
+		$log->write(' * Success: site is accessible!');
+		return true;
 	}
 
 }

@@ -2,32 +2,67 @@
 
 /**
  * Class representing a single deplyoment (passed or failed) at a time to a particular environment
+ *
+ * @property string $SHA
+ * @property string $ResqueToken
+ * @property string $State
+ *
+ * @method DNEnvironment Environment()
+ * @property int EnvironmentID
+ * @method Member Deployer()
+ * @property int DeployerID
  */
-class DNDeployment extends DataObject {
+class DNDeployment extends DataObject implements Finite\StatefulInterface, HasStateMachine {
+
+	const STATE_NEW = 'New';
+	const STATE_SUBMITTED = 'Submitted';
+	const STATE_INVALID = 'Invalid';
+	const STATE_QUEUED = 'Queued';
+	const STATE_DEPLOYING = 'Deploying';
+	const STATE_ABORTING = 'Aborting';
+	const STATE_COMPLETED = 'Completed';
+	const STATE_FAILED = 'Failed';
+
+	const TR_SUBMIT = 'submit';
+	const TR_INVALIDATE = 'invalidate';
+	const TR_QUEUE = 'queue';
+	const TR_DEPLOY = 'deploy';
+	const TR_ABORT = 'abort';
+	const TR_COMPLETE = 'complete';
+	const TR_FAIL = 'fail';
 
 	/**
-	 *
 	 * @var array
 	 */
 	private static $db = array(
-		"SHA" => "Varchar(255)",
+		"SHA" => "GitSHA",
 		"ResqueToken" => "Varchar(255)",
-		// Observe that this is not the same as Resque status, since ResqueStatus is not persistent
-		// It's used for finding successful deployments and displaying that in history views in the frontend
-		"Status" => "Enum('Queued, Started, Finished, Failed, n/a', 'n/a')",
-		"LeaveMaintenacePage" => "Boolean"
+		// The branch that was used to deploy this. Can't really be inferred from Git history because
+		// the commit could appear in lots of branches that are irrelevant to the user when it comes
+		// to deployment history, and the branch may have been deleted.
+		"Branch" => "Varchar(255)",
+		"State" => "Enum('New, Submitted, Invalid, Queued, Deploying, Aborting, Completed, Failed', 'New')",
+		// JSON serialised DeploymentStrategy.
+		"Strategy" => "Text",
+		"Summary" => "Text",
+		"DatePlanned" => "SS_Datetime"
 	);
 
 	/**
-	 *
 	 * @var array
 	 */
 	private static $has_one = array(
 		"Environment" => "DNEnvironment",
 		"Deployer" => "Member",
+		"Approver" => "Member",
+		"BackupDataTransfer" => "DNDataTransfer" // denotes an automated backup done for this deployment
 	);
 
 	private static $default_sort = '"LastEdited" DESC';
+
+	private static $dependencies = [
+		'stateMachineFactory' => '%$StateMachineFactory'
+	];
 
 	public function getTitle() {
 		return "#{$this->ID}: {$this->SHA} (Status: {$this->Status})";
@@ -36,26 +71,30 @@ class DNDeployment extends DataObject {
 	private static $summary_fields = array(
 		'LastEdited' => 'Last Edited',
 		'SHA' => 'SHA',
-		'Status' => 'Status',
+		'State' => 'State',
 		'Deployer.Name' => 'Deployer'
 	);
 
-	/**
-	 *
-	 * @param int $int
-	 * @return string
-	 */
-	public static function map_resque_status($int) {
-		$remap = array(
-			Resque_Job_Status::STATUS_WAITING => "Queued",
-			Resque_Job_Status::STATUS_RUNNING => "Running",
-			Resque_Job_Status::STATUS_FAILED => "Failed",
-			Resque_Job_Status::STATUS_COMPLETE => "Complete",
-			false => "Invalid",
-		);
-		return $remap[$int];
+	public function setResqueToken($token) {
+		$this->ResqueToken = $token;
 	}
 
+	public function getFiniteState() {
+		return $this->State;
+	}
+
+	public function setFiniteState($state) {
+		$this->State = $state;
+		$this->write();
+	}
+
+	public function getStatus() {
+		return $this->State;
+	}
+
+	public function getMachine() {
+		return $this->stateMachineFactory->forDNDeployment($this);
+	}
 
 	public function Link() {
 		return Controller::join_links($this->Environment()->Link(), 'deploy', $this->ID);
@@ -93,26 +132,174 @@ class DNDeployment extends DataObject {
 	}
 
 	/**
-	 * Returns the status of the resque job
+	 * This remains here for backwards compatibility - we don't want to expose Resque status in here.
+	 * Resque job (DeployJob) will change statuses as part of its execution.
 	 *
 	 * @return string
 	 */
 	public function ResqueStatus() {
-		$status = new Resque_Job_Status($this->ResqueToken);
-		$statusCode = $status->get();
-		// The Resque job can no longer be found, fallback to the DNDeployment.Status
-		if($statusCode === false) {
-			// Translate from the DNDeployment.Status to the Resque job status for UI purposes
-			switch($this->Status) {
-				case 'Finished':
-					return 'Complete';
-				case 'Started':
-					return 'Running';
-				default:
-					return $this->Status;
+		return $this->State;
+	}
+
+
+	/**
+	 * Fetch the git repository
+	 *
+	 * @return \Gitonomy\Git\Repository|null
+	 */
+	public function getRepository() {
+		if(!$this->SHA) {
+			return null;
+		}
+		return $this->Environment()->Project()->getRepository();
+	}
+
+
+	/**
+	 * Gets the commit from source. The result is cached upstream in Repository.
+	 *
+	 * @return \Gitonomy\Git\Commit|null
+	 */
+	public function getCommit() {
+		$repo = $this->getRepository();
+		if($repo) {
+			try {
+				return $repo->getCommit($this->SHA);
+			} catch(Gitonomy\Git\Exception\ReferenceNotFoundException $ex) {
+				return null;
 			}
 		}
-		return self::map_resque_status($statusCode);
+
+		return null;
+	}
+
+
+	/**
+	 * Gets the commit message.
+	 *
+	 * @return string|null
+	 */
+	public function getCommitMessage() {
+		$commit = $this->getCommit();
+		if($commit) {
+			try {
+				return Convert::raw2xml($commit->getMessage());
+			} catch(Gitonomy\Git\Exception\ReferenceNotFoundException $e) {
+				return null;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Return all tags for the deployed commit.
+	 *
+	 * @return ArrayList
+	 */
+	public function getTags() {
+		$returnTags = array();
+		$repo = $this->getRepository();
+		if($repo) {
+			$tags = $repo->getReferences()->resolveTags($this->SHA);
+			if(!empty($tags)) {
+				foreach($tags as $tag) {
+					$field = Varchar::create('Tag', '255');
+					$field->setValue($tag->getName());
+					$returnTags[] = $field;
+				}
+			}
+		}
+		return new ArrayList($returnTags);
+	}
+
+	/**
+	 * Collate the list of additional flags to affix to this deployment.
+	 * Elements of the array will be rendered literally.
+	 *
+	 * @return ArrayList
+	 */
+	public function getFullDeployMessages() {
+		$strategy = $this->getDeploymentStrategy();
+		if ($strategy->getActionCode()!=='full') return null;
+
+		$changes = $strategy->getChangesModificationNeeded();
+		$messages = [];
+		foreach ($changes as $change => $details) {
+			if ($change==='Code version') continue;
+
+			$messages[] = [
+				'Flag' => sprintf(
+					'<span class="label label-default full-deploy-info-item">%s</span>',
+					$change[0]
+				),
+				'Text' => sprintf('%s changed', $change)
+			];
+		}
+
+		if (empty($messages)) {
+			$messages[] = [
+				'Flag' => '',
+				'Text' => '<i>Environment changes have been made.</i>'
+			];
+		}
+
+		return new ArrayList($messages);
+	}
+
+	/**
+	 * Fetches the latest tag for the deployed commit
+	 *
+	 * @return \Varchar|null
+	 */
+	public function getTag() {
+		$tags = $this->getTags();
+		if($tags->count() > 0) {
+			return $tags->last();
+		}
+		return null;
+	}
+
+	/**
+	 * @return DeploymentStrategy
+	 */
+	public function getDeploymentStrategy() {
+		$environment = $this->Environment();
+		$strategy = new DeploymentStrategy($environment);
+		$strategy->fromJSON($this->Strategy);
+		return $strategy;
+	}
+
+	/**
+	 * Return a list of things that are going to be deployed, such
+	 * as the code version, and any infrastrucutral changes.
+	 *
+	 * @return ArrayList
+	 */
+	public function getChanges() {
+		$list = new ArrayList();
+		$strategy = $this->getDeploymentStrategy();
+		foreach($strategy->getChanges() as $name => $change) {
+			$changed = (isset($change['from']) && isset($change['to'])) ? $change['from'] != $change['to'] : null;
+			$description = isset($change['description']) ? $change['description'] : '';
+			$compareUrl = null;
+
+			// if there is a compare URL, and a description or a change (something actually changed)
+			// then show the URL. Otherwise don't show anything, as there is no comparison to be made.
+			if ($changed || $description) {
+				$compareUrl = isset($change['compareUrl']) ? $change['compareUrl'] : '';
+			}
+
+			$list->push(new ArrayData([
+				'Name' => $name,
+				'From' => isset($change['from']) ? $change['from'] : null,
+				'To' => isset($change['to']) ? $change['to'] : null,
+				'Description' => $description,
+				'Changed' => $changed,
+				'CompareUrl' => $compareUrl
+			]));
+		}
+
+		return $list;
 	}
 
 	/**
@@ -120,21 +307,26 @@ class DNDeployment extends DataObject {
 	 *
 	 * @return string Resque token
 	 */
-	protected function enqueueDeployment() {
+	public function enqueueDeployment() {
 		$environment = $this->Environment();
 		$project = $environment->Project();
 		$log = $this->log();
 
 		$args = array(
 			'environmentName' => $environment->Name,
-			'sha' => $this->SHA,
-			'repository' => $project->LocalCVSPath,
+			'repository' => $project->getLocalCVSPath(),
 			'logfile' => $this->logfile(),
 			'projectName' => $project->Name,
 			'env' => $project->getProcessEnv(),
 			'deploymentID' => $this->ID,
-			'leaveMaintenacePage' => $this->LeaveMaintenacePage
+			'sigFile' => $this->getSigFile(),
 		);
+
+		$strategy = $this->getDeploymentStrategy();
+		// Inject options.
+		$args = array_merge($args, $strategy->getOptions());
+		// Make sure we use the SHA as it was written into this DNDeployment.
+		$args['sha'] = $this->SHA;
 
 		if(!$this->DeployerID) {
 			$this->DeployerID = Member::currentUserID();
@@ -155,14 +347,27 @@ class DNDeployment extends DataObject {
 		return Resque::enqueue('deploy', 'DeployJob', $args, true);
 	}
 
-	public function start() {
-		$log = $this->log();
-		$token = $this->enqueueDeployment();
-		$this->ResqueToken = $token;
-		$this->Status = 'Queued';
-		$this->write();
+	public function getSigFile() {
+		$dir = DNData::inst()->getSignalDir();
+		if (!is_dir($dir)) {
+			`mkdir $dir`;
+		}
+		return sprintf(
+			'%s/deploynaut-signal-%s-%s',
+			DNData::inst()->getSignalDir(),
+			$this->ClassName,
+			$this->ID
+		);
+	}
 
-		$message = sprintf('Deploy queued as job %s', $token);
-		$log->write($message);
+	/**
+	 * Signal the worker to self-abort. If we had a reliable way of figuring out the right PID,
+	 * we could posix_kill directly, but Resque seems to not provide a way to find out the PID
+	 * from the job nor worker.
+	 */
+	public function setSignal($signal) {
+		$sigFile = $this->getSigFile();
+		// 2 is SIGINT - we can't use SIGINT constant in the Apache context, only available in workers.
+		file_put_contents($sigFile, $signal);
 	}
 }

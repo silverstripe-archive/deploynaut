@@ -3,15 +3,37 @@
 interface DeploymentBackend {
 
 	/**
-	 * Deploy the given build to the given environment
+	 * Creates a deployment strategy that can be used to do some pre-flight checks.
 	 *
 	 * @param DNEnvironment $environment
-	 * @param string $sha
+	 * @param array $options An unsanitised array of request parameters from $request->requestVars.
+	 *
+	 * @return DeploymentStrategy
+	 */
+	public function planDeploy(DNEnvironment $environment, $options);
+
+	/**
+	 * Deploy the given build to the given environment.
+	 *
+	 * @param DNEnvironment $environment
 	 * @param DeploynautLogFile $log
 	 * @param DNProject $project
-	 * @param type $leaveMaintenancePage
+	 * @param array $options
 	 */
-	public function deploy(DNEnvironment $environment, $sha, DeploynautLogFile $log, DNProject $project, $leaveMaintenancePage = false);
+	public function deploy(
+		DNEnvironment $environment,
+		DeploynautLogFile $log,
+		DNProject $project,
+		$options
+	);
+
+	/**
+	 * Return a list of {@link DeployOption} for use on this environment.
+	 *
+	 * @param DNEnvironment $environment
+	 * @return array
+	 */
+	public function getDeployOptions(DNEnvironment $environment);
 
 	/**
 	 * Transfer data from an environment to a local file, or from a local file
@@ -48,5 +70,4 @@ interface DeploymentBackend {
 	 * @param DNProject $project
 	 */
 	public function ping(DNEnvironment $environment, DeploynautLogFile $log, DNProject $project);
-
 }

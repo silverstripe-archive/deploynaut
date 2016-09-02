@@ -1,5 +1,4 @@
 <?php
-use \Symfony\Component\Process\Process;
 
 /**
  * Represents a file archive of database and/or assets extracted from
@@ -28,6 +27,24 @@ use \Symfony\Component\Process\Process;
  *
  * The "Mode" is what the "Author" said the file includes (either 'only assets', 'only
  * database', or both). This is used in the ArchiveList.ss template.
+ *
+ * @property Varchar $UploadToken
+ * @property Varchar $ArchiveFileHash
+ * @property Enum $Mode
+ * @property Boolean $IsBackup
+ * @property Boolean $IsManualUpload
+ *
+ * @method Member Author()
+ * @property int $AuthorID
+ * @method DNEnvironment OriginalEnvironment()
+ * @property int $OriginalEnvironmentID
+ * @method DNEnvironment Environment()
+ * @property int $EnvironmentID
+ * @method File ArchiveFile()
+ * @property int $ArchiveFileID
+ *
+ * @method ManyManyList DataTransfers()
+ *
  */
 class DNDataArchive extends DataObject {
 
@@ -96,7 +113,7 @@ class DNDataArchive extends DataObject {
 	 * Returns a unique token to correlate an offline item (posted DVD)
 	 * with a specific archive placeholder.
 	 *
-	 * @return String
+	 * @return string
 	 */
 	public static function generate_upload_token($chars = 8) {
 		$generator = new RandomGenerator();
@@ -206,7 +223,9 @@ class DNDataArchive extends DataObject {
 	 */
 	public function canRestore($member = null) {
 		$memberID = $member ? $member->ID : Member::currentUserID();
-		if(!$memberID) return false;
+		if(!$memberID) {
+			return false;
+		}
 
 		$key = $memberID . '-' . $this->EnvironmentID;
 		if(!isset(self::$_cache_can_restore[$key])) {
@@ -225,7 +244,9 @@ class DNDataArchive extends DataObject {
 	 */
 	public function canDownload($member = null) {
 		$memberID = $member ? $member->ID : Member::currentUserID();
-		if(!$memberID) return false;
+		if(!$memberID) {
+			return false;
+		}
 
 		$key = $memberID . '-' . $this->EnvironmentID;
 		if(!isset(self::$_cache_can_download[$key])) {
@@ -238,7 +259,7 @@ class DNDataArchive extends DataObject {
 	 * Whether a {@link Member} can delete this archive from staging area.
 	 *
 	 * @param Member|null $member The {@link Member} object to test against.
-	 * @return true if $member (or the currently logged in member if null) can delete this archive
+	 * @return boolean if $member (or the currently logged in member if null) can delete this archive
 	 */
 	public function canDelete($member = null) {
 		return $this->Environment()->canDeleteArchive($member);
@@ -253,19 +274,29 @@ class DNDataArchive extends DataObject {
 	 * @return boolean true if $member can upload archives linked to this environment, false if they can't.
 	 */
 	public function canMoveTo($targetEnv, $member = null) {
-		if ($this->Environment()->Project()->ID!=$targetEnv->Project()->ID) {
+		if($this->Environment()->Project()->ID != $targetEnv->Project()->ID) {
 			// We don't permit moving snapshots between projects at this stage.
 			return false;
 		}
 
-		if(!$member) $member = Member::currentUser();
-		if(!$member) return false; // Must be logged in to check permissions
+		if(!$member) {
+			$member = Member::currentUser();
+		}
+
+		// Must be logged in to check permissions
+		if(!$member) {
+			return false;
+		}
 
 		// Admin can always move.
-		if(Permission::checkMember($member, 'ADMIN')) return true;
+		if(Permission::checkMember($member, 'ADMIN')) {
+			return true;
+		}
 
 		// Checks if the user can actually access the archive.
-		if (!$this->canDownload($member)) return false;
+		if(!$this->canDownload($member)) {
+			return false;
+		}
 
 		// Hooks into ArchiveUploaders permission to prevent proliferation of permission checkboxes.
 		// Bypasses the quota check - we don't need to check for it as long as we move the snapshot within the project.
@@ -283,7 +314,7 @@ class DNDataArchive extends DataObject {
 		$archive = $this;
 		$envs = $this->Environment()->Project()->DNEnvironmentList()
 			->filterByCallback(function($item) use ($archive) {
-				return $archive->EnvironmentID!=$item->ID && $archive->canMoveTo($item);
+				return $archive->EnvironmentID != $item->ID && $archive->canMoveTo($item);
 			});
 
 		return $envs;
@@ -312,7 +343,7 @@ class DNDataArchive extends DataObject {
 	 * Does not create the path on the filesystem. Can be used to store files related to this transfer.
 	 *
 	 * @param DNDataTransfer
-	 * @return String Absolute file path
+	 * @return string Absolute file path
 	 */
 	public function generateFilepath(DNDataTransfer $dataTransfer) {
 		$data = DNData::inst();
@@ -377,14 +408,14 @@ class DNDataArchive extends DataObject {
 		}
 
 		$cleanupFn = function() use($workingDir) {
-			$process = new Process(sprintf('rm -rf %s', escapeshellarg($workingDir)));
+			$process = new AbortableProcess(sprintf('rm -rf %s', escapeshellarg($workingDir)));
 			$process->setTimeout(120);
 			$process->run();
 		};
 
 		// Extract *.sspak to a temporary location
 		$sspakFilename = $this->ArchiveFile()->FullPath;
-		$process = new Process(sprintf(
+		$process = new AbortableProcess(sprintf(
 			'tar -xf %s --directory %s',
 			escapeshellarg($sspakFilename),
 			escapeshellarg($workingDir)
@@ -398,7 +429,7 @@ class DNDataArchive extends DataObject {
 
 		// Extract database.sql.gz to <workingdir>/database.sql
 		if(file_exists($workingDir . DIRECTORY_SEPARATOR . 'database.sql.gz')) {
-			$process = new Process('gunzip database.sql.gz', $workingDir);
+			$process = new AbortableProcess('gunzip database.sql.gz', $workingDir);
 			$process->setTimeout(3600);
 			$process->run();
 			if(!$process->isSuccessful()) {
@@ -409,7 +440,7 @@ class DNDataArchive extends DataObject {
 
 		// Extract assets.tar.gz to <workingdir>/assets/
 		if(file_exists($workingDir . DIRECTORY_SEPARATOR . 'assets.tar.gz')) {
-			$process = new Process('tar xzf assets.tar.gz', $workingDir);
+			$process = new AbortableProcess('tar xzf assets.tar.gz', $workingDir);
 			$process->setTimeout(3600);
 			$process->run();
 			if(!$process->isSuccessful()) {
@@ -427,7 +458,7 @@ class DNDataArchive extends DataObject {
 	 * For example, if the user uploaded an sspak containing just the db, but declared in the form
 	 * that it contained db+assets, then the archive is not valid.
 	 *
-	 * @param string $mode "db", "assets", or "all". This is the content we're checking for. Default to the archive setting
+	 * @param string|null $mode "db", "assets", or "all". This is the content we're checking for. Default to the archive setting
 	 * @return ValidationResult
 	 */
 	public function validateArchiveContents($mode = null) {
@@ -441,7 +472,7 @@ class DNDataArchive extends DataObject {
 			return $result;
 		}
 
-		$process = new Process(sprintf('tar -tf %s', escapeshellarg($file)));
+		$process = new AbortableProcess(sprintf('tar -tf %s', escapeshellarg($file)));
 		$process->setTimeout(120);
 		$process->run();
 		if(!$process->isSuccessful()) {
@@ -487,7 +518,7 @@ class DNDataArchive extends DataObject {
 		);
 
 		foreach($fixCmds as $cmd) {
-			$process = new Process($cmd);
+			$process = new AbortableProcess($cmd);
 			$process->setTimeout(3600);
 			$process->run();
 			if(!$process->isSuccessful()) {
@@ -524,7 +555,7 @@ class DNDataArchive extends DataObject {
 			$commands[] = 'rm -f database.sql.gz assets.tar.gz';
 		}
 
-		$process = new Process(implode(' && ', $commands), $workingDir);
+		$process = new AbortableProcess(implode(' && ', $commands), $workingDir);
 		$process->setTimeout(3600);
 		$process->run();
 		if(!$process->isSuccessful()) {

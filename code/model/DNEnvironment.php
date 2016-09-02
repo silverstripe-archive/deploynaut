@@ -6,12 +6,17 @@
  * This dataobject represents a target environment that source code can be deployed to.
  * Permissions are controlled by environment, see the various many-many relationships.
  *
- * @property string $URL URL Of this environment
+ * @property string $Filename
  * @property string $Name
- * @property string $GraphiteServers
- * @property bool $DryRunEnabled
+ * @property string $URL
+ * @property string $BackendIdentifier
+ * @property bool $Usage
+ *
  * @method DNProject Project()
- * @method DataList Deployments()
+ * @property int $ProjectID
+ *
+ * @method HasManyList Deployments()
+ * @method HasManyList DataArchives()
  *
  * @method ManyManyList Viewers()
  * @method ManyManyList ViewerGroups()
@@ -27,10 +32,6 @@
  * @method ManyManyList ArchiveDownloaderGroups()
  * @method ManyManyList ArchiveDeleters()
  * @method ManyManyList ArchiveDeleterGroups()
- * @method ManyManyList PipelineApprovers()
- * @method ManyManyList PipelineApproverGroups()
- * @method ManyManyList PipelineCancellers()
- * @method ManyManyList PipelineCancellerGroups()
  */
 class DNEnvironment extends DataObject {
 
@@ -52,18 +53,23 @@ class DNEnvironment extends DataObject {
 	 * @var bool
 	 */
 	private static $allow_web_editing = false;
+
+	/**
+	 * @var array
+	 */
 	private static $casting = array(
 		'DeployHistory' => 'Text'
 	);
 
 	/**
 	 * Allowed backends. A map of Injector identifier to human-readable label.
+	 *
 	 * @config
+	 * @var array
 	 */
 	private static $allowed_backends = array();
 
 	/**
-	 *
 	 * @var array
 	 */
 	public static $db = array(
@@ -71,29 +77,26 @@ class DNEnvironment extends DataObject {
 		"Name" => "Varchar(255)",
 		"URL" => "Varchar(255)",
 		"BackendIdentifier" => "Varchar(255)", // Injector identifier of the DeploymentBackend
-		"DryRunEnabled" => "Boolean" // True if the dry run button should be enabled on the frontend
+		"Usage" => "Enum('Production, UAT, Test, Unspecified', 'Unspecified')"
 	);
 
 	/**
-	 *
 	 * @var array
 	 */
 	public static $has_one = array(
-		"Project" => "DNProject"
+		"Project" => "DNProject",
+		"CreateEnvironment" => "DNCreateEnvironment"
 	);
 
 	/**
-	 *
 	 * @var array
 	 */
 	public static $has_many = array(
 		"Deployments" => "DNDeployment",
 		"DataArchives" => "DNDataArchive",
-		"Pipelines" => "Pipeline" // Only one Pipeline can be 'Running' at any one time. @see self::CurrentPipeline().
 	);
 
 	/**
-	 *
 	 * @var array
 	 */
 	public static $many_many = array(
@@ -107,31 +110,25 @@ class DNEnvironment extends DataObject {
 		"CanBackupGroups"   => "Group",
 		"ArchiveUploaders"   => "Member", // Who can upload archive files linked to this environment
 		"ArchiveUploaderGroups" => "Group",
-		"ArchiveDownloaders" => "Member",  // Who can download archive files from this environment
+		"ArchiveDownloaders" => "Member", // Who can download archive files from this environment
 		"ArchiveDownloaderGroups" => "Group",
-		"ArchiveDeleters"    => "Member",  // Who can delete archive files from this environment,
+		"ArchiveDeleters"    => "Member", // Who can delete archive files from this environment,
 		"ArchiveDeleterGroups" => "Group",
-		"PipelineApprovers"  => "Member", // Who can approve / reject pipelines from this environment
-		"PipelineApproverGroups" => "Group",
-		"PipelineCancellers"   => "Member", // Who can abort pipelines
-		"PipelineCancellerGroups" => "Group"
 	);
 
 	/**
-	 *
 	 * @var array
 	 */
 	public static $summary_fields = array(
-		"Name"						=> "Environment Name",
-		"URL"						=> "URL",
-		"DeployersList"				=> "Can Deploy List",
-		"CanRestoreMembersList"		=> "Can Restore List",
-		"CanBackupMembersList"		=> "Can Backup List",
-		"ArchiveUploadersList"		=> "Can Upload List",
-		"ArchiveDownloadersList"	=> "Can Download List",
-		"ArchiveDeletersList"		=> "Can Delete List",
-		"PipelineApproversList"		=> "Can Approve List",
-		"PipelineCancellersList"	=> "Can Cancel List"
+		"Name" => "Environment Name",
+		"Usage" => "Usage",
+		"URL" => "URL",
+		"DeployersList" => "Can Deploy List",
+		"CanRestoreMembersList" => "Can Restore List",
+		"CanBackupMembersList" => "Can Backup List",
+		"ArchiveUploadersList" => "Can Upload List",
+		"ArchiveDownloadersList" => "Can Download List",
+		"ArchiveDeletersList"  => "Can Delete List",
 	);
 
 	private static $singular_name = 'Capistrano Environment';
@@ -139,7 +136,6 @@ class DNEnvironment extends DataObject {
 	private static $plural_name = 'Capistrano Environments';
 
 	/**
-	 *
 	 * @var array
 	 */
 	public static $searchable_fields = array(
@@ -147,10 +143,15 @@ class DNEnvironment extends DataObject {
 	);
 
 	/**
-	 *
 	 * @var string
 	 */
 	private static $default_sort = 'Name';
+
+	const UAT = 'UAT';
+
+	const PRODUCTION = 'Production';
+
+	const UNSPECIFIED = 'Unspecified';
 
 	/**
 	 * Used by the sync task
@@ -171,6 +172,7 @@ class DNEnvironment extends DataObject {
 
 	/**
 	 * Get the deployment backend used for this environment.
+	 *
 	 * Enforces compliance with the allowed_backends setting; if the DNEnvironment.BackendIdentifier value is
 	 * illegal then that value is ignored.
 	 *
@@ -180,22 +182,59 @@ class DNEnvironment extends DataObject {
 		$backends = array_keys($this->config()->get('allowed_backends', Config::FIRST_SET));
 		switch(sizeof($backends)) {
 		// Nothing allowed, use the default value "DeploymentBackend"
-		case 0:
-			$backend = "DeploymentBackend";
-			break;
+			case 0:
+				$backend = "DeploymentBackend";
+				break;
 
-		// Only 1 thing allowed, use that
-		case 1:
-			$backend = $backends[0];
-			break;
+			// Only 1 thing allowed, use that
+			case 1:
+				$backend = $backends[0];
+				break;
 
-		// Multiple choices, use our choice if it's legal, otherwise default to the first item on the list
-		default:
-			$backend = $this->BackendIdentifier;
-			if(!in_array($backend, $backends)) $backend = $backends[0];
+			// Multiple choices, use our choice if it's legal, otherwise default to the first item on the list
+			default:
+				$backend = $this->BackendIdentifier;
+				if(!in_array($backend, $backends)) {
+					$backend = $backends[0];
+				}
 		}
 
 		return Injector::inst()->get($backend);
+	}
+
+	/**
+	 * @param SS_HTTPRequest $request
+	 *
+	 * @return DeploymentStrategy
+	 */
+	public function getDeployStrategy(\SS_HTTPRequest $request) {
+		return $this->Backend()->planDeploy($this, $request->requestVars());
+	}
+
+	public function Menu() {
+		$list = new ArrayList();
+
+		$controller = Controller::curr();
+		$actionType = $controller->getField('CurrentActionType');
+
+		$list->push(new ArrayData(array(
+			'Link' => sprintf('naut/project/%s/environment/%s', $this->Project()->Name, $this->Name),
+			'Title' => 'Deployments',
+			'IsCurrent' => $this->isCurrent(),
+			'IsSection' => $this->isSection() && $actionType == DNRoot::ACTION_DEPLOY
+		)));
+
+		$this->extend('updateMenu', $list);
+
+		return $list;
+	}
+
+	/**
+	 * Return the current object from $this->Menu()
+	 * Good for making titles and things
+	 */
+	public function CurrentMenu() {
+		return $this->Menu()->filter('IsSection', true)->First();
 	}
 
 	/**
@@ -209,105 +248,44 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
-	 * @return boolean true if there is a pipeline for the current environment.
+	 * URL for the environment that can be used if no explicit URL is set.
 	 */
-	public function HasPipelineSupport() {
-		$config = $this->GenericPipelineConfig();
-		return $config instanceof ArrayData && isset($config->Steps);
-	}
-
-	/**
-	 * Returns a {@link Pipeline} object that is linked to this environment, but isn't saved into the database. This
-	 * shouldn't be saved into the database unless you plan on starting an actual pipeline.
-	 *
-	 * @return Pipeline
-	 */
-	public function GenericPipeline() {
-		$pipeline = Pipeline::create();
-		$pipeline->EnvironmentID = $this->ID;
-		return $pipeline;
-	}
-
-	/**
-	 * Returns the parsed config, based on a {@link Pipeline} being created for this {@link DNEnvironment}.
-	 *
-	 * @return ArrayData
-	 */
-	public function GenericPipelineConfig() {
-		$config = $this->loadPipelineConfig();
-		if($config) {
-			return self::array_to_viewabledata($config);
-		}
-	}
-
-	/**
-	 * Extract pipeline configuration data from the source yml file
-	 *
-	 * @return array
-	 */
-	public function loadPipelineConfig() {
-		require_once 'thirdparty/spyc/spyc.php';
-
-		$path = $this->getPipelineFilename();
-		if(file_exists($path)) {
-			return Spyc::YAMLLoad($path);
-		}
-	}
-
-	/**
-	 * Returns the {@link DNEnvironment} object relating to the pipeline config for this environment. The environment
-	 * YAML file (e.g. project1-uat.yml; see docs/en/pipelines.md) contains two variable called `DependsOnProject` and
-	 * `DependsOnEnvironment` - these are used together to find the {@link DNEnvironment} that this environment should
-	 * rely on.
-	 */
-	public function DependsOnEnvironment() {
-		if($this->HasPipelineSupport()) {
-			$pipeline = $this->GenericPipeline();
-			return $pipeline->getDependentEnvironment();
-		}
-
+	public function getDefaultURL() {
 		return null;
 	}
 
-	/**
-	 * @return bool true if there is a currently running Pipeline, and false if there isn't
-	 */
-	public function HasCurrentPipeline() {
-		return $this->CurrentPipeline() && $this->CurrentPipeline()->isInDB();
-	}
-
-	/**
-	 * This can be used to determine if there is a currently running pipeline (there can only be one running per
-	 * {@link DNEnvironment} at once), as well as getting the current pipeline to be shown in templates.
-	 *
-	 * @return Pipeline|null The currently running pipeline, or null if there isn't any.
-	 */
-	public function CurrentPipeline() {
-		return $this->Pipelines()->filter('Status', array('Running', 'Rollback'))->first();
-	}
-
-	/**
-	 * @return bool true if the current user can cancel a running pipeline
-	 */
-	public function CanCancelPipeline() {
-		// do we have a current pipeline
-		if ($this->HasCurrentPipeline()) {
-			return $this->CurrentPipeline()->canAbort();
+	public function getBareURL() {
+		$url = parse_url($this->URL);
+		if(isset($url['host'])) {
+			return strtolower($url['host']);
 		}
-		return false;
+	}
+
+	public function getBareDefaultURL() {
+		$url = parse_url($this->getDefaultURL());
+		if(isset($url['host'])) {
+			return strtolower($url['host']);
+		}
 	}
 
 	/**
 	 * Environments are only viewable by people that can view the environment.
 	 *
-	 * @param Member $member
+	 * @param Member|null $member
 	 * @return boolean
 	 */
 	public function canView($member = null) {
-		if(!$member) $member = Member::currentUser();
-		if(!$member) return false; // Must be logged in to check permissions
+		if(!$member) {
+			$member = Member::currentUser();
+		}
+		if(!$member) {
+			return false;
+		}
+		// Must be logged in to check permissions
 
-		if(Permission::checkMember($member, 'ADMIN')) return true;
+		if(Permission::checkMember($member, 'ADMIN')) {
+			return true;
+		}
 
 		// if no Viewers or ViewerGroups defined, fallback to DNProject::canView permissions
 		if($this->Viewers()->exists() || $this->ViewerGroups()->exists()) {
@@ -321,17 +299,35 @@ class DNEnvironment extends DataObject {
 	/**
 	 * Allow deploy only to some people.
 	 *
-	 * @param Member $member
+	 * @param Member|null $member
 	 * @return boolean
 	 */
 	public function canDeploy($member = null) {
-		if(!$member) $member = Member::currentUser();
-		if(!$member) return false; // Must be logged in to check permissions
+		if(!$member) {
+			$member = Member::currentUser();
+		}
+		if(!$member) {
+			return false;
+		}
+		// Must be logged in to check permissions
 
-		if(Permission::checkMember($member, 'ADMIN')) return true;
+		if ($this->Usage === self::PRODUCTION || $this->Usage === self::UNSPECIFIED) {
+			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_DEPLOYMENT, $member)) return true;
+		} else {
+			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_DEPLOYMENT, $member)) return true;
+		}
 
 		return $this->Deployers()->byID($member->ID)
 			|| $member->inGroups($this->DeployerGroups());
+	}
+
+	/**
+	 * Provide reason why the user cannot deploy.
+	 *
+	 * @return string
+	 */
+	public function getCannotDeployMessage() {
+		return 'You cannot deploy to this environment.';
 	}
 
 	/**
@@ -342,10 +338,19 @@ class DNEnvironment extends DataObject {
 	 * @return boolean true if $member can restore, and false if they can't.
 	 */
 	public function canRestore($member = null) {
-		if(!$member) $member = Member::currentUser();
-		if(!$member) return false; // Must be logged in to check permissions
+		if(!$member) {
+			$member = Member::currentUser();
+		}
+		if(!$member) {
+			return false;
+		}
+		// Must be logged in to check permissions
 
-		if(Permission::checkMember($member, 'ADMIN')) return true;
+		if ($this->Usage === self::PRODUCTION || $this->Usage === self::UNSPECIFIED) {
+			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) return true;
+		} else {
+			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) return true;
+		}
 
 		return $this->CanRestoreMembers()->byID($member->ID)
 			|| $member->inGroups($this->CanRestoreGroups());
@@ -360,12 +365,23 @@ class DNEnvironment extends DataObject {
 	 */
 	public function canBackup($member = null) {
 		$project = $this->Project();
-		if($project->HasDiskQuota() && $project->HasExceededDiskQuota()) return false;
+		if($project->HasDiskQuota() && $project->HasExceededDiskQuota()) {
+			return false;
+		}
 
-		if(!$member) $member = Member::currentUser();
-		if(!$member) return false; // Must be logged in to check permissions
+		if(!$member) {
+			$member = Member::currentUser();
+		}
+		// Must be logged in to check permissions
+		if(!$member) {
+			return false;
+		}
 
-		if(Permission::checkMember($member, 'ADMIN')) return true;
+		if ($this->Usage === self::PRODUCTION || $this->Usage === self::UNSPECIFIED) {
+			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) return true;
+		} else {
+			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) return true;
+		}
 
 		return $this->CanBackupMembers()->byID($member->ID)
 			|| $member->inGroups($this->CanBackupGroups());
@@ -384,12 +400,23 @@ class DNEnvironment extends DataObject {
 	 */
 	public function canUploadArchive($member = null) {
 		$project = $this->Project();
-		if($project->HasDiskQuota() && $project->HasExceededDiskQuota()) return false;
+		if($project->HasDiskQuota() && $project->HasExceededDiskQuota()) {
+			return false;
+		}
 
-		if(!$member) $member = Member::currentUser();
-		if(!$member) return false; // Must be logged in to check permissions
+		if(!$member) {
+			$member = Member::currentUser();
+		}
+		if(!$member) {
+			return false;
+		}
+		// Must be logged in to check permissions
 
-		if(Permission::checkMember($member, 'ADMIN')) return true;
+		if ($this->Usage === self::PRODUCTION || $this->Usage === self::UNSPECIFIED) {
+			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) return true;
+		} else {
+			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) return true;
+		}
 
 		return $this->ArchiveUploaders()->byID($member->ID)
 			|| $member->inGroups($this->ArchiveUploaderGroups());
@@ -403,43 +430,22 @@ class DNEnvironment extends DataObject {
 	 * @return boolean true if $member can download archives from this environment, false if they can't.
 	 */
 	public function canDownloadArchive($member = null) {
-		if(!$member) $member = Member::currentUser();
-		if(!$member) return false; // Must be logged in to check permissions
+		if(!$member) {
+			$member = Member::currentUser();
+		}
+		if(!$member) {
+			return false;
+		}
+		// Must be logged in to check permissions
 
-		if(Permission::checkMember($member, 'ADMIN')) return true;
+		if ($this->Usage === self::PRODUCTION || $this->Usage === self::UNSPECIFIED) {
+			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) return true;
+		} else {
+			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) return true;
+		}
+
 		return $this->ArchiveDownloaders()->byID($member->ID)
 			|| $member->inGroups($this->ArchiveDownloaderGroups());
-	}
-
-	/**
-	 * Determine if the specified user can abort any pipelines
-	 *
-	 * @param type $member
-	 * @return boolean
-	 */
-	public function canAbort($member = null) {
-		if(!$member) $member = Member::currentUser();
-		if(!$member) return false;
-
-		if(Permission::checkMember($member, 'ADMIN')) return true;
-
-		return $this->PipelineCancellers()->byID($member->ID)
-			|| $member->inGroups($this->PipelineCancellerGroups());
-	}
-
-	/**
-	 * Determine if the specified user can approve any pipelines
-	 *
-	 * @param type $member
-	 * @return boolean
-	 */
-	public function canApprove($member = null) {
-		if(!$member) $member = Member::currentUser();
-		if(!$member) return false;
-
-		if(Permission::checkMember($member, 'ADMIN')) return true;
-		return $this->PipelineApprovers()->byID($member->ID)
-			|| $member->inGroups($this->PipelineApproverGroups());
 	}
 
 	/**
@@ -450,10 +456,19 @@ class DNEnvironment extends DataObject {
 	 * @return boolean true if $member can delete archives from this environment, false if they can't.
 	 */
 	public function canDeleteArchive($member = null) {
-		if(!$member) $member = Member::currentUser();
-		if(!$member) return false; // Must be logged in to check permissions
+		if(!$member) {
+			$member = Member::currentUser();
+		}
+		if(!$member) {
+			return false;
+		}
+		// Must be logged in to check permissions
 
-		if(Permission::checkMember($member, 'ADMIN')) return true;
+		if ($this->Usage === self::PRODUCTION || $this->Usage === self::UNSPECIFIED) {
+			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) return true;
+		} else {
+			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) return true;
+		}
 
 		return $this->ArchiveDeleters()->byID($member->ID)
 			|| $member->inGroups($this->ArchiveDeleterGroups());
@@ -505,7 +520,8 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
-	 * Get a string of groups/people that are allowed to upload {@link DNDataArchive} objects linked to this environment.
+	 * Get a string of groups/people that are allowed to upload {@link DNDataArchive}
+	 *  objects linked to this environment.
 	 *
 	 * @return string
 	 */
@@ -550,37 +566,6 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
-	 * Get a string of groups/people that are allowed to approve pipelines
-	 *
-	 * @return string
-	 */
-	public function getPipelineApproversList() {
-		return implode(
-			", ",
-			array_merge(
-				$this->PipelineApproverGroups()->column("Title"),
-				$this->PipelineApprovers()->column("FirstName")
-			)
-		);
-	}
-
-	/**
-	 * Get a string of groups/people that are allowed to cancel pipelines
-	 *
-	 * @return string
-	 */
-	public function getPipelineCancellersList() {
-		return implode(
-			", ",
-			array_merge(
-				$this->PipelineCancellerGroups()->column("Title"),
-				$this->PipelineCancellers()->column("FirstName")
-			)
-		);
-	}
-
-	/**
-	 *
 	 * @return DNData
 	 */
 	public function DNData() {
@@ -590,31 +575,40 @@ class DNEnvironment extends DataObject {
 	/**
 	 * Get the current deployed build for this environment
 	 *
-	 * Dear people of the future: If you are looking to optimize this, simply create a CurrentBuildSHA(), which can be a lot faster.
-	 * I presume you came here because of the Project display template, which only needs a SHA.
+	 * Dear people of the future: If you are looking to optimize this, simply create a CurrentBuildSHA(), which can be
+	 * a lot faster. I presume you came here because of the Project display template, which only needs a SHA.
 	 *
-	 * @return string
+	 * @return false|DNDeployment
 	 */
 	public function CurrentBuild() {
 		// The DeployHistory function is far too slow to use for this
-		$deploy = DNDeployment::get()->filter(array('EnvironmentID' => $this->ID, 'Status' => 'Finished'))->sort('LastEdited DESC')->first();
 
-		if (!$deploy || (!$deploy->SHA)) {
+		/** @var DNDeployment $deploy */
+		$deploy = DNDeployment::get()->filter(array(
+			'EnvironmentID' => $this->ID,
+			'State' => 'Completed'
+		))->sort('LastEdited DESC')->first();
+
+		if(!$deploy || (!$deploy->SHA)) {
 			return false;
 		}
 
 		$repo = $this->Project()->getRepository();
-		if (!$repo) {
+		if(!$repo) {
 			return $deploy;
 		}
 
 		try {
 			$commit = $repo->getCommit($deploy->SHA);
-			if ($commit) {
+			if($commit) {
 				$deploy->Message = Convert::raw2xml($commit->getMessage());
+				$deploy->Committer = Convert::raw2xml($commit->getCommitterName());
+				$deploy->CommitDate = $commit->getCommitterDate()->Format('d/m/Y g:ia');
+				$deploy->Author = Convert::raw2xml($commit->getAuthorName());
+				$deploy->AuthorDate = $commit->getAuthorDate()->Format('d/m/Y g:ia');
 			}
 			// We can't find this SHA, so we ignore adding a commit message to the deployment
-		} catch (Exception $ex) { }
+		} catch(Exception $ex) { }
 
 		return $deploy;
 	}
@@ -625,64 +619,63 @@ class DNEnvironment extends DataObject {
 	 * @return ArrayList
 	 */
 	public function DeployHistory() {
-		$history = $this
-			->Deployments()
+		return $this->Deployments()
+			->where('SHA IS NOT NULL')
 			->sort('LastEdited DESC');
-		$repo = $this->Project()->getRepository();
-		if(!$repo) {
-			return $history;
-		}
-
-		$ammendedHistory = new ArrayList();
-		foreach($history as $deploy) {
-			if(!$deploy->SHA) {
-				continue;
-			}
-			try {
-				$commit = $repo->getCommit($deploy->SHA);
-				if($commit) {
-					$deploy->Message = Convert::raw2xml($commit->getMessage());
-				}
-				// We can't find this SHA, so we ignore adding a commit message to the deployment
-			} catch (Exception $ex) { }
-			$ammendedHistory->push($deploy);
-		}
-
-		return $ammendedHistory;
 	}
 
 	/**
-	 *
 	 * @param string $sha
 	 * @return array
 	 */
 	protected function getCommitData($sha) {
 		try {
-			$commit = new \Gitonomy\Git\Commit($this->Project()->getRepository(), $sha);
-			return array(
-				'AuthorName' => (string)Convert::raw2xml($commit->getAuthorName()),
-				'AuthorEmail' => (string)Convert::raw2xml($commit->getAuthorEmail()),
-				'Message' => (string)Convert::raw2xml($commit->getMessage()),
-				'ShortHash' => Convert::raw2xml($commit->getFixedShortHash(8)),
-				'Hash' => Convert::raw2xml($commit->getHash())
-			);
+			$repo = $this->Project()->getRepository();
+			if($repo !== false) {
+				$commit = new \Gitonomy\Git\Commit($repo, $sha);
+				return [
+					'AuthorName' => (string)Convert::raw2xml($commit->getAuthorName()),
+					'AuthorEmail' => (string)Convert::raw2xml($commit->getAuthorEmail()),
+					'Message' => (string)Convert::raw2xml($commit->getMessage()),
+					'ShortHash' => Convert::raw2xml($commit->getFixedShortHash(8)),
+					'Hash' => Convert::raw2xml($commit->getHash())
+				];
+			}
 		} catch(\Gitonomy\Git\Exception\ReferenceNotFoundException $exc) {
-			return array(
-				'AuthorName' => '(unknown)',
-				'AuthorEmail' => '(unknown)',
-				'Message' => '(unknown)',
-				'ShortHash' => $sha,
-				'Hash' => '(unknown)',
-			);
+			SS_Log::log($exc, SS_Log::WARN);
 		}
+		return array(
+			'AuthorName' => '(unknown)',
+			'AuthorEmail' => '(unknown)',
+			'Message' => '(unknown)',
+			'ShortHash' => $sha,
+			'Hash' => '(unknown)',
+		);
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function Link() {
-		return $this->Project()->Link()."/environment/" . $this->Name;
+		return $this->Project()->Link() . "/environment/" . $this->Name;
+	}
+
+	/**
+	 * Is this environment currently at the root level of the controller that handles it?
+	 * @return bool
+	 */
+	public function isCurrent() {
+		return $this->isSection() && Controller::curr()->getAction() == 'environment';
+	}
+
+	/**
+	 * Is this environment currently in a controller that is handling it or performing a sub-task?
+	 * @return bool
+	 */
+	public function isSection() {
+		$controller = Controller::curr();
+		$environment = $controller->getField('CurrentEnvironment');
+		return $environment && $environment->ID == $this->ID;
 	}
 
 
@@ -712,7 +705,6 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return FieldList
 	 */
 	public function getCMSFields() {
@@ -744,6 +736,9 @@ class DNEnvironment extends DataObject {
 			// The Main.Name
 			TextField::create('Name', 'Environment name')
 				->setDescription('A descriptive name for this environment, e.g. staging, uat, production'),
+
+
+			$this->obj('Usage')->scaffoldFormField('Environment usage'),
 
 			// The Main.URL field
 			TextField::create('URL', 'Server URL')
@@ -822,19 +817,8 @@ to other environments, alongside the "Who can restore" permission.<br>
 Should include all users with upload permissions, otherwise they can't download
 their own uploads.
 PHP
-				),
+				)
 
-			// The Main.PipelineApprovers
-			$this
-				->buildPermissionField('PipelineApproverGroups', 'PipelineApprovers', $groups, $members)
-				->setTitle('Who can approve pipelines?')
-				->setDescription('Users who can approve waiting deployment pipelines.'),
-
-			// The Main.PipelineCancellers
-			$this
-				->buildPermissionField('PipelineCancellerGroups', 'PipelineCancellers', $groups, $members)
-				->setTitle('Who can cancel pipelines?')
-				->setDescription('Users who can cancel in-progess deployment pipelines.')
 		));
 
 		// The Main.DeployConfig
@@ -851,20 +835,6 @@ PHP
 		$dataArchive = GridField::create('DataArchives', 'Data Archives', $this->DataArchives(), $dataArchiveConfig);
 		$fields->addFieldToTab('Root.DataArchive', $dataArchive);
 
-		// Pipeline templates
-		$this->setPipelineConfigurationFields($fields);
-
-		// Pipelines
-		if($this->Pipelines()->Count()) {
-			$pipelinesConfig = GridFieldConfig_RecordEditor::create();
-			$pipelinesConfig->removeComponentsByType('GridFieldAddNewButton');
-			if(class_exists('GridFieldBulkManager')) {
-				$pipelinesConfig->addComponent(new GridFieldBulkManager());
-			}
-			$pipelines = GridField::create('Pipelines', 'Pipelines', $this->Pipelines(), $pipelinesConfig);
-			$fields->addFieldToTab('Root.Pipelines', $pipelines);
-		}
-
 		// Deployments
 		$deploymentsConfig = GridFieldConfig_RecordEditor::create();
 		$deploymentsConfig->removeComponentsByType('GridFieldAddNewButton');
@@ -874,20 +844,13 @@ PHP
 		$deployments = GridField::create('Deployments', 'Deployments', $this->Deployments(), $deploymentsConfig);
 		$fields->addFieldToTab('Root.Deployments', $deployments);
 
-		// The Extra.GraphiteServers
-		$fields->addFieldToTab('Root.GraphiteSettings',
-			TextareaField::create('GraphiteServers')
-				->setDescription(
-					'Enter your graphite servers one by line, e.g. "server.wgtn.test"'
-				)
-		);
-
 		Requirements::javascript('deploynaut/javascript/environment.js');
 
 		// Add actions
 		$action = new FormAction('check', 'Check Connection');
 		$action->setUseButtonTag(true);
-		$action->setAttribute('data-url', Director::absoluteBaseURL().'naut/api/'.$this->Project()->Name.'/'.$this->Name.'/ping');
+		$dataURL = Director::absoluteBaseURL() . 'naut/api/' . $this->Project()->Name . '/' . $this->Name . '/ping';
+		$action->setAttribute('data-url', $dataURL);
 		$fields->insertBefore($action, 'Name');
 
 		// Allow extensions
@@ -896,7 +859,6 @@ PHP
 	}
 
 	/**
-	 *
 	 * @param FieldList $fields
 	 */
 	protected function setDeployConfigurationFields(&$fields) {
@@ -911,7 +873,8 @@ PHP
 			return;
 		}
 
-		$noDeployConfig = new LabelField('noDeployConfig', 'Warning: This environment doesn\'t have deployment configuration.');
+		$warning = 'Warning: This environment doesn\'t have deployment configuration.';
+		$noDeployConfig = new LabelField('noDeployConfig', $warning);
 		$noDeployConfig->addExtraClass('message warning');
 		$fields->insertAfter($noDeployConfig, 'Filename');
 		$createConfigField = new CheckboxField('CreateEnvConfig', 'Create Config');
@@ -919,44 +882,33 @@ PHP
 		$fields->insertAfter($createConfigField, 'noDeployConfig');
 	}
 
-	protected function setPipelineConfigurationFields($fields) {
-		if(!$this->config()->get('allow_web_editing')) {
-			return;
-		}
-		$config = $this->pipelineFileExists()
-			? file_get_contents($this->getPipelineFilename())
-			: '';
-		$deployConfig = new TextareaField('PipelineConfig', 'Pipeline config', $config);
-		$deployConfig->setRows(40);
-		if(!$this->pipelineFileExists()) {
-			$deployConfig->setDescription(
-				"No pipeline is configured for this environment. Saving content here will generate a new template."
-			);
-		}
-		$fields->addFieldsToTab('Root.PipelineSettings', array(
-			FieldGroup::create(
-				CheckboxField::create('DryRunEnabled', 'Enable dry-run?')
-			)
-				->setTitle('Pipeline Options')
-				->setDescription(
-					"Allows admins to run simulated pipelines without triggering deployments or notifications."
-				),
-			$deployConfig
-		));
-	}
-
 	/**
-	 *
 	 */
 	public function onBeforeWrite() {
 		parent::onBeforeWrite();
-		if($this->Name && $this->Name.'.rb' != $this->Filename) {
-			$this->Filename = $this->Name.'.rb';
+		if($this->Name && $this->Name . '.rb' != $this->Filename) {
+			$this->Filename = $this->Name . '.rb';
 		}
 		$this->checkEnvironmentPath();
 		$this->writeConfigFile();
-		$this->writePipelineFile();
 	}
+
+	public function onAfterWrite() {
+		parent::onAfterWrite();
+
+		if($this->Usage === self::PRODUCTION || $this->Usage === self::UAT) {
+			$conflicting = DNEnvironment::get()
+				->filter('ProjectID', $this->ProjectID)
+				->filter('Usage', $this->Usage)
+				->exclude('ID', $this->ID);
+
+			foreach($conflicting as $otherEnvironment) {
+				$otherEnvironment->Usage = self::UNSPECIFIED;
+				$otherEnvironment->write();
+			}
+		}
+	}
+
 
 	/**
 	 * Ensure that environment paths are setup on the local filesystem
@@ -973,32 +925,19 @@ PHP
 	 * Write the deployment config file to filesystem
 	 */
 	protected function writeConfigFile() {
-		if(!$this->config()->get('allow_web_editing')) return;
+		if(!$this->config()->get('allow_web_editing')) {
+			return;
+		}
 
 		// Create a basic new environment config from a template
-		if( !$this->envFileExists()
+		if(!$this->envFileExists()
 			&& $this->Filename
 			&& $this->CreateEnvConfig
 		) {
-			$templateFile = $this->config()->template_file ?: BASE_PATH.'/deploynaut/environment.template';
+			$templateFile = $this->config()->template_file ?: BASE_PATH . '/deploynaut/environment.template';
 			file_put_contents($this->getConfigFilename(), file_get_contents($templateFile));
 		} else if($this->envFileExists() && $this->DeployConfig) {
 			file_put_contents($this->getConfigFilename(), $this->DeployConfig);
-		}
-	}
-
-	/**
-	 * Write the pipeline config file to filesystem
-	 */
-	protected function writePipelineFile() {
-		if(!$this->config()->get('allow_web_editing')) return;
-		$path = $this->getPipelineFilename();
-		if($this->PipelineConfig) {
-			// Update file
-			file_put_contents($path, $this->PipelineConfig);
-		} elseif($this->isChanged('PipelineConfig') && file_exists($path)) {
-			// Remove file if deleted
-			unlink($path);
 		}
 	}
 
@@ -1011,10 +950,14 @@ PHP
 		if($this->config()->get('allow_web_editing') && $this->envFileExists()) {
 			unlink($this->getConfigFilename());
 		}
+
+		$create = $this->CreateEnvironment();
+		if($create && $create->exists()) {
+			$create->delete();
+		}
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	protected function getEnvironmentConfig() {
@@ -1025,7 +968,6 @@ PHP
 	}
 
 	/**
-	 *
 	 * @return boolean
 	 */
 	protected function envFileExists() {
@@ -1047,33 +989,7 @@ PHP
 		if(!$this->Filename) {
 			return '';
 		}
-		return $this->DNData()->getEnvironmentDir().'/'.$this->Project()->Name.'/'.$this->Filename;
-	}
-
-	/**
-	 * Returns the path to the {@link Pipeline} configuration for this environment.
-	 * Uses the same path and filename as the capistrano config, but with .yml extension.
-	 *
-	 * @return string
-	 */
-	public function getPipelineFilename() {
-		$name = $this->getConfigFilename();
-		if(!$name) return null;
-		$path = pathinfo($name);
-		if($path) return $path['dirname'] . '/' . $path['filename'] . '.yml';
-	}
-
-	/**
-	 * Does this environment have a pipeline config file
-	 *
-	 * @return boolean
-	 */
-	protected function pipelineFileExists() {
-		$filename = $this->getPipelineFilename();
-		if(empty($filename)) {
-			return false;
-		}
-		return file_exists($filename);
+		return $this->DNData()->getEnvironmentDir() . '/' . $this->Project()->Name . '/' . $this->Filename;
 	}
 
 	/**
@@ -1086,7 +1002,9 @@ PHP
 	 */
 	public static function array_to_viewabledata($array) {
 		// Don't transform non-arrays
-		if(!is_array($array)) return $array;
+		if(!is_array($array)) {
+			return $array;
+		}
 
 		// Figure out whether this is indexed or associative
 		$keys = array_keys($array);
@@ -1108,62 +1026,31 @@ PHP
 		}
 	}
 
-
-
-	/**
-	 * Helper function to retrieve filtered commits from an environment
-	 * this environment depends on
-	 *
-	 * @return DataList
-	 */
-	public function getDependentFilteredCommits() {
-		// check if this environment depends on another environemnt
-		$dependsOnEnv = $this->DependsOnEnvironment();
-		if(empty($dependsOnEnv)) return null;
-
-		// Check if there is a filter
-		$config = $this->GenericPipelineConfig();
-		$filter = isset($config->PipelineConfig->FilteredCommits)
-			? $config->PipelineConfig->FilteredCommits
-			: null;
-		if (empty($filter)) return null;
-
-		// Create and execute filter
-		if (!class_exists($filter)) throw new Exception(sprintf("Class %s does not exist", $filter));
-		$commitClass = $filter::create();
-		// setup the environment to check for commits
-		$commitClass->env = $dependsOnEnv;
-		return $commitClass->getCommits();
-	}
-
-	/**
-	 * Enable the maintenance page
-	 *
-	 * @param DeploynautLogFile $log
-	 */
-	public function enableMaintenace($log) {
-		$this->Backend()
-			->enableMaintenance($this, $log, $this->Project());
-	}
-
-	/**
-	 * Disable maintenance page
-	 *
-	 * @param DeploynautLogFile $log
-	 */
-	public function disableMaintenance($log) {
-		$this->Backend()
-			->disableMaintenance($this, $log, $this->Project());
-	}
-
 	protected function validate() {
 		$result = parent::validate();
+		$backend = $this->Backend();
 
-		if(strcasecmp('test', $this->Name) === 0) {
+		if(strcasecmp('test', $this->Name) === 0 && get_class($backend) == 'CapistranoDeploymentBackend') {
 			$result->error('"test" is not a valid environment name when using Capistrano backend.');
 		}
 
 		return $result;
 	}
 
+	/**
+	 * Fetchs all deployments in progress. Limits to 1 hour to prevent deployments
+	 * if an old deployment is stuck.
+	 *
+	 * @return DataList
+	 */
+	public function runningDeployments() {
+		return DNDeployment::get()
+			->filter([
+				'EnvironmentID' => $this->ID,
+				'State' => ['Queued', 'Deploying', 'Aborting'],
+				'Created:GreaterThan' => strtotime('-1 hour')
+			]);
+	}
+
 }
+

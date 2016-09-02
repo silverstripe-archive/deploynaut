@@ -4,18 +4,18 @@
  * Component test for SimplePackageGenerator
  * Writes to temporary locations in the filesystem
  */
-class SimplePackageGeneratorTest extends SapphireTest {
+class SimplePackageGeneratorTest extends DeploynautTest {
 
 	protected $tempPath = null;
 
-	function setUp() {
+	public function setUp() {
 		// We muck with the filesystem, create one folder that contains all the stuff we create,
 		// and delete it entirely on tearDown()
 		$this->tempPath = TEMP_FOLDER . '/SimplePackageGeneratorTest-' . rand(1000000,9999999);
 		mkdir($this->tempPath);
 
 	}
-	function tearDown() {
+	public function tearDown() {
 		if($this->tempPath) Filesystem::removeFolder($this->tempPath);
 	}
 
@@ -23,7 +23,7 @@ class SimplePackageGeneratorTest extends SapphireTest {
 	 * Test that generatePackage produces a .tar.gz containing the git repo.
 	 * Test that the build script is executed.
 	 */
-	function testGeneratePackage() {
+	public function testGeneratePackage() {
 		// Build some precursor state for the test
 		$gitPath = $this->tempPath .'/git-repo';
 		$packagePath = $this->tempPath .'/test.tar.gz';
@@ -31,8 +31,7 @@ class SimplePackageGeneratorTest extends SapphireTest {
 		$this->assertNotEmpty($sha);
 
 		// TO DO: DeploynautLogFile should be replaced with a generic interface (maybe PSR-3)
-		// and a generic memory-log or mock-log placed in here.
-		$log = new PipelineTest_MockLog(null);
+		$log = new DeploynautTest_MockLog(null);
 
 		// Create the generator and execute the script
 		$gen = new SimplePackageGenerator;

@@ -7,4 +7,6 @@ Director:
   rules:
     '': '->naut'
     'naut/api//$Project/$Environment/$OtherID': 'DeploynautAPI'
+    'naut/project/$Project/environment/$Environment/plan': 'DeployPlanDispatcher'
     'naut': 'DNRoot'
+    'v1/project/$Project/environment/$Environment/deployment': 'DNDeploymentDispatcher'

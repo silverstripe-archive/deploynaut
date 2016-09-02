@@ -1,11 +1,17 @@
 <?php
 /**
  * This class will queue a ping job and also proxy to the log file of that output
+ *
+ * @property string $ResqueToken
+ *
+ * @method DNEnvironment Environment()
+ * @property int EnvironmentID
+ * @method Member Deployer()
+ * @property int DeployerID
  */
 class DNPing extends DataObject {
 
 	/**
-	 *
 	 * @var array
 	 */
 	private static $db = array(
@@ -13,7 +19,6 @@ class DNPing extends DataObject {
 	);
 
 	/**
-	 *
 	 * @var array
 	 */
 	private static $has_one = array(
@@ -22,7 +27,6 @@ class DNPing extends DataObject {
 	);
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function Link() {
@@ -30,7 +34,6 @@ class DNPing extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function LogLink() {
@@ -38,8 +41,7 @@ class DNPing extends DataObject {
 	}
 
 	/**
-	 *
-	 * @param Member $member
+	 * @param Member|null $member
 	 * @return bool
 	 */
 	public function canView($member = null) {
@@ -59,7 +61,6 @@ class DNPing extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return \DeploynautLogFile
 	 */
 	public function log() {
@@ -67,7 +68,6 @@ class DNPing extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function LogContent() {
@@ -75,7 +75,6 @@ class DNPing extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function ResqueStatus() {
@@ -94,7 +93,6 @@ class DNPing extends DataObject {
 
 	/**
 	 * Queue a ping job
-	 *
 	 */
 	public function start() {
 		$environment = $this->Environment();
@@ -105,7 +103,8 @@ class DNPing extends DataObject {
 			'environmentName' => $environment->Name,
 			'logfile' => $this->logfile(),
 			'projectName' => $project->Name,
-			'env' => $project->getProcessEnv()
+			'env' => $project->getProcessEnv(),
+			'pingID' => $this->ID
 		);
 
 		if(!$this->DeployerID) {

@@ -5,24 +5,24 @@
 	"license": "BSD-3-Clause",
 	"keywords": ["silverstripe", "capistrano", "deploy"],
 	"require": {
-		"php": ">=5.3.2",
+		"php": ">=5.4.0",
 		"silverstripe/framework": "~3.1",
-		"stojg/silverstripe-resque": "1.1.*",
+		"stojg/silverstripe-resque": "~1.2",
 		"gitonomy/gitlib": "dev-master",
 		"undefinedoffset/sortablegridfield": "*",
 		"silverstripe/secureassets": "dev-master",
-		"silverstripe-australia/gridfieldextensions": "dev-master"
+		"silverstripe-australia/gridfieldextensions": "dev-master",
+		"league/event": "^2.1",
+		"yohang/finite": "~1.1"
 	},
 	"require-dev": {
-		"phpunit/PHPUnit": "~3.7@stable"
+		"phpunit/PHPUnit": "~4.8@stable",
+		"mockery/mockery": "^0.9"
 	},
 	"extra": {
 		"branch-alias": {
-			"dev-master": "1.1.x-dev"
+			"dev-master": "2.x-dev"
 		}
-	},
-	"suggest": {
-		"silverstripe/deploynaut-graphite": "Graphite intergration"
 	},
 	"minimum-stability": "dev"
 }

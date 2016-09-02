@@ -1,0 +1,36 @@
+Member:
+  viewer:
+    Email: viewer@example.com
+Permission:
+  foo:
+    Code: FOO_PERMISSION
+  second_foo:
+    Code: FOO_PERMISSION
+PermissionRoleCode:
+  bar:
+    Code: BAR_PERMISSION
+PermissionRole:
+  bar:
+    Title: Bar
+    Codes: =>PermissionRoleCode.bar
+Group:
+  firstWithCodeFoo:
+    Title: firstWithCodeFoo
+    Members: =>Member.viewer
+    Permissions: =>Permission.foo
+  secondWithRoleBar:
+    Title: secondWithRoleBar
+    Members: =>Member.viewer
+    Roles: =>PermissionRole.bar
+  thirdWithCodeFoo:
+    Title: thirdWithCodeFoo
+    Permissions: =>Permission.second_foo
+DNProject:
+  firstProject:
+    Name: firstProject
+    Viewers: =>Group.firstWithCodeFoo, =>Group.secondWithRoleBar
+  secondProject:
+    Name: secondProject
+    Viewers: =>Group.thirdWithCodeFoo
+  otherproject:
+      Name: otherproject

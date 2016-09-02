@@ -2,17 +2,48 @@
 class DNCommit extends ViewableData {
 
 	/**
-	 *
 	 * @var Gitonomy\Git\Commit
 	 */
 	protected $commit = null;
 
 	protected $name = null;
 
+
 	protected $references = null;
 
+	/**
+	 * @var string
+	 */
 	protected $ownerBranchName = null;
 
+	/**
+	 * @var string
+	 */
+	protected $buildname;
+
+	/**
+	 * @var DNProject
+	 */
+	protected $project;
+
+	/**
+	 * @var DNData
+	 */
+	protected $data;
+
+	/**
+	 * @var string
+	 */
+	protected $subjectMessage;
+
+	/**
+	 * @var string
+	 */
+	protected $bodyMessage;
+
+	/**
+	 * @var array
+	 */
 	private static $casting = array(
 		'Name' => 'Text',
 		'SubjectMessage' => 'Text',
@@ -25,10 +56,10 @@ class DNCommit extends ViewableData {
 	);
 
 	/**
-	 *
 	 * @param Gitonomy\Git\Commit $commit
 	 * @param DNProject $project
 	 * @param DNData $data
+	 * @param string|null $ownerBranchName
 	 */
 	public function __construct(Gitonomy\Git\Commit $commit, DNProject $project, DNData $data, $ownerBranchName = null) {
 		$this->commit = $commit;
@@ -48,6 +79,14 @@ class DNCommit extends ViewableData {
 		}
 
 		return htmlentities($this->name);
+	}
+
+	/**
+	 * Return the full SHA of the commit.
+	 * @return string
+	 */
+	public function SHA() {
+		return htmlentities($this->commit->getHash());
 	}
 
 	/**
@@ -71,11 +110,10 @@ class DNCommit extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @return ArrayList
 	 */
 	public function References() {
-		if($this->references !== null ) {
+		if($this->references !== null) {
 			return $this->references;
 		}
 		$this->references = new ArrayList();
@@ -94,7 +132,6 @@ class DNCommit extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function FullName() {
@@ -102,7 +139,6 @@ class DNCommit extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function Filename() {
@@ -110,7 +146,6 @@ class DNCommit extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @return ArrayList
 	 */
 	public function CurrentlyDeployedTo() {
@@ -118,7 +153,7 @@ class DNCommit extends ViewableData {
 		$envList = new ArrayList();
 		foreach($environments as $environment) {
 			$deployments = DNDeployment::get()
-				->filter('Status', 'Finished')
+				->filter('State', 'Completed')
 				->filter('EnvironmentID', $environment->ID)
 				->sort('LastEdited DESC');
 			if(!$deployments->count()) {
@@ -133,7 +168,6 @@ class DNCommit extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @param string $environmentName
 	 * @return boolean True if this release has ever been deployed to the given environment
 	 */
@@ -146,7 +180,7 @@ class DNCommit extends ViewableData {
 		$environment = $environments->first();
 
 		$deployments = DNDeployment::get()
-				->filter('Status', 'Finished')
+				->filter('State', 'Completed')
 				->filter('EnvironmentID', $environment->ID);
 
 		if($deployments->count()) {
@@ -157,7 +191,6 @@ class DNCommit extends ViewableData {
 	}
 
 	/**
-	 *
 	 * @return SS_Datetime
 	 */
 	public function Created() {

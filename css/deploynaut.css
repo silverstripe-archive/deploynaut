@@ -1,6 +1,5 @@
 .navbar .navbar-inner .nav > li.active > a {
 	color: #2c5b87;
-	text-shadow: 0 1px 0 #e5e5e5;
 }
 .navbar .divider-vertical {
 	border-right: 1px solid #999;
@@ -210,7 +209,7 @@
 	}
 	.project-branch.open > h3 .closed-icon {
 		display: none;
-	}	
+	}
 	.project-branch > h3 .open-icon {
 		display: none;
 	}
@@ -266,7 +265,7 @@ ul li pre {
 	border-bottom: 1px solid #eee;
 	padding: 8px 0;
 }
-#Form_DeployForm select, #Form_DeployForm input[type=text] {
+#DeployForm_DeployForm select, #DeployForm_DeployForm input[type=text] {
 	width: 450px;
 }
 
@@ -317,7 +316,7 @@ form.fields-wide .field label.left {
 	margin-top: 60px;
 }
 
-#Form_DeployForm .SelectionGroup {
+#DeployForm_DeployForm .SelectionGroup {
 	overflow: hidden;
 }
 #DeployForm_DeployForm .field.checkbox {
@@ -381,52 +380,4 @@ form.fields-wide .field label.left {
 
 .options .option button {
 	min-width: 140px;
-}
-
-/** progress bar **/
-#deployprogress {
-	background-color: #fcfcfc;
-	border-radius: 3px;
-	margin-left: 0;
-	margin-bottom: 20px;
-	clear: both;
-}
-#deployprogress-actions {
-	margin-top: 10px;
-}
-#deployprogress .progress {
-	height: 26px;
-}
-.deployprogress-step {
-	height: 80px;
-	padding-top: 20px;
-	text-align: center;
-
-	color: #666;
-	font-size: 1.1em;
-	opacity: 0.75;
-}
-.deployprogress-step p {
-	line-height: 1.1;
-}
-.deployprogress-step:nth-child(4n+1) {
-	margin-left: 0;
-}
-.deployprogress-step .progress {
-	width: 80%;
-	margin: 0 auto;
-}
-.deployprogress-step .progress .bar {
-	width: 100%;
-}
-.deployprogress-step-active {
-	color: #3a87ad;
-	background-color: #d9edf7;
-	border-color: #bce8f1;
-	border-radius: 3px;
-	font-weight: bold;
-	opacity: 1.0;
-}
-.running-description {
-	clear: both;
 }

@@ -132,18 +132,38 @@ namespace :data do
 
 	# Transfer files via rsync from source to target by means of an SSH connection.
 	def rsync_transfer(server, source, target)
-		ssh_command = %w[/usr/bin/ssh]
-		ssh_command << fetch(:rsync_ssh_options)
-		ssh_command << "-p" << fetch(:ssh_options)[:port].to_s
-
+		ssh_command = %w[]
 		if server.options[:ssh_options]
 			username = server.options[:ssh_options][:username]
 		else
 			username = fetch(:ssh_options)[:username]
 		end
 
+		if exists?(:gateway)
+			puts "Using gateway to SSH into target instance"
+			# gateway is configured like this: "set :gateway, 'deploy@mygatewayserver.com:222'"
+			# so we need to split the 222 off the end if set, and pass that as the -p argument so
+			# SSH will accept it.
+			server = fetch(:gateway).split(':')
+			ssh_command << "/usr/bin/ssh"
+			ssh_command << server[0]
+			if server[1]
+				ssh_command << "-p" << server[1]
+			end
+			ssh_command << "-l" << username
+			ssh_command << "-i" << fetch(:ssh_options)[:keys]
+			ssh_command << "-A"
+		end
+
+		ssh_command << "/usr/bin/ssh"
+		ssh_command << fetch(:rsync_ssh_options)
+
+		if fetch(:ssh_options).key?(:port)
+			ssh_command << "-p" << fetch(:ssh_options)[:port].to_s
+		end
+
 		ssh_command << "-l" << username
-		ssh_command << '-i' << fetch(:ssh_options)[:keys]
+		ssh_command << "-i" << fetch(:ssh_options)[:keys]
 		if fetch(:ssh_options)[:forward_agent] === true
 			ssh_command << "-A"
 		end
@@ -173,7 +193,7 @@ namespace :data do
 	#
 	# To accomplish our goals, the system must be set up such that:
 	# - webserver user is in the default group used by the ssh user.
-	# - root asset directory is owned by the ssh user and group.
+	# - root asset directory is writable by the ssh user (so that it can be deleted)
 	# - parent directory for the asset root is writable by the ssh user (so that the asset dir can be deleted)
 	# - no files in assets are owned by users other than ssh or webserver user.
 	#
@@ -184,7 +204,9 @@ namespace :data do
 			# Make sure asset directory exists.
 			run "if [ ! -e #{shared_path}/assets ]; then mkdir #{shared_path}/assets; fi", params
 			# Webserver-owned files, just fix permissions.
-			run "sudo -u #{webserver_user} find #{shared_path}/assets -type d -user #{webserver_user} -exec chmod 2755 {} \\;", params
+			run "sudo -u #{webserver_user} find #{shared_path} -maxdepth 1 -type d -user #{webserver_user} -exec chmod 0775 {} \\;", params
+			run "sudo -u #{webserver_user} find #{shared_path}/assets -maxdepth 1 -type d -user #{webserver_user} -exec chmod 0775 {} \\;", params
+			run "sudo -u #{webserver_user} find #{shared_path}/assets -mindepth 1 -type d -user #{webserver_user} -exec chmod 2755 {} \\;", params
 			run "sudo -u #{webserver_user} find #{shared_path}/assets -type f -user #{webserver_user} -exec chmod 0644 {} +", params
 			# Ssh-user owned files, must be writable by the webserver user.
 			# We cannot give files to webserver_user without being root, so we set the group write permission instead.

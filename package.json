@@ -1,0 +1,49 @@
+{
+  "name": "deploynaut",
+  "version": "1.0.0",
+  "description": "[![Build Status](https://secure.travis-ci.org/silverstripe/deploynaut.png)](https://travis-ci.org/silverstripe/deploynaut)",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "build": "echo run 'gulp sass' instead",
+    "watch": "echo run 'gulp watch' instead",
+    "jsx": "echo run 'gulp jsx' instead",
+    "jsx-watch": "echo run 'gulp watch' instead"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/silverstripe/deploynaut.git"
+  },
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/silverstripe/deploynaut/issues"
+  },
+  "homepage": "https://github.com/silverstripe/deploynaut#readme",
+  "dependencies": {
+    "babel": "5.8.23",
+    "babel-polyfill": "^6.13.0",
+    "bootstrap-sass": "^3.3.5",
+    "browserify": "^11.1.0",
+    "font-awesome": "https://registry.npmjs.org/font-awesome/-/font-awesome-4.4.0.tgz",
+    "gulp": "^3.9.0",
+    "gulp-sass": "2.0.4",
+    "gulp-uglify": "^1.4.1",
+    "gulp-util": "^3.0.6",
+    "isomorphic-fetch": "^2.2.1",
+    "node-sass": "^3.3.2",
+    "react": "https://registry.npmjs.org/react/-/react-15.3.0.tgz",
+    "react-dom": "https://registry.npmjs.org/react-dom/-/react-dom-15.3.0.tgz",
+    "react-redux": "https://registry.npmjs.org/react-redux/-/react-redux-4.4.5.tgz",
+    "redux": "^3.5.2",
+    "redux-logger": "^2.6.1",
+    "redux-thunk": "^2.1.0",
+    "underscore": "^1.8.3",
+    "underscore.string": "^3.3.4",
+    "validator": "^4.2.1",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
+  }
+}

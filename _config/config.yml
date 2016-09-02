@@ -1,6 +1,27 @@
 ---
 Name: deploynautconfig
 ---
+AdminRootController:
+  default_panel: 'DNAdmin'
 DNProject:
   defaults:
     DiskQuotaMB: "1024"
+Group:
+  belongs_many_many:
+    "Projects": "DNProject"
+GridFieldDetailForm_ItemRequest:
+  extensions:
+    - FrontendLink
+Injector:
+  Finite\StateMachine\StateMachine:
+    class: Finite\StateMachine\StateMachine
+    type: prototype
+StateMachineFactory:
+  handlers:
+    DNDeployment:
+      submit:
+        DNDeploymentHandlers: onSubmit
+      queue:
+        DNDeploymentHandlers: onQueue
+      abort:
+        DNDeploymentHandlers: onAbort

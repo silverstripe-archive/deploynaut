@@ -3,7 +3,9 @@
  *
  */
 class DNEnvironmentTest extends DeploynautTest {
-
+	/**
+	 * @var string
+	 */
 	protected static $fixture_file = 'DNEnvironmentTest.yml';
 
 	/**
@@ -18,7 +20,7 @@ class DNEnvironmentTest extends DeploynautTest {
 	 */
 	public function testGetConfigFilename() {
 		$environment = $this->getEnvironment();
-		$expected = $this->envPath.'/testproject/uat.rb';
+		$expected = $this->envPath . '/testproject/uat.rb';
 		$this->assertEquals($expected, $environment->getConfigFilename());
 	}
 
@@ -81,22 +83,27 @@ class DNEnvironmentTest extends DeploynautTest {
 		$this->assertFalse($environment->canDeleteArchive($downloaderbygroup));
 		$this->assertTrue($environment->canDeleteArchive($deleter));
 		$this->assertTrue($environment->canDeleteArchive($deleterbygroup));
+	}
 
-		// Pipeline permissions
-		$approver = $this->objFromFixture('Member', 'approver');
-		$approverbygroup = $this->objFromFixture('Member', 'approverbygroup');
-		$canceller = $this->objFromFixture('Member', 'canceller');
-		$cancellerbygroup = $this->objFromFixture('Member', 'cancellerbygroup');
+	private function checkSnapshots($assert, $env, $member) {
+		$this->$assert($env->canRestore($member));
+		$this->$assert($env->canBackup($member));
+		$this->$assert($env->canDownloadArchive($member));
+		$this->$assert($env->canDeleteArchive($member));
+	}
 
-		$this->assertTrue($environment->canApprove($approver));
-		$this->assertTrue($environment->canApprove($approverbygroup));
-		$this->assertFalse($environment->canApprove($canceller));
-		$this->assertFalse($environment->canApprove($cancellerbygroup));
+	public function testAllows() {
+		$prod = $this->objFromFixture('DNEnvironment', 'allowtest-prod');
+		$uat = $this->objFromFixture('DNEnvironment', 'allowtest-uat');
+		$this->assertTrue($prod->canDeploy($this->objFromFixture('Member', 'allowProdDeployment')));
+		$this->assertFalse($prod->canDeploy($this->objFromFixture('Member', 'allowNonProdDeployment')));
+		$this->assertFalse($uat->canDeploy($this->objFromFixture('Member', 'allowProdDeployment')));
+		$this->assertTrue($uat->canDeploy($this->objFromFixture('Member', 'allowNonProdDeployment')));
 
-		$this->assertFalse($environment->canAbort($approver));
-		$this->assertFalse($environment->canAbort($approverbygroup));
-		$this->assertTrue($environment->canAbort($canceller));
-		$this->assertTrue($environment->canAbort($cancellerbygroup));
+		$this->checkSnapshots('assertTrue', $prod, $this->objFromFixture('Member', 'allowProdSnapshot'));
+		$this->checkSnapshots('assertFalse', $prod, $this->objFromFixture('Member', 'allowNonProdSnapshot'));
+		$this->checkSnapshots('assertFalse', $uat, $this->objFromFixture('Member', 'allowProdSnapshot'));
+		$this->checkSnapshots('assertTrue', $uat, $this->objFromFixture('Member', 'allowNonProdSnapshot'));
 	}
 
 	public function testViewerPermissionInheritedFromProjectIfNotConfigured() {
@@ -131,7 +138,14 @@ class DNEnvironmentTest extends DeploynautTest {
 
 		$fields = $environment->getCMSFields();
 		$this->assertNull($fields->dataFieldByName('BackendIdentifier'));
-
 	}
+}
+
+class BackendOne extends DemoDeploymentBackend implements TestOnly {
 
 }
+
+class BackendTwo extends DemoDeploymentBackend implements TestOnly  {
+
+}
+

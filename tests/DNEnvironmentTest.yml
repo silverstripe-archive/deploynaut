@@ -35,6 +35,23 @@ Member:
     Email: canceller@example.com
   cancellerbygroup:
     Email: canceller2@example.com
+  allowProdDeployment:
+    Email: allowProdDeployment
+  allowNonProdDeployment:
+    Email: allowNonProdDeployment
+  allowProdSnapshot:
+    Email: allowProdSnapshot
+  allowNonProdSnapshot:
+    Email: allowNonProdSnapshot
+Permission:
+  allowProdDeployment:
+    Code: ALLOW_PROD_DEPLOYMENT
+  allowNonProdDeployment:
+    Code: ALLOW_NON_PROD_DEPLOYMENT
+  allowProdSnapshot:
+    Code: ALLOW_PROD_SNAPSHOT
+  allowNonProdSnapshot:
+    Code: ALLOW_NON_PROD_SNAPSHOT
 Group:
   viewer:
     Title: Viewers
@@ -63,10 +80,27 @@ Group:
   canceller:
     Title: cancellers
     Members: =>Member.cancellerbygroup
+
+  allowProdDeployment:
+    Members: =>Member.allowProdDeployment
+    Permissions: =>Permission.allowProdDeployment
+  allowNonProdDeployment:
+    Members: =>Member.allowNonProdDeployment
+    Permissions: =>Permission.allowNonProdDeployment
+  allowProdSnapshot:
+    Members: =>Member.allowProdSnapshot
+    Permissions: =>Permission.allowProdSnapshot
+  allowNonProdSnapshot:
+    Members: =>Member.allowNonProdSnapshot
+    Permissions: =>Permission.allowNonProdSnapshot
+
 DNProject:
   testproject:
     Name: 'testproject'
     Viewers: =>Group.viewer
+  allowtest:
+    Viewers: =>Group.allowProdDeployment, =>Group.allowNonProdDeployment, =>Group.allowProdSnapshot, =>Group.allowNonProdSnapshot
+
 DNEnvironment:
   uat:
     Name: uat
@@ -85,10 +119,12 @@ DNEnvironment:
     ArchiveDownloaderGroups: =>Group.downloader
     ArchiveDeleters: =>Member.deleter
     ArchiveDeleterGroups: =>Group.deleter
-    PipelineApprovers: =>Member.approver
-    PipelineApproverGroups: =>Group.approver
-    PipelineCancellers: =>Member.canceller
-    PipelineCancellerGroups: =>Group.canceller
   dev:
     Name: dev
     Project: =>DNProject.testproject
+  allowtest-prod:
+    Project: =>DNProject.allowtest
+    Usage: Production
+  allowtest-uat:
+    Project: =>DNProject.allowtest
+    Usage: UAT

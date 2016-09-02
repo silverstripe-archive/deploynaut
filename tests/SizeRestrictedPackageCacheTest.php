@@ -4,13 +4,13 @@
  * Component test for SizeRestrictedPackageCache
  * Writes to temporary locations in the filesystem
  */
-class SizeRestrictedPackageCacheTest extends SapphireTest {
+class SizeRestrictedPackageCacheTest extends DeploynautTest {
 
 	protected $tempPath = null;
 
 	protected $cache, $gen, $log;
 
-	function setUp() {
+	public function setUp() {
 		// We muck with the filesystem, create one folder that contains all the stuff we create,
 		// and delete it entirely on tearDown()
 		$this->tempPath = TEMP_FOLDER . '/PackageCacheTest-' . rand(1000000,9999999);
@@ -23,15 +23,15 @@ class SizeRestrictedPackageCacheTest extends SapphireTest {
 
 		$this->gen = new PackageCacheTest_MockGenerator;
 		// To do: refactor so as not to be pipelinetest-specific (see also SimplePackageGeneratorTest)
-		$this->log = new PipelineTest_MockLog(null);
+		$this->log = new DeploynautTest_MockLog(null);
 
 	}
-	function tearDown() {
+
+	public function tearDown() {
 		if($this->tempPath) Filesystem::removeFolder($this->tempPath);
 	}
 
-
-	function testSizeRestriction() {
+	public function testSizeRestriction() {
 		// This testing relies on the fact that MockGenerator won't use the gitDir
 
 		// 2 in each project doesn't rupture the cache, all files will exist
@@ -59,7 +59,7 @@ class SizeRestrictedPackageCacheTest extends SapphireTest {
 	/**
 	 * Check that a subsequent re-fetch will mark the file as newer and so not garbage collect it
 	 */
-	function testSizeRestrictionIsLastAccessed() {
+	public function testSizeRestrictionIsLastAccessed() {
 		// 2 in each project doesn't rupture the cache, all files will exist
 		$files = array();
 		$files['project1.a'] = $this->cache->getPackageFilename($this->gen, 'project1', 'a', null, $this->log);
@@ -78,7 +78,7 @@ class SizeRestrictedPackageCacheTest extends SapphireTest {
 	/**
 	 * Check that caching is actually happening
 	 */
-	function testCacheDoesntRegenerateUnnecessarily() {
+	public function testCacheDoesntRegenerateUnnecessarily() {
 		$this->cache->getPackageFilename($this->gen, 'project1', 'a', null, $this->log);
 		$this->assertTrue($this->gen->popWasCalled());
 		$this->cache->getPackageFilename($this->gen, 'project2', 'a', null, $this->log);

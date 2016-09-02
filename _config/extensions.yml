@@ -4,3 +4,9 @@ Name: deploynautextensions
 File:
   extensions:
     - DeploynautFileExtension
+Security:
+  extensions:
+    - DeploynautSecurityExtension
+Member:
+  extensions:
+    - ProjectMemberExtension

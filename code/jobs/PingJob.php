@@ -7,13 +7,11 @@
 class PingJob {
 
 	/**
-	 *
 	 * @var array
 	 */
 	public $args;
 
 	/**
-	 *
 	 * @global array $databaseConfig
 	 */
 	public function setUp() {
@@ -23,7 +21,6 @@ class PingJob {
 	}
 
 	/**
-	 *
 	 * @return DNData
 	 */
 	public function DNData() {
@@ -36,8 +33,10 @@ class PingJob {
 	public function perform() {
 		echo "[-] PingJob starting" . PHP_EOL;
 		$log = new DeploynautLogFile($this->args['logfile']);
-		$DNProject = $this->DNData()->DNProjectList()->filter('Name', $this->args['projectName'])->First();
-		$DNEnvironment = $DNProject->Environments()->filter('Name', $this->args['environmentName'])->First();
-		$DNEnvironment->Backend()->ping($DNEnvironment, $log, $DNProject);
+
+		$ping = DNPing::get()->byID($this->args['pingID']);
+		$environment = $ping->Environment();
+		$project = $environment->Project();
+		$environment->Backend()->ping($environment, $log, $project);
 	}
 }

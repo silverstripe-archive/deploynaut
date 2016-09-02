@@ -16,7 +16,20 @@
  *
  * The "Environment" points to the source or target involved.
  *
+ * @property string $ResqueToken
+ * @property string $Status
+ * @property string $Direction
+ * @property string $Mode
+ * @property string $Origin
+ *
+ * @method DNEnvironment Environment()
+ * @property int EnvironmentID
+ * @method Member Author()
+ * @property int AuthorID
  * @method DNDataArchive DataArchive()
+ * @property int DataArchiveID
+ * @method DNDataTransfer BackupDataTransfer()
+ * @property int BackupDataTransferID
  */
 class DNDataTransfer extends DataObject {
 
@@ -76,6 +89,24 @@ class DNDataTransfer extends DataObject {
 	 */
 	protected $backupBeforePush = true;
 
+	/**
+	 * @param int $int
+	 * @return string
+	 */
+	public static function map_resque_status($int) {
+		$remap = array(
+			Resque_Job_Status::STATUS_WAITING => "Queued",
+			Resque_Job_Status::STATUS_RUNNING => "Running",
+			Resque_Job_Status::STATUS_FAILED => "Failed",
+			Resque_Job_Status::STATUS_COMPLETE => "Complete",
+			false => "Invalid",
+		);
+		return $remap[$int];
+	}
+
+	/**
+	 * @param boolean $value
+	 */
 	public function setBackupBeforePush($value) {
 		$this->backupBeforePush = $value;
 	}
@@ -89,7 +120,7 @@ class DNDataTransfer extends DataObject {
 	}
 
 	public function LogLink() {
-		return $this->Link() . '/log';
+		return Controller::join_links($this->Link(), 'log');
 	}
 
 	public function getDefaultSearchContext() {
@@ -120,7 +151,6 @@ class DNDataTransfer extends DataObject {
 				),
 			)
 		);
-		$linkField->dontEscape = true;
 		$fields = $fields->makeReadonly();
 
 		return $fields;
@@ -157,7 +187,7 @@ class DNDataTransfer extends DataObject {
 			$log->write($message);
 		}
 
-		$token = Resque::enqueue('git', 'DataTransferJob', $args, true);
+		$token = Resque::enqueue('snapshot', 'DataTransferJob', $args, true);
 		$this->ResqueToken = $token;
 		$this->write();
 
@@ -166,8 +196,7 @@ class DNDataTransfer extends DataObject {
 	}
 
 	/**
-	 *
-	 * @param Member $member
+	 * @param Member|null $member
 	 * @return bool
 	 */
 	public function canView($member = null) {
@@ -187,7 +216,6 @@ class DNDataTransfer extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return \DeploynautLogFile
 	 */
 	public function log() {
@@ -195,7 +223,6 @@ class DNDataTransfer extends DataObject {
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function LogContent() {
@@ -203,7 +230,7 @@ class DNDataTransfer extends DataObject {
 	}
 
 	public function getDescription() {
-		$envName = $this->Environment()->FullName;
+		$envName = $this->Environment()->getFullName();
 		if($this->Direction == 'get') {
 			if($this->Origin == 'ManualUpload') {
 				$description = 'Manual upload of ' . $this->getModeNice() . ' to ' . $envName;
@@ -228,32 +255,50 @@ class DNDataTransfer extends DataObject {
 	}
 
 	/**
-	 * Is this transfer an automated backup of a push transfer?
+	 * Is this transfer an automated backup prior to a push transfer or deployment?
 	 * @return boolean
 	 */
 	public function IsBackupDataTransfer() {
-		return DB::query(sprintf(
+		$deploymentBackup = DB::query(sprintf(
+			'SELECT COUNT("ID") FROM "DNDeployment" WHERE "BackupDataTransferID" = %d',
+			$this->ID
+		))->value();
+		if ($deploymentBackup) {
+			return true;
+		}
+
+		$transferBackup = DB::query(sprintf(
 			'SELECT COUNT("ID") FROM "DNDataTransfer" WHERE "BackupDataTransferID" = %d',
 			$this->ID
 		))->value();
+		if ($transferBackup) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
+	 * Returns the status of the resque job
 	 *
 	 * @return string
 	 */
 	public function ResqueStatus() {
 		$status = new Resque_Job_Status($this->ResqueToken);
-
-		$remap = array(
-			Resque_Job_Status::STATUS_WAITING => "Queued",
-			Resque_Job_Status::STATUS_RUNNING => "Running",
-			Resque_Job_Status::STATUS_FAILED => "Failed",
-			Resque_Job_Status::STATUS_COMPLETE => "Complete",
-			false => "Invalid",
-		);
-
-		return $remap[$status->get()];
+		$statusCode = $status->get();
+		// The Resque job can no longer be found, fallback to the DNDataTransfer.Status
+		if($statusCode === false) {
+			// Translate from the DNDataTransfer.Status to the Resque job status for UI purposes
+			switch($this->Status) {
+				case 'Finished':
+					return 'Complete';
+				case 'Started':
+					return 'Running';
+				default:
+					return $this->Status;
+			}
+		}
+		return self::map_resque_status($statusCode);
 	}
 
 }

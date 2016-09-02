@@ -3,33 +3,145 @@
 (function($) {
 	"use strict";
 
+	// Popover on enviroment repository link
+	$(function () {
+		$('[data-toggle="popover"]').popover()
+	});
+
+	$('#current-build-toggle').on('click', function(evt) {
+		evt.stopPropagation();
+		$('.current-build-data').toggleClass('hide');
+		$(this).find('i').toggleClass('fa-caret-down').toggleClass('fa-caret-up');
+	});
+
+	// Ensure no more than one full-deploy-info popover is open.
+	$('.deploy-history').on('click', 'a.full-deploy-info', function() {
+		$('a.full-deploy-info').not(this).popover('hide');
+		$(this).popover('toggle');
+		return false;
+	});
+
+	// Openclose nav
+	$('button.sidebar-open').on('click', function(e) {
+		$('.page-container').toggleClass("open"); // you can list several class names
+		e.preventDefault();
+	});
+
+	// Scrolling tabs
+	if($('.list').length > 0) {
+		var hidWidth;
+		var scrollBarWidths = 40;
+
+		var widthOfList = function(){
+			var itemsWidth = 0;
+			$('.list li').each(function(){
+				var itemWidth = $(this).outerWidth();
+				itemsWidth+=itemWidth;
+			});
+			return itemsWidth;
+		};
+
+		var widthOfHidden = function(){
+			return (($('.wrapper').outerWidth())-widthOfList()-getLeftPosi())-scrollBarWidths;
+		};
+
+		var getLeftPosi = function(){
+			return $('.list').position().left;
+		};
+
+		var reAdjust = function(){
+			if (($('.wrapper').outerWidth()) < widthOfList()) {
+				$('.scroller-right').show();
+			} else {
+				$('.scroller-right').hide();
+			}
+
+			if (getLeftPosi()<0) {
+				$('.scroller-left').show();
+			} else {
+				$('.item').animate({left:"-="+getLeftPosi()+"px"},'slow');
+				$('.scroller-left').hide();
+			}
+		}
+
+		reAdjust();
+
+		$(window).on('resize',function(e){
+			reAdjust();
+		});
+
+		$('.scroller-right').click(function() {
+			$('.scroller-left').fadeIn('slow');
+			$('.scroller-right').fadeOut('slow');
+			$('.list').animate({left:"+="+widthOfHidden()+"px"},'slow',function(){
+			});
+		});
+
+		$('.scroller-left').click(function() {
+			$('.scroller-right').fadeIn('slow');
+			$('.scroller-left').fadeOut('slow');
+			$('.list').animate({left:"-="+getLeftPosi()+"px"},'slow',function(){
+			});
+		});
+	}
+
 	var queue = {
-		showlog: function($status, $content, logLink) {
+		autoScroll: true,
+		showlog: function(status, content, logLink) {
 			var self = this;
+			//add scroll listener
+			content.on('scroll', function(ev) {
+				// if we are scrolled to the bottom then autoScroll should be on otherwise we've scrolled somewhere else
+				// and we shouldn't move the scroll any more
+				if (content.scrollTop() >= (content[0].scrollHeight - content.innerHeight())) {
+					self.autoScroll = true;
+				}
+				else {
+					self.autoScroll = false;
+				}
+			});
 			$.getJSON(logLink, {randval: Math.random()},
 			function(data) {
-				$status.text(data.status);
-				$content.text(data.content);
-				$status.attr('class', data.status);
+				status.text(data.status.toLowerCase());
+				content.text(data.content);
+				//scroll the content to the bottom
+				if (self.autoScroll) {
+					content.scrollTop(content[0].scrollHeight);
+					//we have to re-enable autoscroll because we'll have triggered a scroll event
+					self.autoScroll = true;
+				}
+				$(status).parent().addClass(data.status);
 				$('title').text(data.status + " | Deploynaut");
-				if (data.status === 'Complete') {
+				if (data.status == 'Complete' || data.status == 'Completed' || data.status == 'Failed' || data.status == 'Invalid') {
+					$(status).parent().removeClass('Running Deploying Aborting Queued progress-bar-striped active');
+					//detach scroll listener
+					content.off('scroll');
 					self._clearInterval();
+				} else if (data.status == 'Running' || data.status == 'Deploying' || data.status == 'Aborting') {
+					$(status).parent().addClass('progress-bar-striped active')
+					$(status).parent().removeClass('Queued');
 				}
 			}
 			);
 		},
+
+
 		start: function() {
 			this._setupPinging();
 		},
+
+
 		/**
 		 * Will fetch latest deploy log and reload the content with it
 		 */
 		_setupPinging: function() {
 			var self = this;
 			window._queue_refresh = window.setInterval(function() {
-				self.showlog($("#queue_action"), $("#queue_log"), $('#queue_log').data('loglink'));
+				self.showlog($("#queue_action .jobstatus"), $("#queue_log"), $('#queue_log').data('loglink'));
 			}, 3000);
 		},
+
+
 		/**
 		 * Will remove the pinging and refresh of the application list
 		 */
@@ -40,20 +152,26 @@
 
 	$(document).ready(function() {
 
-		if ($('#Form_DeployForm_BuildName').val() === '') {
-			$('#Form_DeployForm_action_doDeploy').attr('disabled', true);
+		// enable table filtering
+		if(document.getElementsByClassName('table-filter').length > 0) {
+			TableFilter.init('table-filter');
+			document.getElementsByClassName('table-filter')[0].focus();
 		}
 
-		$('#Form_DeployForm_BuildName').change(function() {
-			if ($('#Form_DeployForm_BuildName').val() === '') {
-				$('#Form_DeployForm_action_doDeploy').attr('disabled', true);
-				return;
-			}
-			$('#Form_DeployForm_action_doDeploy').attr('disabled', false);
+		// Enable select2
+		$('select:not(.disable-select2)').select2();
+
+		// Menu 1 expand collapse
+		$('a.nav-submenu.level1').click(function(e) {
+			$(this).parent().siblings().removeClass('open');
+			$(this).parent().toggleClass('open');
+			e.preventDefault();
 		});
 
-		$('#Form_DeployForm_action_doDeploy').click(function() {
-			return confirm('Are you sure that you want to deploy?');
+		// Menu 2 expand collapse
+		$('a.nav-submenu.level2').click(function(e) {
+			$(this).parent().toggleClass('open');
+			e.preventDefault();
 		});
 
 		// Deployment screen
@@ -61,78 +179,50 @@
 			queue.start();
 		}
 
-		$('.project-branch > h3').click(function() {
-			var $project = $(this).parent();
-			var $content = $project.find('.project-branch-content');
-
-			if ($project.hasClass('open')) {
-				$project.removeClass('open');
-			} else {
-				$project.addClass('open');
-				// If the content hasn't been loaded yet, load it
-				if($content.html().match(/^\s+$/)) {
-					$content.html("Loading...");
-					$.get($project.data('href'), function(data) {
-						$content.html(data);
-					});
-				}
-			}
-		});
-
-		$('a.update-repository').click(function(e) {
-			e.preventDefault();
-
-			$(this).attr('disabled', 'disabled');
-			$(this).html('Fetching');
-			$(this).toggleClass('loading');
-
-			$.ajax({
-				type: "POST",
-				url: $(this).data('api-url'),
-				dataType: 'json',
-				success: function(data) {
-					window.fetchInterval = window.setInterval(function() {
-						$.ajax({
-							type: "GET",
-							url: data.href,
-							dataType: 'json',
-							success: function(log_data) {
-								$('#gitFetchModal .modal-body').html('<pre>' + log_data.message + '</pre>');
-								$('#gitFetchModal .modal-footer').html('Status: ' + log_data.status);
-								if(log_data.status === 'Failed' || log_data.status === 'Complete') {
-									clearInterval(window.fetchInterval);
-								}
-								if(log_data.status === 'Complete') {
-									location.reload();
-								}
-							}
-						});
-					}, 2000);
-				}
-			});
-		});
-
-		$('.tooltip-hint, .btn-tooltip').tooltip({
-			placement: "top",
+		$('.tooltip-hint:not(.git-sha), .btn-tooltip').tooltip({
+			placement: 'top',
 			trigger: 'hover'
+		});
+
+		$('.tooltip-hint.git-sha').tooltip({
+			placement: 'left',
+			trigger: 'hover',
+			template: '<div class="tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner git-sha"></div></div>'
+		});
+
+		$('.project-name .icon-star').click(function(e) {
+			var self = $(this);
+			var navEl = $('.side-content .nav');
+
+			$.get($(this).parent().prop('href'), function() {
+				$.get(navEl.data('nav'), function(data) {
+					navEl.html(data);
+					self.toggleClass('hollow');
+				})
+			});
+
+			e.preventDefault();
 		});
 
 		/**
 		 * Extend a specific target
 		 */
 		$('.extended-trigger').click(function(e) {
-			var $el = $($(this).data('extendedTarget')), $container = $($(this).data('extendedContainer'));
+			var $el = $($(this).data('extendedTarget'));
+			var $container = $($(this).data('extendedContainer'));
 
 			if($el.is(':empty')) {
 				$container.data('href', $(this).attr('href'));
+				$container.addClass('loading');
+
 				$el.load($(this).attr('href'), function() {
 					$container.removeClass('loading');
+					$el.removeClass('hide');
+					$el.find('select').select2();
 				});
-				$container.addClass('loading');
-				$container.show();
 			} else {
 				$el.empty();
-				$container.hide();
+				$el.addClass('hide');
 
 				// Re-enter the click handler if another button has been pressed, so the form re-opens.
 				if ($(this).attr('href')!==$container.data('href')) {
@@ -143,7 +233,7 @@
 				}
 
 			}
-			
+
 			e.preventDefault();
 		});
 
@@ -156,25 +246,32 @@
 			if(!confirm(msg)) e.preventDefault();
 		});
 
-		/**
-		 * Add a delay after clicking on Approve/Reject type buttons on a Pipeline. This is because there is a brief
-		 * gap between one PipelineStep ending and the next beginning, and it's preferable to not show the user a page
-		 * with no current step.
-		 *
-		 * @todo: Replace this with AJAX calls to the (not yet existing) Pipeline API so we can update automatically.
-		 */
-		$('.deployprogress-step .btn').click(function(e) {
-			$(this).siblings('.btn').prop('disabled', true);
-			$(this).toggleClass('active').html('<img src="deploynaut/images/ajax-loader.gif">');
-			var href = $(this).prop('href');
-			$.get($(this).prop('href'), function() {
-				setTimeout(function() {
-					window.location.reload();
-				}, 2000);
-			});
+		$('.upload-exceed-link').on('click', function() {
+			$(this).tab('show');
 
-			e.preventDefault();
+			var id = $(this).attr('data-target');
+			$(id).find('select').select2();
+			return false;
 		});
 
+	});
+
+	$('button.abort').click(function(event) {
+		event.preventDefault();
+		var button = $(this);
+		button.prop('disabled', true);
+		button.html('Requesting...');
+		Q($.ajax({
+			type: "POST",
+			dataType: 'json',
+			url: button.attr('data-url'),
+			data: {}
+		})).then(function(data) {
+			button.html(button.attr('data-terminate'));
+			button.prop('disabled', false);
+		}, function(data){
+			button.html('Failed - reload page to retry');
+			console.error(data);
+		});
 	});
 }(jQuery));
