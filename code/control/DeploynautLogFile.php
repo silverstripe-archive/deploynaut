@@ -15,7 +15,13 @@ class DeploynautLogFile {
 	 */
 	public function __construct($logFile, $basePath = null) {
 		$this->logFile = $logFile;
-		$this->basePath = $basePath ?: DEPLOYNAUT_LOG_PATH;
+		if($basePath !== null) {
+			$this->basePath = $basePath;
+		} else if(defined('DEPLOYNAUT_LOG_PATH')) {
+			$this->basePath = DEPLOYNAUT_LOG_PATH;
+		} else {
+			$this->basePath = sys_get_temp_dir();
+		}
 	}
 
 	/**
