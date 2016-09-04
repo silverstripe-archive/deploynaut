@@ -74,6 +74,7 @@ class DeployPlanDispatcher extends Dispatcher {
 	public function gitupdate(SS_HTTPRequest $request) {
 		switch($request->httpMethod()) {
 			case 'POST':
+				$this->checkSecurityToken(sprintf('%sSecurityID', get_class($this)));
 				return $this->createFetch();
 			case 'GET':
 				return $this->getFetch($this->getRequest()->param('ID'));
@@ -124,15 +125,18 @@ class DeployPlanDispatcher extends Dispatcher {
 	}
 
 	/**
-	 * Generate the data structure used by the frontend component.
-	 *
-	 * @param string $name of the component
+	 * @param string $name
 	 *
 	 * @return array
 	 */
-	public function getModel($name) {
+	public function getModel($name = '') {
 		return [
-			'APIEndpoint' => Director::absoluteBaseURL().$this->Link()
+			'namespace' => self::ACTION_PLAN,
+			'api_endpoint' => Director::absoluteBaseURL().$this->Link(),
+			'api_auth' => [
+				'name' => $this->getSecurityToken()->getName(),
+				'value' => $this->getSecurityToken()->getValue()
+			]
 		];
 	}
 
@@ -181,17 +185,12 @@ class DeployPlanDispatcher extends Dispatcher {
 	 * @return SS_HTTPResponse
 	 */
 	public function deploysummary(SS_HTTPRequest $request) {
-		if(!trim($request->getBody())) {
-			return $this->getAPIResponse(['message' => 'no body was sent in the request'], 400);
-		}
+		$this->checkSecurityToken(sprintf('%sSecurityID', get_class($this)));
 
-		$jsonBody = json_decode($request->getBody(), true);
-		if(empty($jsonBody)) {
-			return $this->getAPIResponse(['message' => 'request did not contain a parsable JSON payload'], 400);
-		}
+		// @todo permission checks?
 
 		$options = [
-			'sha' => $jsonBody['sha']
+			'sha' => $request->requestVar('sha')
 		];
 
 		$strategy = $this->environment->Backend()->planDeploy($this->environment, $options);
@@ -207,10 +206,6 @@ class DeployPlanDispatcher extends Dispatcher {
 			);
 			$data['changes']['Code version']['compareUrl'] = $compareurl;
 		}
-
-		// Append json to response
-		$token = SecurityToken::inst();
-		$data['SecurityID'] = $token->getValue();
 
 		$this->extend('updateDeploySummary', $data);
 
@@ -290,6 +285,16 @@ class DeployPlanDispatcher extends Dispatcher {
 	 * @return SS_HTTPResponse
 	 */
 	protected function getAPIResponse($output, $statusCode) {
+		// GET and HEAD requests should not change state and therefore
+		// doesn't need to send new CSRF tokens.
+		$httpMethod = strtolower($this->getRequest()->httpMethod());
+		if(!in_array($httpMethod, ['get', 'head'])) {
+			$this->getRequest()->httpMethod();
+			$secToken = $this->getSecurityToken();
+			$secToken->reset();
+			$output = array_merge($this->getModel(), $output);
+		}
+
 		$output['status_code'] = $statusCode;
 		$body = json_encode($output, JSON_PRETTY_PRINT);
 		$response = $this->getResponse();

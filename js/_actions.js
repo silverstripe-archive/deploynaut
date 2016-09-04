@@ -1,6 +1,9 @@
 // polyfills
 require('babel-polyfill');
-var api = require('./_api.js');
+
+var webAPI = require('./_api.js');
+
+const api = webAPI.create('plan');
 
 export const SET_OPEN_DIALOG = "SET_OPEN_DIALOG";
 export function openPlanDialog() {
@@ -64,9 +67,9 @@ export function failRevisionsGet(err) {
 }
 
 export function getRevisions() {
-	return (dispatch) => {
+	return (dispatch, getState) => {
 		dispatch(startRevisionGet());
-		return api.getRevisions()
+		return api.call(dispatch, getState, '/gitrefs', 'get')
 			.then(json => dispatch(succeedRevisionsGet(json)))
 			.catch(err => dispatch(failRevisionsGet(err)));
 	};
@@ -81,10 +84,10 @@ export function getRevisionsIfNeeded() {
 }
 
 export function updateRepo() {
-	return (dispatch) => {
+	return (dispatch, getState) => {
 		dispatch(startRepoUpdate());
-		api.updateRepo()
-			.then(data => api.waitForSuccess(data.message.href))
+		api.call(dispatch, getState, 'gitupdate', 'post')
+			.then(data => api.waitForSuccess(dispatch, getState, data.message.href))
 			.then(() => dispatch(succeedRepoUpdate()))
 			.catch(err => dispatch(failRepoUpdate(err)));
 	};
@@ -92,16 +95,18 @@ export function updateRepo() {
 
 // combines the updateRepo and revisionGet actions in one call
 export function updateRepoAndGetRevisions() {
-	return (dispatch) => {
+	return (dispatch, getState) => {
 		dispatch(startRepoUpdate());
-		api.updateRepo()
-			.then(data => api.waitForSuccess(data.href))
+		api.call(dispatch, getState, 'gitupdate', 'post')
+			.then(data => api.waitForSuccess(dispatch, getState, data.href))
 			.then(() => dispatch(succeedRepoUpdate()))
 			.catch(err => dispatch(failRepoUpdate(err)))
 			.then(() => dispatch(startRevisionGet()))
-			.then(() => api.getRevisions())
-			.then(json => dispatch(succeedRevisionsGet(json)))
-			.catch(err => dispatch(failRevisionsGet(err)));
+			.then(function() {
+				return api.call(dispatch, getState, '/gitrefs', 'get')
+					.then(json => dispatch(succeedRevisionsGet(json)))
+					.catch(err => dispatch(failRevisionsGet(err)));
+			});
 	};
 }
 
@@ -140,9 +145,9 @@ export function failSummaryGet(err) {
 }
 
 export function getDeploySummary(gitSHA) {
-	return (dispatch) => {
+	return (dispatch, getState) => {
 		dispatch(startSummaryGet());
-		return api.getSummary(gitSHA)
+		return api.call(dispatch, getState, '/deploysummary', 'post', {sha: gitSHA})
 			.then(data => dispatch(succeedSummaryGet(data)))
 			.catch(err => dispatch(failSummaryGet(err)));
 	};
