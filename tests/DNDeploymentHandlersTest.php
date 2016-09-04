@@ -2,51 +2,46 @@
 
 use Finite\Event\TransitionEvent;
 
-class DNDeploymentHandlersTest extends PHPUnit_Framework_TestCase {
+class DNDeploymentHandlersTest extends \SapphireTest {
+
+	protected $usesDatabase = true;
 
 	public function tearDown() {
 		\Mockery::close();
+		parent::tearDown();
 	}
 
 	public function testOnSubmitSendsEmailToApprover() {
-		$deployer = \Mockery::mock('someDeployer')->shouldIgnoreMissing();
-		$deployer->Name = null;
-		$deployer->Email = null;
+		$deployer = Member::create();
+		$deployer->Name = "Carl Deployer";
+		$deployer->Email = 'carldeployer@localhost';
+		$deployer->write();
 
-		$approver = \Mockery::mock('someApprover', [
-			'exists' => true,
-		])->shouldIgnoreMissing();
-		$approver->Name = 'Mr. Approver';
-		$approver->Email = 'mrapprover@localhost';
+		$approver = Member::create();
+		$approver->Name = 'Joe Approver';
+		$approver->Email = 'joeapprover@localhost';
+		$approver->write();
 
-		$deployment = \Mockery::mock('DNDeployment', [
-			'Deployer' => $deployer,
-			'Approver' => $approver,
-			'log' => \Mockery::mock('someLog')->shouldIgnoreMissing(),
-		]);
+		$deployment = DNDeployment::create();
+		$deployment->DeployerID = $deployer->ID;
+		$deployment->ApproverID = $approver->ID;
+		$deployment->log = \Mockery::mock('someLog')->shouldIgnoreMissing();
+		$deployment->write();
 
 		$event = \Mockery::mock('Finite\Event\TransitionEvent', [
 			'getStateMachine->getObject' => $deployment,
 		]);
 
-		$email = \Mockery::mock('Email', [
-			'replyTo' => null,
-			'setSubject' => null,
-			'setTemplate' => null,
-			'populateTemplate' => null,
-		]);
-
-		// Flip to singleton so we can form expectations.
-		Config::inst()->update('Injector', 'Email', null);
-		Injector::inst()->registerService($email, 'Email');
-
-		$email->shouldReceive('setTo')->with('Mr. Approver <mrapprover@localhost>')->once();
-		$email->shouldReceive('send')->once();
-
 		$handlers = new DNDeploymentHandlers();
 		$handlers->onSubmit($event);
 
-		$this->assertTrue(true);
+		$expectedTo = sprintf("%s <%s>", $approver->Name, $approver->Email);
+		$expectedFrom = Config::inst()->get('Email', 'admin_email');
+		$this->assertEmailSent($expectedTo, $expectedFrom, 'Deployment has been submitted');
+
+		$email = $this->findEmail($expectedTo);
+		$this->assertContains($approver->FirstName, $email['content']);
+		$this->assertContains($deployer->Email, $email['content']);
 	}
 
 	public function testOnQueueTriggersJob() {

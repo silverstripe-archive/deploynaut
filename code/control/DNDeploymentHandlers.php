@@ -16,7 +16,7 @@ class DNDeploymentHandlers extends Object {
 			return false;
 		}
 
-		$email = Injector::inst()->get('Email');
+		$email = Email::create();
 		$email->setTo(sprintf('%s <%s>', $approver->Name, $approver->Email));
 		$email->replyTo(sprintf('%s <%s>', $deployer->Name, $deployer->Email));
 		$email->setSubject('Deployment has been submitted');
