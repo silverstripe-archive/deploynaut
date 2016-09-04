@@ -18,7 +18,8 @@ class DeployPlanDispatcher extends Dispatcher {
 	public static $allowed_actions = [
 		'gitupdate',
 		'gitrefs',
-		'deploysummary'
+		'deploysummary',
+		'deployhistorydata'
 	];
 
 	/**
@@ -173,6 +174,26 @@ class DeployPlanDispatcher extends Dispatcher {
 		$response = $this->getAPIResponse($output, 201);
 		$response->addHeader('Location', $location);
 		return $response;
+	}
+
+	/**
+	 * @return SS_HTTPResponse
+	 */
+	public function deployhistorydata(SS_HTTPRequest $request) {
+		$data = [];
+		foreach($this->DeployHistory() as $deployment) {
+			$data[] = [
+				'CreatedDate' => $deployment->Created,
+				'Branch' => $deployment->Branch,
+				'Tags' => $deployment->getTags()->toArray(),
+				'Changes' => $deployment->getDeploymentStrategy()->getChanges(),
+				'CommitMessage' => $deployment->getCommitMessage(),
+				'Deployer' => $deployment->Deployer()->getName(),
+				'Approver' => $deployment->Approver()->getName(),
+				'State' => $deployment->State,
+			];
+		}
+		return $this->getAPIResponse(['history' => $data], 200);
 	}
 
 	/**

@@ -62,6 +62,10 @@ export function getRevisions() {
 	return call(`${window.api_url}/gitrefs`, 'get');
 }
 
+export function getDeployHistory() {
+	return call(`${window.api_url}/deployhistorydata`, 'get');
+}
+
 export function updateRepo() {
 	return call(`${window.api_url}/gitupdate`, 'post');
 }

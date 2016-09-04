@@ -271,7 +271,7 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 
 	/**
 	 * Return a list of things that are going to be deployed, such
-	 * as the code version, and any infrastrucutral changes.
+	 * as the code version, and any infrastructural changes.
 	 *
 	 * @return ArrayList
 	 */
