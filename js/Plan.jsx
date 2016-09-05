@@ -24,6 +24,7 @@ var Plan = function(props) {
 
 	window.api_url = props.model.APIEndpoint;
 
+	store.dispatch(actions.getDeployHistory());
 	store.dispatch(actions.getRevisionsIfNeeded());
 
 	return (

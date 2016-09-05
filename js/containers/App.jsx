@@ -3,6 +3,8 @@ var ReactRedux = require('react-redux');
 
 var StepMenu = require('../components/StepMenu.jsx');
 var NewDeployPlan = require('./buttons/NewDeployPlan.jsx');
+var UpcomingDeployments = require('./UpcomingDeployments.jsx');
+var DeployHistory = require('./DeployHistory.jsx');
 var GitRefSelector = require('./GitRefSelector.jsx');
 var ButtonGitFetch = require('./buttons/GitFetch.jsx');
 var ButtonGitUpdate = require('./buttons/GitUpdate.jsx');
@@ -106,6 +108,9 @@ function App(props) {
 					</div>
 				</div>
 			</Modal>
+
+			<UpcomingDeployments />
+			<DeployHistory />
 		</div>
 	);
 }

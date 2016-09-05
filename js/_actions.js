@@ -63,12 +63,44 @@ export function failRevisionsGet(err) {
 	};
 }
 
+export const START_DEPLOY_HISTORY_GET = 'START_DEPLOY_HISTORY_GET';
+export function startDeployHistoryGet() {
+	return {
+		type: START_DEPLOY_HISTORY_GET
+	};
+}
+
+export const SUCCEED_DEPLOY_HISTORY_GET = 'SUCCEED_DEPLOY_HISTORY_GET';
+export function succeedDeployHistoryGet(data) {
+	return {
+		type: SUCCEED_DEPLOY_HISTORY_GET,
+		data: data
+	};
+}
+
+export const FAIL_DEPLOY_HISTORY_GET = 'FAIL_DEPLOY_HISTORY_GET';
+export function failDeployHistoryGet(err) {
+	return {
+		type: FAIL_DEPLOY_HISTORY_GET,
+		error: err
+	};
+}
+
 export function getRevisions() {
 	return (dispatch) => {
 		dispatch(startRevisionGet());
 		return api.getRevisions()
 			.then(json => dispatch(succeedRevisionsGet(json)))
 			.catch(err => dispatch(failRevisionsGet(err)));
+	};
+}
+
+export function getDeployHistory() {
+	return (dispatch) => {
+		dispatch(startDeployHistoryGet());
+		return api.getDeployHistory()
+			.then(json => dispatch(succeedDeployHistoryGet(json)))
+			.catch(err => dispatch(failDeployHistoryGet(err)));
 	};
 }
 
