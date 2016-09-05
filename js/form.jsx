@@ -34,7 +34,7 @@ var Form = React.createClass({
 		return {
 			isSubmitting: this.props.initialIsSubmitting || false,
 			securityID: this.props.securityID,
-			securityTokenName: this.props.securityTokenName || 'SecurityID'
+			securityTokenName: this.props.securityTokenName || 'DispatcherSecurityID'
 		};
 	},
 

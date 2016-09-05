@@ -44,7 +44,7 @@ var DeployPlan = React.createClass({
 			data: {
 				// Pass the strategy object the user has just signed off back to the backend.
 				strategy: this.props.summary,
-				SecurityID: this.props.summary.SecurityID
+				DispatcherSecurityID: this.props.summary.SecurityID
 			}
 		})).then(function(data) {
 			window.location = data.url;
