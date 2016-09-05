@@ -103,7 +103,10 @@ abstract class Dispatcher extends DNRoot {
 	 * Respond to an AJAX request.
 	 * Automatically updates the security token and proxy pending redirects.
 	 *
+	 * @deprecated the use of getAPIResponse() is encouraged
 	 * @param array $data Data to be passed to the frontend.
+	 *
+	 * @return SS_HTTPResponse
 	 */
 	public function asJSON($data = []) {
 		$securityToken = $this->getSecurityToken();
@@ -127,6 +130,22 @@ abstract class Dispatcher extends DNRoot {
 		$response->addHeader('Content-Type', 'application/json');
 		$response->setBody(json_encode($data));
 		$response->setStatusCode(200);
+		return $response;
+	}
+
+	/**
+	 * Return an XHR response object without any CSRF token information
+	 *
+	 * @param array $output
+	 * @param int $statusCode
+	 * @return SS_HTTPResponse
+	 */
+	protected function getAPIResponse($output, $statusCode) {
+		$output['status_code'] = $statusCode;
+		$response = $this->getResponse();
+		$response->addHeader('Content-Type', 'application/json');
+		$response->setBody(json_encode($output, JSON_PRETTY_PRINT));
+		$response->setStatusCode($statusCode);
 		return $response;
 	}
 
