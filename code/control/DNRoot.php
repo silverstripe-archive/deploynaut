@@ -1257,35 +1257,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 * Check and regenerate a global CSRF token
-	 *
-	 * @param SS_HTTPRequest $request
-	 * @param bool $resetToken
-	 *
-	 * @return bool
-	 */
-	protected function checkCsrfToken(SS_HTTPRequest $request, $resetToken = true) {
-		$token = SecurityToken::inst();
-
-		// Ensure the submitted token has a value
-		$submittedToken = $request->postVar('SecurityID');
-		if(!$submittedToken) {
-			return false;
-		}
-
-		// Do the actual check.
-		$check = $token->check($submittedToken);
-
-		// Reset the token after we've checked the existing token
-		if($resetToken) {
-			$token->reset();
-		}
-
-		// Return whether the token was correct or not
-		return $check;
-	}
-
-	/**
 	 * @param SS_HTTPRequest $request
 	 *
 	 * @return string
@@ -1349,8 +1320,17 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function startDeploy(SS_HTTPRequest $request) {
 
+		$token = SecurityToken::inst();
+
+		// Ensure the submitted token has a value
+		$submittedToken = $request->postVar(\Dispatcher::SECURITY_TOKEN_NAME);
+		if(!$submittedToken) {
+			return false;
+		}
+		// Do the actual check.
+		$check = $token->check($submittedToken);
 		// Ensure the CSRF Token is correct
-		if(!$this->checkCsrfToken($request)) {
+		if(!$check) {
 			// CSRF token didn't match
 			return $this->httpError(400, 'Bad Request');
 		}

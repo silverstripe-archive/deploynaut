@@ -357,7 +357,7 @@ var DeployTab = React.createClass({
 		var summaryData = {
 			sha: sha,
 			branch: branch,
-			SecurityID: this.props.SecurityToken
+			DispatcherSecurityID: this.props.SecurityToken
 		};
 		// merge the 'advanced' options if they are set
 		for (var attrname in this.state.selectedOptions) {
