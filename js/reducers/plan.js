@@ -1,8 +1,9 @@
 var _ = require('underscore');
 
-var actions = require('../_actions.js');
+var git = require('../actions/git.js');
+var plan = require('../actions/plan.js');
 
-module.exports = function plan(state, action) {
+module.exports = function (state, action) {
 	if(typeof state === 'undefined') {
 		return {
 			is_loading: false,
@@ -15,7 +16,7 @@ module.exports = function plan(state, action) {
 	}
 
 	switch(action.type) {
-		case actions.START_SUMMARY_GET:
+		case plan.START_SUMMARY_GET:
 			return _.assign({}, state, {
 				deployment_type: "",
 				deployment_estimate: "",
@@ -24,7 +25,7 @@ module.exports = function plan(state, action) {
 				changes: {}
 			});
 
-		case actions.SUCCEED_SUMMARY_GET:
+		case plan.SUCCEED_SUMMARY_GET:
 			var changes = {};
 			// backend can sometimes return an empty array instead of an object
 			if(action.summary.changes.length !== 0) {
@@ -38,17 +39,17 @@ module.exports = function plan(state, action) {
 				validation_code: action.summary.validationCode
 			});
 
-		case actions.FAIL_SUMMARY_GET:
+		case plan.FAIL_SUMMARY_GET:
 			return _.assign({}, state, {
 				is_loading: false
 			});
 
-		case actions.SET_SUMMARY:
+		case plan.SET_SUMMARY:
 			return _.assign({}, state, {
 				summary_of_changes: action.text
 			});
 
-		case actions.SUCCEED_REVISIONS_GET:
+		case git.SUCCEED_REVISIONS_GET:
 			return _.assign({}, state, {
 				deployment_type: "",
 				deployment_estimate: "",

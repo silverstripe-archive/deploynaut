@@ -12,13 +12,12 @@ APIError.prototype.constructor = APIError;
 
 // SETUP_API is a cross dispatcher action that stores information recieved
 // from the backend dispatcher so that the api class can dip into the store and
-// find the correct endpoints and csrf tokens depending on the namespace
-export const SET_API = 'SET_API';
-export function setAPI(namespace, api_endpoint, api_auth) {
+// find the correct endpoints depending on the apiNamespace
+export const SETUP_API = 'SETUP_API';
+export function setupAPI(dispatchers, api_auth) {
 	return {
-		type: SET_API,
-		namespace: namespace,
-		endpoint: api_endpoint,
+		type: SETUP_API,
+		dispatchers: dispatchers,
 		auth: api_auth
 	};
 }
@@ -33,19 +32,17 @@ function sleep(time) {
 }
 
 /**
+ * apiName is used to find the correct endpoint from the state store under
+ * `store.api.dispatchers.${apiName}`
  *
- * @param ns - string namespace
- * @returns {{getNamespace: getNamespace, call: call, waitForSuccess: waitForSuccess}}
+ * @param apiName - string name of the api, used for finding the api endpoint
+ * @returns {{call: call, waitForSuccess: waitForSuccess}}
  */
-export function create(ns) {
+export function create(name) {
 
-	const namespace = ns;
+	const apiName = name;
 
 	function call(dispatch, getState, uri, method, payload) {
-
-		if(namespace === "") {
-			throw Error("namespace must be set before api call");
-		}
 
 		var options = {
 			credentials: 'same-origin',
@@ -55,7 +52,13 @@ export function create(ns) {
 			}
 		};
 
-		var fullURI = `${getState().api[namespace].endpoint}${uri}`;
+		let fullURI = "";
+		// check if uri is a relative or full uri
+		if (uri.indexOf('://') > 0 || uri.indexOf('//') === 0 ) {
+			fullURI = uri;
+		} else {
+			fullURI = `${getState().api.dispatchers[apiName]}${uri}`;
+		}
 
 		// post actions are the only actions that could possible change the state
 		// and should therefore be protected by CSRF. GET/HEAD operations are
@@ -63,8 +66,8 @@ export function create(ns) {
 		if(method.toLowerCase() === "post") {
 			options.body = new FormData();
 
-			const tokenName = `${getState().api[namespace].auth.name}`;
-			const tokenValue = `${getState().api[namespace].auth.value}`;
+			const tokenName = `${getState().api.auth.name}`;
+			const tokenValue = `${getState().api.auth.value}`;
 
 			options.body.append(tokenName, tokenValue);
 
@@ -76,16 +79,10 @@ export function create(ns) {
 
 		return fetch(fullURI, options)
 			.then(response => {
+
+				// the http response is in the 200 >=  <= 299 range
 				if(response.ok) {
-					return response.json().then(json => {
-						// if this instance of the api recieves new tokens for the
-						// same namespace/dispatcher as it was sending, dispatch an
-						// update for token changes
-						if(json.namespace === namespace && typeof json.api_auth !== 'undefined') {
-							dispatch(setAPI(json.namespace, json.api_endpoint, json.api_auth));
-						}
-						return json;
-					});
+					return response.json().then(json => json);
 				}
 				// if the status code is outside of 200 - 299 we try to parse
 				// the error that can either be some unexpected error or a nicer

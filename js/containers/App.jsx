@@ -12,7 +12,7 @@ var DeployPlan = require('./DeployPlan.jsx');
 var Messages = require('../components/Messages.jsx');
 var Modal = require('../Modal.jsx');
 
-var actions = require('../_actions.js');
+var actions = require('../actions/misc.js');
 
 function calculateSteps(props) {
 	return [

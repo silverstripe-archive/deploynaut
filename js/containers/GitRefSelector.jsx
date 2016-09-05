@@ -4,7 +4,8 @@ var ReactRedux = require('react-redux');
 var RadioList = require('../components/RadioList.jsx');
 var Dropdown = require('../components/Dropdown.jsx');
 
-var actions = require('../_actions.js');
+var git = require('../actions/git.js');
+var plan = require('../actions/plan.js');
 
 function ShaSelector(props) {
 
@@ -83,11 +84,11 @@ const mapStateToProps = function(state) {
 const mapDispatchToProps = function(dispatch) {
 	return {
 		onRadioClick: function(id) {
-			dispatch(actions.setGitRefType(id));
+			dispatch(git.setGitRefType(id));
 		},
 		onRefSelect: function(ref) {
-			dispatch(actions.setGitRef(ref));
-			dispatch(actions.getDeploySummary(ref));
+			dispatch(git.setGitRef(ref));
+			dispatch(plan.getDeploySummary(ref));
 		}
 	};
 };

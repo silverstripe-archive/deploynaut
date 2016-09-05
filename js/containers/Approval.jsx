@@ -8,7 +8,7 @@ var ApproveRequest = require('./buttons/ApproveRequest.jsx');
 var RejectRequest = require('./buttons/RejectRequest.jsx');
 var Bypass = require('./buttons/Bypass.jsx');
 
-var actions = require('../_actions.js');
+var actions = require('../actions/misc.js');
 
 function Approval(props) {
 

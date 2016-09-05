@@ -1,24 +1,26 @@
 <?php
 
+/**
+ * This dispatcher takes care of updating and returning information about this
+ * projects git repository
+ */
+class GitDispatcher extends Dispatcher {
 
-class DeployPlanDispatcher extends Dispatcher {
-
-	const ACTION_PLAN = 'plan';
+	const ACTION_GIT = 'git';
 
 	/**
 	 * @var array
 	 */
 	private static $action_types = [
-		self::ACTION_PLAN
+		self::ACTION_GIT
 	];
 
 	/**
 	 * @var array
 	 */
 	public static $allowed_actions = [
-		'gitupdate',
-		'gitrefs',
-		'deploysummary'
+		'update',
+		'show'
 	];
 
 	/**
@@ -39,19 +41,6 @@ class DeployPlanDispatcher extends Dispatcher {
 		if(!$this->project) {
 			return $this->project404Response();
 		}
-
-		// Performs canView permission check by limiting visible projects
-		$this->environment = $this->getCurrentEnvironment($this->project);
-		if(!$this->environment) {
-			return $this->environment404Response();
-		}
-	}
-
-	/**
-	 * @return string
-	 */
-	public function Link() {
-		return \Controller::join_links($this->environment->Link(), self::ACTION_PLAN);
 	}
 
 	/**
@@ -61,20 +50,17 @@ class DeployPlanDispatcher extends Dispatcher {
 	 * @return \HTMLText|\SS_HTTPResponse
 	 */
 	public function index(\SS_HTTPRequest $request) {
-		$this->setCurrentActionType(self::ACTION_PLAN);
-		return $this->customise([
-			'Environment' => $this->environment
-		])->renderWith(['Plan', 'DNRoot']);
+		return $this->redirect(\Controller::join_links($this->Link(), 'show'), 302);
 	}
 
 	/**
 	 * @param SS_HTTPRequest $request
 	 * @return SS_HTTPResponse
 	 */
-	public function gitupdate(SS_HTTPRequest $request) {
+	public function update(SS_HTTPRequest $request) {
 		switch($request->httpMethod()) {
 			case 'POST':
-				$this->checkSecurityToken(sprintf('%sSecurityID', get_class($this)));
+				$this->checkSecurityToken();
 				return $this->createFetch();
 			case 'GET':
 				return $this->getFetch($this->getRequest()->param('ID'));
@@ -88,7 +74,7 @@ class DeployPlanDispatcher extends Dispatcher {
 	 *
 	 * @return string
 	 */
-	public function gitrefs(\SS_HTTPRequest $request) {
+	public function show(\SS_HTTPRequest $request) {
 
 		$refs = [];
 		$order = 0;
@@ -125,19 +111,19 @@ class DeployPlanDispatcher extends Dispatcher {
 	}
 
 	/**
+	 * @return string
+	 */
+	public function Link() {
+		return \Controller::join_links($this->project->Link(), self::ACTION_GIT);
+	}
+
+	/**
 	 * @param string $name
 	 *
 	 * @return array
 	 */
 	public function getModel($name = '') {
-		return [
-			'namespace' => self::ACTION_PLAN,
-			'api_endpoint' => Director::absoluteBaseURL().$this->Link(),
-			'api_auth' => [
-				'name' => $this->getSecurityToken()->getName(),
-				'value' => $this->getSecurityToken()->getValue()
-			]
-		];
+		return [];
 	}
 
 	/**
@@ -168,7 +154,7 @@ class DeployPlanDispatcher extends Dispatcher {
 		$fetch->write();
 		$fetch->start();
 
-		$location = Director::absoluteBaseURL() . $this->Link() . '/gitupdate/' . $fetch->ID;
+		$location = Director::absoluteBaseURL() . $this->Link() . '/update/' . $fetch->ID;
 		$output = array(
 			'message' => 'Fetch queued as job ' . $fetch->ResqueToken,
 			'href' => $location,
@@ -177,39 +163,6 @@ class DeployPlanDispatcher extends Dispatcher {
 		$response = $this->getAPIResponse($output, 201);
 		$response->addHeader('Location', $location);
 		return $response;
-	}
-
-	/**
-	 * @param SS_HTTPRequest $request
-	 *
-	 * @return SS_HTTPResponse
-	 */
-	public function deploysummary(SS_HTTPRequest $request) {
-		$this->checkSecurityToken(sprintf('%sSecurityID', get_class($this)));
-
-		// @todo permission checks?
-
-		$options = [
-			'sha' => $request->requestVar('sha')
-		];
-
-		$strategy = $this->environment->Backend()->planDeploy($this->environment, $options);
-		$data = $strategy->toArray();
-
-		$interface = $this->project->getRepositoryInterface();
-		if($this->canCompareCodeVersions($interface, $data['changes'])) {
-			$compareurl = sprintf(
-				'%s/compare/%s...%s',
-				$interface->URL,
-				$data['changes']['Code version']['from'],
-				$data['changes']['Code version']['to']
-			);
-			$data['changes']['Code version']['compareUrl'] = $compareurl;
-		}
-
-		$this->extend('updateDeploySummary', $data);
-
-		return $this->getAPIResponse($data, 201);
 	}
 
 	/**
@@ -277,57 +230,4 @@ class DeployPlanDispatcher extends Dispatcher {
 		return $redeploy;
 	}
 
-	/**
-	 * Return a simple response with a message
-	 *
-	 * @param array $output
-	 * @param int $statusCode
-	 * @return SS_HTTPResponse
-	 */
-	protected function getAPIResponse($output, $statusCode) {
-		// GET and HEAD requests should not change state and therefore
-		// doesn't need to send new CSRF tokens.
-		$httpMethod = strtolower($this->getRequest()->httpMethod());
-		if(!in_array($httpMethod, ['get', 'head'])) {
-			$this->getRequest()->httpMethod();
-			$secToken = $this->getSecurityToken();
-			$secToken->reset();
-			$output = array_merge($this->getModel(), $output);
-		}
-
-		$output['status_code'] = $statusCode;
-		$body = json_encode($output, JSON_PRETTY_PRINT);
-		$response = $this->getResponse();
-		$response->addHeader('Content-Type', 'application/json');
-		$response->setBody($body);
-		$response->setStatusCode($statusCode);
-		return $response;
-	}
-
-	/**
-	 * @param ArrayData $interface
-	 * @param $changes
-	 *
-	 * @return bool
-	 *
-	 */
-	protected function canCompareCodeVersions(\ArrayData $interface, $changes) {
-		if(empty($changes['Code version'])) {
-			return false;
-		}
-		$codeVersion = ['Code version'];
-		if(empty($interface)) {
-			return false;
-		}
-		if(empty($interface->URL)) {
-			return false;
-		}
-		if(empty($codeVersion['from']) || empty($codeVersion['to'])) {
-			return false;
-		}
-		if(strlen($codeVersion['from']) !== 40 || strlen($codeVersion['to']) !== 40) {
-			return false;
-		}
-		return true;
-	}
 }

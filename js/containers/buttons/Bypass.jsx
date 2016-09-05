@@ -1,6 +1,6 @@
 var ReactRedux = require('react-redux');
 
-var actions = require('../../_actions.js');
+var actions = require('../../actions/misc.js');
 var Button = require('../../components/Button.jsx');
 
 function canBypass(state) {

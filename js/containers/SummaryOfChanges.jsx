@@ -2,7 +2,7 @@ var React = require('react');
 var ReactRedux = require('react-redux');
 
 var TextArea = require('../components/TextArea.jsx');
-var actions = require('../_actions.js');
+var plan = require('../actions/plan.js');
 
 var summary = function(props) {
 	return (
@@ -62,7 +62,7 @@ const mapStateToProps = function(state) {
 const mapDispatchToProps = function(dispatch) {
 	return {
 		onChange: function(evt) {
-			dispatch(actions.setSummary(evt.target.value));
+			dispatch(plan.setSummary(evt.target.value));
 		}
 	};
 };

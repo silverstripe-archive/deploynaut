@@ -10,6 +10,11 @@
 abstract class Dispatcher extends DNRoot {
 
 	/**
+	 * The CSRF token name that is used for all frondend dispatchers
+	 */
+	const SECURITY_TOKEN_NAME = 'DispatcherSecurityID';
+
+	/**
 	 * Generate the data structure used by the frontend component.
 	 *
 	 * @param string $name of the component
@@ -35,25 +40,28 @@ abstract class Dispatcher extends DNRoot {
 		])->renderWith('ReactTemplate');
 	}
 
-	protected function getSecurityToken($name = null) {
-		// We dynamically set a different name of the token instead of the default
-		// 'SecurityID' so that react forms don't invalidate `reset()` tokens for
-		// static SS forms
-		if(is_null($name)) $name = sprintf('%sSecurityID', get_class($this));
-		return new \SecurityToken($name);
+	/**
+	 * We want to separate the dispatchers security token from the static HTML
+	 * security token since it's possible that they get out of sync with eachother.
+	 *
+	 * We do this by giving the token a separate name.
+	 *
+	 * Don't manually reset() this token, that will cause issues when people have
+	 * several tabs open. The token will be recreated when the user session times
+	 * out.
+	 *
+	 * @return SecurityToken
+	 */
+	protected function getSecurityToken() {
+		return new \SecurityToken(self::SECURITY_TOKEN_NAME);
 	}
 
-	protected function checkSecurityToken($name = null) {
-		$postVar = is_null($name) ? 'SecurityID' : $name;
-		// @see getSecurityToken() for the reason of the non default naming of
-		// the security token
-		if(is_null($name)) $name = sprintf('%sSecurityID', get_class($this));
-		$securityToken = $this->getSecurityToken($name);
-
-		// By default the security token is always represented by a "SecurityID" post var,
-		// even if the backend uses different names for the token. This too means only one security token
-		// can be managed by one dispatcher if the default is used.
-		if(!$securityToken->check($this->request->postVar($postVar))) {
+	/**
+	 * @see getSecurityToken()
+	 */
+	protected function checkSecurityToken() {
+		$securityToken = $this->getSecurityToken();
+		if(!$securityToken->check($this->request->postVar(self::SECURITY_TOKEN_NAME))) {
 			$this->httpError(400, 'Invalid security token, try reloading the page.');
 		}
 	}
@@ -95,7 +103,10 @@ abstract class Dispatcher extends DNRoot {
 	 * Respond to an AJAX request.
 	 * Automatically updates the security token and proxy pending redirects.
 	 *
+	 * @deprecated the use of getAPIResponse() is encouraged
 	 * @param array $data Data to be passed to the frontend.
+	 *
+	 * @return SS_HTTPResponse
 	 */
 	public function asJSON($data = []) {
 		$securityToken = $this->getSecurityToken();
@@ -119,6 +130,22 @@ abstract class Dispatcher extends DNRoot {
 		$response->addHeader('Content-Type', 'application/json');
 		$response->setBody(json_encode($data));
 		$response->setStatusCode(200);
+		return $response;
+	}
+
+	/**
+	 * Return an XHR response object without any CSRF token information
+	 *
+	 * @param array $output
+	 * @param int $statusCode
+	 * @return SS_HTTPResponse
+	 */
+	protected function getAPIResponse($output, $statusCode) {
+		$output['status_code'] = $statusCode;
+		$response = $this->getResponse();
+		$response->addHeader('Content-Type', 'application/json');
+		$response->setBody(json_encode($output, JSON_PRETTY_PRINT));
+		$response->setStatusCode($statusCode);
 		return $response;
 	}
 

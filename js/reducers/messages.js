@@ -1,4 +1,5 @@
-var actions = require('../_actions.js');
+var git = require('../actions/git.js');
+var plan = require('../actions/plan.js');
 
 module.exports = function messages(state, action) {
 	if(typeof state === 'undefined') {
@@ -6,13 +7,13 @@ module.exports = function messages(state, action) {
 	}
 
 	switch(action.type) {
-		case actions.SUCCEED_SUMMARY_GET:
+		case plan.SUCCEED_SUMMARY_GET:
 			return action.summary.messages;
 
 		// clear the messages on these actions
-		case actions.SUCCEED_REPO_UPDATE:
-		case actions.SUCCEED_REVISIONS_GET:
-		case actions.SET_REVISION:
+		case git.SUCCEED_REPO_UPDATE:
+		case git.SUCCEED_REVISIONS_GET:
+		case git.SET_REVISION:
 			return [];
 		default:
 			return state;

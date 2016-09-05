@@ -1,8 +1,8 @@
 var _ = require('underscore');
 
-var actions = require('../_actions.js');
+var git = require('../actions/git.js');
 
-module.exports = function git(state, action) {
+module.exports = function (state, action) {
 	if(typeof state === 'undefined') {
 		return {
 			selected_type: "",
@@ -14,37 +14,37 @@ module.exports = function git(state, action) {
 		};
 	}
 	switch(action.type) {
-		case actions.SET_REVISION_TYPE:
+		case git.SET_REVISION_TYPE:
 			return _.assign({}, state, {
 				selected_type: action.id,
 				selected_ref: ""
 			});
-		case actions.SET_REVISION:
+		case git.SET_REVISION:
 			return _.assign({}, state, {
 				selected_ref: action.id
 			});
-		case actions.START_REPO_UPDATE:
+		case git.START_REPO_UPDATE:
 			return _.assign({}, state, {
 				is_updating: true
 			});
 
-		case actions.SUCCEED_REPO_UPDATE:
+		case git.SUCCEED_REPO_UPDATE:
 			return _.assign({}, state, {
 				is_updating: false,
 				last_updated: action.receivedAt
 			});
 
-		case actions.FAIL_REPO_UPDATE:
+		case git.FAIL_REPO_UPDATE:
 			return _.assign({}, state, {
 				is_updating: false
 			});
 
-		case actions.START_REVISIONS_GET:
+		case git.START_REVISIONS_GET:
 			return _.assign({}, state, {
 				is_fetching: true
 			});
 
-		case actions.SUCCEED_REVISIONS_GET:
+		case git.SUCCEED_REVISIONS_GET:
 			return _.assign({}, state, {
 				is_fetching: false,
 				list: action.list.refs,
@@ -53,7 +53,7 @@ module.exports = function git(state, action) {
 				selected_ref: ""
 			});
 
-		case actions.FAIL_REVISIONS_GET:
+		case git.FAIL_REVISIONS_GET:
 			return _.assign({}, state, {
 				is_fetching: false
 			});

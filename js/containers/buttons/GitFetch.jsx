@@ -1,6 +1,6 @@
 var ReactRedux = require('react-redux');
 
-var actions = require('../../_actions.js');
+var git = require('../../actions/git.js');
 var Button = require('../../components/Button.jsx');
 
 const mapStateToProps = function(state) {
@@ -14,7 +14,7 @@ const mapStateToProps = function(state) {
 const mapDispatchToProps = function(dispatch) {
 	return {
 		onClick: function() {
-			dispatch(actions.getRevisions());
+			dispatch(git.getRevisions());
 		}
 	};
 };

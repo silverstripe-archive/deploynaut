@@ -1,6 +1,6 @@
 var _ = require('underscore');
 
-var actions = require('../_actions.js');
+var actions = require('../actions/misc.js');
 
 module.exports = function environment(state, action) {
 	if(typeof state === 'undefined') {
