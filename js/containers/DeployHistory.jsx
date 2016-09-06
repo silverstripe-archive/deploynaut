@@ -21,7 +21,7 @@ var DeployHistory = function(props) {
 					{
 						Object.keys(props.list).map(function(i) {
 							if(!props.list.hasOwnProperty(i)) {
-								return;
+								return null;
 							}
 
 							var row = props.list[i];
