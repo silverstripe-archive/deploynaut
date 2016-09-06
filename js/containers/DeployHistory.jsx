@@ -39,11 +39,10 @@ var DeployHistory = function(props) {
 				</tbody>
 			</table>
 			<Pagination
-				prev
-				next
-				first
-				last
-				ellipsis
+				prev={props.currentpage > 1}
+				next={props.currentpage !== props.totalpages}
+				first={props.currentpage > 1}
+				last={props.currentpage !== props.totalpages}
 				items={props.totalpages}
 				activePage={props.currentpage}
 				onSelect={props.onPageClick}
@@ -56,7 +55,6 @@ const mapStateToProps = function(state) {
 	return {
 		list: state.deployhistory.list,
 		pagelength: state.deployhistory.pagelength,
-		pagestart: state.deployhistory.pagestart,
 		totalpages: state.deployhistory.totalpages,
 		currentpage: state.deployhistory.currentpage
 	};

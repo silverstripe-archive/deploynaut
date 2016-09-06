@@ -88,7 +88,6 @@ class DeployDispatcher extends Dispatcher {
 			[
 				'list' => $data,
 				'pagelength' => $list->getPageLength(),
-				'pagestart' => $list->getPageStart(),
 				'totalpages' => $list->TotalPages(),
 				'currentpage' => $list->CurrentPage()
 			],
