@@ -41,8 +41,6 @@ var DeployHistory = function(props) {
 			<Pagination
 				prev={props.currentpage > 1}
 				next={props.currentpage !== props.totalpages}
-				first={props.currentpage > 1}
-				last={props.currentpage !== props.totalpages}
 				items={props.totalpages}
 				activePage={props.currentpage}
 				onSelect={props.onPageClick}
