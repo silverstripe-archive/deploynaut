@@ -54,7 +54,7 @@ export function create(name) {
 
 		let fullURI = "";
 		// check if uri is a relative or full uri
-		if (uri.indexOf('://') > 0 || uri.indexOf('//') === 0 ) {
+		if (uri.indexOf('://') > 0 || uri.indexOf('//') === 0) {
 			fullURI = uri;
 		} else {
 			fullURI = `${getState().api.dispatchers[apiName]}${uri}`;

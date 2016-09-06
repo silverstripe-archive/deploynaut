@@ -1034,6 +1034,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * Construct the deployment form
 	 *
+	 * @deprecated 2.0.0 - moved to DeployDispatcher
+	 *
 	 * @return Form
 	 */
 	public function getDeployForm($request = null) {
@@ -1078,6 +1080,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
+	 * @deprecated 2.0.0 - moved to GitDispatcher
+	 *
 	 * @param SS_HTTPRequest $request
 	 *
 	 * @return SS_HTTPResponse|string
@@ -1257,6 +1261,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
+	 * @deprecated 2.0.0 - moved to PlanDispatcher
+	 *
 	 * @param SS_HTTPRequest $request
 	 *
 	 * @return string
@@ -1309,6 +1315,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 	/**
 	 * Deployment form submission handler.
+	 *
+	 * @deprecated 2.0.0 - moved to DeployDispatcher
 	 *
 	 * Initiate a DNDeployment record and redirect to it for status polling
 	 *
@@ -1365,6 +1373,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
+	 * @deprecated 2.0.0 - moved to DeployDispatcher
+	 *
 	 * Action - Do the actual deploy
 	 *
 	 * @param SS_HTTPRequest $request
@@ -1400,6 +1410,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 
 	/**
+	 * @deprecated 2.0.0 - moved to DeployDispatcher
+	 *
 	 * Action - Get the latest deploy log
 	 *
 	 * @param SS_HTTPRequest $request
@@ -2181,6 +2193,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
+	 * @deprecated 2.0.0 - moved to DeployDispatcher
+	 *
 	 * @return null|PaginatedList
 	 */
 	public function DeployHistory() {

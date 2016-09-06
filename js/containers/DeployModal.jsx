@@ -110,13 +110,13 @@ const mapStateToProps = function(state) {
 			state.git.is_loading || state.git.is_updating,
 			state.plan.is_loading,
 			false,
-			false
+			state.deployment.enqueued
 		],
 		isFinished: [
 			state.git.selected_ref !== "",
 			state.plan.validation_code === 'success',
 			state.plan.validation_code === 'success' && (state.approval.approved || state.approval.bypassed),
-			state.deployment.enqueued
+			false
 		],
 		isOpen: state.navigation.open,
 		planSuccess: state.plan.validation_code === 'success',
