@@ -15,6 +15,6 @@ if (holder) {
 }
 
 var Tools = require('../../deploynaut/js/tools.jsx');
-var Plan = require('./Plan.jsx');
+var EnvironmentOverview = require('./EnvironmentOverview.jsx');
 
-Tools.install(Plan, 'Plan');
+Tools.install(EnvironmentOverview, 'EnvironmentOverview');

@@ -23,5 +23,5 @@
 		</div>
 	<% end_with %>
 
-	$getReactComponent(Plan)
+	$getReactComponent(EnvironmentOverview)
 </div>
