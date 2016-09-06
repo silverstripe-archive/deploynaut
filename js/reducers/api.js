@@ -14,14 +14,13 @@ module.exports = function api(state, action) {
 	}
 	switch(action.type) {
 		case actions.SETUP_API: {
-			return _.assign({}, state,{
+			return _.assign({}, state, {
 				dispatchers: action.dispatchers,
 				auth: {
 					name: action.auth.name,
 					value: action.auth.value
 				}
 			});
-			return newstate;
 		}
 		default:
 			return state;

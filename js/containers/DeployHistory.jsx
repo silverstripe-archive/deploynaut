@@ -20,10 +20,6 @@ var DeployHistory = function(props) {
 				<tbody>
 					{
 						Object.keys(props.list).map(function(i) {
-							if(!props.list.hasOwnProperty(i)) {
-								return null;
-							}
-
 							var row = props.list[i];
 							return (
 								<tr key={i}>

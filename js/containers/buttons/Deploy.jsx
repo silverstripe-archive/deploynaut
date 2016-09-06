@@ -25,10 +25,10 @@ const mapStateToProps = function(state) {
 	};
 };
 
-const mapDispatchToProps = function(dispatch) {
+const mapDispatchToProps = function(dispatch, ownProps) {
 	return {
 		onClick: function() {
-			dispatch(actions.startDeploymentEnqueue());
+			dispatch(actions.startDeploy(ownProps.gitSHA));
 		}
 	};
 };

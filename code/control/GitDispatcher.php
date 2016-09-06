@@ -156,8 +156,9 @@ class GitDispatcher extends Dispatcher {
 
 		$location = Director::absoluteBaseURL() . $this->Link() . '/update/' . $fetch->ID;
 		$output = array(
-			'message' => 'Fetch queued as job ' . $fetch->ResqueToken,
-			'href' => $location,
+			'message' => 'git fetch has been queued',
+			'ID' => $fetch->ID,
+			'location' => $location,
 		);
 
 		$response = $this->getAPIResponse($output, 201);

@@ -7,6 +7,18 @@ var deployment = function(props) {
 
 	var approverName = (props.approvedBy) ? props.approvedBy.name : "";
 
+	var logOutput = null;
+	if(props.deployLog.length) {
+		let lines = Object.keys(props.deployLog).map(function(key) {
+			return <div key={key}>{props.deployLog[key]}</div>;
+		});
+		logOutput = (
+			<pre>
+				{lines}
+           </pre>
+		);
+	}
+
 	return (
 		<div>
 			<div className="row">
@@ -32,7 +44,8 @@ var deployment = function(props) {
 				</div>
 			</div>
 			<div>
-				<Deploy />
+				<Deploy gitSHA={props.codeVersion} />
+				{logOutput}
 			</div>
 		</div>
 	);
@@ -52,7 +65,9 @@ const mapStateToProps = function(state) {
 		environment: state.environment.name,
 		deploymentType: state.plan.deployment_type,
 		deploymentEstimate: state.plan.deployment_estimate,
-		codeVersion: state.git.selected_ref
+		codeVersion: state.git.selected_ref,
+		plan: state.plan,
+		deployLog: state.deployment.log
 	};
 };
 

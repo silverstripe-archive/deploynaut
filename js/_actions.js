@@ -101,7 +101,7 @@ export function getRevisions() {
 
 export function getDeployHistory(page) {
 	if (typeof page === 'undefined') {
-		page = 1;
+		page = 1; // eslint-disable-line no-param-reassign
 	}
 
 	return (dispatch, getState) => {
@@ -120,22 +120,12 @@ export function getRevisionsIfNeeded() {
 	};
 }
 
-export function updateRepo() {
-	return (dispatch, getState) => {
-		dispatch(startRepoUpdate());
-		return gitAPI.call(getState, '/update', 'post')
-			.then(data => gitAPI.waitForSuccess(getState, data.message.href))
-			.then(() => dispatch(succeedRepoUpdate()))
-			.catch(err => dispatch(failRepoUpdate(err)));
-	};
-}
-
 // combines the updateRepo and revisionGet actions in one call
 export function updateRepoAndGetRevisions() {
 	return (dispatch, getState) => {
 		dispatch(startRepoUpdate());
 		return gitAPI.call(getState, '/update', 'post')
-			.then(data => gitAPI.waitForSuccess(getState, data.href))
+			.then(data => gitAPI.waitForSuccess(getState, `/update/${data.ID}`))
 			.then(() => dispatch(succeedRepoUpdate()))
 			.catch(err => dispatch(failRepoUpdate(err)))
 			.then(() => dispatch(startRevisionGet()))
@@ -293,11 +283,36 @@ export function startDeploymentEnqueue() {
 }
 
 export const SUCCEED_DEPLOYMENT_ENQUEUE = "SUCCEED_DEPLOYMENT_ENQUEUE";
-export function succeedDeploymentEnqueue() {
-	return {type: SUCCEED_DEPLOYMENT_ENQUEUE};
+export function succeedDeploymentEnqueue(data) {
+	return {type: SUCCEED_DEPLOYMENT_ENQUEUE, ID: data.ID};
 }
 
 export const FAIL_DEPLOYMENT_ENQUEUE = "FAIL_DEPLOYMENT_ENQUEUE";
-export function failDeploymentEnqueue() {
+export function failDeploymentEnqueue(err) {
+	console.error(err); // eslint-disable-line no-console
 	return {type: FAIL_DEPLOYMENT_ENQUEUE};
 }
+
+export const DEPLOY_LOG_UPDATE = 'DEPLOY_LOG_UPDATE';
+export function deployLogUpdate(data) {
+	return {type: DEPLOY_LOG_UPDATE, data: data};
+}
+
+export function getDeployLog() {
+	return (dispatch, getState) => {
+		deployAPI.waitForSuccess(getState, `/log/${getState().deployment.ID}`, 100, function(data) {
+			dispatch(deployLogUpdate(data));
+		}).then(() => console.log('deploy done')); // eslint-disable-line no-console
+
+	};
+}
+
+export function startDeploy(gitSHA) {
+	return (dispatch, getState) => {
+		dispatch(startDeploymentEnqueue());
+		return deployAPI.call(getState, '/start', 'post', {sha: gitSHA})
+			.then(data => dispatch(succeedDeploymentEnqueue(data)))
+			.then(() => dispatch(getDeployLog()));
+	};
+}
+

@@ -65,6 +65,8 @@ class APIEnvironment extends APINoun {
 	}
 
 	/**
+	 * @deprecated 2.0.0 - moved to DeployDispatcher
+	 *
 	 * @param SS_HTTPRequest $request
 	 * @return SS_HTTPResponse
 	 */
@@ -142,6 +144,8 @@ class APIEnvironment extends APINoun {
 	}
 
 	/**
+	 * @deprecated 2.0.0 - moved to DeployDispatcher
+	 *
 	 * @return SS_HTTPResponse
 	 */
 	protected function createDeploy() {
@@ -176,6 +180,8 @@ class APIEnvironment extends APINoun {
 	}
 
 	/**
+	 * @deprecated 2.0.0 - moved to DeployDispatcher
+	 *
 	 * @param int $id
 	 * @return SS_HTTPResponse
 	 */
