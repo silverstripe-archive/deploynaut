@@ -19,7 +19,6 @@ var deployment = function(props) {
 		);
 	}
 
-
 	return (
 		<div>
 			<div className="row">

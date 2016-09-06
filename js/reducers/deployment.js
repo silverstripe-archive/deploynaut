@@ -25,8 +25,7 @@ module.exports = function deployment(state, action) {
 				log: action.data.message,
 				status: action.data.status
 			});
-
-	default:
-		return state;
+		default:
+			return state;
 	}
 };

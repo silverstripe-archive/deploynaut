@@ -101,7 +101,7 @@ export function getRevisions() {
 
 export function getDeployHistory(page) {
 	if (typeof page === 'undefined') {
-		page = 1;
+		page = 1; // eslint-disable-line no-param-reassign
 	}
 
 	return (dispatch, getState) => {
@@ -289,6 +289,7 @@ export function succeedDeploymentEnqueue(data) {
 
 export const FAIL_DEPLOYMENT_ENQUEUE = "FAIL_DEPLOYMENT_ENQUEUE";
 export function failDeploymentEnqueue(err) {
+	console.error(err); // eslint-disable-line no-console
 	return {type: FAIL_DEPLOYMENT_ENQUEUE};
 }
 
@@ -299,9 +300,10 @@ export function deployLogUpdate(data) {
 
 export function getDeployLog() {
 	return (dispatch, getState) => {
-		return deployAPI.waitForSuccess(getState, `/log/${getState().deployment.ID}`, 100, function(data) {
+		deployAPI.waitForSuccess(getState, `/log/${getState().deployment.ID}`, 100, function(data) {
 			dispatch(deployLogUpdate(data));
-		});
+		}).then(() => console.log('deploy done')); // eslint-disable-line no-console
+
 	};
 }
 
