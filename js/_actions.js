@@ -99,10 +99,14 @@ export function getRevisions() {
 	};
 }
 
-export function getDeployHistory() {
+export function getDeployHistory(page) {
+	if (typeof page === 'undefined') {
+		page = 1;
+	}
+
 	return (dispatch, getState) => {
 		dispatch(startDeployHistoryGet());
-		return deployAPI.call(getState, '/history', 'get')
+		return deployAPI.call(getState, `/history?page=${page}`, 'get')
 			.then(json => dispatch(succeedDeployHistoryGet(json)))
 			.catch(err => dispatch(failDeployHistoryGet(err)));
 	};
@@ -178,7 +182,7 @@ export function failSummaryGet(err) {
 export function getDeploySummary(gitSHA) {
 	return (dispatch, getState) => {
 		dispatch(startSummaryGet());
-		return planAPI.call(getState, '/deploysummary', 'post',  {sha: gitSHA})
+		return planAPI.call(getState, '/deploysummary', 'post', {sha: gitSHA})
 			.then(data => dispatch(succeedSummaryGet(data)))
 			.catch(err => dispatch(failSummaryGet(err)));
 	};

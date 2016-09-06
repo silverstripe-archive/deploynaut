@@ -5,7 +5,11 @@ var actions = require('../_actions.js');
 module.exports = function deployhistory(state, action) {
 	if(typeof state === 'undefined') {
 		return {
-			data: [],
+			list: [],
+			pagelength: 0,
+			pagestart: 0,
+			totalpages: 0,
+			currentpage: 0,
 			is_loading: false
 		};
 	}
@@ -13,12 +17,15 @@ module.exports = function deployhistory(state, action) {
 	switch (action.type) {
 		case actions.START_DEPLOY_HISTORY_GET:
 			return _.assign({}, state, {
-				data: [],
 				is_loading: true
 			});
 		case actions.SUCCEED_DEPLOY_HISTORY_GET:
 			return _.assign({}, state, {
-				data: action.data.history,
+				list: action.data.list,
+				pagelength: action.data.pagelength,
+				pagestart: action.data.pagestart,
+				totalpages: action.data.totalpages,
+				currentpage: action.data.currentpage,
 				is_loading: false
 			});
 		default:
