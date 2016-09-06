@@ -1,5 +1,6 @@
 var React = require('react');
 var ReactRedux = require('react-redux');
+var Pagination = require('react-bootstrap/lib/Pagination');
 var actions = require('../_actions.js');
 
 var DeployHistory = function(props) {
@@ -18,12 +19,12 @@ var DeployHistory = function(props) {
 				</thead>
 				<tbody>
 					{
-						Object.keys(props.data).map(function(i) {
-							if(!props.data.hasOwnProperty(i)) {
+						Object.keys(props.list).map(function(i) {
+							if(!props.list.hasOwnProperty(i)) {
 								return;
 							}
 
-							var row = props.data[i];
+							var row = props.list[i];
 							return (
 								<tr key={i}>
 									<td>{row.CreatedDate}</td>
@@ -37,18 +38,36 @@ var DeployHistory = function(props) {
 					}
 				</tbody>
 			</table>
+			<Pagination
+				prev
+				next
+				first
+				last
+				ellipsis
+				items={props.totalpages}
+				activePage={props.currentpage}
+				onSelect={props.onPageClick}
+			/>
 		</div>
 	);
 };
 
 const mapStateToProps = function(state) {
 	return {
-		data: state.deployhistory.data
+		list: state.deployhistory.list,
+		pagelength: state.deployhistory.pagelength,
+		pagestart: state.deployhistory.pagestart,
+		totalpages: state.deployhistory.totalpages,
+		currentpage: state.deployhistory.currentpage
 	};
 };
 
 const mapDispatchToProps = function(dispatch) {
-	return {};
+	return {
+		onPageClick: function(page) {
+			dispatch(actions.getDeployHistory(page));
+		}
+	};
 };
 
 module.exports = ReactRedux.connect(mapStateToProps, mapDispatchToProps)(DeployHistory);

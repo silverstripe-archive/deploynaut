@@ -2188,7 +2188,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			$history = $env->DeployHistory();
 			if($history->count() > 0) {
 				$pagination = new PaginatedList($history, $this->getRequest());
-				$pagination->setPageLength(8);
+				$pagination->setPageLength(4);
 				return $pagination;
 			}
 		}

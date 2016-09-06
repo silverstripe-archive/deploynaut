@@ -57,7 +57,21 @@ class DeployDispatcher extends Dispatcher {
 	 */
 	public function history(SS_HTTPRequest $request) {
 		$data = [];
-		foreach($this->DeployHistory() as $deployment) {
+		$list = $this->DeployHistory();
+		$page = $request->getVar('page') ?: 1;
+		if ($page > $list->TotalPages()) {
+			$page = 1;
+		}
+		if ($page < 1) {
+			$page = 1;
+		}
+		$start = ($page - 1) * $list->getPageLength();
+		$list->setPageStart((int) $start);
+		if (empty($list)) {
+			return $this->getAPIResponse(['message' => 'No deploy history'], 404);
+		}
+
+		foreach ($list as $deployment) {
 			$data[] = [
 				'CreatedDate' => $deployment->Created,
 				'Branch' => $deployment->Branch,
@@ -69,7 +83,17 @@ class DeployDispatcher extends Dispatcher {
 				'State' => $deployment->State,
 			];
 		}
-		return $this->getAPIResponse(['history' => $data], 200);
+
+		return $this->getAPIResponse(
+			[
+				'list' => $data,
+				'pagelength' => $list->getPageLength(),
+				'pagestart' => $list->getPageStart(),
+				'totalpages' => $list->TotalPages(),
+				'currentpage' => $list->CurrentPage()
+			],
+			200
+		);
 	}
 
 	/**
