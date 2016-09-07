@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * @deprecated  2.0.0 - moved to Dispatchers and frontend
+ *
  * Validates a multi-source commit selector
  *
  * @package deploynaut
@@ -32,6 +34,8 @@ class DeployForm_CommitValidator extends DeployForm_ValidatorBase {
 }
 
 /**
+ * @deprecated  2.0.0 - moved to Dispatchers and frontend
+ *
  * Form for generating deployments from a specified commit
  *
  * @package deploynaut
