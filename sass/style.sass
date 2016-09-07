@@ -933,7 +933,32 @@ button.sidebar-open
 	ul
 		@extend .list-unstyled
 
-
+.current-build
+	position: absolute
+	top: 58px
+	right: 20px
+	width: 300px
+	padding: 10px 20px
+	background: #E2E8EB
+	.details
+		display: inline-block
+		.branch-detail
+			text-transform: uppercase
+		.sha-detail
+			width: 50px
+			overflow: hidden
+			white-space: nowrap
+		.deployed-detail
+			font-size: 12px
+			display: block
+	.actions
+		display: inline-block
+		vertical-align: top
+		li
+			display: inline-block
+			margin-left: 15px
+			.fa
+				font-size: 16px
 
 .project-links
 	@extend .list-reset

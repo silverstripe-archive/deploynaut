@@ -3,12 +3,21 @@ var ReactRedux = require('react-redux');
 var actions = require('../_actions.js');
 
 var CurrentBuildStatus = function(props) {
+	var shortSha = "";
+	if (typeof props.build.SHA === 'string') {
+		shortSha = props.build.SHA.substring(0,7);
+	}
+
 	return (
-		<div>
-			<a href={props.build.CommitURL}>{props.build.Branch} {props.build.SHA}</a>
-			<span>Deployed {props.build.CreatedDate}</span>
-			<a href={props.build.CommitURL}><i className="fa fa-github-alt"></i></a>
-			<a href="#"><i className="fa fa-info-circle"></i></a>
+		<div className="current-build">
+			<div className="details">
+				<a className="branch-detail" href={props.build.CommitURL}>{props.build.Branch} <span className="sha-detail" title={props.build.SHA}>{shortSha}</span></a>
+				<span className="deployed-detail">Deployed {props.build.CreatedDate}</span>
+			</div>
+			<ul className="actions">
+				<li><a className="repo-action" href={props.build.CommitURL}><i className="fa fa-github-alt"></i></a></li>
+				<li><a className="info-action" href="#"><i className="fa fa-info-circle"></i></a></li>
+			</ul>
 		</div>
 	);
 };

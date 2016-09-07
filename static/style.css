@@ -11524,6 +11524,33 @@ button.sidebar-open {
   .environment-details .build-details a.git-sha {
     font-size: 14px; }
 
+.current-build {
+  position: absolute;
+  top: 58px;
+  right: 20px;
+  width: 300px;
+  padding: 10px 20px;
+  background: #E2E8EB; }
+  .current-build .details {
+    display: inline-block; }
+    .current-build .details .branch-detail {
+      text-transform: uppercase; }
+    .current-build .details .sha-detail {
+      width: 50px;
+      overflow: hidden;
+      white-space: nowrap; }
+    .current-build .details .deployed-detail {
+      font-size: 12px;
+      display: block; }
+  .current-build .actions {
+    display: inline-block;
+    vertical-align: top; }
+    .current-build .actions li {
+      display: inline-block;
+      margin-left: 15px; }
+      .current-build .actions li .fa, .current-build .actions li .icon-star, .current-build .actions li .deploy-dropdown .status-icon, .deploy-dropdown .current-build .actions li .status-icon, .current-build .actions li .deploy-form-outer .deploy-form .header.loading .status-icon, .deploy-form-outer .deploy-form .header.loading .current-build .actions li .status-icon, .current-build .actions li .deploy-form-loading .deploy-form .header.loading .status-icon, .deploy-form-loading .deploy-form .header.loading .current-build .actions li .status-icon {
+        font-size: 16px; }
+
 .project-links {
   text-align: right;
   position: absolute;
