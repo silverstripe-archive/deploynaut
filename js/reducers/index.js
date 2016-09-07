@@ -4,6 +4,7 @@ var api = require('./api.js');
 var approval = require('./approval.js');
 var deployment = require('./deployment.js');
 var deployhistory = require('./deployhistory.js');
+var currentbuild = require('./currentbuild.js');
 var environment = require('./environment.js');
 var git = require('./git.js');
 var messages = require('./messages.js');
@@ -17,6 +18,7 @@ const planApp = Redux.combineReducers({
 	approval,
 	deployment,
 	deployhistory,
+	currentbuild,
 	messages,
 	navigation,
 	environment

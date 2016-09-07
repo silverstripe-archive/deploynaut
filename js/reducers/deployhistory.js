@@ -18,6 +18,10 @@ module.exports = function deployhistory(state, action) {
 			return _.assign({}, state, {
 				is_loading: true
 			});
+		case actions.FAIL_DEPLOY_HISTORY_GET:
+			return _.assign({}, state, {
+				is_loading: false
+			});
 		case actions.SUCCEED_DEPLOY_HISTORY_GET:
 			return _.assign({}, state, {
 				list: action.data.list,

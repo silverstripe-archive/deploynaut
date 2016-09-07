@@ -141,7 +141,6 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 		return $this->State;
 	}
 
-
 	/**
 	 * Fetch the git repository
 	 *
@@ -153,7 +152,6 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 		}
 		return $this->Environment()->Project()->getRepository();
 	}
-
 
 	/**
 	 * Gets the commit from source. The result is cached upstream in Repository.
@@ -173,6 +171,25 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 		return null;
 	}
 
+	/**
+	 * Get the commit URL to the commit associated with this deployment.
+	 * @return null|string
+	 */
+	public function getCommitURL() {
+		$environment = $this->Environment();
+		if (!$environment) {
+			return null;
+		}
+		$project = $environment->Project();
+		if (!$project) {
+			return null;
+		}
+		$interface = $project->getRepositoryInterface();
+		if (!$interface) {
+			return null;
+		}
+		return $interface->CommitURL . '/' . $this->SHA;
+	}
 
 	/**
 	 * Gets the commit message.

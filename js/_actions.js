@@ -90,6 +90,27 @@ export function failDeployHistoryGet(err) {
 	};
 }
 
+export const START_CURRENT_BUILD_STATUS_GET = 'START_CURRENT_BUILD_STATUS_GET';
+export function startCurrentBuildStatusGet() {
+	return { type: START_DEPLOY_HISTORY_GET };
+}
+
+export const SUCCEED_CURRENT_BUILD_STATUS_GET = 'SUCCEED_CURRENT_BUILD_STATUS_GET';
+export function succeedCurrentBuildStatusGet(data) {
+	return {
+		type: SUCCEED_CURRENT_BUILD_STATUS_GET,
+		data: data
+	};
+}
+
+export const FAIL_CURRENT_BUILD_STATUS_GET = 'FAIL_CURRENT_BUILD_STATUS_GET';
+export function failCurrentBuildStatusGet(err) {
+	return {
+		type: FAIL_CURRENT_BUILD_STATUS_GET,
+		error: err
+	};
+}
+
 export function getRevisions() {
 	return (dispatch, getState) => {
 		dispatch(startRevisionGet());
@@ -109,6 +130,15 @@ export function getDeployHistory(page) {
 		return deployAPI.call(getState, `/history?page=${page}`, 'get')
 			.then(json => dispatch(succeedDeployHistoryGet(json)))
 			.catch(err => dispatch(failDeployHistoryGet(err)));
+	};
+}
+
+export function getCurrentBuildStatus() {
+	return (dispatch, getState) => {
+		dispatch(startCurrentBuildStatusGet());
+		return deployAPI.call(getState, `/currentbuild`, 'get')
+			.then(json => dispatch(succeedCurrentBuildStatusGet(json)))
+			.catch(err => dispatch(failCurrentBuildStatusGet(err)));
 	};
 }
 
@@ -315,4 +345,3 @@ export function startDeploy(gitSHA) {
 			.then(() => dispatch(getDeployLog()));
 	};
 }
-

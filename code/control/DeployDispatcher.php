@@ -20,6 +20,7 @@ class DeployDispatcher extends Dispatcher {
 	 */
 	public static $allowed_actions = [
 		'history',
+		'currentbuild',
 		'start',
 		'log'
 	];
@@ -76,31 +77,54 @@ class DeployDispatcher extends Dispatcher {
 		$start = ($page - 1) * $list->getPageLength();
 		$list->setPageStart((int) $start);
 		if (empty($list)) {
-			return $this->getAPIResponse(['message' => 'No deploy history'], 404);
+			return $this->getAPIResponse(['list' => []], 200);
 		}
+
+		$currentBuild = $this->environment->CurrentBuild();
 
 		foreach ($list as $deployment) {
 			$data[] = [
+				'ID' => $deployment->ID,
 				'CreatedDate' => $deployment->Created,
 				'Branch' => $deployment->Branch,
 				'Tags' => $deployment->getTags()->toArray(),
 				'Changes' => $deployment->getDeploymentStrategy()->getChanges(),
+				'SHA' => $deployment->SHA,
 				'CommitMessage' => $deployment->getCommitMessage(),
+				'CommitURL' => $deployment->getCommitURL(),
 				'Deployer' => $deployment->Deployer()->getName(),
 				'Approver' => $deployment->Approver()->getName(),
 				'State' => $deployment->State,
+				'IsCurrentBuild' => $currentBuild ? ($deployment->ID === $currentBuild->ID) : null
 			];
 		}
 
-		return $this->getAPIResponse(
-			[
-				'list' => $data,
-				'pagelength' => $list->getPageLength(),
-				'totalpages' => $list->TotalPages(),
-				'currentpage' => $list->CurrentPage()
-			],
-			200
-		);
+		return $this->getAPIResponse([
+			'list' => $data,
+			'pagelength' => $list->getPageLength(),
+			'totalpages' => $list->TotalPages(),
+			'currentpage' => $list->CurrentPage()
+		], 200);
+	}
+
+	/**
+	 * @return SS_HTTPResponse
+	 */
+	public function currentbuild(SS_HTTPRequest $request) {
+		$currentBuild = $this->environment->CurrentBuild();
+		if (!$currentBuild) {
+			return $this->getAPIResponse(['build' => []], 200);
+		}
+
+		return $this->getAPIResponse(['build' => [
+			'ID' => $currentBuild->ID,
+			'CreatedDate' => $currentBuild->Created,
+			'Branch' => $currentBuild->Branch,
+			'Tags' => $currentBuild->getTags()->toArray(),
+			'SHA' => $currentBuild->SHA,
+			'CommitMessage' => $currentBuild->getCommitMessage(),
+			'CommitURL' => $currentBuild->getCommitURL(),
+		]], 200);
 	}
 
 	/**
@@ -146,13 +170,13 @@ class DeployDispatcher extends Dispatcher {
 	}
 
 	/**
-	    * Action - Get the latest deploy log
-	    *
-	    * @param SS_HTTPRequest $request
-	    *
-	    * @return string
-	    * @throws SS_HTTPResponse_Exception
-	    */
+	 * Action - Get the latest deploy log
+	 *
+	 * @param SS_HTTPRequest $request
+	 *
+	 * @return string
+	 * @throws SS_HTTPResponse_Exception
+	 */
 	public function log(SS_HTTPRequest $request) {
 		$params = $request->params();
 		$deployment = DNDeployment::get()->byId($params['ID']);
@@ -185,7 +209,7 @@ class DeployDispatcher extends Dispatcher {
 	 *
 	 * @return string
 	 */
-	public function Link($action = "") {
+	public function Link($action = '') {
 		return \Controller::join_links($this->environment->Link(), self::ACTION_DEPLOY, $action);
 	}
 
