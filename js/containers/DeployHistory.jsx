@@ -35,8 +35,8 @@ var DeployHistory = function(props) {
 				</tbody>
 			</table>
 			<Pagination
-				prev={props.currentpage > 1}
-				next={props.currentpage !== props.totalpages}
+				prev
+				next
 				items={props.totalpages}
 				activePage={props.currentpage}
 				onSelect={props.onPageClick}
