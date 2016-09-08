@@ -14,7 +14,7 @@ var summary = function(props) {
 				</p>
 				<TextArea
 					name="summary"
-					value={props.summaryOfChanges}
+					value={props.summary_of_changes}
 					onChange={props.onChange}
 					disabled={props.disabled}
 				/>
@@ -54,7 +54,7 @@ function isDisabled(state) {
 
 const mapStateToProps = function(state) {
 	return {
-		summaryOfChanges: state.plan.summary_of_changes,
+		summary_of_changes: state.plan.summary_of_changes,
 		disabled: isDisabled(state)
 	};
 };
