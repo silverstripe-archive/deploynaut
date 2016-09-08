@@ -42,7 +42,7 @@ function Approval(props) {
 				<Dropdown
 					name="approver"
 					options={props.approvers}
-					value={props.selectedApprover}
+					value={props.selected_approver}
 					onSelect={props.onApproverSelect}
 					disabled={props.disabled}
 				/>
@@ -100,7 +100,7 @@ const mapStateToProps = function(state) {
 		requestSentTime: state.approval.request_sent_time,
 		requester: `${state.approval.request_by.name} <${state.approval.request_by.email}>`,
 		approvers: approvers,
-		selectedApprover: state.approval.approved_by
+		selected_approver: state.approval.approved_by
 	};
 };
 
