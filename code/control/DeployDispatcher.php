@@ -21,8 +21,9 @@ class DeployDispatcher extends Dispatcher {
 	public static $allowed_actions = [
 		'history',
 		'currentbuild',
-		'start',
-		'log'
+		'show',
+		'log',
+		'start'
 	];
 
 	/**
@@ -40,21 +41,19 @@ class DeployDispatcher extends Dispatcher {
 
 		$this->project = $this->getCurrentProject();
 
-		if(!$this->project) {
+		if (!$this->project) {
 			return $this->project404Response();
 		}
 
 		// Performs canView permission check by limiting visible projects
 		$this->environment = $this->getCurrentEnvironment($this->project);
-		if(!$this->environment) {
+		if (!$this->environment) {
 			return $this->environment404Response();
 		}
 	}
 
 	/**
-	 *
 	 * @param \SS_HTTPRequest $request
-	 *
 	 * @return \HTMLText|\SS_HTTPResponse
 	 */
 	public function index(\SS_HTTPRequest $request) {
@@ -62,7 +61,8 @@ class DeployDispatcher extends Dispatcher {
 	}
 
 	/**
-	 * @return SS_HTTPResponse
+	 * @param \SS_HTTPRequest $request
+	 * @return \SS_HTTPResponse
 	 */
 	public function history(SS_HTTPRequest $request) {
 		$data = [];
@@ -80,66 +80,74 @@ class DeployDispatcher extends Dispatcher {
 			return $this->getAPIResponse(['list' => []], 200);
 		}
 
-		$currentBuild = $this->environment->CurrentBuild();
-
 		foreach ($list as $deployment) {
-			$data[] = [
-				'ID' => $deployment->ID,
-				'CreatedDate' => $deployment->Created,
-				'Branch' => $deployment->Branch,
-				'Tags' => $deployment->getTags()->toArray(),
-				'Changes' => $deployment->getDeploymentStrategy()->getChanges(),
-				'SHA' => $deployment->SHA,
-				'CommitMessage' => $deployment->getCommitMessage(),
-				'CommitURL' => $deployment->getCommitURL(),
-				'Deployer' => $deployment->Deployer()->getName(),
-				'Approver' => $deployment->Approver()->getName(),
-				'State' => $deployment->State,
-				'IsCurrentBuild' => $currentBuild ? ($deployment->ID === $currentBuild->ID) : null
-			];
+			$data[] = $this->getDeploymentData($deployment);
 		}
 
 		return $this->getAPIResponse([
 			'list' => $data,
-			'pagelength' => $list->getPageLength(),
-			'totalpages' => $list->TotalPages(),
-			'currentpage' => $list->CurrentPage()
+			'page_length' => $list->getPageLength(),
+			'total_pages' => $list->TotalPages(),
+			'current_page' => $list->CurrentPage()
 		], 200);
 	}
 
 	/**
-	 * @return SS_HTTPResponse
+	 * @param \SS_HTTPRequest $request
+	 * @return \SS_HTTPResponse
 	 */
 	public function currentbuild(SS_HTTPRequest $request) {
 		$currentBuild = $this->environment->CurrentBuild();
 		if (!$currentBuild) {
-			return $this->getAPIResponse(['build' => []], 200);
+			return $this->getAPIResponse(['deployment' => []], 200);
 		}
-
-		return $this->getAPIResponse(['build' => [
-			'ID' => $currentBuild->ID,
-			'CreatedDate' => $currentBuild->Created,
-			'Branch' => $currentBuild->Branch,
-			'Tags' => $currentBuild->getTags()->toArray(),
-			'SHA' => $currentBuild->SHA,
-			'CommitMessage' => $currentBuild->getCommitMessage(),
-			'CommitURL' => $currentBuild->getCommitURL(),
-		]], 200);
+		return $this->getAPIResponse(['deployment' => $this->getDeploymentData($currentBuild)], 200);
 	}
 
 	/**
-	 *
-	 * @param SS_HTTPRequest $request
-	 *
-	 * @return SS_HTTPResponse
-	 * @throws ValidationException
-	 * @throws null
+	 * @param \SS_HTTPRequest $request
+	 * @return \SS_HTTPResponse
+	 */
+	public function show(SS_HTTPRequest $request) {
+		$deployment = DNDeployment::get()->byId($request->param('ID'));
+		if (!$deployment || !$deployment->exists()) {
+			return $this->getAPIResponse(['message' => 'This deployment does not exist'], 404);
+		}
+		if (!$deployment->canView()) {
+			return $this->getAPIResponse(['message' => 'You are not authorised to deploy this environment'], 403);
+		}
+		return $this->getAPIResponse(['deployment' => $this->getDeploymentData($deployment)], 200);
+	}
+
+	/**
+	 * @param \SS_HTTPRequest $request
+	 * @return \SS_HTTPResponse
+	 */
+	public function log(SS_HTTPRequest $request) {
+		$deployment = DNDeployment::get()->byId($request->params('ID'));
+		if (!$deployment || !$deployment->exists) {
+			return $this->getAPIResponse(['message' => 'This deployment does not exist'], 404);
+		}
+		if (!$deployment->canView()) {
+			return $this->getAPIResponse(['message' => 'You are not authorised to view this environment'], 403);
+		}
+
+		$log = $deployment->log();
+		$content = $log->exists() ? $log->content() : 'Waiting for action to start';
+		$lines = explode(PHP_EOL, $content);
+
+		return $this->getAPIResponse(['message' => $lines, 'status' => $deployment->Status], 200);
+	}
+
+	/**
+	 * @param \SS_HTTPRequest $request
+	 * @return \SS_HTTPResponse
 	 */
 	public function start(SS_HTTPRequest $request) {
 		$this->checkSecurityToken();
 
-		if(!$this->environment->canDeploy(Member::currentUser())) {
-			return $this->getAPIResponse(['message' => 'You are not authorized to deploy this environment'], 403);
+		if (!$this->environment->canDeploy(Member::currentUser())) {
+			return $this->getAPIResponse(['message' => 'You are not authorised to deploy this environment'], 403);
 		}
 
 		// @todo the strategy should have been saved when there has been a request for an
@@ -159,54 +167,17 @@ class DeployDispatcher extends Dispatcher {
 
 		$location = \Controller::join_links(Director::absoluteBaseURL(), $this->Link('log'), $deployment->ID);
 
-		$output = [
+		$response = $this->getAPIResponse([
 			'message' => 'deployment has been queued',
-			'ID' => $deployment->ID,
+			'id' => $deployment->ID,
 			'location' => $location
-		];
-		$response = $this->getAPIResponse($output, 201);
+		], 201);
 		$response->addHeader('Location', $location);
 		return $response;
 	}
 
 	/**
-	 * Action - Get the latest deploy log
-	 *
-	 * @param SS_HTTPRequest $request
-	 *
-	 * @return string
-	 * @throws SS_HTTPResponse_Exception
-	 */
-	public function log(SS_HTTPRequest $request) {
-		$params = $request->params();
-		$deployment = DNDeployment::get()->byId($params['ID']);
-		if(!$deployment || !$deployment->ID) {
-			throw new SS_HTTPResponse_Exception('Deployment not found', 404);
-		}
-		if(!$deployment->canView()) {
-			return Security::permissionFailure();
-		}
-		if($this->environment->Name != $params['Environment']) {
-			throw new LogicException("Environment in URL doesn't match this deploy");
-		}
-		if($this->project->Name != $params['Project']) {
-			throw new LogicException("Project in URL doesn't match this deploy");
-		}
-		$log = $deployment->log();
-		if($log->exists()) {
-			$content = $log->content();
-		} else {
-			$content = 'Waiting for action to start';
-		}
-
-		$lines = explode(PHP_EOL, $content);
-
-		return $this->getAPIResponse(['message' => $lines, 'status' => $deployment->ResqueStatus()], 200);
-	}
-
-	/**
 	 * @param string $action
-	 *
 	 * @return string
 	 */
 	public function Link($action = '') {
@@ -215,11 +186,75 @@ class DeployDispatcher extends Dispatcher {
 
 	/**
 	 * @param string $name
-	 *
 	 * @return array
 	 */
 	public function getModel($name = '') {
 		return [];
+	}
+
+	/**
+	 * Return data about a single deployment for use in API response.
+	 * @param DNDeployment $deployment
+	 * @return array
+	 */
+	protected function getDeploymentData(DNDeployment $deployment) {
+		$currentBuild = $this->environment->CurrentBuild();
+
+		$deployer = $deployment->Deployer();
+		$deployerData = null;
+		if ($deployer && $deployer->exists()) {
+			$deployerData = $this->getStackMemberData($deployer);
+		}
+		$approver = $deployment->Approver();
+		$approverData = null;
+		if ($approver && $approver->exists()) {
+			$approverData = $this->getStackMemberData($approver);
+		}
+
+		return [
+			'id' => $deployment->ID,
+			'created' => $deployment->Created,
+			'date_planned' => $deployment->DatePlanned,
+			'summary' => $deployment->Summary,
+			'branch' => $deployment->Branch,
+			'tags' => $deployment->getTags()->toArray(),
+			'changes' => $deployment->getDeploymentStrategy()->getChanges(),
+			'sha' => $deployment->SHA,
+			'commit_message' => $deployment->getCommitMessage(),
+			'commit_url' => $deployment->getCommitURL(),
+			'deployer' => $deployerData,
+			'approver' => $approverData,
+			'state' => $deployment->State,
+			'is_current_build' => $currentBuild ? ($deployment->ID === $currentBuild->ID) : null
+		];
+	}
+
+	/**
+	 * Return data about a particular {@link Member} of the stack for use in API response.
+	 * Note that role can be null in the response. This is the case of an admin, or an operations
+	 * user who can create the deployment but is not part of the stack roles.
+	 *
+	 * @param Member $member
+	 * @return array
+	 */
+	protected function getStackMemberData(Member $member) {
+		$stackMembers = $this->project->listMembers();
+		$role = null;
+
+		foreach ($stackMembers as $stackMember) {
+			if ($stackMember['MemberID'] !== $member->ID) {
+				continue;
+			}
+
+			$role = $stackMember['RoleTitle'];
+		}
+
+		return [
+			'id' => $member->ID,
+			'email' => $member->Email,
+			'role' => $role,
+			'name' => $member->getName()
+		];
 	}
 
 }

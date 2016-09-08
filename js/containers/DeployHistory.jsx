@@ -22,12 +22,12 @@ var DeployHistory = function(props) {
 						Object.keys(props.list).map(function(i) {
 							var row = props.list[i];
 							return (
-								<tr key={i}>
-									<td>{row.CreatedDate}</td>
-									<td>{row.CommitMessage}</td>
-									<td>{row.Approver}</td>
-									<td>{row.Deployer}</td>
-									<td>{row.State}</td>
+								<tr onClick={() => props.onItemClick(row.id)} key={i}>
+									<td>{row.created}</td>
+									<td>{row.commit_message}</td>
+									<td>{row.approver ? row.approver.name : null}</td>
+									<td>{row.deployer ? row.deployer.name : null}</td>
+									<td>{row.state}</td>
 								</tr>
 							);
 						})
@@ -37,8 +37,8 @@ var DeployHistory = function(props) {
 			<Pagination
 				prev
 				next
-				items={props.totalpages}
-				activePage={props.currentpage}
+				items={props.total_pages}
+				activePage={props.current_page}
 				onSelect={props.onPageClick}
 			/>
 		</div>
@@ -48,14 +48,18 @@ var DeployHistory = function(props) {
 const mapStateToProps = function(state) {
 	return {
 		list: state.deployhistory.list,
-		pagelength: state.deployhistory.pagelength,
-		totalpages: state.deployhistory.totalpages,
-		currentpage: state.deployhistory.currentpage
+		page_length: state.deployhistory.page_length,
+		total_pages: state.deployhistory.total_pages,
+		current_page: state.deployhistory.current_page
 	};
 };
 
 const mapDispatchToProps = function(dispatch) {
 	return {
+		onItemClick: function(id) {
+			dispatch(actions.getDeployment(id))
+				.then(dispatch(actions.openPlanDialog()));
+		},
 		onPageClick: function(page) {
 			dispatch(actions.getDeployHistory(page));
 		}

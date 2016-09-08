@@ -15,7 +15,7 @@ var deployment = function(props) {
 		logOutput = (
 			<pre>
 				{lines}
-           </pre>
+			</pre>
 		);
 	}
 

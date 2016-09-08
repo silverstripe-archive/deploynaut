@@ -5,7 +5,7 @@ var actions = require('../_actions.js');
 module.exports = function currentbuild(state, action) {
 	if(typeof state === 'undefined') {
 		return {
-			build: [],
+			deployment: [],
 			is_loading: false
 		};
 	}
@@ -21,7 +21,7 @@ module.exports = function currentbuild(state, action) {
 			});
 		case actions.SUCCEED_CURRENT_BUILD_STATUS_GET:
 			return _.assign({}, state, {
-				build: action.data.build,
+				deployment: action.data.deployment,
 				is_loading: false
 			});
 		default:

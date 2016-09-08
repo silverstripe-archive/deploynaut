@@ -19,6 +19,10 @@ module.exports = function git(state, action) {
 				selected_type: action.id,
 				selected_ref: ""
 			});
+		case actions.SUCCEED_DEPLOYMENT_GET:
+			return _.assign({}, state, {
+				selected_ref: action.data.deployment.sha
+			});
 		case actions.SET_REVISION:
 			return _.assign({}, state, {
 				selected_ref: action.id
