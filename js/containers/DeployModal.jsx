@@ -128,7 +128,7 @@ const mapStateToProps = function(state) {
 			false
 		],
 		is_open: state.navigation.open,
-		planSuccess: state.plan.validation_code === 'success',
+		plan_success: state.plan.validation_code === 'success',
 		messages: state.messages,
 		active_step: state.navigation.active,
 		sha_selected: (state.git.selected_ref !== ""),
