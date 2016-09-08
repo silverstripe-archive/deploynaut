@@ -8,7 +8,7 @@ module.exports = function deployment(state, action) {
 			is_loading: false,
 			enqueued: false,
 			id: "",
-			data: null,
+			data: {},
 			log: [],
 			status: ""
 		};

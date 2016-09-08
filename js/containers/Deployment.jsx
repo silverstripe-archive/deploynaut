@@ -4,11 +4,10 @@ var ReactRedux = require('react-redux');
 var Deploy = require('./buttons/Deploy.jsx');
 
 var deployment = function(props) {
-
 	var approverName = (props.approved_by) ? props.approved_by.name : "";
-
 	var logOutput = null;
-	if(props.deploy_log.length) {
+
+	if (props.deploy_log.length) {
 		let lines = Object.keys(props.deploy_log).map(function(key) {
 			return <div key={key}>{props.deploy_log[key]}</div>;
 		});
@@ -52,7 +51,6 @@ var deployment = function(props) {
 };
 
 const mapStateToProps = function(state) {
-
 	var approvers = state.approval.approvers.filter(obj =>
 		obj.id === parseInt(state.approval.approved_by, 10)
 	);

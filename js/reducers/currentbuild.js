@@ -5,7 +5,7 @@ var actions = require('../_actions.js');
 module.exports = function currentbuild(state, action) {
 	if (typeof state === 'undefined') {
 		return {
-			data: [],
+			data: {},
 			is_loading: false,
 			error: null
 		};
