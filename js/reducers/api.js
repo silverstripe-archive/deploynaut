@@ -3,7 +3,7 @@ var _ = require('underscore');
 var actions = require('../_api.js');
 
 module.exports = function api(state, action) {
-	if(typeof state === 'undefined') {
+	if (typeof state === 'undefined') {
 		return {
 			endpoint: '',
 			auth: {
@@ -12,7 +12,7 @@ module.exports = function api(state, action) {
 			}
 		};
 	}
-	switch(action.type) {
+	switch (action.type) {
 		case actions.SETUP_API: {
 			return _.assign({}, state, {
 				dispatchers: action.dispatchers,

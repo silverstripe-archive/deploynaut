@@ -3,7 +3,7 @@ var _ = require('underscore');
 var actions = require('../_actions.js');
 
 module.exports = function plan(state, action) {
-	if(typeof state === 'undefined') {
+	if (typeof state === 'undefined') {
 		return {
 			is_loading: false,
 			deployment_type: "",
@@ -14,7 +14,7 @@ module.exports = function plan(state, action) {
 		};
 	}
 
-	switch(action.type) {
+	switch (action.type) {
 		case actions.START_SUMMARY_GET:
 			return _.assign({}, state, {
 				deployment_type: "",
@@ -35,7 +35,7 @@ module.exports = function plan(state, action) {
 		case actions.SUCCEED_SUMMARY_GET:
 			var changes = {};
 			// backend can sometimes return an empty array instead of an object
-			if(action.summary.changes.length !== 0) {
+			if (action.summary.changes.length !== 0) {
 				changes = action.summary.changes;
 			}
 			return _.assign({}, state, {
