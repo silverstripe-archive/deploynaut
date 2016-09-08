@@ -8,7 +8,7 @@ var CurrentBuildStatus = function(props) {
 		shortSha = props.deployment.sha.substring(0, 7);
 	}
 
-	if(props.error) {
+	if (props.error) {
 		return (
 			<div className="current-build alert alert-danger">
 				<div className="">

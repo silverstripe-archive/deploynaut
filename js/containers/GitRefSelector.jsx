@@ -10,7 +10,7 @@ function ShaSelector(props) {
 
 	var dropdown = null;
 
-	if(props.typeSelected !== "") {
+	if (props.typeSelected !== "") {
 		dropdown = (
 			<Dropdown
 				onSelect={props.onRefSelect}
@@ -50,16 +50,16 @@ ShaSelector.propTypes = {
 };
 
 function isDisabled(state) {
-	if(state.approval.request_sent) {
+	if (state.approval.request_sent) {
 		return true;
 	}
-	if(state.approval.approved) {
+	if (state.approval.approved) {
 		return true;
 	}
-	if(state.approval.bypassed) {
+	if (state.approval.bypassed) {
 		return true;
 	}
-	if(state.deployment.enqueued) {
+	if (state.deployment.enqueued) {
 		return true;
 	}
 	return false;
@@ -67,7 +67,7 @@ function isDisabled(state) {
 
 const mapStateToProps = function(state) {
 	var refs = [];
-	if(state.git.list[state.git.selected_type]) {
+	if (state.git.list[state.git.selected_type]) {
 		refs = state.git.list[state.git.selected_type].list;
 	}
 

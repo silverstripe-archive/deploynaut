@@ -3,7 +3,7 @@ var React = require("react");
 var Radio = function (props) {
 
 	var classes = "radio";
-	if(props.disabled === true) {
+	if (props.disabled === true) {
 		classes += " disabled";
 	}
 	return (

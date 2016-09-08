@@ -3,7 +3,7 @@ var SummaryTable = require('../SummaryTable.jsx');
 
 var DeployDiff = function (props) {
 
-	if(props.isLoading) {
+	if (props.isLoading) {
 		return (
 			<div>
 				Loading summary...

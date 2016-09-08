@@ -73,7 +73,7 @@ module.exports = React.createClass({
 		}
 
 		var wrapperCss = 'checkbox';
-		if(this.props.inline) {
+		if (this.props.inline) {
 			wrapperCss = 'checkbox-inline';
 		}
 

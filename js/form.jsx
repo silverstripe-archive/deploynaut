@@ -18,11 +18,11 @@ validator.extend('equalsField', function(string, firstFieldID, secondFieldID) {
 	var first = document.getElementById(firstFieldID);
 	var second = document.getElementById(secondFieldID);
 	var firstValue = '';
-	if(first.value) {
+	if (first.value) {
 		firstValue = first.value;
 	}
 	var secondValue = '';
-	if(second.value) {
+	if (second.value) {
 		secondValue = second.value;
 	}
 	return firstValue === secondValue;
@@ -48,7 +48,7 @@ var Form = React.createClass({
 	},
 
 	componentWillReceiveProps: function(nextProps) {
-		if(!nextProps.securityID) {
+		if (!nextProps.securityID) {
 			return;
 		}
 		this.setState({
@@ -108,7 +108,7 @@ var Form = React.createClass({
 		event.stopPropagation();
 		event.preventDefault();
 
-		if(!this.validateForm()) {
+		if (!this.validateForm()) {
 			return;
 		}
 
@@ -126,10 +126,10 @@ var Form = React.createClass({
 			url: this.props.url,
 			data: postData
 		})).then(function(data) {
-			if(data.NewSecurityID) {
+			if (data.NewSecurityID) {
 				self.setState({ securityID: data.NewSecurityID });
 			}
-			if(self.props.afterSuccess) {
+			if (self.props.afterSuccess) {
 				self.props.afterSuccess(data);
 			} else {
 				self.afterSuccess(data);
@@ -143,7 +143,7 @@ var Form = React.createClass({
 	},
 
 	afterSuccess: function(data) {
-		if(data.RedirectTo) {
+		if (data.RedirectTo) {
 			window.location.href = data.RedirectTo;
 		}
 	},
@@ -163,11 +163,11 @@ var Form = React.createClass({
 				this.setErrorOnForm(errMsg);
 			}
 
-			if(typeof json.NewSecurityID !== 'undefined') {
+			if (typeof json.NewSecurityID !== 'undefined') {
 				this.setState({ securityID: json.NewSecurityID });
 			}
 
-			if(_.size(json.InputErrors) > 0) {
+			if (_.size(json.InputErrors) > 0) {
 				this.setErrorsOnInputs(json.InputErrors);
 			} else {
 				this.setErrorOnForm(null);
@@ -187,7 +187,7 @@ var Form = React.createClass({
 		// Validate all the Input components
 		_.keys(inputs).forEach(function (name) {
 
-			if(!self.validate(inputs[name])) {
+			if (!self.validate(inputs[name])) {
 				allIsValid = false;
 			}
 		});
@@ -222,7 +222,7 @@ var Form = React.createClass({
 
 				args = [component.state.value].concat(args);
 
-				if(typeof validator[validateMethod] !== 'function') {
+				if (typeof validator[validateMethod] !== 'function') {
 					var debugWarning = 'Validation method "' + validateMethod;
 					debugWarning += '" on component "' + component.props.name + '" doesn\'t exists';
 					console.warn(debugWarning); // eslint-disable-line no-console
@@ -267,24 +267,24 @@ var Form = React.createClass({
 	// properties because they are immutable.
 	amendChildren: function(child) {
 
-		if(!child || !child.props) {
+		if (!child || !child.props) {
 			return child;
 		}
 
 		// If this component has a child components, we need to amend them as well
 		var children = [];
-		if(child.props.children) {
+		if (child.props.children) {
 			children = React.Children.map(child.props.children, this.amendChildren);
 		}
 
 		// Child is not a Input component so just change the (eventual) children props
-		if(typeof child.props.name === 'undefined') {
+		if (typeof child.props.name === 'undefined') {
 			return React.cloneElement(child, {children: children});
 		}
 
 		var validations = child.props.validations;
 		// Dynamically add a 'required' validation
-		if(child.props.required) {
+		if (child.props.required) {
 			validations = validations ? validations + '/' : '';
 			validations += 'isLength|1';
 		}
@@ -310,16 +310,16 @@ var Form = React.createClass({
 
 		var cancelButton = null;
 
-		if(this.props.cancelButton) {
+		if (this.props.cancelButton) {
 			cancelButton = this.props.cancelButton;
 		}
 
 		var buttonTitle = 'Submit';
-		if(this.props.buttonTitle) {
+		if (this.props.buttonTitle) {
 			buttonTitle = this.props.buttonTitle;
 		}
 		var buttonSubmittingTitle = "Submitting";
-		if(this.props.buttonSubmittingTitle) {
+		if (this.props.buttonSubmittingTitle) {
 			buttonSubmittingTitle = this.props.buttonSubmittingTitle;
 		}
 		return (

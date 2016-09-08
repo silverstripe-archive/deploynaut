@@ -6,7 +6,7 @@ var actions = require('../_actions.js');
 var DeployHistory = function(props) {
 
 	let errorRow = null;
-	if(props.error) {
+	if (props.error) {
 		errorRow = (
 			<tr className="danger">
 				<td colSpan="5">
@@ -17,7 +17,7 @@ var DeployHistory = function(props) {
 	}
 
 	let pagination = null;
-	if(props.totalpages > 1) {
+	if (props.totalpages > 1) {
 		pagination = (
 			<Pagination
 				prev

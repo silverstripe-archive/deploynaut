@@ -37,16 +37,16 @@ var summary = function(props) {
 };
 
 function isDisabled(state) {
-	if(state.approval.request_sent) {
+	if (state.approval.request_sent) {
 		return true;
 	}
-	if(state.approval.approved) {
+	if (state.approval.approved) {
 		return true;
 	}
-	if(state.approval.bypassed) {
+	if (state.approval.bypassed) {
 		return true;
 	}
-	if(state.deployment.enqueued) {
+	if (state.deployment.enqueued) {
 		return true;
 	}
 	return false;

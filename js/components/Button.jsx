@@ -1,11 +1,11 @@
 var React = require("react");
 
 function Button(props) {
-	if(!props.display) {
+	if (!props.display) {
 		return null;
 	}
 	var icon = null;
-	if(props.icon !== "") {
+	if (props.icon !== "") {
 		icon = (
 			<i className={props.icon} aria-hidden="true"></i>
 		);

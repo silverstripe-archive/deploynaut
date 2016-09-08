@@ -44,7 +44,7 @@ var DeploymentDialog = React.createClass({
 	},
 	componentWillUnmount: function() {
 		// remove subscribers
-		for(var idx = 0; idx < this.subscriptions.length; idx++) {
+		for (var idx = 0; idx < this.subscriptions.length; idx++) {
 			this.subscriptions[idx].remove();
 		}
 	},
@@ -97,7 +97,7 @@ var DeploymentDialog = React.createClass({
 
 	fetchStatusError: function(data) {
 		var message = 'Unknown error';
-		if(typeof data.responseText !== 'undefined') {
+		if (typeof data.responseText !== 'undefined') {
 			message = data.responseText;
 		} else if (typeof data.message !== 'undefined') {
 			message = data.message;
@@ -116,9 +116,9 @@ var DeploymentDialog = React.createClass({
 
 		var form;
 
-		if(this.state.errorText !== "") {
+		if (this.state.errorText !== "") {
 			form = <ErrorMessages message={this.state.errorText} />;
-		} else if(this.state.fetched) {
+		} else if (this.state.fetched) {
 			form = (
 				<DeployForm
 					context={this.props.context}
@@ -208,7 +208,7 @@ var DeployForm = React.createClass({
 		this.setState({selectedTab: id});
 	},
 	render: function () {
-		if(this.state.loading) {
+		if (this.state.loading) {
 			return (
 				<LoadingDeployForm message="Loading&hellip;" />
 			);
@@ -361,7 +361,7 @@ var DeployTab = React.createClass({
 		};
 		// merge the 'advanced' options if they are set
 		for (var attrname in this.state.selectedOptions) {
-			if(this.state.selectedOptions.hasOwnProperty(attrname)) {
+			if (this.state.selectedOptions.hasOwnProperty(attrname)) {
 				summaryData[attrname] = this.state.selectedOptions[attrname];
 			}
 		}
@@ -383,7 +383,7 @@ var DeployTab = React.createClass({
 
 	changeHandler: function(event) {
 		event.preventDefault();
-		if(event.target.value === "") {
+		if (event.target.value === "") {
 			return;
 		}
 		var sha = ReactDOM.findDOMNode(this.refs.sha_selector.refs.sha).value;
@@ -453,7 +453,7 @@ var SelectorDropdown = React.createClass({
 			data: this.props.tab.field_data
 		}).val(this.props.defaultValue);
 
-		if(this.props.changeHandler) {
+		if (this.props.changeHandler) {
 			$(ReactDOM.findDOMNode(this.refs.sha)).select2().on("change", this.props.changeHandler);
 		}
 	},
@@ -484,7 +484,7 @@ var SelectorDropdown = React.createClass({
 
 var SelectorText = React.createClass({
 	render: function() {
-		return(
+		return (
 			<div className="field">
 				<input
 					type="text"

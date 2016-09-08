@@ -4,7 +4,7 @@ var Radio = require('./Radio.jsx');
 
 function RadioList(props) {
 
-	if(!props.options) {
+	if (!props.options) {
 		return null;
 	}
 	var list = Object.keys(props.options).map(function(key, index) {

@@ -28,10 +28,10 @@ var VariableEditor = React.createClass({
 		return {
 			validateVariable: function(value) {
 				var message = '';
-				if(value.match(/[^a-zA-Z_0-9]/)) {
+				if (value.match(/[^a-zA-Z_0-9]/)) {
 					message = "Only alphanumerics and underscore permitted.";
 				}
-				if(value.match(/^[0-9]/)) {
+				if (value.match(/^[0-9]/)) {
 					message = "Value cannot start with a digit.";
 				}
 				return message;
@@ -48,7 +48,7 @@ var VariableEditor = React.createClass({
 		var variables = this.deepCopyVariables(this.props.variables);
 
 		// Add additional state needed for editing.
-		for(var i = 0; i < variables.length; i++) {
+		for (var i = 0; i < variables.length; i++) {
 			variables[i].error = "";
 			variables[i].vacant = false;
 			variables[i].deleted = false;
@@ -72,8 +72,8 @@ var VariableEditor = React.createClass({
 
 	deepCopyVariables: function(from) {
 		var to = [];
-		for(var i = 0; i < from.length; i++) {
-			if(!from[i].deleted && !from[i].vacant) {
+		for (var i = 0; i < from.length; i++) {
+			if (!from[i].deleted && !from[i].vacant) {
 				to.push({
 					variable: from[i].variable,
 					value: from[i].value
@@ -102,7 +102,7 @@ var VariableEditor = React.createClass({
 				// it's possible that the this.props.submit will unmount this
 				// component due to state changes, this guards against setting
 				// state on a unmounted component
-				if(self.isMounted()) {
+				if (self.isMounted()) {
 					self.setState({
 						saving: false
 					});
@@ -125,8 +125,8 @@ var VariableEditor = React.createClass({
 		};
 
 		var isVariableUnique = function(variable) {
-			for(var i = 0; i < self.state.variables.length; i++) {
-				if(row !== i
+			for (var i = 0; i < self.state.variables.length; i++) {
+				if (row !== i
 					&& !self.state.variables[i].deleted
 					&& !self.state.variables[i].vacant
 					&& self.state.variables[i].variable === variable
@@ -140,7 +140,7 @@ var VariableEditor = React.createClass({
 				return (typeof self.state.variables[row].vacant !== 'undefined' && self.state.variables[row].vacant);
 			},
 			setVariable: function(variable) {
-				if(self.state.variables[row].vacant) {
+				if (self.state.variables[row].vacant) {
 					self.state.variables.push({
 						variable: "",
 						value: "",
@@ -162,16 +162,16 @@ var VariableEditor = React.createClass({
 			},
 			validateVariable: function(value) {
 				var message = self.props.validateVariable(value);
-				if(trim(value) === "") {
+				if (trim(value) === "") {
 					message = "Value cannot be empty.";
 				}
-				if(!isVariableUnique(value)) {
+				if (!isVariableUnique(value)) {
 					message = "Value already exists.";
 				}
-				if(self.props.blacklist) {
-					for(var i = 0; i < self.props.blacklist.length; i++) {
+				if (self.props.blacklist) {
+					for (var i = 0; i < self.props.blacklist.length; i++) {
 						var re = new RegExp(self.props.blacklist[i]);
-						if(value.match(re)) {
+						if (value.match(re)) {
 							message = "Value not allowed.";
 							break;
 						}
@@ -186,8 +186,8 @@ var VariableEditor = React.createClass({
 	},
 
 	isFormValid: function() {
-		for(var i = 0; i < this.state.variables.length; i++) {
-			if(!this.state.variables[i].vacant
+		for (var i = 0; i < this.state.variables.length; i++) {
+			if (!this.state.variables[i].vacant
 				&& !this.state.variables[i].deleted
 				&& this.state.variables[i].error) return false;
 		}
@@ -216,7 +216,7 @@ var VariableEditor = React.createClass({
 		var j = 0;
 		var rows = _.map(this.state.variables, function(item) {
 			var row;
-			if(!item.deleted) {
+			if (!item.deleted) {
 				// Rely on the positional number of the model row as the key. As rows are deleted,
 				// the variables will get marked up with "deleted: true", but remain in the model
 				// to ensure react knows what rows to changed.
@@ -236,19 +236,19 @@ var VariableEditor = React.createClass({
 		});
 
 		var message = null;
-		if(this.state.message) {
+		if (this.state.message) {
 			message = (
 				<div className="alert alert-danger">{this.state.message}</div>
 			);
 		}
 
 		var valueHeading = null;
-		if(this.props.showValues) {
+		if (this.props.showValues) {
 			valueHeading = <th className="value" dangerouslySetInnerHTML={{__html:this.props.valueHeading}} />;
 		}
 
 		var heading = null;
-		if(this.props.showHeading) {
+		if (this.props.showHeading) {
 			heading = (
 				<thead>
 					<tr>
@@ -288,7 +288,7 @@ var VariableEditor = React.createClass({
 function VariableEditorActions(props) {
 
 	var buttonText = "";
-	if(props.saving) {
+	if (props.saving) {
 		buttonText = "Saving...";
 	} else {
 		buttonText = "Save";
@@ -327,7 +327,7 @@ var VariableEditorRow = React.createClass({
 	render: function() {
 		var remove = null;
 
-		if(!this.props.rowState.isVacant() && !this.props.disabled) {
+		if (!this.props.rowState.isVacant() && !this.props.disabled) {
 			remove = (
 				<button
 					type="button"
@@ -341,7 +341,7 @@ var VariableEditorRow = React.createClass({
 		}
 
 		var value = null;
-		if(this.props.showValues) {
+		if (this.props.showValues) {
 			value = (
 				<td className="value">
 					<input
@@ -378,7 +378,7 @@ var VariableEditorRow = React.createClass({
 function VariableEditorReadonlyRow(props) {
 
 	var value = null;
-	if(props.showValues) {
+	if (props.showValues) {
 		value = <td className="value">{props.value}</td>;
 	}
 
@@ -407,13 +407,13 @@ var ValidatableInput = React.createClass({
 	handleChange: function(event) {
 		var message = this.props.onValidate(event.target.value);
 		this.setState({message: message});
-		if(this.props.onChange) this.props.onChange(event);
+		if (this.props.onChange) this.props.onChange(event);
 	},
 
 	render: function() {
 		var className = 'form-control';
 		var alert = null;
-		if(this.state.message) {
+		if (this.state.message) {
 			alert = <div className='validation-message'>{this.state.message}</div>;
 			className += ' validation-error';
 		}

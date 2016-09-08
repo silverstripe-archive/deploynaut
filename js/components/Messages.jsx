@@ -1,11 +1,11 @@
 var React = require("react");
 
 function Message(props) {
-	if(!props.message) {
+	if (!props.message) {
 		return null;
 	}
 	var message = null;
-	if(typeof props.message === 'object') {
+	if (typeof props.message === 'object') {
 		message = Object.keys(props.message).map(function(key) {
 			return <div key={key}>{props.message[key]}</div>;
 		});
@@ -18,7 +18,7 @@ function Message(props) {
 }
 
 function Messages(props) {
-	if(!props.messages.length) {
+	if (!props.messages.length) {
 		return null;
 	}
 	var messages = props.messages.map(function(msg, index) {

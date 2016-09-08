@@ -27,11 +27,11 @@ var SummaryTable = React.createClass({
 			idx++;
 
 			var compareUrl = null;
-			if(typeof changes[key].compareUrl !== 'undefined') {
+			if (typeof changes[key].compareUrl !== 'undefined') {
 				compareUrl = changes[key].compareUrl;
 			}
 
-			if(typeof changes[key].description !== 'undefined') {
+			if (typeof changes[key].description !== 'undefined') {
 
 				if (changes[key].description !== "") {
 					return (
@@ -51,7 +51,7 @@ var SummaryTable = React.createClass({
 					/>
 				);
 
-			} else if(changes[key].from !== changes[key].to) {
+			} else if (changes[key].from !== changes[key].to) {
 				return (
 					<SummaryLine
 						key={idx}
@@ -61,7 +61,7 @@ var SummaryTable = React.createClass({
 						compareUrl={compareUrl}
 					/>
 				);
-			} else if(typeof changes[key].from !== 'undefined') {
+			} else if (typeof changes[key].from !== 'undefined') {
 				return (
 					<UnchangedSummaryLine
 						key={idx}
@@ -88,17 +88,17 @@ function SummaryLine(props) {
 	var to = props.to;
 
 	// naive git sha detection
-	if(from !== null && from.length === 40) {
+	if (from !== null && from.length === 40) {
 		from = from.substring(0, 7);
 	}
 
 	// naive git sha detection
-	if(to !== null && to.length === 40) {
+	if (to !== null && to.length === 40) {
 		to = to.substring(0, 7);
 	}
 
 	var compareUrl = null;
-	if(props.compareUrl !== null) {
+	if (props.compareUrl !== null) {
 		compareUrl = (
 			<a
 				target="_blank"
@@ -124,7 +124,7 @@ function SummaryLine(props) {
 function UnchangedSummaryLine(props) {
 	var from = props.value;
 	// naive git sha detection
-	if(from !== null && from.length === 40) {
+	if (from !== null && from.length === 40) {
 		from = from.substring(0, 7);
 	}
 
@@ -142,7 +142,7 @@ function UnchangedSummaryLine(props) {
 function DescriptionOnlySummaryLine(props) {
 	var compareColumn = null;
 	var colSpan = "4";
-	if(props.compareUrl !== null) {
+	if (props.compareUrl !== null) {
 		compareColumn = (
 			<td className="changeAction">
 				<a

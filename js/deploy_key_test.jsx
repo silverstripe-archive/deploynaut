@@ -46,17 +46,17 @@ var DeployKeyTest = React.createClass({
 		if (!this.props.deployKey) {
 			buttonDisabled = true;
 			buttonClass = 'btn';
-		} else if(this.state.loading) {
+		} else if (this.state.loading) {
 			buttonText = { __html: '<i class="fa fa-cog fa-spin"></i> Attempting to clone repository...' };
 			buttonDisabled = true;
-		} else if(this.state.canAccessRepo) {
+		} else if (this.state.canAccessRepo) {
 			buttonText = { __html: '<i class="fa fa-check"></i> We can access your repository' };
 			buttonDisabled = true;
 			buttonClass = 'btn btn-success';
 		}
 
 		var msg;
-		if(this.state.tested && !this.state.canAccessRepo && !this.state.loading) {
+		if (this.state.tested && !this.state.canAccessRepo && !this.state.loading) {
 			msg = (
 				<p className='alert alert-danger'>
 					We're having trouble accessing your repository.
@@ -106,7 +106,7 @@ var DeployKeyTest = React.createClass({
 		}
 
 		var deployKeyHelp = null;
-		if(this.props.repoInterface === 'Github') {
+		if (this.props.repoInterface === 'Github') {
 			deployKeyHelp = (
 				<p>
 					<i className="fa fa-github"></i>

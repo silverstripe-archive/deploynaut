@@ -4,15 +4,15 @@ var actions = require('../../_actions.js');
 var Button = require('../../components/Button.jsx');
 
 function canBypass(state) {
-	if(state.approval.bypassed) {
+	if (state.approval.bypassed) {
 		return false;
 	}
 
-	if(state.approval.approved) {
+	if (state.approval.approved) {
 		return false;
 	}
 
-	if(state.approval.request_sent) {
+	if (state.approval.request_sent) {
 		return false;
 	}
 

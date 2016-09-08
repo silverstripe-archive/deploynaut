@@ -53,13 +53,13 @@ var Dropdown = React.createClass({
 			this.props.onSelect(value);
 		}.bind(this));
 
-		if(typeof this.props.value !== 'undefined') {
+		if (typeof this.props.value !== 'undefined') {
 			$(this.selector).val(this.props.value);
 		}
 	},
 
 	destroySelect2: function() {
-		if($(this.selector).data('select2')) {
+		if ($(this.selector).data('select2')) {
 			$(this.selector).select2().off("change");
 			$(this.selector).select2("destroy");
 		}
@@ -70,7 +70,7 @@ var Dropdown = React.createClass({
 
 		var options = [];
 		var idx = 0;
-		if(props.options) {
+		if (props.options) {
 			options = Object.keys(props.options).map(function(index) {
 				idx += 1;
 				return (

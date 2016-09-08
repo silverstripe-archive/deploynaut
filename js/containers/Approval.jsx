@@ -13,7 +13,7 @@ var actions = require('../_actions.js');
 function Approval(props) {
 
 	var sentTime = null;
-	if(props.requested) {
+	if (props.requested) {
 		var date = new Date(props.requestSentTime);
 		sentTime = "Sent: " + date.toTimeString();
 	}
@@ -69,16 +69,16 @@ function Approval(props) {
 }
 
 function isDisabled(state) {
-	if(state.approval.request_sent) {
+	if (state.approval.request_sent) {
 		return true;
 	}
-	if(state.approval.approved) {
+	if (state.approval.approved) {
 		return true;
 	}
-	if(state.approval.bypassed) {
+	if (state.approval.bypassed) {
 		return true;
 	}
-	if(state.deployment.enqueued) {
+	if (state.deployment.enqueued) {
 		return true;
 	}
 	return false;

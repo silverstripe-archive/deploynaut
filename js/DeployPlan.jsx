@@ -71,10 +71,10 @@ var DeployPlan = React.createClass({
 	},
 	showNoChangesMessage: function() {
 		var summary = this.props.summary;
-		if(summary.initialState === true) {
+		if (summary.initialState === true) {
 			return false;
 		}
-		if(summary.messages === 'undefined') {
+		if (summary.messages === 'undefined') {
 			return true;
 		}
 		return (this.isEmpty(summary.changes) && summary.messages.length === 0);
@@ -96,7 +96,7 @@ var DeployPlan = React.createClass({
 		}
 
 		var deployAction;
-		if(this.canDeploy()) {
+		if (this.canDeploy()) {
 			deployAction = (
 				<div
 					className="section"
@@ -126,7 +126,7 @@ var DeployPlan = React.createClass({
 			loading: this.state.loading_changes
 		});
 
-		return(
+		return (
 			<div>
 				<div className="section">
 					<div className={headerClasses}>
@@ -147,7 +147,7 @@ function QuickSummary(props) {
 
 	var type = (props.summary.actionCode === 'fast' ? 'code-only' : 'full');
 	var extraDefinitions = [];
-	if(props.summary.estimatedTime && props.summary.estimatedTime > 0) {
+	if (props.summary.estimatedTime && props.summary.estimatedTime > 0) {
 		extraDefinitions.push(<dt key="duration_term">Duration:</dt>);
 		extraDefinitions.push(
 			<dd key="duration_definition">{props.summary.estimatedTime} min approx.</dd>);
@@ -159,7 +159,7 @@ function QuickSummary(props) {
 	});
 
 	var moreInfo = null;
-	if(typeof props.context.deployHelp !== 'undefined' && props.context.deployHelp) {
+	if (typeof props.context.deployHelp !== 'undefined' && props.context.deployHelp) {
 		moreInfo = (
 			<a
 				target="_blank"
@@ -173,7 +173,7 @@ function QuickSummary(props) {
 	}
 
 	var env;
-	if(props.context.siteUrl) {
+	if (props.context.siteUrl) {
 		env = (
 			<a
 				target="_blank"
@@ -200,10 +200,10 @@ function QuickSummary(props) {
 
 var MessageList = React.createClass({
 	render: function() {
-		if(this.props.messages.length < 1) {
+		if (this.props.messages.length < 1) {
 			return null;
 		}
-		if(typeof this.props.messages === 'undefined') {
+		if (typeof this.props.messages === 'undefined') {
 			return null;
 		}
 		var idx = 0;

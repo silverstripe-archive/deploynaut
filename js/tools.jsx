@@ -19,7 +19,7 @@ module.exports = {
 	 */
 	install: function (reactElement, name) {
 		var container = document.getElementById(name);
-		if(container) {
+		if (container) {
 			var modelId = container.getAttribute('data-model');
 			ReactDOM.render(
 				React.createElement(reactElement, {model: this.readInlineData(modelId)}),

@@ -11,7 +11,7 @@ var Step = function(props) {
 
 	if (props.active) {
 		classNames = "alert-info";
-	} else if(!props.show) {
+	} else if (!props.show) {
 		style.color = "#ddd";
 	}
 
