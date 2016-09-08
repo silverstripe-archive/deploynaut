@@ -106,12 +106,12 @@ function DeployModal(props) {
 
 const mapStateToProps = function(state) {
 
-	function deployPlanIsOk(state) {
+	function deployPlanIsOk() {
 		return state.plan.validation_code === 'success' || state.plan.validation_code === 'warning';
 	}
 
-	function isApproved(state) {
-		return state.approval.approved || state.approval.bypassed
+	function isApproved() {
+		return state.approval.approved || state.approval.bypassed;
 	}
 
 	return {
@@ -123,8 +123,8 @@ const mapStateToProps = function(state) {
 		],
 		isFinished: [
 			state.git.selected_ref !== "",
-			deployPlanIsOk(state),
-			deployPlanIsOk(state) && isApproved(state),
+			deployPlanIsOk(),
+			deployPlanIsOk() && isApproved(),
 			false
 		],
 		isOpen: state.navigation.open,

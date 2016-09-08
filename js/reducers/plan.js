@@ -24,6 +24,14 @@ module.exports = function plan(state, action) {
 				changes: {}
 			});
 
+		case actions.SUCCEED_DEPLOYMENT_GET:
+			return _.assign({}, state, {
+				is_loading: false,
+				changes: action.data.deployment.changes,
+				summary_of_changes: action.data.deployment.summary,
+				validation_code: "success"
+			});
+
 		case actions.SUCCEED_SUMMARY_GET:
 			var changes = {};
 			// backend can sometimes return an empty array instead of an object

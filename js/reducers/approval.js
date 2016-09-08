@@ -30,6 +30,12 @@ module.exports = function approval(state, action) {
 	}
 
 	switch(action.type) {
+		case actions.SUCCEED_DEPLOYMENT_GET:
+			return _.assign({}, state, {
+				request_by: action.data.deployment.deployer,
+				approved_by: action.data.deployment.approver
+			});
+
 		case actions.SET_APPROVER:
 			return _.assign({}, state, {
 				approved_by: action.id

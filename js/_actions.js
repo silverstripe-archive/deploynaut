@@ -155,7 +155,7 @@ export function updateRepoAndGetRevisions() {
 	return (dispatch, getState) => {
 		dispatch(startRepoUpdate());
 		return gitAPI.call(getState, '/update', 'post')
-			.then(data => gitAPI.waitForSuccess(getState, `/update/${data.ID}`))
+			.then(data => gitAPI.waitForSuccess(getState, `/update/${data.id}`))
 			.then(() => dispatch(succeedRepoUpdate()))
 			.catch(err => dispatch(failRepoUpdate(err)))
 			.then(() => dispatch(startRevisionGet()))
@@ -314,7 +314,7 @@ export function startDeploymentEnqueue() {
 
 export const SUCCEED_DEPLOYMENT_ENQUEUE = "SUCCEED_DEPLOYMENT_ENQUEUE";
 export function succeedDeploymentEnqueue(data) {
-	return {type: SUCCEED_DEPLOYMENT_ENQUEUE, ID: data.ID};
+	return {type: SUCCEED_DEPLOYMENT_ENQUEUE, id: data.id};
 }
 
 export const FAIL_DEPLOYMENT_ENQUEUE = "FAIL_DEPLOYMENT_ENQUEUE";
@@ -330,7 +330,7 @@ export function deployLogUpdate(data) {
 
 export function getDeployLog() {
 	return (dispatch, getState) => {
-		deployAPI.waitForSuccess(getState, `/log/${getState().deployment.ID}`, 100, function(data) {
+		deployAPI.waitForSuccess(getState, `/log/${getState().deployment.id}`, 100, function(data) {
 			dispatch(deployLogUpdate(data));
 		}).then(() => console.log('deploy done')); // eslint-disable-line no-console
 
@@ -343,5 +343,35 @@ export function startDeploy(gitSHA) {
 		return deployAPI.call(getState, '/start', 'post', {sha: gitSHA})
 			.then(data => dispatch(succeedDeploymentEnqueue(data)))
 			.then(() => dispatch(getDeployLog()));
+	};
+}
+
+export const START_DEPLOYMENT_GET = "START_DEPLOYMENT_GET";
+export function startGetDeployment() {
+	return {type: START_DEPLOYMENT_GET};
+}
+
+export const SUCCEED_DEPLOYMENT_GET = "SUCCEED_DEPLOYMENT_GET";
+export function succeedGetDeployment(data) {
+	return {
+		type: SUCCEED_DEPLOYMENT_GET,
+		data: data
+	};
+}
+
+export const FAIL_DEPLOYMENT_GET = "FAIL_DEPLOYMENT_GET";
+export function failGetDeployment(err) {
+	return {
+		type: FAIL_DEPLOYMENT_ENQUEUE,
+		error: err
+	};
+}
+
+export function getDeployment(id) {
+	return (dispatch, getState) => {
+		dispatch(startGetDeployment());
+		return deployAPI.call(getState, `/show/${id}`, 'get')
+			.then(data => dispatch(succeedGetDeployment(data)))
+			.catch(err => dispatch(failGetDeployment(err)));
 	};
 }
