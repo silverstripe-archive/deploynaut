@@ -33,7 +33,10 @@ module.exports = function approval(state, action) {
 		case actions.SUCCEED_DEPLOYMENT_GET:
 			return _.assign({}, state, {
 				request_by: action.data.deployment.deployer,
-				approved_by: action.data.deployment.approver
+				approved_by: action.data.deployment.approver,
+				approved: true,
+				bypassed: true,
+				rejected: false
 			});
 
 		case actions.SET_APPROVER:

@@ -5,12 +5,12 @@ var Deploy = require('./buttons/Deploy.jsx');
 
 var deployment = function(props) {
 
-	var approverName = (props.approvedBy) ? props.approvedBy.name : "";
+	var approverName = (props.approved_by) ? props.approved_by.name : "";
 
 	var logOutput = null;
-	if(props.deployLog.length) {
-		let lines = Object.keys(props.deployLog).map(function(key) {
-			return <div key={key}>{props.deployLog[key]}</div>;
+	if(props.deploy_log.length) {
+		let lines = Object.keys(props.deploy_log).map(function(key) {
+			return <div key={key}>{props.deploy_log[key]}</div>;
 		});
 		logOutput = (
 			<pre>
@@ -27,24 +27,24 @@ var deployment = function(props) {
 						<dt>Environment</dt>
 						<dd>{props.environment}</dd>
 						<dt>Deployment Type</dt>
-						<dd>{props.deploymentType}</dd>
+						<dd>{props.deployment_type}</dd>
 						<dt>Code version</dt>
-						<dd>{props.codeVersion}</dd>
+						<dd>{props.code_version}</dd>
 						<dt>Approx deployment time</dt>
-						<dd>{props.deploymentEstimate}</dd>
+						<dd>{props.deployment_estimate}</dd>
 					</dl>
 				</div>
 				<div className="col-md-6">
 					<dl>
 						<dt>Requested by</dt>
-						<dd>{props.requestBy.name}</dd>
+						<dd>{props.request_by.name}</dd>
 						<dt>Approved by</dt>
 						<dd>{approverName}</dd>
 					</dl>
 				</div>
 			</div>
 			<div>
-				<Deploy gitSHA={props.codeVersion} />
+				<Deploy disabled={!props.is_deployed} gitSHA={props.code_version} />
 				{logOutput}
 			</div>
 		</div>
@@ -58,16 +58,17 @@ const mapStateToProps = function(state) {
 	);
 
 	return {
+		is_deployed: state.deployment.data.state === 'Finished',
 		approved: state.approval.approved,
 		bypassed: state.approval.bypassed,
-		approvedBy: approvers.shift(),
-		requestBy: state.approval.request_by,
+		approved_by: approvers.shift(),
+		request_by: state.approval.request_by,
 		environment: state.environment.name,
-		deploymentType: state.plan.deployment_type,
-		deploymentEstimate: state.plan.deployment_estimate,
-		codeVersion: state.git.selected_ref,
+		deployment_type: state.plan.deployment_type,
+		deployment_estimate: state.plan.deployment_estimate,
+		code_version: state.git.selected_ref,
 		plan: state.plan,
-		deployLog: state.deployment.log
+		deploy_log: state.deployment.log
 	};
 };
 

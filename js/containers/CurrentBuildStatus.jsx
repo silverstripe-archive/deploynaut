@@ -44,7 +44,7 @@ var CurrentBuildStatus = function(props) {
 
 const mapStateToProps = function(state) {
 	return {
-		deployment: state.currentbuild.deployment,
+		deployment: state.currentbuild.data,
 		error: state.currentbuild.error
 	};
 };

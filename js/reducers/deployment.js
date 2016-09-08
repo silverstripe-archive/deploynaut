@@ -8,7 +8,7 @@ module.exports = function deployment(state, action) {
 			is_loading: false,
 			enqueued: false,
 			id: "",
-			deployment: null,
+			data: null,
 			log: [],
 			status: ""
 		};
@@ -22,7 +22,7 @@ module.exports = function deployment(state, action) {
 		case actions.SUCCEED_DEPLOYMENT_GET:
 			return _.assign({}, state, {
 				is_loading: false,
-				deployment: action.data.deployment
+				data: action.data.deployment
 			});
 		case actions.START_DEPLOYMENT_ENQUEUE:
 			return _.assign({}, state, {
@@ -30,7 +30,7 @@ module.exports = function deployment(state, action) {
 			});
 		case actions.SUCCEED_DEPLOYMENT_ENQUEUE:
 			return _.assign({}, state, {
-				ID: action.id
+				id: action.id
 			});
 		case actions.DEPLOY_LOG_UPDATE:
 			return _.assign({}, state, {
