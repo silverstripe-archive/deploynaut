@@ -19,8 +19,8 @@ function calculateSteps(props) {
 		{
 			show: true,
 			title: "Target Release",
-			isLoading: props.isLoading[0],
-			isFinished: props.isFinished[0],
+			is_loading: props.is_loading[0],
+			is_finished: props.is_finished[0],
 			content: (
 				<div>
 					<ButtonGitFetch />
@@ -31,9 +31,9 @@ function calculateSteps(props) {
 		},
 		{
 			title: "Deployment Plan",
-			show: props.shaSelected,
-			isLoading: props.isLoading[1],
-			isFinished: props.isFinished[1],
+			show: props.sha_selected,
+			is_loading: props.is_loading[1],
+			is_finished: props.is_finished[1],
 			content: (
 				<div>
 					<SummaryOfChanges />
@@ -43,9 +43,9 @@ function calculateSteps(props) {
 		},
 		{
 			title: "Approval",
-			show: props.planSuccess,
-			isLoading: props.isLoading[2],
-			isFinished: props.isFinished[2],
+			show: props.plan_success,
+			is_loading: props.is_loading[2],
+			is_finished: props.is_finished[2],
 			content: (
 				<div>
 					<Approval />
@@ -54,9 +54,9 @@ function calculateSteps(props) {
 		},
 		{
 			title: "Deployment",
-			show: props.shaSelected && props.canDeploy,
-			isLoading: props.isLoading[3],
-			isFinished: props.isFinished[3],
+			show: props.sha_selected && props.can_deploy,
+			is_loading: props.is_loading[3],
+			is_finished: props.is_finished[3],
 			content: (
 				<div>
 					<Deployment />
@@ -72,19 +72,19 @@ function DeployModal(props) {
 	const content = (
 		<div className="deploy-form">
 			<div className="header">
-				<span className="numberCircle">{steps[props.activeStep].id}</span> {steps[props.activeStep].title}
+				<span className="numberCircle">{steps[props.active_step].id}</span> {steps[props.active_step].title}
 			</div>
 			<Messages
 				messages={props.messages}
 			/>
 			<div>
-				{steps[props.activeStep].content}
+				{steps[props.active_step].content}
 			</div>
 		</div>
 	);
 
 	return (
-		<Modal show={props.isOpen} closeHandler={props.onClose} title="Deployment">
+		<Modal show={props.is_open} closeHandler={props.onClose} title="Deployment">
 			<div className="row">
 				<div className="col-md-12">
 					<h3>Deployment options for ...</h3>
@@ -92,7 +92,7 @@ function DeployModal(props) {
 				<div className="col-md-3">
 					<StepMenu
 						steps={steps}
-						value={props.activeStep}
+						value={props.active_step}
 						onClick={props.onTabClick}
 					/>
 				</div>
@@ -115,24 +115,24 @@ const mapStateToProps = function(state) {
 	}
 
 	return {
-		isLoading: [
+		is_loading: [
 			state.git.is_loading || state.git.is_updating,
 			state.plan.is_loading,
 			false,
 			state.deployment.enqueued
 		],
-		isFinished: [
+		is_finished: [
 			state.git.selected_ref !== "",
 			deployPlanIsOk(),
 			deployPlanIsOk() && isApproved(),
 			false
 		],
-		isOpen: state.navigation.open,
+		is_open: state.navigation.open,
 		planSuccess: state.plan.validation_code === 'success',
 		messages: state.messages,
-		activeStep: state.navigation.active,
-		shaSelected: (state.git.selected_ref !== ""),
-		canDeploy: (state.approval.approved || state.approval.bypassed)
+		active_step: state.navigation.active,
+		sha_selected: (state.git.selected_ref !== ""),
+		can_deploy: (state.approval.approved || state.approval.bypassed)
 	};
 };
 
