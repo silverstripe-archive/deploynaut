@@ -114,7 +114,7 @@ class DeployDispatcher extends Dispatcher {
 			return $this->getAPIResponse(['message' => 'This deployment does not exist'], 404);
 		}
 		if (!$deployment->canView()) {
-			return $this->getAPIResponse(['message' => 'You are not authorised to deploy this environment'], 403);
+			return $this->getAPIResponse(['message' => 'You are not authorised to view this deployment'], 403);
 		}
 		return $this->getAPIResponse(['deployment' => $this->getDeploymentData($deployment)], 200);
 	}
@@ -129,7 +129,7 @@ class DeployDispatcher extends Dispatcher {
 			return $this->getAPIResponse(['message' => 'This deployment does not exist'], 404);
 		}
 		if (!$deployment->canView()) {
-			return $this->getAPIResponse(['message' => 'You are not authorised to view this environment'], 403);
+			return $this->getAPIResponse(['message' => 'You are not authorised to view this deployment'], 403);
 		}
 
 		$log = $deployment->log();
