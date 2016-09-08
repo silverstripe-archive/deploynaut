@@ -49,7 +49,7 @@ var DeployPlan = React.createClass({
 		})).then(function(data) {
 			window.location = data.url;
 		}, function(data) {
-			console.error(data);
+			console.error(data); // eslint-disable-line no-console
 		});
 	},
 	mouseEnterHandler: function() {

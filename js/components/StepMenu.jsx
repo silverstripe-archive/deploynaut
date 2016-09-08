@@ -54,18 +54,22 @@ var StepMenu = function(props) {
 		return (
 			<Step
 				active={props.value === index}
-				isFinished={props.steps[key].isFinished}
+				is_finished={props.steps[key].is_finished}
 				key={index}
-				onClick={function() { props.onClick(index); }}
+				onClick={() => props.onClick(index)}
 				title={props.steps[key].title}
 				id={index}
 				show={props.steps[key].show}
-				isLoading={props.steps[key].isLoading}
+				isLoading={props.steps[key].is_loading}
 			/>
 		);
 	});
 
-	return (<div> {list} </div>);
+	return (
+		<div>
+			{list}
+		</div>
+	);
 };
 
 StepMenu.propTypes = {
