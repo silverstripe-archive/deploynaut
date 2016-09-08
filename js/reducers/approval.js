@@ -3,7 +3,7 @@ var _ = require('underscore');
 var actions = require('../_actions.js');
 
 module.exports = function approval(state, action) {
-	if(typeof state === 'undefined') {
+	if (typeof state === 'undefined') {
 		return {
 
 			bypassed: false,
@@ -29,7 +29,7 @@ module.exports = function approval(state, action) {
 		};
 	}
 
-	switch(action.type) {
+	switch (action.type) {
 		case actions.SUCCEED_DEPLOYMENT_GET:
 			return _.assign({}, state, {
 				request_by: action.data.deployment.deployer,

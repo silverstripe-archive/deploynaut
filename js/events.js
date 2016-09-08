@@ -7,7 +7,7 @@ var hOP = topics.hasOwnProperty;
 module.exports = {
 	subscribe: function(topic, listener) {
 		// Create the topic's object if not yet created
-		if(!hOP.call(topics, topic)) topics[topic] = [];
+		if (!hOP.call(topics, topic)) topics[topic] = [];
 
 		// Add the listener to queue
 		var index = topics[topic].push(listener) - 1;
@@ -22,7 +22,7 @@ module.exports = {
 
 	publish: function(topic, info) {
 		// If the topic doesn't exist, or there's no listeners in queue, just leave
-		if(!hOP.call(topics, topic)) return;
+		if (!hOP.call(topics, topic)) return;
 
 		// Cycle through topics queue, fire!
 		topics[topic].forEach(function(item) {

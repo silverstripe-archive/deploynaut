@@ -3,13 +3,13 @@ var _ = require('underscore');
 var actions = require('../_actions.js');
 
 module.exports = function navigation(state, action) {
-	if(typeof state === 'undefined') {
+	if (typeof state === 'undefined') {
 		return {
 			open: false,
 			active: 0
 		};
 	}
-	switch(action.type) {
+	switch (action.type) {
 		case actions.SET_OPEN_DIALOG:
 			return _.assign({}, state, {
 				open: true

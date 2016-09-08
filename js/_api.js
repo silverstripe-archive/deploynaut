@@ -77,7 +77,7 @@ export function create(name) {
 		// post actions are the only actions that could possible change the state
 		// and should therefore be protected by CSRF. GET/HEAD operations are
 		// prefered to actions that doesn't change state.
-		if(method.toLowerCase() === "post") {
+		if (method.toLowerCase() === "post") {
 			options.body = new FormData();
 
 			const tokenName = `${getState().api.auth.name}`;
@@ -95,7 +95,7 @@ export function create(name) {
 			.then(function(response) {
 
 				// the http response is in the 200 >=  <= 299 range
-				if(response.ok) {
+				if (response.ok) {
 					return response.json().then(json => json);
 				}
 				// if the status code is outside of 200 - 299 we try to parse
@@ -104,7 +104,7 @@ export function create(name) {
 
 				// this is unexpected, so just throw it without trying to parse
 				// the body of the response
-				if(response.status >= 500) {
+				if (response.status >= 500) {
 					const err = new ServerError(response.statusText, response.status);
 					console.error(err); // eslint-disable-line no-console
 					throw err;
@@ -114,7 +114,7 @@ export function create(name) {
 				// nice json formatted error message
 				return response.json()
 					.then(function(json) {
-						if(json.message) {
+						if (json.message) {
 							throw new ApiError(json.message, json.status_code || response.status);
 						}
 						// there isn't a custom error message, so fallback to
@@ -123,7 +123,7 @@ export function create(name) {
 					})
 					.catch(function(err) {
 						console.error(err); // eslint-disable-line no-console
-						if(err.name === 'ApiError') {
+						if (err.name === 'ApiError') {
 							throw err;
 						}
 						// if we got here the, response body couldn't be parsed
@@ -135,14 +135,14 @@ export function create(name) {
 
 	function waitForSuccess(getState, uri, retryInterval, callback) {
 		var retry = retryInterval || 100;
-		if(retry > 5000) {
+		if (retry > 5000) {
 			retry = 5000;
 		}
 		return call(getState, uri, 'get').then(data => {
-			if(callback) {
+			if (callback) {
 				callback(data);
 			}
-			switch(data.status) {
+			switch (data.status) {
 				case 'Complete':
 					return data;
 				case 'Failed':

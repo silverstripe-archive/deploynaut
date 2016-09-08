@@ -1,10 +1,10 @@
 module.exports = function environment(state, action) {
-	if(typeof state === 'undefined') {
+	if (typeof state === 'undefined') {
 		return {
 			name: ""
 		};
 	}
-	switch(action.type) {
+	switch (action.type) {
 		default:
 			return state;
 	}

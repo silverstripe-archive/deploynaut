@@ -144,7 +144,7 @@ export function getCurrentBuildStatus() {
 
 export function getRevisionsIfNeeded() {
 	return (dispatch, getState) => {
-		if(!getState().git.length) {
+		if (!getState().git.length) {
 			dispatch(getRevisions());
 		}
 	};

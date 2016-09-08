@@ -1,11 +1,11 @@
 var actions = require('../_actions.js');
 
 module.exports = function messages(state, action) {
-	if(typeof state === 'undefined') {
+	if (typeof state === 'undefined') {
 		return [];
 	}
 
-	switch(action.type) {
+	switch (action.type) {
 		case actions.SUCCEED_SUMMARY_GET:
 			return action.summary.messages;
 

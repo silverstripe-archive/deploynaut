@@ -3,7 +3,7 @@ var _ = require('underscore');
 var actions = require('../_actions.js');
 
 module.exports = function currentbuild(state, action) {
-	if(typeof state === 'undefined') {
+	if (typeof state === 'undefined') {
 		return {
 			data: [],
 			is_loading: false,

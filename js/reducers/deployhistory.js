@@ -3,7 +3,7 @@ var _ = require('underscore');
 var actions = require('../_actions.js');
 
 module.exports = function deployhistory(state, action) {
-	if(typeof state === 'undefined') {
+	if (typeof state === 'undefined') {
 		return {
 			list: [],
 			page_length: 0,

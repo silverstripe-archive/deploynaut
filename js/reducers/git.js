@@ -3,7 +3,7 @@ var _ = require('underscore');
 var actions = require('../_actions.js');
 
 module.exports = function git(state, action) {
-	if(typeof state === 'undefined') {
+	if (typeof state === 'undefined') {
 		return {
 			selected_type: "",
 			selected_ref: "",
@@ -13,7 +13,7 @@ module.exports = function git(state, action) {
 			list: []
 		};
 	}
-	switch(action.type) {
+	switch (action.type) {
 		case actions.SET_REVISION_TYPE:
 			return _.assign({}, state, {
 				selected_type: action.id,

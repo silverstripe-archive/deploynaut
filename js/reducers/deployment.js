@@ -3,7 +3,7 @@ var _ = require('underscore');
 var actions = require('../_actions.js');
 
 module.exports = function deployment(state, action) {
-	if(typeof state === 'undefined') {
+	if (typeof state === 'undefined') {
 		return {
 			is_loading: false,
 			enqueued: false,
@@ -14,7 +14,7 @@ module.exports = function deployment(state, action) {
 		};
 	}
 
-	switch(action.type) {
+	switch (action.type) {
 		case actions.START_DEPLOYMENT_GET:
 			return _.assign({}, state, {
 				is_loading: true
