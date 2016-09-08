@@ -35,7 +35,7 @@ module.exports = function git(state, action) {
 		case actions.SUCCEED_REPO_UPDATE:
 			return _.assign({}, state, {
 				is_updating: false,
-				last_updated: action.receivedAt
+				last_updated: action.received_at
 			});
 
 		case actions.FAIL_REPO_UPDATE:
@@ -52,7 +52,7 @@ module.exports = function git(state, action) {
 			return _.assign({}, state, {
 				is_fetching: false,
 				list: action.list.refs,
-				last_updated: action.receivedAt,
+				last_updated: action.received_at,
 				selected_type: "",
 				selected_ref: ""
 			});
