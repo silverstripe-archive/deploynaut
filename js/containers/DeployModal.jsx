@@ -3,7 +3,6 @@ var ReactRedux = require('react-redux');
 
 var StepMenu = require('../components/StepMenu.jsx');
 var GitRefSelector = require('./GitRefSelector.jsx');
-var ButtonGitFetch = require('./buttons/GitFetch.jsx');
 var ButtonGitUpdate = require('./buttons/GitUpdate.jsx');
 var SummaryOfChanges = require('./SummaryOfChanges.jsx');
 var Approval = require('./Approval.jsx');
@@ -23,7 +22,6 @@ function calculateSteps(props) {
 			is_finished: props.is_finished[0],
 			content: (
 				<div>
-					<ButtonGitFetch />
 					<ButtonGitUpdate />
 					<GitRefSelector />
 				</div>
