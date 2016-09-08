@@ -40,7 +40,8 @@ module.exports = function git(state, action) {
 
 		case actions.FAIL_REPO_UPDATE:
 			return _.assign({}, state, {
-				is_updating: false
+				is_updating: false,
+				error: action.error.toString()
 			});
 
 		case actions.START_REVISIONS_GET:

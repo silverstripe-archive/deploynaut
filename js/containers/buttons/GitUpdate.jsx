@@ -4,10 +4,17 @@ var actions = require('../../_actions.js');
 var Button = require('../../components/Button.jsx');
 
 const mapStateToProps = function(state) {
+
+	let btnValue = state.git.is_updating ? "Updating code..." : "Update code";
+
+	if (state.git.error) {
+		btnValue = state.git.error;
+	}
+
 	return {
 		disabled: state.git.is_updating || state.approval.request_sent,
 		style: "btn-default",
-		value: state.git.is_updating ? "Updating code..." : "Update code"
+		value: btnValue
 	};
 };
 

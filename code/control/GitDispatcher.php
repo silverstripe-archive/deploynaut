@@ -61,9 +61,9 @@ class GitDispatcher extends Dispatcher {
 		switch($request->httpMethod()) {
 			case 'POST':
 				$this->checkSecurityToken();
-				return $this->createFetch();
+				return $this->createUpdate();
 			case 'GET':
-				return $this->getFetch($this->getRequest()->param('ID'));
+				return $this->getUpdateStatus($this->getRequest()->param('ID'));
 			default:
 				return $this->getAPIResponse(['message' => 'Method not allowed, requires POST or GET/{id}'], 405);
 		}
@@ -130,10 +130,10 @@ class GitDispatcher extends Dispatcher {
 	 * @param int $ID
 	 * @return SS_HTTPResponse
 	 */
-	protected function getFetch($ID) {
+	protected function getUpdateStatus($ID) {
 		$ping = DNGitFetch::get()->byID($ID);
 		if(!$ping) {
-			return $this->getAPIResponse(['message' => 'Fetch not found'], 404);
+			return $this->getAPIResponse(['message' => 'GIT update ('. $ID . ') not found'], 404);
 		}
 		$output = [
 			'id' => $ID,
@@ -147,7 +147,7 @@ class GitDispatcher extends Dispatcher {
 	/**
 	 * @return SS_HTTPResponse
 	 */
-	protected function createFetch() {
+	protected function createUpdate() {
 		/** @var DNGitFetch $fetch */
 		$fetch = DNGitFetch::create();
 		$fetch->ProjectID = $this->project->ID;
@@ -157,7 +157,7 @@ class GitDispatcher extends Dispatcher {
 		$location = Director::absoluteBaseURL() . $this->Link() . '/update/' . $fetch->ID;
 		$output = array(
 			'message' => 'git fetch has been queued',
-			'ID' => $fetch->ID,
+			'id' => $fetch->ID,
 			'location' => $location,
 		);
 
