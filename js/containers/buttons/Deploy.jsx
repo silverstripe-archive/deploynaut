@@ -19,7 +19,6 @@ function canDeploy(state) {
 const mapStateToProps = function(state) {
 	return {
 		display: canDeploy(state),
-		disabled: state.deployment.data.state !== 'Submitted',
 		style: "btn-success",
 		value: "Deploy"
 	};

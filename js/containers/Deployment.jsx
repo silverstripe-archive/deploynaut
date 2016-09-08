@@ -28,7 +28,7 @@ var deployment = function(props) {
 						<dt>Deployment Type</dt>
 						<dd>{props.deployment_type}</dd>
 						<dt>Code version</dt>
-						<dd>{props.code_version}</dd>
+						<dd>{props.selected_ref}</dd>
 						<dt>Approx deployment time</dt>
 						<dd>{props.deployment_estimate}</dd>
 					</dl>
@@ -43,7 +43,7 @@ var deployment = function(props) {
 				</div>
 			</div>
 			<div>
-				<Deploy sha={props.code_version} />
+				<Deploy sha={props.selected_ref} />
 				{logOutput}
 			</div>
 		</div>
@@ -63,7 +63,7 @@ const mapStateToProps = function(state) {
 		environment: state.environment.name,
 		deployment_type: state.plan.deployment_type,
 		deployment_estimate: state.plan.deployment_estimate,
-		code_version: state.git.selected_ref,
+		selected_ref: state.git.selected_ref,
 		plan: state.plan,
 		deploy_log: state.deployment.log
 	};
