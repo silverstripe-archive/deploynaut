@@ -32,7 +32,7 @@ export const SUCCEED_REPO_UPDATE = 'SUCCEED_REPO_UPDATE';
 export function succeedRepoUpdate() {
 	return {
 		type: SUCCEED_REPO_UPDATE,
-		receivedAt: Date.now()
+		received_at: Date.now()
 	};
 }
 
@@ -187,7 +187,7 @@ export function succeedSummaryGet(json) {
 	return {
 		type: SUCCEED_SUMMARY_GET,
 		summary: json,
-		receivedAt: Date.now()
+		received_at: Date.now()
 	};
 }
 
