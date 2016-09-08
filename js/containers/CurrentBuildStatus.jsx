@@ -8,6 +8,16 @@ var CurrentBuildStatus = function(props) {
 		shortSha = props.deployment.sha.substring(0, 7);
 	}
 
+	if(props.error) {
+		return (
+			<div className="current-build alert alert-danger">
+				<div className="">
+					{props.error}
+				</div>
+			</div>
+		);
+	}
+
 	return (
 		<div className="current-build">
 			<div className="details">
@@ -34,7 +44,8 @@ var CurrentBuildStatus = function(props) {
 
 const mapStateToProps = function(state) {
 	return {
-		deployment: state.currentbuild.deployment
+		deployment: state.currentbuild.deployment,
+		error: state.currentbuild.error
 	};
 };
 

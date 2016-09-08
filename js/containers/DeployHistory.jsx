@@ -4,6 +4,31 @@ var Pagination = require('react-bootstrap/lib/Pagination');
 var actions = require('../_actions.js');
 
 var DeployHistory = function(props) {
+
+	let errorRow = null;
+	if(props.error) {
+		errorRow = (
+			<tr className="danger">
+				<td colSpan="5">
+					{props.error}
+				</td>
+			</tr>
+		);
+	}
+
+	let pagination = null;
+	if(props.totalpages > 1) {
+		pagination = (
+			<Pagination
+				prev
+				next
+				items={props.total_pages}
+				activePage={props.current_page}
+				onSelect={props.onPageClick}
+			/>
+		);
+	}
+
 	return (
 		<div>
 			<h4>History</h4>
@@ -18,6 +43,7 @@ var DeployHistory = function(props) {
 					</tr>
 				</thead>
 				<tbody>
+					{errorRow}
 					{
 						Object.keys(props.list).map(function(i) {
 							var row = props.list[i];
@@ -34,13 +60,7 @@ var DeployHistory = function(props) {
 					}
 				</tbody>
 			</table>
-			<Pagination
-				prev
-				next
-				items={props.total_pages}
-				activePage={props.current_page}
-				onSelect={props.onPageClick}
-			/>
+			{pagination}
 		</div>
 	);
 };
@@ -50,7 +70,8 @@ const mapStateToProps = function(state) {
 		list: state.deployhistory.list,
 		page_length: state.deployhistory.page_length,
 		total_pages: state.deployhistory.total_pages,
-		current_page: state.deployhistory.current_page
+		current_page: state.deployhistory.current_page,
+		error: state.deployhistory.error
 	};
 };
 

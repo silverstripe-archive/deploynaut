@@ -2,13 +2,27 @@
 require('babel-polyfill');
 var fetch = require('isomorphic-fetch');
 
-export function APIError(message, json) {
-	this.name = 'APIError';
-	this.message = message || 'Something bad happened';
-	this.json = json;
+export function ServerError(message, status) {
+	this.name = "ServerError";
+	this.message = message;
+	this.status = status;
 }
-APIError.prototype = Object.create(Error.prototype);
-APIError.prototype.constructor = APIError;
+ServerError.prototype = Object.create(Error.prototype);
+ServerError.prototype.constructor = ServerError;
+ServerError.prototype.toString = function () {
+	return "Error " + this.status + " - " + this.message;
+};
+
+export function ApiError(message, status) {
+	this.name = "ApiError";
+	this.message = message;
+	this.status = status;
+}
+ApiError.prototype = Object.create(Error.prototype);
+ApiError.prototype.constructor = ApiError;
+ApiError.prototype.toString = function () {
+	return "Error " + this.status + " - " + this.message;
+};
 
 // SETUP_API is a cross dispatcher action that stores information recieved
 // from the backend dispatcher so that the api class can dip into the store and
@@ -35,7 +49,7 @@ function sleep(time) {
  * apiName is used to find the correct endpoint from the state store under
  * `store.api.dispatchers.${apiName}`
  *
- * @param apiName - string name of the api, used for finding the api endpoint
+ * @param name - string name of the api, used for finding the api endpoint
  * @returns {{call: call, waitForSuccess: waitForSuccess}}
  */
 export function create(name) {
@@ -78,7 +92,7 @@ export function create(name) {
 		}
 
 		return fetch(fullURI, options)
-			.then(response => {
+			.then(function(response) {
 
 				// the http response is in the 200 >=  <= 299 range
 				if(response.ok) {
@@ -87,21 +101,34 @@ export function create(name) {
 				// if the status code is outside of 200 - 299 we try to parse
 				// the error that can either be some unexpected error or a nicer
 				// API error response
-				var message = `${response.status} - ${response.statusText}`;
 
+				// this is unexpected, so just throw it without trying to parse
+				// the body of the response
+				if(response.status >= 500) {
+					const err = new ServerError(response.statusText, response.status);
+					console.error(err); // eslint-disable-line no-console
+					throw err;
+				}
+
+				// try parsing the content of the page in hope that there is a
+				// nice json formatted error message
 				return response.json()
-					.then(json => {
+					.then(function(json) {
 						if(json.message) {
-							message = json.message;
+							throw new ApiError(json.message, json.status_code || response.status);
 						}
-						throw new APIError(message, json);
+						// there isn't a custom error message, so fallback to
+						// the HTTP response
+						throw new ApiError(response.statusText, response.status);
 					})
-					.catch(APIError, err => {
-						throw err;
-					})
-					// ignore any JSON parsing problems and throw the default exception
-					.catch(() => {
-						throw new Error(message);
+					.catch(function(err) {
+						console.error(err); // eslint-disable-line no-console
+						if(err.name === 'ApiError') {
+							throw err;
+						}
+						// if we got here the, response body couldn't be parsed
+						// as JSON at all, use the HTTP response data
+						throw new ApiError(response.statusText, response.status);
 					});
 			});
 	}
