@@ -60,7 +60,7 @@ var StepMenu = function(props) {
 				title={props.steps[key].title}
 				id={index}
 				show={props.steps[key].show}
-				isLoading={props.steps[key].is_loading}
+				is_loading={props.steps[key].is_loading}
 			/>
 		);
 	});
