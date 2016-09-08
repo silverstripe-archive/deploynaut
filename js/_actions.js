@@ -319,20 +319,34 @@ export function succeedDeploymentEnqueue(data) {
 
 export const FAIL_DEPLOYMENT_ENQUEUE = "FAIL_DEPLOYMENT_ENQUEUE";
 export function failDeploymentEnqueue(err) {
-	console.error(err); // eslint-disable-line no-console
-	return {type: FAIL_DEPLOYMENT_ENQUEUE};
+	return {
+		type: FAIL_DEPLOYMENT_ENQUEUE,
+		error: err
+	};
 }
 
-export const DEPLOY_LOG_UPDATE = 'DEPLOY_LOG_UPDATE';
-export function deployLogUpdate(data) {
-	return {type: DEPLOY_LOG_UPDATE, data: data};
+export const SUCCEED_DEPLOY_LOG_UPDATE = 'SUCCEED_DEPLOY_LOG_UPDATE';
+export function succeedDeployLogUpdate(data) {
+	return {
+		type: SUCCEED_DEPLOY_LOG_UPDATE,
+		data: data
+	};
+}
+
+export const FAIL_DEPLOY_LOG_UPDATE = 'FAIL_DEPLOY_LOG_UPDATE';
+export function failDeployLogUpdate(err) {
+	return {
+		type: FAIL_DEPLOY_LOG_UPDATE,
+		error: err
+	};
 }
 
 export function getDeployLog() {
 	return (dispatch, getState) => {
-		deployAPI.waitForSuccess(getState, `/log/${getState().deployment.id}`, 100, function(data) {
-			dispatch(deployLogUpdate(data));
-		}).then(() => console.log('deploy done')); // eslint-disable-line no-console
+		return deployAPI.waitForSuccess(getState, `/log/${getState().deployment.id}`, 100, function(data) {
+			dispatch(succeedDeployLogUpdate(data));
+		})
+			.then(() => console.log('deploy done')); // eslint-disable-line no-console
 
 	};
 }
@@ -341,8 +355,11 @@ export function startDeploy(sha) {
 	return (dispatch, getState) => {
 		dispatch(startDeploymentEnqueue());
 		return deployAPI.call(getState, '/start', 'post', {sha: sha})
-			.then(data => dispatch(succeedDeploymentEnqueue(data)))
-			.then(() => dispatch(getDeployLog()));
+			.then(function(data) {
+				dispatch(succeedDeploymentEnqueue(data));
+				return dispatch(getDeployLog());
+			})
+			.catch((error) => dispatch(failDeploymentEnqueue(error)));
 	};
 }
 

@@ -1,12 +1,23 @@
-var React = require("react");
-var ReactRedux = require('react-redux');
+const React = require("react");
+const ReactRedux = require('react-redux');
 
-var Deploy = require('./buttons/Deploy.jsx');
+const Deploy = require('./buttons/Deploy.jsx');
 
-var deployment = function(props) {
-	var approverName = (props.approved_by) ? props.approved_by.name : "";
-	var logOutput = null;
+const deployment = function(props) {
+	const approverName = (props.approved_by) ? props.approved_by.name : "";
 
+	let error = null;
+	if (props.error) {
+		error = (
+			<div className="alert alert-danger">
+				<div className="">
+					{props.error}
+				</div>
+			</div>
+		);
+	}
+
+	let logOutput = null;
 	if (props.deploy_log.length) {
 		let lines = Object.keys(props.deploy_log).map(function(key) {
 			return <div key={key}>{props.deploy_log[key]}</div>;
@@ -42,6 +53,7 @@ var deployment = function(props) {
 					</dl>
 				</div>
 			</div>
+			{error}
 			<div>
 				<Deploy sha={props.selected_ref} />
 				{logOutput}
@@ -51,9 +63,9 @@ var deployment = function(props) {
 };
 
 const mapStateToProps = function(state) {
-	var approvers = state.approval.approvers.filter(obj =>
-		obj.id === parseInt(state.approval.approved_by, 10)
-	);
+	const approvers = state.approval.approvers.filter(obj =>
+	obj.id === parseInt(state.approval.approved_by, 10)
+);
 
 	return {
 		approved: state.approval.approved,
@@ -65,7 +77,8 @@ const mapStateToProps = function(state) {
 		deployment_estimate: state.plan.deployment_estimate,
 		selected_ref: state.git.selected_ref,
 		plan: state.plan,
-		deploy_log: state.deployment.log
+		deploy_log: state.deployment.log,
+		error: state.deployment.error
 	};
 };
 

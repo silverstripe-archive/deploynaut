@@ -11,13 +11,6 @@ class DeployDispatcher extends Dispatcher {
 	/**
 	 * @var array
 	 */
-	private static $action_types = [
-		self::ACTION_DEPLOY
-	];
-
-	/**
-	 * @var array
-	 */
 	public static $allowed_actions = [
 		'history',
 		'currentbuild',
@@ -35,6 +28,13 @@ class DeployDispatcher extends Dispatcher {
 	 * @var \DNEnvironment
 	 */
 	protected $environment = null;
+
+	/**
+	 * @var array
+	 */
+	private static $action_types = [
+		self::ACTION_DEPLOY
+	];
 
 	public function init() {
 		parent::init();
@@ -110,11 +110,9 @@ class DeployDispatcher extends Dispatcher {
 	 */
 	public function show(SS_HTTPRequest $request) {
 		$deployment = DNDeployment::get()->byId($request->param('ID'));
-		if (!$deployment || !$deployment->exists()) {
-			return $this->getAPIResponse(['message' => 'This deployment does not exist'], 404);
-		}
-		if (!$deployment->canView()) {
-			return $this->getAPIResponse(['message' => 'You are not authorised to view this deployment'], 403);
+		$errorResponse = $this->validateDeployment($deployment);
+		if ($errorResponse instanceof \SS_HTTPResponse) {
+			return $errorResponse;
 		}
 		return $this->getAPIResponse(['deployment' => $this->getDeploymentData($deployment)], 200);
 	}
@@ -124,14 +122,11 @@ class DeployDispatcher extends Dispatcher {
 	 * @return \SS_HTTPResponse
 	 */
 	public function log(SS_HTTPRequest $request) {
-		$deployment = DNDeployment::get()->byId($request->params('ID'));
-		if (!$deployment || !$deployment->exists) {
-			return $this->getAPIResponse(['message' => 'This deployment does not exist'], 404);
+		$deployment = DNDeployment::get()->byId($request->param('ID'));
+		$errorResponse = $this->validateDeployment($deployment);
+		if ($errorResponse instanceof \SS_HTTPResponse) {
+			return $errorResponse;
 		}
-		if (!$deployment->canView()) {
-			return $this->getAPIResponse(['message' => 'You are not authorised to view this deployment'], 403);
-		}
-
 		$log = $deployment->log();
 		$content = $log->exists() ? $log->content() : 'Waiting for action to start';
 		$lines = explode(PHP_EOL, $content);
@@ -255,6 +250,24 @@ class DeployDispatcher extends Dispatcher {
 			'role' => $role,
 			'name' => $member->getName()
 		];
+	}
+
+	/**
+	 * Check if a DNDeployment exists and do permission checks on it. If there is something wrong it will return
+	 * an APIResponse with the error, otherwise null.
+	 *
+	 * @param \DNDeployment $deployment
+	 *
+	 * @return null|SS_HTTPResponse
+	 */
+	protected function validateDeployment(\DNDeployment $deployment) {
+		if (!$deployment || !$deployment->exists()) {
+			return $this->getAPIResponse(['message' => 'This deployment does not exist'], 404);
+		}
+		if (!$deployment->canView()) {
+			return $this->getAPIResponse(['message' => 'You are not authorised to view this deployment'], 403);
+		}
+		return null;
 	}
 
 }
