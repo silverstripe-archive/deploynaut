@@ -4,7 +4,7 @@ var actions = require('../../_actions.js');
 var Button = require('../../components/Button.jsx');
 
 function canDeploy(state) {
-	if (state.deployment.enqueued) {
+	if (state.approval.enqueued) {
 		return false;
 	}
 	if (state.approval.bypassed) {
