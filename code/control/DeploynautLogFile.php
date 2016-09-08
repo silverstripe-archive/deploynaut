@@ -15,9 +15,9 @@ class DeploynautLogFile {
 	 */
 	public function __construct($logFile, $basePath = null) {
 		$this->logFile = $logFile;
-		if($basePath !== null) {
+		if ($basePath !== null) {
 			$this->basePath = $basePath;
-		} else if(defined('DEPLOYNAUT_LOG_PATH')) {
+		} else if (defined('DEPLOYNAUT_LOG_PATH')) {
 			$this->basePath = DEPLOYNAUT_LOG_PATH;
 		} else {
 			$this->basePath = sys_get_temp_dir();
@@ -64,10 +64,10 @@ class DeploynautLogFile {
 		$path = $this->getSanitisedLogFilePath();
 
 		// for backwards compatibility on old logs
-		if(!file_exists($path)) {
+		if (!file_exists($path)) {
 			$path = $this->getRawFilePath();
 
-			if(!file_exists($path)) {
+			if (!file_exists($path)) {
 				return null;
 			}
 		}
@@ -83,7 +83,7 @@ class DeploynautLogFile {
 		// Make sure we write into the old path for existing logs. New logs use the sanitised file path instead.
 		$path = file_exists($this->getRawFilePath()) ? $this->getRawFilePath() : $this->getSanitisedLogFilePath();
 
-		error_log('['.date('Y-m-d H:i:s').'] ' . $message .PHP_EOL, 3, $path);
+		error_log('[' . date('Y-m-d H:i:s') . '] ' . $message . PHP_EOL, 3, $path);
 		@chmod($path, 0666);
 	}
 
@@ -92,7 +92,7 @@ class DeploynautLogFile {
 	 * @return bool
 	 */
 	public function exists() {
-		return (bool)$this->getLogFilePath();
+		return (bool) $this->getLogFilePath();
 	}
 
 	/**

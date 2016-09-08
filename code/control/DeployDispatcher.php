@@ -11,13 +11,6 @@ class DeployDispatcher extends Dispatcher {
 	/**
 	 * @var array
 	 */
-	private static $action_types = [
-		self::ACTION_DEPLOY
-	];
-
-	/**
-	 * @var array
-	 */
 	public static $allowed_actions = [
 		'history',
 		'currentbuild',
@@ -35,6 +28,13 @@ class DeployDispatcher extends Dispatcher {
 	 * @var \DNEnvironment
 	 */
 	protected $environment = null;
+
+	/**
+	 * @var array
+	 */
+	private static $action_types = [
+		self::ACTION_DEPLOY
+	];
 
 	public function init() {
 		parent::init();

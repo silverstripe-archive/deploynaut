@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Dispatcher provides functionality to make it easier to work with frontend React components.
  * See deploynaut/docs/dispatcher.md for more information.
@@ -6,7 +7,6 @@
  * @todo: currently we can't have more than one component mounted in parallel on any given Dispatcher,
  * because the SecurityID will diverge as soon as one of these components submit.
  */
-
 abstract class Dispatcher extends DNRoot {
 
 	/**
@@ -41,37 +41,11 @@ abstract class Dispatcher extends DNRoot {
 	}
 
 	/**
-	 * We want to separate the dispatchers security token from the static HTML
-	 * security token since it's possible that they get out of sync with eachother.
-	 *
-	 * We do this by giving the token a separate name.
-	 *
-	 * Don't manually reset() this token, that will cause issues when people have
-	 * several tabs open. The token will be recreated when the user session times
-	 * out.
-	 *
-	 * @return SecurityToken
-	 */
-	protected function getSecurityToken() {
-		return new \SecurityToken(self::SECURITY_TOKEN_NAME);
-	}
-
-	/**
-	 * @see getSecurityToken()
-	 */
-	protected function checkSecurityToken() {
-		$securityToken = $this->getSecurityToken();
-		if(!$securityToken->check($this->request->postVar(self::SECURITY_TOKEN_NAME))) {
-			$this->httpError(403, 'Invalid security token, try reloading the page.');
-		}
-	}
-
-	/**
 	 * Return the validator errors as AJAX response.
 	 *
 	 * @param int $code HTTP status code.
 	 * @param array $validatorErrors Result of calling Validator::validate, e.g.
-	 *	[{"fieldName":"Name","message":"Message.","messageType":"bad"}]
+	 *    [{"fieldName":"Name","message":"Message.","messageType":"bad"}]
 	 * @return \SS_HTTPResponse
 	 */
 	public function asJSONValidatorErrors($code, $validatorErrors) {
@@ -134,6 +108,32 @@ abstract class Dispatcher extends DNRoot {
 	}
 
 	/**
+	 * We want to separate the dispatchers security token from the static HTML
+	 * security token since it's possible that they get out of sync with eachother.
+	 *
+	 * We do this by giving the token a separate name.
+	 *
+	 * Don't manually reset() this token, that will cause issues when people have
+	 * several tabs open. The token will be recreated when the user session times
+	 * out.
+	 *
+	 * @return SecurityToken
+	 */
+	protected function getSecurityToken() {
+		return new \SecurityToken(self::SECURITY_TOKEN_NAME);
+	}
+
+	/**
+	 * @see getSecurityToken()
+	 */
+	protected function checkSecurityToken() {
+		$securityToken = $this->getSecurityToken();
+		if (!$securityToken->check($this->request->postVar(self::SECURITY_TOKEN_NAME))) {
+			$this->httpError(403, 'Invalid security token, try reloading the page.');
+		}
+	}
+
+	/**
 	 * Return an XHR response object without any CSRF token information
 	 *
 	 * @param array $output
@@ -163,8 +163,10 @@ abstract class Dispatcher extends DNRoot {
 	 * @return string|array
 	 */
 	protected function trimWhitespace($val) {
-		if(is_array($val)) {
-			foreach($val as $k => $v) $val[$k] = $this->trimWhitespace($v);
+		if (is_array($val)) {
+			foreach ($val as $k => $v) {
+				$val[$k] = $this->trimWhitespace($v);
+			}
 			return $val;
 		} else {
 			return trim($val);
@@ -178,8 +180,10 @@ abstract class Dispatcher extends DNRoot {
 	 * @return string|array
 	 */
 	protected function stripNonPrintables($val) {
-		if(is_array($val)) {
-			foreach($val as $k => $v) $val[$k] = $this->stripNonPrintables($v);
+		if (is_array($val)) {
+			foreach ($val as $k => $v) {
+				$val[$k] = $this->stripNonPrintables($v);
+			}
 			return $val;
 		} else {
 			return preg_replace('/[[:cntrl:]]/', '', $val);

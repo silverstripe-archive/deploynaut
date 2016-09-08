@@ -12,8 +12,8 @@ class DeployForm_CommitValidator extends DeployForm_ValidatorBase {
 
 	public function php($data) {
 		// Check release method
-		if(empty($data['SelectRelease'])
-			|| !in_array($data['SelectRelease'], array('Tag', 'Branch', 'Redeploy', 'SHA', 'FilteredCommits'))
+		if (empty($data['SelectRelease'])
+			|| !in_array($data['SelectRelease'], ['Tag', 'Branch', 'Redeploy', 'SHA', 'FilteredCommits'])
 		) {
 			$method = empty($data['SelectRelease']) ? '(blank)' : $data['SelectRelease'];
 			$this->validationError(
@@ -61,6 +61,23 @@ class DeployForm extends Form {
 	}
 
 	/**
+	 * Get the build selected from the given data
+	 *
+	 * @param array $data
+	 * @return string SHA of selected build
+	 */
+	public function getSelectedBuild($data) {
+		if (isset($data['SelectRelease']) && !empty($data[$data['SelectRelease']])) {
+			// Filter out the tag/branch name if required
+			$array = explode('-', $data[$data['SelectRelease']]);
+			return reset($array);
+		}
+		if (isset($data['FilteredCommits']) && !empty($data['FilteredCommits'])) {
+			return $data['FilteredCommits'];
+		}
+	}
+
+	/**
 	 * Construct fields to select any commit
 	 *
 	 * @param DNProject $project
@@ -68,8 +85,8 @@ class DeployForm extends Form {
 	 */
 	protected function buildCommitSelector($project) {
 		// Branches
-		$branches = array();
-		foreach($project->DNBranchList() as $branch) {
+		$branches = [];
+		foreach ($project->DNBranchList() as $branch) {
 			$sha = $branch->SHA();
 			$name = $branch->Name();
 			$branchValue = sprintf("%s (%s, %s old)",
@@ -81,8 +98,8 @@ class DeployForm extends Form {
 		}
 
 		// Tags
-		$tags = array();
-		foreach($project->DNTagList()->setLimit(null) as $tag) {
+		$tags = [];
+		foreach ($project->DNTagList()->setLimit(null) as $tag) {
 			$sha = $tag->SHA();
 			$name = $tag->Name();
 			$tagValue = sprintf("%s (%s, %s old)",
@@ -95,15 +112,15 @@ class DeployForm extends Form {
 		$tags = array_reverse($tags);
 
 		// Past deployments
-		$redeploy = array();
-		foreach($project->DNEnvironmentList() as $dnEnvironment) {
+		$redeploy = [];
+		foreach ($project->DNEnvironmentList() as $dnEnvironment) {
 			$envName = $dnEnvironment->Name;
-			foreach($dnEnvironment->DeployHistory() as $deploy) {
+			foreach ($dnEnvironment->DeployHistory() as $deploy) {
 				$sha = $deploy->SHA;
-				if(!isset($redeploy[$envName])) {
-					$redeploy[$envName] = array();
+				if (!isset($redeploy[$envName])) {
+					$redeploy[$envName] = [];
 				}
-				if(!isset($redeploy[$envName][$sha])) {
+				if (!isset($redeploy[$envName][$sha])) {
 					$pastValue = sprintf("%s (deployed %s)",
 						substr($sha, 0, 8),
 						$deploy->obj('LastEdited')->Ago()
@@ -114,22 +131,22 @@ class DeployForm extends Form {
 		}
 
 		// Merge fields
-		$releaseMethods = array();
-		if(!empty($branches)) {
+		$releaseMethods = [];
+		if (!empty($branches)) {
 			$releaseMethods[] = new SelectionGroup_Item(
 				'Branch',
 				new DropdownField('Branch', 'Select a branch', $branches),
 				'Deploy the latest version of a branch'
 			);
 		}
-		if($tags) {
+		if ($tags) {
 			$releaseMethods[] = new SelectionGroup_Item(
 				'Tag',
 				new DropdownField('Tag', 'Select a tag', $tags),
 				'Deploy a tagged release'
 			);
 		}
-		if($redeploy) {
+		if ($redeploy) {
 			$releaseMethods[] = new SelectionGroup_Item(
 				'Redeploy',
 				new GroupedDropdownField('Redeploy', 'Redeploy', $redeploy),
@@ -147,22 +164,5 @@ class DeployForm extends Form {
 		$field->setValue(reset($releaseMethods)->getValue());
 		$field->addExtraClass('clearfix');
 		return $field;
-	}
-
-	/**
-	 * Get the build selected from the given data
-	 *
-	 * @param array $data
-	 * @return string SHA of selected build
-	 */
-	public function getSelectedBuild($data) {
-		if(isset($data['SelectRelease']) && !empty($data[$data['SelectRelease']])) {
-			// Filter out the tag/branch name if required
-			$array = explode('-', $data[$data['SelectRelease']]);
-			return reset($array);
-		}
-		if(isset($data['FilteredCommits']) && !empty($data['FilteredCommits'])) {
-			return $data['FilteredCommits'];
-		}
 	}
 }

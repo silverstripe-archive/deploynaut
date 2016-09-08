@@ -11,13 +11,6 @@ class PlanDispatcher extends Dispatcher {
 	/**
 	 * @var array
 	 */
-	private static $action_types = [
-		self::ACTION_PLAN
-	];
-
-	/**
-	 * @var array
-	 */
 	public static $allowed_actions = [
 		'deploysummary'
 	];
@@ -32,18 +25,25 @@ class PlanDispatcher extends Dispatcher {
 	 */
 	protected $environment = null;
 
+	/**
+	 * @var array
+	 */
+	private static $action_types = [
+		self::ACTION_PLAN
+	];
+
 	public function init() {
 		parent::init();
 
 		$this->project = $this->getCurrentProject();
 
-		if(!$this->project) {
+		if (!$this->project) {
 			return $this->project404Response();
 		}
 
 		// Performs canView permission check by limiting visible projects
 		$this->environment = $this->getCurrentEnvironment($this->project);
-		if(!$this->environment) {
+		if (!$this->environment) {
 			return $this->environment404Response();
 		}
 	}
@@ -66,7 +66,7 @@ class PlanDispatcher extends Dispatcher {
 	 */
 	public function deploysummary(SS_HTTPRequest $request) {
 
-		if(strtolower($request->httpMethod()) !== 'post') {
+		if (strtolower($request->httpMethod()) !== 'post') {
 			return $this->getAPIResponse(['message' => 'Method not allowed, requires POST'], 405);
 		}
 		$this->checkSecurityToken();
@@ -81,7 +81,7 @@ class PlanDispatcher extends Dispatcher {
 		$data = $strategy->toArray();
 
 		$interface = $this->project->getRepositoryInterface();
-		if($this->canCompareCodeVersions($interface, $data['changes'])) {
+		if ($this->canCompareCodeVersions($interface, $data['changes'])) {
 			$compareurl = sprintf(
 				'%s/compare/%s...%s',
 				$interface->URL,
@@ -118,20 +118,20 @@ class PlanDispatcher extends Dispatcher {
 	 *
 	 */
 	protected function canCompareCodeVersions(\ArrayData $interface, $changes) {
-		if(empty($changes['Code version'])) {
+		if (empty($changes['Code version'])) {
 			return false;
 		}
 		$codeVersion = ['Code version'];
-		if(empty($interface)) {
+		if (empty($interface)) {
 			return false;
 		}
-		if(empty($interface->URL)) {
+		if (empty($interface->URL)) {
 			return false;
 		}
-		if(empty($codeVersion['from']) || empty($codeVersion['to'])) {
+		if (empty($codeVersion['from']) || empty($codeVersion['to'])) {
 			return false;
 		}
-		if(strlen($codeVersion['from']) !== 40 || strlen($codeVersion['to']) !== 40) {
+		if (strlen($codeVersion['from']) !== 40 || strlen($codeVersion['to']) !== 40) {
 			return false;
 		}
 		return true;

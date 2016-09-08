@@ -15,11 +15,11 @@ class DNAdmin extends ModelAdmin {
 	/**
 	 * @var array
 	 */
-	public static $managed_models = array(
-		'DNProject' => array('title' => 'Projects'),
-		'DNDataTransfer' => array('title' => 'Transfers'),
-		'DNDataArchive' => array('title' => 'Archives'),
-	);
+	public static $managed_models = [
+		'DNProject' => ['title' => 'Projects'],
+		'DNDataTransfer' => ['title' => 'Transfers'],
+		'DNDataArchive' => ['title' => 'Archives'],
+	];
 
 	/**
 	 * @var int
@@ -29,7 +29,7 @@ class DNAdmin extends ModelAdmin {
 	public function getEditForm($id = null, $fields = null) {
 		$form = parent::getEditForm($id, $fields);
 		$gridField = $form->Fields()->dataFieldByName('DNProject');
-		if($gridField) {
+		if ($gridField) {
 			$gridField->getConfig()
 				->removeComponentsByType('GridFieldExportButton')
 				->removeComponentsByType('GridFieldPrintButton')

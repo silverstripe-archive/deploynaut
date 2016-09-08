@@ -19,7 +19,7 @@ class EnvironmentOverview extends Dispatcher {
 	public function init() {
 		parent::init();
 		$this->project = $this->getCurrentProject();
-		if(!$this->project) {
+		if (!$this->project) {
 			return $this->project404Response();
 		}
 		// Performs canView permission check by limiting visible projects
@@ -33,7 +33,7 @@ class EnvironmentOverview extends Dispatcher {
 	 * @return \HTMLText|\SS_HTTPResponse
 	 */
 	public function index(\SS_HTTPRequest $request) {
-		if(!$this->environment) {
+		if (!$this->environment) {
 			return $this->environment404Response();
 		}
 
@@ -63,9 +63,9 @@ class EnvironmentOverview extends Dispatcher {
 		$base = Director::absoluteBaseURL();
 		return [
 			'dispatchers' => [
-				'git' => $base.$this->getCurrentProject()->Link('git'),
-				'plan' => $base.$this->getCurrentEnvironment()->Link('plan'),
-				'deploys' => $base.$this->getCurrentEnvironment()->Link('deploys')
+				'git' => $base . $this->getCurrentProject()->Link('git'),
+				'plan' => $base . $this->getCurrentEnvironment()->Link('plan'),
+				'deploys' => $base . $this->getCurrentEnvironment()->Link('deploys')
 			],
 			'api_auth' => [
 				'name' => $this->getSecurityToken()->getName(),
