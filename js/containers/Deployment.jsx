@@ -44,7 +44,7 @@ var deployment = function(props) {
 				</div>
 			</div>
 			<div>
-				<Deploy disabled={!props.is_deployed} gitSHA={props.code_version} />
+				<Deploy sha={props.code_version} />
 				{logOutput}
 			</div>
 		</div>
@@ -58,7 +58,6 @@ const mapStateToProps = function(state) {
 	);
 
 	return {
-		is_deployed: state.deployment.data.state === 'Finished',
 		approved: state.approval.approved,
 		bypassed: state.approval.bypassed,
 		approved_by: approvers.shift(),

@@ -9,25 +9,25 @@ var Step = function(props) {
 		marginBottom: "4px"
 	};
 
-	if(props.active) {
+	if (props.active) {
 		classNames = "alert-info";
 	} else if(!props.show) {
 		style.color = "#ddd";
 	}
 
 	var onclick = function() {};
-	if(props.show) {
+	if (props.show) {
 		style.cursor = "pointer";
 		onclick = props.onClick;
 	}
 
 	var loading = null;
-	if(props.isLoading) {
+	if (props.is_loading) {
 		loading = (<i className="fa fa-refresh fa-spin" aria-hidden="true"></i>);
 	}
 
 	var check = null;
-	if(props.isFinished) {
+	if (props.is_finished) {
 		check = (<i className="fa fa-check" aria-hidden="true"></i>);
 	}
 

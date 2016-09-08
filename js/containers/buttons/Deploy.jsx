@@ -4,13 +4,13 @@ var actions = require('../../_actions.js');
 var Button = require('../../components/Button.jsx');
 
 function canDeploy(state) {
-	if(state.deployment.enqueued) {
+	if (state.deployment.enqueued) {
 		return false;
 	}
-	if(state.approval.bypassed) {
+	if (state.approval.bypassed) {
 		return true;
 	}
-	if(state.approval.approved) {
+	if (state.approval.approved) {
 		return true;
 	}
 	return false;
@@ -19,7 +19,7 @@ function canDeploy(state) {
 const mapStateToProps = function(state) {
 	return {
 		display: canDeploy(state),
-		disabled: false,
+		disabled: state.deployment.data.state !== 'Submitted',
 		style: "btn-success",
 		value: "Deploy"
 	};
@@ -28,7 +28,7 @@ const mapStateToProps = function(state) {
 const mapDispatchToProps = function(dispatch, ownProps) {
 	return {
 		onClick: function() {
-			dispatch(actions.startDeploy(ownProps.gitSHA));
+			dispatch(actions.startDeploy(ownProps.sha));
 		}
 	};
 };

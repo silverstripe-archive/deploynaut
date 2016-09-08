@@ -199,10 +199,10 @@ export function failSummaryGet(err) {
 	};
 }
 
-export function getDeploySummary(gitSHA) {
+export function getDeploySummary(sha) {
 	return (dispatch, getState) => {
 		dispatch(startSummaryGet());
-		return planAPI.call(getState, '/deploysummary', 'post', {sha: gitSHA})
+		return planAPI.call(getState, '/deploysummary', 'post', {sha: sha})
 			.then(data => dispatch(succeedSummaryGet(data)))
 			.catch(err => dispatch(failSummaryGet(err)));
 	};
@@ -337,10 +337,10 @@ export function getDeployLog() {
 	};
 }
 
-export function startDeploy(gitSHA) {
+export function startDeploy(sha) {
 	return (dispatch, getState) => {
 		dispatch(startDeploymentEnqueue());
-		return deployAPI.call(getState, '/start', 'post', {sha: gitSHA})
+		return deployAPI.call(getState, '/start', 'post', {sha: sha})
 			.then(data => dispatch(succeedDeploymentEnqueue(data)))
 			.then(() => dispatch(getDeployLog()));
 	};
