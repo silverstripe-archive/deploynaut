@@ -9,6 +9,28 @@ class DNDeploymentHandlers extends Object {
 		$this->sendEmailToApprover($deployment);
 	}
 
+	public function onQueue(TransitionEvent $e) {
+		$deployment = $e->getStateMachine()->getObject();
+
+		$token = $deployment->enqueueDeployment();
+		$deployment->setResqueToken($token);
+		$deployment->write();
+
+		$log = $deployment->log();
+		$log->write(sprintf(
+			'Deploy queued as job %s (sigFile is %s)',
+			$token,
+			$deployment->getSigFile()
+		));
+	}
+
+	public function onAbort(TransitionEvent $e) {
+		$deployment = $e->getStateMachine()->getObject();
+
+		// 2 is SIGINT - we can't use SIGINT constant in the mod_apache context.
+		$deployment->setSignal(2);
+	}
+
 	protected function sendEmailToApprover(DNDeployment $deployment) {
 		$deployer = $deployment->Deployer();
 		$approver = $deployment->Approver();
@@ -30,27 +52,5 @@ class DNDeploymentHandlers extends Object {
 			$approver->Name,
 			$approver->Email
 		));
-	}
-
-	public function onQueue(TransitionEvent $e) {
-		$deployment = $e->getStateMachine()->getObject();
-
-		$token = $deployment->enqueueDeployment();
-		$deployment->setResqueToken($token);
-		$deployment->write();
-
-		$log = $deployment->log();
-		$log->write(sprintf(
-			'Deploy queued as job %s (sigFile is %s)',
-			$token,
-			$deployment->getSigFile()
-		));
-	}
-
-	public function onAbort(TransitionEvent $e) {
-		$deployment = $e->getStateMachine()->getObject();
-
-		// 2 is SIGINT - we can't use SIGINT constant in the mod_apache context.
-		$deployment->setSignal(2);
 	}
 }

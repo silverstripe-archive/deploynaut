@@ -65,12 +65,12 @@ class DNDeploymentDispatcher extends Dispatcher {
 
 	protected function checkRequest() {
 		$project = $this->getCurrentProject();
-		if(!$project) {
+		if (!$project) {
 			return $this->project404Response();
 		}
 
 		$env = $this->getCurrentEnvironment($project);
-		if(!$env) {
+		if (!$env) {
 			return $this->environment404Response();
 		}
 
@@ -92,20 +92,20 @@ class DNDeploymentDispatcher extends Dispatcher {
 		$machine = $deployment->getMachine();
 
 		$machine->getDispatcher()->addListener(
-			// Global hook which runs before any transition is actually done.
-			// It gives a chance to perform a dry-run, and reject the transition, for example
-			// in case the user is unauthorised.
+		// Global hook which runs before any transition is actually done.
+		// It gives a chance to perform a dry-run, and reject the transition, for example
+		// in case the user is unauthorised.
 			'finite.test_transition',
 			function (Finite\Event\TransitionEvent $e) use ($project) {
 				$code = null;
 
 				switch ($e->getTransition()->getName()) {
-				case DNDeployment::TR_SUBMIT:
-					$code = self::ALLOW_DNDEPLOYMENT_SUBMIT;
-					break;
-				case DNDeployment::TR_QUEUE:
-					$code = self::ALLOW_DNDEPLOYMENT_QUEUE;
-					break;
+					case DNDeployment::TR_SUBMIT:
+						$code = self::ALLOW_DNDEPLOYMENT_SUBMIT;
+						break;
+					case DNDeployment::TR_QUEUE:
+						$code = self::ALLOW_DNDEPLOYMENT_QUEUE;
+						break;
 				}
 
 				if (!$code || !$project->allowed($code)) {

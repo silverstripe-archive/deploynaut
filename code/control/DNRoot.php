@@ -23,25 +23,39 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	const PROJECT_OVERVIEW = 'overview';
 
 	/**
-	 * @var string
-	 */
-	private $actionType = self::ACTION_DEPLOY;
-
-	/**
 	 * Allow advanced options on deployments
 	 */
 	const DEPLOYNAUT_ADVANCED_DEPLOY_OPTIONS = 'DEPLOYNAUT_ADVANCED_DEPLOY_OPTIONS';
 
 	const ALLOW_PROD_DEPLOYMENT = 'ALLOW_PROD_DEPLOYMENT';
+
 	const ALLOW_NON_PROD_DEPLOYMENT = 'ALLOW_NON_PROD_DEPLOYMENT';
+
 	const ALLOW_PROD_SNAPSHOT = 'ALLOW_PROD_SNAPSHOT';
+
 	const ALLOW_NON_PROD_SNAPSHOT = 'ALLOW_NON_PROD_SNAPSHOT';
+
 	const ALLOW_CREATE_ENVIRONMENT = 'ALLOW_CREATE_ENVIRONMENT';
 
 	/**
 	 * @var array
 	 */
-	private static $allowed_actions = array(
+	protected static $_project_cache = [];
+
+	/**
+	 * @var DNData
+	 */
+	protected $data;
+
+	/**
+	 * @var string
+	 */
+	private $actionType = self::ACTION_DEPLOY;
+
+	/**
+	 * @var array
+	 */
+	private static $allowed_actions = [
 		'projects',
 		'nav',
 		'update',
@@ -77,12 +91,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'gitRevisions',
 		'deploySummary',
 		'startDeploy'
-	);
+	];
 
 	/**
 	 * URL handlers pretending that we have a deep URL structure.
 	 */
-	private static $url_handlers = array(
+	private static $url_handlers = [
 		'project/$Project/environment/$Environment/DeployForm' => 'getDeployForm',
 		'project/$Project/createsnapshot/DataTransferForm' => 'getDataTransferForm',
 		'project/$Project/DataTransferForm' => 'getDataTransferForm',
@@ -119,36 +133,26 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'project/$Project' => 'project',
 		'nav/$Project' => 'nav',
 		'projects' => 'projects',
-	);
+	];
 
 	/**
 	 * @var array
 	 */
-	protected static $_project_cache = array();
+	private static $support_links = [];
 
 	/**
 	 * @var array
 	 */
-	private static $support_links = array();
+	private static $platform_specific_strings = [];
 
 	/**
 	 * @var array
 	 */
-	private static $platform_specific_strings = array();
-
-	/**
-	 * @var array
-	 */
-	private static $action_types = array(
+	private static $action_types = [
 		self::ACTION_DEPLOY,
 		self::ACTION_SNAPSHOT,
 		self::PROJECT_OVERVIEW
-	);
-
-	/**
-	 * @var DNData
-	 */
-	protected $data;
+	];
 
 	/**
 	 * Include requirements that deploynaut needs, such as javascript.
@@ -193,13 +197,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return boolean
 	 */
 	public static function FlagSnapshotsEnabled() {
-		if(defined('FLAG_SNAPSHOTS_ENABLED') && FLAG_SNAPSHOTS_ENABLED) {
+		if (defined('FLAG_SNAPSHOTS_ENABLED') && FLAG_SNAPSHOTS_ENABLED) {
 			return true;
 		}
-		if(defined('FLAG_SNAPSHOTS_ENABLED_FOR_MEMBERS') && FLAG_SNAPSHOTS_ENABLED_FOR_MEMBERS) {
+		if (defined('FLAG_SNAPSHOTS_ENABLED_FOR_MEMBERS') && FLAG_SNAPSHOTS_ENABLED_FOR_MEMBERS) {
 			$allowedMembers = explode(';', FLAG_SNAPSHOTS_ENABLED_FOR_MEMBERS);
 			$member = Member::currentUser();
-			if($allowedMembers && $member && in_array($member->Email, $allowedMembers)) {
+			if ($allowedMembers && $member && in_array($member->Email, $allowedMembers)) {
 				return true;
 			}
 		}
@@ -211,7 +215,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public static function get_support_links() {
 		$supportLinks = self::config()->support_links;
-		if($supportLinks) {
+		if ($supportLinks) {
 			return new ArrayList($supportLinks);
 		}
 	}
@@ -220,12 +224,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return array
 	 */
 	public static function get_template_global_variables() {
-		return array(
+		return [
 			'RedisUnavailable' => 'RedisUnavailable',
 			'RedisWorkersCount' => 'RedisWorkersCount',
 			'SidebarLinks' => 'SidebarLinks',
 			"SupportLinks" => 'get_support_links'
-		);
+		];
 	}
 
 	/**
@@ -233,7 +237,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	public function init() {
 		parent::init();
 
-		if(!Member::currentUser() && !Session::get('AutoLoginHash')) {
+		if (!Member::currentUser() && !Session::get('AutoLoginHash')) {
 			return Security::permissionFailure();
 		}
 
@@ -268,9 +272,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function projects(SS_HTTPRequest $request) {
 		// Performs canView permission check by limiting visible projects in DNProjectsList() call.
-		return $this->customise(array(
+		return $this->customise([
 			'Title' => 'Projects',
-		))->render();
+		])->render();
 	}
 
 	/**
@@ -313,19 +317,19 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
-		if(!$project) {
+		if (!$project) {
 			return $this->project404Response();
 		}
 
-		if(!$project->canBackup()) {
+		if (!$project->canBackup()) {
 			return new SS_HTTPResponse("Not allowed to create snapshots on any environments", 401);
 		}
 
-		return $this->customise(array(
+		return $this->customise([
 			'Title' => 'Create Data Snapshot',
 			'SnapshotsSection' => 1,
 			'DataTransferForm' => $this->getDataTransferForm($request)
-		))->render();
+		])->render();
 	}
 
 	/**
@@ -339,19 +343,19 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
-		if(!$project) {
+		if (!$project) {
 			return $this->project404Response();
 		}
 
-		if(!$project->canUploadArchive()) {
+		if (!$project->canUploadArchive()) {
 			return new SS_HTTPResponse("Not allowed to upload", 401);
 		}
 
-		return $this->customise(array(
+		return $this->customise([
 			'SnapshotsSection' => 1,
 			'UploadSnapshotForm' => $this->getUploadSnapshotForm($request),
 			'PostSnapshotForm' => $this->getPostSnapshotForm($request)
-		))->render();
+		])->render();
 	}
 
 	/**
@@ -374,29 +378,29 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	public function getUploadSnapshotForm(SS_HTTPRequest $request) {
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
-		if(!$project) {
+		if (!$project) {
 			return $this->project404Response();
 		}
 
-		if(!$project->canUploadArchive()) {
+		if (!$project->canUploadArchive()) {
 			return new SS_HTTPResponse("Not allowed to upload", 401);
 		}
 
 		// Framing an environment as a "group of people with download access"
 		// makes more sense to the user here, while still allowing us to enforce
 		// environment specific restrictions on downloading the file later on.
-		$envs = $project->DNEnvironmentList()->filterByCallback(function($item) {
+		$envs = $project->DNEnvironmentList()->filterByCallback(function ($item) {
 			return $item->canUploadArchive();
 		});
-		$envsMap = array();
-		foreach($envs as $env) {
+		$envsMap = [];
+		foreach ($envs as $env) {
 			$envsMap[$env->ID] = $env->Name;
 		}
 
 		$maxSize = min(File::ini2bytes(ini_get('upload_max_filesize')), File::ini2bytes(ini_get('post_max_size')));
 		$fileField = DataArchiveFileField::create('ArchiveFile', 'File');
-		$fileField->getValidator()->setAllowedExtensions(array('sspak'));
-		$fileField->getValidator()->setAllowedMaxFileSize(array('*' => $maxSize));
+		$fileField->getValidator()->setAllowedExtensions(['sspak']);
+		$fileField->getValidator()->setAllowedMaxFileSize(['*' => $maxSize]);
 
 		$form = Form::create(
 			$this,
@@ -433,43 +437,43 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
-		if(!$project) {
+		if (!$project) {
 			return $this->project404Response();
 		}
 
 		$validEnvs = $project->DNEnvironmentList()
-			->filterByCallback(function($item) {
+			->filterByCallback(function ($item) {
 				return $item->canUploadArchive();
 			});
 
 		// Validate $data['EnvironmentID'] by checking against $validEnvs.
 		$environment = $validEnvs->find('ID', $data['EnvironmentID']);
-		if(!$environment) {
+		if (!$environment) {
 			throw new LogicException('Invalid environment');
 		}
 
 		$this->validateSnapshotMode($data['Mode']);
 
-		$dataArchive = DNDataArchive::create(array(
+		$dataArchive = DNDataArchive::create([
 			'AuthorID' => Member::currentUserID(),
 			'EnvironmentID' => $data['EnvironmentID'],
 			'IsManualUpload' => true,
-		));
+		]);
 		// needs an ID and transfer to determine upload path
 		$dataArchive->write();
-		$dataTransfer = DNDataTransfer::create(array(
+		$dataTransfer = DNDataTransfer::create([
 			'AuthorID' => Member::currentUserID(),
 			'Mode' => $data['Mode'],
 			'Origin' => 'ManualUpload',
 			'EnvironmentID' => $data['EnvironmentID']
-		));
+		]);
 		$dataTransfer->write();
 		$dataArchive->DataTransfers()->add($dataTransfer);
 		$form->saveInto($dataArchive);
 		$dataArchive->write();
 		$workingDir = TEMP_FOLDER . DIRECTORY_SEPARATOR . 'deploynaut-transfer-' . $dataTransfer->ID;
 
-		$cleanupFn = function() use($workingDir, $dataTransfer, $dataArchive) {
+		$cleanupFn = function () use ($workingDir, $dataTransfer, $dataArchive) {
 			$process = new AbortableProcess(sprintf('rm -rf %s', escapeshellarg($workingDir)));
 			$process->setTimeout(120);
 			$process->run();
@@ -480,7 +484,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// extract the sspak contents so we can inspect them
 		try {
 			$dataArchive->extractArchive($workingDir);
-		} catch(Exception $e) {
+		} catch (Exception $e) {
 			$cleanupFn();
 			$form->sessionMessage(
 				'There was a problem trying to open your snapshot for processing. Please try uploading again',
@@ -491,7 +495,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		// validate that the sspak contents match the declared contents
 		$result = $dataArchive->validateArchiveContents();
-		if(!$result->valid()) {
+		if (!$result->valid()) {
 			$cleanupFn();
 			$form->sessionMessage($result->message(), 'bad');
 			return $this->redirectBack();
@@ -501,7 +505,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		try {
 			$dataArchive->fixArchivePermissions($workingDir);
 			$dataArchive->setArchiveFromFiles($workingDir);
-		} catch(Exception $e) {
+		} catch (Exception $e) {
 			$cleanupFn();
 			$form->sessionMessage(
 				'There was a problem processing your snapshot. Please try uploading again',
@@ -515,14 +519,14 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$process->setTimeout(120);
 		$process->run();
 
-		return $this->customise(array(
+		return $this->customise([
 			'Project' => $project,
 			'CurrentProject' => $project,
 			'SnapshotsSection' => 1,
 			'DataArchive' => $dataArchive,
 			'DataTransferRestoreForm' => $this->getDataTransferRestoreForm($this->request, $dataArchive),
 			'BackURL' => $project->Link('snapshots')
-		))->renderWith(array('DNRoot_uploadsnapshot', 'DNRoot'));
+		])->renderWith(['DNRoot_uploadsnapshot', 'DNRoot']);
 	}
 
 	/**
@@ -532,22 +536,22 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	public function getPostSnapshotForm(SS_HTTPRequest $request) {
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
-		if(!$project) {
+		if (!$project) {
 			return $this->project404Response();
 		}
 
-		if(!$project->canUploadArchive()) {
+		if (!$project->canUploadArchive()) {
 			return new SS_HTTPResponse("Not allowed to upload", 401);
 		}
 
 		// Framing an environment as a "group of people with download access"
 		// makes more sense to the user here, while still allowing us to enforce
 		// environment specific restrictions on downloading the file later on.
-		$envs = $project->DNEnvironmentList()->filterByCallback(function($item) {
+		$envs = $project->DNEnvironmentList()->filterByCallback(function ($item) {
 			return $item->canUploadArchive();
 		});
-		$envsMap = array();
-		foreach($envs as $env) {
+		$envsMap = [];
+		foreach ($envs as $env) {
 			$envsMap[$env->ID] = $env->Name;
 		}
 
@@ -584,23 +588,23 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
 
 		$project = $this->getCurrentProject();
-		if(!$project) {
+		if (!$project) {
 			return $this->project404Response();
 		}
 
-		$validEnvs = $project->DNEnvironmentList()->filterByCallback(function($item) {
-				return $item->canUploadArchive();
+		$validEnvs = $project->DNEnvironmentList()->filterByCallback(function ($item) {
+			return $item->canUploadArchive();
 		});
 
 		// Validate $data['EnvironmentID'] by checking against $validEnvs.
 		$environment = $validEnvs->find('ID', $data['EnvironmentID']);
-		if(!$environment) {
+		if (!$environment) {
 			throw new LogicException('Invalid environment');
 		}
 
-		$dataArchive = DNDataArchive::create(array(
+		$dataArchive = DNDataArchive::create([
 			'UploadToken' => DNDataArchive::generate_upload_token(),
-		));
+		]);
 		$form->saveInto($dataArchive);
 		$dataArchive->write();
 
@@ -632,29 +636,29 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
-		if(!$project) {
+		if (!$project) {
 			return $this->project404Response();
 		}
 
-		if(!$project->canUploadArchive()) {
+		if (!$project->canUploadArchive()) {
 			return new SS_HTTPResponse("Not allowed to upload", 401);
 		}
 
 		$dataArchive = DNDataArchive::get()->byId($request->param('DataArchiveID'));
-		if(!$dataArchive) {
+		if (!$dataArchive) {
 			return new SS_HTTPResponse("Archive not found.", 404);
 		}
 
-		if(!$dataArchive->canRestore()) {
+		if (!$dataArchive->canRestore()) {
 			throw new SS_HTTPResponse_Exception('Not allowed to restore archive', 403);
 		}
 
-		return $this->render(array(
-				'Title' => 'How to send us your Data Snapshot by post',
-				'DataArchive' => $dataArchive,
-				'Address' => Config::inst()->get('Deploynaut', 'snapshot_post_address'),
-				'BackURL' => $project->Link(),
-			));
+		return $this->render([
+			'Title' => 'How to send us your Data Snapshot by post',
+			'DataArchive' => $dataArchive,
+			'Address' => Config::inst()->get('Deploynaut', 'snapshot_post_address'),
+			'BackURL' => $project->Link(),
+		]);
 	}
 
 	/**
@@ -663,7 +667,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function project(SS_HTTPRequest $request) {
 		$this->setCurrentActionType(self::PROJECT_OVERVIEW);
-		return $this->getCustomisedViewSection('ProjectOverview', '', array('IsAdmin' => Permission::check('ADMIN')));
+		return $this->getCustomisedViewSection('ProjectOverview', '', ['IsAdmin' => Permission::check('ADMIN')]);
 	}
 
 	/**
@@ -675,19 +679,19 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function toggleprojectstar(SS_HTTPRequest $request) {
 		$project = $this->getCurrentProject();
-		if(!$project) {
+		if (!$project) {
 			return $this->project404Response();
 		}
 
 		$member = Member::currentUser();
-		if($member === null) {
+		if ($member === null) {
 			return $this->project404Response();
 		}
 		$favProject = $member->StarredProjects()
 			->filter('DNProjectID', $project->ID)
 			->first();
 
-		if($favProject) {
+		if ($favProject) {
 			$member->StarredProjects()->remove($favProject);
 		} else {
 			$member->StarredProjects()->add($project);
@@ -701,19 +705,19 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function branch(SS_HTTPRequest $request) {
 		$project = $this->getCurrentProject();
-		if(!$project) {
+		if (!$project) {
 			return $this->project404Response();
 		}
 
 		$branchName = $request->getVar('name');
 		$branch = $project->DNBranchList()->byName($branchName);
-		if(!$branch) {
+		if (!$branch) {
 			return new SS_HTTPResponse("Branch '" . Convert::raw2xml($branchName) . "' not found.", 404);
 		}
 
-		return $this->render(array(
+		return $this->render([
 			'CurrentBranch' => $branch,
-		));
+		]);
 	}
 
 	/**
@@ -723,21 +727,21 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	public function environment(SS_HTTPRequest $request) {
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
-		if(!$project) {
+		if (!$project) {
 			return $this->project404Response();
 		}
 
 		// Performs canView permission check by limiting visible projects
 		$env = $this->getCurrentEnvironment($project);
-		if(!$env) {
+		if (!$env) {
 			return $this->environment404Response();
 		}
 
-		return $this->render(array(
+		return $this->render([
 			'DNEnvironmentList' => $this->getCurrentProject()->DNEnvironmentList(),
 			'FlagSnapshotsEnabled' => $this->FlagSnapshotsEnabled(),
-			'Redeploy' => (bool)$request->getVar('redeploy')
-		));
+			'Redeploy' => (bool) $request->getVar('redeploy')
+		]);
 	}
 
 	/**
@@ -748,52 +752,51 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function createenv(SS_HTTPRequest $request) {
 		$params = $request->params();
-		if($params['Identifier']) {
+		if ($params['Identifier']) {
 			$record = DNCreateEnvironment::get()->byId($params['Identifier']);
 
-			if(!$record || !$record->ID) {
+			if (!$record || !$record->ID) {
 				throw new SS_HTTPResponse_Exception('Create environment not found', 404);
 			}
-			if(!$record->canView()) {
+			if (!$record->canView()) {
 				return Security::permissionFailure();
 			}
 
 			$project = $this->getCurrentProject();
-			if(!$project) {
+			if (!$project) {
 				return $this->project404Response();
 			}
 
-			if($project->Name != $params['Project']) {
+			if ($project->Name != $params['Project']) {
 				throw new LogicException("Project in URL doesn't match this creation");
 			}
 
-			return $this->render(array(
+			return $this->render([
 				'CreateEnvironment' => $record,
-			));
+			]);
 		}
-		return $this->render(array('CurrentTitle' => 'Create an environment'));
+		return $this->render(['CurrentTitle' => 'Create an environment']);
 	}
-
 
 	public function createenvlog(SS_HTTPRequest $request) {
 		$params = $request->params();
 		$env = DNCreateEnvironment::get()->byId($params['Identifier']);
 
-		if(!$env || !$env->ID) {
+		if (!$env || !$env->ID) {
 			throw new SS_HTTPResponse_Exception('Log not found', 404);
 		}
-		if(!$env->canView()) {
+		if (!$env->canView()) {
 			return Security::permissionFailure();
 		}
 
 		$project = $env->Project();
 
-		if($project->Name != $params['Project']) {
+		if ($project->Name != $params['Project']) {
 			throw new LogicException("Project in URL doesn't match this deploy");
 		}
 
 		$log = $env->log();
-		if($log->exists()) {
+		if ($log->exists()) {
 			$content = $log->content();
 		} else {
 			$content = 'Waiting for action to start';
@@ -810,25 +813,27 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$this->setCurrentActionType(self::ACTION_ENVIRONMENTS);
 
 		$project = $this->getCurrentProject();
-		if(!$project) {
+		if (!$project) {
 			return $this->project404Response();
 		}
 
 		$envType = $project->AllowedEnvironmentType;
-		if(!$envType || !class_exists($envType)) {
+		if (!$envType || !class_exists($envType)) {
 			return null;
 		}
 
 		$backend = Injector::inst()->get($envType);
-		if(!($backend instanceof EnvironmentCreateBackend)) {
+		if (!($backend instanceof EnvironmentCreateBackend)) {
 			// Only allow this for supported backends.
 			return null;
 		}
 
 		$fields = $backend->getCreateEnvironmentFields($project);
-		if(!$fields) return null;
+		if (!$fields) {
+			return null;
+		}
 
-		if(!$project->canCreateEnvironments()) {
+		if (!$project->canCreateEnvironments()) {
 			return new SS_HTTPResponse('Not allowed to create environments for this project', 401);
 		}
 
@@ -859,11 +864,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$this->setCurrentActionType(self::ACTION_ENVIRONMENTS);
 
 		$project = $this->getCurrentProject();
-		if(!$project) {
+		if (!$project) {
 			return $this->project404Response();
 		}
 
-		if(!$project->canCreateEnvironments()) {
+		if (!$project->canCreateEnvironments()) {
 			return new SS_HTTPResponse('Not allowed to create environments for this project', 401);
 		}
 
@@ -888,13 +893,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	public function metrics(SS_HTTPRequest $request) {
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
-		if(!$project) {
+		if (!$project) {
 			return $this->project404Response();
 		}
 
 		// Performs canView permission check by limiting visible projects
 		$env = $this->getCurrentEnvironment($project);
-		if(!$env) {
+		if (!$env) {
 			return $this->environment404Response();
 		}
 
@@ -917,11 +922,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function DNProjectList() {
 		$memberId = Member::currentUserID();
-		if(!$memberId) {
+		if (!$memberId) {
 			return new ArrayList();
 		}
 
-		if(Permission::check('ADMIN')) {
+		if (Permission::check('ADMIN')) {
 			return DNProject::get();
 		}
 
@@ -950,15 +955,15 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function getStarredProjects() {
 		$member = Member::currentUser();
-		if($member === null) {
+		if ($member === null) {
 			return new ArrayList();
 		}
 
 		$favProjects = $member->StarredProjects();
 
 		$list = new ArrayList();
-		foreach($favProjects as $project) {
-			if($project->canView($member)) {
+		foreach ($favProjects as $project) {
+			if ($project->canView($member)) {
 				$list->add($project);
 			}
 		}
@@ -980,49 +985,49 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$actionType = $this->getCurrentActionType();
 
 		$projects = $this->getStarredProjects();
-		if($projects->count() < 1) {
+		if ($projects->count() < 1) {
 			$projects = $this->DNProjectList();
 		} else {
 			$limit = -1;
 		}
 
-		if($projects->count() > 0) {
+		if ($projects->count() > 0) {
 			$activeProject = false;
 
-			if($limit > 0) {
+			if ($limit > 0) {
 				$limitedProjects = $projects->limit($limit);
 			} else {
 				$limitedProjects = $projects;
 			}
 
-			foreach($limitedProjects as $project) {
+			foreach ($limitedProjects as $project) {
 				$isActive = $currentProject && $currentProject->ID == $project->ID;
-				if($isActive) {
+				if ($isActive) {
 					$activeProject = true;
 				}
 
 				$isCurrentEnvironment = false;
-				if($project && $currentEnvironment) {
+				if ($project && $currentEnvironment) {
 					$isCurrentEnvironment = (bool) $project->DNEnvironmentList()->find('ID', $currentEnvironment->ID);
 				}
 
-				$navigation->push(array(
+				$navigation->push([
 					'Project' => $project,
 					'IsCurrentEnvironment' => $isCurrentEnvironment,
 					'IsActive' => $currentProject && $currentProject->ID == $project->ID,
 					'IsOverview' => $actionType == self::PROJECT_OVERVIEW && $currentProject->ID == $project->ID
-				));
+				]);
 			}
 
 			// Ensure the current project is in the list
-			if(!$activeProject && $currentProject) {
-				$navigation->unshift(array(
+			if (!$activeProject && $currentProject) {
+				$navigation->unshift([
 					'Project' => $currentProject,
 					'IsActive' => true,
 					'IsCurrentEnvironment' => $currentEnvironment,
 					'IsOverview' => $actionType == self::PROJECT_OVERVIEW
-				));
-				if($limit > 0 && $navigation->count() > $limit) {
+				]);
+				if ($limit > 0 && $navigation->count() > $limit) {
 					$navigation->pop();
 				}
 			}
@@ -1042,17 +1047,17 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
-		if(!$project) {
+		if (!$project) {
 			return $this->project404Response();
 		}
 
 		// Performs canView permission check by limiting visible projects
 		$environment = $this->getCurrentEnvironment($project);
-		if(!$environment) {
+		if (!$environment) {
 			return $this->environment404Response();
 		}
 
-		if(!$environment->canDeploy()) {
+		if (!$environment->canDeploy()) {
 			return new SS_HTTPResponse("Not allowed to deploy", 401);
 		}
 
@@ -1060,7 +1065,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$form = new DeployForm($this, 'DeployForm', $environment, $project);
 
 		// If this is an ajax request we don't want to submit the form - we just want to retrieve the markup.
-		if(
+		if (
 			$request &&
 			!$request->requestVar('action_showDeploySummary') &&
 			$this->getRequest()->isAjax() &&
@@ -1069,7 +1074,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			// We can just use the URL we're accessing
 			$form->setFormAction($this->getRequest()->getURL());
 
-			$body = json_encode(array('Content' => $form->forAjaxTemplate()->forTemplate()));
+			$body = json_encode(['Content' => $form->forAjaxTemplate()->forTemplate()]);
 			$this->getResponse()->addHeader('Content-Type', 'application/json');
 			$this->getResponse()->setBody($body);
 			return $body;
@@ -1090,13 +1095,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
-		if(!$project) {
+		if (!$project) {
 			return $this->project404Response();
 		}
 
 		// Performs canView permission check by limiting visible projects
 		$env = $this->getCurrentEnvironment($project);
-		if(!$env) {
+		if (!$env) {
 			return $this->environment404Response();
 		}
 
@@ -1109,9 +1114,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			];
 		}
 
-		$tabs = array();
+		$tabs = [];
 		$id = 0;
-		$data = array(
+		$data = [
 			'id' => ++$id,
 			'name' => 'Deploy the latest version of a branch',
 			'field_type' => 'dropdown',
@@ -1119,8 +1124,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'field_id' => 'branch',
 			'field_data' => [],
 			'options' => $options
-		);
-		foreach($project->DNBranchList() as $branch) {
+		];
+		foreach ($project->DNBranchList() as $branch) {
 			$sha = $branch->SHA();
 			$name = $branch->Name();
 			$branchValue = sprintf("%s (%s, %s old)",
@@ -1128,15 +1133,15 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				substr($sha, 0, 8),
 				$branch->LastUpdated()->TimeDiff()
 			);
-			$data['field_data'][] = array(
+			$data['field_data'][] = [
 				'id' => $sha,
 				'text' => $branchValue,
 				'branch_name' => $name // the raw branch name, not including the time etc
-			);
+			];
 		}
 		$tabs[] = $data;
 
-		$data = array(
+		$data = [
 			'id' => ++$id,
 			'name' => 'Deploy a tagged release',
 			'field_type' => 'dropdown',
@@ -1144,14 +1149,14 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'field_id' => 'tag',
 			'field_data' => [],
 			'options' => $options
-		);
+		];
 
-		foreach($project->DNTagList()->setLimit(null) as $tag) {
+		foreach ($project->DNTagList()->setLimit(null) as $tag) {
 			$name = $tag->Name();
-			$data['field_data'][] = array(
+			$data['field_data'][] = [
 				'id' => $tag->SHA(),
 				'text' => sprintf("%s", $name)
-			);
+			];
 		}
 
 		// show newest tags first.
@@ -1160,7 +1165,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$tabs[] = $data;
 
 		// Past deployments
-		$data = array(
+		$data = [
 			'id' => ++$id,
 			'name' => 'Redeploy a release that was previously deployed (to any environment)',
 			'field_type' => 'dropdown',
@@ -1168,41 +1173,41 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'field_id' => 'release',
 			'field_data' => [],
 			'options' => $options
-		);
+		];
 		// We are aiming at the format:
 		// [{text: 'optgroup text', children: [{id: '<sha>', text: '<inner text>'}]}]
-		$redeploy = array();
-		foreach($project->DNEnvironmentList() as $dnEnvironment) {
+		$redeploy = [];
+		foreach ($project->DNEnvironmentList() as $dnEnvironment) {
 			$envName = $dnEnvironment->Name;
-			$perEnvDeploys = array();
+			$perEnvDeploys = [];
 
-			foreach($dnEnvironment->DeployHistory() as $deploy) {
+			foreach ($dnEnvironment->DeployHistory() as $deploy) {
 				$sha = $deploy->SHA;
 
 				// Check if exists to make sure the newest deployment date is used.
-				if(!isset($perEnvDeploys[$sha])) {
+				if (!isset($perEnvDeploys[$sha])) {
 					$pastValue = sprintf("%s (deployed %s)",
 						substr($sha, 0, 8),
 						$deploy->obj('LastEdited')->Ago()
 					);
-					$perEnvDeploys[$sha] = array(
+					$perEnvDeploys[$sha] = [
 						'id' => $sha,
 						'text' => $pastValue
-					);
+					];
 				}
 			}
 
-			if(!empty($perEnvDeploys)) {
+			if (!empty($perEnvDeploys)) {
 				$redeploy[$envName] = array_values($perEnvDeploys);
 			}
 		}
 		// Convert the array to the frontend format (i.e. keyed to regular array)
-		foreach($redeploy as $name => $descr) {
-			$data['field_data'][] = array('text'=>$name, 'children'=>$descr);
+		foreach ($redeploy as $name => $descr) {
+			$data['field_data'][] = ['text' => $name, 'children' => $descr];
 		}
 		$tabs[] = $data;
 
-		$data = array(
+		$data = [
 			'id' => ++$id,
 			'name' => 'Deploy a specific SHA',
 			'field_type' => 'textfield',
@@ -1210,7 +1215,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'field_id' => 'SHA',
 			'field_data' => [],
 			'options' => $options
-		);
+		];
 		$tabs[] = $data;
 
 		// get the last time git fetch was run
@@ -1219,45 +1224,18 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			->filter('ProjectID', $project->ID)
 			->sort('LastEdited', 'DESC')
 			->first();
-		if($fetch) {
+		if ($fetch) {
 			$lastFetched = $fetch->dbObject('LastEdited')->Ago();
 		}
 
-		$data = array(
+		$data = [
 			'Tabs' => $tabs,
 			'last_fetched' => $lastFetched
-		);
+		];
 
 		$this->applyRedeploy($request, $data);
 
 		return json_encode($data, JSON_PRETTY_PRINT);
-	}
-
-	protected function applyRedeploy(SS_HTTPRequest $request, &$data) {
-		if (!$request->getVar('redeploy')) return;
-
-		$project = $this->getCurrentProject();
-		if(!$project) {
-			return $this->project404Response();
-		}
-
-		// Performs canView permission check by limiting visible projects
-		$env = $this->getCurrentEnvironment($project);
-		if(!$env) {
-			return $this->environment404Response();
-		}
-
-		$current = $env->CurrentBuild();
-		if ($current && $current->exists()) {
-			$data['preselect_tab'] = 3;
-			$data['preselect_sha'] = $current->SHA;
-		} else {
-			$master = $project->DNBranchList()->byName('master');
-			if ($master) {
-				$data['preselect_tab'] = 1;
-				$data['preselect_sha'] = $master->SHA();
-			}
-		}
 	}
 
 	/**
@@ -1271,13 +1249,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
-		if(!$project) {
+		if (!$project) {
 			return $this->project404Response();
 		}
 
 		// Performs canView permission check by limiting visible projects
 		$environment = $this->getCurrentEnvironment($project);
-		if(!$environment) {
+		if (!$environment) {
 			return $this->environment404Response();
 		}
 
@@ -1288,7 +1266,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// Add in a URL for comparing from->to code changes. Ensure that we have
 		// two proper 40 character SHAs, otherwise we can't show the compare link.
 		$interface = $project->getRepositoryInterface();
-		if(
+		if (
 			!empty($interface) && !empty($interface->URL)
 			&& !empty($data['changes']['Code version']['from'])
 			&& strlen($data['changes']['Code version']['from']) == '40'
@@ -1332,26 +1310,26 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		// Ensure the submitted token has a value
 		$submittedToken = $request->postVar(\Dispatcher::SECURITY_TOKEN_NAME);
-		if(!$submittedToken) {
+		if (!$submittedToken) {
 			return false;
 		}
 		// Do the actual check.
 		$check = $token->check($submittedToken);
 		// Ensure the CSRF Token is correct
-		if(!$check) {
+		if (!$check) {
 			// CSRF token didn't match
 			return $this->httpError(400, 'Bad Request');
 		}
 
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
-		if(!$project) {
+		if (!$project) {
 			return $this->project404Response();
 		}
 
 		// Performs canView permission check by limiting visible projects
 		$environment = $this->getCurrentEnvironment($project);
-		if(!$environment) {
+		if (!$environment) {
 			return $this->environment404Response();
 		}
 
@@ -1367,9 +1345,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$deployment->getMachine()->apply(DNDeployment::TR_SUBMIT);
 		$deployment->getMachine()->apply(DNDeployment::TR_QUEUE);
 
-		return json_encode(array(
+		return json_encode([
 			'url' => Director::absoluteBaseURL() . $deployment->Link()
-		), JSON_PRETTY_PRINT);
+		], JSON_PRETTY_PRINT);
 	}
 
 	/**
@@ -1386,28 +1364,27 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$params = $request->params();
 		$deployment = DNDeployment::get()->byId($params['Identifier']);
 
-		if(!$deployment || !$deployment->ID) {
+		if (!$deployment || !$deployment->ID) {
 			throw new SS_HTTPResponse_Exception('Deployment not found', 404);
 		}
-		if(!$deployment->canView()) {
+		if (!$deployment->canView()) {
 			return Security::permissionFailure();
 		}
 
 		$environment = $deployment->Environment();
 		$project = $environment->Project();
 
-		if($environment->Name != $params['Environment']) {
+		if ($environment->Name != $params['Environment']) {
 			throw new LogicException("Environment in URL doesn't match this deploy");
 		}
-		if($project->Name != $params['Project']) {
+		if ($project->Name != $params['Project']) {
 			throw new LogicException("Project in URL doesn't match this deploy");
 		}
 
-		return $this->render(array(
+		return $this->render([
 			'Deployment' => $deployment,
-		));
+		]);
 	}
-
 
 	/**
 	 * @deprecated 2.0.0 - moved to DeployDispatcher
@@ -1423,25 +1400,25 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$params = $request->params();
 		$deployment = DNDeployment::get()->byId($params['Identifier']);
 
-		if(!$deployment || !$deployment->ID) {
+		if (!$deployment || !$deployment->ID) {
 			throw new SS_HTTPResponse_Exception('Deployment not found', 404);
 		}
-		if(!$deployment->canView()) {
+		if (!$deployment->canView()) {
 			return Security::permissionFailure();
 		}
 
 		$environment = $deployment->Environment();
 		$project = $environment->Project();
 
-		if($environment->Name != $params['Environment']) {
+		if ($environment->Name != $params['Environment']) {
 			throw new LogicException("Environment in URL doesn't match this deploy");
 		}
-		if($project->Name != $params['Project']) {
+		if ($project->Name != $params['Project']) {
 			throw new LogicException("Project in URL doesn't match this deploy");
 		}
 
 		$log = $deployment->log();
-		if($log->exists()) {
+		if ($log->exists()) {
 			$content = $log->content();
 		} else {
 			$content = 'Waiting for action to start';
@@ -1454,25 +1431,25 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$params = $request->params();
 		$deployment = DNDeployment::get()->byId($params['Identifier']);
 
-		if(!$deployment || !$deployment->ID) {
+		if (!$deployment || !$deployment->ID) {
 			throw new SS_HTTPResponse_Exception('Deployment not found', 404);
 		}
-		if(!$deployment->canView()) {
+		if (!$deployment->canView()) {
 			return Security::permissionFailure();
 		}
 
 		// For now restrict to ADMINs only.
-		if(!Permission::check('ADMIN')) {
+		if (!Permission::check('ADMIN')) {
 			return Security::permissionFailure();
 		}
 
 		$environment = $deployment->Environment();
 		$project = $environment->Project();
 
-		if($environment->Name != $params['Environment']) {
+		if ($environment->Name != $params['Environment']) {
 			throw new LogicException("Environment in URL doesn't match this deploy");
 		}
-		if($project->Name != $params['Project']) {
+		if ($project->Name != $params['Project']) {
 			throw new LogicException("Project in URL doesn't match this deploy");
 		}
 
@@ -1492,11 +1469,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function getDataTransferForm(SS_HTTPRequest $request = null) {
 		// Performs canView permission check by limiting visible projects
-		$envs = $this->getCurrentProject()->DNEnvironmentList()->filterByCallback(function($item) {
+		$envs = $this->getCurrentProject()->DNEnvironmentList()->filterByCallback(function ($item) {
 			return $item->canBackup();
 		});
 
-		if(!$envs) {
+		if (!$envs) {
 			return $this->environment404Response();
 		}
 
@@ -1531,21 +1508,21 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
-		if(!$project) {
+		if (!$project) {
 			return $this->project404Response();
 		}
 
 		$dataArchive = null;
 
 		// Validate direction.
-		if($data['Direction'] == 'get') {
+		if ($data['Direction'] == 'get') {
 			$validEnvs = $this->getCurrentProject()->DNEnvironmentList()
-				->filterByCallback(function($item) {
+				->filterByCallback(function ($item) {
 					return $item->canBackup();
 				});
-		} else if($data['Direction'] == 'push') {
+		} else if ($data['Direction'] == 'push') {
 			$validEnvs = $this->getCurrentProject()->DNEnvironmentList()
-				->filterByCallback(function($item) {
+				->filterByCallback(function ($item) {
 					return $item->canRestore();
 				});
 		} else {
@@ -1554,25 +1531,24 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		// Validate $data['EnvironmentID'] by checking against $validEnvs.
 		$environment = $validEnvs->find('ID', $data['EnvironmentID']);
-		if(!$environment) {
+		if (!$environment) {
 			throw new LogicException('Invalid environment');
 		}
 
 		$this->validateSnapshotMode($data['Mode']);
 
-
 		// Only 'push' direction is allowed an association with an existing archive.
-		if(
+		if (
 			$data['Direction'] == 'push'
 			&& isset($data['DataArchiveID'])
 			&& is_numeric($data['DataArchiveID'])
 		) {
 			$dataArchive = DNDataArchive::get()->byId($data['DataArchiveID']);
-			if(!$dataArchive) {
+			if (!$dataArchive) {
 				throw new LogicException('Invalid data archive');
 			}
 
-			if(!$dataArchive->canDownload()) {
+			if (!$dataArchive->canDownload()) {
 				throw new SS_HTTPResponse_Exception('Not allowed to access archive', 403);
 			}
 		}
@@ -1582,7 +1558,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$transfer->Direction = $data['Direction'];
 		$transfer->Mode = $data['Mode'];
 		$transfer->DataArchiveID = $dataArchive ? $dataArchive->ID : null;
-		if($data['Direction'] == 'push') {
+		if ($data['Direction'] == 'push') {
 			$transfer->setBackupBeforePush(!empty($data['BackupBeforePush']));
 		}
 		$transfer->write();
@@ -1605,24 +1581,24 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$params = $request->params();
 		$transfer = DNDataTransfer::get()->byId($params['Identifier']);
 
-		if(!$transfer || !$transfer->ID) {
+		if (!$transfer || !$transfer->ID) {
 			throw new SS_HTTPResponse_Exception('Transfer not found', 404);
 		}
-		if(!$transfer->canView()) {
+		if (!$transfer->canView()) {
 			return Security::permissionFailure();
 		}
 
 		$environment = $transfer->Environment();
 		$project = $environment->Project();
 
-		if($project->Name != $params['Project']) {
+		if ($project->Name != $params['Project']) {
 			throw new LogicException("Project in URL doesn't match this deploy");
 		}
 
-		return $this->render(array(
+		return $this->render([
 			'CurrentTransfer' => $transfer,
 			'SnapshotsSection' => 1,
-		));
+		]);
 	}
 
 	/**
@@ -1639,22 +1615,22 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$params = $request->params();
 		$transfer = DNDataTransfer::get()->byId($params['Identifier']);
 
-		if(!$transfer || !$transfer->ID) {
+		if (!$transfer || !$transfer->ID) {
 			throw new SS_HTTPResponse_Exception('Transfer not found', 404);
 		}
-		if(!$transfer->canView()) {
+		if (!$transfer->canView()) {
 			return Security::permissionFailure();
 		}
 
 		$environment = $transfer->Environment();
 		$project = $environment->Project();
 
-		if($project->Name != $params['Project']) {
+		if ($project->Name != $params['Project']) {
 			throw new LogicException("Project in URL doesn't match this deploy");
 		}
 
 		$log = $transfer->log();
-		if($log->exists()) {
+		if ($log->exists()) {
 			$content = $log->content();
 		} else {
 			$content = 'Waiting for action to start';
@@ -1677,22 +1653,22 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
-		$envs = $project->DNEnvironmentList()->filterByCallback(function($item) {
+		$envs = $project->DNEnvironmentList()->filterByCallback(function ($item) {
 			return $item->canRestore();
 		});
 
-		if(!$envs) {
+		if (!$envs) {
 			return $this->environment404Response();
 		}
 
-		$modesMap = array();
-		if(in_array($dataArchive->Mode, array('all'))) {
+		$modesMap = [];
+		if (in_array($dataArchive->Mode, ['all'])) {
 			$modesMap['all'] = 'Database and Assets';
 		};
-		if(in_array($dataArchive->Mode, array('all', 'db'))) {
+		if (in_array($dataArchive->Mode, ['all', 'db'])) {
 			$modesMap['db'] = 'Database only';
 		};
-		if(in_array($dataArchive->Mode, array('all', 'assets'))) {
+		if (in_array($dataArchive->Mode, ['all', 'assets'])) {
 			$modesMap['assets'] = 'Assets only';
 		};
 
@@ -1737,13 +1713,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		/** @var DNDataArchive $dataArchive */
 		$dataArchive = DNDataArchive::get()->byId($request->param('DataArchiveID'));
 
-		if(!$dataArchive) {
+		if (!$dataArchive) {
 			throw new SS_HTTPResponse_Exception('Archive not found', 404);
 		}
 
 		// We check for canDownload because that implies access to the data.
 		// canRestore is later checked on the actual restore action per environment.
-		if(!$dataArchive->canDownload()) {
+		if (!$dataArchive->canDownload()) {
 			throw new SS_HTTPResponse_Exception('Not allowed to access archive', 403);
 		}
 
@@ -1769,11 +1745,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		/** @var DNDataArchive $dataArchive */
 		$dataArchive = DNDataArchive::get()->byId($request->param('DataArchiveID'));
 
-		if(!$dataArchive) {
+		if (!$dataArchive) {
 			throw new SS_HTTPResponse_Exception('Archive not found', 404);
 		}
 
-		if(!$dataArchive->canDelete()) {
+		if (!$dataArchive->canDelete()) {
 			throw new SS_HTTPResponse_Exception('Not allowed to delete archive', 403);
 		}
 
@@ -1794,7 +1770,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
-		if(!$project) {
+		if (!$project) {
 			return $this->project404Response();
 		}
 
@@ -1831,24 +1807,24 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
-		if(!$project) {
+		if (!$project) {
 			return $this->project404Response();
 		}
 
 		$dataArchive = null;
 
-		if(
+		if (
 			isset($data['DataArchiveID'])
 			&& is_numeric($data['DataArchiveID'])
 		) {
 			$dataArchive = DNDataArchive::get()->byId($data['DataArchiveID']);
 		}
 
-		if(!$dataArchive) {
+		if (!$dataArchive) {
 			throw new LogicException('Invalid data archive');
 		}
 
-		if(!$dataArchive->canDelete()) {
+		if (!$dataArchive->canDelete()) {
 			throw new SS_HTTPResponse_Exception('Not allowed to delete archive', 403);
 		}
 
@@ -1871,12 +1847,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		/** @var DNDataArchive $dataArchive */
 		$dataArchive = DNDataArchive::get()->byId($request->param('DataArchiveID'));
 
-		if(!$dataArchive) {
+		if (!$dataArchive) {
 			throw new SS_HTTPResponse_Exception('Archive not found', 404);
 		}
 
 		// We check for canDownload because that implies access to the data.
-		if(!$dataArchive->canDownload()) {
+		if (!$dataArchive->canDownload()) {
 			throw new SS_HTTPResponse_Exception('Not allowed to access archive', 403);
 		}
 
@@ -1898,7 +1874,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$dataArchive = $dataArchive ? $dataArchive : DNDataArchive::get()->byId($request->requestVar('DataArchiveID'));
 
 		$envs = $dataArchive->validTargetEnvironments();
-		if(!$envs) {
+		if (!$envs) {
 			return $this->environment404Response();
 		}
 
@@ -1939,25 +1915,25 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
-		if(!$project) {
+		if (!$project) {
 			return $this->project404Response();
 		}
 
 		/** @var DNDataArchive $dataArchive */
 		$dataArchive = DNDataArchive::get()->byId($data['DataArchiveID']);
-		if(!$dataArchive) {
+		if (!$dataArchive) {
 			throw new LogicException('Invalid data archive');
 		}
 
 		// We check for canDownload because that implies access to the data.
-		if(!$dataArchive->canDownload()) {
+		if (!$dataArchive->canDownload()) {
 			throw new SS_HTTPResponse_Exception('Not allowed to access archive', 403);
 		}
 
 		// Validate $data['EnvironmentID'] by checking against $validEnvs.
 		$validEnvs = $dataArchive->validTargetEnvironments();
 		$environment = $validEnvs->find('ID', $data['EnvironmentID']);
-		if(!$environment) {
+		if (!$environment) {
 			throw new LogicException('Invalid environment');
 		}
 
@@ -1975,7 +1951,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	public static function RedisUnavailable() {
 		try {
 			Resque::queues();
-		} catch(Exception $e) {
+		} catch (Exception $e) {
 			return $e->getMessage();
 		}
 		return '';
@@ -1994,34 +1970,34 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return array
 	 */
 	public function providePermissions() {
-		return array(
-			self::DEPLOYNAUT_ADVANCED_DEPLOY_OPTIONS => array(
+		return [
+			self::DEPLOYNAUT_ADVANCED_DEPLOY_OPTIONS => [
 				'name' => "Access to advanced deploy options",
 				'category' => "Deploynaut",
-			),
+			],
 
 			// Permissions that are intended to be added to the roles.
-			self::ALLOW_PROD_DEPLOYMENT => array(
+			self::ALLOW_PROD_DEPLOYMENT => [
 				'name' => "Ability to deploy to production environments",
 				'category' => "Deploynaut",
-			),
-			self::ALLOW_NON_PROD_DEPLOYMENT => array(
+			],
+			self::ALLOW_NON_PROD_DEPLOYMENT => [
 				'name' => "Ability to deploy to non-production environments",
 				'category' => "Deploynaut",
-			),
-			self::ALLOW_PROD_SNAPSHOT => array(
+			],
+			self::ALLOW_PROD_SNAPSHOT => [
 				'name' => "Ability to make production snapshots",
 				'category' => "Deploynaut",
-			),
-			self::ALLOW_NON_PROD_SNAPSHOT => array(
+			],
+			self::ALLOW_NON_PROD_SNAPSHOT => [
 				'name' => "Ability to make non-production snapshots",
 				'category' => "Deploynaut",
-			),
-			self::ALLOW_CREATE_ENVIRONMENT => array(
+			],
+			self::ALLOW_CREATE_ENVIRONMENT => [
 				'name' => "Ability to create environments",
 				'category' => "Deploynaut",
-			),
-		);
+			],
+		];
 	}
 
 	/**
@@ -2029,10 +2005,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function getCurrentProject() {
 		$projectName = trim($this->getRequest()->param('Project'));
-		if(!$projectName) {
+		if (!$projectName) {
 			return null;
 		}
-		if(empty(self::$_project_cache[$projectName])) {
+		if (empty(self::$_project_cache[$projectName])) {
 			self::$_project_cache[$projectName] = $this->DNProjectList()->filter('Name', $projectName)->First();
 		}
 		return self::$_project_cache[$projectName];
@@ -2043,14 +2019,14 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return DNEnvironment|null
 	 */
 	public function getCurrentEnvironment(DNProject $project = null) {
-		if($this->getRequest()->param('Environment') === null) {
+		if ($this->getRequest()->param('Environment') === null) {
 			return null;
 		}
-		if($project === null) {
+		if ($project === null) {
 			$project = $this->getCurrentProject();
 		}
 		// project can still be null
-		if($project === null) {
+		if ($project === null) {
 			return null;
 		}
 		return $project->DNEnvironmentList()->filter('Name', $this->getRequest()->param('Environment'))->First();
@@ -2089,23 +2065,23 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return boolean|null true if $member has access to upload or download to at least one {@link DNEnvironment}.
 	 */
 	public function CanViewArchives(Member $member = null) {
-		if($member === null) {
+		if ($member === null) {
 			$member = Member::currentUser();
 		}
 
-		if(Permission::checkMember($member, 'ADMIN')) {
+		if (Permission::checkMember($member, 'ADMIN')) {
 			return true;
 		}
 
 		$allProjects = $this->DNProjectList();
-		if(!$allProjects) {
+		if (!$allProjects) {
 			return false;
 		}
 
-		foreach($allProjects as $project) {
-			if($project->Environments()) {
-				foreach($project->Environments() as $environment) {
-					if(
+		foreach ($allProjects as $project) {
+			if ($project->Environments()) {
+				foreach ($project->Environments() as $environment) {
+					if (
 						$environment->canRestore($member) ||
 						$environment->canBackup($member) ||
 						$environment->canUploadArchive($member) ||
@@ -2126,7 +2102,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 */
 	public function CreateEnvironmentList() {
 		$project = $this->getCurrentProject();
-		if($project) {
+		if ($project) {
 			$dataList = $project->CreateEnvironments();
 		} else {
 			$dataList = new ArrayList();
@@ -2146,9 +2122,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$archives = new ArrayList();
 
 		$archiveList = $project->Environments()->relation("DataArchives");
-		if($archiveList->count() > 0) {
-			foreach($archiveList as $archive) {
-				if(!$archive->isPending()) {
+		if ($archiveList->count() > 0) {
+			foreach ($archiveList as $archive) {
+				if (!$archive->isPending()) {
 					$archives->push($archive);
 				}
 			}
@@ -2163,9 +2139,9 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	public function PendingDataArchives() {
 		$project = $this->getCurrentProject();
 		$archives = new ArrayList();
-		foreach($project->DNEnvironmentList() as $env) {
-			foreach($env->DataArchives() as $archive) {
-				if($archive->isPending()) {
+		foreach ($project->DNEnvironmentList() as $env) {
+			foreach ($env->DataArchives() as $archive) {
+				if ($archive->isPending()) {
 					$archives->push($archive);
 				}
 			}
@@ -2181,7 +2157,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$transfers = DNDataTransfer::get()
 			->filter('EnvironmentID', $environments)
 			->filterByCallback(
-				function($record) {
+				function ($record) {
 					return
 						$record->Environment()->canRestore() || // Ensure member can perform an action on the transfers env
 						$record->Environment()->canBackup() ||
@@ -2198,15 +2174,107 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @return null|PaginatedList
 	 */
 	public function DeployHistory() {
-		if($env = $this->getCurrentEnvironment()) {
+		if ($env = $this->getCurrentEnvironment()) {
 			$history = $env->DeployHistory();
-			if($history->count() > 0) {
+			if ($history->count() > 0) {
 				$pagination = new PaginatedList($history, $this->getRequest());
 				$pagination->setPageLength(4);
 				return $pagination;
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * @param string $status
+	 * @param string $content
+	 *
+	 * @return string
+	 */
+	public function sendResponse($status, $content) {
+		// strip excessive newlines
+		$content = preg_replace('/(?:(?:\r\n|\r|\n)\s*){2}/s', "\n", $content);
+
+		$sendJSON = (strpos($this->getRequest()->getHeader('Accept'), 'application/json') !== false)
+			|| $this->getRequest()->getExtension() == 'json';
+
+		if (!$sendJSON) {
+			$this->response->addHeader("Content-type", "text/plain");
+			return $content;
+		}
+		$this->response->addHeader("Content-type", "application/json");
+		return json_encode([
+			'status' => $status,
+			'content' => $content,
+		]);
+	}
+
+	/**
+	 * Get items for the ambient menu that should be accessible from all pages.
+	 *
+	 * @return ArrayList
+	 */
+	public function AmbientMenu() {
+		$list = new ArrayList();
+
+		if (Member::currentUserID()) {
+			$list->push(new ArrayData([
+				'Classes' => 'logout',
+				'FaIcon' => 'sign-out',
+				'Link' => 'Security/logout',
+				'Title' => 'Log out',
+				'IsCurrent' => false,
+				'IsSection' => false
+			]));
+		}
+
+		$this->extend('updateAmbientMenu', $list);
+		return $list;
+	}
+
+	/**
+	 * Checks whether the user can create a project.
+	 *
+	 * @return bool
+	 */
+	public function canCreateProjects($member = null) {
+		if (!$member) {
+			$member = Member::currentUser();
+		}
+		if (!$member) {
+			return false;
+		}
+
+		return singleton('DNProject')->canCreate($member);
+	}
+
+	protected function applyRedeploy(SS_HTTPRequest $request, &$data) {
+		if (!$request->getVar('redeploy')) {
+			return;
+		}
+
+		$project = $this->getCurrentProject();
+		if (!$project) {
+			return $this->project404Response();
+		}
+
+		// Performs canView permission check by limiting visible projects
+		$env = $this->getCurrentEnvironment($project);
+		if (!$env) {
+			return $this->environment404Response();
+		}
+
+		$current = $env->CurrentBuild();
+		if ($current && $current->exists()) {
+			$data['preselect_tab'] = 3;
+			$data['preselect_sha'] = $current->SHA;
+		} else {
+			$master = $project->DNBranchList()->byName('master');
+			if ($master) {
+				$data['preselect_tab'] = 1;
+				$data['preselect_sha'] = $master->SHA();
+			}
+		}
 	}
 
 	/**
@@ -2228,36 +2296,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 * @param string $status
-	 * @param string $content
-	 *
-	 * @return string
-	 */
-	public function sendResponse($status, $content) {
-		// strip excessive newlines
-		$content = preg_replace('/(?:(?:\r\n|\r|\n)\s*){2}/s', "\n", $content);
-
-		$sendJSON = (strpos($this->getRequest()->getHeader('Accept'), 'application/json') !== false)
-			|| $this->getRequest()->getExtension() == 'json';
-
-		if(!$sendJSON) {
-			$this->response->addHeader("Content-type", "text/plain");
-			return $content;
-		}
-		$this->response->addHeader("Content-type", "application/json");
-		return json_encode(array(
-			'status' => $status,
-			'content' => $content,
-		));
-	}
-
-	/**
 	 * Validate the snapshot mode
 	 *
 	 * @param string $mode
 	 */
 	protected function validateSnapshotMode($mode) {
-		if(!in_array($mode, array('all', 'assets', 'db'))) {
+		if (!in_array($mode, ['all', 'assets', 'db'])) {
 			throw new LogicException('Invalid mode');
 		}
 	}
@@ -2268,54 +2312,19 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 *
 	 * @return SS_HTTPResponse
 	 */
-	protected function getCustomisedViewSection($sectionName, $title = '', $data = array()) {
+	protected function getCustomisedViewSection($sectionName, $title = '', $data = []) {
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
-		if(!$project) {
+		if (!$project) {
 			return $this->project404Response();
 		}
 		$data[$sectionName] = 1;
 
-		if($this !== '') {
+		if ($this !== '') {
 			$data['Title'] = $title;
 		}
 
 		return $this->render($data);
-	}
-
-	/**
-	 * Get items for the ambient menu that should be accessible from all pages.
-	 *
-	 * @return ArrayList
-	 */
-	public function AmbientMenu() {
-		$list = new ArrayList();
-
-		if (Member::currentUserID()) {
-			$list->push(new ArrayData(array(
-				'Classes' => 'logout',
-				'FaIcon' => 'sign-out',
-				'Link' => 'Security/logout',
-				'Title' => 'Log out',
-				'IsCurrent' => false,
-				'IsSection' => false
-			)));
-		}
-
-		$this->extend('updateAmbientMenu', $list);
-		return $list;
-	}
-
-	/**
-	 * Checks whether the user can create a project.
-	 *
-	 * @return bool
-	 */
-	public function canCreateProjects($member = null) {
-		if(!$member) $member = Member::currentUser();
-		if(!$member) return false;
-
-		return singleton('DNProject')->canCreate($member);
 	}
 
 }

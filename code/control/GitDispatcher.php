@@ -11,13 +11,6 @@ class GitDispatcher extends Dispatcher {
 	/**
 	 * @var array
 	 */
-	private static $action_types = [
-		self::ACTION_GIT
-	];
-
-	/**
-	 * @var array
-	 */
 	public static $allowed_actions = [
 		'update',
 		'show'
@@ -33,12 +26,19 @@ class GitDispatcher extends Dispatcher {
 	 */
 	protected $environment = null;
 
+	/**
+	 * @var array
+	 */
+	private static $action_types = [
+		self::ACTION_GIT
+	];
+
 	public function init() {
 		parent::init();
 
 		$this->project = $this->getCurrentProject();
 
-		if(!$this->project) {
+		if (!$this->project) {
 			return $this->project404Response();
 		}
 	}
@@ -58,7 +58,7 @@ class GitDispatcher extends Dispatcher {
 	 * @return SS_HTTPResponse
 	 */
 	public function update(SS_HTTPRequest $request) {
-		switch($request->httpMethod()) {
+		switch ($request->httpMethod()) {
 			case 'POST':
 				$this->checkSecurityToken();
 				return $this->createUpdate();
@@ -95,8 +95,8 @@ class GitDispatcher extends Dispatcher {
 		// @todo: the original was a tree that was keyed by environment, the
 		// front-end dropdown needs to be changed to support that. brrrr.
 		$prevDeploys = [];
-		foreach($this->getGitPrevDeploys($this->project) as $env) {
-			foreach($env as $deploy) {
+		foreach ($this->getGitPrevDeploys($this->project) as $env) {
+			foreach ($env as $deploy) {
 				$prevDeploys[] = $deploy;
 			}
 		}
@@ -132,8 +132,8 @@ class GitDispatcher extends Dispatcher {
 	 */
 	protected function getUpdateStatus($ID) {
 		$ping = DNGitFetch::get()->byID($ID);
-		if(!$ping) {
-			return $this->getAPIResponse(['message' => 'GIT update ('. $ID . ') not found'], 404);
+		if (!$ping) {
+			return $this->getAPIResponse(['message' => 'GIT update (' . $ID . ') not found'], 404);
 		}
 		$output = [
 			'id' => $ID,
@@ -155,11 +155,11 @@ class GitDispatcher extends Dispatcher {
 		$fetch->start();
 
 		$location = Director::absoluteBaseURL() . $this->Link() . '/update/' . $fetch->ID;
-		$output = array(
+		$output = [
 			'message' => 'git fetch has been queued',
 			'id' => $fetch->ID,
 			'location' => $location,
-		);
+		];
 
 		$response = $this->getAPIResponse($output, 201);
 		$response->addHeader('Location', $location);
@@ -173,7 +173,7 @@ class GitDispatcher extends Dispatcher {
 	 */
 	protected function getGitBranches($project) {
 		$branches = [];
-		foreach($project->DNBranchList() as $branch) {
+		foreach ($project->DNBranchList() as $branch) {
 			$branches[] = [
 				'key' => $branch->SHA(),
 				'value' => $branch->Name(),
@@ -189,7 +189,7 @@ class GitDispatcher extends Dispatcher {
 	 */
 	protected function getGitTags($project) {
 		$tags = [];
-		foreach($project->DNTagList()->setLimit(null) as $tag) {
+		foreach ($project->DNTagList()->setLimit(null) as $tag) {
 			$tags[] = [
 				'key' => $tag->SHA(),
 				'value' => $tag->Name(),
@@ -205,14 +205,14 @@ class GitDispatcher extends Dispatcher {
 	 */
 	protected function getGitPrevDeploys($project) {
 		$redeploy = [];
-		foreach($project->DNEnvironmentList() as $dnEnvironment) {
+		foreach ($project->DNEnvironmentList() as $dnEnvironment) {
 			$envName = $dnEnvironment->Name;
 			$perEnvDeploys = [];
-			foreach($dnEnvironment->DeployHistory() as $deploy) {
+			foreach ($dnEnvironment->DeployHistory() as $deploy) {
 				$sha = $deploy->SHA;
 
 				// Check if exists to make sure the newest deployment date is used.
-				if(!isset($perEnvDeploys[$sha])) {
+				if (!isset($perEnvDeploys[$sha])) {
 					$pastValue = sprintf(
 						"%s (deployed %s)",
 						substr($sha, 0, 8),
@@ -224,7 +224,7 @@ class GitDispatcher extends Dispatcher {
 					];
 				}
 			}
-			if(!empty($perEnvDeploys)) {
+			if (!empty($perEnvDeploys)) {
 				$redeploy[$envName] = array_values($perEnvDeploys);
 			}
 		}
