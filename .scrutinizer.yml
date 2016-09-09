@@ -1,0 +1,42 @@
+tools:
+  php_sim:
+    min_mass: 30 # Defaults to 16
+
+filter:
+  excluded_paths:
+    - 'tests/*'
+    - 'bin/*'
+    - 'vendor/*'
+
+build:
+  tests:
+    override:
+      - eslint-run "./js/**"
+
+checks:
+  php:
+    uppercase_constants: true
+    use_self_instead_of_fqcn: true
+    properties_in_camelcaps: true
+    prefer_while_loop_over_for_loop: true
+    more_specific_types_in_doc_comments: true
+
+coding_style:
+  php:
+    indentation:
+      general:
+        use_tabs: true
+    spaces:
+      before_parentheses:
+        if: true
+        for: true
+        while: true
+        switch: true
+        catch: true
+      other:
+        after_type_cast: true
+    upper_lower_casing:
+      keywords:
+        general: lower
+      constants:
+        true_false_null: lower
