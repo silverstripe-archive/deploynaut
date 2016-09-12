@@ -7,7 +7,6 @@ var Dropdown = require('../components/Dropdown.jsx');
 var actions = require('../_actions.js');
 
 function GitRefSelector(props) {
-
 	var dropdown = null;
 
 	if (props.type_selected !== "") {

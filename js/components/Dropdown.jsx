@@ -1,7 +1,6 @@
 var React = require("react");
 
 var Dropdown = React.createClass({
-
 	propTypes: {
 		options: React.PropTypes.arrayOf(React.PropTypes.shape({
 			key: React.PropTypes.oneOfType([
