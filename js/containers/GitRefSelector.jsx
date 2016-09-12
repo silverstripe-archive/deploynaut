@@ -6,16 +6,16 @@ var Dropdown = require('../components/Dropdown.jsx');
 
 var actions = require('../_actions.js');
 
-function ShaSelector(props) {
+function GitRefSelector(props) {
 
 	var dropdown = null;
 
-	if (props.typeSelected !== "") {
+	if (props.type_selected !== "") {
 		dropdown = (
 			<Dropdown
 				onSelect={props.onRefSelect}
-				options={props.refList}
-				value={props.refSelected}
+				options={props.ref_list}
+				value={props.selected_ref}
 				disabled={props.disabled}
 				name="ref_selector"
 			/>
@@ -26,7 +26,7 @@ function ShaSelector(props) {
 		<div>
 			<RadioList
 				options={props.types}
-				value={props.typeSelected}
+				value={props.type_selected}
 				onRadioClick={props.onRadioClick}
 				disabled={props.disabled}
 			/>
@@ -35,14 +35,14 @@ function ShaSelector(props) {
 	);
 }
 
-ShaSelector.propTypes = {
+GitRefSelector.propTypes = {
 	types: React.PropTypes.array.isRequired,
-	typeSelected:  React.PropTypes.oneOfType([
+	type_selected: React.PropTypes.oneOfType([
 		React.PropTypes.string,
 		React.PropTypes.number
 	]).isRequired,
-	refList: React.PropTypes.array.isRequired,
-	refSelected: React.PropTypes.oneOfType([
+	ref_list: React.PropTypes.array.isRequired,
+	selected_ref: React.PropTypes.oneOfType([
 		React.PropTypes.string,
 		React.PropTypes.number
 	]).isRequired,
@@ -73,9 +73,9 @@ const mapStateToProps = function(state) {
 
 	return {
 		types: state.git.list,
-		typeSelected: state.git.selected_type,
-		refList: refs,
-		refSelected: state.git.selected_ref,
+		type_selected: state.git.selected_type,
+		ref_list: refs,
+		selected_ref: state.git.selected_ref,
 		disabled: isDisabled(state)
 	};
 };
@@ -92,4 +92,4 @@ const mapDispatchToProps = function(dispatch) {
 	};
 };
 
-module.exports = ReactRedux.connect(mapStateToProps, mapDispatchToProps)(ShaSelector);
+module.exports = ReactRedux.connect(mapStateToProps, mapDispatchToProps)(GitRefSelector);
