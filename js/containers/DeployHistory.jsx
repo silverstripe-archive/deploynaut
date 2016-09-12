@@ -17,7 +17,7 @@ var DeployHistory = function(props) {
 	}
 
 	let pagination = null;
-	if (props.totalpages > 1) {
+	if (props.total_pages > 1) {
 		pagination = (
 			<Pagination
 				prev
