@@ -116,7 +116,7 @@ const mapStateToProps = function(state) {
 		is_loading: [
 			state.git.is_loading || state.git.is_updating,
 			state.plan.is_loading,
-			false,
+			state.approval.is_loading,
 			state.deployment.enqueued
 		],
 		is_finished: [

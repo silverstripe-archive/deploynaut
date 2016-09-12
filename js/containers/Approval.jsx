@@ -26,18 +26,6 @@ function Approval(props) {
 			</p>
 
 			<div className="form-group">
-				<label htmlFor="requester">Request made by</label>
-				<input
-					type="email"
-					className="form-control"
-					id="requester"
-					name="requester"
-					value={props.requester}
-					readOnly
-				/>
-			</div>
-
-			<div className="form-group">
 				<label htmlFor="approver">Request approval from</label>
 				<Dropdown
 					name="approver"
@@ -86,21 +74,21 @@ function isDisabled(state) {
 
 const mapStateToProps = function(state) {
 
-	var approvers = state.approval.approvers.map(function(val) {
+	const approvers = state.approval.approvers.map(function(val) {
 		return {
 			key: val.id,
 			value: val.email + " - " + val.role
 		};
 	});
 
+
 	return {
 		disabled: isDisabled(state),
 		requested: state.approval.requested,
 		requestSent: state.approval.request_sent,
 		requestSentTime: state.approval.request_sent_time,
-		requester: `${state.approval.request_by.name} <${state.approval.request_by.email}>`,
 		approvers: approvers,
-		selected_approver: state.approval.approved_by
+		selected_approver: state.approval.approved_by || 0
 	};
 };
 

@@ -4,7 +4,11 @@ const ReactRedux = require('react-redux');
 const Deploy = require('./buttons/Deploy.jsx');
 
 const deployment = function(props) {
-	const approverName = (props.approved_by) ? props.approved_by.name : "";
+	let approverName = "";
+
+	if (props.approved_by && props.approved_by.name) {
+		approverName = props.approved_by.name;
+	}
 
 	let error = null;
 	if (props.error) {
@@ -46,8 +50,6 @@ const deployment = function(props) {
 				</div>
 				<div className="col-md-6">
 					<dl>
-						<dt>Requested by</dt>
-						<dd>{props.request_by.name}</dd>
 						<dt>Approved by</dt>
 						<dd>{approverName}</dd>
 					</dl>
@@ -71,7 +73,6 @@ const mapStateToProps = function(state) {
 		approved: state.approval.approved,
 		bypassed: state.approval.bypassed,
 		approved_by: approvers.shift(),
-		request_by: state.approval.request_by,
 		environment: state.environment.name,
 		deployment_type: state.plan.deployment_type,
 		deployment_estimate: state.plan.deployment_estimate,

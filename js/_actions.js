@@ -8,12 +8,12 @@ const deployAPI = api.create('deploys');
 
 export const SET_OPEN_DIALOG = "SET_OPEN_DIALOG";
 export function openPlanDialog() {
-	return {type: SET_OPEN_DIALOG };
+	return {type: SET_OPEN_DIALOG};
 }
 
 export const SET_CLOSE_DIALOG = "SET_CLOSE_DIALOG";
 export function closePlanDialog() {
-	return {type: SET_CLOSE_DIALOG };
+	return {type: SET_CLOSE_DIALOG};
 }
 
 export const SET_ACTIVE_STEP = "SET_ACTIVE_STEP";
@@ -92,7 +92,7 @@ export function failDeployHistoryGet(err) {
 
 export const START_CURRENT_BUILD_STATUS_GET = 'START_CURRENT_BUILD_STATUS_GET';
 export function startCurrentBuildStatusGet() {
-	return { type: START_DEPLOY_HISTORY_GET };
+	return {type: START_DEPLOY_HISTORY_GET};
 }
 
 export const SUCCEED_CURRENT_BUILD_STATUS_GET = 'SUCCEED_CURRENT_BUILD_STATUS_GET';
@@ -291,8 +291,11 @@ export function startApprovalBypass() {
 }
 
 export const SUCCEED_APPROVAL_BYPASS = "SUCCEED_APPROVAL_BYPASS";
-export function succeedApprovalBypass() {
-	return {type: SUCCEED_APPROVAL_BYPASS};
+export function succeedApprovalBypass(data) {
+	return {
+		type: SUCCEED_APPROVAL_BYPASS,
+		data: data
+	};
 }
 
 export const FAIL_APPROVAL_BYPASS = "FAIL_APPROVAL_BYPASS";
@@ -301,9 +304,19 @@ export function failApprovalBypass() {
 }
 
 export function bypassApproval() {
-	return (dispatch) => {
+	return (dispatch, getState) => {
 		dispatch(startApprovalBypass());
-		dispatch(succeedApprovalBypass());
+		deployAPI.call(getState, '/save', 'post', {
+			ref: getState().git.selected_ref,
+			ref_type: getState().git.selected_type,
+			ref_name: getState().git.selected_name,
+			summary: getState().plan.summary_of_changes
+		})
+			.then(function(data) {
+				dispatch(succeedApprovalBypass(data));
+				return dispatch(getDeployHistory(0));
+			})
+			.catch((error) => dispatch(failApprovalBypass(error)));
 	};
 }
 
@@ -343,7 +356,7 @@ export function failDeployLogUpdate(err) {
 
 export function getDeployLog() {
 	return (dispatch, getState) => {
-		return deployAPI.waitForSuccess(getState, `/log/${getState().deployment.id}`, 100, function(data) {
+		deployAPI.waitForSuccess(getState, `/log/${getState().deployment.id}`, 100, function(data) {
 			dispatch(succeedDeployLogUpdate(data));
 		})
 			.then(() => console.log('deploy done')); // eslint-disable-line no-console

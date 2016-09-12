@@ -28,7 +28,7 @@ module.exports = function plan(state, action) {
 			return _.assign({}, state, {
 				is_loading: false,
 				changes: action.data.deployment.changes,
-				summary_of_changes: action.data.deployment.summary,
+				summary_of_changes: action.data.deployment.summary || "",
 				validation_code: "success"
 			});
 

@@ -16,7 +16,9 @@ class DeployDispatcher extends Dispatcher {
 		'currentbuild',
 		'show',
 		'log',
-		'start'
+		'start',
+		'save'
+
 	];
 
 	/**
@@ -134,6 +136,37 @@ class DeployDispatcher extends Dispatcher {
 		return $this->getAPIResponse(['message' => $lines, 'status' => $deployment->Status], 200);
 	}
 
+	public function save(\SS_HTTPRequest $request) {
+
+		if (strtolower($request->httpMethod()) !== 'post') {
+			return $this->getAPIResponse(['message' => 'Method not allowed, requires POST'], 405);
+		}
+
+		$this->checkSecurityToken();
+		if (!$this->environment->canDeploy(Member::currentUser())) {
+			return $this->getAPIResponse(['message' => 'You are not authorised to deploy this environment'], 403);
+		}
+
+		// @todo the strategy should have been saved when there has been a request for an
+		// approval or a bypass. This saved state needs to be checked if it's invalidated
+		// if another deploy happens before this one
+		$options = [
+			'sha' => $request->requestVar('ref'),
+			'ref_type' => $request->requestVar('ref_type'),
+			'branch' => $request->requestVar('ref_name'),
+			'summary' => $request->requestVar('summary')
+		];
+		$strategy = $this->environment->Backend()->planDeploy($this->environment, $options);
+
+		$strategy->fromArray($request->requestVars());
+		$deployment = $strategy->createDeployment();
+		$deployment->getMachine()->apply(DNDeployment::TR_SUBMIT);
+		return $this->getAPIResponse([
+			'message' => 'deployment has been created',
+			'id' => $deployment->ID,
+		], 201);
+	}
+
 	/**
 	 * @param \SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse
@@ -215,6 +248,7 @@ class DeployDispatcher extends Dispatcher {
 			'tags' => $deployment->getTags()->toArray(),
 			'changes' => $deployment->getDeploymentStrategy()->getChanges(),
 			'sha' => $deployment->SHA,
+			'ref_type' => $deployment->RefType,
 			'commit_message' => $deployment->getCommitMessage(),
 			'commit_url' => $deployment->getCommitURL(),
 			'deployer' => $deployerData,

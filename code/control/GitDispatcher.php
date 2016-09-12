@@ -8,6 +8,12 @@ class GitDispatcher extends Dispatcher {
 
 	const ACTION_GIT = 'git';
 
+	const REF_TYPE_BRANCH = 0;
+	const REF_TYPE_TAG = 1;
+	const REF_TYPE_PREVIOUS = 2;
+	const REF_TYPE_FROM_UAT = 3;
+	const REF_TYPE_SHA = 4;
+
 	/**
 	 * @var array
 	 */
@@ -78,14 +84,14 @@ class GitDispatcher extends Dispatcher {
 
 		$refs = [];
 		$order = 0;
-		$refs[] = [
+		$refs[self::REF_TYPE_BRANCH] = [
 			'id' => ++$order,
 			'label' => "Branch version",
 			"description" => "Deploy the latest version of a branch",
 			"list" => $this->getGitBranches($this->project)
 		];
 
-		$refs[] = [
+		$refs[self::REF_TYPE_TAG] = [
 			'id' => ++$order,
 			'label' => "Tag version",
 			"description" => "Deploy a tagged release",
@@ -100,7 +106,7 @@ class GitDispatcher extends Dispatcher {
 				$prevDeploys[] = $deploy;
 			}
 		}
-		$refs[] = [
+		$refs[self::REF_TYPE_PREVIOUS] = [
 			'id' => ++$order,
 			'label' => "Redeploy a release that was previously deployed (to any environment",
 			"description" => "Deploy a previous release",
