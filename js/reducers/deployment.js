@@ -1,21 +1,26 @@
 var _ = require('underscore');
 
 var actions = require('../_actions.js');
+var deployStates = require('../constants/deployment.js');
+
+const initialState = {
+	is_loading: false,
+	enqueued: false,
+	id: "",
+	data: {},
+	log: [],
+	error: null,
+	state: deployStates.STATE_NEW
+};
 
 module.exports = function deployment(state, action) {
 	if (typeof state === 'undefined') {
-		return {
-			is_loading: false,
-			enqueued: false,
-			id: "",
-			data: {},
-			log: [],
-			status: "",
-			error: null
-		};
+		return initialState;
 	}
 
 	switch (action.type) {
+		case actions.NEW_DEPLOYMENT:
+			return initialState;
 		case actions.START_DEPLOYMENT_GET:
 			return _.assign({}, state, {
 				is_loading: true,
@@ -24,6 +29,8 @@ module.exports = function deployment(state, action) {
 		case actions.SUCCEED_DEPLOYMENT_GET:
 			return _.assign({}, state, {
 				is_loading: false,
+				id: action.data.deployment.id,
+				state: action.data.deployment.state,
 				data: action.data.deployment
 			});
 		case actions.START_DEPLOYMENT_ENQUEUE:
@@ -43,7 +50,7 @@ module.exports = function deployment(state, action) {
 		case actions.SUCCEED_DEPLOY_LOG_UPDATE:
 			return _.assign({}, state, {
 				log: action.data.message,
-				status: action.data.status,
+				state: action.data.status,
 				error: null
 			});
 		case actions.FAIL_DEPLOY_LOG_UPDATE:

@@ -29,7 +29,7 @@ function calculateSteps(props) {
 		},
 		{
 			title: "Deployment Plan",
-			show: props.sha_selected,
+			show: props.sha_is_selected,
 			is_loading: props.is_loading[1],
 			is_finished: props.is_finished[1],
 			content: (
@@ -52,7 +52,7 @@ function calculateSteps(props) {
 		},
 		{
 			title: "Deployment",
-			show: props.sha_selected && props.can_deploy,
+			show: props.sha_is_selected && props.can_deploy,
 			is_loading: props.is_loading[3],
 			is_finished: props.is_finished[3],
 			content: (
@@ -129,8 +129,9 @@ const mapStateToProps = function(state) {
 		plan_success: deployPlanIsOk(),
 		messages: state.messages,
 		active_step: state.navigation.active,
-		sha_selected: (state.git.selected_ref !== ""),
-		can_deploy: (state.approval.approved || state.approval.bypassed)
+		sha_is_selected: (state.git.selected_ref !== ""),
+		can_deploy: isApproved(),
+		state: state.deployment.state
 	};
 };
 

@@ -10,6 +10,10 @@ module.exports = function navigation(state, action) {
 		};
 	}
 	switch (action.type) {
+		case actions.NEW_DEPLOYMENT:
+			return _.assign({}, state, {
+				active: 0
+			});
 		case actions.SET_OPEN_DIALOG:
 			return _.assign({}, state, {
 				open: true

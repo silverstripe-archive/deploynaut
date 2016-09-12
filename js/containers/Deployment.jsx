@@ -3,8 +3,23 @@ const ReactRedux = require('react-redux');
 
 const Deploy = require('./buttons/Deploy.jsx');
 
+const deployStates = require('../constants/deployment.js');
+
 const deployment = function(props) {
 	let approverName = "";
+
+	function shouldShowLogs() {
+		if (props.state === deployStates.STATE_NEW) {
+			return false;
+		}
+		if (props.state === deployStates.STATE_SUBMITTED) {
+			return false;
+		}
+		if (props.state === deployStates.STATE_INVALID) {
+			return false;
+		}
+		return props.deploy_log.length > 0;
+	}
 
 	if (props.approved_by && props.approved_by.name) {
 		approverName = props.approved_by.name;
@@ -22,7 +37,7 @@ const deployment = function(props) {
 	}
 
 	let logOutput = null;
-	if (props.deploy_log.length) {
+	if (shouldShowLogs()) {
 		let lines = Object.keys(props.deploy_log).map(function(key) {
 			return <div key={key}>{props.deploy_log[key]}</div>;
 		});
@@ -78,6 +93,7 @@ const mapStateToProps = function(state) {
 		deployment_estimate: state.plan.deployment_estimate,
 		selected_ref: state.git.selected_ref,
 		plan: state.plan,
+		state: state.deployment.state,
 		deploy_log: state.deployment.log,
 		error: state.deployment.error
 	};

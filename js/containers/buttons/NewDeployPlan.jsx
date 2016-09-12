@@ -13,6 +13,7 @@ const mapStateToProps = function() {
 const mapDispatchToProps = function(dispatch) {
 	return {
 		onClick: function() {
+			dispatch(actions.newDeployment());
 			dispatch(actions.openPlanDialog());
 		}
 	};

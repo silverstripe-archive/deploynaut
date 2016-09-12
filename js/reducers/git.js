@@ -2,19 +2,27 @@ var _ = require('underscore');
 
 var actions = require('../_actions.js');
 
+const initialState = {
+	selected_type: "",
+	selected_ref: "",
+	selected_name: "",
+	is_fetching: false,
+	is_updating: false,
+	last_updated: 0,
+	list: []
+};
+
 module.exports = function git(state, action) {
 	if (typeof state === 'undefined') {
-		return {
-			selected_type: "",
-			selected_ref: "",
-			selected_name: "",
-			is_fetching: false,
-			is_updating: false,
-			last_updated: 0,
-			list: []
-		};
+		return initialState;
 	}
 	switch (action.type) {
+		case actions.NEW_DEPLOYMENT:
+			return _.assign({}, state, {
+				selected_type: "",
+				selected_ref: "",
+				selected_name: "",
+			});
 		case actions.SET_REVISION_TYPE:
 			return _.assign({}, state, {
 				selected_type: action.id,
