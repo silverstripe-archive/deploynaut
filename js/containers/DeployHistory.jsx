@@ -79,7 +79,7 @@ const mapDispatchToProps = function(dispatch) {
 	return {
 		onItemClick: function(id) {
 			dispatch(actions.getDeployment(id))
-				.then(dispatch(actions.openPlanDialog()));
+				.then(() => dispatch(actions.openPlanDialog()));
 		},
 		onPageClick: function(page) {
 			dispatch(actions.getDeployHistory(page));

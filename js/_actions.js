@@ -21,6 +21,11 @@ export function setActiveStep(id) {
 	return {type: SET_ACTIVE_STEP, id};
 }
 
+export const NEW_DEPLOYMENT = "NEW_DEPLOYMENT";
+export function newDeployment() {
+	return {type: NEW_DEPLOYMENT};
+}
+
 export const START_REPO_UPDATE = 'START_REPO_UPDATE';
 export function startRepoUpdate() {
 	return {
@@ -358,9 +363,7 @@ export function getDeployLog() {
 	return (dispatch, getState) => {
 		deployAPI.waitForSuccess(getState, `/log/${getState().deployment.id}`, 100, function(data) {
 			dispatch(succeedDeployLogUpdate(data));
-		})
-			.then(() => console.log('deploy done')); // eslint-disable-line no-console
-
+		});
 	};
 }
 
@@ -401,7 +404,10 @@ export function getDeployment(id) {
 	return (dispatch, getState) => {
 		dispatch(startGetDeployment());
 		return deployAPI.call(getState, `/show/${id}`, 'get')
-			.then(data => dispatch(succeedGetDeployment(data)))
+			.then(data => {
+				dispatch(succeedGetDeployment(data));
+				dispatch(getDeployLog());
+			})
 			.catch(err => dispatch(failGetDeployment(err)));
 	};
 }

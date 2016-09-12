@@ -10,6 +10,8 @@ module.exports = function messages(state, action) {
 			return action.summary.messages;
 
 		// clear the messages on these actions
+		case actions.NEW_DEPLOYMENT:
+		case actions.START_DEPLOYMENT_GET:
 		case actions.SUCCEED_REPO_UPDATE:
 		case actions.SUCCEED_REVISIONS_GET:
 		case actions.SET_REVISION:

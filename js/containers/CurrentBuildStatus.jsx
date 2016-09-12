@@ -52,8 +52,8 @@ const mapStateToProps = function(state) {
 const mapDispatchToProps = function(dispatch) {
 	return {
 		onItemClick: function(id) {
-			dispatch(actions.getDeployment(id))
-				.then(dispatch(actions.openPlanDialog()));
+			return dispatch(actions.getDeployment(id))
+				.then(() => dispatch(actions.openPlanDialog()));
 		}
 	};
 };

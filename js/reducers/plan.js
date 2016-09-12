@@ -2,19 +2,24 @@ var _ = require('underscore');
 
 var actions = require('../_actions.js');
 
+const initialState = {
+	is_loading: false,
+	deployment_type: "",
+	deployment_estimate: "",
+	changes: {},
+	validation_code: "",
+	summary_of_changes: ""
+};
+
 module.exports = function plan(state, action) {
 	if (typeof state === 'undefined') {
-		return {
-			is_loading: false,
-			deployment_type: "",
-			deployment_estimate: "",
-			changes: {},
-			validation_code: "",
-			summary_of_changes: "" // fixup
-		};
+		return initialState;
 	}
 
 	switch (action.type) {
+		case actions.NEW_DEPLOYMENT:
+			return initialState;
+
 		case actions.START_SUMMARY_GET:
 			return _.assign({}, state, {
 				deployment_type: "",

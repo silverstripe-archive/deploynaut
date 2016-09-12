@@ -2,35 +2,40 @@ var _ = require('underscore');
 
 var actions = require('../_actions.js');
 
+const initialState = {
+
+	bypassed: false,
+	bypassed_time: "",
+
+	rejected: false,
+	rejected_time: "",
+
+	request_by: {id: 5, email: "fredrik@example.com", role: "Team Member", name: "Fredrik Fredriksson"},
+	request_sent: false,
+	request_sent_time: "",
+
+	approved: false,
+	approved_time: "",
+
+	approved_by: "",
+	approvers: [
+		{id: 1, email: "anders@example.com", role: "Release manager", name: "Anders Andersson"},
+		{id: 2, email: "bengt@example.com", role: "Release manager", name: "Bengt Bengtsson"},
+		{id: 3, email: "daniel@example.com", role: "Release manager", name: "Daniel Danielsson"},
+		{id: 4, email: "erik@example.com", role: "Release manager", name: "Erik Eriksson"}
+	],
+	is_loading: false
+};
+
 module.exports = function approval(state, action) {
 	if (typeof state === 'undefined') {
-		return {
-
-			bypassed: false,
-			bypassed_time: "",
-
-			rejected: false,
-			rejected_time: "",
-
-			request_by: {id: 5, email: "fredrik@example.com", role: "Team Member", name: "Fredrik Fredriksson"},
-			request_sent: false,
-			request_sent_time: "",
-
-			approved: false,
-			approved_time: "",
-
-			approved_by: "",
-			approvers: [
-				{id: 1, email: "anders@example.com", role: "Release manager", name: "Anders Andersson"},
-				{id: 2, email: "bengt@example.com", role: "Release manager", name: "Bengt Bengtsson"},
-				{id: 3, email: "daniel@example.com", role: "Release manager", name: "Daniel Danielsson"},
-				{id: 4, email: "erik@example.com", role: "Release manager", name: "Erik Eriksson"}
-			],
-			is_loading: false
-		};
+		return initialState;
 	}
 
 	switch (action.type) {
+		case actions.NEW_DEPLOYMENT:
+			return initialState;
+
 		case actions.SUCCEED_DEPLOYMENT_GET:
 			return _.assign({}, state, {
 				request_by: action.data.deployment.deployer,

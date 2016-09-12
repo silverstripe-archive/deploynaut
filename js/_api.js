@@ -146,7 +146,9 @@ export function create(name) {
 				case 'Complete':
 					return data;
 				case 'Failed':
-					throw new Error("An error occurred");
+					return data;
+				case 'Submitted':
+					return data;
 				default:
 					return sleep(retry).then(() => waitForSuccess(getState, uri, 2 * retry, callback));
 			}
