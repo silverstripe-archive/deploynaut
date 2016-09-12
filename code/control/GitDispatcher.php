@@ -81,26 +81,25 @@ class GitDispatcher extends Dispatcher {
 	 * @return string
 	 */
 	public function show(\SS_HTTPRequest $request) {
-
 		$refs = [];
+		$prevDeploys = [];
 		$order = 0;
 		$refs[self::REF_TYPE_BRANCH] = [
 			'id' => ++$order,
-			'label' => "Branch version",
-			"description" => "Deploy the latest version of a branch",
-			"list" => $this->getGitBranches($this->project)
+			'label' => 'Branch version',
+			'description' => 'Deploy the latest version of a branch',
+			'list' => $this->getGitBranches($this->project)
 		];
 
 		$refs[self::REF_TYPE_TAG] = [
 			'id' => ++$order,
-			'label' => "Tag version",
-			"description" => "Deploy a tagged release",
-			"list" => $this->getGitTags($this->project)
+			'label' => 'Tag version',
+			'description' => 'Deploy a tagged release',
+			'list' => $this->getGitTags($this->project)
 		];
 
 		// @todo: the original was a tree that was keyed by environment, the
 		// front-end dropdown needs to be changed to support that. brrrr.
-		$prevDeploys = [];
 		foreach ($this->getGitPrevDeploys($this->project) as $env) {
 			foreach ($env as $deploy) {
 				$prevDeploys[] = $deploy;
@@ -108,9 +107,14 @@ class GitDispatcher extends Dispatcher {
 		}
 		$refs[self::REF_TYPE_PREVIOUS] = [
 			'id' => ++$order,
-			'label' => "Redeploy a release that was previously deployed (to any environment",
-			"description" => "Deploy a previous release",
-			"list" => $prevDeploys
+			'label' => 'Redeploy a release that was previously deployed (to any environment)',
+			'description' => 'Deploy a previous release',
+			'list' => $prevDeploys
+		];
+		$refs[self::REF_TYPE_SHA] = [
+			'id' => ++$order,
+			'label' => 'Deploy a specific SHA',
+			'description' => 'Deploy a specific SHA'
 		];
 
 		return $this->getAPIResponse(['refs' => $refs], 200);
