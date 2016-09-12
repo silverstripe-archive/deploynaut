@@ -6,6 +6,7 @@
  * @property string $SHA
  * @property string $ResqueToken
  * @property string $State
+ * @property int $RefType
  *
  * @method DNEnvironment Environment()
  * @property int EnvironmentID
@@ -41,6 +42,8 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 		// the commit could appear in lots of branches that are irrelevant to the user when it comes
 		// to deployment history, and the branch may have been deleted.
 		"Branch" => "Varchar(255)",
+		// is it a branch, tag etc, see GitDispatcher REF_TYPE_* constants
+		"RefType" => "Int",
 		"State" => "Enum('New, Submitted, Invalid, Queued, Deploying, Aborting, Completed, Failed', 'New')",
 		// JSON serialised DeploymentStrategy.
 		"Strategy" => "Text",

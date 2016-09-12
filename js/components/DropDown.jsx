@@ -49,7 +49,7 @@ var Dropdown = React.createClass({
 	initSelect2: function() {
 		$(this.selector).select2(this.props.options);
 		$(this.selector).select2().on("change", function(evt) {
-			var value = evt.currentTarget.value;
+			const value = evt.currentTarget.value;
 			this.props.onSelect(value);
 		}.bind(this));
 

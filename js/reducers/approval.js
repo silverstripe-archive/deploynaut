@@ -25,7 +25,8 @@ module.exports = function approval(state, action) {
 				{id: 2, email: "bengt@example.com", role: "Release manager", name: "Bengt Bengtsson"},
 				{id: 3, email: "daniel@example.com", role: "Release manager", name: "Daniel Danielsson"},
 				{id: 4, email: "erik@example.com", role: "Release manager", name: "Erik Eriksson"}
-			]
+			],
+			is_loading: false
 		};
 	}
 
@@ -77,11 +78,17 @@ module.exports = function approval(state, action) {
 				bypassed: false,
 				rejected: true
 			});
+
+		case actions.START_APPROVAL_BYPASS:
+			return _.assign({}, state, {
+				is_loading: true
+			});
 		case actions.SUCCEED_APPROVAL_BYPASS:
 			return _.assign({}, state, {
 				approved: false,
 				bypassed: true,
-				rejected: false
+				rejected: false,
+				is_loading: false
 			});
 
 		default:

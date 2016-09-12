@@ -144,7 +144,7 @@ abstract class Dispatcher extends DNRoot {
 		$output['status_code'] = $statusCode;
 		$response = $this->getResponse();
 		$response->addHeader('Content-Type', 'application/json');
-		$response->setBody(json_encode($output, JSON_PRETTY_PRINT));
+		$response->setBody(json_encode($output, JSON_PRETTY_PRINT|JSON_NUMERIC_CHECK));
 		$response->setStatusCode($statusCode);
 		return $response;
 	}
