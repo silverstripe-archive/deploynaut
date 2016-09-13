@@ -367,10 +367,10 @@ export function getDeployLog() {
 	};
 }
 
-export function startDeploy(sha) {
+export function startDeploy() {
 	return (dispatch, getState) => {
 		dispatch(startDeploymentEnqueue());
-		return deployAPI.call(getState, '/start', 'post', {sha: sha})
+		return deployAPI.call(getState, `/start/${getState().deployment.id}`, 'post')
 			.then(function(data) {
 				dispatch(succeedDeploymentEnqueue(data));
 				return dispatch(getDeployLog());
