@@ -11,7 +11,7 @@ function GitRefSelector(props) {
 	var dropdown = null;
 	var shaInput = null;
 
-	if (props.selected_type === 3) { // Deploy a specific SHA
+	if (props.selected_type === 4) { // Deploy a specific SHA
 		shaInput = (
 			<fieldset>
 				<input
@@ -26,7 +26,7 @@ function GitRefSelector(props) {
 				/>
 			</fieldset>
 		);
-	} else if(props.selected_type !== "") {
+	} else if (props.selected_type !== "") {
 		dropdown = (
 			<Dropdown
 				onSelect={props.onRefSelect}
@@ -58,7 +58,7 @@ GitRefSelector.propTypes = {
 		React.PropTypes.string,
 		React.PropTypes.number
 	]).isRequired,
-	ref_list: React.PropTypes.array.isRequired,
+	ref_list: React.PropTypes.array,
 	selected_ref: React.PropTypes.oneOfType([
 		React.PropTypes.string,
 		React.PropTypes.number
@@ -99,8 +99,12 @@ const mapStateToProps = function(state) {
 
 const mapDispatchToProps = function(dispatch) {
 	return {
-		onRadioClick: function(id) {
+		onRadioClick: function(id, type) {
 			dispatch(actions.setGitRefType(id));
+			if (type.promote_build) {
+				dispatch(actions.setGitRef(type.promote_build.sha));
+				dispatch(actions.getDeploySummary(type.promote_build.sha));
+			}
 		},
 		onRefSelect: function(ref) {
 			dispatch(actions.setGitRef(ref));

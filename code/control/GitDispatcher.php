@@ -8,10 +8,10 @@ class GitDispatcher extends Dispatcher {
 
 	const ACTION_GIT = 'git';
 
-	const REF_TYPE_BRANCH = 0;
-	const REF_TYPE_TAG = 1;
-	const REF_TYPE_PREVIOUS = 2;
-	const REF_TYPE_FROM_UAT = 3;
+	const REF_TYPE_FROM_UAT = 0;
+	const REF_TYPE_BRANCH = 1;
+	const REF_TYPE_TAG = 2;
+	const REF_TYPE_PREVIOUS = 3;
 	const REF_TYPE_SHA = 4;
 
 	/**
@@ -84,6 +84,25 @@ class GitDispatcher extends Dispatcher {
 		$refs = [];
 		$prevDeploys = [];
 		$order = 0;
+
+		$uatEnvironment = $this->project->DNEnvironmentList()->filter('Usage', 'UAT')->first();
+		$uatBuild = $uatEnvironment ? $uatEnvironment->CurrentBuild() : null;
+		if ($uatBuild && $uatBuild->exists()) {
+			$refs[self::REF_TYPE_FROM_UAT] = [
+				'id' => ++$order,
+				'label' => 'Promote the version currently on UAT',
+				'description' => 'Promote the version currently on UAT',
+				'promote_build' => [
+					'deployed' => DBField::create_field('SS_Datetime', $uatBuild->Created, 'Created')->Ago(),
+					'branch' => $uatBuild->Branch,
+					'tags' => $uatBuild->getTags()->toArray(),
+					'sha' => $uatBuild->SHA,
+					'commit_message' => $uatBuild->getCommitMessage(),
+					'commit_url' => $uatBuild->getCommitURL(),
+				]
+			];
+		}
+
 		$refs[self::REF_TYPE_BRANCH] = [
 			'id' => ++$order,
 			'label' => 'Branch version',

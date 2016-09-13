@@ -3,10 +3,10 @@ var React = require("react");
 var Radio = require('./Radio.jsx');
 
 function RadioList(props) {
-
 	if (!props.options) {
 		return null;
 	}
+
 	var list = Object.keys(props.options).map(function(key, index) {
 		return (
 			<Radio
@@ -15,7 +15,7 @@ function RadioList(props) {
 				name="type"
 				checked={props.value === index}
 				id={index}
-				onClick={function() { props.onRadioClick(index); }}
+				onClick={() => props.onRadioClick(index, props.options[key])}
 				disabled={props.disabled}
 			/>
 		);
