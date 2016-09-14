@@ -10,12 +10,12 @@ function RadioList(props) {
 	var list = Object.keys(props.options).map(function(key, index) {
 		return (
 			<Radio
-				key={index}
+				key={props.options[key].id}
 				description={props.options[key].description}
 				name="type"
-				checked={props.value === index}
+				checked={props.value === props.options[key].id}
 				id={index}
-				onClick={() => props.onRadioClick(index, props.options[key])}
+				onClick={() => props.onRadioClick(props.options[key].id, props.options[key])}
 				disabled={props.disabled}
 			/>
 		);
@@ -29,7 +29,7 @@ function RadioList(props) {
 }
 
 RadioList.propTypes = {
-	options: React.PropTypes.arrayOf(React.PropTypes.shape({
+	options: React.PropTypes.objectOf(React.PropTypes.shape({
 		id: React.PropTypes.number.isRequired,
 		description: React.PropTypes.string.isRequired
 	}).isRequired).isRequired,
