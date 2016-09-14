@@ -53,7 +53,7 @@ function GitRefSelector(props) {
 }
 
 GitRefSelector.propTypes = {
-	types: React.PropTypes.array.isRequired,
+	types: React.PropTypes.object.isRequired,
 	selected_type: React.PropTypes.oneOfType([
 		React.PropTypes.string,
 		React.PropTypes.number

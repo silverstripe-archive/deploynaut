@@ -83,13 +83,12 @@ class GitDispatcher extends Dispatcher {
 	public function show(\SS_HTTPRequest $request) {
 		$refs = [];
 		$prevDeploys = [];
-		$order = 0;
 
 		$uatEnvironment = $this->project->DNEnvironmentList()->filter('Usage', 'UAT')->first();
 		$uatBuild = $uatEnvironment ? $uatEnvironment->CurrentBuild() : null;
 		if ($uatBuild && $uatBuild->exists()) {
 			$refs[self::REF_TYPE_FROM_UAT] = [
-				'id' => ++$order,
+				'id' => self::REF_TYPE_FROM_UAT,
 				'label' => 'Promote the version currently on UAT',
 				'description' => 'Promote the version currently on UAT',
 				'promote_build' => [
@@ -104,14 +103,14 @@ class GitDispatcher extends Dispatcher {
 		}
 
 		$refs[self::REF_TYPE_BRANCH] = [
-			'id' => ++$order,
+			'id' => self::REF_TYPE_BRANCH,
 			'label' => 'Branch version',
 			'description' => 'Deploy the latest version of a branch',
 			'list' => $this->getGitBranches($this->project)
 		];
 
 		$refs[self::REF_TYPE_TAG] = [
-			'id' => ++$order,
+			'id' => self::REF_TYPE_TAG,
 			'label' => 'Tag version',
 			'description' => 'Deploy a tagged release',
 			'list' => $this->getGitTags($this->project)
@@ -125,13 +124,13 @@ class GitDispatcher extends Dispatcher {
 			}
 		}
 		$refs[self::REF_TYPE_PREVIOUS] = [
-			'id' => ++$order,
+			'id' => self::REF_TYPE_PREVIOUS,
 			'label' => 'Redeploy a release that was previously deployed (to any environment)',
 			'description' => 'Deploy a previous release',
 			'list' => $prevDeploys
 		];
 		$refs[self::REF_TYPE_SHA] = [
-			'id' => ++$order,
+			'id' => self::REF_TYPE_SHA,
 			'label' => 'Deploy a specific SHA',
 			'description' => 'Deploy a specific SHA'
 		];
