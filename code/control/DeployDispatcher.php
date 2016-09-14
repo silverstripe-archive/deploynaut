@@ -138,7 +138,7 @@ class DeployDispatcher extends Dispatcher {
 
 	public function save(\SS_HTTPRequest $request) {
 
-		if (strtolower($request->httpMethod()) !== 'post') {
+		if ($request->httpMethod() !== 'POST') {
 			return $this->getAPIResponse(['message' => 'Method not allowed, requires POST'], 405);
 		}
 
@@ -172,25 +172,30 @@ class DeployDispatcher extends Dispatcher {
 	 * @return \SS_HTTPResponse
 	 */
 	public function start(SS_HTTPRequest $request) {
+		if ($request->httpMethod() !== 'POST') {
+			return $this->getAPIResponse(['message' => 'Method not allowed, requires POST'], 405);
+		}
+
 		$this->checkSecurityToken();
 
+		$deployment = DNDeployment::get()->byId($request->param('ID'));
+
+		if (!$deployment || !$deployment->exists()) {
+			return $this->getAPIResponse(['message' => 'This deployment does not exist'], 404);
+		}
 		if (!$this->environment->canDeploy(Member::currentUser())) {
 			return $this->getAPIResponse(['message' => 'You are not authorised to deploy this environment'], 403);
 		}
 
-		// @todo the strategy should have been saved when there has been a request for an
-		// approval or a bypass. This saved state needs to be checked if it's invalidated
-		// if another deploy happens before this one
-		$options = [
-			'sha' => $request->requestVar('sha'),
-		];
+		// until we have a system that can invalidate currently scheduled deployments due
+		// to emergency deploys etc, replan the deployment to check if it's still valid.
+
+		$options = $deployment->getDeploymentStrategy()->getOptions();
+
 		$strategy = $this->environment->Backend()->planDeploy($this->environment, $options);
+		$deployment->Strategy = $strategy->toJSON();
+		$deployment->write();
 
-		$strategy->fromArray($request->requestVars());
-		$deployment = $strategy->createDeployment();
-
-		// Skip through the approval state for now.
-		$deployment->getMachine()->apply(DNDeployment::TR_SUBMIT);
 		$deployment->getMachine()->apply(DNDeployment::TR_QUEUE);
 
 		$location = \Controller::join_links(Director::absoluteBaseURL(), $this->Link('log'), $deployment->ID);
