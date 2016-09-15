@@ -4,8 +4,9 @@ var Pagination = require('react-bootstrap/lib/Pagination');
 var actions = require('../_actions.js');
 
 var DeployHistory = function(props) {
-
 	let errorRow = null;
+	let pagination = null;
+
 	if (props.error) {
 		errorRow = (
 			<tr className="danger">
@@ -16,7 +17,6 @@ var DeployHistory = function(props) {
 		);
 	}
 
-	let pagination = null;
 	if (props.total_pages > 1) {
 		pagination = (
 			<Pagination
