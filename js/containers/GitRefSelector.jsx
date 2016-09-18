@@ -11,7 +11,8 @@ function GitRefSelector(props) {
 	var dropdown = null;
 	var shaInput = null;
 
-	if (props.selected_type === 4) { // Deploy a specific SHA
+	if (props.selected_type === 4) {
+		// "Deploy a specific SHA" type has it's own fields
 		shaInput = (
 			<fieldset>
 				<input
@@ -26,7 +27,8 @@ function GitRefSelector(props) {
 				/>
 			</fieldset>
 		);
-	} else if (props.selected_type !== "") {
+	} else if (props.selected_type !== "" && props.selected_type !== 0) {
+		// any selected type that isn't "Promote..." will show a dropdown
 		dropdown = (
 			<Dropdown
 				onSelect={props.onRefSelect}

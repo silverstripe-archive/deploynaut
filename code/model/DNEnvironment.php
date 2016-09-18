@@ -586,7 +586,7 @@ class DNEnvironment extends DataObject {
 		/** @var DNDeployment $deploy */
 		$deploy = DNDeployment::get()->filter(array(
 			'EnvironmentID' => $this->ID,
-			'State' => 'Completed'
+			'State' => DNDeployment::STATE_COMPLETED
 		))->sort('LastEdited DESC')->first();
 
 		if(!$deploy || (!$deploy->SHA)) {
@@ -614,13 +614,32 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
-	 * A history of all builds deployed to this environment
-	 *
+	 * A list of past deployments.
 	 * @return ArrayList
 	 */
 	public function DeployHistory() {
 		return $this->Deployments()
-			->where('SHA IS NOT NULL')
+			->where('"SHA" IS NOT NULL')
+			->filter('State', [
+				DNDeployment::STATE_COMPLETED,
+				DNDeployment::STATE_FAILED,
+				DNDeployment::STATE_INVALID
+			])
+			->sort('LastEdited DESC');
+	}
+
+	/**
+	 * A list of upcoming or current deployments.
+	 * @return ArrayList
+	 */
+	public function UpcomingDeployments() {
+		return $this->Deployments()
+			->where('"SHA" IS NOT NULL')
+			->filter('State', [
+				DNDeployment::STATE_NEW,
+				DNDeployment::STATE_SUBMITTED,
+				DNDeployment::STATE_ABORTING
+			])
 			->sort('LastEdited DESC');
 	}
 
@@ -1049,10 +1068,13 @@ PHP
 		return DNDeployment::get()
 			->filter([
 				'EnvironmentID' => $this->ID,
-				'State' => ['Queued', 'Deploying', 'Aborting'],
+				'State' => [
+					DNDeployment::STATE_QUEUED,
+					DNDeployment::STATE_DEPLOYING,
+					DNDeployment::STATE_ABORTING
+				],
 				'Created:GreaterThan' => strtotime('-1 hour')
 			]);
 	}
 
 }
-

@@ -13,6 +13,7 @@ class DeployDispatcher extends Dispatcher {
 	 */
 	public static $allowed_actions = [
 		'history',
+		'upcoming',
 		'currentbuild',
 		'show',
 		'log',
@@ -68,7 +69,8 @@ class DeployDispatcher extends Dispatcher {
 	 */
 	public function history(SS_HTTPRequest $request) {
 		$data = [];
-		$list = $this->DeployHistory();
+		$list = new PaginatedList($this->environment->DeployHistory(), $this->getRequest());
+		$list->setPageLength(4);
 		$page = $request->getVar('page') ?: 1;
 		if ($page > $list->TotalPages()) {
 			$page = 1;
@@ -91,6 +93,21 @@ class DeployDispatcher extends Dispatcher {
 			'page_length' => $list->getPageLength(),
 			'total_pages' => $list->TotalPages(),
 			'current_page' => $list->CurrentPage()
+		], 200);
+	}
+
+	/**
+	 * @param \SS_HTTPRequest $request
+	 * @return \SS_HTTPResponse
+	 */
+	public function upcoming(SS_HTTPRequest $request) {
+		$data = [];
+		$list = $this->environment->UpcomingDeployments();
+		foreach ($list as $deployment) {
+			$data[] = $this->getDeploymentData($deployment);
+		}
+		return $this->getAPIResponse([
+			'list' => $data,
 		], 200);
 	}
 
