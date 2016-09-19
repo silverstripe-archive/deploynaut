@@ -1,4 +1,4 @@
-var actions = require('../_actions.js');
+const actions = require('../_actions.js');
 
 module.exports = function messages(state, action) {
 	if (typeof state === 'undefined') {

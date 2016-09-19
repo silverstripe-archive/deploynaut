@@ -1,6 +1,6 @@
-var _ = require('underscore');
+const _ = require('underscore');
 
-var actions = require('../_actions.js');
+const actions = require('../_actions.js');
 
 const initialState = {
 	selected_type: "",
