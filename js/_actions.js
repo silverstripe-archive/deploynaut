@@ -6,6 +6,14 @@ const gitAPI = api.create('git');
 const planAPI = api.create('plan');
 const deployAPI = api.create('deploys');
 
+export const SET_ENVIRONMENT = 'SET_ENVIRONMENT';
+export function setEnvironment(data) {
+	return {
+		type: SET_ENVIRONMENT,
+		data: data
+	};
+}
+
 export const SET_OPEN_DIALOG = "SET_OPEN_DIALOG";
 export function openPlanDialog() {
 	return {type: SET_OPEN_DIALOG};
@@ -142,7 +150,7 @@ export function failCurrentBuildStatusGet(err) {
 export function getRevisions() {
 	return (dispatch, getState) => {
 		dispatch(startRevisionGet());
-		return gitAPI.call(getState, '/show', 'get')
+		return gitAPI.call(getState, `/show?environmentId=${getState().environment.id}`, 'get')
 			.then(json => dispatch(succeedRevisionsGet(json)))
 			.catch(err => dispatch(failRevisionsGet(err)));
 	};

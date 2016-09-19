@@ -81,17 +81,24 @@ class GitDispatcher extends Dispatcher {
 	 * @return string
 	 */
 	public function show(\SS_HTTPRequest $request) {
+		$targetEnvironment = null;
+		$targetEnvironmentId = $request->getVar('environmentId');
+		if (!empty($targetEnvironmentId)) {
+			$targetEnvironment = DNEnvironment::get()->byId((int) $targetEnvironmentId);
+		}
+
 		$refs = [];
 		$prevDeploys = [];
 
 		$uatEnvironment = $this->project->DNEnvironmentList()->filter('Usage', 'UAT')->first();
 		$uatBuild = $uatEnvironment ? $uatEnvironment->CurrentBuild() : null;
-		if ($uatBuild && $uatBuild->exists()) {
+		if ($uatBuild && $uatBuild->exists() && $targetEnvironment && $targetEnvironment->Usage === DNEnvironment::PRODUCTION) {
 			$refs[self::REF_TYPE_FROM_UAT] = [
 				'id' => self::REF_TYPE_FROM_UAT,
 				'label' => 'Promote the version currently on UAT',
 				'description' => 'Promote the version currently on UAT',
 				'promote_build' => [
+					'id' => $uatBuild->ID,
 					'deployed' => DBField::create_field('SS_Datetime', $uatBuild->Created, 'Created')->Ago(),
 					'branch' => $uatBuild->Branch,
 					'tags' => $uatBuild->getTags()->toArray(),

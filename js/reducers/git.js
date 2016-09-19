@@ -80,7 +80,6 @@ module.exports = function git(state, action) {
 			if (action.list.refs.constructor === Array) {
 				listAsArray = _.assign({}, action.list.refs);
 			}
-			console.log(listAsArray);
 			return _.assign({}, state, {
 				is_fetching: false,
 				// we do this to force the list into an object, inc ase it's an array

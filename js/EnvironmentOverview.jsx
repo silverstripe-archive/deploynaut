@@ -28,6 +28,8 @@ var Plan = function(props) {
 		props.model.api_auth
 	));
 
+	store.dispatch(actions.setEnvironment(props.model.environment));
+
 	store.dispatch(actions.getUpcomingDeployments());
 	store.dispatch(actions.getCurrentBuildStatus());
 	store.dispatch(actions.getDeployHistory());
