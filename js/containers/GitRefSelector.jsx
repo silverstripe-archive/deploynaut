@@ -1,55 +1,85 @@
 var React = require('react');
 var ReactRedux = require('react-redux');
 
-var RadioList = require('../components/RadioList.jsx');
+var Radio = require('../components/Radio.jsx');
 var Dropdown = require('../components/Dropdown.jsx');
 var Button = require('../components/Button.jsx');
+var BuildStatus = require('../components/BuildStatus.jsx');
 
 var actions = require('../_actions.js');
 
 function GitRefSelector(props) {
-	var dropdown = null;
-	var shaInput = null;
+	var typeFields = {};
+	Object.keys(props.types).forEach(function(key) {
+		switch (key) {
+			case '0': // Promote build option
+				typeFields[key] = (
+					<BuildStatus deployment={props.types[key].promote_build} />
+				);
+				break;
+			case '1': // Dropdowns for branch, tags, previously released
+			case '2':
+			case '3':
+				typeFields[key] = (
+					<Dropdown
+						onSelect={props.onRefSelect}
+						options={props.ref_list}
+						value={props.selected_ref}
+						disabled={props.disabled}
+						name={"ref_selector_" + key}
+					/>
+				);
+				break;
+			case '4': // Input SHA option
+				typeFields[key] = (
+					<fieldset>
+						<input
+							type="text"
+							name="selected_ref"
+							onChange={props.onShaChange}
+							value={props.selected_ref}
+							disabled={props.disabled}
+						/>
+						<Button
+							onClick={() => props.onRefSelect(props.selected_ref)}
+							disabled={props.disabled}
+							value="Go"
+						/>
+					</fieldset>
+				);
+				break;
+			default:
+				break;
+		}
+	});
 
-	if (props.selected_type === 4) {
-		// "Deploy a specific SHA" type has it's own fields
-		shaInput = (
-			<fieldset>
-				<input
-					type="text"
-					name="selected_ref"
-					onChange={props.onShaChange}
-					value={props.selected_ref}
+	var list = Object.keys(props.types).map(function(key, index) {
+		var extraFields = null;
+		if (props.selected_type === props.types[key].id) {
+			extraFields = typeFields[props.types[key].id];
+		}
+		return (
+			<li key={props.types[key].id}>
+				<Radio
+					description={props.types[key].description}
+					name="type"
+					checked={props.selected_type === props.types[key].id}
+					id={index}
+					onClick={() => props.onRadioClick(props.types[key].id, props.types[key])}
+					disabled={props.disabled}
 				/>
-				<Button
-					onClick={() => props.onRefSelect(props.selected_ref)}
-					value="Go"
-				/>
-			</fieldset>
+				{extraFields}
+			</li>
 		);
-	} else if (props.selected_type !== "" && props.selected_type !== 0) {
-		// any selected type that isn't "Promote..." will show a dropdown
-		dropdown = (
-			<Dropdown
-				onSelect={props.onRefSelect}
-				options={props.ref_list}
-				value={props.selected_ref}
-				disabled={props.disabled}
-				name="ref_selector"
-			/>
-		);
-	}
+	});
 
 	return (
 		<div>
-			<RadioList
-				options={props.types}
-				value={props.selected_type}
-				onRadioClick={props.onRadioClick}
-				disabled={props.disabled}
-			/>
-			{dropdown}
-			{shaInput}
+			<form className="form">
+				<ul className="radio-list">
+					{list}
+				</ul>
+			</form>
 		</div>
 	);
 }

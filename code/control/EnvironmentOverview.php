@@ -70,6 +70,11 @@ class EnvironmentOverview extends Dispatcher {
 			'api_auth' => [
 				'name' => $this->getSecurityToken()->getName(),
 				'value' => $this->getSecurityToken()->getValue()
+			],
+			'environment' => [
+				'id' => $this->environment->ID,
+				'name' => $this->environment->Name,
+				'usage' => $this->environment->Usage
 			]
 		];
 	}

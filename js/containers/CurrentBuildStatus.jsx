@@ -19,14 +19,14 @@ var CurrentBuildStatus = function(props) {
 	}
 
 	return (
-		<div className="current-build">
-			<div className="details">
+		<div className="current-build build-status">
+			<div className="build-details">
 				<a className="branch-detail" href={props.deployment.commit_url}>{props.deployment.branch}
 					<span className="sha-detail" title={props.deployment.sha}>{shortSha}</span>
 				</a>
 				<span className="deployed-detail">Deployed {props.deployment.created}</span>
 			</div>
-			<ul className="actions">
+			<ul className="build-actions">
 				<li>
 					<a className="repo-action" href={props.deployment.commit_url}>
 						<i className="fa fa-github-alt"></i>
