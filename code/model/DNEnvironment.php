@@ -615,9 +615,18 @@ class DNEnvironment extends DataObject {
 
 	/**
 	 * A list of past deployments.
-	 * @return ArrayList
+	 * @param string $orderBy - the name of a DB column to sort in descending order
+	 * @return \ArrayList
 	 */
-	public function DeployHistory() {
+	public function DeployHistory($orderBy = '') {
+
+		$sort = [];
+		if($orderBy != '') {
+			$sort[$orderBy] = 'DESC';
+		}
+		// default / fallback sort order
+		$sort['LastEdited'] = 'DESC';
+
 		return $this->Deployments()
 			->where('"SHA" IS NOT NULL')
 			->filter('State', [
@@ -638,7 +647,9 @@ class DNEnvironment extends DataObject {
 			->filter('State', [
 				DNDeployment::STATE_NEW,
 				DNDeployment::STATE_SUBMITTED,
-				DNDeployment::STATE_ABORTING
+				DNDeployment::STATE_ABORTING,
+				DNDeployment::STATE_QUEUED,
+				DNDeployment::STATE_DEPLOYING,
 			])
 			->sort('LastEdited DESC');
 	}

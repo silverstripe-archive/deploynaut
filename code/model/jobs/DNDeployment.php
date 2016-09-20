@@ -7,6 +7,8 @@
  * @property string $ResqueToken
  * @property string $State
  * @property int $RefType
+ * @property SS_Datetime $DeployStarted
+ * @property SS_Datetime $DeployRequested
  *
  * @method DNEnvironment Environment()
  * @property int EnvironmentID
@@ -48,7 +50,9 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 		// JSON serialised DeploymentStrategy.
 		"Strategy" => "Text",
 		"Summary" => "Text",
-		"DatePlanned" => "SS_Datetime"
+		// the date and time the deploy was queued
+		"DeployStarted" => "SS_Datetime",
+		"DeployRequested" => "SS_Datetime"
 	);
 
 	/**

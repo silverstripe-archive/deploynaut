@@ -69,7 +69,7 @@ class DeployDispatcher extends Dispatcher {
 	 */
 	public function history(SS_HTTPRequest $request) {
 		$data = [];
-		$list = new PaginatedList($this->environment->DeployHistory(), $this->getRequest());
+		$list = new PaginatedList($this->environment->DeployHistory('DeployStarted'), $this->getRequest());
 		$list->setPageLength(4);
 		$page = $request->getVar('page') ?: 1;
 		if ($page > $list->TotalPages()) {
@@ -261,10 +261,23 @@ class DeployDispatcher extends Dispatcher {
 			$approverData = $this->getStackMemberData($approver);
 		}
 
+		// failover for older deployments
+		$started = $deployment->Created;
+		if($deployment->DeployStarted) {
+			$started = $deployment->DeployStarted;
+		}
+
+		$requested = $deployment->Created;
+		if($deployment->DeployRequested) {
+			$requested = $deployment->DeployRequested;
+		}
+
 		return [
 			'id' => $deployment->ID,
-			'created' => $deployment->Created,
-			'date_planned' => $deployment->DatePlanned,
+			'date_created' => $deployment->Created,
+			'date_started' => $started,
+			'date_requested' => $requested,
+			'date_updated' => $deployment->LastEdited,
 			'summary' => $deployment->Summary,
 			'branch' => $deployment->Branch,
 			'tags' => $deployment->getTags()->toArray(),

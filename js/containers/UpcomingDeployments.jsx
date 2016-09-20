@@ -35,7 +35,7 @@ var UpcomingDeployments = function(props) {
 							var row = props.list[i];
 							return (
 								<tr onClick={() => props.onItemClick(row.id)} key={i}>
-									<td>{row.created}</td>
+									<td>{row.date_requested}</td>
 									<td>{row.commit_message}</td>
 									<td>{row.deployer ? row.deployer.name : null}</td>
 									<td>{row.approver ? row.approver.name : null}</td>

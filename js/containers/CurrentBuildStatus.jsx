@@ -24,7 +24,7 @@ var CurrentBuildStatus = function(props) {
 				<a className="branch-detail" href={props.deployment.commit_url}>{props.deployment.branch}
 					<span className="sha-detail" title={props.deployment.sha}>{shortSha}</span>
 				</a>
-				<span className="deployed-detail">Deployed {props.deployment.created}</span>
+				<span className="deployed-detail">Deployed {props.deployment.date_started}</span>
 			</div>
 			<ul className="build-actions">
 				<li>
