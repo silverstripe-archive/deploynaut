@@ -1,6 +1,7 @@
 var React = require('react');
 var ReactRedux = require('react-redux');
 var Pagination = require('react-bootstrap/lib/Pagination');
+const _ = require('underscore');
 var actions = require('../_actions.js');
 
 var DeployHistory = function(props) {
@@ -66,12 +67,31 @@ var DeployHistory = function(props) {
 };
 
 const mapStateToProps = function(state) {
+
+	// try to find the current build in the list of all deployments
+	let historyList = {};
+	if (typeof state.deployment.list === "object") {
+		historyList = _.filter(state.deployment.list, function(deploy) {
+			switch (deploy.state) {
+				case "Completed":
+				case "Invalid":
+				case "Failed":
+					return true;
+				default:
+					return false;
+			}
+		});
+	}
+	historyList.sort(function(a, b) {
+		return Date.parse(b.date_started) - Date.parse(a.date_started);
+	});
+
 	return {
-		list: state.deployhistory.list,
-		page_length: state.deployhistory.page_length,
-		total_pages: state.deployhistory.total_pages,
-		current_page: state.deployhistory.current_page,
-		error: state.deployhistory.error
+		list: historyList,
+		page_length: state.deployment.pagination.page_length,
+		total_pages: state.deployment.pagination.total_pages,
+		current_page: state.deployment.pagination.current_page,
+		error: state.deployment.error
 	};
 };
 

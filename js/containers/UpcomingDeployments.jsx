@@ -1,5 +1,6 @@
 var React = require('react');
 var ReactRedux = require('react-redux');
+const _ = require('underscore');
 var actions = require('../_actions.js');
 
 var UpcomingDeployments = function(props) {
@@ -51,9 +52,28 @@ var UpcomingDeployments = function(props) {
 };
 
 const mapStateToProps = function(state) {
+
+	// try to find the current build in the list of all deployments
+	let upcomingList = {};
+	if (typeof state.deployment.list === "object") {
+		upcomingList = _.filter(state.deployment.list, function(deploy) {
+			switch (deploy.state) {
+				case "Completed":
+				case "Invalid":
+				case "Failed":
+					return false;
+				default:
+					return true;
+			}
+		});
+	}
+	upcomingList.sort(function(a, b) {
+		return Date.parse(b.date_requested) - Date.parse(a.date_requested);
+	});
+
 	return {
-		list: state.upcomingdeployments.list,
-		error: state.upcomingdeployments.error
+		list: upcomingList,
+		error: null
 	};
 };
 

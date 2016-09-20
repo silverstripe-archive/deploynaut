@@ -372,7 +372,10 @@ export function startDeploymentEnqueue() {
 
 export const SUCCEED_DEPLOYMENT_ENQUEUE = "SUCCEED_DEPLOYMENT_ENQUEUE";
 export function succeedDeploymentEnqueue(data) {
-	return {type: SUCCEED_DEPLOYMENT_ENQUEUE, id: data.id};
+	return {
+		type: SUCCEED_DEPLOYMENT_ENQUEUE,
+		data: data
+	};
 }
 
 export const FAIL_DEPLOYMENT_ENQUEUE = "FAIL_DEPLOYMENT_ENQUEUE";
@@ -443,7 +446,19 @@ export function failGetDeployment(err) {
 export function getDeployment(id) {
 	return (dispatch, getState) => {
 		dispatch(startGetDeployment());
-		return deployAPI.call(getState, `/show/${id}`, 'get')
+
+		let getDeployPromise = null;
+		if (getState().deployment.list[id]) {
+			// we can use the cached value
+			getDeployPromise = new Promise(function(resolve) {
+				resolve({deployment: getState().deployment.list[id]});
+			});
+		} else {
+			// we need to fetch the deployment from the backend
+			getDeployPromise = deployAPI.call(getState, `/show/${id}`, 'get');
+		}
+
+		return getDeployPromise
 			.then(data => {
 				dispatch(succeedGetDeployment(data));
 				dispatch(getDeployLog());

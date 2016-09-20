@@ -150,7 +150,11 @@ class DeployDispatcher extends Dispatcher {
 		$content = $log->exists() ? $log->content() : 'Waiting for action to start';
 		$lines = explode(PHP_EOL, $content);
 
-		return $this->getAPIResponse(['message' => $lines, 'status' => $deployment->Status], 200);
+		return $this->getAPIResponse([
+			'message' => $lines,
+			'status' => $deployment->Status,
+			'deployment' => $this->getDeploymentData($deployment),
+		], 200);
 	}
 
 	public function save(\SS_HTTPRequest $request) {
@@ -181,6 +185,7 @@ class DeployDispatcher extends Dispatcher {
 		return $this->getAPIResponse([
 			'message' => 'deployment has been created',
 			'id' => $deployment->ID,
+			'deployment' => $this->getDeploymentData($deployment),
 		], 201);
 	}
 
@@ -220,7 +225,8 @@ class DeployDispatcher extends Dispatcher {
 		$response = $this->getAPIResponse([
 			'message' => 'deployment has been queued',
 			'id' => $deployment->ID,
-			'location' => $location
+			'location' => $location,
+			'deployment' => $this->getDeploymentData($deployment),
 		], 201);
 		$response->addHeader('Location', $location);
 		return $response;
