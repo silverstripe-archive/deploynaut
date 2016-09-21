@@ -222,7 +222,7 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 	 */
 	public function getTags() {
 		$commit = $this->Environment()->getCommit($this->SHA);
-		$this->Environment()->getCommitTags($commit);
+		$tags = $this->Environment()->getCommitTags($commit);
 		$returnTags = [];
 		if (!empty($tags)) {
 			foreach($tags as $tag) {

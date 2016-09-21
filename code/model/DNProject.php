@@ -17,43 +17,43 @@ class DNProject extends DataObject {
 	/**
 	 * @var array
 	 */
-	public static $db = array(
+	private static $db = [
 		"Name" => "Varchar",
 		"CVSPath" => "Varchar(255)",
 		"DiskQuotaMB" => "Int",
 		"AllowedEnvironmentType" => "Varchar(255)",
-	);
+	];
 
 	/**
 	 * @var array
 	 */
-	public static $has_many = array(
+	private static $has_many = [
 		"Environments" => "DNEnvironment",
 		"CreateEnvironments" => "DNCreateEnvironment"
-	);
+	];
 
 	/**
 	 * @var array
 	 */
-	public static $many_many = array(
+	private static $many_many = [
 		"Viewers" => "Group",
 		'StarredBy' => "Member"
-	);
+	];
 
 	/**
 	 * @var array
 	 */
-	public static $summary_fields = array(
+	private static $summary_fields = [
 		"Name",
 		"ViewersList",
-	);
+	];
 
 	/**
 	 * @var array
 	 */
-	public static $searchable_fields = array(
+	private static $searchable_fields = [
 		"Name",
-	);
+	];
 
 	/**
 	 * @var string
@@ -71,6 +71,19 @@ class DNProject extends DataObject {
 	private static $default_sort = 'Name';
 
 	/**
+	 * In-memory cache for currentBuilds per environment since fetching them from
+	 * disk is pretty resource hungry.
+	 *
+	 * @var array
+	 */
+	protected static $relation_cache = [];
+
+	/**
+	 * @var bool|Member
+	 */
+	protected static $_current_member_cache = null;
+
+	/**
 	 * Display the repository URL on the project page.
 	 *
 	 * @var bool
@@ -78,23 +91,48 @@ class DNProject extends DataObject {
 	private static $show_repository_url = false;
 
 	/**
-	 * In-memory cache for currentBuilds per environment since fetching them from
-	 * disk is pretty resource hungry.
-	 *
-	 * @var array
-	 */
-	protected static $relation_cache = array();
-
-	/**
 	 * In-memory cache to determine whether clone repo was called.
 	 * @var array
 	 */
-	private static $has_cloned_cache = array();
+	private static $has_cloned_cache = [];
 
 	/**
-	 * @var bool|Member
+	 * Whitelist configuration that describes how to convert a repository URL into a link
+	 * to a web user interface for that URL
+	 *
+	 * Consists of a hash of "full.lower.case.domain" => {configuration} key/value pairs
+	 *
+	 * {configuration} can either be boolean true to auto-detect both the host and the
+	 * name of the UI provider, or a nested array that overrides either one or both
+	 * of the auto-detected values
+	 *
+	 * @var array
 	 */
-	protected static $_current_member_cache = null;
+	private static $repository_interfaces = [
+		'github.com' => [
+			'icon' => 'deploynaut/img/github.png',
+			'name' => 'Github.com',
+		],
+		'bitbucket.org' => [
+			'commit' => 'commits',
+			'name' => 'Bitbucket.org',
+		],
+		'repo.or.cz' => [
+			'scheme' => 'http',
+			'name' => 'repo.or.cz',
+			'regex' => ['^(.*)$' => '/w$1'],
+		],
+
+		/* Example for adding your own gitlab repository and override all auto-detected values (with their defaults)
+		'gitlab.mysite.com' => array(
+			'icon' => 'deploynaut/img/git.png',
+			'host' => 'gitlab.mysite.com',
+			'name' => 'Gitlab',
+			'regex' => array('.git$' => ''),
+			'commit' => "commit"
+		),
+		*/
+	];
 
 	/**
 	 * Used by the sync task
@@ -109,7 +147,7 @@ class DNProject extends DataObject {
 
 		// add the administrators group as the viewers of the new project
 		$adminGroup = Group::get()->filter('Code', 'administrators')->first();
-		if($adminGroup && $adminGroup->exists()) {
+		if ($adminGroup && $adminGroup->exists()) {
 			$project->Viewers()->add($adminGroup);
 		}
 		return $project;
@@ -122,7 +160,7 @@ class DNProject extends DataObject {
 		$cache = self::get_git_cache();
 		// we only need to clear the tag cache since everything else is cached by SHA, that is for commit and
 		// commit message.
-		$cache->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, ['gitonomy', 'tags', 'project_'.$this->ID]);
+		$cache->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, ['gitonomy', 'tags', 'project_' . $this->ID]);
 	}
 
 	/**
@@ -131,7 +169,7 @@ class DNProject extends DataObject {
 	public static function get_git_cache() {
 		return SS_Cache::factory('gitonomy', 'Output', [
 			'automatic_serialization' => true,
-			'lifetime' => 60*60*24*7 // seven days
+			'lifetime' => 60 * 60 * 24 * 7 // seven days
 		]);
 	}
 
@@ -144,8 +182,8 @@ class DNProject extends DataObject {
 	public function getUsedQuotaMB($round = 2) {
 		$size = 0;
 
-		foreach($this->Environments() as $environment) {
-			foreach($environment->DataArchives()->filter('IsBackup', 0) as $archive) {
+		foreach ($this->Environments() as $environment) {
+			foreach ($environment->DataArchives()->filter('IsBackup', 0) as $archive) {
 				$size += $archive->ArchiveFile()->getAbsoluteSize();
 			}
 		}
@@ -164,7 +202,7 @@ class DNProject extends DataObject {
 	public function getDiskQuotaMB() {
 		$size = $this->getField('DiskQuotaMB');
 
-		if(empty($size)) {
+		if (empty($size)) {
 			$defaults = $this->config()->get('defaults');
 			$size = (isset($defaults['DiskQuotaMB'])) ? $defaults['DiskQuotaMB'] : 0;
 		}
@@ -197,7 +235,7 @@ class DNProject extends DataObject {
 	 */
 	public function DiskQuotaUsagePercent() {
 		$quota = $this->getDiskQuotaMB();
-		if($quota > 0) {
+		if ($quota > 0) {
 			return $this->getUsedQuotaMB() * 100 / $quota;
 		}
 		return 100;
@@ -214,13 +252,13 @@ class DNProject extends DataObject {
 		$controller = Controller::curr();
 		$actionType = $controller->getField('CurrentActionType');
 
-		if(DNRoot::FlagSnapshotsEnabled() && $this->isProjectReady()) {
-			$list->push(new ArrayData(array(
+		if (DNRoot::FlagSnapshotsEnabled() && $this->isProjectReady()) {
+			$list->push(new ArrayData([
 				'Link' => sprintf('naut/project/%s/snapshots', $this->Name),
 				'Title' => 'Snapshots',
 				'IsCurrent' => $this->isSection() && $controller->getAction() == 'snapshots',
 				'IsSection' => $this->isSection() && $actionType == DNRoot::ACTION_SNAPSHOT
-			)));
+			]));
 		}
 
 		$this->extend('updateMenu', $list);
@@ -265,11 +303,11 @@ class DNProject extends DataObject {
 	 * @return boolean
 	 */
 	public function canView($member = null) {
-		if(!$member) {
+		if (!$member) {
 			$member = Member::currentUser();
 		}
 
-		if(Permission::checkMember($member, 'ADMIN')) {
+		if (Permission::checkMember($member, 'ADMIN')) {
 			return true;
 		}
 
@@ -283,16 +321,17 @@ class DNProject extends DataObject {
 	 */
 	public function canRestore($member = null) {
 		if ($this->allowedAny(
-			array(
+			[
 				DNRoot::ALLOW_PROD_SNAPSHOT,
 				DNRoot::ALLOW_NON_PROD_SNAPSHOT
-			),
+			],
 			$member
-		)) {
+		)
+		) {
 			return true;
 		}
 
-		return (bool)$this->Environments()->filterByCallback(function($env) use($member) {
+		return (bool) $this->Environments()->filterByCallback(function ($env) use ($member) {
 			return $env->canRestore($member);
 		})->Count();
 	}
@@ -303,16 +342,17 @@ class DNProject extends DataObject {
 	 */
 	public function canBackup($member = null) {
 		if ($this->allowedAny(
-			array(
+			[
 				DNRoot::ALLOW_PROD_SNAPSHOT,
 				DNRoot::ALLOW_NON_PROD_SNAPSHOT
-			),
+			],
 			$member
-		)) {
+		)
+		) {
 			return true;
 		}
 
-		return (bool)$this->Environments()->filterByCallback(function($env) use($member) {
+		return (bool) $this->Environments()->filterByCallback(function ($env) use ($member) {
 			return $env->canBackup($member);
 		})->Count();
 	}
@@ -323,16 +363,17 @@ class DNProject extends DataObject {
 	 */
 	public function canUploadArchive($member = null) {
 		if ($this->allowedAny(
-			array(
+			[
 				DNRoot::ALLOW_PROD_SNAPSHOT,
 				DNRoot::ALLOW_NON_PROD_SNAPSHOT
-			),
+			],
 			$member
-		)) {
+		)
+		) {
 			return true;
 		}
 
-		return (bool)$this->Environments()->filterByCallback(function($env) use($member) {
+		return (bool) $this->Environments()->filterByCallback(function ($env) use ($member) {
 			return $env->canUploadArchive($member);
 		})->Count();
 	}
@@ -343,16 +384,17 @@ class DNProject extends DataObject {
 	 */
 	public function canDownloadArchive($member = null) {
 		if ($this->allowedAny(
-			array(
+			[
 				DNRoot::ALLOW_PROD_SNAPSHOT,
 				DNRoot::ALLOW_NON_PROD_SNAPSHOT
-			),
+			],
 			$member
-		)) {
+		)
+		) {
 			return true;
 		}
 
-		return (bool)$this->Environments()->filterByCallback(function($env) use($member) {
+		return (bool) $this->Environments()->filterByCallback(function ($env) use ($member) {
 			return $env->canDownloadArchive($member);
 		})->Count();
 	}
@@ -369,9 +411,9 @@ class DNProject extends DataObject {
 	 */
 	public function canCreateEnvironments($member = null) {
 		$envType = $this->AllowedEnvironmentType;
-		if($envType) {
+		if ($envType) {
 			$env = Injector::inst()->get($envType);
-			if($env instanceof EnvironmentCreateBackend) {
+			if ($env instanceof EnvironmentCreateBackend) {
 				return $this->allowed(DNRoot::ALLOW_CREATE_ENVIRONMENT, $member);
 			}
 		}
@@ -407,14 +449,14 @@ class DNProject extends DataObject {
 	 * @return array
 	 */
 	public function getProcessEnv() {
-		if(file_exists($this->getPrivateKeyPath())) {
+		if (file_exists($this->getPrivateKeyPath())) {
 			// Key-pair is available, use it.
-			$processEnv = array(
+			$processEnv = [
 				'IDENT_KEY' => $this->getPrivateKeyPath(),
 				'GIT_SSH' => BASE_PATH . "/deploynaut/git-deploy.sh"
-			);
+			];
 		} else {
-			$processEnv = array();
+			$processEnv = [];
 		}
 		$this->extend('updateProcessEnv', $processEnv);
 
@@ -452,7 +494,7 @@ class DNProject extends DataObject {
 	 * @return DNBranchList
 	 */
 	public function DNBranchList() {
-		if($this->CVSPath && !$this->repoExists()) {
+		if ($this->CVSPath && !$this->repoExists()) {
 			$this->cloneRepo();
 		}
 		return DNBranchList::create($this, $this->DNData());
@@ -464,7 +506,7 @@ class DNProject extends DataObject {
 	 * @return DNReferenceList
 	 */
 	public function DNTagList() {
-		if($this->CVSPath && !$this->repoExists()) {
+		if ($this->CVSPath && !$this->repoExists()) {
 			$this->cloneRepo();
 		}
 		return DNReferenceList::create($this, $this->DNData(), null, null, true);
@@ -474,7 +516,7 @@ class DNProject extends DataObject {
 	 * @return false|Gitonomy\Git\Repository
 	 */
 	public function getRepository() {
-		if(!$this->repoExists()) {
+		if (!$this->repoExists()) {
 			return false;
 		}
 
@@ -489,17 +531,17 @@ class DNProject extends DataObject {
 	 */
 	public function DNEnvironmentList() {
 
-		if(!self::$_current_member_cache) {
+		if (!self::$_current_member_cache) {
 			self::$_current_member_cache = Member::currentUser();
 		}
 
-		if(self::$_current_member_cache === false) {
+		if (self::$_current_member_cache === false) {
 			return new ArrayList();
 		}
 
 		$currentMember = self::$_current_member_cache;
 		return $this->Environments()
-			->filterByCallBack(function($item) use ($currentMember) {
+			->filterByCallBack(function ($item) use ($currentMember) {
 				return $item->canView($currentMember);
 			});
 	}
@@ -518,14 +560,14 @@ class DNProject extends DataObject {
 	 * @return false|DNDeployment
 	 */
 	public function currentBuilds() {
-		if(!isset(self::$relation_cache['currentBuilds.'.$this->ID])) {
-			$currentBuilds = array();
-			foreach($this->Environments() as $env) {
+		if (!isset(self::$relation_cache['currentBuilds.' . $this->ID])) {
+			$currentBuilds = [];
+			foreach ($this->Environments() as $env) {
 				$currentBuilds[$env->Name] = $env->CurrentBuild();
 			}
-			self::$relation_cache['currentBuilds.'.$this->ID] = $currentBuilds;
+			self::$relation_cache['currentBuilds.' . $this->ID] = $currentBuilds;
 		}
-		return self::$relation_cache['currentBuilds.'.$this->ID];
+		return self::$relation_cache['currentBuilds.' . $this->ID];
 	}
 
 	/**
@@ -540,7 +582,7 @@ class DNProject extends DataObject {
 	 * @return string|null
 	 */
 	public function CreateEnvironmentLink() {
-		if($this->canCreateEnvironments()) {
+		if ($this->canCreateEnvironments()) {
 			return $this->Link('createenv');
 		}
 		return null;
@@ -558,11 +600,11 @@ class DNProject extends DataObject {
 	 */
 	public function IsStarred() {
 		$member = Member::currentUser();
-		if($member === null) {
+		if ($member === null) {
 			return false;
 		}
 		$favourited = $this->StarredBy()->filter('MemberID', $member->ID);
-		if($favourited->count() == 0) {
+		if ($favourited->count() == 0) {
 			return false;
 		}
 		return true;
@@ -616,20 +658,20 @@ class DNProject extends DataObject {
 		$this->setEnvironmentFields($fields, $environments);
 
 		$environmentTypes = ClassInfo::implementorsOf('EnvironmentCreateBackend');
-		$types = array();
-		foreach($environmentTypes as $type) {
+		$types = [];
+		foreach ($environmentTypes as $type) {
 			$types[$type] = $type;
 		}
 
-		$fields->addFieldsToTab('Root.Main', array(
+		$fields->addFieldsToTab('Root.Main', [
 			DropdownField::create(
 				'AllowedEnvironmentType',
 				'Allowed Environment Type',
 				$types
 			)->setDescription('This defined which form to show on the front end for '
 				. 'environment creation. This will not affect backend functionality.')
-			->setEmptyString(' - None - '),
-		));
+				->setEmptyString(' - None - '),
+		]);
 
 		return $fields;
 	}
@@ -641,11 +683,11 @@ class DNProject extends DataObject {
 	 */
 	public function setCreateProjectFolderField(&$fields) {
 		// Check if the capistrano project folder exists
-		if(!$this->Name) {
+		if (!$this->Name) {
 			return;
 		}
 
-		if($this->projectFolderExists()) {
+		if ($this->projectFolderExists()) {
 			return;
 		}
 
@@ -677,7 +719,7 @@ class DNProject extends DataObject {
 	 */
 	public function cloneRepo() {
 		// Avoid this being called multiple times in the same request
-		if(!isset(self::$has_cloned_cache[$this->ID])) {
+		if (!isset(self::$has_cloned_cache[$this->ID])) {
 			$fetch = DNGitFetch::create();
 			$fetch->ProjectID = $this->ID;
 			$fetch->write();
@@ -701,7 +743,7 @@ class DNProject extends DataObject {
 	public function onBeforeWrite() {
 		parent::onBeforeWrite();
 
-		if($this->CreateEnvFolder && !file_exists($this->getProjectFolderPath())) {
+		if ($this->CreateEnvFolder && !file_exists($this->getProjectFolderPath())) {
 			mkdir($this->getProjectFolderPath());
 		}
 	}
@@ -709,12 +751,12 @@ class DNProject extends DataObject {
 	public function onAfterWrite() {
 		parent::onAfterWrite();
 
-		if(!$this->CVSPath) {
+		if (!$this->CVSPath) {
 			return;
 		}
 
 		$changedFields = $this->getChangedFields(true, 2);
-		if(isset($changedFields['CVSPath']) || isset($changedFields['Name'])) {
+		if (isset($changedFields['CVSPath']) || isset($changedFields['Name'])) {
 			$this->cloneRepo();
 		}
 	}
@@ -726,22 +768,22 @@ class DNProject extends DataObject {
 		parent::onAfterDelete();
 
 		// Delete related environments
-		foreach($this->Environments() as $env) {
+		foreach ($this->Environments() as $env) {
 			$env->delete();
 		}
 
 		// Delete local repository
-		if(file_exists($this->getLocalCVSPath())) {
+		if (file_exists($this->getLocalCVSPath())) {
 			Filesystem::removeFolder($this->getLocalCVSPath());
 		}
 
 		// Delete project template
-		if(file_exists($this->getProjectFolderPath()) && Config::inst()->get('DNEnvironment', 'allow_web_editing')) {
+		if (file_exists($this->getProjectFolderPath()) && Config::inst()->get('DNEnvironment', 'allow_web_editing')) {
 			Filesystem::removeFolder($this->getProjectFolderPath());
 		}
 
 		// Delete the deploy key
-		if(file_exists($this->getKeyDir())) {
+		if (file_exists($this->getKeyDir())) {
 			Filesystem::removeFolder($this->getKeyDir());
 		}
 	}
@@ -754,7 +796,7 @@ class DNProject extends DataObject {
 	public function getPublicKey() {
 		$key = $this->getPublicKeyPath();
 
-		if(file_exists($key)) {
+		if (file_exists($key)) {
 			return trim(file_get_contents($key));
 		}
 	}
@@ -765,7 +807,7 @@ class DNProject extends DataObject {
 	 * @return string|null
 	 */
 	public function getPublicKeyPath() {
-		if($privateKey = $this->getPrivateKeyPath()) {
+		if ($privateKey = $this->getPrivateKeyPath()) {
 			return $privateKey . '.pub';
 		}
 		return null;
@@ -778,7 +820,7 @@ class DNProject extends DataObject {
 	 */
 	public function getPrivateKeyPath() {
 		$keyDir = $this->getKeyDir();
-		if(!empty($keyDir)) {
+		if (!empty($keyDir)) {
 			$filter = FileNameFilter::create();
 			$name = $filter->filter($this->Name);
 			return $keyDir . '/' . $name;
@@ -793,7 +835,7 @@ class DNProject extends DataObject {
 	 */
 	public function getKeyDir() {
 		$keyDir = $this->DNData()->getKeyDir();
-		if(!$keyDir) {
+		if (!$keyDir) {
 			return null;
 		}
 
@@ -804,79 +846,16 @@ class DNProject extends DataObject {
 	}
 
 	/**
-	 * Setup a gridfield for the environment configs
-	 *
-	 * @param FieldList $fields
-	 * @param GridField $environments
-	 */
-	protected function setEnvironmentFields(&$fields, $environments) {
-		if(!$environments) {
-			return;
-		}
-
-		$environments->getConfig()->addComponent(new GridFieldAddNewMultiClass());
-		$environments->getConfig()->removeComponentsByType('GridFieldAddNewButton');
-		$environments->getConfig()->removeComponentsByType('GridFieldAddExistingAutocompleter');
-		$environments->getConfig()->removeComponentsByType('GridFieldDeleteAction');
-		$environments->getConfig()->removeComponentsByType('GridFieldPageCount');
-		if(Config::inst()->get('DNEnvironment', 'allow_web_editing')) {
-			$addNewRelease = new GridFieldAddNewButton('toolbar-header-right');
-			$addNewRelease->setButtonName('Add');
-			$environments->getConfig()->addComponent($addNewRelease);
-		}
-
-		$fields->addFieldToTab("Root.Main", $environments);
-	}
-
-	/**
 	 * Provide current repository URL to the users.
 	 *
 	 * @return void|string
 	 */
 	public function getRepositoryURL() {
 		$showUrl = Config::inst()->get($this->class, 'show_repository_url');
-		if($showUrl) {
+		if ($showUrl) {
 			return $this->CVSPath;
 		}
 	}
-
-	/**
-	 * Whitelist configuration that describes how to convert a repository URL into a link
-	 * to a web user interface for that URL
-	 *
-	 * Consists of a hash of "full.lower.case.domain" => {configuration} key/value pairs
-	 *
-	 * {configuration} can either be boolean true to auto-detect both the host and the
-	 * name of the UI provider, or a nested array that overrides either one or both
-	 * of the auto-detected valyes
-	 *
-	 * @var array
-	 */
-	static private $repository_interfaces = array(
-		'github.com' => array(
-			'icon' => 'deploynaut/img/github.png',
-			'name' => 'Github.com',
-		),
-		'bitbucket.org' => array(
-			'commit' => 'commits',
-			'name' => 'Bitbucket.org',
-		),
-		'repo.or.cz' => array(
-			'scheme' => 'http',
-			'name' => 'repo.or.cz',
-			'regex' => array('^(.*)$' => '/w$1'),
-		),
-
-		/* Example for adding your own gitlab repository and override all auto-detected values (with their defaults)
-		'gitlab.mysite.com' => array(
-			'icon' => 'deploynaut/img/git.png',
-			'host' => 'gitlab.mysite.com',
-			'name' => 'Gitlab',
-			'regex' => array('.git$' => ''),
-			'commit' => "commit"
-		),
-		*/
-	);
 
 	/**
 	 * Get a ViewableData structure describing the UI tool that lets the user view the repository code
@@ -887,25 +866,25 @@ class DNProject extends DataObject {
 		$interfaces = $this->config()->repository_interfaces;
 
 		/* Look for each whitelisted hostname */
-		foreach($interfaces as $host => $interface) {
+		foreach ($interfaces as $host => $interface) {
 			/* See if the CVS Path is for this hostname, followed by some junk (maybe a port), then the path */
-			if(preg_match('{^[^.]*' . $host . '(.*?)([/a-zA-Z].+)}', $this->CVSPath, $match)) {
+			if (preg_match('{^[^.]*' . $host . '(.*?)([/a-zA-Z].+)}', $this->CVSPath, $match)) {
 
 				$path = $match[2];
 
 				$scheme = isset($interface['scheme']) ? $interface['scheme'] : 'https';
 				$host = isset($interface['host']) ? $interface['host'] : $host;
-				$regex = isset($interface['regex']) ? $interface['regex'] : array('\.git$' => '');
+				$regex = isset($interface['regex']) ? $interface['regex'] : ['\.git$' => ''];
 
 				$components = explode('.', $host);
 
-				foreach($regex as $pattern => $replacement) {
+				foreach ($regex as $pattern => $replacement) {
 					$path = preg_replace('/' . $pattern . '/', $replacement, $path);
 				}
 
 				$uxurl = Controller::join_links($scheme . '://', $host, $path);
 
-				if(array_key_exists('commit', $interface) && $interface['commit'] == false) {
+				if (array_key_exists('commit', $interface) && $interface['commit'] == false) {
 					$commiturl = false;
 				} else {
 					$commiturl = Controller::join_links(
@@ -914,21 +893,14 @@ class DNProject extends DataObject {
 					);
 				}
 
-				return new ArrayData(array(
-					'Name'      => isset($interface['name']) ? $interface['name'] : ucfirst($components[0]),
-					'Icon'      => isset($interface['icon']) ? $interface['icon'] : 'deploynaut/img/git.png',
-					'URL'       => $uxurl,
+				return new ArrayData([
+					'Name' => isset($interface['name']) ? $interface['name'] : ucfirst($components[0]),
+					'Icon' => isset($interface['icon']) ? $interface['icon'] : 'deploynaut/img/git.png',
+					'URL' => $uxurl,
 					'CommitURL' => $commiturl
-				));
+				]);
 			}
 		}
-	}
-
-	/**
-	 * @return string
-	 */
-	protected function getProjectFolderPath() {
-		return sprintf('%s/%s', $this->DNData()->getEnvironmentDir(), $this->Name);
 	}
 
 	/**
@@ -938,7 +910,7 @@ class DNProject extends DataObject {
 	 * @return SS_List
 	 */
 	public function whoIsAllowed($code) {
-		return $this->whoIsAllowedAny(array($code));
+		return $this->whoIsAllowedAny([$code]);
 	}
 
 	/**
@@ -949,7 +921,9 @@ class DNProject extends DataObject {
 	 * @return SS_List
 	 */
 	public function whoIsAllowedAny($codes) {
-		if(!is_array($codes)) $codes = array($codes);
+		if (!is_array($codes)) {
+			$codes = [$codes];
+		}
 
 		$SQLa_codes = Convert::raw2sql($codes);
 		$SQL_codes = join("','", $SQLa_codes);
@@ -975,7 +949,7 @@ class DNProject extends DataObject {
 	 * @return bool
 	 */
 	public function allowed($code, $member = null) {
-		return $this->allowedAny(array($code), $member);
+		return $this->allowedAny([$code], $member);
 	}
 
 	/**
@@ -988,11 +962,11 @@ class DNProject extends DataObject {
 	 */
 	public function groupAllowed($permissionCode, Group $group) {
 		$viewers = $this->Viewers();
-		if(!$viewers->find('ID', $group->ID)) {
+		if (!$viewers->find('ID', $group->ID)) {
 			return false;
 		}
 		$groups = Permission::get_groups_by_permission($permissionCode);
-		if(!$groups->find('ID', $group->ID)) {
+		if (!$groups->find('ID', $group->ID)) {
 			return false;
 		}
 		return true;
@@ -1011,10 +985,12 @@ class DNProject extends DataObject {
 			$member = Member::currentUser();
 		}
 
-		if(Permission::checkMember($member, 'ADMIN')) return true;
+		if (Permission::checkMember($member, 'ADMIN')) {
+			return true;
+		}
 
 		$hits = $this->whoIsAllowedAny($codes)->filter('Member.ID', $member->ID)->count();
-		return ($hits>0 ? true : false);
+		return ($hits > 0 ? true : false);
 	}
 
 	/**
@@ -1023,7 +999,7 @@ class DNProject extends DataObject {
 	 * @return bool
 	 */
 	public function isProjectReady() {
-		if($this->getRunningInitialEnvironmentCreations()->count() > 0) {
+		if ($this->getRunningInitialEnvironmentCreations()->count() > 0) {
 			// We're still creating the initial environments for this project so we're
 			// not quite done
 			return false;
@@ -1032,13 +1008,15 @@ class DNProject extends DataObject {
 		// Provide a hook for further checks. Logic stolen from
 		// {@see DataObject::extendedCan()}
 		$isDone = $this->extend('isProjectReady');
-		if($isDone && is_array($isDone)) {
-			$isDone = array_filter($isDone, function($val) {
+		if ($isDone && is_array($isDone)) {
+			$isDone = array_filter($isDone, function ($val) {
 				return !is_null($val);
 			});
 
 			// If anything returns false then we're not ready.
-			if($isDone) return min($isDone);
+			if ($isDone) {
+				return min($isDone);
+			}
 		}
 
 		return true;
@@ -1084,45 +1062,19 @@ class DNProject extends DataObject {
 	}
 
 	/**
-	 * @return ValidationResult
-	 */
-	protected function validate() {
-		$validation = parent::validate();
-		if($validation->valid()) {
-			if(empty($this->Name)) {
-				return $validation->error('The stack must have a name.');
-			}
-
-			// The name is used to build filepaths so should be restricted
-			if(!preg_match('/^[a-zA-Z0-9][a-zA-Z0-9\-\_]+$/', $this->Name)) {
-				return $validation->error('Project name can only contain alphanumeric, hyphens and underscores.');
-			}
-
-			if(empty($this->CVSPath)) {
-				return $validation->error('You must provide a repository URL.');
-			}
-
-			$existing = DNProject::get()->filter('Name', $this->Name);
-			if($this->ID) {
-				$existing = $existing->exclude('ID', $this->ID);
-			}
-			if($existing->count() > 0) {
-				return $validation->error('A stack already exists with that name.');
-			}
-		}
-		return $validation;
-	}
-
-	/**
 	 * @param Member $member
 	 *
 	 * @return bool
 	 */
 	public function canCreate($member = null) {
-		if(!$member) $member = Member::currentUser();
-		if(!$member) return false;
+		if (!$member) {
+			$member = Member::currentUser();
+		}
+		if (!$member) {
+			return false;
+		}
 
-		if(Permission::checkMember($member, 'ADMIN')) {
+		if (Permission::checkMember($member, 'ADMIN')) {
 			return true;
 		}
 
@@ -1138,15 +1090,15 @@ class DNProject extends DataObject {
 	 */
 	public function getCommit($sha) {
 		$repo = $this->getRepository();
-		if(!$repo) {
+		if (!$repo) {
 			return false;
 		}
 
-		$cachekey = $this->ID.'_commit_'.$sha;
+		$cachekey = $this->ID . '_commit_' . $sha;
 		$cache = self::get_git_cache();
 		if (!($result = $cache->load($cachekey))) {
 			$result = $repo->getCommit($sha);
-			$cache->save($result, $cachekey, ['gitonomy', 'commit', 'project_'.$this->ID]);
+			$cache->save($result, $cachekey, ['gitonomy', 'commit', 'project_' . $this->ID]);
 		}
 		return $result;
 	}
@@ -1156,11 +1108,11 @@ class DNProject extends DataObject {
 	 * @return string
 	 */
 	public function getCommitMessage(\Gitonomy\Git\Commit $commit) {
-		$cachekey = $this->ID.'_message_'.$commit->getRevision();
+		$cachekey = $this->ID . '_message_' . $commit->getRevision();
 		$cache = self::get_git_cache();
 		if (!($result = $cache->load($cachekey))) {
 			$result = $commit->getMessage();
-			$cache->save($result, $cachekey, ['gitonomy', 'message', 'project_'.$this->ID]);
+			$cache->save($result, $cachekey, ['gitonomy', 'message', 'project_' . $this->ID]);
 		}
 		return $result;
 	}
@@ -1170,16 +1122,78 @@ class DNProject extends DataObject {
 	 * @return mixed
 	 */
 	public function getCommitTags(\Gitonomy\Git\Commit $commit) {
-		$cachekey = $this->ID.'_tags_'.$commit->getRevision();
+		$cachekey = $this->ID . '_tags_' . $commit->getRevision();
 		$cache = self::get_git_cache();
 		$result = $cache->load($cachekey);
 		// we check against false, because in many cases the tag list is an empty array
 		if ($result === false) {
 			$repo = $this->getRepository();
-			$result = $tags = $repo->getReferences()->resolveTags($commit->getRevision());
-			$cache->save($result, $cachekey, ['gitonomy', 'tags', 'project_'.$this->ID]);
+			$result = $repo->getReferences()->resolveTags($commit->getRevision());
+			$cache->save($result, $cachekey, ['gitonomy', 'tags', 'project_' . $this->ID]);
 		}
 		return $result;
+	}
+
+	/**
+	 * Setup a gridfield for the environment configs
+	 *
+	 * @param FieldList $fields
+	 * @param GridField $environments
+	 */
+	protected function setEnvironmentFields(&$fields, $environments) {
+		if (!$environments) {
+			return;
+		}
+
+		$environments->getConfig()->addComponent(new GridFieldAddNewMultiClass());
+		$environments->getConfig()->removeComponentsByType('GridFieldAddNewButton');
+		$environments->getConfig()->removeComponentsByType('GridFieldAddExistingAutocompleter');
+		$environments->getConfig()->removeComponentsByType('GridFieldDeleteAction');
+		$environments->getConfig()->removeComponentsByType('GridFieldPageCount');
+		if (Config::inst()->get('DNEnvironment', 'allow_web_editing')) {
+			$addNewRelease = new GridFieldAddNewButton('toolbar-header-right');
+			$addNewRelease->setButtonName('Add');
+			$environments->getConfig()->addComponent($addNewRelease);
+		}
+
+		$fields->addFieldToTab("Root.Main", $environments);
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function getProjectFolderPath() {
+		return sprintf('%s/%s', $this->DNData()->getEnvironmentDir(), $this->Name);
+	}
+
+	/**
+	 * @return ValidationResult
+	 */
+	protected function validate() {
+		$validation = parent::validate();
+		if ($validation->valid()) {
+			if (empty($this->Name)) {
+				return $validation->error('The stack must have a name.');
+			}
+
+			// The name is used to build filepaths so should be restricted
+			if (!preg_match('/^[a-zA-Z0-9][a-zA-Z0-9\-\_]+$/', $this->Name)) {
+				return $validation->error('Project name can only contain alphanumeric, hyphens and underscores.');
+			}
+
+			if (empty($this->CVSPath)) {
+				return $validation->error('You must provide a repository URL.');
+			}
+
+			$existing = DNProject::get()->filter('Name', $this->Name);
+			if ($this->ID) {
+				$existing = $existing->exclude('ID', $this->ID);
+			}
+			if ($existing->count() > 0) {
+				return $validation->error('A stack already exists with that name.');
+			}
+		}
+		return $validation;
 	}
 
 }
