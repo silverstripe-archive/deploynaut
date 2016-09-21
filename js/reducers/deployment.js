@@ -14,11 +14,7 @@ const initialState = {
 	// this is the "list" (actually an object) of all deployments that we fetched, updated etc keyed by their unique
 	// id.
 	list: {},
-	pagination: {
-		total_pages: 0,
-		page_length: 4,
-		current_page: 1
-	}
+	current_page: 1
 };
 
 module.exports = function deployment(state, action) {
@@ -27,8 +23,13 @@ module.exports = function deployment(state, action) {
 	}
 
 	switch (action.type) {
-		case actions.SUCCEED_UPCOMING_DEPLOYMENTS_GET:
-		case actions.SUCCEED_DEPLOY_HISTORY_GET: {
+		case actions.SET_DEPLOY_HISTORY_PAGE: {
+			return _.assign({}, state, {
+				current_page: action.page
+			});
+		}
+		case actions.SUCCEED_DEPLOY_HISTORY_GET:
+		case actions.SUCCEED_UPCOMING_DEPLOYMENTS_GET: {
 			// get current list
 			const newList = _.assign({}, state.list);
 			// add or update the entries in the current list
@@ -37,11 +38,6 @@ module.exports = function deployment(state, action) {
 			}
 			return _.assign({}, state, {
 				list: newList,
-				pagination: {
-					total_pages: action.data.total_pages || state.pagination.total_pages,
-					page_length: action.data.page_length || state.pagination.page_length,
-					current_page: action.data.current_page || state.pagination.current_page
-				}
 			});
 		}
 		case actions.NEW_DEPLOYMENT:

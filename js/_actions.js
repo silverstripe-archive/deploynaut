@@ -126,6 +126,18 @@ export function failDeployHistoryGet(err) {
 	};
 }
 
+export const SET_DEPLOY_HISTORY_PAGE = 'SET_DEPLOY_HISTORY_PAGE';
+export function setDeployHistoryPage(page) {
+	if(typeof page === 'undefined') {
+		page = 1;
+	}
+
+	return {
+		type: SET_DEPLOY_HISTORY_PAGE,
+		page: page
+	};
+}
+
 export const START_CURRENT_BUILD_STATUS_GET = 'START_CURRENT_BUILD_STATUS_GET';
 export function startCurrentBuildStatusGet() {
 	return {type: START_DEPLOY_HISTORY_GET};
@@ -156,14 +168,10 @@ export function getRevisions() {
 	};
 }
 
-export function getDeployHistory(page) {
-	if (typeof page === 'undefined') {
-		page = 1; // eslint-disable-line no-param-reassign
-	}
-
+export function getDeployHistory() {
 	return (dispatch, getState) => {
 		dispatch(startDeployHistoryGet());
-		return deployAPI.call(getState, `/history?page=${page}`, 'get')
+		return deployAPI.call(getState, '/history', 'get')
 			.then(json => dispatch(succeedDeployHistoryGet(json)))
 			.catch(err => dispatch(failDeployHistoryGet(err)));
 	};
@@ -358,8 +366,7 @@ export function bypassApproval() {
 			summary: getState().plan.summary_of_changes
 		})
 			.then(function(data) {
-				dispatch(succeedApprovalBypass(data));
-				return dispatch(getDeployHistory(0));
+				return dispatch(succeedApprovalBypass(data));
 			})
 			.catch((error) => dispatch(failApprovalBypass(error)));
 	};

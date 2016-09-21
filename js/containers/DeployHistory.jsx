@@ -70,12 +70,14 @@ const mapStateToProps = function(state) {
 
 	// try to find the current build in the list of all deployments
 	let historyList = {};
+	let numDeployments = 0;
 	if (typeof state.deployment.list === "object") {
 		historyList = _.filter(state.deployment.list, function(deploy) {
 			switch (deploy.state) {
 				case "Completed":
 				case "Invalid":
 				case "Failed":
+					numDeployments += 1;
 					return true;
 				default:
 					return false;
@@ -86,11 +88,26 @@ const mapStateToProps = function(state) {
 		return Date.parse(b.date_started) - Date.parse(a.date_started);
 	});
 
+	const perPage = 4;
+	// only show paginated result, recalc
+	const start = (state.deployment.current_page - 1) * perPage;
+	const end = start + perPage;
+	const totalPages = Math.ceil(numDeployments / perPage);
+
+	const paginatedList = {};
+	let pos = 0;
+	Object.keys(historyList).forEach(function(key) {
+		if (pos >= start && pos < end) {
+			paginatedList[key] = historyList[key];
+		}
+		pos++;
+	});
+
 	return {
-		list: historyList,
-		page_length: state.deployment.pagination.page_length,
-		total_pages: state.deployment.pagination.total_pages,
-		current_page: state.deployment.pagination.current_page,
+		list: paginatedList,
+		page_length: perPage,
+		total_pages: totalPages,
+		current_page: state.deployment.current_page,
 		error: state.deployment.error
 	};
 };
@@ -102,7 +119,7 @@ const mapDispatchToProps = function(dispatch) {
 				.then(() => dispatch(actions.openPlanDialog()));
 		},
 		onPageClick: function(page) {
-			dispatch(actions.getDeployHistory(page));
+			dispatch(actions.setDeployHistoryPage(page));
 		}
 	};
 };
