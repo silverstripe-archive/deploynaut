@@ -35,6 +35,90 @@
  */
 class DNEnvironment extends DataObject {
 
+	const UAT = 'UAT';
+
+	const PRODUCTION = 'Production';
+
+	const UNSPECIFIED = 'Unspecified';
+
+	/**
+	 * @var array
+	 */
+	public static $db = [
+		"Filename" => "Varchar(255)",
+		"Name" => "Varchar(255)",
+		"URL" => "Varchar(255)",
+		"BackendIdentifier" => "Varchar(255)", // Injector identifier of the DeploymentBackend
+		"Usage" => "Enum('Production, UAT, Test, Unspecified', 'Unspecified')"
+	];
+
+	/**
+	 * @var array
+	 */
+	public static $has_many = [
+		"Deployments" => "DNDeployment",
+		"DataArchives" => "DNDataArchive",
+	];
+
+	/**
+	 * @var array
+	 */
+	public static $many_many = [
+		"Viewers" => "Member", // Who can view this environment
+		"ViewerGroups" => "Group",
+		"Deployers" => "Member", // Who can deploy to this environment
+		"DeployerGroups" => "Group",
+		"CanRestoreMembers" => "Member", // Who can restore archive files to this environment
+		"CanRestoreGroups" => "Group",
+		"CanBackupMembers" => "Member", // Who can backup archive files from this environment
+		"CanBackupGroups" => "Group",
+		"ArchiveUploaders" => "Member", // Who can upload archive files linked to this environment
+		"ArchiveUploaderGroups" => "Group",
+		"ArchiveDownloaders" => "Member", // Who can download archive files from this environment
+		"ArchiveDownloaderGroups" => "Group",
+		"ArchiveDeleters" => "Member", // Who can delete archive files from this environment,
+		"ArchiveDeleterGroups" => "Group",
+	];
+
+	/**
+	 * @var array
+	 */
+	public static $summary_fields = [
+		"Name" => "Environment Name",
+		"Usage" => "Usage",
+		"URL" => "URL",
+		"DeployersList" => "Can Deploy List",
+		"CanRestoreMembersList" => "Can Restore List",
+		"CanBackupMembersList" => "Can Backup List",
+		"ArchiveUploadersList" => "Can Upload List",
+		"ArchiveDownloadersList" => "Can Download List",
+		"ArchiveDeletersList" => "Can Delete List",
+	];
+
+	/**
+	 * @var array
+	 */
+	public static $searchable_fields = [
+		"Name",
+	];
+
+	private static $singular_name = 'Capistrano Environment';
+
+	private static $plural_name = 'Capistrano Environments';
+
+	/**
+	 * @var string
+	 */
+	private static $default_sort = 'Name';
+
+	/**
+	 * @var array
+	 */
+	public static $has_one = [
+		"Project" => "DNProject",
+		"CreateEnvironment" => "DNCreateEnvironment"
+	];
+
 	/**
 	 * If this is set to a full pathfile, it will be used as template
 	 * file when creating a new capistrano environment config file.
@@ -57,9 +141,9 @@ class DNEnvironment extends DataObject {
 	/**
 	 * @var array
 	 */
-	private static $casting = array(
+	private static $casting = [
 		'DeployHistory' => 'Text'
-	);
+	];
 
 	/**
 	 * Allowed backends. A map of Injector identifier to human-readable label.
@@ -67,91 +151,7 @@ class DNEnvironment extends DataObject {
 	 * @config
 	 * @var array
 	 */
-	private static $allowed_backends = array();
-
-	/**
-	 * @var array
-	 */
-	public static $db = array(
-		"Filename" => "Varchar(255)",
-		"Name" => "Varchar(255)",
-		"URL" => "Varchar(255)",
-		"BackendIdentifier" => "Varchar(255)", // Injector identifier of the DeploymentBackend
-		"Usage" => "Enum('Production, UAT, Test, Unspecified', 'Unspecified')"
-	);
-
-	/**
-	 * @var array
-	 */
-	public static $has_one = array(
-		"Project" => "DNProject",
-		"CreateEnvironment" => "DNCreateEnvironment"
-	);
-
-	/**
-	 * @var array
-	 */
-	public static $has_many = array(
-		"Deployments" => "DNDeployment",
-		"DataArchives" => "DNDataArchive",
-	);
-
-	/**
-	 * @var array
-	 */
-	public static $many_many = array(
-		"Viewers"            => "Member", // Who can view this environment
-		"ViewerGroups"       => "Group",
-		"Deployers"          => "Member", // Who can deploy to this environment
-		"DeployerGroups" => "Group",
-		"CanRestoreMembers"  => "Member", // Who can restore archive files to this environment
-		"CanRestoreGroups"  => "Group",
-		"CanBackupMembers"   => "Member", // Who can backup archive files from this environment
-		"CanBackupGroups"   => "Group",
-		"ArchiveUploaders"   => "Member", // Who can upload archive files linked to this environment
-		"ArchiveUploaderGroups" => "Group",
-		"ArchiveDownloaders" => "Member", // Who can download archive files from this environment
-		"ArchiveDownloaderGroups" => "Group",
-		"ArchiveDeleters"    => "Member", // Who can delete archive files from this environment,
-		"ArchiveDeleterGroups" => "Group",
-	);
-
-	/**
-	 * @var array
-	 */
-	public static $summary_fields = array(
-		"Name" => "Environment Name",
-		"Usage" => "Usage",
-		"URL" => "URL",
-		"DeployersList" => "Can Deploy List",
-		"CanRestoreMembersList" => "Can Restore List",
-		"CanBackupMembersList" => "Can Backup List",
-		"ArchiveUploadersList" => "Can Upload List",
-		"ArchiveDownloadersList" => "Can Download List",
-		"ArchiveDeletersList"  => "Can Delete List",
-	);
-
-	private static $singular_name = 'Capistrano Environment';
-
-	private static $plural_name = 'Capistrano Environments';
-
-	/**
-	 * @var array
-	 */
-	public static $searchable_fields = array(
-		"Name",
-	);
-
-	/**
-	 * @var string
-	 */
-	private static $default_sort = 'Name';
-
-	const UAT = 'UAT';
-
-	const PRODUCTION = 'Production';
-
-	const UNSPECIFIED = 'Unspecified';
+	private static $allowed_backends = [];
 
 	/**
 	 * Used by the sync task
@@ -180,8 +180,8 @@ class DNEnvironment extends DataObject {
 	 */
 	public function Backend() {
 		$backends = array_keys($this->config()->get('allowed_backends', Config::FIRST_SET));
-		switch(sizeof($backends)) {
-		// Nothing allowed, use the default value "DeploymentBackend"
+		switch (sizeof($backends)) {
+			// Nothing allowed, use the default value "DeploymentBackend"
 			case 0:
 				$backend = "DeploymentBackend";
 				break;
@@ -194,7 +194,7 @@ class DNEnvironment extends DataObject {
 			// Multiple choices, use our choice if it's legal, otherwise default to the first item on the list
 			default:
 				$backend = $this->BackendIdentifier;
-				if(!in_array($backend, $backends)) {
+				if (!in_array($backend, $backends)) {
 					$backend = $backends[0];
 				}
 		}
@@ -217,12 +217,12 @@ class DNEnvironment extends DataObject {
 		$controller = Controller::curr();
 		$actionType = $controller->getField('CurrentActionType');
 
-		$list->push(new ArrayData(array(
+		$list->push(new ArrayData([
 			'Link' => sprintf('naut/project/%s/environment/%s', $this->Project()->Name, $this->Name),
 			'Title' => 'Deployments',
 			'IsCurrent' => $this->isCurrent(),
 			'IsSection' => $this->isSection() && $actionType == DNRoot::ACTION_DEPLOY
-		)));
+		]));
 
 		$this->extend('updateMenu', $list);
 
@@ -256,14 +256,14 @@ class DNEnvironment extends DataObject {
 
 	public function getBareURL() {
 		$url = parse_url($this->URL);
-		if(isset($url['host'])) {
+		if (isset($url['host'])) {
 			return strtolower($url['host']);
 		}
 	}
 
 	public function getBareDefaultURL() {
 		$url = parse_url($this->getDefaultURL());
-		if(isset($url['host'])) {
+		if (isset($url['host'])) {
 			return strtolower($url['host']);
 		}
 	}
@@ -275,22 +275,22 @@ class DNEnvironment extends DataObject {
 	 * @return boolean
 	 */
 	public function canView($member = null) {
-		if(!$member) {
+		if (!$member) {
 			$member = Member::currentUser();
 		}
-		if(!$member) {
+		if (!$member) {
 			return false;
 		}
 		// Must be logged in to check permissions
 
-		if(Permission::checkMember($member, 'ADMIN')) {
+		if (Permission::checkMember($member, 'ADMIN')) {
 			return true;
 		}
 
 		// if no Viewers or ViewerGroups defined, fallback to DNProject::canView permissions
-		if($this->Viewers()->exists() || $this->ViewerGroups()->exists()) {
+		if ($this->Viewers()->exists() || $this->ViewerGroups()->exists()) {
 			return $this->Viewers()->byID($member->ID)
-				|| $member->inGroups($this->ViewerGroups());
+			|| $member->inGroups($this->ViewerGroups());
 		}
 
 		return $this->Project()->canView($member);
@@ -303,22 +303,26 @@ class DNEnvironment extends DataObject {
 	 * @return boolean
 	 */
 	public function canDeploy($member = null) {
-		if(!$member) {
+		if (!$member) {
 			$member = Member::currentUser();
 		}
-		if(!$member) {
+		if (!$member) {
 			return false;
 		}
 		// Must be logged in to check permissions
 
 		if ($this->Usage === self::PRODUCTION || $this->Usage === self::UNSPECIFIED) {
-			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_DEPLOYMENT, $member)) return true;
+			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_DEPLOYMENT, $member)) {
+				return true;
+			}
 		} else {
-			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_DEPLOYMENT, $member)) return true;
+			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_DEPLOYMENT, $member)) {
+				return true;
+			}
 		}
 
 		return $this->Deployers()->byID($member->ID)
-			|| $member->inGroups($this->DeployerGroups());
+		|| $member->inGroups($this->DeployerGroups());
 	}
 
 	/**
@@ -338,22 +342,26 @@ class DNEnvironment extends DataObject {
 	 * @return boolean true if $member can restore, and false if they can't.
 	 */
 	public function canRestore($member = null) {
-		if(!$member) {
+		if (!$member) {
 			$member = Member::currentUser();
 		}
-		if(!$member) {
+		if (!$member) {
 			return false;
 		}
 		// Must be logged in to check permissions
 
 		if ($this->Usage === self::PRODUCTION || $this->Usage === self::UNSPECIFIED) {
-			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) return true;
+			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) {
+				return true;
+			}
 		} else {
-			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) return true;
+			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) {
+				return true;
+			}
 		}
 
 		return $this->CanRestoreMembers()->byID($member->ID)
-			|| $member->inGroups($this->CanRestoreGroups());
+		|| $member->inGroups($this->CanRestoreGroups());
 	}
 
 	/**
@@ -365,26 +373,30 @@ class DNEnvironment extends DataObject {
 	 */
 	public function canBackup($member = null) {
 		$project = $this->Project();
-		if($project->HasDiskQuota() && $project->HasExceededDiskQuota()) {
+		if ($project->HasDiskQuota() && $project->HasExceededDiskQuota()) {
 			return false;
 		}
 
-		if(!$member) {
+		if (!$member) {
 			$member = Member::currentUser();
 		}
 		// Must be logged in to check permissions
-		if(!$member) {
+		if (!$member) {
 			return false;
 		}
 
 		if ($this->Usage === self::PRODUCTION || $this->Usage === self::UNSPECIFIED) {
-			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) return true;
+			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) {
+				return true;
+			}
 		} else {
-			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) return true;
+			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) {
+				return true;
+			}
 		}
 
 		return $this->CanBackupMembers()->byID($member->ID)
-			|| $member->inGroups($this->CanBackupGroups());
+		|| $member->inGroups($this->CanBackupGroups());
 	}
 
 	/**
@@ -400,26 +412,30 @@ class DNEnvironment extends DataObject {
 	 */
 	public function canUploadArchive($member = null) {
 		$project = $this->Project();
-		if($project->HasDiskQuota() && $project->HasExceededDiskQuota()) {
+		if ($project->HasDiskQuota() && $project->HasExceededDiskQuota()) {
 			return false;
 		}
 
-		if(!$member) {
+		if (!$member) {
 			$member = Member::currentUser();
 		}
-		if(!$member) {
+		if (!$member) {
 			return false;
 		}
 		// Must be logged in to check permissions
 
 		if ($this->Usage === self::PRODUCTION || $this->Usage === self::UNSPECIFIED) {
-			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) return true;
+			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) {
+				return true;
+			}
 		} else {
-			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) return true;
+			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) {
+				return true;
+			}
 		}
 
 		return $this->ArchiveUploaders()->byID($member->ID)
-			|| $member->inGroups($this->ArchiveUploaderGroups());
+		|| $member->inGroups($this->ArchiveUploaderGroups());
 	}
 
 	/**
@@ -430,22 +446,26 @@ class DNEnvironment extends DataObject {
 	 * @return boolean true if $member can download archives from this environment, false if they can't.
 	 */
 	public function canDownloadArchive($member = null) {
-		if(!$member) {
+		if (!$member) {
 			$member = Member::currentUser();
 		}
-		if(!$member) {
+		if (!$member) {
 			return false;
 		}
 		// Must be logged in to check permissions
 
 		if ($this->Usage === self::PRODUCTION || $this->Usage === self::UNSPECIFIED) {
-			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) return true;
+			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) {
+				return true;
+			}
 		} else {
-			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) return true;
+			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) {
+				return true;
+			}
 		}
 
 		return $this->ArchiveDownloaders()->byID($member->ID)
-			|| $member->inGroups($this->ArchiveDownloaderGroups());
+		|| $member->inGroups($this->ArchiveDownloaderGroups());
 	}
 
 	/**
@@ -456,23 +476,28 @@ class DNEnvironment extends DataObject {
 	 * @return boolean true if $member can delete archives from this environment, false if they can't.
 	 */
 	public function canDeleteArchive($member = null) {
-		if(!$member) {
+		if (!$member) {
 			$member = Member::currentUser();
 		}
-		if(!$member) {
+		if (!$member) {
 			return false;
 		}
 		// Must be logged in to check permissions
 
 		if ($this->Usage === self::PRODUCTION || $this->Usage === self::UNSPECIFIED) {
-			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) return true;
+			if ($this->Project()->allowed(DNRoot::ALLOW_PROD_SNAPSHOT, $member)) {
+				return true;
+			}
 		} else {
-			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) return true;
+			if ($this->Project()->allowed(DNRoot::ALLOW_NON_PROD_SNAPSHOT, $member)) {
+				return true;
+			}
 		}
 
 		return $this->ArchiveDeleters()->byID($member->ID)
-			|| $member->inGroups($this->ArchiveDeleterGroups());
+		|| $member->inGroups($this->ArchiveDeleterGroups());
 	}
+
 	/**
 	 * Get a string of groups/people that are allowed to deploy to this environment.
 	 * Used in DNRoot_project.ss to list {@link Member}s who have permission to perform this action.
@@ -584,23 +609,23 @@ class DNEnvironment extends DataObject {
 		// The DeployHistory function is far too slow to use for this
 
 		/** @var DNDeployment $deploy */
-		$deploy = DNDeployment::get()->filter(array(
+		$deploy = DNDeployment::get()->filter([
 			'EnvironmentID' => $this->ID,
 			'State' => DNDeployment::STATE_COMPLETED
-		))->sort('LastEdited DESC')->first();
+		])->sort('LastEdited DESC')->first();
 
-		if(!$deploy || (!$deploy->SHA)) {
+		if (!$deploy || (!$deploy->SHA)) {
 			return false;
 		}
 
 		$repo = $this->Project()->getRepository();
-		if(!$repo) {
+		if (!$repo) {
 			return $deploy;
 		}
 
 		try {
 			$commit = $repo->getCommit($deploy->SHA);
-			if($commit) {
+			if ($commit) {
 				$deploy->Message = Convert::raw2xml($commit->getMessage());
 				$deploy->Committer = Convert::raw2xml($commit->getCommitterName());
 				$deploy->CommitDate = $commit->getCommitterDate()->Format('d/m/Y g:ia');
@@ -608,7 +633,8 @@ class DNEnvironment extends DataObject {
 				$deploy->AuthorDate = $commit->getAuthorDate()->Format('d/m/Y g:ia');
 			}
 			// We can't find this SHA, so we ignore adding a commit message to the deployment
-		} catch(Exception $ex) { }
+		} catch (Exception $ex) {
+		}
 
 		return $deploy;
 	}
@@ -619,9 +645,8 @@ class DNEnvironment extends DataObject {
 	 * @return \ArrayList
 	 */
 	public function DeployHistory($orderBy = '') {
-
 		$sort = [];
-		if($orderBy != '') {
+		if ($orderBy != '') {
 			$sort[$orderBy] = 'DESC';
 		}
 		// default / fallback sort order
@@ -634,7 +659,7 @@ class DNEnvironment extends DataObject {
 				DNDeployment::STATE_FAILED,
 				DNDeployment::STATE_INVALID
 			])
-			->sort('LastEdited DESC');
+			->sort($sort);
 	}
 
 	/**
@@ -652,35 +677,6 @@ class DNEnvironment extends DataObject {
 				DNDeployment::STATE_DEPLOYING,
 			])
 			->sort('LastEdited DESC');
-	}
-
-	/**
-	 * @param string $sha
-	 * @return array
-	 */
-	protected function getCommitData($sha) {
-		try {
-			$repo = $this->Project()->getRepository();
-			if($repo !== false) {
-				$commit = new \Gitonomy\Git\Commit($repo, $sha);
-				return [
-					'AuthorName' => (string)Convert::raw2xml($commit->getAuthorName()),
-					'AuthorEmail' => (string)Convert::raw2xml($commit->getAuthorEmail()),
-					'Message' => (string)Convert::raw2xml($commit->getMessage()),
-					'ShortHash' => Convert::raw2xml($commit->getFixedShortHash(8)),
-					'Hash' => Convert::raw2xml($commit->getHash())
-				];
-			}
-		} catch(\Gitonomy\Git\Exception\ReferenceNotFoundException $exc) {
-			SS_Log::log($exc, SS_Log::WARN);
-		}
-		return array(
-			'AuthorName' => '(unknown)',
-			'AuthorEmail' => '(unknown)',
-			'Message' => '(unknown)',
-			'ShortHash' => $sha,
-			'Hash' => '(unknown)',
-		);
 	}
 
 	/**
@@ -710,32 +706,6 @@ class DNEnvironment extends DataObject {
 		return $environment && $environment->ID == $this->ID;
 	}
 
-
-	/**
-	 * Build a set of multi-select fields for assigning permissions to a pair of group and member many_many relations
-	 *
-	 * @param string $groupField Group field name
-	 * @param string $memberField Member field name
-	 * @param array $groups List of groups
-	 * @param array $members List of members
-	 * @return FieldGroup
-	 */
-	protected function buildPermissionField($groupField, $memberField, $groups, $members) {
-		return FieldGroup::create(
-			ListboxField::create($groupField, false, $groups)
-				->setMultiple(true)
-				->setAttribute('data-placeholder', 'Groups')
-				->setAttribute('placeholder', 'Groups')
-				->setAttribute('style', 'width: 400px;'),
-
-			ListboxField::create($memberField, false, $members)
-				->setMultiple(true)
-				->setAttribute('data-placeholder', 'Members')
-				->setAttribute('placeholder', 'Members')
-				->setAttribute('style', 'width: 400px;')
-		);
-	}
-
 	/**
 	 * @return FieldList
 	 */
@@ -743,23 +713,23 @@ class DNEnvironment extends DataObject {
 		$fields = new FieldList(new TabSet('Root'));
 
 		$project = $this->Project();
-		if($project && $project->exists()) {
+		if ($project && $project->exists()) {
 			$viewerGroups = $project->Viewers();
 			$groups = $viewerGroups->sort('Title')->map()->toArray();
-			$members = array();
-			foreach($viewerGroups as $group) {
-				foreach($group->Members()->map() as $k => $v) {
+			$members = [];
+			foreach ($viewerGroups as $group) {
+				foreach ($group->Members()->map() as $k => $v) {
 					$members[$k] = $v;
 				}
 			}
 			asort($members);
 		} else {
-			$groups = array();
-			$members = array();
+			$groups = [];
+			$members = [];
 		}
 
 		// Main tab
-		$fields->addFieldsToTab('Root.Main', array(
+		$fields->addFieldsToTab('Root.Main', [
 			// The Main.ProjectID
 			TextField::create('ProjectName', 'Project')
 				->setValue(($project = $this->Project()) ? $project->Name : null)
@@ -768,7 +738,6 @@ class DNEnvironment extends DataObject {
 			// The Main.Name
 			TextField::create('Name', 'Environment name')
 				->setDescription('A descriptive name for this environment, e.g. staging, uat, production'),
-
 
 			$this->obj('Usage')->scaffoldFormField('Environment usage'),
 
@@ -780,18 +749,18 @@ class DNEnvironment extends DataObject {
 			TextField::create('Filename')
 				->setDescription('The capistrano environment file name')
 				->performReadonlyTransformation(),
-		));
+		]);
 
 		// Backend identifier - pick from a named list of configurations specified in YML config
 		$backends = $this->config()->get('allowed_backends', Config::FIRST_SET);
 		// If there's only 1 backend, then user selection isn't needed
-		if(sizeof($backends) > 1) {
+		if (sizeof($backends) > 1) {
 			$fields->addFieldToTab('Root.Main', DropdownField::create('BackendIdentifier', 'Deployment backend')
 				->setSource($backends)
 				->setDescription('What kind of deployment system should be used to deploy to this environment'));
 		}
 
-		$fields->addFieldsToTab('Root.UserPermissions', array(
+		$fields->addFieldsToTab('Root.UserPermissions', [
 			// The viewers of the environment
 			$this
 				->buildPermissionField('ViewerGroups', 'Viewers', $groups, $members)
@@ -851,17 +820,17 @@ their own uploads.
 PHP
 				)
 
-		));
+		]);
 
 		// The Main.DeployConfig
-		if($this->Project()->exists()) {
+		if ($this->Project()->exists()) {
 			$this->setDeployConfigurationFields($fields);
 		}
 
 		// The DataArchives
 		$dataArchiveConfig = GridFieldConfig_RecordViewer::create();
 		$dataArchiveConfig->removeComponentsByType('GridFieldAddNewButton');
-		if(class_exists('GridFieldBulkManager')) {
+		if (class_exists('GridFieldBulkManager')) {
 			$dataArchiveConfig->addComponent(new GridFieldBulkManager());
 		}
 		$dataArchive = GridField::create('DataArchives', 'Data Archives', $this->DataArchives(), $dataArchiveConfig);
@@ -870,7 +839,7 @@ PHP
 		// Deployments
 		$deploymentsConfig = GridFieldConfig_RecordEditor::create();
 		$deploymentsConfig->removeComponentsByType('GridFieldAddNewButton');
-		if(class_exists('GridFieldBulkManager')) {
+		if (class_exists('GridFieldBulkManager')) {
 			$deploymentsConfig->addComponent(new GridFieldBulkManager());
 		}
 		$deployments = GridField::create('Deployments', 'Deployments', $this->Deployments(), $deploymentsConfig);
@@ -891,34 +860,10 @@ PHP
 	}
 
 	/**
-	 * @param FieldList $fields
-	 */
-	protected function setDeployConfigurationFields(&$fields) {
-		if(!$this->config()->get('allow_web_editing')) {
-			return;
-		}
-
-		if($this->envFileExists()) {
-			$deployConfig = new TextareaField('DeployConfig', 'Deploy config', $this->getEnvironmentConfig());
-			$deployConfig->setRows(40);
-			$fields->insertAfter($deployConfig, 'Filename');
-			return;
-		}
-
-		$warning = 'Warning: This environment doesn\'t have deployment configuration.';
-		$noDeployConfig = new LabelField('noDeployConfig', $warning);
-		$noDeployConfig->addExtraClass('message warning');
-		$fields->insertAfter($noDeployConfig, 'Filename');
-		$createConfigField = new CheckboxField('CreateEnvConfig', 'Create Config');
-		$createConfigField->setDescription('Would you like to create the capistrano deploy configuration?');
-		$fields->insertAfter($createConfigField, 'noDeployConfig');
-	}
-
-	/**
 	 */
 	public function onBeforeWrite() {
 		parent::onBeforeWrite();
-		if($this->Name && $this->Name . '.rb' != $this->Filename) {
+		if ($this->Name && $this->Name . '.rb' != $this->Filename) {
 			$this->Filename = $this->Name . '.rb';
 		}
 		$this->checkEnvironmentPath();
@@ -928,48 +873,16 @@ PHP
 	public function onAfterWrite() {
 		parent::onAfterWrite();
 
-		if($this->Usage === self::PRODUCTION || $this->Usage === self::UAT) {
+		if ($this->Usage === self::PRODUCTION || $this->Usage === self::UAT) {
 			$conflicting = DNEnvironment::get()
 				->filter('ProjectID', $this->ProjectID)
 				->filter('Usage', $this->Usage)
 				->exclude('ID', $this->ID);
 
-			foreach($conflicting as $otherEnvironment) {
+			foreach ($conflicting as $otherEnvironment) {
 				$otherEnvironment->Usage = self::UNSPECIFIED;
 				$otherEnvironment->write();
 			}
-		}
-	}
-
-
-	/**
-	 * Ensure that environment paths are setup on the local filesystem
-	 */
-	protected function checkEnvironmentPath() {
-		// Create folder if it doesn't exist
-		$configDir = dirname($this->getConfigFilename());
-		if(!file_exists($configDir) && $configDir) {
-			mkdir($configDir, 0777, true);
-		}
-	}
-
-	/**
-	 * Write the deployment config file to filesystem
-	 */
-	protected function writeConfigFile() {
-		if(!$this->config()->get('allow_web_editing')) {
-			return;
-		}
-
-		// Create a basic new environment config from a template
-		if(!$this->envFileExists()
-			&& $this->Filename
-			&& $this->CreateEnvConfig
-		) {
-			$templateFile = $this->config()->template_file ?: BASE_PATH . '/deploynaut/environment.template';
-			file_put_contents($this->getConfigFilename(), file_get_contents($templateFile));
-		} else if($this->envFileExists() && $this->DeployConfig) {
-			file_put_contents($this->getConfigFilename(), $this->DeployConfig);
 		}
 	}
 
@@ -979,34 +892,14 @@ PHP
 	public function onAfterDelete() {
 		parent::onAfterDelete();
 		// Create a basic new environment config from a template
-		if($this->config()->get('allow_web_editing') && $this->envFileExists()) {
+		if ($this->config()->get('allow_web_editing') && $this->envFileExists()) {
 			unlink($this->getConfigFilename());
 		}
 
 		$create = $this->CreateEnvironment();
-		if($create && $create->exists()) {
+		if ($create && $create->exists()) {
 			$create->delete();
 		}
-	}
-
-	/**
-	 * @return string
-	 */
-	protected function getEnvironmentConfig() {
-		if(!$this->envFileExists()) {
-			return '';
-		}
-		return file_get_contents($this->getConfigFilename());
-	}
-
-	/**
-	 * @return boolean
-	 */
-	protected function envFileExists() {
-		if(!$this->getConfigFilename()) {
-			return false;
-		}
-		return file_exists($this->getConfigFilename());
 	}
 
 	/**
@@ -1015,10 +908,10 @@ PHP
 	 * @return string
 	 */
 	public function getConfigFilename() {
-		if(!$this->Project()->exists()) {
+		if (!$this->Project()->exists()) {
 			return '';
 		}
-		if(!$this->Filename) {
+		if (!$this->Filename) {
 			return '';
 		}
 		return $this->DNData()->getEnvironmentDir() . '/' . $this->Project()->Name . '/' . $this->Filename;
@@ -1034,39 +927,28 @@ PHP
 	 */
 	public static function array_to_viewabledata($array) {
 		// Don't transform non-arrays
-		if(!is_array($array)) {
+		if (!is_array($array)) {
 			return $array;
 		}
 
 		// Figure out whether this is indexed or associative
 		$keys = array_keys($array);
 		$assoc = ($keys != array_keys($keys));
-		if($assoc) {
+		if ($assoc) {
 			// Treat as viewable data
-			$data = new ArrayData(array());
-			foreach($array as $key => $value) {
+			$data = new ArrayData([]);
+			foreach ($array as $key => $value) {
 				$data->setField($key, self::array_to_viewabledata($value));
 			}
 			return $data;
 		} else {
 			// Treat this as basic non-associative list
 			$list = new ArrayList();
-			foreach($array as $value) {
+			foreach ($array as $value) {
 				$list->push(self::array_to_viewabledata($value));
 			}
 			return $list;
 		}
-	}
-
-	protected function validate() {
-		$result = parent::validate();
-		$backend = $this->Backend();
-
-		if(strcasecmp('test', $this->Name) === 0 && get_class($backend) == 'CapistranoDeploymentBackend') {
-			$result->error('"test" is not a valid environment name when using Capistrano backend.');
-		}
-
-		return $result;
 	}
 
 	/**
@@ -1086,6 +968,146 @@ PHP
 				],
 				'Created:GreaterThan' => strtotime('-1 hour')
 			]);
+	}
+
+	/**
+	 * @param string $sha
+	 * @return array
+	 */
+	protected function getCommitData($sha) {
+		try {
+			$repo = $this->Project()->getRepository();
+			if ($repo !== false) {
+				$commit = new \Gitonomy\Git\Commit($repo, $sha);
+				return [
+					'AuthorName' => (string) Convert::raw2xml($commit->getAuthorName()),
+					'AuthorEmail' => (string) Convert::raw2xml($commit->getAuthorEmail()),
+					'Message' => (string) Convert::raw2xml($commit->getMessage()),
+					'ShortHash' => Convert::raw2xml($commit->getFixedShortHash(8)),
+					'Hash' => Convert::raw2xml($commit->getHash())
+				];
+			}
+		} catch (\Gitonomy\Git\Exception\ReferenceNotFoundException $exc) {
+			SS_Log::log($exc, SS_Log::WARN);
+		}
+		return [
+			'AuthorName' => '(unknown)',
+			'AuthorEmail' => '(unknown)',
+			'Message' => '(unknown)',
+			'ShortHash' => $sha,
+			'Hash' => '(unknown)',
+		];
+	}
+
+	/**
+	 * Build a set of multi-select fields for assigning permissions to a pair of group and member many_many relations
+	 *
+	 * @param string $groupField Group field name
+	 * @param string $memberField Member field name
+	 * @param array $groups List of groups
+	 * @param array $members List of members
+	 * @return FieldGroup
+	 */
+	protected function buildPermissionField($groupField, $memberField, $groups, $members) {
+		return FieldGroup::create(
+			ListboxField::create($groupField, false, $groups)
+				->setMultiple(true)
+				->setAttribute('data-placeholder', 'Groups')
+				->setAttribute('placeholder', 'Groups')
+				->setAttribute('style', 'width: 400px;'),
+
+			ListboxField::create($memberField, false, $members)
+				->setMultiple(true)
+				->setAttribute('data-placeholder', 'Members')
+				->setAttribute('placeholder', 'Members')
+				->setAttribute('style', 'width: 400px;')
+		);
+	}
+
+	/**
+	 * @param FieldList $fields
+	 */
+	protected function setDeployConfigurationFields(&$fields) {
+		if (!$this->config()->get('allow_web_editing')) {
+			return;
+		}
+
+		if ($this->envFileExists()) {
+			$deployConfig = new TextareaField('DeployConfig', 'Deploy config', $this->getEnvironmentConfig());
+			$deployConfig->setRows(40);
+			$fields->insertAfter($deployConfig, 'Filename');
+			return;
+		}
+
+		$warning = 'Warning: This environment doesn\'t have deployment configuration.';
+		$noDeployConfig = new LabelField('noDeployConfig', $warning);
+		$noDeployConfig->addExtraClass('message warning');
+		$fields->insertAfter($noDeployConfig, 'Filename');
+		$createConfigField = new CheckboxField('CreateEnvConfig', 'Create Config');
+		$createConfigField->setDescription('Would you like to create the capistrano deploy configuration?');
+		$fields->insertAfter($createConfigField, 'noDeployConfig');
+	}
+
+	/**
+	 * Ensure that environment paths are setup on the local filesystem
+	 */
+	protected function checkEnvironmentPath() {
+		// Create folder if it doesn't exist
+		$configDir = dirname($this->getConfigFilename());
+		if (!file_exists($configDir) && $configDir) {
+			mkdir($configDir, 0777, true);
+		}
+	}
+
+	/**
+	 * Write the deployment config file to filesystem
+	 */
+	protected function writeConfigFile() {
+		if (!$this->config()->get('allow_web_editing')) {
+			return;
+		}
+
+		// Create a basic new environment config from a template
+		if (!$this->envFileExists()
+			&& $this->Filename
+			&& $this->CreateEnvConfig
+		) {
+			$templateFile = $this->config()->template_file ?: BASE_PATH . '/deploynaut/environment.template';
+			file_put_contents($this->getConfigFilename(), file_get_contents($templateFile));
+		} else if ($this->envFileExists() && $this->DeployConfig) {
+			file_put_contents($this->getConfigFilename(), $this->DeployConfig);
+		}
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function getEnvironmentConfig() {
+		if (!$this->envFileExists()) {
+			return '';
+		}
+		return file_get_contents($this->getConfigFilename());
+	}
+
+	/**
+	 * @return boolean
+	 */
+	protected function envFileExists() {
+		if (!$this->getConfigFilename()) {
+			return false;
+		}
+		return file_exists($this->getConfigFilename());
+	}
+
+	protected function validate() {
+		$result = parent::validate();
+		$backend = $this->Backend();
+
+		if (strcasecmp('test', $this->Name) === 0 && get_class($backend) == 'CapistranoDeploymentBackend') {
+			$result->error('"test" is not a valid environment name when using Capistrano backend.');
+		}
+
+		return $result;
 	}
 
 }
