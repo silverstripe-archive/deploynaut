@@ -1,9 +1,10 @@
-var React = require('react');
-var ReactRedux = require('react-redux');
-const _ = require('underscore');
-var actions = require('../_actions.js');
+const React = require('react');
+const ReactRedux = require('react-redux');
 
-var UpcomingDeployments = function(props) {
+const _ = require('underscore');
+const actions = require('../_actions.js');
+
+const UpcomingDeployments = function(props) {
 	let errorRow = null;
 
 	if (props.error) {
@@ -33,7 +34,7 @@ var UpcomingDeployments = function(props) {
 					{errorRow}
 					{
 						Object.keys(props.list).map(function(i) {
-							var row = props.list[i];
+							const row = props.list[i];
 							return (
 								<tr onClick={() => props.onItemClick(row.id)} key={i}>
 									<td>{row.date_requested}</td>
@@ -77,11 +78,10 @@ const mapStateToProps = function(state) {
 	};
 };
 
-const mapDispatchToProps = function(dispatch) {
+const mapDispatchToProps = function() {
 	return {
 		onItemClick: function(id) {
-			dispatch(actions.getDeployment(id))
-				.then(() => dispatch(actions.openPlanDialog()));
+			actions.history.push('/deployment/' + id.toString());
 		}
 	};
 };

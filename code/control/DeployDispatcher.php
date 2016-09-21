@@ -19,7 +19,6 @@ class DeployDispatcher extends Dispatcher {
 		'log',
 		'start',
 		'save'
-
 	];
 
 	/**

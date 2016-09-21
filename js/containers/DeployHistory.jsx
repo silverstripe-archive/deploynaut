@@ -1,10 +1,11 @@
-var React = require('react');
-var ReactRedux = require('react-redux');
-var Pagination = require('react-bootstrap/lib/Pagination');
-const _ = require('underscore');
-var actions = require('../_actions.js');
+const React = require('react');
+const ReactRedux = require('react-redux');
+const Pagination = require('react-bootstrap/lib/Pagination');
 
-var DeployHistory = function(props) {
+const _ = require('underscore');
+const actions = require('../_actions.js');
+
+const DeployHistory = function(props) {
 	let errorRow = null;
 	let pagination = null;
 
@@ -47,7 +48,7 @@ var DeployHistory = function(props) {
 					{errorRow}
 					{
 						Object.keys(props.list).map(function(i) {
-							var row = props.list[i];
+							const row = props.list[i];
 							return (
 								<tr onClick={() => props.onItemClick(row.id)} key={i}>
 									<td>{row.date_started}</td>
@@ -115,8 +116,7 @@ const mapStateToProps = function(state) {
 const mapDispatchToProps = function(dispatch) {
 	return {
 		onItemClick: function(id) {
-			dispatch(actions.getDeployment(id))
-				.then(() => dispatch(actions.openPlanDialog()));
+			actions.history.push('/deployment/' + id.toString());
 		},
 		onPageClick: function(page) {
 			dispatch(actions.setDeployHistoryPage(page));

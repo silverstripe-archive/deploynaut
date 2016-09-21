@@ -1,17 +1,17 @@
-var React = require('react');
-var ReactRedux = require('react-redux');
+const React = require('react');
+const ReactRedux = require('react-redux');
 
-var StepMenu = require('../components/StepMenu.jsx');
-var GitRefSelector = require('./GitRefSelector.jsx');
-var ButtonGitUpdate = require('./buttons/GitUpdate.jsx');
-var SummaryOfChanges = require('./SummaryOfChanges.jsx');
-var Approval = require('./Approval.jsx');
-var Deployment = require('./Deployment.jsx');
-var DeployPlan = require('./DeployPlan.jsx');
-var Messages = require('../components/Messages.jsx');
-var Modal = require('../Modal.jsx');
+const StepMenu = require('../components/StepMenu.jsx');
+const GitRefSelector = require('./GitRefSelector.jsx');
+const ButtonGitUpdate = require('./buttons/GitUpdate.jsx');
+const SummaryOfChanges = require('./SummaryOfChanges.jsx');
+const Approval = require('./Approval.jsx');
+const Deployment = require('./Deployment.jsx');
+const DeployPlan = require('./DeployPlan.jsx');
+const Messages = require('../components/Messages.jsx');
+const Modal = require('../Modal.jsx');
 
-var actions = require('../_actions.js');
+const actions = require('../_actions.js');
 
 function calculateSteps(props) {
 	return [
@@ -65,7 +65,7 @@ function calculateSteps(props) {
 }
 
 function DeployModal(props) {
-	var steps = calculateSteps(props);
+	const steps = calculateSteps(props);
 
 	const content = (
 		<div className="deploy-form">
@@ -102,14 +102,18 @@ function DeployModal(props) {
 	);
 }
 
-const mapStateToProps = function(state) {
-
+const mapStateToProps = function(state, ownProps) {
 	function deployPlanIsOk() {
 		return state.plan.validation_code === 'success' || state.plan.validation_code === 'warning';
 	}
 
 	function isApproved() {
 		return state.approval.approved || state.approval.bypassed;
+	}
+
+	let active_step = 0;
+	if (window.location.hash) {
+		active_step = parseInt(window.location.hash.substring(1), 10);
 	}
 
 	return {
@@ -125,23 +129,23 @@ const mapStateToProps = function(state) {
 			deployPlanIsOk() && isApproved(),
 			false
 		],
-		is_open: state.navigation.open,
+		is_open: typeof (ownProps.params.id) !== 'undefined' && ownProps.params.id !== null,
 		plan_success: deployPlanIsOk(),
 		messages: state.messages,
-		active_step: state.navigation.active,
 		sha_is_selected: (state.git.selected_ref !== ""),
 		can_deploy: isApproved(),
-		state: state.deployment.state
+		state: state.deployment.state,
+		active_step: active_step
 	};
 };
 
-const mapDispatchToProps = function(dispatch) {
+const mapDispatchToProps = function() {
 	return {
 		onClose: function() {
-			dispatch(actions.closePlanDialog());
+			actions.history.push('/');
 		},
-		onTabClick: function(id) {
-			dispatch(actions.setActiveStep(id));
+		onTabClick: function(active_step) {
+			document.location.hash = active_step;
 		}
 	};
 };

@@ -1,10 +1,11 @@
-var React = require('react');
-var ReactRedux = require('react-redux');
-const _ = require('underscore');
-var actions = require('../_actions.js');
+const React = require('react');
+const ReactRedux = require('react-redux');
 
-var CurrentBuildStatus = function(props) {
-	var shortSha = "";
+const _ = require('underscore');
+const actions = require('../_actions.js');
+
+const CurrentBuildStatus = function(props) {
+	let shortSha = "";
 	if (typeof props.deployment.sha === 'string') {
 		shortSha = props.deployment.sha.substring(0, 7);
 	}
@@ -62,11 +63,10 @@ const mapStateToProps = function(state) {
 	};
 };
 
-const mapDispatchToProps = function(dispatch) {
+const mapDispatchToProps = function() {
 	return {
 		onItemClick: function(id) {
-			dispatch(actions.getDeployment(id))
-				.then(() => dispatch(actions.openPlanDialog()));
+			actions.history.push('/deployment/' + id.toString());
 		}
 	};
 };

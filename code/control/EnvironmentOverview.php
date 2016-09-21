@@ -16,6 +16,14 @@ class EnvironmentOverview extends Dispatcher {
 		self::ACTION_OVERVIEW
 	];
 
+	/**
+	 * The "deployment" action here should only go to index, it gets used by
+	 * the frontend routing.
+	 */
+	private static $allowed_actions = [
+		'deployment'
+	];
+
 	public function init() {
 		parent::init();
 		$this->project = $this->getCurrentProject();
@@ -62,6 +70,7 @@ class EnvironmentOverview extends Dispatcher {
 	public function getModel($name = '') {
 		$base = Director::absoluteBaseURL();
 		return [
+			'basename' => Director::baseURL() . $this->getCurrentEnvironment()->Link('overview'),
 			'dispatchers' => [
 				'git' => $base . $this->getCurrentProject()->Link('git'),
 				'plan' => $base . $this->getCurrentEnvironment()->Link('plan'),

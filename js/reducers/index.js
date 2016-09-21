@@ -6,7 +6,6 @@ const deployment = require('./deployment.js');
 const environment = require('./environment.js');
 const git = require('./git.js');
 const messages = require('./messages.js');
-const navigation = require('./navigation.js');
 const plan = require('./plan.js');
 
 const planApp = Redux.combineReducers({
@@ -16,7 +15,6 @@ const planApp = Redux.combineReducers({
 	approval,
 	deployment,
 	messages,
-	navigation,
 	environment
 });
 
