@@ -1,7 +1,7 @@
-var _ = require('underscore');
+const _ = require('underscore');
 
-var actions = require('../_actions.js');
-var deployStates = require('../constants/deployment.js');
+const actions = require('../_actions.js');
+const deployStates = require('../constants/deployment.js');
 
 const initialState = {
 	is_loading: false,

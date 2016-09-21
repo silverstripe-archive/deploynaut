@@ -1,6 +1,6 @@
-var _ = require('underscore');
+const _ = require('underscore');
 
-var actions = require('../_api.js');
+const actions = require('../_api.js');
 
 module.exports = function api(state, action) {
 	if (typeof state === 'undefined') {

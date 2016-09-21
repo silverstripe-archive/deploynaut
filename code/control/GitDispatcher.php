@@ -90,7 +90,7 @@ class GitDispatcher extends Dispatcher {
 		$refs = [];
 		$prevDeploys = [];
 
-		$uatEnvironment = $this->project->DNEnvironmentList()->filter('Usage', 'UAT')->first();
+		$uatEnvironment = $this->project->DNEnvironmentList()->filter('Usage', DNEnvironment::UAT)->first();
 		$uatBuild = $uatEnvironment ? $uatEnvironment->CurrentBuild() : null;
 		if ($uatBuild && $uatBuild->exists() && $targetEnvironment && $targetEnvironment->Usage === DNEnvironment::PRODUCTION) {
 			$refs[self::REF_TYPE_FROM_UAT] = [

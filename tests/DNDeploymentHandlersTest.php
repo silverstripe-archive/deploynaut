@@ -49,6 +49,10 @@ class DNDeploymentHandlersTest extends \SapphireTest {
 			'log' => \Mockery::mock('someLog')->shouldIgnoreMissing(),
 			'write' => null,
 			'getSigFile' => '/tmp/__test',
+			// we mock theses two below because SS calls this for updates on DB properties
+			// and in this test case we don't care that datetime values have been updated
+			'hasMethod' => false,
+			'setField' => null,
 		]);
 		$machine = \Mockery::mock('Finite\StateMachine', [
 			'getObject' => $deployment,

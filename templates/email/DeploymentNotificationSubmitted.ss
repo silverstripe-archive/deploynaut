@@ -13,11 +13,6 @@
 			<td><a href="mailto:{$Deployer.Email}">$Deployer.Name</a></td>
 			<td colspan="3">&nbsp;</td>
 		</tr>
-		<tr>
-			<td>Expected deployment time</td>
-			<td>$DatePlanned.Format("jS F Y H:s")</td>
-			<td colspan="3">&nbsp;</td>
-		</tr>
 		<% loop $Changes %>
 			<% if $Changed || $Description %>
 			<tr>

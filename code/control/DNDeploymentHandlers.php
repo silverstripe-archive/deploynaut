@@ -5,15 +5,20 @@ use \Finite\Event\TransitionEvent;
 class DNDeploymentHandlers extends Object {
 
 	public function onSubmit(TransitionEvent $e) {
+		/** @var DNDeployment $deployment */
 		$deployment = $e->getStateMachine()->getObject();
+		$deployment->DeployRequested = SS_Datetime::now()->Rfc2822();
+		$deployment->write();
 		$this->sendEmailToApprover($deployment);
 	}
 
 	public function onQueue(TransitionEvent $e) {
+		/** @var DNDeployment $deployment */
 		$deployment = $e->getStateMachine()->getObject();
 
 		$token = $deployment->enqueueDeployment();
 		$deployment->setResqueToken($token);
+		$deployment->DeployStarted = SS_Datetime::now()->Rfc2822();
 		$deployment->write();
 
 		$log = $deployment->log();

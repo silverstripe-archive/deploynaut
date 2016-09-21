@@ -35,7 +35,7 @@ var DeployHistory = function(props) {
 			<table className="table table-striped table-hover">
 				<thead>
 					<tr>
-						<th>Request date</th>
+						<th>Deploy date</th>
 						<th>Build details</th>
 						<th>Approval</th>
 						<th>Deployed by</th>
@@ -49,7 +49,7 @@ var DeployHistory = function(props) {
 							var row = props.list[i];
 							return (
 								<tr onClick={() => props.onItemClick(row.id)} key={i}>
-									<td>{row.created}</td>
+									<td>{row.date_started}</td>
 									<td>{row.commit_message}</td>
 									<td>{row.approver ? row.approver.name : null}</td>
 									<td>{row.deployer ? row.deployer.name : null}</td>
