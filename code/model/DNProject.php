@@ -116,6 +116,26 @@ class DNProject extends DataObject {
 	}
 
 	/**
+	 * This will clear the cache for the git getters and should be called when the local git repo is updated
+	 */
+	public function clearGitCache() {
+		$cache = self::get_git_cache();
+		// we only need to clear the tag cache since everything else is cached by SHA, that is for commit and
+		// commit message.
+		$cache->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, ['gitonomy', 'tags', 'project_'.$this->ID]);
+	}
+
+	/**
+	 * @return \Zend_Cache_Frontend_Output
+	 */
+	public static function get_git_cache() {
+		return SS_Cache::factory('gitonomy', 'Output', [
+			'automatic_serialization' => true,
+			'lifetime' => 60*60*24*7 // seven days
+		]);
+	}
+
+	/**
 	 * Return the used quota in MB.
 	 *
 	 * @param int $round Number of decimal places to round to
@@ -1108,6 +1128,58 @@ class DNProject extends DataObject {
 
 		// This calls canCreate on extensions.
 		return parent::canCreate($member);
+	}
+
+	/**
+	 * This is a proxy call to gitonmy that caches the information per project and sha
+	 *
+	 * @param string $sha
+	 * @return false|\Gitonomy\Git\Commit
+	 */
+	public function getCommit($sha) {
+		$repo = $this->getRepository();
+		if(!$repo) {
+			return false;
+		}
+
+		$cachekey = $this->ID.'_commit_'.$sha;
+		$cache = self::get_git_cache();
+		if (!($result = $cache->load($cachekey))) {
+			$result = $repo->getCommit($sha);
+			$cache->save($result, $cachekey, ['gitonomy', 'commit', 'project_'.$this->ID]);
+		}
+		return $result;
+	}
+
+	/**
+	 * @param \Gitonomy\Git\Commit $commit
+	 * @return string
+	 */
+	public function getCommitMessage(\Gitonomy\Git\Commit $commit) {
+		$cachekey = $this->ID.'_message_'.$commit->getRevision();
+		$cache = self::get_git_cache();
+		if (!($result = $cache->load($cachekey))) {
+			$result = $commit->getMessage();
+			$cache->save($result, $cachekey, ['gitonomy', 'message', 'project_'.$this->ID]);
+		}
+		return $result;
+	}
+
+	/**
+	 * @param \Gitonomy\Git\Commit $commit
+	 * @return mixed
+	 */
+	public function getCommitTags(\Gitonomy\Git\Commit $commit) {
+		$cachekey = $this->ID.'_tags_'.$commit->getRevision();
+		$cache = self::get_git_cache();
+		$result = $cache->load($cachekey);
+		// we check against false, because in many cases the tag list is an empty array
+		if ($result === false) {
+			$repo = $this->getRepository();
+			$result = $tags = $repo->getReferences()->resolveTags($commit->getRevision());
+			$cache->save($result, $cachekey, ['gitonomy', 'tags', 'project_'.$this->ID]);
+		}
+		return $result;
 	}
 
 }

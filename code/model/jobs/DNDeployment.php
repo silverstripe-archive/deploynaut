@@ -169,7 +169,7 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 		$repo = $this->getRepository();
 		if($repo) {
 			try {
-				return $repo->getCommit($this->SHA);
+				return $this->Environment()->getCommit($this->SHA);
 			} catch(Gitonomy\Git\Exception\ReferenceNotFoundException $ex) {
 				return null;
 			}
@@ -207,7 +207,7 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 		$commit = $this->getCommit();
 		if($commit) {
 			try {
-				return Convert::raw2xml($commit->getMessage());
+				return Convert::raw2xml($this->Environment()->getCommitMessage($commit));
 			} catch(Gitonomy\Git\Exception\ReferenceNotFoundException $e) {
 				return null;
 			}
@@ -221,16 +221,14 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 	 * @return ArrayList
 	 */
 	public function getTags() {
-		$returnTags = array();
-		$repo = $this->getRepository();
-		if($repo) {
-			$tags = $repo->getReferences()->resolveTags($this->SHA);
-			if(!empty($tags)) {
-				foreach($tags as $tag) {
-					$field = Varchar::create('Tag', '255');
-					$field->setValue($tag->getName());
-					$returnTags[] = $field;
-				}
+		$commit = $this->Environment()->getCommit($this->SHA);
+		$this->Environment()->getCommitTags($commit);
+		$returnTags = [];
+		if (!empty($tags)) {
+			foreach($tags as $tag) {
+				$field = Varchar::create('Tag', '255');
+				$field->setValue($tag->getName());
+				$returnTags[] = $field;
 			}
 		}
 		return new ArrayList($returnTags);

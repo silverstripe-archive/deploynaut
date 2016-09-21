@@ -39,6 +39,20 @@ class DeployDispatcher extends Dispatcher {
 		self::ACTION_DEPLOY
 	];
 
+	/**
+	 * This is a per request cache of $this->project()->listMembers()
+	 *
+	 * @var null|array
+	 */
+	private static $_cache_project_members = null;
+
+	/**
+	 * This is a per request cache of $this->environment->CurrentBuild();
+	 *
+	 * @var null|DNDeployment
+	 */
+	private static $_cache_current_build = null;
+
 	public function init() {
 		parent::init();
 
@@ -69,20 +83,8 @@ class DeployDispatcher extends Dispatcher {
 	 */
 	public function history(SS_HTTPRequest $request) {
 		$data = [];
-		$list = new PaginatedList($this->environment->DeployHistory('DeployStarted'), $this->getRequest());
-		$list->setPageLength(4);
-		$page = $request->getVar('page') ?: 1;
-		if ($page > $list->TotalPages()) {
-			$page = 1;
-		}
-		if ($page < 1) {
-			$page = 1;
-		}
-		$start = ($page - 1) * $list->getPageLength();
-		$list->setPageStart((int) $start);
-		if (empty($list)) {
-			return $this->getAPIResponse(['list' => []], 200);
-		}
+
+		$list = $this->environment->DeployHistory('DeployStarted');
 
 		foreach ($list as $deployment) {
 			$data[] = $this->getDeploymentData($deployment);
@@ -90,9 +92,6 @@ class DeployDispatcher extends Dispatcher {
 
 		return $this->getAPIResponse([
 			'list' => $data,
-			'page_length' => $list->getPageLength(),
-			'total_pages' => $list->TotalPages(),
-			'current_page' => $list->CurrentPage()
 		], 200);
 	}
 
@@ -254,7 +253,9 @@ class DeployDispatcher extends Dispatcher {
 	 * @return array
 	 */
 	protected function getDeploymentData(DNDeployment $deployment) {
-		$currentBuild = $this->environment->CurrentBuild();
+		if (self::$_cache_current_build === null) {
+			self::$_cache_current_build = $this->environment->CurrentBuild();
+		}
 
 		$deployer = $deployment->Deployer();
 		$deployerData = null;
@@ -278,6 +279,8 @@ class DeployDispatcher extends Dispatcher {
 			$requested = $deployment->DeployRequested;
 		}
 
+		$isCurrentBuild = self::$_cache_current_build ? ($deployment->ID === self::$_cache_current_build->ID) : false;
+
 		return [
 			'id' => $deployment->ID,
 			'date_created' => $deployment->Created,
@@ -295,7 +298,7 @@ class DeployDispatcher extends Dispatcher {
 			'deployer' => $deployerData,
 			'approver' => $approverData,
 			'state' => $deployment->State,
-			'is_current_build' => $currentBuild ? ($deployment->ID === $currentBuild->ID) : null
+			'is_current_build' => $isCurrentBuild
 		];
 	}
 
@@ -308,10 +311,13 @@ class DeployDispatcher extends Dispatcher {
 	 * @return array
 	 */
 	protected function getStackMemberData(Member $member) {
-		$stackMembers = $this->project->listMembers();
+		if (self::$_cache_project_members === null) {
+			self::$_cache_project_members = $this->project->listMembers();
+		}
+
 		$role = null;
 
-		foreach ($stackMembers as $stackMember) {
+		foreach (self::$_cache_project_members as $stackMember) {
 			if ($stackMember['MemberID'] !== $member->ID) {
 				continue;
 			}

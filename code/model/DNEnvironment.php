@@ -624,9 +624,9 @@ class DNEnvironment extends DataObject {
 		}
 
 		try {
-			$commit = $repo->getCommit($deploy->SHA);
+			$commit = $this->getCommit($deploy->SHA);
 			if ($commit) {
-				$deploy->Message = Convert::raw2xml($commit->getMessage());
+				$deploy->Message = Convert::raw2xml($this->getCommitMessage($commit));
 				$deploy->Committer = Convert::raw2xml($commit->getCommitterName());
 				$deploy->CommitDate = $commit->getCommitterDate()->Format('d/m/Y g:ia');
 				$deploy->Author = Convert::raw2xml($commit->getAuthorName());
@@ -637,6 +637,24 @@ class DNEnvironment extends DataObject {
 		}
 
 		return $deploy;
+	}
+
+	/**
+	 * This is a proxy call to gitonmy that caches the information per project and sha
+	 *
+	 * @param string $sha
+	 * @return \Gitonomy\Git\Commit
+	 */
+	public function getCommit($sha) {
+		return $this->Project()->getCommit($sha);
+	}
+
+	public function getCommitMessage(\Gitonomy\Git\Commit $commit) {
+		return $this->Project()->getCommitMessage($commit);
+	}
+
+	public function getCommitTags(\Gitonomy\Git\Commit $commit) {
+		return $this->Project()->getCommitTags($commit);
 	}
 
 	/**
@@ -982,7 +1000,7 @@ PHP
 				return [
 					'AuthorName' => (string) Convert::raw2xml($commit->getAuthorName()),
 					'AuthorEmail' => (string) Convert::raw2xml($commit->getAuthorEmail()),
-					'Message' => (string) Convert::raw2xml($commit->getMessage()),
+					'Message' => (string) Convert::raw2xml($this->getCommitMessage($commit)),
 					'ShortHash' => Convert::raw2xml($commit->getFixedShortHash(8)),
 					'Hash' => Convert::raw2xml($commit->getHash())
 				];
