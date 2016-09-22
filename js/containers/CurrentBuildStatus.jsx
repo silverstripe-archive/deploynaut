@@ -1,5 +1,6 @@
 var React = require('react');
 var ReactRedux = require('react-redux');
+const _ = require('underscore');
 var actions = require('../_actions.js');
 
 var CurrentBuildStatus = function(props) {
@@ -7,7 +8,6 @@ var CurrentBuildStatus = function(props) {
 	if (typeof props.deployment.sha === 'string') {
 		shortSha = props.deployment.sha.substring(0, 7);
 	}
-
 	if (props.error) {
 		return (
 			<div className="current-build alert alert-danger">
@@ -43,9 +43,22 @@ var CurrentBuildStatus = function(props) {
 };
 
 const mapStateToProps = function(state) {
+
+	// try to find the current build in the list of all deployments
+	let currentBuild = {};
+	if (typeof state.deployment.list === "object") {
+		// return the first match in the list
+		currentBuild = _.find(state.deployment.list, function(deploy) {
+			return deploy.is_current_build === true;
+		});
+	}
+	if (!currentBuild) {
+		currentBuild = {};
+	}
+
 	return {
-		deployment: state.currentbuild.data,
-		error: state.currentbuild.error
+		deployment: currentBuild,
+		error: null
 	};
 };
 

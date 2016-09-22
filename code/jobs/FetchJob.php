@@ -83,7 +83,7 @@ class FetchJob extends DeploynautJob {
 			}
 			throw $e;
 		}
-
+		$this->project->clearGitCache();
 		$this->updateStatus('Finished');
 	}
 

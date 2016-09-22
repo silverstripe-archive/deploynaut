@@ -126,6 +126,18 @@ export function failDeployHistoryGet(err) {
 	};
 }
 
+export const SET_DEPLOY_HISTORY_PAGE = 'SET_DEPLOY_HISTORY_PAGE';
+export function setDeployHistoryPage(page) {
+	if(typeof page === 'undefined') {
+		page = 1;
+	}
+
+	return {
+		type: SET_DEPLOY_HISTORY_PAGE,
+		page: page
+	};
+}
+
 export const START_CURRENT_BUILD_STATUS_GET = 'START_CURRENT_BUILD_STATUS_GET';
 export function startCurrentBuildStatusGet() {
 	return {type: START_DEPLOY_HISTORY_GET};
@@ -156,14 +168,10 @@ export function getRevisions() {
 	};
 }
 
-export function getDeployHistory(page) {
-	if (typeof page === 'undefined') {
-		page = 1; // eslint-disable-line no-param-reassign
-	}
-
+export function getDeployHistory() {
 	return (dispatch, getState) => {
 		dispatch(startDeployHistoryGet());
-		return deployAPI.call(getState, `/history?page=${page}`, 'get')
+		return deployAPI.call(getState, '/history', 'get')
 			.then(json => dispatch(succeedDeployHistoryGet(json)))
 			.catch(err => dispatch(failDeployHistoryGet(err)));
 	};
@@ -358,8 +366,7 @@ export function bypassApproval() {
 			summary: getState().plan.summary_of_changes
 		})
 			.then(function(data) {
-				dispatch(succeedApprovalBypass(data));
-				return dispatch(getDeployHistory(0));
+				return dispatch(succeedApprovalBypass(data));
 			})
 			.catch((error) => dispatch(failApprovalBypass(error)));
 	};
@@ -372,7 +379,10 @@ export function startDeploymentEnqueue() {
 
 export const SUCCEED_DEPLOYMENT_ENQUEUE = "SUCCEED_DEPLOYMENT_ENQUEUE";
 export function succeedDeploymentEnqueue(data) {
-	return {type: SUCCEED_DEPLOYMENT_ENQUEUE, id: data.id};
+	return {
+		type: SUCCEED_DEPLOYMENT_ENQUEUE,
+		data: data
+	};
 }
 
 export const FAIL_DEPLOYMENT_ENQUEUE = "FAIL_DEPLOYMENT_ENQUEUE";
@@ -443,7 +453,19 @@ export function failGetDeployment(err) {
 export function getDeployment(id) {
 	return (dispatch, getState) => {
 		dispatch(startGetDeployment());
-		return deployAPI.call(getState, `/show/${id}`, 'get')
+
+		let getDeployPromise = null;
+		if (getState().deployment.list[id]) {
+			// we can use the cached value
+			getDeployPromise = new Promise(function(resolve) {
+				resolve({deployment: getState().deployment.list[id]});
+			});
+		} else {
+			// we need to fetch the deployment from the backend
+			getDeployPromise = deployAPI.call(getState, `/show/${id}`, 'get');
+		}
+
+		return getDeployPromise
 			.then(data => {
 				dispatch(succeedGetDeployment(data));
 				dispatch(getDeployLog());
