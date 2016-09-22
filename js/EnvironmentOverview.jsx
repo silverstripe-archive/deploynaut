@@ -28,15 +28,15 @@ const store = Redux.createStore(
  * as there is no direction connection between the store, and the URL
  * parameters provided by ReactRouter.
  */
-export function loadDeployment(store) {
-	return (nextState, replace) => {
+function loadDeployment() {
+	return (nextState) => {
 		if (nextState.params.id === 'new') {
 			store.dispatch(actions.newDeployment());
 		} else if (nextState.params.id) {
 			store.dispatch(actions.getDeployment(nextState.params.id));
 		}
-	}
-};
+	};
+}
 
 function Plan(props) {
 	// first we setup the web api with CSRF tokens and backend dispatcher endpoints
@@ -58,7 +58,7 @@ function Plan(props) {
 		<ReactRedux.Provider store={store}>
 			<ReactRouter.Router history={actions.history}>
 				<ReactRouter.Route path="/" component={App}>
-					<ReactRouter.Route path="deployment/:id" component={DeployModal} onEnter={loadDeployment(store)} />
+					<ReactRouter.Route path="deployment/:id" component={DeployModal} onEnter={loadDeployment()} />
 				</ReactRouter.Route>
 			</ReactRouter.Router>
 		</ReactRedux.Provider>
