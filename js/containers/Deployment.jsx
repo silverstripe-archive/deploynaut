@@ -38,7 +38,7 @@ const deployment = function(props) {
 
 	let logOutput = null;
 	if (shouldShowLogs()) {
-		let lines = Object.keys(props.deploy_log).map(function(key) {
+		const lines = Object.keys(props.deploy_log).map(function(key) {
 			return <div key={key}>{props.deploy_log[key]}</div>;
 		});
 		logOutput = (

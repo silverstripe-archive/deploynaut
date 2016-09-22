@@ -1,32 +1,51 @@
-var React = require("react");
-var Redux = require('redux');
-var ReactRedux = require('react-redux');
+const React = require('react');
+const Redux = require('redux');
+const ReactRedux = require('react-redux');
+const ReactRouter = require('react-router');
+const thunkMiddleware = require('redux-thunk').default;
+const createLogger = require('redux-logger');
 
-var thunkMiddleware = require('redux-thunk').default;
-var createLogger = require('redux-logger');
+const App = require('./containers/App.jsx');
+const DeployModal = require('./containers/DeployModal.jsx');
 
-var App = require('./containers/App.jsx');
+const reducers = require('./reducers/index.js');
+const webAPI = require('./_api.js');
+const actions = require('./_actions.js');
 
-var rootReducer = require("./reducers/index.js");
-var webAPI = require('./_api.js');
-var actions = require('./_actions.js');
+const createHistory = require('history').createHistory;
+const useRouterHistory = require('react-router').useRouterHistory;
 
-var store = Redux.createStore(
-	rootReducer,
+const store = Redux.createStore(
+	reducers,
 	Redux.applyMiddleware(
 		thunkMiddleware,
 		createLogger()
 	)
 );
 
-var Plan = function(props) {
+/**
+ * Load deployment data, which is used by ReactRouter onEnter
+ * as there is no direction connection between the store, and the URL
+ * parameters provided by ReactRouter.
+ */
+export function loadDeployment(store) {
+	return (nextState, replace) => {
+		if (nextState.params.id === 'new') {
+			store.dispatch(actions.newDeployment());
+		} else if (nextState.params.id) {
+			store.dispatch(actions.getDeployment(nextState.params.id));
+		}
+	}
+};
 
-	// first we setup the web api with CSRF tokens and backend dispatcher
-	// end_points
+function Plan(props) {
+	// first we setup the web api with CSRF tokens and backend dispatcher endpoints
 	store.dispatch(webAPI.setupAPI(
 		props.model.dispatchers,
 		props.model.api_auth
 	));
+
+	actions.history = useRouterHistory(createHistory)({ basename: props.model.basename });
 
 	store.dispatch(actions.setEnvironment(props.model.environment));
 
@@ -37,9 +56,13 @@ var Plan = function(props) {
 
 	return (
 		<ReactRedux.Provider store={store}>
-			<App />
+			<ReactRouter.Router history={actions.history}>
+				<ReactRouter.Route path="/" component={App}>
+					<ReactRouter.Route path="deployment/:id" component={DeployModal} onEnter={loadDeployment(store)} />
+				</ReactRouter.Route>
+			</ReactRouter.Router>
 		</ReactRedux.Provider>
 	);
-};
+}
 
 module.exports = Plan;

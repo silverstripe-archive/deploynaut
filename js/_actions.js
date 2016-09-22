@@ -6,27 +6,16 @@ const gitAPI = api.create('git');
 const planAPI = api.create('plan');
 const deployAPI = api.create('deploys');
 
+// allows history to be accessed throughout the project, this will be set
+// when the store is configured in EnvironmentOverview.jsx
+export const history = null;
+
 export const SET_ENVIRONMENT = 'SET_ENVIRONMENT';
 export function setEnvironment(data) {
 	return {
 		type: SET_ENVIRONMENT,
 		data: data
 	};
-}
-
-export const SET_OPEN_DIALOG = "SET_OPEN_DIALOG";
-export function openPlanDialog() {
-	return {type: SET_OPEN_DIALOG};
-}
-
-export const SET_CLOSE_DIALOG = "SET_CLOSE_DIALOG";
-export function closePlanDialog() {
-	return {type: SET_CLOSE_DIALOG};
-}
-
-export const SET_ACTIVE_STEP = "SET_ACTIVE_STEP";
-export function setActiveStep(id) {
-	return {type: SET_ACTIVE_STEP, id};
 }
 
 export const NEW_DEPLOYMENT = "NEW_DEPLOYMENT";
@@ -128,13 +117,14 @@ export function failDeployHistoryGet(err) {
 
 export const SET_DEPLOY_HISTORY_PAGE = 'SET_DEPLOY_HISTORY_PAGE';
 export function setDeployHistoryPage(page) {
-	if(typeof page === 'undefined') {
-		page = 1;
+	let selected_page = 1;
+	if (typeof page !== 'undefined') {
+		selected_page = page;
 	}
 
 	return {
 		type: SET_DEPLOY_HISTORY_PAGE,
-		page: page
+		page: selected_page
 	};
 }
 

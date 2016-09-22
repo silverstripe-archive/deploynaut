@@ -1,19 +1,20 @@
-var React = require('react');
+const React = require('react');
+const ReactRouter = require('react-router');
 
-var CurrentBuildStatus = require('./CurrentBuildStatus.jsx');
-var NewDeployPlan = require('./buttons/NewDeployPlan.jsx');
-var DeployModal = require('./DeployModal.jsx');
-var UpcomingDeployments = require('./UpcomingDeployments.jsx');
-var DeployHistory = require('./DeployHistory.jsx');
+const CurrentBuildStatus = require('./CurrentBuildStatus.jsx');
+const UpcomingDeployments = require('./UpcomingDeployments.jsx');
+const DeployHistory = require('./DeployHistory.jsx');
 
-function App() {
+function App(props) {
 	return (
 		<div>
 			<CurrentBuildStatus />
-			<NewDeployPlan />
-			<DeployModal />
+			<ReactRouter.Link className="btn btn-primary" to="/deployment/new">
+				New deployment
+			</ReactRouter.Link>
 			<UpcomingDeployments />
 			<DeployHistory />
+			{props.children}
 		</div>
 	);
 }
