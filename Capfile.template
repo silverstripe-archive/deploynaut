@@ -1,4 +1,4 @@
-# ----  Load the default capistrano deploy recipe ---- 
+# ----  Load the default capistrano deploy recipe ----
 load 'deploy'
 
 # ---- Set where the environment specific configuration are ----
@@ -7,10 +7,10 @@ set :config_root, '<config root>'
 # ----  Load the recipes from the multiconfig gem ----
 require 'capistrano/multiconfig'
 
-# ---- load tasks from ./config dir ---- 
+# ---- load tasks from ./config dir ----
 Dir['<base path>/deploynaut/ruby/*.rb'].each { |task| load(task) }
 
-# ---- What directories are shared between releases ---- 
+# ---- What directories are shared between releases ----
 set :shared_children, %w(assets)
 
 # ---- change the effective symlink to www ----
@@ -59,6 +59,7 @@ set :rsync_ssh_options, %w[-q -T -c arcfour -o Compression=no]
 ssh_options[:forward_agent] = true
 ssh_options[:keys] = '<ssh key>'
 default_run_options[:pty] = true
+default_run_options[:shell] = '/bin/bash'
 
 # ---- What SCM are we using ----
 set :scm, "git"
