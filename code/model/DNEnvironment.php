@@ -49,7 +49,7 @@ class DNEnvironment extends DataObject {
 		"Name" => "Varchar(255)",
 		"URL" => "Varchar(255)",
 		"BackendIdentifier" => "Varchar(255)", // Injector identifier of the DeploymentBackend
-		"Usage" => "Enum('Production, UAT, Test, Unspecified', 'Unspecified')"
+		"Usage" => "Enum('Production, UAT, Test, Unspecified', 'Unspecified')",
 	];
 
 	/**

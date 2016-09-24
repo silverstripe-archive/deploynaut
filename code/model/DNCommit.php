@@ -196,12 +196,9 @@ class DNCommit extends ViewableData {
 	public function Created() {
 		$created = $this->commit->getCommitterDate();
 
-		// gitonomy sets the time to UTC, so now we set the timezone to
-		// whatever PHP is set to (date.timezone). This will change in the future if each
-		// deploynaut user has their own timezone
 		$created->setTimezone(new DateTimeZone(date_default_timezone_get()));
 
-		$d = new SS_Datetime();
+		$d = SS_Datetime::create();
 		$d->setValue($created->format('Y-m-d H:i:s'));
 
 		return $d;
