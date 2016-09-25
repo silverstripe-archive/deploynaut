@@ -1,6 +1,7 @@
 // polyfills
 require('babel-polyfill');
 const api = require('./_api.js');
+const constants = require('./constants/deployment.js');
 
 const gitAPI = api.create('git');
 const planAPI = api.create('plan');
@@ -401,6 +402,10 @@ export function failDeployLogUpdate(err) {
 
 export function getDeployLog() {
 	return (dispatch, getState) => {
+		const currentState = getState().deployment.list[getState().deployment.id].state;
+		if (!constants.hasLogs(currentState)) {
+			return;
+		}
 		deployAPI.waitForSuccess(getState, `/log/${getState().deployment.id}`, 100, function(data) {
 			dispatch(succeedDeployLogUpdate(data));
 		});

@@ -12,6 +12,7 @@ const Messages = require('../components/Messages.jsx');
 const Modal = require('../Modal.jsx');
 
 const actions = require('../_actions.js');
+const constants = require('../constants/deployment.js');
 
 function calculateSteps(props) {
 	return [
@@ -116,18 +117,23 @@ const mapStateToProps = function(state, ownProps) {
 		active_step = parseInt(window.location.hash.substring(1), 10);
 	}
 
+	let currentState = 'new';
+	if (typeof state.deployment.list[ownProps.params.id] !== 'undefined') {
+		currentState = state.deployment.list[ownProps.params.id].state;
+	}
+
 	return {
 		is_loading: [
 			state.git.is_loading || state.git.is_updating,
 			state.plan.is_loading,
 			state.approval.is_loading,
-			state.deployment.enqueued
+			constants.isDeploying(currentState)
 		],
 		is_finished: [
 			state.git.selected_ref !== "",
 			deployPlanIsOk(),
 			deployPlanIsOk() && isApproved(),
-			false
+			constants.isDeployDone(currentState)
 		],
 		is_open: typeof (ownProps.params.id) !== 'undefined' && ownProps.params.id !== null,
 		plan_success: deployPlanIsOk(),

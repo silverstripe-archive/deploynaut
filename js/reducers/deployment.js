@@ -8,11 +8,13 @@ const initialState = {
 	enqueued: false,
 	id: "",
 	data: {},
-	log: [],
+	// this is a "list" (actually an object) of deployment logs keyed by the deployment id
+	logs: {},
 	error: null,
+	selected: {},
 	state: deployStates.STATE_NEW,
-	// this is the "list" (actually an object) of all deployments that we fetched, updated etc keyed by their unique
-	// id.
+	// this is the "list" (actually an object) of all deployments that we fetched, updated etc keyed by the deployment
+	// id
 	list: {},
 	current_page: 1
 };
@@ -46,7 +48,6 @@ module.exports = function deployment(state, action) {
 				enqueued: false,
 				id: "",
 				data: {},
-				log: [],
 				error: null,
 				state: deployStates.STATE_NEW,
 			});
@@ -95,8 +96,11 @@ module.exports = function deployment(state, action) {
 			const newList = _.assign({}, state.list);
 			newList[action.data.deployment.id] = action.data.deployment;
 
+			const newLogList = _.assign({}, state.logs);
+			newLogList[action.data.deployment.id] = action.data.message;
+
 			return _.assign({}, state, {
-				log: action.data.message,
+				logs: newLogList,
 				state: action.data.status,
 				error: null,
 				list: newList

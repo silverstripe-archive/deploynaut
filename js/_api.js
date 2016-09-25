@@ -143,7 +143,8 @@ export function create(name) {
 				callback(data);
 			}
 			switch (data.status) {
-				case 'Complete' || 'Completed':
+				case 'Completed':
+				case 'Complete':
 					return data;
 				case 'Failed':
 					return data;
