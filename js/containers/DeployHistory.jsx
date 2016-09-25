@@ -34,34 +34,36 @@ const DeployHistory = function(props) {
 	return (
 		<div>
 			<h4>History</h4>
-			<table className="table table-striped table-hover">
-				<thead>
-					<tr>
-						<th>Deploy date</th>
-						<th>Build details</th>
-						<th>Approval</th>
-						<th>Deployed by</th>
-						<th>Status</th>
-					</tr>
-				</thead>
-				<tbody>
-					{errorRow}
-					{
-						Object.keys(props.list).map(function(i) {
-							const row = props.list[i];
-							return (
-								<tr onClick={() => props.onItemClick(row.id)} key={i}>
-									<td>{row.date_started}</td>
-									<td>{row.commit_message}</td>
-									<td>{row.approver ? row.approver.name : null}</td>
-									<td>{row.deployer ? row.deployer.name : null}</td>
-									<td>{row.state}</td>
-								</tr>
-							);
-						})
-					}
-				</tbody>
-			</table>
+			<div className="table-responsive">
+				<table className="table table-clickable table-striped table-hover">
+					<thead>
+						<tr>
+							<th>Deploy date</th>
+							<th>Build details</th>
+							<th>Approval</th>
+							<th>Deployed by</th>
+							<th>Status</th>
+						</tr>
+					</thead>
+					<tbody>
+						{errorRow}
+						{
+							Object.keys(props.list).map(function(i) {
+								const row = props.list[i];
+								return (
+									<tr className={row.is_current_build ? "current" : ""} onClick={() => props.onItemClick(row.id)} key={i}>
+										<td>{row.date_started}</td>
+										<td>{row.commit_message}</td>
+										<td>{row.approver ? row.approver.name : <span className="bypassed">Bypassed</span>}</td>
+										<td>{row.deployer ? row.deployer.name : null}</td>
+										<td>{row.state}</td>
+									</tr>
+								);
+							})
+						}
+					</tbody>
+				</table>
+			</div>
 			{pagination}
 		</div>
 	);

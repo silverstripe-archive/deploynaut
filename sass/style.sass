@@ -589,6 +589,15 @@ button.sidebar-open
 	padding-top: 20px
 	padding-bottom: 20px
 
+.table-clickable > tbody > tr
+	& .bypassed
+		font-style: italic
+		color: $text-muted
+	&.current td
+		background: $platform-blue-light
+	&:hover
+		cursor: pointer
+
 
 // Environment
 .deploy-dropdown

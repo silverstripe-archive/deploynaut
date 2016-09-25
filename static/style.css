@@ -11276,6 +11276,16 @@ button.sidebar-open {
   padding-top: 20px;
   padding-bottom: 20px; }
 
+.table-clickable > tbody > tr .bypassed {
+  font-style: italic;
+  color: #aaaaaa; }
+
+.table-clickable > tbody > tr.current td {
+  background: #d8effe; }
+
+.table-clickable > tbody > tr:hover {
+  cursor: pointer; }
+
 .deploy-dropdown {
   border-radius: 3px;
   text-align: left;
