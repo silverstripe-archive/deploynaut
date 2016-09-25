@@ -1,3 +1,5 @@
+require "tmpdir"
+
 namespace :data do
 
 	desc <<-DESC
@@ -6,28 +8,23 @@ namespace :data do
 		Assumption: This task will run against the webserver, so that it's able to fetch the database credentials
 		from _ss_environment.php
 
-		Example command: cap -f '/sites/deploynaut/www/assets/Capfile' project1:env1 data:getdb -s data_path=/tmp/mydatabase.sql
+		Example command: cap -f '/sites/deploynaut/www/assets/Capfile' project1:env1 data:getdb -s data_path=/tmp/mydatabase.sql.gz
 
 		Required arguments to the cap command:
-		data_path - Absolute path (including filename) of where the exported database should be placed, e.g. /tmp/my_database.sql
+		data_path - Absolute path (including filename) of where the exported database should be placed, e.g. /tmp/my_database.sql.gz
 	DESC
 	task :getdb do
-		# todo: output to gzip and stream that back instead of the raw data.
-		run "mysqldump --skip-opt --add-drop-table --extended-insert --create-options --quick --set-charset --default-character-set=utf8 #{mysql_options} -p", :once => true do |channel, stream, data|
+		tmpfile = Dir::Tmpname.make_tmpname "/tmp/database.sql.gz", nil
+		run "mysqldump --skip-opt --add-drop-table --extended-insert --create-options --quick --set-charset --default-character-set=utf8 #{mysql_options} -p | gzip -9 > #{tmpfile}; exit ${PIPESTATUS[0]}", :once => true do |channel, stream, data|
 			if data =~ /^Enter password: /
 				channel.send_data "#{getmysqlpassword}\n"
 			else
-				begin
-					file = File.open(data_path, "a")
-					file.write(data)
-				rescue IOError => e
-					logger.debug e.message
-					raise e
-				ensure
-					file.close unless file == nil
-				end
+				puts data
 			end
+			break if stream == :err
 		end
+		download tmpfile, data_path, :via => :scp, :once => true
+		run "rm -f #{tmpfile}", :once => true
 	end
 
 	desc <<-DESC
@@ -72,9 +69,9 @@ namespace :data do
 				end
 			end
 
-			run "rm -rf #{tmpfile}", :once => true
+			run "rm -f #{tmpfile}", :once => true
 		rescue Exception => e
-			run "rm -rf #{tmpfile}", :once => true
+			run "rm -f #{tmpfile}", :once => true
 			raise e
 		end
 	end
@@ -248,7 +245,7 @@ namespace :data do
 			output = data
 		end
 
-		run "rm -rf #{filename}", :once => true
+		run "rm -f #{filename}", :once => true
 
 		output
 	end
