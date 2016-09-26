@@ -11537,8 +11537,7 @@ button.sidebar-open {
 .current-build {
   position: absolute;
   top: 58px;
-  right: 20px;
-  width: 300px; }
+  right: 20px; }
 
 .build-status {
   padding: 10px 20px;
@@ -11558,7 +11557,6 @@ button.sidebar-open {
 
 .build-actions {
   display: inline-block;
-  margin-left: 30px;
   vertical-align: top; }
   .build-actions li {
     display: inline-block;
