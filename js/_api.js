@@ -96,6 +96,12 @@ export function create(name) {
 
 				// the http response is in the 200 >=  <= 299 range
 				if (response.ok) {
+					// If the response is to login, such as the user session has timed out, then
+					// reload the current page so they can login again.
+					if (/Security\/login/.test(response.url)) {
+						return location.reload();
+					}
+
 					return response.json().then(json => json);
 				}
 				// if the status code is outside of 200 - 299 we try to parse
