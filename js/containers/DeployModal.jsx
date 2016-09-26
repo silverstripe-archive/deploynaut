@@ -83,7 +83,7 @@ function DeployModal(props) {
 	);
 
 	return (
-		<Modal show={props.is_open} closeHandler={props.onClose} title="Deployment">
+		<Modal show={props.is_open} className="deploy" closeHandler={props.onClose} title="Deployment">
 			<div className="row">
 				<div className="col-md-12">
 					<h3>Deployment options for ...</h3>

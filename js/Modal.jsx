@@ -5,7 +5,8 @@ var Modal = React.createClass({
 	propTypes: {
 		show: React.PropTypes.bool,
 		keyboard: React.PropTypes.bool,
-		closeHandler: React.PropTypes.func
+		closeHandler: React.PropTypes.func,
+		className: React.PropTypes.string
 	},
 
 	getDefaultProps: function() {
@@ -39,8 +40,14 @@ var Modal = React.createClass({
 
 	render: function() {
 		// tabIndex -1 fixes esc key not working. See http://stackoverflow.com/questions/12630156
+
+		let classNames = 'modal fade';
+		if (this.props.className) {
+			classNames += ' ' + this.props.className;
+		}
+
 		return (
-			<div className="modal fade" tabIndex="-1" ref={function(node) { this.selector = node; }.bind(this)}>
+			<div className={classNames} tabIndex="-1" ref={function(node) { this.selector = node; }.bind(this)}>
 				<div className="modal-dialog modal-lg">
 					<div className="modal-content">
 						<div className="modal-header">
