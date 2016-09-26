@@ -36,6 +36,12 @@
 							<td>$Environment.CurrentBuild.DeploymentStrategy.getChange("Infrastructure version").to</td>
 						</tr>
 					<% end_if %>
+					<% if $HasPerm(ADMIN) %>
+						<tr>
+							<th>Layout version</th>
+							<td>$Environment.layoutVersion</td>
+						</tr>
+					<% end_if %>
 					<% if $Environment.CurrentBuild.DeploymentStrategy.getChange("Base image") %>
 						<tr>
 							<th>Base image</th>
