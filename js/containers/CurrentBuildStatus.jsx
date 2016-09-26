@@ -5,10 +5,6 @@ const _ = require('underscore');
 const actions = require('../_actions.js');
 
 const CurrentBuildStatus = function(props) {
-	let shortSha = "";
-	if (typeof props.deployment.sha === 'string') {
-		shortSha = props.deployment.sha.substring(0, 7);
-	}
 	if (props.error) {
 		return (
 			<div className="current-build alert alert-danger">
@@ -23,7 +19,7 @@ const CurrentBuildStatus = function(props) {
 		<div className="current-build build-status">
 			<div className="build-details">
 				<a className="branch-detail" href={props.deployment.commit_url}>{props.deployment.branch}
-					<span className="sha-detail" title={props.deployment.sha}>{shortSha}</span>
+					<span className="sha-detail" title={props.deployment.sha}>{props.deployment.short_sha}</span>
 				</a>
 				<span className="deployed-detail">Deployed {props.deployment.date_started}</span>
 			</div>

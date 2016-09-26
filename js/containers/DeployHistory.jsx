@@ -1,6 +1,7 @@
 const React = require('react');
 const ReactRedux = require('react-redux');
 const Pagination = require('react-bootstrap/lib/Pagination');
+const BuildStatus = require('../components/BuildStatus.jsx');
 
 const _ = require('underscore');
 const actions = require('../_actions.js');
@@ -53,7 +54,7 @@ const DeployHistory = function(props) {
 								return (
 									<tr className={row.is_current_build ? "current" : ""} onClick={() => props.onItemClick(row.id)} key={i}>
 										<td>{row.date_started}</td>
-										<td>{row.commit_message}</td>
+										<td><BuildStatus deployment={row} /></td>
 										<td>{row.approver ? row.approver.name : <span className="bypassed">Bypassed</span>}</td>
 										<td>{row.deployer ? row.deployer.name : null}</td>
 										<td>{row.state}</td>
