@@ -2,8 +2,16 @@ var ReactRedux = require('react-redux');
 
 var actions = require('../../_actions.js');
 var Button = require('../../components/Button.jsx');
+const constants = require('../../constants/deployment.js');
 
 function canDeploy(state) {
+	let currentState = 'new';
+	if (typeof state.deployment.list[state.deployment.id] !== 'undefined') {
+		currentState = state.deployment.list[state.deployment.id].state;
+	}
+	if (constants.hasDeployStarted(currentState)) {
+		return false;
+	}
 	if (state.approval.enqueued) {
 		return false;
 	}
