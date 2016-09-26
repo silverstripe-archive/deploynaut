@@ -103,6 +103,7 @@ class GitDispatcher extends Dispatcher {
 					'branch' => $uatBuild->Branch,
 					'tags' => $uatBuild->getTags()->toArray(),
 					'sha' => $uatBuild->SHA,
+					'short_sha' => substr($uatBuild->SHA, 0, 7),
 					'commit_message' => $uatBuild->getCommitMessage(),
 					'commit_url' => $uatBuild->getCommitURL(),
 				]

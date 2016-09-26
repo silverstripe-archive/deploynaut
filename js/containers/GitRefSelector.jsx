@@ -14,7 +14,7 @@ function GitRefSelector(props) {
 		switch (key) {
 			case '0': // Promote build option
 				typeFields[key] = (
-					<BuildStatus deployment={props.types[key].promote_build} />
+					<BuildStatus status_box={true} deployment={props.types[key].promote_build} />
 				);
 				break;
 			case '1': // Dropdowns for branch, tags, previously released

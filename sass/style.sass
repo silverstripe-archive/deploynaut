@@ -950,25 +950,25 @@ button.sidebar-open
 .build-status
 	padding: 10px 20px
 	background: #E2E8EB
-	.build-details
+.build-details
+	display: inline-block
+	.sha-detail
+		width: 50px
+		overflow: hidden
+		white-space: nowrap
+	.deployment-branch
+		margin-left: 5px
+	.deployed-detail
+		font-size: 12px
+		display: block
+.build-actions
+	display: inline-block
+	vertical-align: top
+	li
 		display: inline-block
-		.sha-detail
-			width: 50px
-			overflow: hidden
-			white-space: nowrap
-		.message-detail
-			margin-left: 5px
-		.deployed-detail
-			font-size: 12px
-			display: block
-	.build-actions
-		display: inline-block
-		vertical-align: top
-		li
-			display: inline-block
-			margin-left: 15px
-			.fa
-				font-size: 16px
+		margin-left: 15px
+		.fa
+			font-size: 16px
 
 .project-links
 	@extend .list-reset

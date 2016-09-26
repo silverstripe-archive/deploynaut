@@ -156,7 +156,6 @@ class DeployDispatcher extends Dispatcher {
 	}
 
 	public function save(\SS_HTTPRequest $request) {
-
 		if ($request->httpMethod() !== 'POST') {
 			return $this->getAPIResponse(['message' => 'Method not allowed, requires POST'], 405);
 		}
@@ -291,6 +290,7 @@ class DeployDispatcher extends Dispatcher {
 			'tags' => $deployment->getTags()->toArray(),
 			'changes' => $deployment->getDeploymentStrategy()->getChanges(),
 			'sha' => $deployment->SHA,
+			'short_sha' => substr($deployment->SHA, 0, 7),
 			'ref_type' => $deployment->RefType,
 			'commit_message' => $deployment->getCommitMessage(),
 			'commit_url' => $deployment->getCommitURL(),
