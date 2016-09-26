@@ -1,5 +1,6 @@
 const React = require('react');
 const ReactRedux = require('react-redux');
+const BuildStatus = require('../components/BuildStatus.jsx');
 
 const _ = require('underscore');
 const actions = require('../_actions.js');
@@ -17,12 +18,7 @@ const CurrentBuildStatus = function(props) {
 
 	return (
 		<div className="current-build build-status">
-			<div className="build-details">
-				<a className="branch-detail" href={props.deployment.commit_url}>{props.deployment.branch}
-					<span className="sha-detail" title={props.deployment.sha}>{props.deployment.short_sha}</span>
-				</a>
-				<span className="deployed-detail">Deployed {props.deployment.date_started}</span>
-			</div>
+			<BuildStatus deployment={props.deployment} />
 			<ul className="build-actions">
 				<li>
 					<a className="repo-action" href={props.deployment.commit_url}>

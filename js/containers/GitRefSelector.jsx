@@ -1,15 +1,15 @@
-var React = require('react');
-var ReactRedux = require('react-redux');
+const React = require('react');
+const ReactRedux = require('react-redux');
 
-var Radio = require('../components/Radio.jsx');
-var Dropdown = require('../components/Dropdown.jsx');
-var Button = require('../components/Button.jsx');
-var BuildStatus = require('../components/BuildStatus.jsx');
+const Radio = require('../components/Radio.jsx');
+const Dropdown = require('../components/Dropdown.jsx');
+const Button = require('../components/Button.jsx');
+const BuildStatus = require('../components/BuildStatus.jsx');
 
-var actions = require('../_actions.js');
+const actions = require('../_actions.js');
 
 function GitRefSelector(props) {
-	var typeFields = {};
+	const typeFields = {};
 	Object.keys(props.types).forEach(function(key) {
 		switch (key) {
 			case '0': // Promote build option
@@ -53,8 +53,8 @@ function GitRefSelector(props) {
 		}
 	});
 
-	var list = Object.keys(props.types).map(function(key, index) {
-		var extraFields = null;
+	const list = Object.keys(props.types).map(function(key, index) {
+		let extraFields = null;
 		if (props.selected_type === props.types[key].id) {
 			extraFields = typeFields[props.types[key].id];
 		}
@@ -115,7 +115,7 @@ function isDisabled(state) {
 }
 
 const mapStateToProps = function(state) {
-	var refs = [];
+	let refs = [];
 	if (state.git.list[state.git.selected_type]) {
 		refs = state.git.list[state.git.selected_type].list;
 	}
