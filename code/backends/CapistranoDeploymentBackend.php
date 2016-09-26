@@ -325,7 +325,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		$filepathBase = $dataArchive->generateFilepath($dataTransfer);
 		mkdir($filepathBase, 0700, true);
 
-		$databasePath = $filepathBase . DIRECTORY_SEPARATOR . 'database.sql';
+		$databasePath = $filepathBase . DIRECTORY_SEPARATOR . 'database.sql.gz';
 
 		// Backup database
 		if(in_array($dataTransfer->Mode, array('all', 'db'))) {

@@ -58,6 +58,7 @@ set :rsync_ssh_options, %w[-q -T -o Compression=no]
 ssh_options[:forward_agent] = true
 ssh_options[:keys] = '<ssh key>'
 default_run_options[:pty] = true
+default_run_options[:shell] = '/bin/bash'
 
 # ---- What SCM are we using ----
 set :scm, "git"
