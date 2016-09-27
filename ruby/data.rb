@@ -147,7 +147,6 @@ namespace :data do
 			if server[1]
 				ssh_command << "-p" << server[1]
 			end
-			ssh_command << "-l" << username
 			ssh_command << "-i" << fetch(:ssh_options)[:keys]
 			ssh_command << "-A"
 		end
@@ -160,10 +159,16 @@ namespace :data do
 		end
 
 		ssh_command << "-l" << username
-		ssh_command << "-i" << fetch(:ssh_options)[:keys]
-		if fetch(:ssh_options)[:forward_agent] === true
-			ssh_command << "-A"
+
+		# if gateway was given, we cannot use the identity and forward agent on the
+		# target instance, as we are going through the gateway where they were already given
+		if not exists?(:gateway)
+			ssh_command << "-i" << fetch(:ssh_options)[:keys]
+			if fetch(:ssh_options)[:forward_agent] === true
+				ssh_command << "-A"
+			end
 		end
+
 		rsync_command = %w[/usr/bin/rsync]
 		rsync_command << fetch(:rsync_options)
 		rsync_command << "-e" << "'#{ssh_command.join(' ')}'"
