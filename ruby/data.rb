@@ -147,8 +147,6 @@ namespace :data do
 			if server[1]
 				ssh_command << "-p" << server[1]
 			end
-			ssh_command << "-l" << username
-			ssh_command << "-i" << fetch(:ssh_options)[:keys]
 			ssh_command << "-A"
 		end
 
