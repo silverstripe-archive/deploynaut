@@ -20,9 +20,10 @@ class CreateEnvJob extends DeploynautJob {
 	 */
 	public function perform() {
 		echo "[-] CreateEnvJob starting" . PHP_EOL;
-		// This is a bit icky, but there is no easy way of capturing a failed deploy by using the PHP Resque
+		$log = new DeploynautLogFile($this->args['logfile']);
+		$envCreate = DNCreateEnvironment::get()->byId($this->args['createID']);
+
 		try {
-			$envCreate = DNCreateEnvironment::get()->byId($this->args['createID']);
 			if(!($envCreate && $envCreate->exists())) {
 				throw new RuntimeException(sprintf('Could not find create environment record %s', $args['createID']));
 			}
@@ -31,9 +32,11 @@ class CreateEnvJob extends DeploynautJob {
 			$envCreate->createEnvironment();
 
 		} catch(Exception $e) {
+			$log->write($e->getMessage());
 			echo "[-] CreateEnvJob failed" . PHP_EOL;
 			throw $e;
 		}
+
 		$this->updateStatus('Finished');
 		echo "[-] CreateEnvJob finished" . PHP_EOL;
 	}
