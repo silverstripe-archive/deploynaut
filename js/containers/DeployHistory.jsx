@@ -36,7 +36,7 @@ const DeployHistory = function(props) {
 		<div>
 			<h4>History</h4>
 			<div className="table-responsive">
-				<table className="table table-clickable table-striped table-hover">
+				<table className="table table-clickable table-centered-columns table-striped table-hover">
 					<thead>
 						<tr>
 							<th>Deploy date</th>
@@ -57,7 +57,7 @@ const DeployHistory = function(props) {
 										<td><BuildStatus deployment={row} /></td>
 										<td>{row.approver ? row.approver.name : <span className="bypassed">Bypassed</span>}</td>
 										<td>{row.deployer ? row.deployer.name : null}</td>
-										<td>{row.state}</td>
+										<td className={"deploy-status status-" + row.state}><span className="deploy-status-text">{row.state}</span></td>
 									</tr>
 								);
 							})

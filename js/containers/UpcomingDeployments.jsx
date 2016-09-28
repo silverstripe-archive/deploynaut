@@ -25,7 +25,7 @@ const UpcomingDeployments = function(props) {
 		<div>
 			<h4>Upcoming</h4>
 			<div className="table-responsive">
-				<table className="table table-clickable table-striped table-hover">
+				<table className="table table-clickable table-centered-columns table-striped table-hover">
 					<thead>
 						<tr>
 							<th>Request date</th>
@@ -46,7 +46,7 @@ const UpcomingDeployments = function(props) {
 										<td>{row.commit_message}</td>
 										<td>{row.deployer ? row.deployer.name : null}</td>
 										<td>{row.approver ? row.approver.name : null}</td>
-										<td>{row.state}</td>
+										<td className={"deploy-status status-" + row.state}><span className="deploy-status-text">{row.state}</span></td>
 									</tr>
 								);
 							})
