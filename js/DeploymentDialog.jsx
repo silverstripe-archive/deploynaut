@@ -135,7 +135,6 @@ var DeploymentDialog = React.createClass({
 				<div className={classes} onClick={this.handleClick}>
 					<span className="status-icon" aria-hidden="true"></span>
 					<span className="time">last updated {this.state.last_fetched}</span>
-					<EnvironmentName environmentName={this.props.context.envName} />
 				</div>
 				{form}
 			</div>

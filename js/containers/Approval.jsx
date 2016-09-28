@@ -19,7 +19,10 @@ function Approval(props) {
 	}
 
 	return (
-		<div>
+
+		<div className="section">
+			<header id="2">Approval</header>
+
 			<p>
 				Once this request has been approved, your team will be able to
 				progress to the final Deployment step.

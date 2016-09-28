@@ -30,43 +30,42 @@ var Dropdown = React.createClass({
 	},
 
 	componentDidMount: function() {
-		this.destroySelect2();
-		this.initSelect2();
-	},
-
-	componentDidUpdate: function() {
-		this.destroySelect2();
-		this.initSelect2();
+		this.initSelectize();
 	},
 
 	componentWillUnmount: function() {
-		this.destroySelect2();
+		// we want to destroy selectize to prevent
+		// onUpdate events to hang around after this
+		// component have been unmounted.
+		this.removeSelectize();
 	},
 
 	selector: null,
 
-	initSelect2: function() {
-		$(this.selector).select2(this.props.options);
-		$(this.selector).select2().on("change", function(evt) {
-			const value = evt.currentTarget.value;
+	// We are using the selectize library instead of select2 because
+	// select2 causes a lot of bugs and the hacks didn't do it anymore.
+	// The biggest problem is displaying a select2 dropdown in a bootstrap
+	// modal that has overflow scrolling will break the scrolling.
+	initSelectize: function() {
+		$(this.selector).selectize(this.props.options);
+		// push the set the default value from react to selectize
+		if (typeof this.props.value !== 'undefined') {
+			$(this.selector)[0].selectize.setValue(this.props.value);
+		}
+		// make sure that react get notified when values are picked
+		$(this.selector)[0].selectize.on("change", function(value) {
 			this.props.onSelect(value);
 		}.bind(this));
-
-		if (typeof this.props.value !== 'undefined') {
-			$(this.selector).val(this.props.value);
-		}
 	},
 
-	destroySelect2: function() {
-		if ($(this.selector).data('select2')) {
-			$(this.selector).select2().off("change");
-			$(this.selector).select2("destroy");
+	removeSelectize: function() {
+		if ($(this.selector)[0].selectize) {
+			$(this.selector)[0].selectize.destroy();
 		}
 	},
 
 	render: function() {
 		var props = this.props;
-
 		var options = [];
 		var idx = 0;
 		if (props.options) {
@@ -80,17 +79,15 @@ var Dropdown = React.createClass({
 						{props.options[index].value}
 					</option>
 				);
-
 			});
 		}
 
 		options.unshift(<option key={"default"} value={""} disabled>{props.defaultText}</option>);
-		var className = 'form-control';
 		return (
 			<select
 				ref={function(node) { this.selector = node; }.bind(this)}
 				id={props.name}
-				className={className}
+				className='form-control disable-select2'
 				name={props.name}
 				onChange={props.onSelect}
 				value={props.value}

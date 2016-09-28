@@ -41,7 +41,8 @@ const deployment = function(props) {
 	}
 
 	return (
-		<div>
+		<div className="section">
+			<header id="3">Deployment</header>
 			<div className="row">
 				<div className="col-md-6">
 					<dl>

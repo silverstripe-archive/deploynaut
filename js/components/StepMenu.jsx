@@ -4,20 +4,16 @@ var React = require("react");
 // with the proper design
 
 var Step = function(props) {
-	var classNames = "";
-	var style = {
-		marginBottom: "4px"
-	};
+	let classNames = "step";
 
 	if (props.active) {
-		classNames = "alert-info";
-	} else if (!props.show) {
-		style.color = "#ddd";
+		classNames += " active";
+	} else if (props.show) {
+		classNames += " selectable";
 	}
 
 	var onclick = function() {};
 	if (props.show) {
-		style.cursor = "pointer";
 		onclick = props.onClick;
 	}
 
@@ -33,9 +29,8 @@ var Step = function(props) {
 
 	return (
 		<div
-			style={style}
 			onClick={onclick}
-			className={"alert " + classNames}
+			className={classNames}
 		>
 			{props.id + 1}. {props.title} {loading} {check}
 		</div>
