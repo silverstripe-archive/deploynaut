@@ -109,7 +109,6 @@ class DeployJob extends DeploynautJob {
 			$deployment->write();
 		}
 
-		// This is a bit icky, but there is no easy way of capturing a failed deploy by using the PHP Resque
 		try {
 			// Disallow concurrent deployments (don't rely on queuing implementation to restrict this)
 			// Only consider deployments started in the last 30 minutes (older jobs probably got stuck)

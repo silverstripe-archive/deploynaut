@@ -43,7 +43,6 @@ class DataTransferJob extends DeploynautJob {
 			$dataTransfer->write();
 		}
 
-		// This is a bit icky, but there is no easy way of capturing a failed run by using the PHP Resque
 		try {
 			// Disallow concurrent jobs (don't rely on queuing implementation to restrict this)
 			// Only consider data transfers started in the last 30 minutes (older jobs probably got stuck)
