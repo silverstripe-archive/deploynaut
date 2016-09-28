@@ -97,6 +97,8 @@ class SmokeTestPipelineStep extends PipelineStep {
 	 * @return resource Curl handle
 	 */
 	protected function initCurl() {
+		//do not bypass proxy by default
+		$bypassProxy = false;
 		$handle = curl_init();
 
 		// avoid curl_exec pushing out the response to the screen
@@ -105,8 +107,13 @@ class SmokeTestPipelineStep extends PipelineStep {
 		curl_setopt($handle, CURLOPT_TIMEOUT, $timeout);
 		// don't allow this to run for more than 10 seconds to avoid tying up webserver processes.
 
+		//check the pipelines settings to see if we should bypass the proxy
+		$environment = $this->getDependentEnvironment();
+		if($this->Pipeline()->getConfigSetting('PipelineConfig', 'bypassProxy')){
+			$bypassProxy = $this->Pipeline()->getConfigSetting('PipelineConfig', 'bypassProxy');
+		}
 		// if we need to use a proxy, ensure that is configured
-		if(defined('SS_OUTBOUND_PROXY')) {
+		if(defined('SS_OUTBOUND_PROXY') && !$bypassProxy) {
 			curl_setopt($handle, CURLOPT_PROXY, SS_OUTBOUND_PROXY);
 			curl_setopt($handle, CURLOPT_PROXYPORT, SS_OUTBOUND_PROXY_PORT);
 		}
