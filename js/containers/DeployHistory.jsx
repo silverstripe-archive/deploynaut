@@ -22,13 +22,17 @@ const DeployHistory = function(props) {
 
 	if (props.total_pages > 1) {
 		pagination = (
-			<Pagination
-				prev
-				next
-				items={props.total_pages}
-				activePage={props.current_page}
-				onSelect={props.onPageClick}
-			/>
+			<div className="text-center">
+				<nav>
+					<Pagination
+						prev
+						next
+						items={props.total_pages}
+						activePage={props.current_page}
+						onSelect={props.onPageClick}
+					/>
+				</nav>
+			</div>
 		);
 	}
 
