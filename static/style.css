@@ -12036,7 +12036,7 @@ button.sidebar-open {
     color: #5cb85c; }
   .deploy-status.status-Deploying {
     color: #3aaef9; }
-  .deploy-status.status-Failed, .deploy-status.status-Invalid {
+  .deploy-status.status-Failed, .deploy-status.status-Invalid, .deploy-status.status-Rejected {
     color: #d9534f; }
   .deploy-status .deploy-status-text {
     padding: 3px 0 0 25px;
