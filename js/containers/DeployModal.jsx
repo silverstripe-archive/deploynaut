@@ -4,7 +4,7 @@ const ReactRedux = require('react-redux');
 const StepMenu = require('../components/StepMenu.jsx');
 const GitRefSelector = require('./GitRefSelector.jsx');
 const ButtonGitUpdate = require('./buttons/GitUpdate.jsx');
-const SummaryOfChanges = require('./SummaryOfChanges.jsx');
+
 const Approval = require('./Approval.jsx');
 const Deployment = require('./Deployment.jsx');
 const DeployPlan = require('./DeployPlan.jsx');
@@ -20,88 +20,97 @@ function calculateSteps(props) {
 			show: true,
 			title: "Target Release",
 			is_loading: props.is_loading[0],
-			is_finished: props.is_finished[0],
-			content: (
-				<div>
-					<ButtonGitUpdate />
-					<GitRefSelector />
-				</div>
-			)
+			is_finished: props.is_finished[0]
 		},
 		{
 			title: "Deployment Plan",
 			show: props.sha_is_selected,
 			is_loading: props.is_loading[1],
-			is_finished: props.is_finished[1],
-			content: (
-				<div>
-					<SummaryOfChanges />
-					<DeployPlan />
-				</div>
-			)
+			is_finished: props.is_finished[1]
 		},
 		{
 			title: "Approval",
 			show: props.plan_success,
 			is_loading: props.is_loading[2],
-			is_finished: props.is_finished[2],
-			content: (
-				<div>
-					<Approval />
-				</div>
-			)
+			is_finished: props.is_finished[2]
 		},
 		{
 			title: "Deployment",
 			show: props.sha_is_selected && props.can_deploy,
 			is_loading: props.is_loading[3],
-			is_finished: props.is_finished[3],
-			content: (
-				<div>
-					<Deployment />
-				</div>
-			)
+			is_finished: props.is_finished[3]
 		}
 	];
 }
 
-function DeployModal(props) {
-	const steps = calculateSteps(props);
 
-	const content = (
-		<div className="deploy-form">
-			<div className="header">
-				<span className="numberCircle">{steps[props.active_step].id}</span> {steps[props.active_step].title}
-			</div>
-			<Messages
-				messages={props.messages}
-			/>
-			<div>
-				{steps[props.active_step].content}
-			</div>
-		</div>
-	);
+const DeployModal = React.createClass({
 
-	return (
-		<Modal show={props.is_open} className="deploy" closeHandler={props.onClose} title="Deployment">
-			<div className="row">
-				<div className="col-md-12">
-					<h3>Deployment options for ...</h3>
+	componentDidMount: function() {
+		window.addEventListener("resize", this.resize);
+	},
+
+	componentDidUpdate: function() {
+		this.resize();
+	},
+
+	componentWillUnmount: function() {
+		window.removeEventListener("resize", this.resize);
+	},
+
+	// calculate and set a pixel value on the modal height instead of a percentage
+	// value so that we get a scrollbar inside the body of the modal
+	resize: function() {
+		// we need to remove the height of the modal header
+		let headerHeight = 0;
+		const headerElements = document.getElementsByClassName("modal-header");
+		if (headerElements.length > 0) {
+			headerHeight = headerElements[0].offsetHeight;
+		}
+		const bodyElements = document.getElementsByClassName("modal-body");
+		if (bodyElements.length > 0) {
+			bodyElements[0].style.height = (window.innerHeight - headerHeight) + 'px';
+		}
+	},
+
+	render: function() {
+		const steps = calculateSteps(this.props);
+
+		return (
+			<Modal show={this.props.is_open} className="deploy" closeHandler={this.props.onClose} title="Deployment">
+				<div className="row">
+					<div className="col-md-3 menu">
+						<StepMenu
+							steps={steps}
+							value={this.props.active_step}
+							onClick={this.props.onTabClick}
+						/>
+					</div>
+					<div className="col-md-9 main">
+						<div className="deploy-form">
+							<Messages
+								messages={this.props.messages}
+							/>
+							<div>
+								<div className="section fetch">
+									<div style={{float: "right"}}>
+										<ButtonGitUpdate />
+									</div>
+									<div>Last synced x/x/xx <span className="small">less than x xxxx ago</span></div>
+									<div><i>Ensure you have the most recent code before setting up your deployment</i></div>
+								</div>
+								<GitRefSelector />
+								<DeployPlan />
+								<Approval />
+								<Deployment />
+							</div>
+						</div>
+					</div>
 				</div>
-				<div className="col-md-3">
-					<StepMenu
-						steps={steps}
-						value={props.active_step}
-						onClick={props.onTabClick}
-					/>
-				</div>
-				<div className="col-md-9">
-					{content}
-				</div>
-			</div>
-		</Modal>
-	);
-}
+			</Modal>
+		);
+	}
+});
 
 const mapStateToProps = function(state, ownProps) {
 	function deployPlanIsOk() {

@@ -3,6 +3,7 @@ var React = require("react");
 var TextArea = function(props) {
 	return (
 		<textarea
+			className="form-control"
 			rows="10"
 			name={props.name}
 			value={props.value}

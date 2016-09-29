@@ -41,7 +41,7 @@ function GitRefSelector(props) {
 							disabled={props.disabled}
 						/>
 						<Button
-							onClick={() => props.onRefSelect(props.selected_ref)}
+							onClick={(evt) => { evt.preventDefault(); props.onRefSelect(props.selected_ref); }}
 							disabled={props.disabled}
 							value="Go"
 						/>
@@ -74,7 +74,11 @@ function GitRefSelector(props) {
 	});
 
 	return (
-		<div>
+		<div className="section">
+			<header id="0">Target release</header>
+			<div>
+				Select the release you would like to deploy to xxxx
+			</div>
 			<form className="form">
 				<ul className="radio-list">
 					{list}

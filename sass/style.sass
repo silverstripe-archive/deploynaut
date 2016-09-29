@@ -18,6 +18,9 @@ $textarea-transition-time: 0.6s
 @import "_user-switch.sass"
 @import "variables.sass"
 
+@import "selectize/selectize"
+@import "selectize/selectize.bootstrap3"
+
 ul.list,
 ol.list
 	list-style: none
@@ -1289,6 +1292,69 @@ textarea.deploy-key
 
 	p, h1, h2, h3, h4, h5, .h1, .h2, .h3, .h4, .h5, .close
 		color: #fff
+
+.modal.deploy
+
+	.modal-lg
+		@media screen and (min-width: 992px)
+			width: 90%
+			color: #505050
+
+	.modal-dialog
+		margin: 0 auto
+
+		.modal-content
+			border-radius: 0
+			background-color: #F0F3F4
+
+			.modal-header
+				border-radius: 0
+				background: #ffffff
+
+				.modal-title
+					color: #000000
+
+				.close
+					color: #000000
+
+			.modal-body
+				// ensure that there is a scrollbar inside the modal
+				overflow-y: auto
+				height: 100%
+				// we remove padding here so the menu can do a left aligned active indicator
+				padding-left: 0
+
+
+				.menu
+					padding-right: 0
+
+					.step
+						font-size: 16px
+						color: #B2B3B4
+						padding: 10px 0 10px 16px
+						border-left: 6px solid transparent
+
+						&.active
+							border-color: #0685D7
+							color: #505050
+							cursor: pointer
+
+						&.selectable
+							color: #505050
+							cursor: pointer
+
+			.section
+				border: 1px solid #D7D7D7
+				margin-bottom: 10px
+				padding: 10px
+				background-color: #ffffff
+
+				&.fetch
+					margin-bottom: 0
+					background-color: #EDF1F2
+
+				header
+					font-size: 18px
 
 .content .variables-description p
 	max-width: none

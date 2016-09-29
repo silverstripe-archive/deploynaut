@@ -5,7 +5,7 @@ var Button = require('../../components/Button.jsx');
 
 const mapStateToProps = function(state) {
 
-	let btnValue = state.git.is_updating ? "Updating code..." : "Update code";
+	let btnValue = state.git.is_updating ? "Fetch code..." : "Fetch code";
 
 	if (state.git.error) {
 		btnValue = state.git.error;

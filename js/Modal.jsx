@@ -47,7 +47,7 @@ var Modal = React.createClass({
 		}
 
 		return (
-			<div className={classNames} tabIndex="-1" ref={function(node) { this.selector = node; }.bind(this)}>
+			<div className={classNames} ref={function(node) { this.selector = node; }.bind(this)}>
 				<div className="modal-dialog modal-lg">
 					<div className="modal-content">
 						<div className="modal-header">
