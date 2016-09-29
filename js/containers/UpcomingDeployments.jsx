@@ -1,5 +1,6 @@
 const React = require('react');
 const ReactRedux = require('react-redux');
+const BuildStatus = require('../components/BuildStatus.jsx');
 
 const _ = require('underscore');
 const actions = require('../_actions.js');
@@ -42,8 +43,8 @@ const UpcomingDeployments = function(props) {
 								const row = props.list[i];
 								return (
 									<tr onClick={() => props.onItemClick(row.id)} key={i}>
-										<td>{row.date_requested}</td>
-										<td>{row.commit_message}</td>
+										<td>{row.date_requested_nice}</td>
+										<td><BuildStatus deployment={row} /></td>
 										<td>{row.deployer ? row.deployer.name : null}</td>
 										<td>{row.approver ? row.approver.name : null}</td>
 										<td className={"deploy-status status-" + row.state}><span className="deploy-status-text">{row.state}</span></td>

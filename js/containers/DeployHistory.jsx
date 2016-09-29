@@ -53,7 +53,7 @@ const DeployHistory = function(props) {
 								const row = props.list[i];
 								return (
 									<tr className={row.is_current_build ? "current" : ""} onClick={() => props.onItemClick(row.id)} key={i}>
-										<td>{row.date_started}</td>
+										<td>{row.date_started_nice}</td>
 										<td><BuildStatus deployment={row} /></td>
 										<td>{row.approver ? row.approver.name : <span className="bypassed">Bypassed</span>}</td>
 										<td>{row.deployer ? row.deployer.name : null}</td>

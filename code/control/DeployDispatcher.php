@@ -268,13 +268,17 @@ class DeployDispatcher extends Dispatcher {
 
 		// failover for older deployments
 		$started = $deployment->Created;
+		$startedNice = $deployment->obj('Created')->Nice();
 		if($deployment->DeployStarted) {
 			$started = $deployment->DeployStarted;
+			$startedNice = $deployment->obj('DeployStarted')->Nice();
 		}
 
 		$requested = $deployment->Created;
+		$requestedNice = $deployment->obj('Created')->Nice();
 		if($deployment->DeployRequested) {
 			$requested = $deployment->DeployRequested;
+			$requestedNice = $deployment->obj('DeployRequested')->Nice();
 		}
 
 		$isCurrentBuild = self::$_cache_current_build ? ($deployment->ID === self::$_cache_current_build->ID) : false;
@@ -282,9 +286,13 @@ class DeployDispatcher extends Dispatcher {
 		return [
 			'id' => $deployment->ID,
 			'date_created' => $deployment->Created,
+			'date_created_nice' => $deployment->obj('Created')->Nice(),
 			'date_started' => $started,
+			'date_started_nice' => $startedNice,
 			'date_requested' => $requested,
+			'date_requested_nice' => $requestedNice,
 			'date_updated' => $deployment->LastEdited,
+			'date_updated_nice' => $deployment->obj('LastEdited')->Nice(),
 			'summary' => $deployment->Summary,
 			'branch' => $deployment->Branch,
 			'tags' => $deployment->getTags()->toArray(),
