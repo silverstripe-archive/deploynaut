@@ -12093,6 +12093,13 @@ button.sidebar-open {
     .deploy-form-loading > .icon-holder > span {
       display: block; }
 
+.deploy-button {
+  padding: 12px 45px;
+  font-size: 16px; }
+  @media (max-width: 992px) {
+    .deploy-button {
+      width: 100%; } }
+
 .deploy-form-outer, .deploy-form-loading {
   border-width: 0px 1px 1px;
   border-style: solid;
