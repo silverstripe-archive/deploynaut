@@ -28,12 +28,14 @@ var Step = function(props) {
 	}
 
 	return (
-		<div
+		<li
+			href={"#" + props.id}
 			onClick={onclick}
 			className={classNames}
+			role="presentation"
 		>
 			{props.id + 1}. {props.title} {loading} {check}
-		</div>
+		</li>
 	);
 };
 
@@ -61,9 +63,9 @@ var StepMenu = function(props) {
 	});
 
 	return (
-		<div>
+		<ul className="nav nav-pills nav-stacked">
 			{list}
-		</div>
+		</ul>
 	);
 };
 

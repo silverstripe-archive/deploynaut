@@ -12628,6 +12628,17 @@ textarea.deploy-key {
       padding-left: 0; }
       .modal.deploy .modal-dialog .modal-content .modal-body .menu {
         padding-right: 0; }
+        .modal.deploy .modal-dialog .modal-content .modal-body .menu.affix {
+          position: relative; }
+        @media screen and (min-width: 992px) {
+          .modal.deploy .modal-dialog .modal-content .modal-body .menu.affix-top {
+            position: static;
+            margin-top: 30px;
+            width: 250px; }
+          .modal.deploy .modal-dialog .modal-content .modal-body .menu.affix {
+            position: fixed;
+            top: 70px;
+            width: 250px; } }
         .modal.deploy .modal-dialog .modal-content .modal-body .menu .step {
           font-size: 16px;
           color: #B2B3B4;
@@ -12640,6 +12651,9 @@ textarea.deploy-key {
           .modal.deploy .modal-dialog .modal-content .modal-body .menu .step.selectable {
             color: #505050;
             cursor: pointer; }
+      @media screen and (min-width: 992px) {
+        .modal.deploy .modal-dialog .modal-content .modal-body .main {
+          margin-left: 251px; } }
     .modal.deploy .modal-dialog .modal-content .section {
       border: 1px solid #D7D7D7;
       margin-bottom: 10px;
