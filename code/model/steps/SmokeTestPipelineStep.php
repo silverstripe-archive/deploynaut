@@ -108,7 +108,6 @@ class SmokeTestPipelineStep extends PipelineStep {
 		// don't allow this to run for more than 10 seconds to avoid tying up webserver processes.
 
 		//check the pipelines settings to see if we should bypass the proxy
-		$environment = $this->getDependentEnvironment();
 		if($this->Pipeline()->getConfigSetting('PipelineConfig', 'bypassProxy')){
 			$bypassProxy = $this->Pipeline()->getConfigSetting('PipelineConfig', 'bypassProxy');
 		}
