@@ -711,6 +711,12 @@ button.sidebar-open
 		> span
 			display: block
 
+.deploy-button
+	padding: 12px 45px
+	font-size: 16px
+	@media (max-width: $screen-md)
+		width: 100%
+
 .deploy-form-outer
 	border-width: 0px 1px 1px
 	border-style: solid
@@ -1298,7 +1304,7 @@ textarea.deploy-key
 .modal.deploy
 
 	.modal-lg
-		@media screen and (min-width: 992px)
+		@media screen and (min-width: $screen-md)
 			width: 90%
 			color: #505050
 
