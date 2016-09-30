@@ -79,7 +79,7 @@ const DeployModal = React.createClass({
 		return (
 			<Modal show={this.props.is_open} className="deploy" closeHandler={this.props.onClose} title="Deployment">
 				<div className="row">
-					<div className="col-md-3 menu">
+					<div className="col-md-3 menu" data-spy="affix" id="modal-menu">
 						<StepMenu
 							steps={steps}
 							value={this.props.active_step}
