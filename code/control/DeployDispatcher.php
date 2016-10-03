@@ -168,10 +168,12 @@ class DeployDispatcher extends Dispatcher {
 		// @todo the strategy should have been saved when there has been a request for an
 		// approval or a bypass. This saved state needs to be checked if it's invalidated
 		// if another deploy happens before this one
+		$isBranchDeploy = (int) $request->requestVar('ref_type') === GitDispatcher::REF_TYPE_BRANCH;
+
 		$options = [
 			'sha' => $request->requestVar('ref'),
 			'ref_type' => $request->requestVar('ref_type'),
-			'branch' => $request->requestVar('ref_name'),
+			'branch' => $isBranchDeploy ? $request->requestVar('ref_name') : null,
 			'summary' => $request->requestVar('summary')
 		];
 		$strategy = $this->environment->Backend()->planDeploy($this->environment, $options);
