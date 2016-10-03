@@ -8,7 +8,8 @@ var Step = function(props) {
 
 	if (props.active) {
 		classNames += " active";
-	} else if (props.show) {
+	}
+	if (props.show) {
 		classNames += " selectable";
 	}
 

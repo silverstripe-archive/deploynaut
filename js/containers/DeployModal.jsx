@@ -17,26 +17,26 @@ const constants = require('../constants/deployment.js');
 function calculateSteps(props) {
 	return [
 		{
-			show: true,
 			title: "Target Release",
+			show: true,
 			is_loading: props.is_loading[0],
 			is_finished: props.is_finished[0]
 		},
 		{
 			title: "Deployment Plan",
-			show: props.sha_is_selected,
+			show: true,
 			is_loading: props.is_loading[1],
 			is_finished: props.is_finished[1]
 		},
 		{
 			title: "Approval",
-			show: props.plan_success,
+			show: true,
 			is_loading: props.is_loading[2],
 			is_finished: props.is_finished[2]
 		},
 		{
 			title: "Deployment",
-			show: props.sha_is_selected && props.can_deploy,
+			show: true,
 			is_loading: props.is_loading[3],
 			is_finished: props.is_finished[3]
 		}
@@ -46,17 +46,58 @@ function calculateSteps(props) {
 
 const DeployModal = React.createClass({
 
+	bodyElement: null,
+
 	componentDidMount: function() {
 		window.addEventListener("resize", this.resize);
+		const bodyElements = document.getElementsByClassName("modal-body");
+		if (bodyElements.length === 0) {
+			return;
+		}
+
+		this.bodyElement = bodyElements[0];
+		this.bodyElement.addEventListener("scroll", this.calculateActiveSection);
+
 		this.resize();
+		this.calculateActiveSection();
 	},
 
 	componentDidUpdate: function() {
 		this.resize();
+		this.calculateActiveSection();
 	},
 
 	componentWillUnmount: function() {
 		window.removeEventListener("resize", this.resize);
+		if(this.bodyElement) {
+			this.bodyElement.removeEventListener("scroll", this.calculateActiveSection);
+		}
+	},
+
+	calculateActiveSection: function() {
+		// menu items
+		const menuItems = $('.menu').find("li");
+		// section anchors corresponding to menu items
+		const scrollItems = menuItems.map(function() {
+			const item = $($(this).attr("href"));
+			if (item.length) { return item; }
+		});
+
+		// this is a carefully hand tweaked value (:P) that will ensure that when a section
+		// is reasonable in view it will mark the menu as active
+		const topOffset = 230;
+
+		// find all items that are above the topOffset
+		let cur = scrollItems.map(function(){
+			if ($(this).offset().top < topOffset) {
+				return this;
+			}
+		});
+		// we take the last item in the list above and mark it as action
+		if (cur && cur.length) {
+			$(menuItems[cur.length-1]).addClass("active");
+			$(menuItems[cur.length-1]).siblings().removeClass("active");
+		}
 	},
 
 	// calculate and set a pixel value on the modal height instead of a percentage
@@ -69,8 +110,21 @@ const DeployModal = React.createClass({
 			headerHeight = headerElements[0].offsetHeight;
 		}
 		const bodyElements = document.getElementsByClassName("modal-body");
+		let bodyHeight = 0;
 		if (bodyElements.length > 0) {
-			bodyElements[0].style.height = (window.innerHeight - headerHeight) + 'px';
+			bodyHeight = (window.innerHeight - headerHeight);
+		}
+
+		if(bodyHeight === 0) {
+			return;
+		}
+
+		// set the height of the modal
+		bodyElements[0].style.height = bodyHeight + 'px';
+		// scale each "step" section to be the same height as the modal window
+		const sections = this.bodyElement.getElementsByClassName("section");
+		for(let i = 0; i<sections.length; i++) {
+			sections[i].style.minHeight = (bodyHeight) + 'px';
 		}
 	},
 
@@ -87,23 +141,23 @@ const DeployModal = React.createClass({
 							onClick={this.props.onTabClick}
 						/>
 					</div>
-					<div className="col-md-9 main">
+					<div className="col-md-9 main" >
 						<div className="deploy-form">
 							<Messages
 								messages={this.props.messages}
 							/>
 							<div>
-								<div className="section fetch">
+								<div className="fetch">
 									<div style={{float: "right"}}>
 										<ButtonGitUpdate />
 									</div>
 									<div>Last synced x/x/xx <span className="small">less than x xxxx ago</span></div>
 									<div><i>Ensure you have the most recent code before setting up your deployment</i></div>
 								</div>
-								<GitRefSelector />
-								<DeployPlan />
-								<Approval />
-								<Deployment />
+								<GitRefSelector  />
+								<DeployPlan  />
+								<Approval  />
+								<Deployment  />
 							</div>
 						</div>
 					</div>

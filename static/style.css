@@ -12632,15 +12632,12 @@ textarea.deploy-key {
     .modal.deploy .modal-dialog .modal-content .modal-body {
       overflow-y: auto;
       height: 100%;
-      padding-left: 0; }
+      padding: 0; }
       .modal.deploy .modal-dialog .modal-content .modal-body .menu {
         padding-right: 0; }
         .modal.deploy .modal-dialog .modal-content .modal-body .menu.affix {
           position: relative; }
         @media screen and (min-width: 992px) {
-          .modal.deploy .modal-dialog .modal-content .modal-body .menu.affix-top {
-            position: static;
-            width: 220px; }
           .modal.deploy .modal-dialog .modal-content .modal-body .menu.affix {
             position: fixed;
             width: 220px; } }
@@ -12659,14 +12656,17 @@ textarea.deploy-key {
       @media screen and (min-width: 992px) {
         .modal.deploy .modal-dialog .modal-content .modal-body .main {
           margin-left: 221px; } }
+    .modal.deploy .modal-dialog .modal-content .fetch,
     .modal.deploy .modal-dialog .modal-content .section {
       border: 1px solid #D7D7D7;
       margin-bottom: 10px;
       padding: 10px;
       background-color: #ffffff; }
+      .modal.deploy .modal-dialog .modal-content .fetch.fetch,
       .modal.deploy .modal-dialog .modal-content .section.fetch {
         margin-bottom: 0;
         background-color: #EDF1F2; }
+      .modal.deploy .modal-dialog .modal-content .fetch header,
       .modal.deploy .modal-dialog .modal-content .section header {
         font-size: 18px; }
 
