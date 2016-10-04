@@ -62,10 +62,11 @@ const UpcomingDeployments = function(props) {
 const mapStateToProps = function(state) {
 
 	// try to find the current build in the list of all deployments
-	let upcomingList = {};
+	let upcomingList = [];
 	if (typeof state.deployment.list === "object") {
 		upcomingList = _.filter(state.deployment.list, function(deploy) {
 			switch (deploy.state) {
+				case undefined:
 				case "Completed":
 				case "Invalid":
 				case "Failed":
