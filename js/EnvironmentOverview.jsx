@@ -48,11 +48,12 @@ function Plan(props) {
 	actions.history = useRouterHistory(createHistory)({ basename: props.model.basename });
 
 	store.dispatch(actions.setEnvironment(props.model.environment));
+	store.dispatch(actions.setUser(props.model.user));
 
 	store.dispatch(actions.getUpcomingDeployments());
-	store.dispatch(actions.getCurrentBuildStatus());
 	store.dispatch(actions.getDeployHistory());
 	store.dispatch(actions.getRevisionsIfNeeded());
+	store.dispatch(actions.getApprovers());
 
 	return (
 		<ReactRedux.Provider store={store}>

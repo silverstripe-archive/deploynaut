@@ -4,12 +4,27 @@ use \Finite\Event\TransitionEvent;
 
 class DNDeploymentHandlers extends Object {
 
+	public function onNew(TransitionEvent $e) {
+		/** @var DNDeployment $deployment */
+		$deployment = $e->getStateMachine()->getObject();
+		$deployment->DeployRequested = null;
+		$deployment->write();
+	}
+
 	public function onSubmit(TransitionEvent $e) {
 		/** @var DNDeployment $deployment */
 		$deployment = $e->getStateMachine()->getObject();
 		$deployment->DeployRequested = SS_Datetime::now()->Rfc2822();
 		$deployment->write();
 		$this->sendEmailToApprover($deployment);
+	}
+
+	public function onApprove(TransitionEvent $e) {
+		// @todo send email to requester that it's approved
+	}
+
+	public function onReject(TransitionEvent $e) {
+		// @todo send email to requester that it's rejected
 	}
 
 	public function onQueue(TransitionEvent $e) {

@@ -180,10 +180,6 @@ const mapStateToProps = function(state, ownProps) {
 		return state.plan.validation_code === 'success' || state.plan.validation_code === 'warning';
 	}
 
-	function isApproved() {
-		return state.approval.approved || state.approval.bypassed;
-	}
-
 	let active_step = 0;
 	if (window.location.hash) {
 		active_step = parseInt(window.location.hash.substring(1), 10);
@@ -198,20 +194,20 @@ const mapStateToProps = function(state, ownProps) {
 		is_loading: [
 			state.git.is_loading || state.git.is_updating,
 			state.plan.is_loading,
-			state.approval.is_loading,
+			state.deployment.is_loading,
 			constants.isDeploying(currentState)
 		],
 		is_finished: [
 			state.git.selected_ref !== "",
 			deployPlanIsOk(),
-			deployPlanIsOk() && isApproved(),
+			deployPlanIsOk() && state.deployment.approved,
 			constants.isDeployDone(currentState)
 		],
 		is_open: typeof (ownProps.params.id) !== 'undefined' && ownProps.params.id !== null,
 		plan_success: deployPlanIsOk(),
 		messages: state.messages,
 		sha_is_selected: (state.git.selected_ref !== ""),
-		can_deploy: isApproved(),
+		can_deploy: state.deployment.approved,
 		state: state.deployment.state,
 		active_step: active_step
 	};

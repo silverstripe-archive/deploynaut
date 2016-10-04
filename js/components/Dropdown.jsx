@@ -3,11 +3,11 @@ var React = require("react");
 var Dropdown = React.createClass({
 	propTypes: {
 		options: React.PropTypes.arrayOf(React.PropTypes.shape({
-			key: React.PropTypes.oneOfType([
+			id: React.PropTypes.oneOfType([
 				React.PropTypes.string,
 				React.PropTypes.number
 			]).isRequired,
-			value: React.PropTypes.string.isRequired
+			title: React.PropTypes.string.isRequired
 		}).isRequired),
 		defaultValue: React.PropTypes.oneOfType([
 			React.PropTypes.string,
@@ -40,6 +40,12 @@ var Dropdown = React.createClass({
 		this.removeSelectize();
 	},
 
+	// When props get updated we re-initialise the selector
+	componentDidUpdate: function() {
+		this.removeSelectize();
+		this.initSelectize();
+	},
+
 	selector: null,
 
 	// We are using the selectize library instead of select2 because
@@ -47,7 +53,12 @@ var Dropdown = React.createClass({
 	// The biggest problem is displaying a select2 dropdown in a bootstrap
 	// modal that has overflow scrolling will break the scrolling.
 	initSelectize: function() {
-		$(this.selector).selectize(this.props.options);
+		$(this.selector).selectize({
+			valueField: 'id',
+			labelField: 'title',
+			searchField: 'title',
+			options: this.props.options
+		});
 		// push the set the default value from react to selectize
 		if (typeof this.props.value !== 'undefined') {
 			$(this.selector)[0].selectize.setValue(this.props.value);
@@ -68,15 +79,16 @@ var Dropdown = React.createClass({
 		var props = this.props;
 		var options = [];
 		var idx = 0;
+
 		if (props.options) {
 			options = Object.keys(props.options).map(function(index) {
 				idx += 1;
 				return (
 					<option
 						key={idx}
-						value={props.options[index].key}
+						value={props.options[index].id}
 					>
-						{props.options[index].value}
+						{props.options[index].title}
 					</option>
 				);
 			});

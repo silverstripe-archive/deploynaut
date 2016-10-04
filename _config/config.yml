@@ -19,8 +19,14 @@ Injector:
 StateMachineFactory:
   handlers:
     DNDeployment:
+      new:
+        DNDeploymentHandlers: onNew
       submit:
         DNDeploymentHandlers: onSubmit
+      approve:
+        DNDeploymentHandlers: onApprove
+      reject:
+        DNDeploymentHandlers: onReject
       queue:
         DNDeploymentHandlers: onQueue
       abort:

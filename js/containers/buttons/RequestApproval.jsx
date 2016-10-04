@@ -1,11 +1,26 @@
 var ReactRedux = require('react-redux');
 
+var _ = require('underscore');
 var actions = require('../../_actions.js');
 var Button = require('../../components/Button.jsx');
 
+function canRequest(state) {
+	if (_.isEmpty(state.plan.changes)) {
+		return false;
+	}
+	if (!state.deployment.approver_id) {
+		return false;
+	}
+	if (state.deployment.submitted) {
+		return false;
+	}
+	return true;
+}
+
 const mapStateToProps = function(state) {
 	return {
-		display: !state.approval.request_sent && state.approval.approved_by && state.git.selected_ref,
+		display: canRequest(state),
+		disabled: state.deployment.is_loading,
 		style: "btn-success",
 		value: 'Send Request',
 		icon: 'fa fa-envelope'
@@ -15,7 +30,8 @@ const mapStateToProps = function(state) {
 const mapDispatchToProps = function(dispatch) {
 	return {
 		onClick: function() {
-			dispatch(actions.submitForApproval());
+			dispatch(actions.createDeployment())
+				.then(() => dispatch(actions.submitForApproval()));
 		}
 	};
 };

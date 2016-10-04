@@ -35,7 +35,7 @@ function DeployPlan(props) {
 					</small>
 				</div>
 			</div>
-			<DeployDiff changes={props.changes} isLoading={props.isLoading} />
+			<DeployDiff changes={props.changes} is_loading={props.is_loading} />
 		</div>
 	);
 }
@@ -43,7 +43,7 @@ function DeployPlan(props) {
 const mapStateToProps = function(state) {
 	return {
 		changes: state.plan.changes,
-		isLoading: state.plan.is_loading
+		is_loading: state.plan.is_loading
 	};
 };
 

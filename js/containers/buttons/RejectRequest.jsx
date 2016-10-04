@@ -5,7 +5,8 @@ var Button = require('../../components/Button.jsx');
 
 const mapStateToProps = function(state) {
 	return {
-		display: state.approval.request_sent && !state.approval.approved,
+		display: state.deployment.submitted,
+		disabled: state.deployment.is_loading,
 		style: "btn-default",
 		value: "Reject deployment"
 	};
@@ -14,7 +15,7 @@ const mapStateToProps = function(state) {
 const mapDispatchToProps = function(dispatch) {
 	return {
 		onClick: function() {
-			dispatch(actions.startApprovalReject());
+			dispatch(actions.rejectDeployment());
 		}
 	};
 };

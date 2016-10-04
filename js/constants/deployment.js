@@ -2,6 +2,8 @@
 export const STATE_NEW = 'New';
 export const STATE_SUBMITTED = 'Submitted';
 export const STATE_INVALID = 'Invalid';
+export const STATE_APPROVED = 'Approved';
+export const STATE_REJECTED = 'Rejected';
 export const STATE_QUEUED = 'Queued';
 export const STATE_DEPLOYING = 'Deploying';
 export const STATE_ABORTING = 'Aborting';
@@ -46,4 +48,22 @@ export function isDeployDone(deployState) {
 
 export function hasDeployStarted(deployState) {
 	return isDeployDone(deployState) || isDeploying(deployState);
+}
+
+export function isSubmitted(deployState) {
+	return deployState === STATE_SUBMITTED;
+}
+
+export function isApproved(deployState) {
+	if (hasDeployStarted(deployState)) {
+		return true;
+	}
+	if (deployState === STATE_APPROVED) {
+		return true;
+	}
+	return false;
+}
+
+export function isRejected(deployState) {
+	return deployState === STATE_REJECTED;
 }

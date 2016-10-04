@@ -5,16 +5,19 @@ const deployStates = require('../constants/deployment.js');
 
 const initialState = {
 	is_loading: false,
-	enqueued: false,
 	id: "",
 	data: {},
 	// this is a "list" (actually an object) of deployment logs keyed by the deployment id
 	logs: {},
 	error: null,
-	selected: {},
 	state: deployStates.STATE_NEW,
-	// this is the "list" (actually an object) of all deployments that we fetched, updated etc keyed by the deployment
-	// id
+	submitted: false,
+	approved: false,
+	rejected: false,
+	queued: false,
+	approvers: [],
+	approver_id: 0,
+	// this is the "list" (actually an object) of all deployments that we fetched, updated etc keyed by deployment id
 	list: {},
 	current_page: 1
 };
@@ -47,22 +50,45 @@ module.exports = function deployment(state, action) {
 		}
 		case actions.NEW_DEPLOYMENT:
 			return _.assign({}, state, {
-				is_loading: false,
-				enqueued: false,
 				id: "",
 				data: {},
 				error: null,
 				state: deployStates.STATE_NEW,
+				submitted: false,
+				approved: false,
+				rejected: false,
+				queued: false,
+				approver_id: 0
 			});
 
+		case actions.START_DEPLOYMENT_CREATE:
 		case actions.START_DEPLOYMENT_GET:
 			return _.assign({}, state, {
 				is_loading: true,
 				error: null
 			});
 
-		case actions.SUCCEED_APPROVAL_BYPASS:
-		case actions.SUCCEED_CURRENT_BUILD_STATUS_GET:
+		case actions.SET_APPROVER:
+			return _.assign({}, state, {
+				approver_id: action.id
+			});
+
+		case actions.SUCCEED_APPROVERS_GET:
+			return _.assign({}, state, {
+				approvers: action.data.approvers
+			});
+
+		case actions.START_DEPLOYMENT_QUEUE:
+			return _.assign({}, state, {
+				queued: true
+			});
+
+		case actions.SUCCEED_APPROVAL_SUBMIT:
+		case actions.SUCCEED_APPROVAL_CANCEL:
+		case actions.SUCCEED_APPROVAL_APPROVE:
+		case actions.SUCCEED_APPROVAL_REJECT:
+		case actions.SUCCEED_DEPLOYMENT_QUEUE:
+		case actions.SUCCEED_DEPLOYMENT_CREATE:
 		case actions.SUCCEED_DEPLOYMENT_GET: {
 			// get current list
 			const newList = _.assign({}, state.list);
@@ -70,27 +96,27 @@ module.exports = function deployment(state, action) {
 
 			return _.assign({}, state, {
 				is_loading: false,
+				error: null,
 				id: action.data.deployment.id,
 				state: action.data.deployment.state,
+				submitted: deployStates.isSubmitted(action.data.deployment.state),
+				approved: deployStates.isApproved(action.data.deployment.state),
+				rejected: deployStates.isRejected(action.data.deployment.state),
+				approver_id: action.data.deployment.approver ? action.data.deployment.approver.id : 0,
 				data: action.data.deployment,
 				list: newList
 			});
 		}
-		case actions.START_DEPLOYMENT_ENQUEUE:
-			return _.assign({}, state, {
-				enqueued: true
-			});
-		case actions.SUCCEED_DEPLOYMENT_ENQUEUE: {
-			const newList = _.assign({}, state.list);
-			newList[action.data.deployment.id] = action.data.deployment;
 
-			return _.assign({}, state, {
-				id: action.data.deployment.id,
-				list: newList,
-				error: null
-			});
-		}
-		case actions.FAIL_DEPLOYMENT_ENQUEUE:
+		case actions.FAIL_APPROVAL_SUBMIT:
+		case actions.FAIL_APPROVAL_CANCEL:
+		case actions.FAIL_APPROVAL_APPROVE:
+		case actions.FAIL_APPROVAL_REJECT:
+		case actions.FAIL_APPROVERS_GET:
+		case actions.FAIL_DEPLOYMENT_QUEUE:
+		case actions.FAIL_DEPLOY_LOG_UPDATE:
+		case actions.FAIL_DEPLOYMENT_CREATE:
+		case actions.FAIL_DEPLOYMENT_GET:
 			return _.assign({}, state, {
 				error: action.error.toString()
 			});
@@ -109,10 +135,7 @@ module.exports = function deployment(state, action) {
 				list: newList
 			});
 		}
-		case actions.FAIL_DEPLOY_LOG_UPDATE:
-			return _.assign({}, state, {
-				error: action.error.toString(),
-			});
+
 		default:
 			return state;
 	}

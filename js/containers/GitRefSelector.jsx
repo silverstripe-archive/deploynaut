@@ -14,7 +14,7 @@ function GitRefSelector(props) {
 		switch (key) {
 			case '0': // Promote build option
 				typeFields[key] = (
-					<BuildStatus status_box={true} deployment={props.types[key].promote_build} />
+					<BuildStatus status_box deployment={props.types[key].promote_build} />
 				);
 				break;
 			case '1': // Dropdowns for branch, tags, previously released
@@ -103,16 +103,13 @@ GitRefSelector.propTypes = {
 };
 
 function isDisabled(state) {
-	if (state.approval.request_sent) {
+	if (state.deployment.submitted) {
 		return true;
 	}
-	if (state.approval.approved) {
+	if (state.deployment.approved) {
 		return true;
 	}
-	if (state.approval.bypassed) {
-		return true;
-	}
-	if (state.deployment.enqueued) {
+	if (state.deployment.queued) {
 		return true;
 	}
 	return false;

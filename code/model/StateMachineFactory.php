@@ -13,6 +13,8 @@ class StateMachineFactory extends Object {
 				DNDeployment::STATE_NEW => ['type' => StateInterface::TYPE_INITIAL],
 				DNDeployment::STATE_SUBMITTED => ['type' => StateInterface::TYPE_NORMAL],
 				DNDeployment::STATE_INVALID => ['type' => StateInterface::TYPE_NORMAL],
+				DNDeployment::STATE_APPROVED => ['type' => StateInterface::TYPE_NORMAL],
+				DNDeployment::STATE_REJECTED => ['type' => StateInterface::TYPE_NORMAL],
 				DNDeployment::STATE_QUEUED => ['type' => StateInterface::TYPE_NORMAL],
 				DNDeployment::STATE_DEPLOYING => ['type' => StateInterface::TYPE_NORMAL],
 				DNDeployment::STATE_ABORTING => ['type' => StateInterface::TYPE_NORMAL],
@@ -20,13 +22,26 @@ class StateMachineFactory extends Object {
 				DNDeployment::STATE_FAILED => ['type' => StateInterface::TYPE_FINAL],
 			],
 			'transitions' => [
+				DNDeployment::TR_NEW => ['from' => [DNDeployment::STATE_SUBMITTED], 'to' => DNDeployment::STATE_NEW],
 				DNDeployment::TR_SUBMIT => ['from' => [DNDeployment::STATE_NEW], 'to' => DNDeployment::STATE_SUBMITTED],
-				DNDeployment::TR_QUEUE => ['from' => [DNDeployment::STATE_SUBMITTED], 'to' => DNDeployment::STATE_QUEUED],
+				DNDeployment::TR_QUEUE => ['from' => [DNDeployment::STATE_APPROVED], 'to' => DNDeployment::STATE_QUEUED],
 				DNDeployment::TR_INVALIDATE  => [
-					'from' => [DNDeployment::STATE_NEW, DNDeployment::STATE_SUBMITTED],
+					'from' => [
+						DNDeployment::STATE_NEW,
+						DNDeployment::STATE_SUBMITTED,
+						DNDeployment::STATE_APPROVED,
+						DNDeployment::STATE_REJECTED
+					],
 					'to' => DNDeployment::STATE_INVALID
 				],
-				DNDeployment::TR_DEPLOY  => ['from' => [DNDeployment::STATE_QUEUED], 'to' => DNDeployment::STATE_DEPLOYING],
+				DNDeployment::TR_APPROVE => ['from' => [
+						DNDeployment::STATE_NEW,
+						DNDeployment::STATE_SUBMITTED
+					],
+					'to' => DNDeployment::STATE_APPROVED
+				],
+				DNDeployment::TR_REJECT => ['from' => [DNDeployment::STATE_SUBMITTED], 'to' => DNDeployment::STATE_REJECTED],
+				DNDeployment::TR_DEPLOY => ['from' => [DNDeployment::STATE_QUEUED], 'to' => DNDeployment::STATE_DEPLOYING],
 				DNDeployment::TR_ABORT => [
 					'from' => [
 						DNDeployment::STATE_QUEUED,
@@ -40,8 +55,10 @@ class StateMachineFactory extends Object {
 					'from' => [
 						DNDeployment::STATE_NEW,
 						DNDeployment::STATE_SUBMITTED,
-						DNDeployment::STATE_QUEUED,
 						DNDeployment::STATE_INVALID,
+						DNDeployment::STATE_REJECTED,
+						DNDeployment::STATE_APPROVED,
+						DNDeployment::STATE_QUEUED,
 						DNDeployment::STATE_DEPLOYING,
 						DNDeployment::STATE_ABORTING
 					],
