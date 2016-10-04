@@ -54,7 +54,7 @@ ol.list
 	&.Started,
 	&.Queued,
 	&.Running,
-	&.Deploying,
+	&.Deploying
 		@extend .alert-info
 
 	&.Invalid
@@ -73,8 +73,7 @@ ol.list
 
 .alert-special
 	background-color: $platform-blue
-	margin-bottom: $line-height-computed;
-	margin: -30px -30px 0;
+	margin: -30px -30px 0
 	padding-left: 30px
 	padding-right: 30px
 	color: #fff
@@ -91,7 +90,7 @@ ol.list
 	text-decoration: none
 
 .popover
-	max-width: 800px;
+	max-width: 800px
 
 .progress-bar
 	width: 100% /* default */
@@ -109,7 +108,7 @@ ol.list
 	&.Deploying
 		@extend .progress-bar-info
 
-	&.Invalid
+	&.Invalid,
 	&.Aborting
 		@extend .progress-bar-warning
 
@@ -217,7 +216,7 @@ ol.list
 				position: relative
 
 				a
-					padding-left: 0px
+					padding-left: 0
 
 		a
 			padding-left: 0
@@ -279,9 +278,7 @@ ol.list
 		padding-left: 15px
 
 	li.virtual-s a
-		background-image: url(../img/stack-levels.png)
-		background-repeat: no-repeat
-		background-position: 20px 2px
+		background: url(../img/stack-levels.png) no-repeat 20px 2px
 		padding-left: 43px
 
 .btn-group.open .btn-pagination,
@@ -289,8 +286,7 @@ ol.list
 	box-shadow: none
 
 .page-header .btn-group + .page-heading
-	margin-top: 0px
-
+	margin-top: 0
 
 .icon-arrow
 	width: 16px
@@ -299,9 +295,7 @@ ol.list
 	position: absolute
 	right: 15px
 	top: 12px
-	background-color: red
 	background: transparent url(../img/Platform_icon-arrow.svg) no-repeat
-
 
 	ul.nav ul
 		background-color: rgba(0, 0, 0, 0.15)
@@ -499,7 +493,7 @@ button.sidebar-open
 
 	.page-title
 		display: inline-block
-		vertical-align: middle;
+		vertical-align: middle
 		margin: 0
 
 	.breadcrumb
@@ -516,7 +510,7 @@ button.sidebar-open
 	.labels
 		display: inline-block
 		margin-left: 5px
-		vertical-align: middle;
+		vertical-align: middle
 
 		.label
 			font-weight: normal
@@ -546,7 +540,6 @@ button.sidebar-open
 		> li.active > a
 			border: none
 			border-bottom: 3px solid $platform-blue
-			background-color: none
 			background-color: transparent
 
 			&:hover, &:focus
@@ -583,12 +576,12 @@ button.sidebar-open
 .table > tfoot > tr > td,
 .table > thead > tr > th,
 .table > tbody > tr > th,
-.table > tfoot > tr > th,
+.table > tfoot > tr > th
 	border-bottom: 1px solid $UI-border
 	border-top: 1px solid $UI-border
 
 .table-large > tbody > tr > td,
-.table-large > tbody > tr > th,
+.table-large > tbody > tr > th
 	padding-top: 20px
 	padding-bottom: 20px
 
@@ -718,9 +711,8 @@ button.sidebar-open
 		width: 100%
 
 .deploy-form-outer
-	border-width: 0px 1px 1px
-	border-style: solid
-	border-color: #bbb
+	border: 1px solid #bbb
+	border-top-width: 0
 	overflow: hidden
 
 	.deploy-form
@@ -769,7 +761,7 @@ button.sidebar-open
 					@extend .fa-refresh
 					//@extend .pull-right
 					@extend .fa-spin
-					padding: 0px 5px
+					padding: 0 5px
 
 				.numberCircle
 					display: none
@@ -803,9 +795,8 @@ button.sidebar-open
 
 			> li
 				background-color: $theme-bg
-				border-width: 1px 1px 1px 0px
-				border-color: #ccc
-				border-style: solid
+				border: 1px solid #ccc
+				border-left-width: 0
 
 				@media (max-width: $screen-md)
 					border-right: none
@@ -828,14 +819,14 @@ button.sidebar-open
 
 
 				&:last-child
-					border-bottom-width: 0px
+					border-bottom-width: 0
 
 					@media (max-width: $screen-md)
 						border-bottom-width: 1px
 
 				+ li
 					margin-top: 0
-					border-top-width: 0px
+					border-top-width: 0
 
 			+ .tab-content
 				@extend .col-md-8
@@ -1095,9 +1086,8 @@ td > .deployment-branch
 		line-height: 24px
 		padding: 0 8px
 		width: 100%
-		border-width: 0 0 1px 0
-		border-style: solid
-		border-color: #e6e6e6
+		border: 0 solid #e6e6e6
+		border-bottom-width: 1px
 
 .project-branch
 	.branch-details
@@ -1274,7 +1264,7 @@ textarea.deploy-key
 
 	.table-projects &
 		color: #646464
-		margin-right: 0px
+		margin-right: 0
 		float: none
 
 .button-row a
@@ -1383,5 +1373,4 @@ textarea.deploy-key
 button.abort
 	min-width: 110px
 	padding: 1px 4px
-	margin: 0px
-	margin-top: -5px
+	margin: -5px 0px 0px

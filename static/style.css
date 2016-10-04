@@ -5442,9 +5442,9 @@ a.thumbnail.active {
     background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
     background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent); }
 
-.progress-bar-warning, .progress-bar.Aborting {
+.progress-bar-warning, .progress-bar.Invalid, .progress-bar.Aborting {
   background-color: #f0ad4e; }
-  .progress-striped .progress-bar-warning, .progress-striped .progress-bar.Aborting {
+  .progress-striped .progress-bar-warning, .progress-striped .progress-bar.Invalid, .progress-striped .progress-bar.Aborting {
     background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
     background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
     background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent); }
@@ -11595,7 +11595,6 @@ input[type="reset"], .alert .deploy-dropdown, .message.bad .deploy-dropdown,
 
 .alert-special {
   background-color: #3aaef9;
-  margin-bottom: 20px;
   margin: -30px -30px 0;
   padding-left: 30px;
   padding-right: 30px;
@@ -11704,7 +11703,7 @@ input[type="reset"], .alert .deploy-dropdown, .message.bad .deploy-dropdown,
       .side-content ul.nav ul ul li, .side-content .deploy-form-outer .deploy-form ul.SelectionGroup ul ul li, .deploy-form-outer .deploy-form .side-content ul.SelectionGroup ul ul li, .side-content .deploy-form-loading .deploy-form ul.SelectionGroup ul ul li, .deploy-form-loading .deploy-form .side-content ul.SelectionGroup ul ul li {
         position: relative; }
         .side-content ul.nav ul ul li a, .side-content .deploy-form-outer .deploy-form ul.SelectionGroup ul ul li a, .deploy-form-outer .deploy-form .side-content ul.SelectionGroup ul ul li a, .side-content .deploy-form-loading .deploy-form ul.SelectionGroup ul ul li a, .deploy-form-loading .deploy-form .side-content ul.SelectionGroup ul ul li a {
-          padding-left: 0px; }
+          padding-left: 0; }
     .side-content ul.nav ul a, .side-content .deploy-form-outer .deploy-form ul.SelectionGroup ul a, .deploy-form-outer .deploy-form .side-content ul.SelectionGroup ul a, .side-content .deploy-form-loading .deploy-form ul.SelectionGroup ul a, .deploy-form-loading .deploy-form .side-content ul.SelectionGroup ul a {
       padding-left: 0; }
       .side-content ul.nav ul a:hover, .side-content .deploy-form-outer .deploy-form ul.SelectionGroup ul a:hover, .deploy-form-outer .deploy-form .side-content ul.SelectionGroup ul a:hover, .side-content .deploy-form-loading .deploy-form ul.SelectionGroup ul a:hover, .deploy-form-loading .deploy-form .side-content ul.SelectionGroup ul a:hover {
@@ -11751,9 +11750,7 @@ input[type="reset"], .alert .deploy-dropdown, .message.bad .deploy-dropdown,
   .stack-pagination > li > a {
     padding-left: 15px; }
   .stack-pagination li.virtual-s a {
-    background-image: url(../img/stack-levels.png);
-    background-repeat: no-repeat;
-    background-position: 20px 2px;
+    background: url(../img/stack-levels.png) no-repeat 20px 2px;
     padding-left: 43px; }
 
 .btn-group.open .btn-pagination,
@@ -11761,7 +11758,7 @@ input[type="reset"], .alert .deploy-dropdown, .message.bad .deploy-dropdown,
   box-shadow: none; }
 
 .page-header .btn-group + .page-heading {
-  margin-top: 0px; }
+  margin-top: 0; }
 
 .icon-arrow {
   width: 16px;
@@ -11770,7 +11767,6 @@ input[type="reset"], .alert .deploy-dropdown, .message.bad .deploy-dropdown,
   position: absolute;
   right: 15px;
   top: 12px;
-  background-color: red;
   background: transparent url(../img/Platform_icon-arrow.svg) no-repeat; }
   .icon-arrow ul.nav ul, .icon-arrow .deploy-form-outer .deploy-form ul.SelectionGroup ul, .deploy-form-outer .deploy-form .icon-arrow ul.SelectionGroup ul, .icon-arrow .deploy-form-loading .deploy-form ul.SelectionGroup ul, .deploy-form-loading .deploy-form .icon-arrow ul.SelectionGroup ul {
     background-color: rgba(0, 0, 0, 0.15);
@@ -11970,7 +11966,6 @@ button.sidebar-open {
   .main-container .nav.nav-tabs > li.active > a, .main-container .deploy-form-outer .deploy-form .nav-tabs.SelectionGroup > li.active > a, .deploy-form-outer .deploy-form .main-container .nav-tabs.SelectionGroup > li.active > a, .main-container .deploy-form-loading .deploy-form .nav-tabs.SelectionGroup > li.active > a, .deploy-form-loading .deploy-form .main-container .nav-tabs.SelectionGroup > li.active > a {
     border: none;
     border-bottom: 3px solid #3aaef9;
-    background-color: none;
     background-color: transparent; }
     .main-container .nav.nav-tabs > li.active > a:hover, .main-container .deploy-form-outer .deploy-form .nav-tabs.SelectionGroup > li.active > a:hover, .deploy-form-outer .deploy-form .main-container .nav-tabs.SelectionGroup > li.active > a:hover, .main-container .deploy-form-loading .deploy-form .nav-tabs.SelectionGroup > li.active > a:hover, .deploy-form-loading .deploy-form .main-container .nav-tabs.SelectionGroup > li.active > a:hover, .main-container .nav.nav-tabs > li.active > a:focus, .main-container .deploy-form-outer .deploy-form .nav-tabs.SelectionGroup > li.active > a:focus, .deploy-form-outer .deploy-form .main-container .nav-tabs.SelectionGroup > li.active > a:focus, .main-container .deploy-form-loading .deploy-form .nav-tabs.SelectionGroup > li.active > a:focus, .deploy-form-loading .deploy-form .main-container .nav-tabs.SelectionGroup > li.active > a:focus {
       color: #222222;
@@ -12101,9 +12096,8 @@ button.sidebar-open {
       width: 100%; } }
 
 .deploy-form-outer, .deploy-form-loading {
-  border-width: 0px 1px 1px;
-  border-style: solid;
-  border-color: #bbb;
+  border: 1px solid #bbb;
+  border-top-width: 0;
   overflow: hidden; }
   .deploy-form-outer .deploy-form, .deploy-form-loading .deploy-form {
     position: relative; }
@@ -12136,7 +12130,7 @@ button.sidebar-open {
         .deploy-form-outer .deploy-form .header.inactive .numberCircle, .deploy-form-loading .deploy-form .header.inactive .numberCircle {
           background-color: #ddd; }
       .deploy-form-outer .deploy-form .header.loading .status-icon, .deploy-form-loading .deploy-form .header.loading .status-icon {
-        padding: 0px 5px; }
+        padding: 0 5px; }
       .deploy-form-outer .deploy-form .header.loading .numberCircle, .deploy-form-loading .deploy-form .header.loading .numberCircle {
         display: none; }
     .deploy-form-outer .deploy-form:after, .deploy-form-loading .deploy-form:after {
@@ -12159,9 +12153,8 @@ button.sidebar-open {
       z-index: 2; }
       .deploy-form-outer .deploy-form .SelectionGroup > li, .deploy-form-loading .deploy-form .SelectionGroup > li {
         background-color: #f0f3f4;
-        border-width: 1px 1px 1px 0px;
-        border-color: #ccc;
-        border-style: solid; }
+        border: 1px solid #ccc;
+        border-left-width: 0; }
         @media (max-width: 992px) {
           .deploy-form-outer .deploy-form .SelectionGroup > li, .deploy-form-loading .deploy-form .SelectionGroup > li {
             border-right: none; } }
@@ -12178,13 +12171,13 @@ button.sidebar-open {
           .deploy-form-outer .deploy-form .SelectionGroup > li.active a, .deploy-form-loading .deploy-form .SelectionGroup > li.active a {
             color: #555555; }
         .deploy-form-outer .deploy-form .SelectionGroup > li:last-child, .deploy-form-loading .deploy-form .SelectionGroup > li:last-child {
-          border-bottom-width: 0px; }
+          border-bottom-width: 0; }
           @media (max-width: 992px) {
             .deploy-form-outer .deploy-form .SelectionGroup > li:last-child, .deploy-form-loading .deploy-form .SelectionGroup > li:last-child {
               border-bottom-width: 1px; } }
         .deploy-form-outer .deploy-form .SelectionGroup > li + li, .deploy-form-loading .deploy-form .SelectionGroup > li + li {
           margin-top: 0;
-          border-top-width: 0px; }
+          border-top-width: 0; }
       .deploy-form-outer .deploy-form .SelectionGroup + .tab-content, .deploy-form-loading .deploy-form .SelectionGroup + .tab-content {
         padding: 2em 30px;
         background-color: #fff;
@@ -12397,9 +12390,8 @@ td > .deployment-branch {
   line-height: 24px;
   padding: 0 8px;
   width: 100%;
-  border-width: 0 0 1px 0;
-  border-style: solid;
-  border-color: #e6e6e6; }
+  border: 0 solid #e6e6e6;
+  border-bottom-width: 1px; }
 
 .project-branch .branch-details {
   cursor: pointer; }
@@ -12589,7 +12581,7 @@ textarea.deploy-key {
 
 .table-projects .plat-icon {
   color: #646464;
-  margin-right: 0px;
+  margin-right: 0;
   float: none; }
 
 .button-row a {
@@ -12676,5 +12668,4 @@ textarea.deploy-key {
 button.abort {
   min-width: 110px;
   padding: 1px 4px;
-  margin: 0px;
-  margin-top: -5px; }
+  margin: -5px 0px 0px; }
