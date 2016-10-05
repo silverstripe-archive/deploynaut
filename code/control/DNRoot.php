@@ -1478,19 +1478,36 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return $this->environment404Response();
 		}
 
+		$items = [];
+		$disabledEnvironments = [];
+		foreach($envs as $env) {
+			$items[$env->ID] = $env->Title;
+			if ($env->CurrentBuild() === false) {
+				$items[$env->ID] = sprintf("%s - requires initial deployment", $env->Title);
+				$disabledEnvironments[] = $env->ID;
+			}
+		}
+
+		$envsField =  DropdownField::create('EnvironmentID', 'Environment', $items)
+			->setEmptyString('Select an environment');
+		$envsField->setDisabledItems($disabledEnvironments);
+
+		$formAction = FormAction::create('doDataTransfer', 'Create')
+			->addExtraClass('btn');
+
+		if (count($disabledEnvironments) === $envs->count()) {
+			$formAction->setDisabled(true);
+		}
+
 		$form = Form::create(
 			$this,
 			'DataTransferForm',
 			FieldList::create(
 				HiddenField::create('Direction', null, 'get'),
-				DropdownField::create('EnvironmentID', 'Environment', $envs->map())
-					->setEmptyString('Select an environment'),
+				$envsField,
 				DropdownField::create('Mode', 'Transfer', DNDataArchive::get_mode_map())
 			),
-			FieldList::create(
-				FormAction::create('doDataTransfer', 'Create')
-					->addExtraClass('btn')
-			)
+			FieldList::create($formAction)
 		);
 		$form->setFormAction($this->getRequest()->getURL() . '/DataTransferForm');
 
@@ -1676,6 +1693,26 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$alertMessage = '<div class="alert alert-warning"><strong>Warning:</strong> '
 			. 'This restore will overwrite the data on the chosen environment below</div>';
 
+
+		$items = [];
+		$disabledEnvironments = [];
+		foreach($envs as $env) {
+			$items[$env->ID] = $env->Title;
+			if ($env->CurrentBuild() === false) {
+				$items[$env->ID] = sprintf("%s - requires initial deployment", $env->Title);
+				$disabledEnvironments[] = $env->ID;
+			}
+		}
+
+		$envsField = DropdownField::create('EnvironmentID', 'Environment', $items)
+			->setEmptyString('Select an environment');
+		$envsField->setDisabledItems($disabledEnvironments);
+		$formAction = FormAction::create('doDataTransfer', 'Restore Data')->addExtraClass('btn');
+
+		if (count($disabledEnvironments) == $envs->count()) {
+			$formAction->setDisabled(true);
+		}
+
 		$form = Form::create(
 			$this,
 			'DataTransferRestoreForm',
@@ -1683,15 +1720,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 				HiddenField::create('DataArchiveID', null, $dataArchive->ID),
 				HiddenField::create('Direction', null, 'push'),
 				LiteralField::create('Warning', $alertMessage),
-				DropdownField::create('EnvironmentID', 'Environment', $envs->map())
-					->setEmptyString('Select an environment'),
+				$envsField,
 				DropdownField::create('Mode', 'Transfer', $modesMap),
 				CheckboxField::create('BackupBeforePush', 'Backup existing data', '1')
 			),
-			FieldList::create(
-				FormAction::create('doDataTransfer', 'Restore Data')
-					->addExtraClass('btn')
-			)
+			FieldList::create($formAction)
 		);
 		$form->setFormAction($project->Link() . '/DataTransferRestoreForm');
 
