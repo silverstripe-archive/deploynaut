@@ -32,6 +32,9 @@ module.exports = function deployment(state, action) {
 		}
 		case actions.SUCCEED_DEPLOY_HISTORY_GET:
 		case actions.SUCCEED_UPCOMING_DEPLOYMENTS_GET: {
+			if (action.data.list.length === 0) {
+				return state;
+			}
 			// get current list
 			const newList = _.assign({}, state.list);
 			// add or update the entries in the current list
