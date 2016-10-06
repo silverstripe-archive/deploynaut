@@ -33,17 +33,17 @@ var Dropdown = React.createClass({
 		this.initSelectize();
 	},
 
+	// When props get updated we re-initialise the selector
+	componentDidUpdate: function() {
+		this.removeSelectize();
+		this.initSelectize();
+	},
+
 	componentWillUnmount: function() {
 		// we want to destroy selectize to prevent
 		// onUpdate events to hang around after this
 		// component have been unmounted.
 		this.removeSelectize();
-	},
-
-	// When props get updated we re-initialise the selector
-	componentDidUpdate: function() {
-		this.removeSelectize();
-		this.initSelectize();
 	},
 
 	selector: null,

@@ -46,8 +46,6 @@ function calculateSteps(props) {
 
 const DeployModal = React.createClass({
 
-	bodyElement: null,
-
 	componentDidMount: function() {
 		window.addEventListener("resize", this.resize);
 		const bodyElements = document.getElementsByClassName("modal-body");
@@ -69,10 +67,12 @@ const DeployModal = React.createClass({
 
 	componentWillUnmount: function() {
 		window.removeEventListener("resize", this.resize);
-		if(this.bodyElement) {
+		if (this.bodyElement) {
 			this.bodyElement.removeEventListener("scroll", this.calculateActiveSection);
 		}
 	},
+
+	bodyElement: null,
 
 	calculateActiveSection: function() {
 		// menu items
@@ -88,15 +88,15 @@ const DeployModal = React.createClass({
 		const topOffset = 230;
 
 		// find all items that are above the topOffset
-		let cur = scrollItems.map(function(){
+		const cur = scrollItems.map(function() {
 			if ($(this).offset().top < topOffset) {
 				return this;
 			}
 		});
 		// we take the last item in the list above and mark it as action
 		if (cur && cur.length) {
-			$(menuItems[cur.length-1]).addClass("active");
-			$(menuItems[cur.length-1]).siblings().removeClass("active");
+			$(menuItems[cur.length - 1]).addClass("active");
+			$(menuItems[cur.length - 1]).siblings().removeClass("active");
 		}
 	},
 
@@ -115,7 +115,7 @@ const DeployModal = React.createClass({
 			bodyHeight = (window.innerHeight - headerHeight);
 		}
 
-		if(bodyHeight === 0) {
+		if (bodyHeight === 0) {
 			return;
 		}
 
@@ -124,9 +124,9 @@ const DeployModal = React.createClass({
 		// scale each "step" section to be the same height as the modal window
 		const sections = this.bodyElement.getElementsByClassName("section");
 
-		const lastSection = sections[sections.length-1];
+		const lastSection = sections[sections.length - 1];
 		if (lastSection) {
-			const sectionHeight = sections[sections.length-1].offsetHeight;
+			const sectionHeight = sections[sections.length - 1].offsetHeight;
 			// calculate the required margin to pad the section so that it can be
 			// properly scrolled to the top
 			const sectionMargin = bodyHeight - sectionHeight;
@@ -162,10 +162,10 @@ const DeployModal = React.createClass({
 									<div>Last synced x/x/xx <span className="small">less than x xxxx ago</span></div>
 									<div><i>Ensure you have the most recent code before setting up your deployment</i></div>
 								</div>
-								<GitRefSelector  />
-								<DeployPlan  />
-								<Approval  />
-								<Deployment  />
+								<GitRefSelector />
+								<DeployPlan />
+								<Approval />
+								<Deployment />
 							</div>
 						</div>
 					</div>
