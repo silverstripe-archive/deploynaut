@@ -17,8 +17,8 @@ class DeployDispatcher extends Dispatcher {
 		'currentbuild',
 		'show',
 		'log',
-		'create',
-		'createdeployment'
+		'createdeployment',
+		'start'
 	];
 
 	private static $dependencies = [
