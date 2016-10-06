@@ -11,5 +11,6 @@ Director:
     'naut/project/$Project/git': 'GitDispatcher'
     'naut/project/$Project/environment/$Environment/plan': 'PlanDispatcher'
     'naut/project/$Project/environment/$Environment/deploys': 'DeployDispatcher'
+    'naut/project/$Project/environment/$Environment/approvals': 'ApprovalsDispatcher'
     'naut': 'DNRoot'
     'v1/project/$Project/environment/$Environment/deployment': 'DNDeploymentDispatcher'

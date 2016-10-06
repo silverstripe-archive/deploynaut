@@ -6,6 +6,7 @@ const constants = require('./constants/deployment.js');
 const gitAPI = api.create('git');
 const planAPI = api.create('plan');
 const deployAPI = api.create('deploys');
+const approvalsAPI = api.create('approvals');
 
 // allows history to be accessed throughout the project, this will be set
 // when the store is configured in EnvironmentOverview.jsx
@@ -15,6 +16,14 @@ export const SET_ENVIRONMENT = 'SET_ENVIRONMENT';
 export function setEnvironment(data) {
 	return {
 		type: SET_ENVIRONMENT,
+		data: data
+	};
+}
+
+export const SET_USER = 'SET_USER';
+export function setUser(data) {
+	return {
+		type: SET_USER,
 		data: data
 	};
 }
@@ -129,27 +138,6 @@ export function setDeployHistoryPage(page) {
 	};
 }
 
-export const START_CURRENT_BUILD_STATUS_GET = 'START_CURRENT_BUILD_STATUS_GET';
-export function startCurrentBuildStatusGet() {
-	return {type: START_DEPLOY_HISTORY_GET};
-}
-
-export const SUCCEED_CURRENT_BUILD_STATUS_GET = 'SUCCEED_CURRENT_BUILD_STATUS_GET';
-export function succeedCurrentBuildStatusGet(data) {
-	return {
-		type: SUCCEED_CURRENT_BUILD_STATUS_GET,
-		data: data
-	};
-}
-
-export const FAIL_CURRENT_BUILD_STATUS_GET = 'FAIL_CURRENT_BUILD_STATUS_GET';
-export function failCurrentBuildStatusGet(err) {
-	return {
-		type: FAIL_CURRENT_BUILD_STATUS_GET,
-		error: err
-	};
-}
-
 export function getRevisions() {
 	return (dispatch, getState) => {
 		dispatch(startRevisionGet());
@@ -174,15 +162,6 @@ export function getUpcomingDeployments() {
 		return deployAPI.call(getState, '/upcoming', 'get')
 			.then(json => dispatch(succeedUpcomingDeploymentsGet(json)))
 			.catch(err => dispatch(failUpcomingDeploymentsGet(err)));
-	};
-}
-
-export function getCurrentBuildStatus() {
-	return (dispatch, getState) => {
-		dispatch(startCurrentBuildStatusGet());
-		return deployAPI.call(getState, '/currentbuild', 'get')
-			.then(json => dispatch(succeedCurrentBuildStatusGet(json)))
-			.catch(err => dispatch(failCurrentBuildStatusGet(err)));
 	};
 }
 
@@ -257,6 +236,33 @@ export function setSummary(text) {
 	return {type: SET_SUMMARY, text};
 }
 
+export const START_APPROVERS_GET = 'START_APPROVERS_GET';
+export function startApproversGet() {
+	return {type: START_APPROVERS_GET};
+}
+export const SUCCEED_APPROVERS_GET = 'SUCCEED_APPROVERS_GET';
+export function succeedApproversGet(data) {
+	return {
+		type: SUCCEED_APPROVERS_GET,
+		data: data
+	};
+}
+export const FAIL_APPROVERS_GET = 'FAIL_APPROVERS_GET';
+export function failApproversGet(err) {
+	return {
+		type: FAIL_APPROVERS_GET,
+		error: err
+	};
+}
+export function getApprovers() {
+	return (dispatch, getState) => {
+		dispatch(startApproversGet());
+		return approvalsAPI.call(getState, '/approvers', 'get')
+			.then(json => dispatch(succeedApproversGet(json)))
+			.catch(err => dispatch(failApproversGet(err)));
+	};
+}
+
 export const SET_APPROVER = "SET_APPROVER";
 export function setApprover(id) {
 	return {type: SET_APPROVER, id};
@@ -268,19 +274,32 @@ export function startApprovalSubmit() {
 }
 
 export const SUCCEED_APPROVAL_SUBMIT = "SUCCEED_APPROVAL_SUBMIT";
-export function succeedApprovalSubmit() {
-	return {type: SUCCEED_APPROVAL_SUBMIT};
+export function succeedApprovalSubmit(data) {
+	return {
+		type: SUCCEED_APPROVAL_SUBMIT,
+		data: data
+	};
 }
 
 export const FAIL_APPROVAL_SUBMIT = "FAIL_APPROVAL_SUBMIT";
-export function failApprovalSubmit() {
-	return {type: FAIL_APPROVAL_SUBMIT};
+export function failApprovalSubmit(err) {
+	return {
+		type: FAIL_APPROVAL_SUBMIT,
+		error: err
+	};
 }
 
 export function submitForApproval() {
-	return function(dispatch) {
+	return (dispatch, getState) => {
 		dispatch(startApprovalSubmit());
-		dispatch(succeedApprovalSubmit());
+		return approvalsAPI.call(getState, '/submit', 'post', {
+			id: getState().deployment.id,
+			approver_id: getState().deployment.approver_id
+		})
+			.then(function(data) {
+				dispatch(succeedApprovalSubmit(data));
+			})
+			.catch((error) => dispatch(failApprovalSubmit(error)));
 	};
 }
 
@@ -290,28 +309,66 @@ export function startApprovalCancel() {
 }
 
 export const SUCCEED_APPROVAL_CANCEL = "SUCCEED_APPROVAL_CANCEL";
-export function succeedApprovalCancel() {
-	return {type: SUCCEED_APPROVAL_CANCEL};
+export function succeedApprovalCancel(data) {
+	return {
+		type: SUCCEED_APPROVAL_CANCEL,
+		data: data
+	};
 }
 
 export const FAIL_APPROVAL_CANCEL = "FAIL_APPROVAL_CANCEL";
-export function failApprovalCancel() {
-	return {type: FAIL_APPROVAL_CANCEL};
+export function failApprovalCancel(err) {
+	return {
+		type: FAIL_APPROVAL_CANCEL,
+		error: err
+	};
 }
 
-export const START_APPROVAL_APROVE = "START_APPROVAL_APROVE";
-export function startApprovalAprove() {
-	return {type: START_APPROVAL_APROVE};
+export function cancelApprovalRequest() {
+	return (dispatch, getState) => {
+		dispatch(startApprovalCancel());
+		return approvalsAPI.call(getState, '/cancel', 'post', {
+			id: getState().deployment.id
+		})
+			.then(function(data) {
+				dispatch(succeedApprovalCancel(data));
+			})
+			.catch((error) => dispatch(failApprovalCancel(error)));
+	};
 }
 
-export const SUCCEED_APPROVAL_APROVE = "SUCCEED_APPROVAL_APROVE";
-export function succeedApprovalAprove() {
-	return {type: SUCCEED_APPROVAL_APROVE};
+export const START_APPROVAL_APPROVE = "START_APPROVAL_APPROVE";
+export function startApprovalApprove() {
+	return {type: START_APPROVAL_APPROVE};
 }
 
-export const FAIL_APPROVAL_APROVE = "FAIL_APPROVAL_APROVE";
-export function failApprovalAprove() {
-	return {type: FAIL_APPROVAL_APROVE};
+export const SUCCEED_APPROVAL_APPROVE = "SUCCEED_APPROVAL_APPROVE";
+export function succeedApprovalApprove(data) {
+	return {
+		type: SUCCEED_APPROVAL_APPROVE,
+		data: data
+	};
+}
+
+export const FAIL_APPROVAL_APPROVE = "FAIL_APPROVAL_APPROVE";
+export function failApprovalApprove(err) {
+	return {
+		type: FAIL_APPROVAL_APPROVE,
+		error: err
+	};
+}
+
+export function approveDeployment() {
+	return (dispatch, getState) => {
+		dispatch(startApprovalApprove());
+		return approvalsAPI.call(getState, '/approve', 'post', {
+			id: getState().deployment.id
+		})
+			.then(function(data) {
+				dispatch(succeedApprovalApprove(data));
+			})
+			.catch((error) => dispatch(failApprovalApprove(error)));
+	};
 }
 
 export const START_APPROVAL_REJECT = "START_APPROVAL_REJECT";
@@ -320,66 +377,93 @@ export function startApprovalReject() {
 }
 
 export const SUCCEED_APPROVAL_REJECT = "SUCCEED_APPROVAL_REJECT";
-export function succeedApprovalReject() {
-	return {type: START_APPROVAL_REJECT};
+export function succeedApprovalReject(data) {
+	return {
+		type: START_APPROVAL_REJECT,
+		data: data
+	};
 }
 
 export const FAIL_APPROVAL_REJECT = "FAIL_APPROVAL_REJECT";
-export function failApprovalReject() {
-	return {type: FAIL_APPROVAL_REJECT};
-}
-
-export const START_APPROVAL_BYPASS = "START_APPROVAL_BYPASS";
-export function startApprovalBypass() {
-	return {type: START_APPROVAL_BYPASS};
-}
-
-export const SUCCEED_APPROVAL_BYPASS = "SUCCEED_APPROVAL_BYPASS";
-export function succeedApprovalBypass(data) {
+export function failApprovalReject(err) {
 	return {
-		type: SUCCEED_APPROVAL_BYPASS,
+		type: FAIL_APPROVAL_REJECT,
+		error: err
+	};
+}
+
+export function rejectDeployment() {
+	return (dispatch, getState) => {
+		dispatch(startApprovalReject());
+		return approvalsAPI.call(getState, '/reject', 'post', {
+			id: getState().deployment.id
+		})
+			.then(function(data) {
+				dispatch(succeedApprovalReject(data));
+			})
+			.catch((error) => dispatch(failApprovalReject(error)));
+	};
+}
+
+export const START_DEPLOYMENT_CREATE = "START_DEPLOYMENT_CREATE";
+export function startDeploymentCreate() {
+	return {type: START_DEPLOYMENT_CREATE};
+}
+
+export const SUCCEED_DEPLOYMENT_CREATE = "SUCCEED_DEPLOYMENT_CREATE";
+export function succeedDeploymentCreate(data) {
+	return {
+		type: SUCCEED_DEPLOYMENT_CREATE,
 		data: data
 	};
 }
 
-export const FAIL_APPROVAL_BYPASS = "FAIL_APPROVAL_BYPASS";
-export function failApprovalBypass() {
-	return {type: FAIL_APPROVAL_BYPASS};
+export const FAIL_DEPLOYMENT_CREATE = "FAIL_DEPLOYMENT_CREATE";
+export function failDeploymentCreate(err) {
+	return {
+		type: FAIL_DEPLOYMENT_CREATE,
+		error: err
+	};
 }
 
-export function bypassApproval() {
+export function createDeployment() {
 	return (dispatch, getState) => {
-		dispatch(startApprovalBypass());
-		deployAPI.call(getState, '/save', 'post', {
+		if (getState().deployment.id) {
+			return Promise.resolve();
+		}
+
+		dispatch(startDeploymentCreate());
+		return deployAPI.call(getState, '/createdeployment', 'post', {
 			ref: getState().git.selected_ref,
 			ref_type: getState().git.selected_type,
 			ref_name: getState().git.selected_name,
-			summary: getState().plan.summary_of_changes
+			summary: getState().plan.summary_of_changes,
+			approver_id: getState().deployment.approver_id
 		})
 			.then(function(data) {
-				return dispatch(succeedApprovalBypass(data));
+				return dispatch(succeedDeploymentCreate(data));
 			})
-			.catch((error) => dispatch(failApprovalBypass(error)));
+			.catch((error) => dispatch(failDeploymentCreate(error)));
 	};
 }
 
-export const START_DEPLOYMENT_ENQUEUE = "START_DEPLOYMENT_ENQUEUE";
+export const START_DEPLOYMENT_QUEUE = "START_DEPLOYMENT_QUEUE";
 export function startDeploymentEnqueue() {
-	return {type: START_DEPLOYMENT_ENQUEUE};
+	return {type: START_DEPLOYMENT_QUEUE};
 }
 
-export const SUCCEED_DEPLOYMENT_ENQUEUE = "SUCCEED_DEPLOYMENT_ENQUEUE";
+export const SUCCEED_DEPLOYMENT_QUEUE = "SUCCEED_DEPLOYMENT_QUEUE";
 export function succeedDeploymentEnqueue(data) {
 	return {
-		type: SUCCEED_DEPLOYMENT_ENQUEUE,
+		type: SUCCEED_DEPLOYMENT_QUEUE,
 		data: data
 	};
 }
 
-export const FAIL_DEPLOYMENT_ENQUEUE = "FAIL_DEPLOYMENT_ENQUEUE";
+export const FAIL_DEPLOYMENT_QUEUE = "FAIL_DEPLOYMENT_QUEUE";
 export function failDeploymentEnqueue(err) {
 	return {
-		type: FAIL_DEPLOYMENT_ENQUEUE,
+		type: FAIL_DEPLOYMENT_QUEUE,
 		error: err
 	};
 }
@@ -415,7 +499,9 @@ export function getDeployLog() {
 export function startDeploy() {
 	return (dispatch, getState) => {
 		dispatch(startDeploymentEnqueue());
-		return deployAPI.call(getState, `/start/${getState().deployment.id}`, 'post')
+		return deployAPI.call(getState, '/start', 'post', {
+			id: getState().deployment.id
+		})
 			.then(function(data) {
 				dispatch(succeedDeploymentEnqueue(data));
 				return dispatch(getDeployLog());
@@ -440,7 +526,7 @@ export function succeedGetDeployment(data) {
 export const FAIL_DEPLOYMENT_GET = "FAIL_DEPLOYMENT_GET";
 export function failGetDeployment(err) {
 	return {
-		type: FAIL_DEPLOYMENT_ENQUEUE,
+		type: FAIL_DEPLOYMENT_QUEUE,
 		error: err
 	};
 }

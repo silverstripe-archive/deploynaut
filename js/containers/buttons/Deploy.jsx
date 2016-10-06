@@ -12,13 +12,10 @@ function canDeploy(state) {
 	if (constants.hasDeployStarted(currentState)) {
 		return false;
 	}
-	if (state.approval.enqueued) {
+	if (state.deployment.queued) {
 		return false;
 	}
-	if (state.approval.bypassed) {
-		return true;
-	}
-	if (state.approval.approved) {
+	if (state.deployment.approved) {
 		return true;
 	}
 	return false;

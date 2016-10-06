@@ -5,6 +5,7 @@ const BuildStatus = require('../components/BuildStatus.jsx');
 
 const _ = require('underscore');
 const actions = require('../_actions.js');
+const deployStates = require('../constants/deployment.js');
 
 const DeployHistory = function(props) {
 	let errorRow = null;
@@ -82,9 +83,9 @@ const mapStateToProps = function(state) {
 	if (typeof state.deployment.list === "object") {
 		historyList = _.filter(state.deployment.list, function(deploy) {
 			switch (deploy.state) {
-				case "Completed":
-				case "Invalid":
-				case "Failed":
+				case deployStates.STATE_COMPLETED:
+				case deployStates.STATE_INVALID:
+				case deployStates.STATE_FAILED:
 					numDeployments += 1;
 					return true;
 				default:

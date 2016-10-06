@@ -74,7 +74,8 @@ class EnvironmentOverview extends Dispatcher {
 			'dispatchers' => [
 				'git' => $base . $this->getCurrentProject()->Link('git'),
 				'plan' => $base . $this->getCurrentEnvironment()->Link('plan'),
-				'deploys' => $base . $this->getCurrentEnvironment()->Link('deploys')
+				'deploys' => $base . $this->getCurrentEnvironment()->Link('deploys'),
+				'approvals' => $base . $this->getCurrentEnvironment()->Link('approvals')
 			],
 			'api_auth' => [
 				'name' => $this->getSecurityToken()->getName(),
@@ -84,6 +85,16 @@ class EnvironmentOverview extends Dispatcher {
 				'id' => $this->environment->ID,
 				'name' => $this->environment->Name,
 				'usage' => $this->environment->Usage
+			],
+			'user' => [
+				'can_approve' => $this->getCurrentProject()->allowed(
+					ApprovalsDispatcher::ALLOW_APPROVAL,
+					Member::currentUser()
+				),
+				'can_bypass_approval' => $this->getCurrentProject()->allowed(
+					ApprovalsDispatcher::ALLOW_APPROVAL_BYPASS,
+					Member::currentUser()
+				)
 			]
 		];
 	}

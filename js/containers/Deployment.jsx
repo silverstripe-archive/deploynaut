@@ -73,13 +73,11 @@ const deployment = function(props) {
 };
 
 const mapStateToProps = function(state) {
-	const approvers = state.approval.approvers.filter(obj =>
-	obj.id === parseInt(state.approval.approved_by, 10)
-);
+	const approvers = state.deployment.approvers.filter(function(obj) {
+		return obj.id === parseInt(state.deployment.approver_id, 10);
+	});
 
 	return {
-		approved: state.approval.approved,
-		bypassed: state.approval.bypassed,
 		approved_by: approvers.shift(),
 		environment: state.environment.name,
 		deployment_type: state.plan.deployment_type,

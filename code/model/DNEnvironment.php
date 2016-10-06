@@ -690,6 +690,8 @@ class DNEnvironment extends DataObject {
 			->filter('State', [
 				DNDeployment::STATE_NEW,
 				DNDeployment::STATE_SUBMITTED,
+				DNDeployment::STATE_APPROVED,
+				DNDeployment::STATE_REJECTED,
 				DNDeployment::STATE_ABORTING,
 				DNDeployment::STATE_QUEUED,
 				DNDeployment::STATE_DEPLOYING,

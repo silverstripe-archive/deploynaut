@@ -3,7 +3,7 @@ var SummaryTable = require('../SummaryTable.jsx');
 
 var DeployDiff = function (props) {
 
-	if (props.isLoading) {
+	if (props.is_loading) {
 		return (
 			<div>
 				Loading summary...
@@ -17,8 +17,7 @@ var DeployDiff = function (props) {
 };
 
 DeployDiff.propTypes = {
-	isLoading: React.PropTypes.bool
+	is_loading: React.PropTypes.bool
 };
 
 module.exports = DeployDiff;
-

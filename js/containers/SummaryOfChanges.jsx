@@ -20,16 +20,13 @@ var summary = function(props) {
 };
 
 function isDisabled(state) {
-	if (state.approval.request_sent) {
+	if (state.deployment.submitted) {
 		return true;
 	}
-	if (state.approval.approved) {
+	if (state.deployment.approved) {
 		return true;
 	}
-	if (state.approval.bypassed) {
-		return true;
-	}
-	if (state.deployment.enqueued) {
+	if (state.deployment.queued) {
 		return true;
 	}
 	return false;

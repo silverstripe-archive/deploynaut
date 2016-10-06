@@ -20,14 +20,19 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 	const STATE_NEW = 'New';
 	const STATE_SUBMITTED = 'Submitted';
 	const STATE_INVALID = 'Invalid';
+	const STATE_APPROVED = 'Approved';
+	const STATE_REJECTED = 'Rejected';
 	const STATE_QUEUED = 'Queued';
 	const STATE_DEPLOYING = 'Deploying';
 	const STATE_ABORTING = 'Aborting';
 	const STATE_COMPLETED = 'Completed';
 	const STATE_FAILED = 'Failed';
 
+	const TR_NEW = 'new';
 	const TR_SUBMIT = 'submit';
 	const TR_INVALIDATE = 'invalidate';
+	const TR_APPROVE = 'approve';
+	const TR_REJECT = 'reject';
 	const TR_QUEUE = 'queue';
 	const TR_DEPLOY = 'deploy';
 	const TR_ABORT = 'abort';
@@ -46,12 +51,13 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 		"Branch" => "Varchar(255)",
 		// is it a branch, tag etc, see GitDispatcher REF_TYPE_* constants
 		"RefType" => "Int",
-		"State" => "Enum('New, Submitted, Invalid, Queued, Deploying, Aborting, Completed, Failed', 'New')",
+		"State" => "Enum('New, Submitted, Invalid, Approved, Rejected, Queued, Deploying, Aborting, Completed, Failed', 'New')",
 		// JSON serialised DeploymentStrategy.
 		"Strategy" => "Text",
 		"Summary" => "Text",
 		// the date and time the deploy was queued
 		"DeployStarted" => "SS_Datetime",
+		// the date and time a deployment was requested to be approved
 		"DeployRequested" => "SS_Datetime"
 	);
 

@@ -4,6 +4,7 @@ const BuildStatus = require('../components/BuildStatus.jsx');
 
 const _ = require('underscore');
 const actions = require('../_actions.js');
+const deployStates = require('../constants/deployment.js');
 
 const UpcomingDeployments = function(props) {
 	let errorRow = null;
@@ -43,7 +44,7 @@ const UpcomingDeployments = function(props) {
 								const row = props.list[i];
 								return (
 									<tr onClick={() => props.onItemClick(row.id)} key={i}>
-										<td>{row.date_requested_nice}</td>
+										<td>{row.date_requested_nice ? row.date_requested_nice : "-"}</td>
 										<td><BuildStatus deployment={row} /></td>
 										<td>{row.deployer ? row.deployer.name : null}</td>
 										<td>{row.approver ? row.approver.name : null}</td>
@@ -67,9 +68,9 @@ const mapStateToProps = function(state) {
 		upcomingList = _.filter(state.deployment.list, function(deploy) {
 			switch (deploy.state) {
 				case undefined:
-				case "Completed":
-				case "Invalid":
-				case "Failed":
+				case deployStates.STATE_COMPLETED:
+				case deployStates.STATE_INVALID:
+				case deployStates.STATE_FAILED:
 					return false;
 				default:
 					return true;
@@ -77,7 +78,7 @@ const mapStateToProps = function(state) {
 		});
 	}
 	upcomingList.sort(function(a, b) {
-		return Date.parse(b.date_requested) - Date.parse(a.date_requested);
+		return Date.parse(b.date_created) - Date.parse(a.date_created);
 	});
 
 	return {

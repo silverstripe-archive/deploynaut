@@ -11,18 +11,34 @@ var Bypass = require('./buttons/Bypass.jsx');
 var actions = require('../_actions.js');
 
 function Approval(props) {
-
 	var sentTime = null;
-	if (props.requested) {
-		var date = new Date(props.requestSentTime);
-		sentTime = "Sent: " + date.toTimeString();
+	if (props.date_requested_nice) {
+		sentTime = "Sent: " + props.date_requested_nice;
+	}
+
+	let error = null;
+	if (props.error) {
+		error = (
+			<div className="alert alert-danger">
+				<div className="">
+					{props.error}
+				</div>
+			</div>
+		);
+	}
+
+	let loading = null;
+	if (props.is_loading) {
+		loading = (
+			<div>
+				Loading...
+			</div>
+		);
 	}
 
 	return (
-
 		<div className="section">
 			<header id="2">Approval</header>
-
 			<p>
 				Once this request has been approved, your team will be able to
 				progress to the final Deployment step.
@@ -33,7 +49,7 @@ function Approval(props) {
 				<Dropdown
 					name="approver"
 					options={props.approvers}
-					value={props.selected_approver}
+					value={props.approver_id}
 					onSelect={props.onApproverSelect}
 					disabled={props.disabled}
 				/>
@@ -43,6 +59,7 @@ function Approval(props) {
 					manager.
 				</small>
 			</div>
+			{loading}
 			<div>
 				{sentTime}
 			</div>
@@ -55,43 +72,36 @@ function Approval(props) {
 			<div>
 				<Bypass />
 			</div>
+			{error}
 		</div>
 	);
 }
 
 function isDisabled(state) {
-	if (state.approval.request_sent) {
+	if (state.deployment.approved) {
 		return true;
 	}
-	if (state.approval.approved) {
-		return true;
-	}
-	if (state.approval.bypassed) {
-		return true;
-	}
-	if (state.deployment.enqueued) {
+	if (state.deployment.queued) {
 		return true;
 	}
 	return false;
 }
 
 const mapStateToProps = function(state) {
-
-	const approvers = state.approval.approvers.map(function(val) {
+	const approvers = state.deployment.approvers.map(function(val) {
 		return {
-			key: val.id,
-			value: val.email + " - " + val.role
+			id: val.id,
+			title: val.email + " - " + val.role
 		};
 	});
 
-
 	return {
 		disabled: isDisabled(state),
-		requested: state.approval.requested,
-		requestSent: state.approval.request_sent,
-		requestSentTime: state.approval.request_sent_time,
+		date_requested_nice: state.deployment.data.date_requested_nice,
 		approvers: approvers,
-		selected_approver: state.approval.approved_by || 0
+		approver_id: state.deployment.approver_id,
+		error: state.deployment.error,
+		is_loading: state.deployment.is_loading
 	};
 };
 

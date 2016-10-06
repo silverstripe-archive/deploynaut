@@ -151,9 +151,7 @@ export function create(name) {
 			switch (data.status) {
 				case 'Completed':
 				case 'Complete':
-					return data;
 				case 'Failed':
-					return data;
 				case 'Submitted':
 					return data;
 				default:
