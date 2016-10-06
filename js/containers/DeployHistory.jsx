@@ -2,6 +2,7 @@ const React = require('react');
 const ReactRedux = require('react-redux');
 const Pagination = require('react-bootstrap/lib/Pagination');
 const BuildStatus = require('../components/BuildStatus.jsx');
+const LoadingBar = require('../components/LoadingBar.jsx');
 
 const _ = require('underscore');
 const actions = require('../_actions.js');
@@ -68,6 +69,7 @@ const DeployHistory = function(props) {
 						}
 					</tbody>
 				</table>
+				<LoadingBar show={props.is_loading} />
 			</div>
 			{pagination}
 		</div>
@@ -116,7 +118,9 @@ const mapStateToProps = function(state) {
 		page_length: perPage,
 		total_pages: totalPages,
 		current_page: state.deployment.current_page,
-		error: state.deployment.error
+		error: state.deployment.error,
+		is_loading: state.deployment.history_is_loading
+
 	};
 };
 
