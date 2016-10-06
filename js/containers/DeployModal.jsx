@@ -123,8 +123,16 @@ const DeployModal = React.createClass({
 		bodyElements[0].style.height = bodyHeight + 'px';
 		// scale each "step" section to be the same height as the modal window
 		const sections = this.bodyElement.getElementsByClassName("section");
-		for(let i = 0; i<sections.length; i++) {
-			sections[i].style.minHeight = (bodyHeight) + 'px';
+
+		const lastSection = sections[sections.length-1];
+		if (lastSection) {
+			const sectionHeight = sections[sections.length-1].offsetHeight;
+			// calculate the required margin to pad the section so that it can be
+			// properly scrolled to the top
+			const sectionMargin = bodyHeight - sectionHeight;
+			if (sectionMargin > 0) {
+				lastSection.style.marginBottom = sectionMargin + 'px';
+			}
 		}
 	},
 
