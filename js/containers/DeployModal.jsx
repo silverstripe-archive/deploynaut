@@ -131,7 +131,7 @@ const DeployModal = React.createClass({
 			// properly scrolled to the top
 			const sectionMargin = bodyHeight - sectionHeight;
 			if (sectionMargin > 0) {
-				lastSection.style.marginBottom = sectionMargin + 'px';
+				lastSection.style.minHeight = sectionMargin + 'px';
 			}
 		}
 	},
