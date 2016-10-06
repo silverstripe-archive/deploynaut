@@ -211,8 +211,8 @@ class GitDispatcher extends Dispatcher {
 		$branches = [];
 		foreach ($project->DNBranchList() as $branch) {
 			$branches[] = [
-				'key' => $branch->SHA(),
-				'value' => $branch->Name(),
+				'id' => $branch->SHA(),
+				'title' => $branch->Name(),
 			];
 		}
 		return $branches;
@@ -227,8 +227,8 @@ class GitDispatcher extends Dispatcher {
 		$tags = [];
 		foreach ($project->DNTagList()->setLimit(null) as $tag) {
 			$tags[] = [
-				'key' => $tag->SHA(),
-				'value' => $tag->Name(),
+				'id' => $tag->SHA(),
+				'title' => $tag->Name(),
 			];
 		}
 		return $tags;
@@ -255,8 +255,8 @@ class GitDispatcher extends Dispatcher {
 						$deploy->obj('LastEdited')->Ago()
 					);
 					$perEnvDeploys[$sha] = [
-						'key' => $sha,
-						'value' => $pastValue
+						'id' => $sha,
+						'title' => $pastValue
 					];
 				}
 			}

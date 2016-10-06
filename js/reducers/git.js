@@ -39,9 +39,9 @@ module.exports = function git(state, action) {
 			const gitRefs = state.list[state.selected_type] || [];
 			let ref_name = action.id;
 			if (gitRefs.list) {
-				const ref = gitRefs.list.find(obj => obj.key === action.id);
-				if (ref.value) {
-					ref_name = ref.value;
+				const ref = gitRefs.list.find(obj => obj.id === action.id);
+				if (ref.title) {
+					ref_name = ref.title;
 				}
 			}
 			return _.assign({}, state, {
