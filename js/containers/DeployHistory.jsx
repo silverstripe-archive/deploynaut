@@ -27,8 +27,9 @@ const DeployHistory = function(props) {
 			<div className="text-center">
 				<nav>
 					<Pagination
-						prev
-						next
+						first
+						last
+						maxButtons={6}
 						items={props.total_pages}
 						activePage={props.current_page}
 						onSelect={props.onPageClick}
