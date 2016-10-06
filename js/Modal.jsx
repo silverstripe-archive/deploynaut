@@ -6,13 +6,15 @@ var Modal = React.createClass({
 		show: React.PropTypes.bool,
 		keyboard: React.PropTypes.bool,
 		closeHandler: React.PropTypes.func,
-		className: React.PropTypes.string
+		className: React.PropTypes.string,
+		closeTitle: React.PropTypes.string
 	},
 
 	getDefaultProps: function() {
 		return {
 			show: true,
-			keyboard: true
+			keyboard: true,
+			closeTitle: "&times;"
 		};
 	},
 
@@ -38,6 +40,10 @@ var Modal = React.createClass({
 		}.bind(this));
 	},
 
+	getCloseTitle: function() {
+		return {__html: this.props.closeTitle};
+	},
+
 	render: function() {
 		// tabIndex -1 fixes esc key not working. See http://stackoverflow.com/questions/12630156
 
@@ -52,7 +58,7 @@ var Modal = React.createClass({
 					<div className="modal-content">
 						<div className="modal-header">
 							<button type="button" className="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
+								<span aria-hidden="true" dangerouslySetInnerHTML={this.getCloseTitle()} />
 							</button>
 							<h4 className="modal-title">{this.props.title}</h4>
 						</div>
