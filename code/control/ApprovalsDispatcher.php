@@ -267,23 +267,6 @@ class ApprovalsDispatcher extends Dispatcher {
 	}
 
 	/**
-	 * @return ArrayList
-	 */
-	protected function getApprovers() {
-		$list = new ArrayList();
-		if (self::$_cache_project_members === null) {
-			self::$_cache_project_members = $this->project->listMembers();
-		}
-		foreach (self::$_cache_project_members as $data) {
-			$list->push(new ArrayData([
-				'ID' => $member->ID,
-				'Role' => $data['RoleTitle']
-			]));
-		}
-		return $list;
-	}
-
-	/**
 	 * @param string $name
 	 * @return array
 	 */
