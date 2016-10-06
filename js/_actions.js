@@ -182,7 +182,7 @@ export function updateRepoAndGetRevisions() {
 			.then(() => dispatch(succeedRepoUpdate()))
 			.catch(err => dispatch(failRepoUpdate(err)))
 			.then(() => dispatch(startRevisionGet()))
-			.then(() => gitAPI.call(getState, '/show', 'get'))
+			.then(() => gitAPI.call(getState, `/show?environmentId=${getState().environment.id}`, 'get'))
 			.then(json => dispatch(succeedRevisionsGet(json)))
 			.catch(err => dispatch(failRevisionsGet(err)));
 	};
