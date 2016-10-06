@@ -19,7 +19,8 @@ const initialState = {
 	approver_id: 0,
 	// this is the "list" (actually an object) of all deployments that we fetched, updated etc keyed by deployment id
 	list: {},
-	current_page: 1
+	current_page: 1,
+	history_is_loading: false
 };
 
 module.exports = function deployment(state, action) {
@@ -33,7 +34,25 @@ module.exports = function deployment(state, action) {
 				current_page: action.page
 			});
 		}
+		case actions.START_DEPLOY_HISTORY_GET:
+			return _.assign({}, state, {
+				history_is_loading: true
+			});
+		case actions.FAIL_DEPLOY_HISTORY_GET:
+			return _.assign({}, state, {
+				history_is_loading: false
+			});
 		case actions.SUCCEED_DEPLOY_HISTORY_GET:
+			// get current list
+			const newList = _.assign({}, state.list);
+			// add or update the entries in the current list
+			for (let i = 0; i < action.data.list.length; i++) {
+				newList[action.data.list[i].id] = action.data.list[i];
+			}
+			return _.assign({}, state, {
+				list: newList,
+				history_is_loading: false
+			});
 		case actions.SUCCEED_UPCOMING_DEPLOYMENTS_GET: {
 			if (action.data.list.length === 0) {
 				return state;
