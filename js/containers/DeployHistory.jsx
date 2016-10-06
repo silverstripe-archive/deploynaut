@@ -100,7 +100,7 @@ const mapStateToProps = function(state) {
 		return Date.parse(b.date_started) - Date.parse(a.date_started);
 	});
 
-	const perPage = 4;
+	const perPage = 10;
 	// only show paginated result, recalc
 	const start = (state.deployment.current_page - 1) * perPage;
 	const end = start + perPage;
