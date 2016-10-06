@@ -112,7 +112,7 @@ const DeployModal = React.createClass({
 		const bodyElements = document.getElementsByClassName("modal-body");
 		let bodyHeight = 0;
 		if (bodyElements.length > 0) {
-			bodyHeight = (window.innerHeight - headerHeight);
+			bodyHeight = (window.innerHeight - headerHeight) - 16;
 		}
 
 		if (bodyHeight === 0) {
