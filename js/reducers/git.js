@@ -8,6 +8,8 @@ const initialState = {
 	selected_name: "",
 	is_fetching: false,
 	is_updating: false,
+	last_fetched_date: "",
+	last_fetched_ago: "",
 	last_updated: 0,
 	list: {}
 };
@@ -72,18 +74,20 @@ module.exports = function git(state, action) {
 			});
 
 		case actions.SUCCEED_REVISIONS_GET: {
-			let listAsArray = action.list.refs;
+			let listAsArray = action.data.refs;
 
 			// The backend returns a proper array if the 'key's are 0, 1, 2, 3
 			// but an object if the 'keys' are 1, 2, 3.. this will ensure that
 			// we only have to deal with an object.
-			if (action.list.refs.constructor === Array) {
-				listAsArray = _.assign({}, action.list.refs);
+			if (action.data.refs.constructor === Array) {
+				listAsArray = _.assign({}, action.data.refs);
 			}
 			return _.assign({}, state, {
 				is_fetching: false,
-				// we do this to force the list into an object, inc ase it's an array
+				// we do this to force the list into an object, in case it's an array
 				list: listAsArray,
+				last_fetched_date: action.data.last_fetched_date,
+				last_fetched_ago: action.data.last_fetched_ago,
 				last_updated: action.received_at,
 				selected_type: "",
 				selected_ref: "",

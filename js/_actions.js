@@ -64,10 +64,10 @@ export function startRevisionGet() {
 }
 
 export const SUCCEED_REVISIONS_GET = 'SUCCEED_REVISIONS_GET';
-export function succeedRevisionsGet(revisions) {
+export function succeedRevisionsGet(data) {
 	return {
 		type: SUCCEED_REVISIONS_GET,
-		list: revisions
+		data: data
 	};
 }
 

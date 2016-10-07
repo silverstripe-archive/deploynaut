@@ -165,7 +165,7 @@ const DeployModal = React.createClass({
 									<div style={{float: "right"}}>
 										<ButtonGitUpdate />
 									</div>
-									<div>Last synced x/x/xx <span className="small">less than x xxxx ago</span></div>
+									<div>Last synced {this.props.last_fetched_date} <span className="small">{this.props.last_fetched_ago}</span></div>
 									<div><i>Ensure you have the most recent code before setting up your deployment</i></div>
 								</div>
 								<GitRefSelector />
@@ -213,6 +213,8 @@ const mapStateToProps = function(state, ownProps) {
 		plan_success: deployPlanIsOk(),
 		messages: state.messages,
 		sha_is_selected: (state.git.selected_ref !== ""),
+		last_fetched_date: state.git.last_fetched_date,
+		last_fetched_ago: state.git.last_fetched_ago,
 		can_deploy: state.deployment.approved,
 		state: state.deployment.state,
 		active_step: active_step,
