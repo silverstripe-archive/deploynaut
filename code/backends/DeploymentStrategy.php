@@ -319,6 +319,7 @@ class DeploymentStrategy extends ViewableData {
 		// is a branch, tag, uat->prod, prev deploy or sha
 		$deployment->RefType = $this->getOption('ref_type');
 		$deployment->Summary = $this->getOption('summary');
+		$deployment->Title = $this->getOption('title');
 		$deployment->Strategy = $this->toJSON();
 		$deployment->DeployerID = \Member::currentUserID();
 		$deployment->write();

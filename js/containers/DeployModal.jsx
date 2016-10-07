@@ -112,7 +112,7 @@ const DeployModal = React.createClass({
 		const bodyElements = document.getElementsByClassName("modal-body");
 		let bodyHeight = 0;
 		if (bodyElements.length > 0) {
-			bodyHeight = (window.innerHeight - headerHeight);
+			bodyHeight = (window.innerHeight - headerHeight) - 16;
 		}
 
 		if (bodyHeight === 0) {
@@ -131,7 +131,7 @@ const DeployModal = React.createClass({
 			// properly scrolled to the top
 			const sectionMargin = bodyHeight - sectionHeight;
 			if (sectionMargin > 0) {
-				lastSection.style.marginBottom = sectionMargin + 'px';
+				lastSection.style.minHeight = sectionMargin + 'px';
 			}
 		}
 	},
@@ -140,7 +140,13 @@ const DeployModal = React.createClass({
 		const steps = calculateSteps(this.props);
 
 		return (
-			<Modal show={this.props.is_open} className="deploy" closeHandler={this.props.onClose} title="Deployment">
+			<Modal
+				show={this.props.is_open}
+				className="deploy"
+				closeHandler={this.props.onClose}
+				title={"Deploy to " + this.props.environment_name}
+				closeTitle="Close"
+			>
 				<div className="row">
 					<div className="col-md-3 menu affix">
 						<StepMenu
@@ -209,7 +215,8 @@ const mapStateToProps = function(state, ownProps) {
 		sha_is_selected: (state.git.selected_ref !== ""),
 		can_deploy: state.deployment.approved,
 		state: state.deployment.state,
-		active_step: active_step
+		active_step: active_step,
+		environment_name: state.environment.name
 	};
 };
 

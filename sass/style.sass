@@ -983,6 +983,7 @@ button.sidebar-open
 		width: 50px
 		overflow: hidden
 		white-space: nowrap
+	.deployment-title,
 	.deployment-branch
 		margin-left: 5px
 	.deployed-detail
@@ -1296,7 +1297,7 @@ textarea.deploy-key
 	.modal-lg
 		@media screen and (min-width: $screen-md)
 			width: 90%
-			color: #505050
+			color: $body-text
 
 	.modal-dialog
 		margin: 0 auto
@@ -1308,12 +1309,22 @@ textarea.deploy-key
 			.modal-header
 				border-radius: 0
 				background: #ffffff
+				border-bottom: 1px solid #D7D7D7
+				padding: 10px 20px 10px 22px
 
 				.modal-title
-					color: #000000
+					color: $body-text
 
 				.close
-					color: #000000
+					// same as .modal-title
+					@extend h4
+					font-size: 14px
+					font-weight: bold
+					color: $body-text
+					line-height: 2
+					opacity: 0.7
+					margin: 0
+					text-transform: uppercase
 
 			.modal-body
 				// ensure that there is a scrollbar inside the modal
@@ -1342,11 +1353,11 @@ textarea.deploy-key
 
 						&.active
 							border-color: #0685D7
-							color: #505050
+							color: $body-text
 							cursor: pointer
 
 						&.selectable
-							color: #505050
+							color: $body-text
 							cursor: pointer
 				.main
 					@media screen and (min-width: $screen-md)
@@ -1361,6 +1372,7 @@ textarea.deploy-key
 				background-color: #ffffff
 
 				&.fetch
+					border-top: 0
 					margin-bottom: 0
 					background-color: #EDF1F2
 
@@ -1458,3 +1470,37 @@ $color_loading_indicator: $platform-blue
 			background-color: $color_loading_indicator
 		100%
 			background-color: transparent
+
+.fade-in
+	opacity: 0
+	/* make things invisible upon start
+	-webkit-animation: fadeIn ease-in 1
+	/* call our keyframe named fadeIn, use animation ease-in and repeat it only 1 time
+	-moz-animation: fadeIn ease-in 1
+	animation: fadeIn ease-in 1
+	-webkit-animation-fill-mode: forwards
+	/* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1)
+	-moz-animation-fill-mode: forwards
+	animation-fill-mode: forwards
+	-webkit-animation-duration: 0.25s
+	-moz-animation-duration: 0.25s
+	animation-duration: 0.25s
+
+	@-webkit-keyframes fadeIn
+		from
+			opacity: 0
+		to
+			opacity: 1
+
+	@-moz-keyframes fadeIn
+		from
+			opacity: 0
+		to
+			opacity: 1
+
+	@keyframes fadeIn
+		from
+			opacity: 0
+		to
+			opacity: 1
+

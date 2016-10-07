@@ -1147,7 +1147,7 @@ hr {
 [role="button"] {
   cursor: pointer; }
 
-h1, h2, h3, h4, h5, h6,
+h1, h2, h3, h4, .modal.deploy .modal-dialog .modal-content .modal-header .close, h5, h6,
 .h1, .h2, .h3, .h4, .h5, .h6 {
   font-family: inherit;
   font-weight: 300;
@@ -1168,12 +1168,12 @@ h1, h2, h3, h4, h5, h6,
   h3 .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-outer .deploy-form
   h3 dl.quick-summary,
   h3 .deploy-form-loading .deploy-form dl.quick-summary, .deploy-form-loading .deploy-form
-  h3 dl.quick-summary, h4 small,
-  h4 .small,
+  h3 dl.quick-summary, h4 small, .modal.deploy .modal-dialog .modal-content .modal-header .close small,
+  h4 .small, .modal.deploy .modal-dialog .modal-content .modal-header .close .small,
   h4 .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-outer .deploy-form
-  h4 dl.quick-summary,
+  h4 dl.quick-summary, .modal.deploy .modal-dialog .modal-content .modal-header .close .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-outer .deploy-form .modal.deploy .modal-dialog .modal-content .modal-header .close dl.quick-summary,
   h4 .deploy-form-loading .deploy-form dl.quick-summary, .deploy-form-loading .deploy-form
-  h4 dl.quick-summary, h5 small,
+  h4 dl.quick-summary, .modal.deploy .modal-dialog .modal-content .modal-header .close .deploy-form-loading .deploy-form dl.quick-summary, .deploy-form-loading .deploy-form .modal.deploy .modal-dialog .modal-content .modal-header .close dl.quick-summary, h5 small,
   h5 .small,
   h5 .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-outer .deploy-form
   h5 dl.quick-summary,
@@ -1259,17 +1259,17 @@ h3, .h3 {
   .h3 dl.quick-summary {
     font-size: 65%; }
 
-h4, .h4,
+h4, .modal.deploy .modal-dialog .modal-content .modal-header .close, .h4,
 h5, .h5,
 h6, .h6 {
   margin-top: 10px;
   margin-bottom: 10px; }
-  h4 small,
-  h4 .small,
+  h4 small, .modal.deploy .modal-dialog .modal-content .modal-header .close small,
+  h4 .small, .modal.deploy .modal-dialog .modal-content .modal-header .close .small,
   h4 .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-outer .deploy-form
-  h4 dl.quick-summary,
+  h4 dl.quick-summary, .modal.deploy .modal-dialog .modal-content .modal-header .close .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-outer .deploy-form .modal.deploy .modal-dialog .modal-content .modal-header .close dl.quick-summary,
   h4 .deploy-form-loading .deploy-form dl.quick-summary, .deploy-form-loading .deploy-form
-  h4 dl.quick-summary, .h4 small,
+  h4 dl.quick-summary, .modal.deploy .modal-dialog .modal-content .modal-header .close .deploy-form-loading .deploy-form dl.quick-summary, .deploy-form-loading .deploy-form .modal.deploy .modal-dialog .modal-content .modal-header .close dl.quick-summary, .h4 small,
   .h4 .small,
   .h4 .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-outer .deploy-form
   .h4 dl.quick-summary,
@@ -1308,7 +1308,7 @@ h2, .h2 {
 h3, .h3 {
   font-size: 24px; }
 
-h4, .h4 {
+h4, .modal.deploy .modal-dialog .modal-content .modal-header .close, .h4 {
   font-size: 20px; }
 
 h5, .h5 {
@@ -5294,7 +5294,9 @@ a.thumbnail.active {
   border: 1px solid transparent;
   border-radius: 3px; }
   .alert h4, .message.bad h4,
-  .message.required h4, .deploy-dropdown.error h4, .deploy-dropdown-errors h4 {
+  .message.required h4, .deploy-dropdown.error h4, .deploy-dropdown-errors h4, .alert .modal.deploy .modal-dialog .modal-content .modal-header .close, .modal.deploy .modal-dialog .modal-content .modal-header .alert .close, .message.bad .modal.deploy .modal-dialog .modal-content .modal-header .close, .modal.deploy .modal-dialog .modal-content .modal-header .message.bad .close,
+  .message.required .modal.deploy .modal-dialog .modal-content .modal-header .close, .modal.deploy .modal-dialog .modal-content .modal-header
+  .message.required .close, .deploy-dropdown.error .modal.deploy .modal-dialog .modal-content .modal-header .close, .modal.deploy .modal-dialog .modal-content .modal-header .deploy-dropdown.error .close, .deploy-dropdown-errors .modal.deploy .modal-dialog .modal-content .modal-header .close, .modal.deploy .modal-dialog .modal-content .modal-header .deploy-dropdown-errors .close {
     margin-top: 0;
     color: inherit; }
   .alert .alert-link, .message.bad .alert-link,
@@ -12306,6 +12308,7 @@ button.sidebar-open {
     width: 50px;
     overflow: hidden;
     white-space: nowrap; }
+  .build-details .deployment-title,
   .build-details .deployment-branch {
     margin-left: 5px; }
   .build-details .deployed-detail {
@@ -12601,7 +12604,7 @@ textarea.deploy-key {
     opacity: .5;
     font-weight: lighter;
     font-size: 32px; }
-  .modal-header p, .modal-header h1, .modal-header h2, .modal-header h3, .modal-header h4, .modal-header h5, .modal-header .h1, .modal-header .h2, .modal-header .h3, .modal-header .h4, .modal-header .h5, .modal-header .close {
+  .modal-header p, .modal-header h1, .modal-header h2, .modal-header h3, .modal-header h4, .modal.deploy .modal-dialog .modal-content .modal-header .close, .modal-header h5, .modal-header .h1, .modal-header .h2, .modal-header .h3, .modal-header .h4, .modal-header .h5, .modal-header .close {
     color: #fff; }
 
 @media screen and (min-width: 992px) {
@@ -12616,11 +12619,19 @@ textarea.deploy-key {
     background-color: #F0F3F4; }
     .modal.deploy .modal-dialog .modal-content .modal-header {
       border-radius: 0;
-      background: #ffffff; }
+      background: #ffffff;
+      border-bottom: 1px solid #D7D7D7;
+      padding: 10px 20px 10px 22px; }
       .modal.deploy .modal-dialog .modal-content .modal-header .modal-title {
-        color: #000000; }
+        color: #505050; }
       .modal.deploy .modal-dialog .modal-content .modal-header .close {
-        color: #000000; }
+        font-size: 14px;
+        font-weight: bold;
+        color: #505050;
+        line-height: 2;
+        opacity: 0.7;
+        margin: 0;
+        text-transform: uppercase; }
     .modal.deploy .modal-dialog .modal-content .modal-body {
       overflow-y: auto;
       height: 100%;
@@ -12656,6 +12667,7 @@ textarea.deploy-key {
       background-color: #ffffff; }
       .modal.deploy .modal-dialog .modal-content .fetch.fetch,
       .modal.deploy .modal-dialog .modal-content .section.fetch {
+        border-top: 0;
         margin-bottom: 0;
         background-color: #EDF1F2; }
       .modal.deploy .modal-dialog .modal-content .fetch header,
@@ -12742,3 +12754,36 @@ button.abort {
     background-color: #3aaef9; }
   100% {
     background-color: transparent; } }
+
+.fade-in {
+  opacity: 0;
+  /* make things invisible upon start */
+  -webkit-animation: fadeIn ease-in 1;
+  /* call our keyframe named fadeIn, use animation ease-in and repeat it only 1 time */
+  -moz-animation: fadeIn ease-in 1;
+  animation: fadeIn ease-in 1;
+  -webkit-animation-fill-mode: forwards;
+  /* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1) */
+  -moz-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+  -webkit-animation-duration: 0.25s;
+  -moz-animation-duration: 0.25s;
+  animation-duration: 0.25s; }
+
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0; }
+  to {
+    opacity: 1; } }
+
+@-moz-keyframes fadeIn {
+  from {
+    opacity: 0; }
+  to {
+    opacity: 1; } }
+
+@keyframes fadeIn {
+  from {
+    opacity: 0; }
+  to {
+    opacity: 1; } }

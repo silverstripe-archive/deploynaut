@@ -4,6 +4,9 @@ var ReactRedux = require('react-redux');
 const SummaryOfChanges = require('./SummaryOfChanges.jsx');
 var DeployDiff = require('../components/DeployDiff.jsx');
 
+const actions = require('../_actions.js');
+const deployment = require('../constants/deployment.js');
+
 function DeployPlan(props) {
 	return (
 		<div className="section">
@@ -16,8 +19,15 @@ function DeployPlan(props) {
 			<div className="row">
 				<div className="col-md-8">
 					<div className="form-group">
-						<label htmlFor="exampleInputEmail1">Deployment name or meaningful title</label>
-						<input type="text" className="form-control" id="exampleInputEmail1" />
+						<label htmlFor="deployTitle">Deployment name or meaningful title</label>
+						<input
+							type="text"
+							className="form-control"
+							id="deployTitle"
+							value={props.title}
+							onChange={props.onTitleChange}
+							disabled={!props.can_edit}
+						/>
 					</div>
 					<SummaryOfChanges />
 				</div>
@@ -43,12 +53,18 @@ function DeployPlan(props) {
 const mapStateToProps = function(state) {
 	return {
 		changes: state.plan.changes,
-		is_loading: state.plan.is_loading
+		is_loading: state.plan.is_loading,
+		title: state.plan.title,
+		can_edit: deployment.canEdit(state)
 	};
 };
 
-const mapDispatchToProps = function() {
-	return {};
+const mapDispatchToProps = function(dispatch) {
+	return {
+		onTitleChange: function(evt) {
+			dispatch(actions.setTitle(evt.target.value));
+		}
+	};
 };
 
 module.exports = ReactRedux.connect(mapStateToProps, mapDispatchToProps)(DeployPlan);

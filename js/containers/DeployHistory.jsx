@@ -40,7 +40,7 @@ const DeployHistory = function(props) {
 	}
 
 	return (
-		<div>
+		<div className="fade-in">
 			<h4>History</h4>
 			<div className="table-responsive">
 				<table className="table table-clickable table-centered-columns table-striped table-hover">
@@ -59,7 +59,7 @@ const DeployHistory = function(props) {
 							Object.keys(props.list).map(function(i) {
 								const row = props.list[i];
 								return (
-									<tr className={row.is_current_build ? "current" : ""} onClick={() => props.onItemClick(row.id)} key={i}>
+									<tr className={row.is_current_build ? "fade-in current" : "fade-in"} onClick={() => props.onItemClick(row.id)} key={i}>
 										<td>{row.date_started_nice}</td>
 										<td><BuildStatus deployment={row} /></td>
 										<td>{row.approver ? row.approver.name : <span className="bypassed">Bypassed</span>}</td>
@@ -100,7 +100,7 @@ const mapStateToProps = function(state) {
 		return Date.parse(b.date_started) - Date.parse(a.date_started);
 	});
 
-	const perPage = 4;
+	const perPage = 10;
 	// only show paginated result, recalc
 	const start = (state.deployment.current_page - 1) * perPage;
 	const end = start + perPage;

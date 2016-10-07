@@ -3,6 +3,7 @@ var ReactRedux = require('react-redux');
 
 var TextArea = require('../components/TextArea.jsx');
 var actions = require('../_actions.js');
+const deployment = require('../constants/deployment.js');
 
 var summary = function(props) {
 	return (
@@ -13,29 +14,16 @@ var summary = function(props) {
 					name="summary"
 					value={props.summary_of_changes}
 					onChange={props.onChange}
-					disabled={props.disabled}
+					disabled={!props.can_edit}
 				/>
 		</div>
 	);
 };
 
-function isDisabled(state) {
-	if (state.deployment.submitted) {
-		return true;
-	}
-	if (state.deployment.approved) {
-		return true;
-	}
-	if (state.deployment.queued) {
-		return true;
-	}
-	return false;
-}
-
 const mapStateToProps = function(state) {
 	return {
 		summary_of_changes: state.plan.summary_of_changes,
-		disabled: isDisabled(state)
+		can_edit: deployment.canEdit(state)
 	};
 };
 
