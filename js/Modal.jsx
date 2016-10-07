@@ -1,7 +1,6 @@
 var React = require("react");
 
 var Modal = React.createClass({
-
 	propTypes: {
 		show: React.PropTypes.bool,
 		keyboard: React.PropTypes.bool,
@@ -30,7 +29,9 @@ var Modal = React.createClass({
 		this.modal('hide');
 	},
 
-	selector: null,
+	getCloseTitle: function() {
+		return {__html: this.props.closeTitle};
+	},
 
 	modal: function(options) {
 		var selector = $(this.selector);
@@ -40,9 +41,7 @@ var Modal = React.createClass({
 		}.bind(this));
 	},
 
-	getCloseTitle: function() {
-		return {__html: this.props.closeTitle};
-	},
+	selector: null,
 
 	render: function() {
 		// tabIndex -1 fixes esc key not working. See http://stackoverflow.com/questions/12630156
