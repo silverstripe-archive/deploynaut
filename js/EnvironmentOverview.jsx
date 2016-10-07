@@ -25,7 +25,7 @@ const store = Redux.createStore(
 
 /**
  * Load deployment data, which is used by ReactRouter onEnter
- * as there is no direction connection between the store, and the URL
+ * as there is no direct connection between the store, and the URL
  * parameters provided by ReactRouter.
  */
 function loadDeployment() {
