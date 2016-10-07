@@ -1,9 +1,8 @@
 const React = require('react');
 
 const LoadingBar = function(props) {
-
 	if (!props.show) {
-		return null
+		return null;
 	}
 
 	return (
@@ -18,6 +17,6 @@ const LoadingBar = function(props) {
 			<div id="loading-horizontal-8"></div>
 		</div>
 	);
-}
+};
 
 module.exports = LoadingBar;
