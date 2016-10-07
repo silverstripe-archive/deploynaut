@@ -143,7 +143,23 @@ class GitDispatcher extends Dispatcher {
 			'description' => 'Deploy a specific SHA'
 		];
 
-		return $this->getAPIResponse(['refs' => $refs], 200);
+		// get the last time git fetch was run
+		$lastFetchedDate = 'never';
+		$lastFetchedAgo = null;
+		$fetch = DNGitFetch::get()
+			->filter('ProjectID', $this->project->ID)
+			->sort('LastEdited', 'DESC')
+			->first();
+		if ($fetch) {
+			$lastFetchedDate = $fetch->obj('LastEdited')->Date();
+			$lastFetchedAgo = $fetch->obj('LastEdited')->Ago();
+		}
+
+		return $this->getAPIResponse([
+			'refs' => $refs,
+			'last_fetched_date' => $lastFetchedDate,
+			'last_fetched_ago' => $lastFetchedAgo
+		], 200);
 	}
 
 	/**
@@ -167,14 +183,14 @@ class GitDispatcher extends Dispatcher {
 	 * @return SS_HTTPResponse
 	 */
 	protected function getUpdateStatus($ID) {
-		$ping = DNGitFetch::get()->byID($ID);
-		if (!$ping) {
+		$fetch = DNGitFetch::get()->byID($ID);
+		if (!$fetch) {
 			return $this->getAPIResponse(['message' => 'GIT update (' . $ID . ') not found'], 404);
 		}
 		$output = [
 			'id' => $ID,
-			'status' => $ping->ResqueStatus(),
-			'message' => array_filter(explode(PHP_EOL, $ping->LogContent()))
+			'status' => $fetch->ResqueStatus(),
+			'message' => array_filter(explode(PHP_EOL, $fetch->LogContent()))
 		];
 
 		return $this->getAPIResponse($output, 200);
