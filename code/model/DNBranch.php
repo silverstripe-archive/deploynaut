@@ -87,13 +87,10 @@ class DNBranch extends ViewableData {
 			//occasionally parsing will fail this is a fallback to make it still work
 			return new SS_Datetime();
 		}
-		// gitonomy sets the time to UTC, so now we set the timezone to
-		// whatever PHP is set to (date.timezone). This will change in the future if each
-		// deploynaut user has their own timezone
 
 		$created->setTimezone(new DateTimeZone(date_default_timezone_get()));
 
-		$date = new SS_Datetime();
+		$date = SS_Datetime::create();
 		$date->setValue($created->format('Y-m-d H:i:s'));
 		$this->_lastUpdatedCache = $date;
 		return $date;

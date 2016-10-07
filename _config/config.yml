@@ -31,3 +31,9 @@ StateMachineFactory:
         DNDeploymentHandlers: onQueue
       abort:
         DNDeploymentHandlers: onAbort
+Member:
+  extensions:
+    - TimezoneMemberExtension
+Injector:
+  SS_Datetime:
+    class: SS_Datetimezone
