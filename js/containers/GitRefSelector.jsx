@@ -77,7 +77,7 @@ function GitRefSelector(props) {
 		<div className="section">
 			<header id="0">Target release</header>
 			<div>
-				Select the release you would like to deploy to xxxx
+				Select the release you would like to deploy to {props.environment_name}
 			</div>
 			<form className="form">
 				<ul className="radio-list">
@@ -125,6 +125,7 @@ const mapStateToProps = function(state) {
 	}
 
 	return {
+		environment_name: state.environment.name,
 		types: state.git.list,
 		selected_type: state.git.selected_type,
 		ref_list: refs,
