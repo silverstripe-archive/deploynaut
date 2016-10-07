@@ -231,6 +231,11 @@ export function getDeploySummary(sha) {
 	};
 }
 
+export const SET_TITLE = "SET_TITLE";
+export function setTitle(text) {
+	return {type: SET_TITLE, text};
+}
+
 export const SET_SUMMARY = "SET_SUMMARY";
 export function setSummary(text) {
 	return {type: SET_SUMMARY, text};
@@ -437,6 +442,7 @@ export function createDeployment() {
 			ref: getState().git.selected_ref,
 			ref_type: getState().git.selected_type,
 			ref_name: getState().git.selected_name,
+			title: getState().plan.title,
 			summary: getState().plan.summary_of_changes,
 			approver_id: getState().deployment.approver_id
 		})

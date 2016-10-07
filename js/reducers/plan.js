@@ -8,6 +8,7 @@ const initialState = {
 	deployment_estimate: "",
 	changes: {},
 	validation_code: "",
+	title: "",
 	summary_of_changes: ""
 };
 
@@ -33,6 +34,7 @@ module.exports = function plan(state, action) {
 			return _.assign({}, state, {
 				is_loading: false,
 				changes: action.data.deployment.changes,
+				title: action.data.deployment.title || "",
 				summary_of_changes: action.data.deployment.summary || "",
 				validation_code: "success"
 			});
@@ -54,6 +56,11 @@ module.exports = function plan(state, action) {
 		case actions.FAIL_SUMMARY_GET:
 			return _.assign({}, state, {
 				is_loading: false
+			});
+
+		case actions.SET_TITLE:
+			return _.assign({}, state, {
+				title: action.text
 			});
 
 		case actions.SET_SUMMARY:

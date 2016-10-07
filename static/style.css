@@ -12308,6 +12308,7 @@ button.sidebar-open {
     width: 50px;
     overflow: hidden;
     white-space: nowrap; }
+  .build-details .deployment-title,
   .build-details .deployment-branch {
     margin-left: 5px; }
   .build-details .deployed-detail {

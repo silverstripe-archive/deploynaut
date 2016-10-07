@@ -60,6 +60,7 @@ class DeploynautAPIFormatter {
 			'date_requested_nice' => $deployment->obj('DeployRequested')->Nice(),
 			'date_updated' => $deployment->LastEdited,
 			'date_updated_nice' => $deployment->obj('LastEdited')->Nice(),
+			'title' => $deployment->Title,
 			'summary' => $deployment->Summary,
 			'branch' => $deployment->Branch,
 			'tags' => $deployment->getTags()->toArray(),

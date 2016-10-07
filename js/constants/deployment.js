@@ -67,3 +67,16 @@ export function isApproved(deployState) {
 export function isRejected(deployState) {
 	return deployState === STATE_REJECTED;
 }
+
+export function canEdit(state) {
+	if (state.deployment.submitted) {
+		return false;
+	}
+	if (state.deployment.approved) {
+		return false;
+	}
+	if (state.deployment.queued) {
+		return false;
+	}
+	return true;
+}

@@ -54,6 +54,7 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 		"State" => "Enum('New, Submitted, Invalid, Approved, Rejected, Queued, Deploying, Aborting, Completed, Failed', 'New')",
 		// JSON serialised DeploymentStrategy.
 		"Strategy" => "Text",
+		"Title" => "Varchar(255)",
 		"Summary" => "Text",
 		// the date and time the deploy was queued
 		"DeployStarted" => "SS_Datetime",
@@ -76,10 +77,6 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 	private static $dependencies = [
 		'stateMachineFactory' => '%$StateMachineFactory'
 	];
-
-	public function getTitle() {
-		return "#{$this->ID}: {$this->SHA} (Status: {$this->Status})";
-	}
 
 	private static $summary_fields = array(
 		'LastEdited' => 'Last Edited',

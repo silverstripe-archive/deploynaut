@@ -167,6 +167,7 @@ class DeployDispatcher extends Dispatcher {
 			'sha' => $request->postVar('ref'),
 			'ref_type' => $request->postVar('ref_type'),
 			'branch' => $isBranchDeploy ? $request->postVar('ref_name') : null,
+			'title' => $request->postVar('title'),
 			'summary' => $request->postVar('summary')
 		];
 		$strategy = $this->environment->Backend()->planDeploy($this->environment, $options);

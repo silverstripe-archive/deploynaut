@@ -10,6 +10,7 @@ var BuildStatus = function(props) {
 		<div className={classNames}>
 			<a className="sha-detail" href={props.deployment.commit_url} title={props.deployment.sha}>{props.deployment.short_sha}</a>
 			<span className="deployment-branch">{props.deployment.branch}</span>
+			<span className="deployment-title">{props.deployment.title}</span>
 			<span className="deployed-detail">{props.deployment.commit_message}</span>
 		</div>
 	);
