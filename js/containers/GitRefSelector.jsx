@@ -103,6 +103,9 @@ GitRefSelector.propTypes = {
 };
 
 function isDisabled(state) {
+	if (state.git.is_updating || state.plan.is_loading) {
+		return true;
+	}
 	if (state.deployment.submitted) {
 		return true;
 	}

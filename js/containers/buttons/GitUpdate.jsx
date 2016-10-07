@@ -11,7 +11,7 @@ const mapStateToProps = function(state) {
 	}
 
 	return {
-		disabled: state.git.is_updating || state.deployment.submitted,
+		disabled: state.git.is_updating || state.plan.is_loading || state.deployment.submitted,
 		style: "btn-default",
 		value: btnValue
 	};
