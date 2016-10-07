@@ -42,7 +42,7 @@ module.exports = function deployment(state, action) {
 			return _.assign({}, state, {
 				history_is_loading: false
 			});
-		case actions.SUCCEED_DEPLOY_HISTORY_GET:
+		case actions.SUCCEED_DEPLOY_HISTORY_GET: {
 			// get current list
 			const newList = _.assign({}, state.list);
 			// add or update the entries in the current list
@@ -53,6 +53,7 @@ module.exports = function deployment(state, action) {
 				list: newList,
 				history_is_loading: false
 			});
+		}
 		case actions.SUCCEED_UPCOMING_DEPLOYMENTS_GET: {
 			if (action.data.list.length === 0) {
 				return state;
