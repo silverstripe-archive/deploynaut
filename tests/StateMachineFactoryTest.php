@@ -27,6 +27,11 @@ class StateMachineFactoryTest extends PHPUnit_Framework_TestCase {
 		]);
 
 		$dispatcher->shouldReceive('addListener')->once()->with(
+			'finite.post_transition',
+			[Injector::inst()->get('DNDeploymentHandlers'), 'onAfterTransition']
+		);
+
+		$dispatcher->shouldReceive('addListener')->once()->with(
 			'finite.post_transition.arbitraryTransition',
 			[$handler, 'hookMethod']
 		);

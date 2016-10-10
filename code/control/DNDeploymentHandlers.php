@@ -4,6 +4,16 @@ use \Finite\Event\TransitionEvent;
 
 class DNDeploymentHandlers extends Object {
 
+	public function onAfterTransition(TransitionEvent $e) {
+		/** @var DNDeployment $deployment */
+		$deployment = $e->getStateMachine()->getObject();
+		$deployment->log()->write(sprintf(
+			'State transitioned from "%s" to "%s"',
+			$e->getInitialState()->getName(),
+			$e->getTransition()->getState()
+		));
+	}
+
 	public function onNew(TransitionEvent $e) {
 		/** @var DNDeployment $deployment */
 		$deployment = $e->getStateMachine()->getObject();
@@ -36,8 +46,7 @@ class DNDeploymentHandlers extends Object {
 		$deployment->DeployStarted = SS_Datetime::now()->Rfc2822();
 		$deployment->write();
 
-		$log = $deployment->log();
-		$log->write(sprintf(
+		$deployment->log()->write(sprintf(
 			'Deploy queued as job %s (sigFile is %s)',
 			$token,
 			$deployment->getSigFile()
@@ -66,8 +75,7 @@ class DNDeploymentHandlers extends Object {
 		$email->populateTemplate($deployment);
 		$email->send();
 
-		$log = $deployment->log();
-		$log->write(sprintf(
+		$deployment->log()->write(sprintf(
 			'Deployment submitted email sent to approver %s <%s>',
 			$approver->Name,
 			$approver->Email
