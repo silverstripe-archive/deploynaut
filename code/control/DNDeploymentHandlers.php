@@ -19,6 +19,11 @@ class DNDeploymentHandlers extends Object {
 		$deployment = $e->getStateMachine()->getObject();
 		$deployment->DeployRequested = null;
 		$deployment->write();
+
+		// If we transitioned from Submitted state, then send a cancellation email
+		if ($e->getInitialState()->getName() === DNDeployment::STATE_SUBMITTED) {
+			$this->sendApprovalCancellationEmail($deployment);
+		}
 	}
 
 	public function onSubmit(TransitionEvent $e) {
@@ -30,11 +35,19 @@ class DNDeploymentHandlers extends Object {
 	}
 
 	public function onApprove(TransitionEvent $e) {
-		$this->sendApprovedEmail($e->getStateMachine()->getObject());
+		// If we transitioned from Submitted state, then send an approved email.
+		// This is especially important as bypassing goes from New to Approved, and we
+		// don't want to be sending emails about approved when it was bypassed.
+		if ($e->getInitialState()->getName() === DNDeployment::STATE_SUBMITTED) {
+			$this->sendApprovedEmail($e->getStateMachine()->getObject());
+		}
 	}
 
 	public function onReject(TransitionEvent $e) {
-		$this->sendRejectedEmail($e->getStateMachine()->getObject());
+		// If we transitioned from Submitted state, then send an rejected email.
+		if ($e->getInitialState()->getName() === DNDeployment::STATE_SUBMITTED) {
+			$this->sendRejectedEmail($e->getStateMachine()->getObject());
+		}
 	}
 
 	public function onQueue(TransitionEvent $e) {
@@ -83,7 +96,7 @@ class DNDeploymentHandlers extends Object {
 		$email = Email::create();
 		$email->setTo(sprintf('%s <%s>', $approver->Name, $approver->Email));
 		$email->replyTo(sprintf('%s <%s>', $deployer->Name, $deployer->Email));
-		$email->setSubject('Deployment has been submitted');
+		$email->setSubject(sprintf('%s has submitted a deployment for your approval', $deployer->Name));
 		$email->setTemplate('DeploymentSubmittedEmail');
 		$email->populateTemplate($deployment);
 		$email->send();
@@ -100,10 +113,11 @@ class DNDeploymentHandlers extends Object {
 			return false;
 		}
 		$deployer = $deployment->Deployer();
+		$approver = $deployment->Approver();
 
 		$email = Email::create();
 		$email->setTo(sprintf('%s <%s>', $deployer->Name, $deployer->Email));
-		$email->setSubject('Deployment has been approved');
+		$email->setSubject(sprintf('Your deployment has been approved by %s', $approver->Name));
 		$email->setTemplate('DeploymentApprovedEmail');
 		$email->populateTemplate($deployment);
 		$email->send();
@@ -125,7 +139,7 @@ class DNDeploymentHandlers extends Object {
 		$email = Email::create();
 		$email->setTo(sprintf('%s <%s>', $deployer->Name, $deployer->Email));
 		$email->replyTo(sprintf('%s <%s>', $approver->Name, $approver->Email));
-		$email->setSubject('Deployment has been rejected');
+		$email->setSubject(sprintf('Your deployment has been rejected by %s', $approver->Name));
 		$email->setTemplate('DeploymentRejectedEmail');
 		$email->populateTemplate($deployment);
 		$email->send();
@@ -135,6 +149,25 @@ class DNDeploymentHandlers extends Object {
 			$deployer->Name,
 			$deployer->Email
 		));
+	}
+
+	protected function sendApprovalCancellationEmail(DNDeployment $deployment) {
+		if (!$this->canSendEmail($deployment)) {
+			return false;
+		}
+		$deployer = $deployment->Deployer();
+		$approver = $deployment->Approver();
+
+		$to = sprintf('%s <%s>, %s <%s>', $deployer->Name, $deployer->Email, $approver->Name, $approver->Email);
+
+		$email = Email::create();
+		$email->setTo($to);
+		$email->setSubject('Deployment approval has been cancelled');
+		$email->setTemplate('DeploymentApprovalCancellationEmail');
+		$email->populateTemplate($deployment);
+		$email->send();
+
+		$deployment->log()->write(sprintf('Deployment approval cancellation email sent to %s', $to));
 	}
 
 }

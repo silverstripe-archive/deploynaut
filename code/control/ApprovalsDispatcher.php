@@ -108,14 +108,12 @@ class ApprovalsDispatcher extends Dispatcher {
 			if (!$this->project->allowed(ApprovalsDispatcher::ALLOW_APPROVAL, $approver)) {
 				return $this->getAPIResponse(['message' => 'The given approver does not have permissions to approve'], 403);
 			}
+
+			$deployment->ApproverID = $approver->ID;
+			$deployment->write();
 		}
 
 		try {
-			if ($approver && $approver->exists()) {
-				$deployment->ApproverID = $approver->ID;
-				$deployment->write();
-			}
-
 			$deployment->getMachine()->apply(DNDeployment::TR_SUBMIT);
 		} catch (\Exception $e) {
 			return $this->getAPIResponse([
@@ -142,6 +140,12 @@ class ApprovalsDispatcher extends Dispatcher {
 		$errorResponse = $this->validateDeployment($deployment);
 		if ($errorResponse instanceof \SS_HTTPResponse) {
 			return $errorResponse;
+		}
+
+		// if the person cancelling is not the one who created the deployment, update the deployer
+		if (Member::currentUserID() !== $deployment->DeployerID) {
+			$deployment->DeployerID = Member::currentUserID();
+			$deployment->write();
 		}
 
 		// @todo permission checking for cancelling an approval request
@@ -198,6 +202,13 @@ class ApprovalsDispatcher extends Dispatcher {
 			return $this->getAPIResponse(['message' => 'You are not authorised to bypass approval of this deployment'], 403);
 		}
 
+		// if the current user is not the person who was selected for approval on submit, but they got
+		// here because they still have permission, then change the approver to the current user
+		if (Member::currentUserID() !== $deployment->ApproverID) {
+			$deployment->ApproverID = Member::currentUserID();
+			$deployment->write();
+		}
+
 		try {
 			$deployment->getMachine()->apply(DNDeployment::TR_APPROVE);
 		} catch (\Exception $e) {
@@ -229,6 +240,13 @@ class ApprovalsDispatcher extends Dispatcher {
 		// reject permissions are the same as can approve
 		if (!$this->project->allowed(self::ALLOW_APPROVAL, Member::currentUser())) {
 			return $this->getAPIResponse(['message' => 'You are not authorised to reject this deployment'], 403);
+		}
+
+		// if the current user is not the person who was selected for approval on submit, but they got
+		// here because they still have permission, then change the approver to the current user
+		if (Member::currentUserID() !== $deployment->ApproverID) {
+			$deployment->ApproverID = Member::currentUserID();
+			$deployment->write();
 		}
 
 		try {

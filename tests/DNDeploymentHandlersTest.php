@@ -11,7 +11,7 @@ class DNDeploymentHandlersTest extends \SapphireTest {
 		parent::tearDown();
 	}
 
-	public function testOnSubmitSendsEmailToApprover() {
+	public function createDeployment() {
 		$deployer = Member::create();
 		$deployer->Name = "Carl Deployer";
 		$deployer->Email = 'carldeployer@localhost';
@@ -28,6 +28,14 @@ class DNDeploymentHandlersTest extends \SapphireTest {
 		$deployment->log = \Mockery::mock('someLog')->shouldIgnoreMissing();
 		$deployment->write();
 
+		return $deployment;
+	}
+
+	public function testOnSubmitSendsEmailToApprover() {
+		$deployment = $this->createDeployment();
+		$deployer = $deployment->Deployer();
+		$approver = $deployment->Approver();
+
 		$event = \Mockery::mock('Finite\Event\TransitionEvent', [
 			'getStateMachine->getObject' => $deployment,
 		]);
@@ -35,13 +43,63 @@ class DNDeploymentHandlersTest extends \SapphireTest {
 		$handlers = new DNDeploymentHandlers();
 		$handlers->onSubmit($event);
 
-		$expectedTo = sprintf("%s <%s>", $approver->Name, $approver->Email);
+		$expectedTo = sprintf('%s <%s>', $approver->Name, $approver->Email);
 		$expectedFrom = Config::inst()->get('Email', 'admin_email');
-		$this->assertEmailSent($expectedTo, $expectedFrom, 'Deployment has been submitted');
+		$this->assertEmailSent($expectedTo, $expectedFrom, sprintf('%s has submitted a deployment for your approval', $deployer->Name));
+	}
 
-		$email = $this->findEmail($expectedTo);
-		$this->assertContains($approver->FirstName, $email['content']);
-		$this->assertContains($deployer->Email, $email['content']);
+	public function testOnApproveSendsEmailToDeployer() {
+		$deployment = $this->createDeployment();
+		$deployer = $deployment->Deployer();
+		$approver = $deployment->Approver();
+
+		$event = \Mockery::mock('Finite\Event\TransitionEvent', [
+			'getStateMachine->getObject' => $deployment,
+			'getInitialState->getName' => DNDeployment::STATE_SUBMITTED
+		]);
+
+		$handlers = new DNDeploymentHandlers();
+		$handlers->onApprove($event);
+
+		$expectedTo = sprintf('%s <%s>', $deployer->Name, $deployer->Email);
+		$expectedFrom = Config::inst()->get('Email', 'admin_email');
+		$this->assertEmailSent($expectedTo, $expectedFrom, sprintf('Your deployment has been approved by %s', $approver->Name));
+	}
+
+	public function testOnRejectSendsEmailToDeployer() {
+		$deployment = $this->createDeployment();
+		$deployer = $deployment->Deployer();
+		$approver = $deployment->Approver();
+
+		$event = \Mockery::mock('Finite\Event\TransitionEvent', [
+			'getStateMachine->getObject' => $deployment,
+			'getInitialState->getName' => DNDeployment::STATE_SUBMITTED
+		]);
+
+		$handlers = new DNDeploymentHandlers();
+		$handlers->onReject($event);
+
+		$expectedTo = sprintf('%s <%s>', $deployer->Name, $deployer->Email);
+		$expectedFrom = Config::inst()->get('Email', 'admin_email');
+		$this->assertEmailSent($expectedTo, $expectedFrom, sprintf('Your deployment has been rejected by %s', $approver->Name));
+	}
+
+	public function testOnCancelSendsCancellationEmail() {
+		$deployment = $this->createDeployment();
+		$deployer = $deployment->Deployer();
+		$approver = $deployment->Approver();
+
+		$event = \Mockery::mock('Finite\Event\TransitionEvent', [
+			'getStateMachine->getObject' => $deployment,
+			'getInitialState->getName' => DNDeployment::STATE_SUBMITTED
+		]);
+
+		$handlers = new DNDeploymentHandlers();
+		$handlers->onNew($event);
+
+		$expectedTo = sprintf('%s <%s>, %s <%s>', $deployer->Name, $deployer->Email, $approver->Name, $approver->Email);
+		$expectedFrom = Config::inst()->get('Email', 'admin_email');
+		$this->assertEmailSent($expectedTo, $expectedFrom, 'Deployment approval has been cancelled');
 	}
 
 	public function testOnQueueTriggersJob() {

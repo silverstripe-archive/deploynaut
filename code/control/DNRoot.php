@@ -1342,8 +1342,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$strategy = new DeploymentStrategy($environment);
 		$strategy->fromArray($request->requestVar('strategy'));
 		$deployment = $strategy->createDeployment();
-		// Skip through the approval state for now.
-		$deployment->getMachine()->apply(DNDeployment::TR_SUBMIT);
+		// Bypass approval by going straight to Approved, and then Queued.
+		$deployment->getMachine()->apply(DNDeployment::TR_APPROVE);
 		$deployment->getMachine()->apply(DNDeployment::TR_QUEUE);
 
 		return json_encode([
