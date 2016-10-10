@@ -11,6 +11,9 @@ function canRequest(state) {
 	if (!state.deployment.approver_id) {
 		return false;
 	}
+	if (state.deployment.approved) {
+		return false;
+	}
 	if (state.deployment.submitted) {
 		return false;
 	}
@@ -22,7 +25,7 @@ const mapStateToProps = function(state) {
 		display: canRequest(state),
 		disabled: state.deployment.is_loading,
 		style: "btn-success",
-		value: 'Send Request',
+		value: 'Send request',
 		icon: 'fa fa-envelope'
 	};
 };
