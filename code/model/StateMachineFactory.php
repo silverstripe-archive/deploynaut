@@ -24,7 +24,13 @@ class StateMachineFactory extends Object {
 			'transitions' => [
 				DNDeployment::TR_NEW => ['from' => [DNDeployment::STATE_SUBMITTED], 'to' => DNDeployment::STATE_NEW],
 				DNDeployment::TR_SUBMIT => ['from' => [DNDeployment::STATE_NEW], 'to' => DNDeployment::STATE_SUBMITTED],
-				DNDeployment::TR_QUEUE => ['from' => [DNDeployment::STATE_APPROVED], 'to' => DNDeployment::STATE_QUEUED],
+				DNDeployment::TR_QUEUE => [
+					'from' => [
+						DNDeployment::STATE_NEW, // @deprecated. Remove this when DNRoot::startDeploy() is removed.
+						DNDeployment::STATE_APPROVED
+					],
+					'to' => DNDeployment::STATE_QUEUED
+				],
 				DNDeployment::TR_INVALIDATE  => [
 					'from' => [
 						DNDeployment::STATE_NEW,
