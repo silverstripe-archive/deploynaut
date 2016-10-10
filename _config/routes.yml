@@ -13,4 +13,3 @@ Director:
     'naut/project/$Project/environment/$Environment/deploys': 'DeployDispatcher'
     'naut/project/$Project/environment/$Environment/approvals': 'ApprovalsDispatcher'
     'naut': 'DNRoot'
-    'v1/project/$Project/environment/$Environment/deployment': 'DNDeploymentDispatcher'
