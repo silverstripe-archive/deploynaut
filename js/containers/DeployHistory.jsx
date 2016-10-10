@@ -120,7 +120,7 @@ const mapStateToProps = function(state) {
 		page_length: perPage,
 		total_pages: totalPages,
 		current_page: state.deployment.current_page,
-		error: state.deployment.error,
+		error: state.deployment.history_error,
 		is_loading: state.deployment.history_is_loading
 
 	};

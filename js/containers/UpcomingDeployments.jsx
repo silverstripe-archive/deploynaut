@@ -19,7 +19,7 @@ const UpcomingDeployments = function(props) {
 		);
 	}
 
-	if (props.list.length === 0) {
+	if (props.list.length === 0 && errorRow === null) {
 		return null;
 	}
 
@@ -83,7 +83,7 @@ const mapStateToProps = function(state) {
 
 	return {
 		list: upcomingList,
-		error: null
+		error: state.deployment.upcoming_error
 	};
 };
 
