@@ -1,9 +1,10 @@
 <p>Hi $Approver.FirstName,</p>
 
-<p>We're just letting you know that a <a href="$Link">deployment to $Environment.FullName</a> has been submitted.</p>
+<p>We're just letting you know that a <a href="$Link">deployment to $Environment.FullName</a> has been submitted by {$Deployer.Name}.</p>
 
 <p>Summary of changes:</p>
 
+<p>$Title</p>
 <p>$Summary</p>
 
 <table>

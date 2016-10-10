@@ -26,15 +26,15 @@ class DNDeploymentHandlers extends Object {
 		$deployment = $e->getStateMachine()->getObject();
 		$deployment->DeployRequested = SS_Datetime::now()->Rfc2822();
 		$deployment->write();
-		$this->sendEmailToApprover($deployment);
+		$this->sendSubmittedEmail($deployment);
 	}
 
 	public function onApprove(TransitionEvent $e) {
-		// @todo send email to requester that it's approved
+		$this->sendApprovedEmail($e->getStateMachine()->getObject());
 	}
 
 	public function onReject(TransitionEvent $e) {
-		// @todo send email to requester that it's rejected
+		$this->sendRejectedEmail($e->getStateMachine()->getObject());
 	}
 
 	public function onQueue(TransitionEvent $e) {
@@ -60,18 +60,31 @@ class DNDeploymentHandlers extends Object {
 		$deployment->setSignal(2);
 	}
 
-	protected function sendEmailToApprover(DNDeployment $deployment) {
+	protected function canSendEmail(DNDeployment $deployment) {
 		$deployer = $deployment->Deployer();
 		$approver = $deployment->Approver();
+		if (!$deployer || !$deployer->exists()) {
+			return false;
+		}
 		if (!$approver || !$approver->exists()) {
 			return false;
 		}
+
+		return true;
+	}
+
+	protected function sendSubmittedEmail(DNDeployment $deployment) {
+		if (!$this->canSendEmail($deployment)) {
+			return false;
+		}
+		$deployer = $deployment->Deployer();
+		$approver = $deployment->Approver();
 
 		$email = Email::create();
 		$email->setTo(sprintf('%s <%s>', $approver->Name, $approver->Email));
 		$email->replyTo(sprintf('%s <%s>', $deployer->Name, $deployer->Email));
 		$email->setSubject('Deployment has been submitted');
-		$email->setTemplate('DeploymentNotificationSubmitted');
+		$email->setTemplate('DeploymentSubmittedEmail');
 		$email->populateTemplate($deployment);
 		$email->send();
 
@@ -81,4 +94,47 @@ class DNDeploymentHandlers extends Object {
 			$approver->Email
 		));
 	}
+
+	protected function sendApprovedEmail(DNDeployment $deployment) {
+		if (!$this->canSendEmail($deployment)) {
+			return false;
+		}
+		$deployer = $deployment->Deployer();
+
+		$email = Email::create();
+		$email->setTo(sprintf('%s <%s>', $deployer->Name, $deployer->Email));
+		$email->setSubject('Deployment has been approved');
+		$email->setTemplate('DeploymentApprovedEmail');
+		$email->populateTemplate($deployment);
+		$email->send();
+
+		$deployment->log()->write(sprintf(
+			'Deployment approved email sent to requester %s <%s>',
+			$deployer->Name,
+			$deployer->Email
+		));
+	}
+
+	protected function sendRejectedEmail(DNDeployment $deployment) {
+		if (!$this->canSendEmail($deployment)) {
+			return false;
+		}
+		$deployer = $deployment->Deployer();
+		$approver = $deployment->Approver();
+
+		$email = Email::create();
+		$email->setTo(sprintf('%s <%s>', $deployer->Name, $deployer->Email));
+		$email->replyTo(sprintf('%s <%s>', $approver->Name, $approver->Email));
+		$email->setSubject('Deployment has been rejected');
+		$email->setTemplate('DeploymentRejectedEmail');
+		$email->populateTemplate($deployment);
+		$email->send();
+
+		$deployment->log()->write(sprintf(
+			'Deployment rejected email sent to requester %s <%s>',
+			$deployer->Name,
+			$deployer->Email
+		));
+	}
+
 }
