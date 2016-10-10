@@ -201,11 +201,18 @@ class ApprovalsDispatcher extends Dispatcher {
 			return $this->getAPIResponse(['message' => 'You are not authorised to bypass approval of this deployment'], 403);
 		}
 
-		// if the current user is not the person who was selected for approval on submit, but they got
-		// here because they still have permission, then change the approver to the current user
-		if (Member::currentUserID() !== $deployment->ApproverID) {
-			$deployment->ApproverID = Member::currentUserID();
+		if ($deployment->State === DNDeployment::STATE_NEW) {
+			// Bypassing approval: Ensure that approver is not set. This may happen when someone has requested approval,
+			// cancelled approval, then bypassed.
+			$deployment->ApproverID = 0;
 			$deployment->write();
+		} else {
+			// if the current user is not the person who was selected for approval on submit, but they got
+			// here because they still have permission, then change the approver to the current user
+			if (Member::currentUserID() !== $deployment->ApproverID) {
+				$deployment->ApproverID = Member::currentUserID();
+				$deployment->write();
+			}
 		}
 
 		try {
