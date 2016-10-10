@@ -148,7 +148,6 @@ class ApprovalsDispatcher extends Dispatcher {
 			$deployment->write();
 		}
 
-		// @todo permission checking for cancelling an approval request
 		try {
 			$deployment->getMachine()->apply(DNDeployment::TR_NEW);
 		} catch (\Exception $e) {
