@@ -77,6 +77,12 @@ class StateMachineFactory extends Object {
 		$class = get_class($machine->getObject());
 		if (empty($this->config()->handlers[$class])) return;
 
+		// this is the "internal" state listener that logs all state transitions
+		$machine->getDispatcher()->addListener(
+			'finite.post_transition',
+			[Injector::inst()->get('DNDeploymentHandlers'), 'onAfterTransition']
+		);
+
 		$transitions = $this->config()->handlers[$class];
 		foreach ($transitions as $transName => $handlers) {
 			if (!is_array($handlers)) {
