@@ -47,7 +47,7 @@ const UpcomingDeployments = function(props) {
 										<td>{row.date_requested_nice ? row.date_requested_nice : "-"}</td>
 										<td><BuildStatus deployment={row} /></td>
 										<td>{row.deployer ? row.deployer.name : null}</td>
-										<td>{row.approver ? row.approver.name : null}</td>
+										<td>{row.approver ? row.approver.name : (deployStates.isApproved(row.state) ? <span className="bypassed">Bypassed</span> : null)}</td>
 										<td className={"deploy-status status-" + row.state}><span className="deploy-status-text">{row.state}</span></td>
 									</tr>
 								);
