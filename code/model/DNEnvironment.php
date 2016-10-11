@@ -911,6 +911,7 @@ PHP
 	 */
 	public function onAfterDelete() {
 		parent::onAfterDelete();
+
 		// Create a basic new environment config from a template
 		if ($this->config()->get('allow_web_editing') && $this->envFileExists()) {
 			unlink($this->getConfigFilename());
@@ -920,6 +921,13 @@ PHP
 		if ($deployments && $deployments->exists()) {
 			foreach ($deployments as $deployment) {
 				$deployment->delete();
+			}
+		}
+
+		$archives = $this->DataArchives();
+		if ($archives && $archives->exists()) {
+			foreach ($archives as $archive) {
+				$archive->delete();
 			}
 		}
 
