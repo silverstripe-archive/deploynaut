@@ -916,6 +916,13 @@ PHP
 			unlink($this->getConfigFilename());
 		}
 
+		$deployments = $this->Deployments();
+		if ($deployments && $deployments->exists()) {
+			foreach ($deployments as $deployment) {
+				$deployment->delete();
+			}
+		}
+
 		$create = $this->CreateEnvironment();
 		if ($create && $create->exists()) {
 			$create->delete();
