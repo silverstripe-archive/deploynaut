@@ -29,7 +29,8 @@ class DNProject extends DataObject {
 	 */
 	private static $has_many = [
 		"Environments" => "DNEnvironment",
-		"CreateEnvironments" => "DNCreateEnvironment"
+		"CreateEnvironments" => "DNCreateEnvironment",
+		"Fetches" => "DNGitFetch"
 	];
 
 	/**
@@ -767,9 +768,18 @@ class DNProject extends DataObject {
 	public function onAfterDelete() {
 		parent::onAfterDelete();
 
-		// Delete related environments
-		foreach ($this->Environments() as $env) {
-			$env->delete();
+		$environments = $this->Environments();
+		if ($environments && $environments->exists()) {
+			foreach ($environments as $env) {
+				$env->delete();
+			}
+		}
+
+		$fetches = $this->Fetches();
+		if ($fetches && $fetches->exists()) {
+			foreach ($fetches as $fetch) {
+				$fetch->delete();
+			}
 		}
 
 		// Delete local repository

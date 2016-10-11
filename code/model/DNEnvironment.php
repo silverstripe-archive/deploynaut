@@ -58,6 +58,8 @@ class DNEnvironment extends DataObject {
 	public static $has_many = [
 		"Deployments" => "DNDeployment",
 		"DataArchives" => "DNDataArchive",
+		"DataTransfers" => "DNDataTransfer",
+		"Pings" => "DNPing"
 	];
 
 	/**
@@ -928,6 +930,20 @@ PHP
 		if ($archives && $archives->exists()) {
 			foreach ($archives as $archive) {
 				$archive->delete();
+			}
+		}
+
+		$transfers = $this->DataTransfers();
+		if ($transfers && $transfers->exists()) {
+			foreach ($transfers as $transfer) {
+				$transfer->delete();
+			}
+		}
+
+		$pings = $this->Pings();
+		if ($pings && $pings->exists()) {
+			foreach ($pings as $ping) {
+				$ping->delete();
 			}
 		}
 
