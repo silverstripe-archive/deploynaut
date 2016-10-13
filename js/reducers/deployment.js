@@ -149,11 +149,21 @@ module.exports = function deployment(state, action) {
 			});
 
 		case actions.SUCCEED_DEPLOY_LOG_UPDATE: {
-			const newList = _.assign({}, state.list);
+			let newList = _.assign({}, state.list);
 			newList[action.data.deployment.id] = action.data.deployment;
 
 			const newLogList = _.assign({}, state.logs);
 			newLogList[action.data.deployment.id] = action.data.message;
+
+			// find the old current build and set the flag to not be the current build
+			// as the completed build in action.data.deployment is now the new current build
+			if (action.data.status === deployStates.STATE_COMPLETED) {
+				newList = _.each(newList, function(deploy) {
+					if (deploy.is_current_build && deploy.id !== action.data.deployment.id) {
+						deploy.is_current_build = false;
+					}
+				});
+			}
 
 			return _.assign({}, state, {
 				logs: newLogList,
