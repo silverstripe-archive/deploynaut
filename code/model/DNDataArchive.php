@@ -129,7 +129,10 @@ class DNDataArchive extends DataObject {
 	}
 
 	public function onAfterDelete() {
-		$this->ArchiveFile()->delete();
+		$file = $this->ArchiveFile();
+		if ($file && $file->exists()) {
+			$file->delete();
+		}
 	}
 
 	public function getCMSFields() {
