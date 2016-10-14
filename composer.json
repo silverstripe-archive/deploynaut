@@ -13,7 +13,8 @@
 		"silverstripe/secureassets": "dev-master",
 		"silverstripe-australia/gridfieldextensions": "dev-master",
 		"league/event": "^2.1",
-		"yohang/finite": "~1.1"
+		"yohang/finite": "~1.1",
+		"cheddam/silverstripe-switchflit": "^1.0"
 	},
 	"require-dev": {
 		"phpunit/PHPUnit": "~4.8@stable",

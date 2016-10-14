@@ -33,7 +33,7 @@
  * @method ManyManyList ArchiveDeleters()
  * @method ManyManyList ArchiveDeleterGroups()
  */
-class DNEnvironment extends DataObject {
+class DNEnvironment extends DataObject implements \SwitchFlit\SwitchFlitable  {
 
 	const UAT = 'UAT';
 
@@ -1161,4 +1161,19 @@ PHP
 		return $result;
 	}
 
+	/**
+	 * @return string The title to use in SwitchFlit for this DataObject
+	 */
+	public function SwitchFlitTitle()
+	{
+		return $this->Project()->Name . ' - ' . $this->Name;
+	}
+
+	/**
+	 * @return string The link to use in SwitchFlit for this DataObject
+	 */
+	public function SwitchFlitLink()
+	{
+		return $this->Link();
+	}
 }
