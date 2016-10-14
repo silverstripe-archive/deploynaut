@@ -32,6 +32,13 @@ class SizeRestrictedPackageCache implements PackageCache {
 	}
 
 	/**
+	 * @return mixed
+	 */
+	public function getBaseDir() {
+		return $this->baseDir;
+	}
+
+	/**
 	 * Return the filename of the generated package, retrieving from cache or generating as necessary
 	 *
 	 * @param PackageGenerator $generator The generator to use to create cache entries.
