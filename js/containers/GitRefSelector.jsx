@@ -2,6 +2,7 @@ const React = require('react');
 const ReactRedux = require('react-redux');
 
 const Radio = require('../components/Radio.jsx');
+const Checkbox = require('../components/Checkbox.jsx');
 const Dropdown = require('../components/Dropdown.jsx');
 const Button = require('../components/Button.jsx');
 const BuildStatus = require('../components/BuildStatus.jsx');
@@ -73,6 +74,21 @@ function GitRefSelector(props) {
 		);
 	});
 
+	const options = props.options.map(function(option, index) {
+		return (
+			<li key={index}>
+				<Checkbox
+					description={option.title}
+					name="option"
+					checked={props.selected_options[index] === 1}
+					id={index}
+					onClick={() => props.onCheckboxClick(index)}
+					disabled={props.disabled}
+				/>
+			</li>
+		);
+	});
+
 	return (
 		<div className="section">
 			<header id="0">Target release</header>
@@ -82,6 +98,9 @@ function GitRefSelector(props) {
 			<form className="form">
 				<ul className="radio-list">
 					{list}
+				</ul>
+				<ul className="checkbox-list">
+					{options}
 				</ul>
 			</form>
 		</div>
@@ -94,6 +113,8 @@ GitRefSelector.propTypes = {
 		React.PropTypes.string,
 		React.PropTypes.number
 	]).isRequired,
+	options: React.PropTypes.array,
+	selected_options: React.PropTypes.array,
 	ref_list: React.PropTypes.array,
 	selected_ref: React.PropTypes.oneOfType([
 		React.PropTypes.string,
@@ -128,6 +149,8 @@ const mapStateToProps = function(state) {
 		environment_name: state.environment.name,
 		types: state.git.list,
 		selected_type: state.git.selected_type,
+		options: state.git.options,
+		selected_options: state.git.selected_options,
 		ref_list: refs,
 		selected_ref: state.git.selected_ref,
 		disabled: isDisabled(state)
@@ -140,12 +163,16 @@ const mapDispatchToProps = function(dispatch) {
 			dispatch(actions.setGitRefType(id));
 			if (type.promote_build) {
 				dispatch(actions.setGitRef(type.promote_build.sha));
-				dispatch(actions.getDeploySummary(type.promote_build.sha));
+				dispatch(actions.getDeploySummary());
 			}
+		},
+		onCheckboxClick: function(id) {
+			dispatch(actions.toggleOption(id));
+			dispatch(actions.getDeploySummary());
 		},
 		onRefSelect: function(ref) {
 			dispatch(actions.setGitRef(ref));
-			dispatch(actions.getDeploySummary(ref));
+			dispatch(actions.getDeploySummary());
 		},
 		onShaChange: function(e) {
 			dispatch(actions.setGitRef(e.target.value));

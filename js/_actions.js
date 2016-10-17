@@ -188,6 +188,14 @@ export function updateRepoAndGetRevisions() {
 	};
 }
 
+export const TOGGLE_OPTION = 'TOGGLE_OPTION';
+export function toggleOption(id) {
+	return {
+		type: TOGGLE_OPTION,
+		id: id
+	};
+}
+
 export const SET_REVISION_TYPE = "SET_REVISION_TYPE";
 export function setGitRefType(id) {
 	return {type: SET_REVISION_TYPE, id};
@@ -222,10 +230,24 @@ export function failSummaryGet(err) {
 	};
 }
 
-export function getDeploySummary(sha) {
+export function getDeploySummary() {
 	return (dispatch, getState) => {
+		if (!getState().git.selected_ref) {
+			return;
+		}
+
+		let selected_options = [];
+		for (var i = 0; i < getState().git.options.length; i++) {
+			if (getState().git.selected_options[i] === 1) {
+				selected_options.push(getState().git.options[i].name);
+			}
+		}
+
 		dispatch(startSummaryGet());
-		return planAPI.call(getState, '/deploysummary', 'post', {sha: sha})
+		return planAPI.call(getState, '/deploysummary', 'post', {
+			sha: getState().git.selected_ref,
+			options: selected_options
+		})
 			.then(data => dispatch(succeedSummaryGet(data)))
 			.catch(err => dispatch(failSummaryGet(err)));
 	};

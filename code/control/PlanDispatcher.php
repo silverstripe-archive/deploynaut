@@ -71,11 +71,8 @@ class PlanDispatcher extends Dispatcher {
 		}
 		$this->checkSecurityToken();
 
-		// @todo further permission checks?
-		// @todo add more options, like force full deploy etc
-		$options = [
-			'sha' => $request->requestVar('sha')
-		];
+		$options = $request->requestVar('options') ? explode(',', $request->requestVar('options')) : [];
+		$options = array_merge($options, ['sha' => $request->requestVar('sha')]);
 
 		$strategy = $this->environment->Backend()->planDeploy($this->environment, $options);
 		$data = $strategy->toArray();

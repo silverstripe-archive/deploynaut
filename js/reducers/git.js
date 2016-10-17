@@ -11,7 +11,9 @@ const initialState = {
 	last_fetched_date: "",
 	last_fetched_ago: "",
 	last_updated: 0,
-	list: {}
+	list: {},
+	options: [],
+	selected_options: []
 };
 
 module.exports = function git(state, action) {
@@ -30,6 +32,16 @@ module.exports = function git(state, action) {
 				selected_type: action.id,
 				selected_ref: "",
 				selected_name: ""
+			});
+		case actions.TOGGLE_OPTION:
+			let selected_options = state.selected_options;
+			if (selected_options[action.id] === 1) {
+				selected_options[action.id] = 0;
+			} else {
+				selected_options[action.id] = 1;
+			}
+			return _.assign({}, state, {
+				selected_options: selected_options
 			});
 		case actions.SUCCEED_DEPLOYMENT_GET:
 			return _.assign({}, state, {
@@ -82,10 +94,20 @@ module.exports = function git(state, action) {
 			if (action.data.refs.constructor === Array) {
 				listAsArray = _.assign({}, action.data.refs);
 			}
+
+			let selected_options = [];
+			for (var i = 0; i < action.data.options.length; i++) {
+				if (action.data.options[i].defaultValue === true) {
+					selected_options[i] = 1;
+				}
+			}
+
 			return _.assign({}, state, {
 				is_fetching: false,
 				// we do this to force the list into an object, in case it's an array
 				list: listAsArray,
+				options: action.data.options,
+				selected_options: selected_options,
 				last_fetched_date: action.data.last_fetched_date,
 				last_fetched_ago: action.data.last_fetched_ago,
 				last_updated: action.received_at,

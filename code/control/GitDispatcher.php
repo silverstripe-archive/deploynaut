@@ -143,6 +143,17 @@ class GitDispatcher extends Dispatcher {
 			'description' => 'Deploy a specific SHA'
 		];
 
+		$options = [];
+		if ($targetEnvironment) {
+			foreach ($targetEnvironment->Backend()->getDeployOptions($targetEnvironment) as $option) {
+				$options[] = [
+					'name' => $option->getName(),
+					'title' => $option->getTitle(),
+					'defaultValue' => $option->getDefaultValue()
+				];
+			}
+		}
+
 		// get the last time git fetch was run
 		$lastFetchedDate = 'never';
 		$lastFetchedAgo = null;
@@ -157,6 +168,7 @@ class GitDispatcher extends Dispatcher {
 
 		return $this->getAPIResponse([
 			'refs' => $refs,
+			'options' => $options,
 			'last_fetched_date' => $lastFetchedDate,
 			'last_fetched_ago' => $lastFetchedAgo
 		], 200);
