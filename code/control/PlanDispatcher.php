@@ -73,7 +73,7 @@ class PlanDispatcher extends Dispatcher {
 		$options = ['sha' => $request->requestVar('sha')];
 		if ($request->requestVar('options')) {
 			foreach (explode(',', $request->requestVar('options')) as $option) {
-				$options[$option] = true;
+				$options[$option] = 'true';
 			}
 		}
 
