@@ -65,14 +65,17 @@ class PlanDispatcher extends Dispatcher {
 	 * @return SS_HTTPResponse
 	 */
 	public function deploysummary(SS_HTTPRequest $request) {
-
 		if (strtolower($request->httpMethod()) !== 'post') {
 			return $this->getAPIResponse(['message' => 'Method not allowed, requires POST'], 405);
 		}
 		$this->checkSecurityToken();
 
-		$options = $request->requestVar('options') ? explode(',', $request->requestVar('options')) : [];
-		$options = array_merge($options, ['sha' => $request->requestVar('sha')]);
+		$options = ['sha' => $request->requestVar('sha')];
+		if ($request->requestVar('options')) {
+			foreach (explode(',', $request->requestVar('options')) as $option) {
+				$options[$option] = true;
+			}
+		}
 
 		$strategy = $this->environment->Backend()->planDeploy($this->environment, $options);
 		$data = $strategy->toArray();
