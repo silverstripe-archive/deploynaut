@@ -13,6 +13,7 @@ const initialState = {
 	upcoming_error: null,
 	error: null,
 	state: deployStates.STATE_NEW,
+	approval_is_loading: false,
 	submitted: false,
 	approved: false,
 	rejected: false,
@@ -100,14 +101,28 @@ module.exports = function deployment(state, action) {
 				approver_id: action.id
 			});
 
+		case actions.START_APPROVERS_GET:
+			return _.assign({}, state, {
+				approval_is_loading: true
+			});
+
 		case actions.SUCCEED_APPROVERS_GET:
 			return _.assign({}, state, {
-				approvers: action.data.approvers
+				approvers: action.data.approvers,
+				approval_is_loading: false
 			});
 
 		case actions.START_DEPLOYMENT_QUEUE:
 			return _.assign({}, state, {
 				queued: true
+			});
+
+		case actions.START_APPROVAL_SUBMIT:
+		case actions.START_APPROVAL_CANCEL:
+		case actions.START_APPROVAL_APPROVE:
+		case actions.START_APPROVAL_REJECT:
+			return _.assign({}, state, {
+				approval_is_loading: true
 			});
 
 		case actions.SUCCEED_APPROVAL_SUBMIT:
@@ -122,6 +137,7 @@ module.exports = function deployment(state, action) {
 			newList[action.data.deployment.id] = action.data.deployment;
 
 			return _.assign({}, state, {
+				approval_is_loading: false,
 				is_loading: false,
 				error: null,
 				id: action.data.deployment.id,
@@ -145,6 +161,7 @@ module.exports = function deployment(state, action) {
 		case actions.FAIL_DEPLOYMENT_CREATE:
 		case actions.FAIL_DEPLOYMENT_GET:
 			return _.assign({}, state, {
+				is_loading: false,
 				error: action.error.toString()
 			});
 

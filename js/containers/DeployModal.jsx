@@ -18,25 +18,25 @@ function calculateSteps(props) {
 	return [
 		{
 			title: "Target Release",
-			show: true,
+			show: props.show[0],
 			is_loading: props.is_loading[0],
 			is_finished: props.is_finished[0]
 		},
 		{
 			title: "Deployment Plan",
-			show: true,
+			show: props.show[1],
 			is_loading: props.is_loading[1],
 			is_finished: props.is_finished[1]
 		},
 		{
 			title: "Approval",
-			show: true,
+			show: props.show[2],
 			is_loading: props.is_loading[2],
 			is_finished: props.is_finished[2]
 		},
 		{
 			title: "Deployment",
-			show: true,
+			show: props.show[3],
 			is_loading: props.is_loading[3],
 			is_finished: props.is_finished[3]
 		}
@@ -139,6 +139,20 @@ const DeployModal = React.createClass({
 	render: function() {
 		const steps = calculateSteps(this.props);
 
+		const content = [];
+		if (steps[0].show) {
+			content[0] = (<GitRefSelector key={0}/>);
+		}
+		if (steps[1].show) {
+			content[1] = (<DeployPlan key={1} />);
+		}
+		if (steps[2].show) {
+			content[2] = (<Approval key={2} />);
+		}
+		if (steps[3].show) {
+			content[3] = (<Deployment key={3} />);
+		}
+
 		return (
 			<Modal
 				show={this.props.is_open}
@@ -168,10 +182,7 @@ const DeployModal = React.createClass({
 									<div>Last synced {this.props.last_fetched_date} <span className="small">{this.props.last_fetched_ago}</span></div>
 									<div><i>Ensure you have the most recent code before setting up your deployment</i></div>
 								</div>
-								<GitRefSelector />
-								<DeployPlan />
-								<Approval />
-								<Deployment />
+								{content}
 							</div>
 						</div>
 					</div>
@@ -197,15 +208,21 @@ const mapStateToProps = function(state, ownProps) {
 	}
 
 	return {
+		show: [
+			true,
+			state.git.selected_ref !== "",
+			state.deployment.id !== "",
+			state.deployment.approved
+		],
 		is_loading: [
 			state.git.is_loading || state.git.is_updating,
-			state.plan.is_loading,
-			state.deployment.is_loading,
+			state.plan.is_loading || state.deployment.is_loading,
+			state.deployment.approval_is_loading,
 			constants.isDeploying(currentState)
 		],
 		is_finished: [
 			state.git.selected_ref !== "",
-			deployPlanIsOk(),
+			state.deployment.id !== "",
 			deployPlanIsOk() && state.deployment.approved,
 			constants.isDeployDone(currentState)
 		],
