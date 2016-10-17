@@ -65,7 +65,10 @@ module.exports = function git(state, action) {
 		}
 		case actions.START_REPO_UPDATE:
 			return _.assign({}, state, {
-				is_updating: true
+				is_updating: true,
+				selected_type: "",
+				selected_ref: "",
+				selected_name: ""
 			});
 
 		case actions.SUCCEED_REPO_UPDATE:
@@ -110,10 +113,7 @@ module.exports = function git(state, action) {
 				selected_options: selected_options,
 				last_fetched_date: action.data.last_fetched_date,
 				last_fetched_ago: action.data.last_fetched_ago,
-				last_updated: action.received_at,
-				selected_type: "",
-				selected_ref: "",
-				selected_name: ""
+				last_updated: action.received_at
 			});
 		}
 		case actions.FAIL_REVISIONS_GET:
