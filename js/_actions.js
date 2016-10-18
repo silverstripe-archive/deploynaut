@@ -236,17 +236,17 @@ export function getDeploySummary() {
 			return;
 		}
 
-		let selected_options = [];
-		for (var i = 0; i < getState().git.options.length; i++) {
-			if (getState().git.selected_options[i] === 1) {
-				selected_options.push(getState().git.options[i].name);
+		let options = [];
+		Object.keys(getState().git.selected_options).map(function(option) {
+			if (getState().git.selected_options[option] === 'true') {
+				options.push(option);
 			}
-		}
+		});
 
 		dispatch(startSummaryGet());
 		return planAPI.call(getState, '/deploysummary', 'post', {
 			sha: getState().git.selected_ref,
-			options: selected_options
+			options: options
 		})
 			.then(data => dispatch(succeedSummaryGet(data)))
 			.catch(err => dispatch(failSummaryGet(err)));
@@ -459,11 +459,19 @@ export function createDeployment() {
 			return Promise.resolve();
 		}
 
+		let options = [];
+		Object.keys(getState().git.selected_options).map(function(option) {
+			if (getState().git.selected_options[option] === 'true') {
+				options.push(option);
+			}
+		});
+
 		dispatch(startDeploymentCreate());
 		return deployAPI.call(getState, '/createdeployment', 'post', {
 			ref: getState().git.selected_ref,
 			ref_type: getState().git.selected_type,
 			ref_name: getState().git.selected_name,
+			options: options,
 			title: getState().plan.title,
 			summary: getState().plan.summary_of_changes,
 			approver_id: getState().deployment.approver_id

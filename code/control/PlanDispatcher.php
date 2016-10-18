@@ -70,9 +70,9 @@ class PlanDispatcher extends Dispatcher {
 		}
 		$this->checkSecurityToken();
 
-		$options = ['sha' => $request->requestVar('sha')];
+		$options = ['sha' => $request->postVar('sha')];
 		if ($request->requestVar('options')) {
-			foreach (explode(',', $request->requestVar('options')) as $option) {
+			foreach (explode(',', $request->postVar('options')) as $option) {
 				$options[$option] = 'true';
 			}
 		}

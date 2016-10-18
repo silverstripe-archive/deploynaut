@@ -114,7 +114,7 @@ GitRefSelector.propTypes = {
 		React.PropTypes.number
 	]).isRequired,
 	options: React.PropTypes.array,
-	selected_options: React.PropTypes.array,
+	selected_options: React.PropTypes.object,
 	ref_list: React.PropTypes.array,
 	selected_ref: React.PropTypes.oneOfType([
 		React.PropTypes.string,

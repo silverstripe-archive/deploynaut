@@ -170,9 +170,14 @@ class DeployDispatcher extends Dispatcher {
 			'title' => $request->postVar('title'),
 			'summary' => $request->postVar('summary')
 		];
-		$strategy = $this->environment->Backend()->planDeploy($this->environment, $options);
 
-		$strategy->fromArray($request->postVars());
+		if ($request->postVar('options')) {
+			foreach (explode(',', $request->postVar('options')) as $option) {
+				$options[$option] = 'true';
+			}
+		}
+
+		$strategy = $this->environment->Backend()->planDeploy($this->environment, $options);
 
 		$approver = Member::get()->byId($request->postVar('approver_id'));
 		if ($approver && $approver->exists()) {
