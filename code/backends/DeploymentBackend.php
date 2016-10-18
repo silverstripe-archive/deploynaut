@@ -31,7 +31,7 @@ interface DeploymentBackend {
 	 * Return a list of {@link DeployOption} for use on this environment.
 	 *
 	 * @param DNEnvironment $environment
-	 * @return array
+	 * @return ArrayList
 	 */
 	public function getDeployOptions(DNEnvironment $environment);
 
