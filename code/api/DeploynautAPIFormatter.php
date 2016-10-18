@@ -50,13 +50,16 @@ class DeploynautAPIFormatter {
 			? ($deployment->ID === self::$_cache_current_build[$deployment->EnvironmentID]->ID)
 			: false;
 
-		$supportedOptions = $deployment->Environment()->Backend()->getDeployOptions($deployment->Environment());
+		$supportedOptions = $environment->getSupportedOptions();
 		$setOptions = $deployment->getDeploymentStrategy() ? $deployment->getDeploymentStrategy()->getOptions() : [];
 		$options = [];
 
 		foreach ($supportedOptions as $option) {
-			if (isset($setOptions[$option->getName()]) && $setOptions[$option->getName()] === 'true') {
-				$options[$option->getName()] = 'true';
+			if (!isset($setOptions[$option->getName()])) {
+				continue;
+			}
+			if ($setOptions[$option->getName()] === 'true' || $setOptions[$option->getName()] === true) {
+				$options[$option->getName()] = true;
 			}
 		}
 

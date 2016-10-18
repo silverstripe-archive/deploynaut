@@ -1107,7 +1107,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		}
 
 		$options = [];
-		foreach ($env->Backend()->getDeployOptions($env) as $option) {
+		foreach ($env->getSupportedOptions() as $option) {
 			$options[] = [
 				'name' => $option->getName(),
 				'title' => $option->getTitle(),

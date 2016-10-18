@@ -13,6 +13,7 @@ const initialState = {
 	last_updated: 0,
 	list: {},
 	options: [],
+	initial_options: {},
 	selected_options: {}
 };
 
@@ -21,12 +22,17 @@ module.exports = function git(state, action) {
 		return initialState;
 	}
 	switch (action.type) {
+		case actions.SET_ENVIRONMENT:
+			return _.assign({}, state, {
+				initial_options: action.data.supported_options,
+				selected_options: action.data.supported_options
+			});
 		case actions.NEW_DEPLOYMENT:
 			return _.assign({}, state, {
 				selected_type: "",
 				selected_ref: "",
 				selected_name: "",
-				selected_options: {}
+				selected_options: state.initial_options
 			});
 		case actions.SET_REVISION_TYPE:
 			return _.assign({}, state, {
@@ -36,19 +42,24 @@ module.exports = function git(state, action) {
 			});
 		case actions.TOGGLE_OPTION:
 			let selected_options = state.selected_options;
-			if (selected_options[action.name] === 'true') {
-				selected_options[action.name] = 'false';
+			if (selected_options[action.name] === true) {
+				selected_options[action.name] = false;
 			} else {
-				selected_options[action.name] = 'true';
+				selected_options[action.name] = true;
 			}
 			return _.assign({}, state, {
 				selected_options: selected_options
 			});
 		case actions.SUCCEED_DEPLOYMENT_GET:
+			let options = action.data.deployment.options;
+			if (action.data.deployment.options.constructor === Array) {
+				options = _.assign({}, action.data.deployment.options);
+			}
+
 			return _.assign({}, state, {
 				selected_ref: action.data.deployment.sha,
 				selected_type: action.data.deployment.ref_type,
-				selected_options: action.data.deployment.options
+				selected_options: options
 			});
 		case actions.SET_REVISION: {
 			// get the 'nice' name of the commit, i.e the branch or tag name
@@ -100,20 +111,10 @@ module.exports = function git(state, action) {
 				listAsArray = _.assign({}, action.data.refs);
 			}
 
-			let selected_options = {};
-			for (var i = 0; i < action.data.options.length; i++) {
-				const option = action.data.options[i];
-				if (option.defaultValue === true) {
-					selected_options[option.name] = 'true';
-				}
-			}
-
 			return _.assign({}, state, {
 				is_fetching: false,
-				// we do this to force the list into an object, in case it's an array
 				list: listAsArray,
 				options: action.data.options,
-				selected_options: selected_options,
 				last_fetched_date: action.data.last_fetched_date,
 				last_fetched_ago: action.data.last_fetched_ago,
 				last_updated: action.received_at

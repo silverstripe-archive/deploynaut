@@ -173,7 +173,7 @@ class DeployDispatcher extends Dispatcher {
 
 		if ($request->postVar('options')) {
 			foreach (explode(',', $request->postVar('options')) as $option) {
-				$options[$option] = 'true';
+				$options[$option] = true;
 			}
 		}
 
