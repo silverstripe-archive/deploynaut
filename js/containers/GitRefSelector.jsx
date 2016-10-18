@@ -80,9 +80,9 @@ function GitRefSelector(props) {
 				<Checkbox
 					description={option.title}
 					name="option"
-					checked={props.selected_options[index] === 1}
+					checked={props.selected_options[option.name] === 'true'}
 					id={index}
-					onClick={() => props.onCheckboxClick(index)}
+					onClick={() => props.onCheckboxClick(option.name)}
 					disabled={props.disabled}
 				/>
 			</li>
@@ -166,8 +166,8 @@ const mapDispatchToProps = function(dispatch) {
 				dispatch(actions.getDeploySummary());
 			}
 		},
-		onCheckboxClick: function(id) {
-			dispatch(actions.toggleOption(id));
+		onCheckboxClick: function(name) {
+			dispatch(actions.toggleOption(name));
 			dispatch(actions.getDeploySummary());
 		},
 		onRefSelect: function(ref) {
