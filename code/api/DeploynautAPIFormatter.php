@@ -53,10 +53,18 @@ class DeploynautAPIFormatter {
 		$supportedOptions = $deployment->Environment()->Backend()->getDeployOptions($deployment->Environment());
 		$setOptions = $deployment->getDeploymentStrategy() ? $deployment->getDeploymentStrategy()->getOptions() : [];
 		$options = [];
+
 		foreach ($supportedOptions as $option) {
-			if (in_array($option->getName(), $setOptions)) {
+			if (isset($setOptions[$option->getName()]) && $setOptions[$option->getName()] === 'true') {
 				$options[$option->getName()] = 'true';
 			}
+		}
+
+		$tags = [];
+		try {
+			$tags = $deployment->getTags()->toArray();
+		} catch (\Exception $e) {
+			// gitonomy exception
 		}
 
 		return [
@@ -72,7 +80,7 @@ class DeploynautAPIFormatter {
 			'title' => $deployment->Title,
 			'summary' => $deployment->Summary,
 			'branch' => $deployment->Branch,
-			'tags' => $deployment->getTags()->toArray(),
+			'tags' => $tags,
 			'changes' => $deployment->getDeploymentStrategy()->getChanges(),
 			'sha' => $deployment->SHA,
 			'short_sha' => substr($deployment->SHA, 0, 7),

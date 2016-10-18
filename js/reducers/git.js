@@ -13,7 +13,7 @@ const initialState = {
 	last_updated: 0,
 	list: {},
 	options: [],
-	selected_options: []
+	selected_options: {}
 };
 
 module.exports = function git(state, action) {
@@ -26,6 +26,7 @@ module.exports = function git(state, action) {
 				selected_type: "",
 				selected_ref: "",
 				selected_name: "",
+				selected_options: {}
 			});
 		case actions.SET_REVISION_TYPE:
 			return _.assign({}, state, {
@@ -99,7 +100,7 @@ module.exports = function git(state, action) {
 				listAsArray = _.assign({}, action.data.refs);
 			}
 
-			let selected_options = [];
+			let selected_options = {};
 			for (var i = 0; i < action.data.options.length; i++) {
 				const option = action.data.options[i];
 				if (option.defaultValue === true) {
