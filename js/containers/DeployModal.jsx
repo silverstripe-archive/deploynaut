@@ -3,6 +3,7 @@ const ReactRedux = require('react-redux');
 
 const StepMenu = require('../components/StepMenu.jsx');
 const GitRefSelector = require('./GitRefSelector.jsx');
+const TargetRelease = require('./TargetRelease.jsx');
 const ButtonGitUpdate = require('./buttons/GitUpdate.jsx');
 
 const Approval = require('./Approval.jsx');
@@ -103,7 +104,7 @@ const DeployModal = React.createClass({
 	// calculate and set a pixel value on the modal height instead of a percentage
 	// value so that we get a scrollbar inside the body of the modal
 	resize: function() {
-		// we need to remove the height of the modal header
+		// We need to calculate the height of the ".modal .body" in the browsers window
 		let headerHeight = 0;
 		const headerElements = document.getElementsByClassName("modal-header");
 		if (headerElements.length > 0) {
@@ -112,6 +113,7 @@ const DeployModal = React.createClass({
 		const bodyElements = document.getElementsByClassName("modal-body");
 		let bodyHeight = 0;
 		if (bodyElements.length > 0) {
+			// leave 16px of space to the bottom of the window
 			bodyHeight = (window.innerHeight - headerHeight) - 16;
 		}
 
@@ -119,10 +121,16 @@ const DeployModal = React.createClass({
 			return;
 		}
 
-		// set the height of the modal
+		// Increase the height of the modal, this cannot be done reliable in CSS because
+		// a pixel value is required to use the "sticky" side bar
 		bodyElements[0].style.height = bodyHeight + 'px';
-		// scale each "step" section to be the same height as the modal window
+
+		// first reset the height of all sections in case additional siblings have
+		// been loaded.
 		const sections = this.bodyElement.getElementsByClassName("section");
+		for (let i = 0; i > sections.length; i++) {
+			sections[i].style.minHeight = null;
+		}
 
 		const lastSection = sections[sections.length - 1];
 		if (lastSection) {
@@ -141,7 +149,11 @@ const DeployModal = React.createClass({
 
 		const content = [];
 		if (steps[0].show) {
-			content[0] = (<GitRefSelector key={0}/>);
+			if (this.props.can_edit) {
+				content[0] = (<GitRefSelector key={0}/>);
+			} else {
+				content[0] = (<TargetRelease key={0}/>);
+			}
 		}
 		if (steps[1].show) {
 			content[1] = (<DeployPlan key={1} />);
@@ -226,6 +238,7 @@ const mapStateToProps = function(state, ownProps) {
 			deployPlanIsOk() && state.deployment.approved,
 			constants.isDeployDone(currentState)
 		],
+		can_edit: constants.canEdit(state),
 		is_open: typeof (ownProps.params.id) !== 'undefined' && ownProps.params.id !== null,
 		plan_success: deployPlanIsOk(),
 		messages: state.messages,

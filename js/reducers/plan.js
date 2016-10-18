@@ -36,7 +36,9 @@ module.exports = function plan(state, action) {
 				changes: action.data.deployment.changes,
 				title: action.data.deployment.title || "",
 				summary_of_changes: action.data.deployment.summary || "",
-				validation_code: "success"
+				validation_code: "success",
+				deployment_type: action.data.deployment.deployment_type,
+				deployment_estimate: action.data.deployment.deployment_estimate
 			});
 
 		case actions.SUCCEED_SUMMARY_GET:
