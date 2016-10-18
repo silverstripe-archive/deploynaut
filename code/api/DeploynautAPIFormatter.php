@@ -50,6 +50,15 @@ class DeploynautAPIFormatter {
 			? ($deployment->ID === self::$_cache_current_build[$deployment->EnvironmentID]->ID)
 			: false;
 
+		$supportedOptions = $deployment->Environment()->Backend()->getDeployOptions($deployment->Environment());
+		$setOptions = $deployment->getDeploymentStrategy() ? $deployment->getDeploymentStrategy()->getOptions() : [];
+		$options = [];
+		foreach ($supportedOptions as $option) {
+			if (in_array($option->getName(), $setOptions)) {
+				$options[$option->getName()] = 'true';
+			}
+		}
+
 		return [
 			'id' => $deployment->ID,
 			'date_created' => $deployment->Created,
@@ -68,6 +77,7 @@ class DeploynautAPIFormatter {
 			'sha' => $deployment->SHA,
 			'short_sha' => substr($deployment->SHA, 0, 7),
 			'ref_type' => $deployment->RefType,
+			'options' => $options,
 			'commit_message' => $deployment->getCommitMessage(),
 			'commit_url' => $deployment->getCommitURL(),
 			'deployer' => $deployerData,

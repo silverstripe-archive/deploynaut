@@ -189,10 +189,10 @@ export function updateRepoAndGetRevisions() {
 }
 
 export const TOGGLE_OPTION = 'TOGGLE_OPTION';
-export function toggleOption(id) {
+export function toggleOption(name) {
 	return {
 		type: TOGGLE_OPTION,
-		id: id
+		name: name
 	};
 }
 
