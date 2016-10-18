@@ -12673,6 +12673,9 @@ textarea.deploy-key {
       .modal.deploy .modal-dialog .modal-content .fetch header,
       .modal.deploy .modal-dialog .modal-content .section header {
         font-size: 18px; }
+      .modal.deploy .modal-dialog .modal-content .fetch .build-details,
+      .modal.deploy .modal-dialog .modal-content .section .build-details {
+        display: block; }
 
 .content .variables-description p {
   max-width: none; }

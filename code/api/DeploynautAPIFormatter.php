@@ -82,6 +82,8 @@ class DeploynautAPIFormatter {
 			'branch' => $deployment->Branch,
 			'tags' => $tags,
 			'changes' => $deployment->getDeploymentStrategy()->getChanges(),
+			'deployment_type' => $deployment->getDeploymentStrategy()->getActionCode(),
+			'deployment_estimate' => $deployment->getDeploymentStrategy()->getEstimatedTime(),
 			'sha' => $deployment->SHA,
 			'short_sha' => substr($deployment->SHA, 0, 7),
 			'ref_type' => $deployment->RefType,
