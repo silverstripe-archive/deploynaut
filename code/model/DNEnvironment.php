@@ -213,6 +213,14 @@ class DNEnvironment extends DataObject {
 		return $this->Backend()->planDeploy($this, $request->requestVars());
 	}
 
+	/**
+	 * Return the supported options for this environment.
+	 * @return ArrayList
+	 */
+	public function getSupportedOptions() {
+		return $this->Backend()->getDeployOptions($this);
+	}
+
 	public function Menu() {
 		$list = new ArrayList();
 

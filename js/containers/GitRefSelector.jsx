@@ -80,7 +80,7 @@ function GitRefSelector(props) {
 				<Checkbox
 					description={option.title}
 					name="option"
-					checked={props.selected_options[option.name] === 'true'}
+					checked={props.selected_options[option.name] === true}
 					id={index}
 					onClick={() => props.onCheckboxClick(option.name)}
 					disabled={props.disabled}

@@ -145,7 +145,7 @@ class GitDispatcher extends Dispatcher {
 
 		$options = [];
 		if ($targetEnvironment) {
-			foreach ($targetEnvironment->Backend()->getDeployOptions($targetEnvironment) as $option) {
+			foreach ($targetEnvironment->getSupportedOptions() as $option) {
 				$options[] = [
 					'name' => $option->getName(),
 					'title' => $option->getTitle(),

@@ -84,7 +84,16 @@ class EnvironmentOverview extends Dispatcher {
 			'environment' => [
 				'id' => $this->environment->ID,
 				'name' => $this->environment->Name,
-				'usage' => $this->environment->Usage
+				'usage' => $this->environment->Usage,
+				'supported_options' => ArrayList::create(array_map(
+					function($option) {
+						return new ArrayData([
+							'name' => $option->getName(),
+							'defaultValue' => $option->getDefaultValue()
+						]);
+					},
+					$this->environment->getSupportedOptions()
+				))->map('name', 'defaultValue')
 			],
 			'user' => [
 				'can_approve' => $this->getCurrentProject()->allowed(

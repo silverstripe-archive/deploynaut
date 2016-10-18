@@ -238,7 +238,7 @@ export function getDeploySummary() {
 
 		let options = [];
 		Object.keys(getState().git.selected_options).map(function(option) {
-			if (getState().git.selected_options[option] === 'true') {
+			if (getState().git.selected_options[option] === true) {
 				options.push(option);
 			}
 		});
@@ -461,7 +461,7 @@ export function createDeployment() {
 
 		let options = [];
 		Object.keys(getState().git.selected_options).map(function(option) {
-			if (getState().git.selected_options[option] === 'true') {
+			if (getState().git.selected_options[option] === true) {
 				options.push(option);
 			}
 		});
