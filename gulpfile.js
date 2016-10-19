@@ -18,14 +18,14 @@ var onError = function (err) {
 };
 
 gulp.task('sass', function () {
-	gulp.src('sass/*.sass')
+	gulp.src('sass/**/*.sass')
 		.pipe(sass().on('error', sass.logError))
 		.pipe(gulp.dest(path.DEST));
 });
 
 // Rerun when files changes
 gulp.task('watch', function () {
-	gulp.watch('./sass/*.sass', ['sass']);
+	gulp.watch('./sass/**/*.sass', ['sass']);
 	gulp.watch(path.JS, ['js-debug', 'js']);
 });
 
