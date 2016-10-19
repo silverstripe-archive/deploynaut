@@ -147,7 +147,7 @@ class DeployJob extends DeploynautJob {
 		$this->updateStatus(DNDeployment::TR_FAIL);
 	}
 
-	protected function performBackup($backupDataTransfer, DeploynautLogFile $log) {
+	protected function performBackup($backupDataTransfer, \DeploynautLogFile $log) {
 		if (!$backupDataTransfer) {
 			return false;
 		}

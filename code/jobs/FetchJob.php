@@ -10,7 +10,7 @@ class FetchJob extends DeploynautJob {
 	protected $project;
 
 	/**
-	 * @var DeploynautLogFile
+	 * @var \DeploynautLogFile
 	 */
 	protected $log;
 

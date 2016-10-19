@@ -63,7 +63,7 @@ class GitDispatcher extends Dispatcher {
 	 * @param SS_HTTPRequest $request
 	 * @return SS_HTTPResponse
 	 */
-	public function update(SS_HTTPRequest $request) {
+	public function update(\SS_HTTPRequest $request) {
 		switch ($request->httpMethod()) {
 			case 'POST':
 				$this->checkSecurityToken();

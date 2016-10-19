@@ -65,7 +65,7 @@ class ApprovalsDispatcher extends Dispatcher {
 	 * @param \SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse
 	 */
-	public function approvers(SS_HTTPRequest $request) {
+	public function approvers(\SS_HTTPRequest $request) {
 		$list = [];
 
 		if (self::$_cache_project_members === null) {
@@ -92,7 +92,7 @@ class ApprovalsDispatcher extends Dispatcher {
 	 * @param \SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse
 	 */
-	public function submit(SS_HTTPRequest $request) {
+	public function submit(\SS_HTTPRequest $request) {
 		if ($request->httpMethod() !== 'POST') {
 			return $this->getAPIResponse(['message' => 'Method not allowed, requires POST'], 405);
 		}
@@ -131,7 +131,7 @@ class ApprovalsDispatcher extends Dispatcher {
 	 * @param \SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse
 	 */
-	public function cancel(SS_HTTPRequest $request) {
+	public function cancel(\SS_HTTPRequest $request) {
 		if ($request->httpMethod() !== 'POST') {
 			return $this->getAPIResponse(['message' => 'Method not allowed, requires POST'], 405);
 		}
@@ -166,7 +166,7 @@ class ApprovalsDispatcher extends Dispatcher {
 	 * @param \SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse
 	 */
-	public function approve(SS_HTTPRequest $request) {
+	public function approve(\SS_HTTPRequest $request) {
 		if ($request->httpMethod() !== 'POST') {
 			return $this->getAPIResponse(['message' => 'Method not allowed, requires POST'], 405);
 		}
@@ -233,7 +233,7 @@ class ApprovalsDispatcher extends Dispatcher {
 	 * @param \SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse
 	 */
-	public function reject(SS_HTTPRequest $request) {
+	public function reject(\SS_HTTPRequest $request) {
 		if ($request->httpMethod() !== 'POST') {
 			return $this->getAPIResponse(['message' => 'Method not allowed, requires POST'], 405);
 		}

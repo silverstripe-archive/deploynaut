@@ -327,7 +327,7 @@ class DNDataArchive extends DataObject {
 	 * Returns a unique filename, including project/environment/timestamp details.
 	 * @return string
 	 */
-	public function generateFilename(DNDataTransfer $dataTransfer) {
+	public function generateFilename(\DNDataTransfer $dataTransfer) {
 		$generator = new RandomGenerator();
 		$filter = FileNameFilter::create();
 
@@ -348,7 +348,7 @@ class DNDataArchive extends DataObject {
 	 * @param DNDataTransfer
 	 * @return string Absolute file path
 	 */
-	public function generateFilepath(DNDataTransfer $dataTransfer) {
+	public function generateFilepath(\DNDataTransfer $dataTransfer) {
 		$data = DNData::inst();
 		$transferDir = $data->getDataTransferDir();
 		$filter = FileNameFilter::create();

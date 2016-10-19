@@ -258,20 +258,20 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * Actions
 	 *
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse
 	 */
-	public function index(SS_HTTPRequest $request) {
+	public function index(\SS_HTTPRequest $request) {
 		return $this->redirect($this->Link() . 'projects/');
 	}
 
 	/**
 	 * Action
 	 *
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 * @return string - HTML
 	 */
-	public function projects(SS_HTTPRequest $request) {
+	public function projects(\SS_HTTPRequest $request) {
 		// Performs canView permission check by limiting visible projects in DNProjectsList() call.
 		return $this->customise([
 			'Title' => 'Projects',
@@ -279,10 +279,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 * @return HTMLText
 	 */
-	public function nav(SS_HTTPRequest $request) {
+	public function nav(\SS_HTTPRequest $request) {
 		return $this->renderWith('Nav');
 	}
 
@@ -299,10 +299,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * Action
 	 *
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 * @return SS_HTTPResponse - HTML
 	 */
-	public function snapshots(SS_HTTPRequest $request) {
+	public function snapshots(\SS_HTTPRequest $request) {
 		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
 		return $this->getCustomisedViewSection('SnapshotsSection', 'Data Snapshots');
 	}
@@ -310,10 +310,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * Action
 	 *
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 * @return string - HTML
 	 */
-	public function createsnapshot(SS_HTTPRequest $request) {
+	public function createsnapshot(\SS_HTTPRequest $request) {
 		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
 
 		// Performs canView permission check by limiting visible projects
@@ -336,10 +336,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * Action
 	 *
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 * @return string - HTML
 	 */
-	public function uploadsnapshot(SS_HTTPRequest $request) {
+	public function uploadsnapshot(\SS_HTTPRequest $request) {
 		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
 
 		// Performs canView permission check by limiting visible projects
@@ -373,10 +373,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * Construct the upload form.
 	 *
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 * @return Form
 	 */
-	public function getUploadSnapshotForm(SS_HTTPRequest $request) {
+	public function getUploadSnapshotForm(\SS_HTTPRequest $request) {
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if (!$project) {
@@ -433,7 +433,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 *
 	 * @return bool|HTMLText|SS_HTTPResponse
 	 */
-	public function doUploadSnapshot($data, Form $form) {
+	public function doUploadSnapshot($data, \Form $form) {
 		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
 
 		// Performs canView permission check by limiting visible projects
@@ -531,10 +531,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 * @return Form
 	 */
-	public function getPostSnapshotForm(SS_HTTPRequest $request) {
+	public function getPostSnapshotForm(\SS_HTTPRequest $request) {
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if (!$project) {
@@ -619,20 +619,20 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * Action
 	 *
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 * @return SS_HTTPResponse - HTML
 	 */
-	public function snapshotslog(SS_HTTPRequest $request) {
+	public function snapshotslog(\SS_HTTPRequest $request) {
 		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
 		return $this->getCustomisedViewSection('SnapshotsSection', 'Snapshots log');
 	}
 
 	/**
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 * @return SS_HTTPResponse|string
 	 * @throws SS_HTTPResponse_Exception
 	 */
-	public function postsnapshotsuccess(SS_HTTPRequest $request) {
+	public function postsnapshotsuccess(\SS_HTTPRequest $request) {
 		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
 
 		// Performs canView permission check by limiting visible projects
@@ -663,10 +663,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse
 	 */
-	public function project(SS_HTTPRequest $request) {
+	public function project(\SS_HTTPRequest $request) {
 		$this->setCurrentActionType(self::PROJECT_OVERVIEW);
 		return $this->getCustomisedViewSection('ProjectOverview', '', ['IsAdmin' => Permission::check('ADMIN')]);
 	}
@@ -674,11 +674,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * This action will star / unstar a project for the current member
 	 *
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 *
 	 * @return SS_HTTPResponse
 	 */
-	public function toggleprojectstar(SS_HTTPRequest $request) {
+	public function toggleprojectstar(\SS_HTTPRequest $request) {
 		$project = $this->getCurrentProject();
 		if (!$project) {
 			return $this->project404Response();
@@ -701,10 +701,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse
 	 */
-	public function branch(SS_HTTPRequest $request) {
+	public function branch(\SS_HTTPRequest $request) {
 		$project = $this->getCurrentProject();
 		if (!$project) {
 			return $this->project404Response();
@@ -722,10 +722,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse
 	 */
-	public function environment(SS_HTTPRequest $request) {
+	public function environment(\SS_HTTPRequest $request) {
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if (!$project) {
@@ -748,10 +748,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * Shows the creation log.
 	 *
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 * @return string
 	 */
-	public function createenv(SS_HTTPRequest $request) {
+	public function createenv(\SS_HTTPRequest $request) {
 		$params = $request->params();
 		if ($params['Identifier']) {
 			$record = DNCreateEnvironment::get()->byId($params['Identifier']);
@@ -779,7 +779,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		return $this->render(['CurrentTitle' => 'Create an environment']);
 	}
 
-	public function createenvlog(SS_HTTPRequest $request) {
+	public function createenvlog(\SS_HTTPRequest $request) {
 		$params = $request->params();
 		$env = DNCreateEnvironment::get()->byId($params['Identifier']);
 
@@ -807,10 +807,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 * @return Form
 	 */
-	public function getCreateEnvironmentForm(SS_HTTPRequest $request) {
+	public function getCreateEnvironmentForm(\SS_HTTPRequest $request) {
 		$this->setCurrentActionType(self::ACTION_ENVIRONMENTS);
 
 		$project = $this->getCurrentProject();
@@ -888,10 +888,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 	/**
 	 *
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse
 	 */
-	public function metrics(SS_HTTPRequest $request) {
+	public function metrics(\SS_HTTPRequest $request) {
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
 		if (!$project) {
@@ -1088,11 +1088,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * @deprecated 2.0.0 - moved to GitDispatcher
 	 *
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 *
 	 * @return SS_HTTPResponse|string
 	 */
-	public function gitRevisions(SS_HTTPRequest $request) {
+	public function gitRevisions(\SS_HTTPRequest $request) {
 
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
@@ -1242,11 +1242,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * @deprecated 2.0.0 - moved to PlanDispatcher
 	 *
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 *
 	 * @return string
 	 */
-	public function deploySummary(SS_HTTPRequest $request) {
+	public function deploySummary(\SS_HTTPRequest $request) {
 
 		// Performs canView permission check by limiting visible projects
 		$project = $this->getCurrentProject();
@@ -1299,13 +1299,13 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 *
 	 * Initiate a DNDeployment record and redirect to it for status polling
 	 *
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 *
 	 * @return SS_HTTPResponse
 	 * @throws ValidationException
 	 * @throws null
 	 */
-	public function startDeploy(SS_HTTPRequest $request) {
+	public function startDeploy(\SS_HTTPRequest $request) {
 
 		$token = SecurityToken::inst();
 
@@ -1355,12 +1355,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 *
 	 * Action - Do the actual deploy
 	 *
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 *
 	 * @return SS_HTTPResponse|string
 	 * @throws SS_HTTPResponse_Exception
 	 */
-	public function deploy(SS_HTTPRequest $request) {
+	public function deploy(\SS_HTTPRequest $request) {
 		$params = $request->params();
 		$deployment = DNDeployment::get()->byId($params['Identifier']);
 
@@ -1391,12 +1391,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 *
 	 * Action - Get the latest deploy log
 	 *
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 *
 	 * @return string
 	 * @throws SS_HTTPResponse_Exception
 	 */
-	public function deploylog(SS_HTTPRequest $request) {
+	public function deploylog(\SS_HTTPRequest $request) {
 		$params = $request->params();
 		$deployment = DNDeployment::get()->byId($params['Identifier']);
 
@@ -1427,7 +1427,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		return $this->sendResponse($deployment->ResqueStatus(), $content);
 	}
 
-	public function abortDeploy(SS_HTTPRequest $request) {
+	public function abortDeploy(\SS_HTTPRequest $request) {
 		$params = $request->params();
 		$deployment = DNDeployment::get()->byId($params['Identifier']);
 
@@ -1463,11 +1463,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 * @param SS_HTTPRequest|null $request
+	 * @param \SS_HTTPRequest|null $request
 	 *
 	 * @return Form
 	 */
-	public function getDataTransferForm(SS_HTTPRequest $request = null) {
+	public function getDataTransferForm(\SS_HTTPRequest $request = null) {
 		// Performs canView permission check by limiting visible projects
 		$envs = $this->getCurrentProject()->DNEnvironmentList()->filterByCallback(function ($item) {
 			return $item->canBackup();
@@ -1587,12 +1587,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * View into the log for a {@link DNDataTransfer}.
 	 *
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 *
 	 * @return SS_HTTPResponse|string
 	 * @throws SS_HTTPResponse_Exception
 	 */
-	public function transfer(SS_HTTPRequest $request) {
+	public function transfer(\SS_HTTPRequest $request) {
 		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
 
 		$params = $request->params();
@@ -1621,12 +1621,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * Action - Get the latest deploy log
 	 *
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 *
 	 * @return string
 	 * @throws SS_HTTPResponse_Exception
 	 */
-	public function transferlog(SS_HTTPRequest $request) {
+	public function transferlog(\SS_HTTPRequest $request) {
 		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
 
 		$params = $request->params();
@@ -1660,12 +1660,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * Note: Submits to the same action as {@link getDataTransferForm()},
 	 * but with a Direction=push and an archive reference.
 	 *
-	 * @param SS_HTTPRequest $request
-	 * @param DNDataArchive|null $dataArchive Only set when method is called manually in {@link restore()},
+	 * @param \SS_HTTPRequest $request
+	 * @param \DNDataArchive|null $dataArchive Only set when method is called manually in {@link restore()},
 	 *                            otherwise the state is inferred from the request data.
 	 * @return Form
 	 */
-	public function getDataTransferRestoreForm(SS_HTTPRequest $request, DNDataArchive $dataArchive = null) {
+	public function getDataTransferRestoreForm(\SS_HTTPRequest $request, \DNDataArchive $dataArchive = null) {
 		$dataArchive = $dataArchive ? $dataArchive : DNDataArchive::get()->byId($request->requestVar('DataArchiveID'));
 
 		// Performs canView permission check by limiting visible projects
@@ -1735,12 +1735,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * Permission checks are handled in {@link DataArchives()}.
 	 * Submissions are handled through {@link doDataTransfer()}, same as backup operations.
 	 *
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 *
 	 * @return HTMLText
 	 * @throws SS_HTTPResponse_Exception
 	 */
-	public function restoresnapshot(SS_HTTPRequest $request) {
+	public function restoresnapshot(\SS_HTTPRequest $request) {
 		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
 
 		/** @var DNDataArchive $dataArchive */
@@ -1767,12 +1767,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * Permission checks are handled in {@link DataArchives()}.
 	 * Submissions are handled through {@link doDelete()}.
 	 *
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 *
 	 * @return HTMLText
 	 * @throws SS_HTTPResponse_Exception
 	 */
-	public function deletesnapshot(SS_HTTPRequest $request) {
+	public function deletesnapshot(\SS_HTTPRequest $request) {
 		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
 
 		/** @var DNDataArchive $dataArchive */
@@ -1793,12 +1793,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 * @param DNDataArchive|null $dataArchive Only set when method is called manually, otherwise the state is inferred
 	 *        from the request data.
 	 * @return Form
 	 */
-	public function getDeleteForm(SS_HTTPRequest $request, DNDataArchive $dataArchive = null) {
+	public function getDeleteForm(\SS_HTTPRequest $request, \DNDataArchive $dataArchive = null) {
 		$dataArchive = $dataArchive ? $dataArchive : DNDataArchive::get()->byId($request->requestVar('DataArchiveID'));
 
 		// Performs canView permission check by limiting visible projects
@@ -1869,12 +1869,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * View a form to move a specific {@link DataArchive}.
 	 *
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 *
 	 * @return HTMLText
 	 * @throws SS_HTTPResponse_Exception
 	 */
-	public function movesnapshot(SS_HTTPRequest $request) {
+	public function movesnapshot(\SS_HTTPRequest $request) {
 		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
 
 		/** @var DNDataArchive $dataArchive */
@@ -1898,12 +1898,12 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * Build snapshot move form.
 	 *
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 * @param DNDataArchive|null $dataArchive
 	 *
 	 * @return Form|SS_HTTPResponse
 	 */
-	public function getMoveForm(SS_HTTPRequest $request, DNDataArchive $dataArchive = null) {
+	public function getMoveForm(\SS_HTTPRequest $request, \DNDataArchive $dataArchive = null) {
 		$dataArchive = $dataArchive ? $dataArchive : DNDataArchive::get()->byId($request->requestVar('DataArchiveID'));
 
 		$envs = $dataArchive->validTargetEnvironments();
@@ -1943,7 +1943,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @throws ValidationException
 	 * @throws null
 	 */
-	public function doMove($data, Form $form) {
+	public function doMove($data, \Form $form) {
 		$this->setCurrentActionType(self::ACTION_SNAPSHOT);
 
 		// Performs canView permission check by limiting visible projects
@@ -2048,10 +2048,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 * @param DNProject|null $project
-	 * @return DNEnvironment|null
+	 * @param \DNProject|null $project
+	 * @return \DNEnvironment|null
 	 */
-	public function getCurrentEnvironment(DNProject $project = null) {
+	public function getCurrentEnvironment(\DNProject $project = null) {
 		if ($this->getRequest()->param('Environment') === null) {
 			return null;
 		}
@@ -2097,7 +2097,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @param Member|null $member The {@link Member} to check (or null to check the currently logged in Member)
 	 * @return boolean|null true if $member has access to upload or download to at least one {@link DNEnvironment}.
 	 */
-	public function CanViewArchives(Member $member = null) {
+	public function CanViewArchives(\Member $member = null) {
 		if ($member === null) {
 			$member = Member::currentUser();
 		}
@@ -2281,7 +2281,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		return singleton('DNProject')->canCreate($member);
 	}
 
-	protected function applyRedeploy(SS_HTTPRequest $request, &$data) {
+	protected function applyRedeploy(\SS_HTTPRequest $request, &$data) {
 		if (!$request->getVar('redeploy')) {
 			return;
 		}

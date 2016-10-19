@@ -91,7 +91,7 @@ class DNCreateEnvironment extends DataObject {
 	}
 
 	/**
-	 * @return DeploynautLogFile
+	 * @return \DeploynautLogFile
 	 */
 	public function log() {
 		return Injector::inst()->createWithArgs('DeploynautLogFile', array($this->logfile()));

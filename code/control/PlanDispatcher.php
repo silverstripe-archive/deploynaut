@@ -60,11 +60,10 @@ class PlanDispatcher extends Dispatcher {
 	}
 
 	/**
-	 * @param SS_HTTPRequest $request
-	 *
-	 * @return SS_HTTPResponse
+	 * @param \SS_HTTPRequest $request
+	 * @return \SS_HTTPResponse
 	 */
-	public function deploysummary(SS_HTTPRequest $request) {
+	public function deploysummary(\SS_HTTPRequest $request) {
 		if (strtolower($request->httpMethod()) !== 'post') {
 			return $this->getAPIResponse(['message' => 'Method not allowed, requires POST'], 405);
 		}

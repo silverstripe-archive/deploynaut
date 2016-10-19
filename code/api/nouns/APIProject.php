@@ -11,10 +11,10 @@ class APIProject extends APINoun {
 	);
 
 	/**
-	 * @param SS_HTTPRequest $request
-	 * @return SS_HTTPResponse
+	 * @param \SS_HTTPRequest $request
+	 * @return \SS_HTTPResponse
 	 */
-	public function index(SS_HTTPRequest $request) {
+	public function index(\SS_HTTPRequest $request) {
 		if(!$this->record->canView($this->getMember())) {
 			return $this->message('You are not authorized to this environment', 403);
 		}
@@ -43,10 +43,10 @@ class APIProject extends APINoun {
 	}
 
 	/**
-	 * @param SS_HTTPRequest $request
-	 * @return SS_HTTPResponse
+	 * @param \SS_HTTPRequest $request
+	 * @return \SS_HTTPResponse
 	 */
-	public function fetch(SS_HTTPRequest $request) {
+	public function fetch(\SS_HTTPRequest $request) {
 		if(!$this->record->canView($this->getMember())) {
 			return $this->message('You are not authorized to do that on this environment', 403);
 		}

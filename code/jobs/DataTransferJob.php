@@ -75,7 +75,7 @@ class DataTransferJob extends DeploynautJob {
 		echo "[-] DataTransferJob finished" . PHP_EOL;
 	}
 
-	protected function performBackup($backupDataTransfer, DeploynautLogFile $log) {
+	protected function performBackup($backupDataTransfer, \DeploynautLogFile $log) {
 		if (!$backupDataTransfer) {
 			return false;
 		}

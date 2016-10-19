@@ -100,7 +100,7 @@ class PackageCacheTest_MockGenerator extends PackageGenerator {
 		return "";
 	}
 
-	public function generatePackage($sha, $baseDir, $outputFilename, DeploynautLogFile $log) {
+	public function generatePackage($sha, $baseDir, $outputFilename, \DeploynautLogFile $log) {
 		touch($outputFilename);
 		$this->wasCalled = true;
 		return true;

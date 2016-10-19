@@ -34,19 +34,19 @@ class SizeRestrictedPackageCache implements PackageCache {
 	/**
 	 * Return the filename of the generated package, retrieving from cache or generating as necessary
 	 *
-	 * @param PackageGenerator $generator The generator to use to create cache entries.
+	 * @param \PackageGenerator $generator The generator to use to create cache entries.
 	 * @param string $identifier A unique identifier for the generator; used to partition the cache
 	 * @param string $sha The SHA of the commit to be deployed
 	 * @param string $repositoryDir The directory where the repository resides
-	 * @param DeploynautLogFile $log The log to write status output to, including package-generation commands
+	 * @param \DeploynautLogFile $log The log to write status output to, including package-generation commands
 	 *
 	 * @return string
 	 */
 	public function getPackageFilename(
-		PackageGenerator $generator,
+		\PackageGenerator $generator,
 		$identifier, $sha,
 		$repositoryDir,
-		DeploynautLogFile $log
+		\DeploynautLogFile $log
 	) {
 		if(!$this->baseDir) {
 			throw new \LogicException("Can't use PackageCache without setting BaseDir");
@@ -100,9 +100,9 @@ class SizeRestrictedPackageCache implements PackageCache {
 	 *
 	 * @param string $dir The directory to remove items from
 	 * @param int $count The maximum number of .tar.gz files that can appear in that directory
-	 * @param DeploynautLogFile $log The log to send removal status messages to
+	 * @param \DeploynautLogFile $log The log to send removal status messages to
 	 */
-	protected function reduceDirSizeTo($dir, $count, DeploynautLogFile $log) {
+	protected function reduceDirSizeTo($dir, $count, \DeploynautLogFile $log) {
 		$files = glob($dir . '/*.tar.gz');
 		if(sizeof($files) > $count) {
 			usort($files, function($a, $b) {

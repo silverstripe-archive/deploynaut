@@ -70,7 +70,7 @@ class DeployDispatcher extends Dispatcher {
 	 * @param \SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse
 	 */
-	public function history(SS_HTTPRequest $request) {
+	public function history(\SS_HTTPRequest $request) {
 		$data = [];
 
 		$list = $this->environment->DeployHistory('DeployStarted');
@@ -88,7 +88,7 @@ class DeployDispatcher extends Dispatcher {
 	 * @param \SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse
 	 */
-	public function upcoming(SS_HTTPRequest $request) {
+	public function upcoming(\SS_HTTPRequest $request) {
 		$data = [];
 		$list = $this->environment->UpcomingDeployments();
 		foreach ($list as $deployment) {
@@ -103,7 +103,7 @@ class DeployDispatcher extends Dispatcher {
 	 * @param \SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse
 	 */
-	public function currentbuild(SS_HTTPRequest $request) {
+	public function currentbuild(\SS_HTTPRequest $request) {
 		$currentBuild = $this->environment->CurrentBuild();
 		if (!$currentBuild) {
 			return $this->getAPIResponse(['deployment' => []], 200);
@@ -115,7 +115,7 @@ class DeployDispatcher extends Dispatcher {
 	 * @param \SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse
 	 */
-	public function show(SS_HTTPRequest $request) {
+	public function show(\SS_HTTPRequest $request) {
 		$deployment = DNDeployment::get()->byId($request->param('ID'));
 		$errorResponse = $this->validateDeployment($deployment);
 		if ($errorResponse instanceof \SS_HTTPResponse) {
@@ -128,7 +128,7 @@ class DeployDispatcher extends Dispatcher {
 	 * @param \SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse
 	 */
-	public function log(SS_HTTPRequest $request) {
+	public function log(\SS_HTTPRequest $request) {
 		$deployment = DNDeployment::get()->byId($request->param('ID'));
 		$errorResponse = $this->validateDeployment($deployment);
 		if ($errorResponse instanceof \SS_HTTPResponse) {
@@ -151,7 +151,7 @@ class DeployDispatcher extends Dispatcher {
 	 * @param \SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse
 	 */
-	public function createdeployment(SS_HTTPRequest $request) {
+	public function createdeployment(\SS_HTTPRequest $request) {
 		if ($request->httpMethod() !== 'POST') {
 			return $this->getAPIResponse(['message' => 'Method not allowed, requires POST'], 405);
 		}
@@ -202,7 +202,7 @@ class DeployDispatcher extends Dispatcher {
 	 * @param \SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse
 	 */
-	public function start(SS_HTTPRequest $request) {
+	public function start(\SS_HTTPRequest $request) {
 		if ($request->httpMethod() !== 'POST') {
 			return $this->getAPIResponse(['message' => 'Method not allowed, requires POST'], 405);
 		}
