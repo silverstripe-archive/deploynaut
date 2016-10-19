@@ -73,7 +73,7 @@ class DNDeploymentHandlers extends Object {
 		$deployment->setSignal(2);
 	}
 
-	protected function canSendEmail(DNDeployment $deployment) {
+	protected function canSendEmail(\DNDeployment $deployment) {
 		$deployer = $deployment->Deployer();
 		$approver = $deployment->Approver();
 		if (!$deployer || !$deployer->exists()) {
@@ -86,7 +86,7 @@ class DNDeploymentHandlers extends Object {
 		return true;
 	}
 
-	protected function sendSubmittedEmail(DNDeployment $deployment) {
+	protected function sendSubmittedEmail(\DNDeployment $deployment) {
 		if (!$this->canSendEmail($deployment)) {
 			return false;
 		}
@@ -108,7 +108,7 @@ class DNDeploymentHandlers extends Object {
 		));
 	}
 
-	protected function sendApprovedEmail(DNDeployment $deployment) {
+	protected function sendApprovedEmail(\DNDeployment $deployment) {
 		if (!$this->canSendEmail($deployment)) {
 			return false;
 		}
@@ -129,7 +129,7 @@ class DNDeploymentHandlers extends Object {
 		));
 	}
 
-	protected function sendRejectedEmail(DNDeployment $deployment) {
+	protected function sendRejectedEmail(\DNDeployment $deployment) {
 		if (!$this->canSendEmail($deployment)) {
 			return false;
 		}
@@ -151,7 +151,7 @@ class DNDeploymentHandlers extends Object {
 		));
 	}
 
-	protected function sendApprovalCancellationEmail(DNDeployment $deployment) {
+	protected function sendApprovalCancellationEmail(\DNDeployment $deployment) {
 		if (!$this->canSendEmail($deployment)) {
 			return false;
 		}

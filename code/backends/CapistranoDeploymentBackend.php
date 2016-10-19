@@ -15,12 +15,12 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	/**
 	 * Create a deployment strategy.
 	 *
-	 * @param DNEnvironment $environment
+	 * @param \DNEnvironment $environment
 	 * @param array $options
 	 *
 	 * @return DeploymentStrategy
 	 */
-	public function planDeploy(DNEnvironment $environment, $options) {
+	public function planDeploy(\DNEnvironment $environment, $options) {
 		$strategy = new DeploymentStrategy($environment, $options);
 
 		$currentBuild = $environment->CurrentBuild();
@@ -38,15 +38,15 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	/**
 	 * Deploy the given build to the given environment.
 	 *
-	 * @param DNEnvironment $environment
-	 * @param DeploynautLogFile $log
-	 * @param DNProject $project
+	 * @param \DNEnvironment $environment
+	 * @param \DeploynautLogFile $log
+	 * @param \DNProject $project
 	 * @param array $options
 	 */
 	public function deploy(
-		DNEnvironment $environment,
-		DeploynautLogFile $log,
-		DNProject $project,
+		\DNEnvironment $environment,
+		\DeploynautLogFile $log,
+		\DNProject $project,
 		$options
 	) {
 		$name = $environment->getFullName();
@@ -152,10 +152,10 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	}
 
 	/**
-	 * @param DNEnvironment $environment
+	 * @param \DNEnvironment $environment
 	 * @return ArrayList
 	 */
-	public function getDeployOptions(DNEnvironment $environment) {
+	public function getDeployOptions(\DNEnvironment $environment) {
 		return new ArrayList(
 			new PredeployBackupOption($environment->Usage === DNEnvironment::PRODUCTION),
 			new NoRollbackDeployOption()
@@ -165,7 +165,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	/**
 	 * Enable a maintenance page for the given environment using the maintenance:enable Capistrano task.
 	 */
-	public function enableMaintenance(DNEnvironment $environment, DeploynautLogFile $log, DNProject $project) {
+	public function enableMaintenance(\DNEnvironment $environment, \DeploynautLogFile $log, \DNProject $project) {
 		$name = $environment->getFullName();
 		$command = $this->getCommand('maintenance:enable', 'web', $environment, null, $log);
 		$command->run(function($type, $buffer) use($log) {
@@ -181,7 +181,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	/**
 	 * Disable the maintenance page for the given environment using the maintenance:disable Capistrano task.
 	 */
-	public function disableMaintenance(DNEnvironment $environment, DeploynautLogFile $log, DNProject $project) {
+	public function disableMaintenance(\DNEnvironment $environment, \DeploynautLogFile $log, \DNProject $project) {
 		$name = $environment->getFullName();
 		$command = $this->getCommand('maintenance:disable', 'web', $environment, null, $log);
 		$command->run(function($type, $buffer) use($log) {
@@ -197,7 +197,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	/**
 	 * Check the status using the deploy:check capistrano method
 	 */
-	public function ping(DNEnvironment $environment, DeploynautLogFile $log, DNProject $project) {
+	public function ping(\DNEnvironment $environment, \DeploynautLogFile $log, \DNProject $project) {
 		$command = $this->getCommand('deploy:check', 'web', $environment, null, $log);
 		$command->run(function($type, $buffer) use($log) {
 			$log->write($buffer);
@@ -208,7 +208,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	/**
 	 * @inheritdoc
 	 */
-	public function dataTransfer(DNDataTransfer $dataTransfer, DeploynautLogFile $log) {
+	public function dataTransfer(\DNDataTransfer $dataTransfer, \DeploynautLogFile $log) {
 		if($dataTransfer->Direction == 'get') {
 			$this->dataTransferBackup($dataTransfer, $log);
 		} else {
@@ -248,12 +248,12 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	/**
 	 * @param string $action Capistrano action to be executed
 	 * @param string $roles Defining a server role is required to target only the required servers.
-	 * @param DNEnvironment $environment
+	 * @param \DNEnvironment $environment
 	 * @param array<string>|null $args Additional arguments for process
-	 * @param DeploynautLogFile $log
+	 * @param \DeploynautLogFile $log
 	 * @return \Symfony\Component\Process\Process
 	 */
-	public function getCommand($action, $roles, DNEnvironment $environment, $args = null, DeploynautLogFile $log) {
+	public function getCommand($action, $roles, \DNEnvironment $environment, $args = null, \DeploynautLogFile $log) {
 		$name = $environment->getFullName();
 		$env = $environment->Project()->getProcessEnv();
 
@@ -305,10 +305,10 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	 * Backs up database and/or assets to a designated folder,
 	 * and packs up the files into a single sspak.
 	 *
-	 * @param DNDataTransfer    $dataTransfer
+	 * @param \DNDataTransfer    $dataTransfer
 	 * @param DeploynautLogFile $log
 	 */
-	protected function dataTransferBackup(DNDataTransfer $dataTransfer, DeploynautLogFile $log) {
+	protected function dataTransferBackup(\DNDataTransfer $dataTransfer, \DeploynautLogFile $log) {
 		$environment = $dataTransfer->Environment();
 		$name = $environment->getFullName();
 
@@ -392,7 +392,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	 * Also cleans up and generates new error pages.
 	 * @param DeploynautLogFile $log
 	 */
-	public function rebuild(DNEnvironment $environment, $log) {
+	public function rebuild(\DNEnvironment $environment, $log) {
 		$name = $environment->getFullName();
 		$command = $this->getCommand('deploy:migrate', 'web', $environment, null, $log);
 		$command->run(function($type, $buffer) use($log) {
@@ -413,7 +413,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	 * @param DNDataTransfer $dataTransfer
 	 * @param DeploynautLogFile $log
 	 */
-	protected function dataTransferRestore($workingDir, DNDataTransfer $dataTransfer, DeploynautLogFile $log) {
+	protected function dataTransferRestore($workingDir, \DNDataTransfer $dataTransfer, \DeploynautLogFile $log) {
 		$environment = $dataTransfer->Environment();
 		$name = $environment->getFullName();
 
@@ -468,11 +468,11 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	/**
 	 * This is mostly copy-pasted from Anthill/Smoketest.
 	 *
-	 * @param DNEnvironment $environment
-	 * @param DeploynautLogFile $log
+	 * @param \DNEnvironment $environment
+	 * @param \DeploynautLogFile $log
 	 * @return bool
 	 */
-	protected function smokeTest(DNEnvironment $environment, DeploynautLogFile $log) {
+	protected function smokeTest(\DNEnvironment $environment, \DeploynautLogFile $log) {
 		$url = $environment->getBareURL();
 		$timeout = 600;
 		$tick = 60;

@@ -16,10 +16,10 @@ class DeploynautAPIFormatter {
 
 	/**
 	 * Return data about a single deployment for use in API response.
-	 * @param DNDeployment $deployment
+	 * @param \DNDeployment $deployment
 	 * @return array
 	 */
-	public function getDeploymentData(DNDeployment $deployment) {
+	public function getDeploymentData(\DNDeployment $deployment) {
 		if (empty(self::$_cache_current_build[$deployment->EnvironmentID])) {
 			self::$_cache_current_build[$deployment->EnvironmentID] = $deployment->Environment()->CurrentBuild();
 		}
@@ -105,11 +105,11 @@ class DeploynautAPIFormatter {
 	 * Note that role can be null in the response. This is the case of an admin, or an operations
 	 * user who can create the deployment but is not part of the stack roles.
 	 *
-	 * @param DNProject $project
-	 * @param Member $member
+	 * @param \DNProject $project
+	 * @param \Member $member
 	 * @return array
 	 */
-	public function getStackMemberData(DNProject $project, Member $member) {
+	public function getStackMemberData(\DNProject $project, \Member $member) {
 		if (empty(self::$_cache_project_members[$project->ID])) {
 			self::$_cache_project_members[$project->ID] = $project->listMembers();
 		}

@@ -12,27 +12,27 @@ class DemoDeploymentBackend extends Object implements DeploymentBackend {
 	/**
 	 * Create a deployment strategy.
 	 *
-	 * @param DNEnvironment $environment
+	 * @param \DNEnvironment $environment
 	 * @param array $options
 	 *
 	 * @return DeploymentStrategy
 	 */
-	public function planDeploy(DNEnvironment $environment, $options = array()) {
+	public function planDeploy(\DNEnvironment $environment, $options = array()) {
 		return new DeploymentStrategy($environment, $options);
 	}
 
 	/**
 	 * Deploy the given build to the given environment
 	 *
-	 * @param DNEnvironment $environment
-	 * @param DeploynautLogFile $log
-	 * @param DNProject $project
+	 * @param \DNEnvironment $environment
+	 * @param \DeploynautLogFile $log
+	 * @param \DNProject $project
 	 * @param array $options
 	 */
 	public function deploy(
-		DNEnvironment $environment,
-		DeploynautLogFile $log,
-		DNProject $project,
+		\DNEnvironment $environment,
+		\DeploynautLogFile $log,
+		\DNProject $project,
 		$options
 	) {
 		$sha = $options['sha'];
@@ -65,29 +65,29 @@ class DemoDeploymentBackend extends Object implements DeploymentBackend {
 	}
 
 	/**
-	 * @param DNEnvironment $environment
+	 * @param \DNEnvironment $environment
 	 * @return ArrayList
 	 */
-	public function getDeployOptions(DNEnvironment $environment) {
+	public function getDeployOptions(\DNEnvironment $environment) {
 		return new ArrayList();
 	}
 
 	/**
 	 * @inheritdoc
 	 */
-	public function dataTransfer(DNDataTransfer $dataTransfer, DeploynautLogFile $log) {
+	public function dataTransfer(\DNDataTransfer $dataTransfer, \DeploynautLogFile $log) {
 		die('Not implemented');
 	}
 
-	public function enableMaintenance(DNEnvironment $environment, \DeploynautLogFile $log, DNProject $project) {
+	public function enableMaintenance(\DNEnvironment $environment, \DeploynautLogFile $log, \DNProject $project) {
 		$log->write(sprintf('Maintenance page enabled on "%s"', $environment->getFullName()));
 	}
 
-	public function disableMaintenance(DNEnvironment $environment, DeploynautLogFile $log, DNProject $project) {
+	public function disableMaintenance(\DNEnvironment $environment, \DeploynautLogFile $log, \DNProject $project) {
 		$log->write(sprintf('Maintenance page disabled on "%s"', $environment->getFullName()));
 	}
 
-	public function ping(\DNEnvironment $environment, DeploynautLogFile $log, DNProject $project) {
+	public function ping(\DNEnvironment $environment, \DeploynautLogFile $log, \DNProject $project) {
 		$log->write(sprintf('Ping "%s"', $environment->getFullName()));
 	}
 

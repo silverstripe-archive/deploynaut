@@ -39,10 +39,10 @@ class DNBranchList extends ArrayList {
 	}
 
 	/**
-	 * @param DNProject $project
-	 * @param DNData $data
+	 * @param \DNProject $project
+	 * @param \DNData $data
 	 */
-	public function __construct(DNProject $project, DNData $data) {
+	public function __construct(\DNProject $project, \DNData $data) {
 		$this->project = $project;
 		$this->data = $data;
 		parent::__construct(array());

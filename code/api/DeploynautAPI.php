@@ -42,10 +42,10 @@ class DeploynautAPI extends APINoun {
 	protected $link = 'deploynaut/api';
 
 	/**
-	 * @param SS_HTTPRequest $request
-	 * @return SS_HTTPResponse
+	 * @param \SS_HTTPRequest $request
+	 * @return \SS_HTTPResponse
 	 */
-	public function listProjects(SS_HTTPRequest $request) {
+	public function listProjects(\SS_HTTPRequest $request) {
 		$response = array(
 			'href' => Director::absoluteURL($this->Link()),
 			'projects' => array(),
@@ -70,10 +70,10 @@ class DeploynautAPI extends APINoun {
 	/**
 	 * Controller Action
 	 *
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 * @return APIProject
 	 */
-	public function project(SS_HTTPRequest $request) {
+	public function project(\SS_HTTPRequest $request) {
 		$project = $this->getProject();
 		if(!$project) {
 			return $this->project404Response();
@@ -84,10 +84,10 @@ class DeploynautAPI extends APINoun {
 	/**
 	 * Controller Action
 	 *
-	 * @param SS_HTTPRequest $request
+	 * @param \SS_HTTPRequest $request
 	 * @return APIEnvironment
 	 */
-	public function environment(SS_HTTPRequest $request) {
+	public function environment(\SS_HTTPRequest $request) {
 		$project = $this->getProject();
 		if(!$project) {
 			return $this->project404Response();

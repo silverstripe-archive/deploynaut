@@ -52,10 +52,10 @@ class DeploymentStrategy extends ViewableData {
 
 
 	/**
-	 * @param DNEnvironment $environment
+	 * @param \DNEnvironment $environment
 	 * @param array $options
 	 */
-	public function __construct(DNEnvironment $environment, $options = array()) {
+	public function __construct(\DNEnvironment $environment, $options = array()) {
 		$this->environment = $environment;
 		$this->options = $options;
 	}

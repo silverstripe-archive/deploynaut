@@ -19,7 +19,7 @@ abstract class PackageGenerator {
 	 *
 	 * @return boolean True on success
 	 */
-	abstract public function generatePackage($sha, $baseDir, $outputFilename, DeploynautLogFile $log);
+	abstract public function generatePackage($sha, $baseDir, $outputFilename, \DeploynautLogFile $log);
 
 	/**
 	 * Return a string that uniquely identifies this package generator.
@@ -44,11 +44,11 @@ abstract class PackageGenerator {
 	 * @param string $identifier A unique identifier for the generator; used to partition the cache
 	 * @param string $sha The SHA of the commit to be deployed
 	 * @param string $repositoryDir The directory where the repository resides
-	 * @param DeploynautLogFile $log The log to write status output to, including package-generation commands
+	 * @param \DeploynautLogFile $log The log to write status output to, including package-generation commands
 	 *
 	 * @return string
 	 */
-	public function getPackageFilename($identifier, $sha, $repositoryDir, DeploynautLogFile $log) {
+	public function getPackageFilename($identifier, $sha, $repositoryDir, \DeploynautLogFile $log) {
 		// Fetch through the cache
 		if($this->cache) {
 			$identifier .= '-' . get_class($this) . '-' . $this->getIdentifier();

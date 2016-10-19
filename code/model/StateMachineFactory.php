@@ -6,7 +6,7 @@ class StateMachineFactory extends Object {
 
 	private static $handlers = [];
 
-	public function forDNDeployment(DNDeployment $obj) {
+	public function forDNDeployment(\DNDeployment $obj) {
 		$loader = new Finite\Loader\ArrayLoader([
 			'class'   => 'DNDeployment',
 			'states'  => [

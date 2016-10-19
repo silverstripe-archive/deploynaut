@@ -11,10 +11,10 @@ class APIEnvironment extends APINoun {
 	);
 
 	/**
-	 * @param SS_HTTPRequest $request
-	 * @return SS_HTTPResponse
+	 * @param \SS_HTTPRequest $request
+	 * @return \SS_HTTPResponse
 	 */
-	public function index(SS_HTTPRequest $request) {
+	public function index(\SS_HTTPRequest $request) {
 		if(!$this->record->canView($this->getMember())) {
 			return $this->message('You are not authorized to view this environment', 403);
 		}
@@ -47,10 +47,10 @@ class APIEnvironment extends APINoun {
 	}
 
 	/**
-	 * @param SS_HTTPRequest $request
-	 * @return SS_HTTPResponse
+	 * @param \SS_HTTPRequest $request
+	 * @return \SS_HTTPResponse
 	 */
-	public function ping(SS_HTTPRequest $request) {
+	public function ping(\SS_HTTPRequest $request) {
 		if(!$this->record->canView($this->getMember())) {
 			return $this->message('You are not authorized to do that on this environment', 403);
 		}
@@ -67,10 +67,10 @@ class APIEnvironment extends APINoun {
 	/**
 	 * @deprecated 2.0.0 - moved to DeployDispatcher
 	 *
-	 * @param SS_HTTPRequest $request
-	 * @return SS_HTTPResponse
+	 * @param \SS_HTTPRequest $request
+	 * @return \SS_HTTPResponse
 	 */
-	public function deploy(SS_HTTPRequest $request) {
+	public function deploy(\SS_HTTPRequest $request) {
 		if(!$this->record->canView($this->getMember())) {
 			return $this->message('You are not authorized to do that on this environment', 403);
 		}
