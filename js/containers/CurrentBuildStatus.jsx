@@ -8,7 +8,7 @@ const actions = require('../_actions.js');
 const CurrentBuildStatus = function(props) {
 	if (props.error) {
 		return (
-			<div className="current-build alert alert-danger">
+			<div className="current-build-status alert alert-danger">
 				<div className="">
 					{props.error}
 				</div>
@@ -16,21 +16,13 @@ const CurrentBuildStatus = function(props) {
 		);
 	}
 
+	if (typeof props.deployment.short_sha === 'undefined') {
+		return null;
+	}
+
 	return (
-		<div className="current-build build-status">
-			<BuildStatus deployment={props.deployment} />
-			<ul className="build-actions">
-				<li>
-					<a className="repo-action" href={props.deployment.commit_url}>
-						<i className="fa fa-github-alt"></i>
-					</a>
-				</li>
-				<li>
-					<a className="info-action" onClick={() => props.onItemClick(props.deployment.id)}>
-						<i className="fa fa-info-circle"></i>
-					</a>
-				</li>
-			</ul>
+		<div className="current-build-status" >
+			<BuildStatus deployment={props.deployment} open={props.onItemClick} />
 		</div>
 	);
 };
