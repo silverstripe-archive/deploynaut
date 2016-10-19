@@ -156,10 +156,10 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 	 * @return ArrayList
 	 */
 	public function getDeployOptions(\DNEnvironment $environment) {
-		return new ArrayList(
+		return new ArrayList([
 			new PredeployBackupOption($environment->Usage === DNEnvironment::PRODUCTION),
 			new NoRollbackDeployOption()
-		);
+		]);
 	}
 
 	/**
