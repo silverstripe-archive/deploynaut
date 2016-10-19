@@ -3,6 +3,17 @@ var SummaryTable = require('../SummaryTable.jsx');
 
 var DeployDiff = function (props) {
 
+	// filter out things that haven't changed
+	const filteredProps = {
+		changes: {}
+	};
+	Object.keys(props.changes).forEach(function(key) {
+		if (props.changes[key].to === props.changes[key].from) {
+			return;
+		}
+		filteredProps.changes[key] = props.changes[key];
+	});
+
 	if (props.is_loading) {
 		return (
 			<div>
@@ -12,7 +23,9 @@ var DeployDiff = function (props) {
 	}
 
 	return (
-		<SummaryTable {...props} />
+		<div className="fade-in">
+			<SummaryTable {...filteredProps} />
+		</div>
 	);
 };
 

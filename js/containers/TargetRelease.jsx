@@ -1,78 +1,183 @@
-var React = require('react');
-var ReactRedux = require('react-redux');
+const React = require('react');
+const ReactRedux = require('react-redux');
 
-/**
- * This simple container is a locked down / readonly version of the first step
- * (git ref selector) that are shown when a deployment is waiting for approval
- * or deploy
- */
-var targetRelease = function(props) {
+const Radio = require('../components/Radio.jsx');
+const Checkbox = require('../components/Checkbox.jsx');
+const Dropdown = require('../components/Dropdown.jsx');
+const Button = require('../components/Button.jsx');
+const BuildStatus = require('../components/BuildStatus.jsx');
 
-	if (props.length < 1) {
+const actions = require('../_actions.js');
+
+function TargetRelease(props) {
+	const typeFields = {};
+	Object.keys(props.types).forEach(function(key) {
+		switch (key) {
+			case '0': // Promote build option
+				typeFields[key] = (
+					<BuildStatus status_box deployment={props.types[key].promote_build} />
+				);
+				break;
+			case '1': // Dropdowns for branch, tags, previously released
+			case '2':
+			case '3':
+				typeFields[key] = (
+					<Dropdown
+						onSelect={props.onRefSelect}
+						options={props.ref_list}
+						value={props.selected_ref}
+						disabled={props.disabled}
+						name={"ref_selector_" + key}
+					/>
+				);
+				break;
+			case '4': // Input SHA option
+				typeFields[key] = (
+					<fieldset>
+						<input
+							type="text"
+							name="selected_ref"
+							onChange={props.onShaChange}
+							value={props.selected_ref}
+							disabled={props.disabled}
+						/>
+						<Button
+							onClick={(evt) => { evt.preventDefault(); props.onRefSelect(props.selected_ref); }}
+							disabled={props.disabled}
+							value="Go"
+						/>
+					</fieldset>
+				);
+				break;
+			default:
+				break;
+		}
+	});
+
+	const list = Object.keys(props.types).map(function(key, index) {
+		let extraFields = null;
+		if (props.selected_type === props.types[key].id) {
+			extraFields = typeFields[props.types[key].id];
+		}
 		return (
-			<div className="section">
-				<header id="0">Target release</header>
-			</div>
+			<li key={props.types[key].id}>
+				<Radio
+					description={props.types[key].description}
+					name="type"
+					checked={props.selected_type === props.types[key].id}
+					id={index}
+					onClick={() => props.onRadioClick(props.types[key].id, props.types[key])}
+					disabled={props.disabled}
+				/>
+				{extraFields}
+			</li>
 		);
-	}
+	});
+
+	const options = props.options.map(function(option, index) {
+		return (
+			<li key={index}>
+				<Checkbox
+					description={option.title}
+					name="option"
+					checked={props.selected_options[option.name] === true}
+					id={index}
+					onClick={() => props.onCheckboxClick(option.name)}
+					disabled={props.disabled}
+				/>
+			</li>
+		);
+	});
 
 	return (
-		<div className="section">
+		<div className="section target-release">
 			<header id="0">Target release</header>
-			<div>{props.ref_type_description}</div>
-			<div className="build-status build-details">
-				<a className="sha-detail"
-					href={props.deployment.commit_url}
-					title={props.deployment.sha}>{props.deployment.short_sha}</a>
-				<span className="deployment-branch">{props.deployment.branch}</span>
-				<span className="deployed-detail">{props.deployment.commit_message}</span>
+			<div>
+				Select the release you would like to deploy to {props.environment_name}
 			</div>
-
-			<div className="row">
-				<div className="col-md-6">
-					<dl className="dl-horizontal">
-						<dt>Environment</dt>
-						<dd>{props.environment}</dd>
-						<dt>Deployment type</dt>
-						<dd>{props.deployment.deployment_type}</dd>
-						<dt>Deployment time</dt>
-						<dd>{props.deployment.deployment_estimate} min</dd>
-					</dl>
-				</div>
-				<div className="col-md-6">
-					<dl className="dl-horizontal">
-						<dt>Requested by</dt>
-						<dd>{props.deployment.deployer.name}</dd>
-						<dt>Date Requested</dt>
-						<dd>{props.deployment.date_requested_nice}</dd>
-					</dl>
-				</div>
-			</div>
+			<form className="form">
+				<ul className="radio-list">
+					{list}
+				</ul>
+				<ul className="checkbox-list">
+					{options}
+				</ul>
+			</form>
 		</div>
 	);
+}
+
+TargetRelease.propTypes = {
+	types: React.PropTypes.object.isRequired,
+	selected_type: React.PropTypes.oneOfType([
+		React.PropTypes.string,
+		React.PropTypes.number
+	]).isRequired,
+	options: React.PropTypes.array,
+	selected_options: React.PropTypes.object,
+	ref_list: React.PropTypes.array,
+	selected_ref: React.PropTypes.oneOfType([
+		React.PropTypes.string,
+		React.PropTypes.number
+	]).isRequired,
+	disabled: React.PropTypes.bool.isRequired
 };
 
-const mapStateToProps = function(state) {
-	if (typeof state.deployment.list[state.deployment.id] === 'undefined') {
-		return {};
+function isDisabled(state) {
+	if (state.git.is_updating || state.plan.is_loading) {
+		return true;
 	}
+	if (state.deployment.submitted) {
+		return true;
+	}
+	if (state.deployment.approved) {
+		return true;
+	}
+	if (state.deployment.queued) {
+		return true;
+	}
+	return false;
+}
 
-	const deploy = state.deployment.list[state.deployment.id];
-
-	let ref_type_description = "";
-	if (state.git.list[deploy.ref_type]) {
-		ref_type_description = state.git.list[deploy.ref_type].description;
+const mapStateToProps = function(state) {
+	let refs = [];
+	if (state.git.list[state.git.selected_type]) {
+		refs = state.git.list[state.git.selected_type].list;
 	}
 
 	return {
-		deployment: deploy,
-		environment: state.environment.name,
-		ref_type_description: ref_type_description
+		environment_name: state.environment.name,
+		types: state.git.list,
+		selected_type: state.git.selected_type,
+		options: state.git.options,
+		selected_options: state.git.selected_options,
+		ref_list: refs,
+		selected_ref: state.git.selected_ref,
+		disabled: isDisabled(state)
 	};
 };
 
 const mapDispatchToProps = function(dispatch) {
-	return {};
+	return {
+		onRadioClick: function(id, type) {
+			dispatch(actions.setGitRefType(id));
+			if (type.promote_build) {
+				dispatch(actions.setGitRef(type.promote_build.sha));
+				dispatch(actions.getDeploySummary());
+			}
+		},
+		onCheckboxClick: function(name) {
+			dispatch(actions.toggleOption(name));
+			dispatch(actions.getDeploySummary());
+		},
+		onRefSelect: function(ref) {
+			dispatch(actions.setGitRef(ref));
+			dispatch(actions.getDeploySummary());
+		},
+		onShaChange: function(e) {
+			dispatch(actions.setGitRef(e.target.value));
+		}
+	};
 };
 
-module.exports = ReactRedux.connect(mapStateToProps, mapDispatchToProps)(targetRelease);
+module.exports = ReactRedux.connect(mapStateToProps, mapDispatchToProps)(TargetRelease);

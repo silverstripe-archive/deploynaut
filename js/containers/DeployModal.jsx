@@ -2,13 +2,14 @@ const React = require('react');
 const ReactRedux = require('react-redux');
 
 const StepMenu = require('../components/StepMenu.jsx');
-const GitRefSelector = require('./GitRefSelector.jsx');
 const TargetRelease = require('./TargetRelease.jsx');
+const TargetReleaseRO = require('./TargetReleaseRO.jsx');
 const ButtonGitUpdate = require('./buttons/GitUpdate.jsx');
 
 const Approval = require('./Approval.jsx');
 const Deployment = require('./Deployment.jsx');
 const DeployPlan = require('./DeployPlan.jsx');
+const DeployPlanRO = require('./DeployPlanRO.jsx');
 const Messages = require('../components/Messages.jsx');
 const Modal = require('../Modal.jsx');
 
@@ -150,13 +151,17 @@ const DeployModal = React.createClass({
 		const content = [];
 		if (steps[0].show) {
 			if (this.props.can_edit) {
-				content[0] = (<GitRefSelector key={0}/>);
-			} else {
 				content[0] = (<TargetRelease key={0}/>);
+			} else {
+				content[0] = (<TargetReleaseRO key={0}/>);
 			}
 		}
 		if (steps[1].show) {
-			content[1] = (<DeployPlan key={1} />);
+			if (this.props.can_edit) {
+				content[1] = (<DeployPlan key={1}/>);
+			} else {
+				content[1] = (<DeployPlanRO key={1}/>);
+			}
 		}
 		if (steps[2].show) {
 			content[2] = (<Approval key={2} />);

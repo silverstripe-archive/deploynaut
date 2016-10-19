@@ -1,5 +1,4 @@
 @charset "UTF-8";
-/* lighten($gray-light, 15%) */
 /*!
  * Bootstrap v3.3.7 (http://getbootstrap.com)
  * Copyright 2011-2016 Twitter, Inc.
@@ -11542,6 +11541,51 @@ select.selectize-control,
   -moz-border-radius: 0;
   border-radius: 0; }
 
+.current-build-status {
+  position: absolute;
+  top: 58px;
+  right: 20px;
+  padding: 10px 20px;
+  background: #E2E8EB; }
+  .current-build-status .show_link {
+    padding: 10px;
+    float: right; }
+
+.deploy-plan .summary_title {
+  margin: 10px 0 20px;
+  font-size: 16px;
+  font-weight: bold; }
+
+.deploy-plan .summary_of_changes {
+  white-space: pre-wrap; }
+
+.status-box {
+  background: #eeeeee;
+  padding: 10px 20px;
+  margin: 10px 0;
+  border-left: 2px solid #eeeeee; }
+  .status-box.default {
+    border-color: #777777; }
+  .status-box.aborting {
+    border-color: #f0ad4e; }
+  .status-box.pending {
+    border-color: #f0ad4e; }
+  .status-box.submitted {
+    border-color: #f0ad4e; }
+  .status-box.approved {
+    border-color: #5cb85c; }
+  .status-box.deploying {
+    border-color: #3aaef9; }
+  .status-box.failed {
+    border-color: #d9534f; }
+  .status-box.invalid {
+    border-color: #d9534f; }
+  .status-box.rejected {
+    border-color: #d9534f; }
+
+.target-release table {
+  margin-top: 10px; }
+
 ul.list,
 ol.list {
   list-style: none;
@@ -12027,13 +12071,21 @@ button.sidebar-open {
     top: 0;
     font-size: 40px;
     content: "\2022"; }
-  .deploy-status.status-Aborting, .deploy-status.status-Pending, .deploy-status.status-Submitted {
+  .deploy-status.status-Aborting {
+    color: #f0ad4e; }
+  .deploy-status.status-Pending {
+    color: #f0ad4e; }
+  .deploy-status.status-Submitted {
     color: #f0ad4e; }
   .deploy-status.status-Approved {
     color: #5cb85c; }
   .deploy-status.status-Deploying {
     color: #3aaef9; }
-  .deploy-status.status-Failed, .deploy-status.status-Invalid, .deploy-status.status-Rejected {
+  .deploy-status.status-Failed {
+    color: #d9534f; }
+  .deploy-status.status-Invalid {
+    color: #d9534f; }
+  .deploy-status.status-Rejected {
     color: #d9534f; }
   .deploy-status .deploy-status-text {
     padding: 3px 0 0 25px;
@@ -12292,39 +12344,6 @@ button.sidebar-open {
   .environment-details .build-details span.git-sha,
   .environment-details .build-details a.git-sha {
     font-size: 14px; }
-
-.current-build {
-  position: absolute;
-  top: 58px;
-  right: 20px; }
-
-.build-status {
-  padding: 10px 20px;
-  background: #E2E8EB; }
-
-.build-details {
-  display: inline-block; }
-  .build-details .sha-detail {
-    width: 50px;
-    overflow: hidden;
-    white-space: nowrap; }
-  .build-details .deployment-title,
-  .build-details .deployment-branch {
-    margin-left: 5px; }
-  .build-details .deployed-detail {
-    font-size: 12px;
-    display: block; }
-
-.build-actions {
-  display: inline-block;
-  vertical-align: top; }
-  .build-actions li {
-    display: inline-block;
-    margin-left: 20px; }
-    .build-actions li .info-action {
-      cursor: pointer; }
-    .build-actions li .fa, .build-actions li .icon-star, .build-actions li .deploy-dropdown .status-icon, .deploy-dropdown .build-actions li .status-icon, .build-actions li .deploy-form-outer .deploy-form .header.loading .status-icon, .deploy-form-outer .deploy-form .header.loading .build-actions li .status-icon, .build-actions li .deploy-form-loading .deploy-form .header.loading .status-icon, .deploy-form-loading .deploy-form .header.loading .build-actions li .status-icon {
-      font-size: 16px; }
 
 .project-links {
   text-align: right;
