@@ -1,0 +1,26 @@
+@import "../_bootstrap-variables.sass"
+
+.status-box
+	background: $gray-lighter
+	padding: 10px 20px
+	margin: 10px 0
+	border-left: 2px solid $gray-lighter
+
+	&.default
+		border-color: $gray-light
+	&.aborting
+		border-color: $status-aborting
+	&.pending
+		border-color: $status-pending
+	&.submitted
+		border-color: $status-submitted
+	&.approved
+		border-color: $status-approved
+	&.deploying
+		border-color: $status-deploying
+	&.failed
+		border-color: $status-failed
+	&.invalid
+		border-color: $status-invalid
+	&.rejected
+		border-color: $status-rejected

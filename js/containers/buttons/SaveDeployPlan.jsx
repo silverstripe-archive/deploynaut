@@ -1,6 +1,5 @@
 var ReactRedux = require('react-redux');
 
-var _ = require('underscore');
 var actions = require('../../_actions.js');
 var Button = require('../../components/Button.jsx');
 
@@ -16,7 +15,7 @@ const mapStateToProps = function(state) {
 const mapDispatchToProps = function(dispatch) {
 	return {
 		onClick: function() {
-			dispatch(actions.createDeployment())
+			dispatch(actions.createDeployment());
 		}
 	};
 };

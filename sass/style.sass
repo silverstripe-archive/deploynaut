@@ -21,6 +21,12 @@ $textarea-transition-time: 0.6s
 @import "selectize/selectize"
 @import "selectize/selectize.bootstrap3"
 
+// react components
+@import 'components/current-build-status'
+@import 'components/deploy-plan'
+@import 'components/status-box'
+@import 'components/target-release'
+
 ul.list,
 ol.list
 	list-style: none
@@ -605,18 +611,22 @@ button.sidebar-open
 		font-size: 40px
 		content: "\2022"
 
-	&.status-Aborting,
-	&.status-Pending,
+	&.status-Aborting
+		color: $status-aborting
+	&.status-Pending
+		color: $status-pending
 	&.status-Submitted
-		color: $brand-warning
+		color: $status-submitted
 	&.status-Approved
-		color: $brand-success
+		color: $status-approved
 	&.status-Deploying
-		color: $brand-primary
-	&.status-Failed,
-	&.status-Invalid,
+		color: $status-deploying
+	&.status-Failed
+		color: $status-failed
+	&.status-Invalid
+		color: $status-invalid
 	&.status-Rejected
-		color: $brand-danger
+		color: $status-rejected
 
 	.deploy-status-text
 		padding: 3px 0 0 25px
@@ -969,36 +979,6 @@ button.sidebar-open
 
 	ul
 		@extend .list-unstyled
-
-.current-build
-	position: absolute
-	top: 58px
-	right: 20px
-.build-status
-	padding: 10px 20px
-	background: #E2E8EB
-.build-details
-	display: inline-block
-	.sha-detail
-		width: 50px
-		overflow: hidden
-		white-space: nowrap
-	.deployment-title,
-	.deployment-branch
-		margin-left: 5px
-	.deployed-detail
-		font-size: 12px
-		display: block
-.build-actions
-	display: inline-block
-	vertical-align: top
-	li
-		display: inline-block
-		margin-left: 20px
-		.info-action
-			cursor: pointer
-		.fa
-			font-size: 16px
 
 .project-links
 	@extend .list-reset

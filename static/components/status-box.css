@@ -1,0 +1,23 @@
+.status-box {
+  background: #eeeeee;
+  padding: 10px 20px;
+  margin: 10px 0;
+  border-left: 2px solid #eeeeee; }
+  .status-box.default {
+    border-color: #777777; }
+  .status-box.aborting {
+    border-color: #f0ad4e; }
+  .status-box.pending {
+    border-color: #f0ad4e; }
+  .status-box.submitted {
+    border-color: #f0ad4e; }
+  .status-box.approved {
+    border-color: #5cb85c; }
+  .status-box.deploying {
+    border-color: #3aaef9; }
+  .status-box.failed {
+    border-color: #d9534f; }
+  .status-box.invalid {
+    border-color: #d9534f; }
+  .status-box.rejected {
+    border-color: #d9534f; }

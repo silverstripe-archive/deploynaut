@@ -1,17 +1,35 @@
-var React = require('react');
+const React = require('react');
 
 var BuildStatus = function(props) {
-	var classNames = 'build-details';
-	if (props.status_box) {
-		classNames += ' build-status';
+	if (typeof props.deployment.short_sha === 'undefined') {
+		return null;
+	}
+
+	let label = null;
+	if (props.deployment.branch) {
+		label = (
+			<span>
+				<span className="label label-default">{props.deployment.branch}</span>
+				&nbsp;
+			</span>
+		);
+	}
+
+	let link = null;
+	if (props.openDeployHandler) {
+		link = (
+			<a className="show_link" onClick={() => props.openDeployHandler(props.deployment.id)}>
+				<i className="fa fa-info-circle"></i>
+			</a>
+		);
 	}
 
 	return (
-		<div className={classNames}>
-			<a className="sha-detail" href={props.deployment.commit_url} title={props.deployment.sha}>{props.deployment.short_sha}</a>
-			<span className="deployment-branch">{props.deployment.branch}</span>
-			<span className="deployment-title">{props.deployment.title}</span>
-			<span className="deployed-detail">{props.deployment.commit_message}</span>
+		<div>
+			{link}
+			{label}
+			{props.deployment.title}<br />
+			<small>{props.deployment.commit_message}</small>
 		</div>
 	);
 };
