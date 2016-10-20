@@ -2,7 +2,6 @@ const React = require('react');
 const ReactRedux = require('react-redux');
 
 const StatusBox = require('../components/StatusBox.jsx');
-const BuildStatus = require('../components/BuildStatus.jsx');
 const DeployDiff = require('../components/DeployDiff.jsx');
 
 /**
@@ -25,7 +24,6 @@ const TargetReleaseRO = React.createClass({
 	},
 
 	render: function() {
-
 		const props = this.props;
 
 		if (props.length < 1) {
@@ -40,7 +38,7 @@ const TargetReleaseRO = React.createClass({
 		let linkName = "View details";
 		let caret = 'down';
 		if (this.state.open) {
-			deployDiff = <DeployDiff changes={props.deployment.changes} is_loading={props.is_loading}/>;
+			deployDiff = <DeployDiff changes={props.deployment.changes} />;
 			linkName = "Hide details";
 			caret = 'up';
 		}
@@ -52,7 +50,8 @@ const TargetReleaseRO = React.createClass({
 
 				<StatusBox type="default">
 					<span className="label label-default">{props.deployment.branch}</span>&nbsp;
-					<a className="sha-detail"
+					<a
+						className="sha-detail"
 						href={props.deployment.commit_url}
 						title={props.deployment.sha}
 					>
@@ -64,7 +63,7 @@ const TargetReleaseRO = React.createClass({
 							<a href={"javascript:void(0);"} onClick={this.toggleOpen}>{linkName}</a>&nbsp;
 							<i className={"fa fa-caret-" + caret}></i>
 						</span>
-					</div><br/>
+					</div><br />
 
 					{deployDiff}
 				</StatusBox>
@@ -115,7 +114,7 @@ const mapStateToProps = function(state) {
 	};
 };
 
-const mapDispatchToProps = function(dispatch) {
+const mapDispatchToProps = function() {
 	return {};
 };
 

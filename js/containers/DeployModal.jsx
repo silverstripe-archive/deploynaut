@@ -151,16 +151,16 @@ const DeployModal = React.createClass({
 		const content = [];
 		if (steps[0].show) {
 			if (this.props.can_edit) {
-				content[0] = (<TargetRelease key={0}/>);
+				content[0] = (<TargetRelease key={0} />);
 			} else {
-				content[0] = (<TargetReleaseRO key={0}/>);
+				content[0] = (<TargetReleaseRO key={0} />);
 			}
 		}
 		if (steps[1].show) {
 			if (this.props.can_edit) {
-				content[1] = (<DeployPlan key={1}/>);
+				content[1] = (<DeployPlan key={1} />);
 			} else {
-				content[1] = (<DeployPlanRO key={1}/>);
+				content[1] = (<DeployPlanRO key={1} />);
 			}
 		}
 		if (steps[2].show) {

@@ -1,9 +1,6 @@
 const React = require('react');
 const ReactRedux = require('react-redux');
 
-const actions = require('../_actions.js');
-const deployment = require('../constants/deployment.js');
-
 function DeployPlanRO(props) {
 	return (
 		<div>
@@ -25,7 +22,7 @@ const mapStateToProps = function(state) {
 	};
 };
 
-const mapDispatchToProps = function(dispatch) {
+const mapDispatchToProps = function() {
 	return {};
 };
 

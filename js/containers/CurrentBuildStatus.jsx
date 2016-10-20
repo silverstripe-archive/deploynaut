@@ -22,7 +22,7 @@ const CurrentBuildStatus = function(props) {
 
 	return (
 		<div className="current-build-status" >
-			<BuildStatus deployment={props.deployment} open={props.onItemClick} />
+			<BuildStatus deployment={props.deployment} openDeployHandler={props.onItemClick} />
 		</div>
 	);
 };
