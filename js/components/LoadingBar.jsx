@@ -6,15 +6,10 @@ const LoadingBar = function(props) {
 	}
 
 	return (
-		<div className="loading-horizontal">
-			<div id="loading-horizontal-1"></div>
-			<div id="loading-horizontal-2"></div>
-			<div id="loading-horizontal-3"></div>
-			<div id="loading-horizontal-4"></div>
-			<div id="loading-horizontal-5"></div>
-			<div id="loading-horizontal-6"></div>
-			<div id="loading-horizontal-7"></div>
-			<div id="loading-horizontal-8"></div>
+		<div className="loading-bar">
+			<div className="bounce1"></div>
+			<div className="bounce2"></div>
+			<div className="bounce3"></div>
 		</div>
 	);
 };

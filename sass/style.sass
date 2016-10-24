@@ -22,10 +22,11 @@ $textarea-transition-time: 0.6s
 @import "selectize/selectize.bootstrap3"
 
 // react components
-@import 'components/current-build-status'
-@import 'components/deploy-plan'
-@import 'components/status-box'
-@import 'components/target-release'
+@import 'components/_current-build-status'
+@import 'components/_deploy-plan'
+@import 'components/_loading-bar'
+@import 'components/_status-box'
+@import 'components/_target-release'
 
 ul.list,
 ol.list
@@ -1370,90 +1371,6 @@ button.abort
 	min-width: 110px
 	padding: 1px 4px
 	margin: -5px 0px 0px
-
-
-$color_loading_indicator: $platform-blue
-.loading-horizontal
-	position: relative
-	width: 162px
-	height: 20px
-	margin: auto
-
-	div
-		background: transparent
-		position: absolute
-		top: 0
-		width: 20px
-		height: 20px
-		animation-name: bounce_loading
-		animation-duration: 1.3s
-		animation-iteration-count: infinite
-		animation-direction: normal
-		transform: scale(0.3)
-
-	#loading-horizontal-1
-		left: 0
-		animation-delay: 0.52s
-
-	#loading-horizontal-2
-		left: 20px
-		animation-delay: 0.65s
-
-	#loading-horizontal-3
-		left: 40px
-		animation-delay: 0.78s
-
-	#loading-horizontal-4
-		left: 61px
-		animation-delay: 0.91s
-
-	#loading-horizontal-5
-		left: 81px
-		animation-delay: 1.04s
-
-	#loading-horizontal-6
-		left: 101px
-		animation-delay: 1.17s
-
-	#loading-horizontal-7
-		left: 121px
-		animation-delay: 1.3s
-
-	#loading-horizontal-8
-		left: 142px
-		animation-delay: 1.43s
-
-	@keyframes bounce_loading
-		0%
-			transform: scale(1)
-			background-color: $color_loading_indicator
-		100%
-			transform: scale(0.3)
-			background-color: transparent
-
-	@-o-keyframes bounce_loading
-		0%
-			background-color: $color_loading_indicator
-		100%
-			background-color: transparent
-
-	@-ms-keyframes bounce_loading
-		0%
-			background-color: $color_loading_indicator
-		100%
-			background-color: transparent
-
-	@-webkit-keyframes bounce_loading
-		0%
-			background-color: $color_loading_indicator
-		100%
-			background-color: transparent
-
-	@-moz-keyframes bounce_loading
-		0%
-			background-color: $color_loading_indicator
-		100%
-			background-color: transparent
 
 .fade-in
 	opacity: 0
