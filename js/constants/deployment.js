@@ -68,6 +68,13 @@ export function isRejected(deployState) {
 	return deployState === STATE_REJECTED;
 }
 
+export function canDelete(state) {
+	if (hasDeployStarted(state)) {
+		return false;
+	}
+	return true;
+}
+
 export function canEdit(state) {
 	if (state.deployment.submitted) {
 		return false;

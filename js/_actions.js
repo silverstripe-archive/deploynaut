@@ -590,3 +590,39 @@ export function getDeployment(id) {
 			.catch(err => dispatch(failGetDeployment(err)));
 	};
 }
+
+export const START_DEPLOYMENT_DELETE = 'START_DEPLOYMENT_DELETE';
+export function startDeploymentDelete() {
+	return {
+		type: START_DEPLOYMENT_DELETE
+	};
+}
+
+export const SUCCEED_DEPLOYMENT_DELETE = 'SUCCEED_DEPLOYMENT_DELETE';
+export function succeedDeploymentDelete(data) {
+	return {
+		type: SUCCEED_DEPLOYMENT_DELETE,
+		data: data
+	};
+}
+
+export const FAIL_DEPLOYMENT_DELETE = 'FAIL_DEPLOYMENT_DELETE';
+export function failDeploymentDelete(err) {
+	return {
+		type: FAIL_DEPLOYMENT_DELETE,
+		error: err
+	};
+}
+
+export function deleteDeployment() {
+	return (dispatch, getState) => {
+		dispatch(startDeploymentDelete());
+		return deployAPI.call(getState, '/delete', 'post', {
+			id: getState().deployment.id
+		})
+			.then(function(data) {
+				return dispatch(succeedDeploymentDelete(data));
+			})
+			.catch((error) => dispatch(failDeploymentDelete(error)));
+	};
+}

@@ -1260,17 +1260,21 @@ textarea.deploy-key
 .modal-header
 	background-color: $platform-blue
 	border-radius: $border-radius-base $border-radius-base 0 0
-	color: #fff
 	border-bottom: 1px solid #eee
 
-	.close
+	.nav
+		float: right
+
+	.nav > li > a
+		padding: 0
+		cursor: pointer
 		text-shadow: none
 		opacity: .5
 		font-weight: lighter
-		font-size: 32px
 
-	p, h1, h2, h3, h4, h5, .h1, .h2, .h3, .h4, .h5, .close
+	p, h1, h2, h3, h4, h5, .h1, .h2, .h3, .h4, .h5
 		color: #fff
+
 
 .modal.deploy
 
@@ -1290,16 +1294,19 @@ textarea.deploy-key
 				border-radius: 0
 				background: #ffffff
 				border-bottom: 1px solid #D7D7D7
-				padding: 10px 20px 10px 22px
+				padding: 10px 5px 10px 22px
 
 				.modal-title
 					color: $body-text
+					margin-top: 7px
 
-				.close
+				.nav > li > a
 					// same as .modal-title
 					@extend h4
-					font-size: 14px
-					font-weight: bold
+					background: transparent
+					border: 0
+					padding: 6px 20px
+					font-size: 16px
 					color: $body-text
 					line-height: 2
 					opacity: 0.7

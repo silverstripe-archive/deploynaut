@@ -189,6 +189,17 @@ module.exports = function deployment(state, action) {
 				list: newList
 			});
 		}
+		case actions.SUCCEED_DEPLOYMENT_DELETE: {
+			let newList = _.assign({}, state.list);
+			delete newList[action.data.id];
+
+			return _.assign({}, state, {
+				state: null,
+				data: {},
+				error: null,
+				list: newList
+			});
+		}
 
 		default:
 			return state;

@@ -324,6 +324,9 @@ class DeploymentStrategy extends ViewableData {
 		$deployment->DeployerID = \Member::currentUserID();
 		$deployment->write();
 
+		// re-get the deployment so we have the correct state
+		$deployment = DNDeployment::get()->byId($deployment->ID);
+
 		return $deployment;
 	}
 
