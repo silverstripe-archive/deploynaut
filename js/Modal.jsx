@@ -6,7 +6,8 @@ var Modal = React.createClass({
 		keyboard: React.PropTypes.bool,
 		closeHandler: React.PropTypes.func,
 		className: React.PropTypes.string,
-		closeTitle: React.PropTypes.string
+		closeTitle: React.PropTypes.string,
+		options: React.PropTypes.array
 	},
 
 	getDefaultProps: function() {
@@ -51,14 +52,37 @@ var Modal = React.createClass({
 			classNames += ' ' + this.props.className;
 		}
 
+		let options = null;
+		if (this.props.options && this.props.options.length) {
+			options = (
+				<li className="dropdown">
+					<a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="Options">
+						Options <i className="glyphicon glyphicon-menu-down"></i>
+					</a>
+					<ul className="dropdown-menu">
+					{this.props.options.map(function(item) {
+						return (
+							<li key={item.title}>
+								<a onClick={item.handler}>{item.title}</a>
+							</li>
+						);
+					})}
+					</ul>
+				</li>
+			);
+		}
+
 		return (
 			<div className={classNames} ref={function(node) { this.selector = node; }.bind(this)}>
 				<div className="modal-dialog modal-lg">
 					<div className="modal-content">
 						<div className="modal-header">
-							<button type="button" className="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true" dangerouslySetInnerHTML={this.getCloseTitle()} />
-							</button>
+							<ul className="nav nav-tabs">
+								{options}
+								<li>
+									<a className="close" data-dismiss="modal" aria-label="Close" dangerouslySetInnerHTML={this.getCloseTitle()} />
+								</li>
+							</ul>
 							<h4 className="modal-title">{this.props.title}</h4>
 						</div>
 						<div className="modal-body">

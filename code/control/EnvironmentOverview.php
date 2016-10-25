@@ -84,6 +84,7 @@ class EnvironmentOverview extends Dispatcher {
 			'environment' => [
 				'id' => $this->environment->ID,
 				'name' => $this->environment->Name,
+				'project_name' => $this->getCurrentProject()->Name,
 				'usage' => $this->environment->Usage,
 				'supported_options' => $this->environment->getSupportedOptions()->map('name', 'defaultValue')
 			],

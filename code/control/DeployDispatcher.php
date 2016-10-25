@@ -16,6 +16,7 @@ class DeployDispatcher extends Dispatcher {
 		'upcoming',
 		'currentbuild',
 		'show',
+		'delete',
 		'log',
 		'createdeployment',
 		'start'
@@ -124,6 +125,28 @@ class DeployDispatcher extends Dispatcher {
 		return $this->getAPIResponse(['deployment' => $this->formatter->getDeploymentData($deployment)], 200);
 	}
 
+	public function delete(\SS_HTTPRequest $request) {
+		if ($request->httpMethod() !== 'POST') {
+			return $this->getAPIResponse(['message' => 'Method not allowed, requires POST'], 405);
+		}
+
+		$this->checkSecurityToken();
+
+		$deployment = DNDeployment::get()->byId($request->postVar('id'));
+		$errorResponse = $this->validateDeployment($deployment);
+		if ($errorResponse instanceof \SS_HTTPResponse) {
+			return $errorResponse;
+		}
+
+		$id = $deployment->ID;
+		$deployment->delete();
+
+		return $this->getAPIResponse([
+			'id' => $id,
+			'message' => 'Deployment has been deleted'
+		], 201);
+	}
+
 	/**
 	 * @param \SS_HTTPRequest $request
 	 * @return \SS_HTTPResponse
@@ -210,8 +233,9 @@ class DeployDispatcher extends Dispatcher {
 		$this->checkSecurityToken();
 
 		$deployment = DNDeployment::get()->byId($request->postVar('id'));
-		if (!$deployment || !$deployment->exists()) {
-			return $this->getAPIResponse(['message' => 'This deployment does not exist'], 404);
+		$errorResponse = $this->validateDeployment($deployment);
+		if ($errorResponse instanceof \SS_HTTPResponse) {
+			return $errorResponse;
 		}
 
 		// The deployment cannot be started until it has been approved, or bypassed straight to approved state
@@ -265,7 +289,7 @@ class DeployDispatcher extends Dispatcher {
 	 *
 	 * @return null|SS_HTTPResponse
 	 */
-	protected function validateDeployment(\DNDeployment $deployment) {
+	protected function validateDeployment($deployment) {
 		if (!$deployment || !$deployment->exists()) {
 			return $this->getAPIResponse(['message' => 'This deployment does not exist'], 404);
 		}

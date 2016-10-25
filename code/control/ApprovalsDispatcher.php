@@ -97,6 +97,8 @@ class ApprovalsDispatcher extends Dispatcher {
 			return $this->getAPIResponse(['message' => 'Method not allowed, requires POST'], 405);
 		}
 
+		$this->checkSecurityToken();
+
 		$deployment = DNDeployment::get()->byId($request->postVar('id'));
 		$errorResponse = $this->validateDeployment($deployment);
 		if ($errorResponse instanceof \SS_HTTPResponse) {
@@ -136,6 +138,8 @@ class ApprovalsDispatcher extends Dispatcher {
 			return $this->getAPIResponse(['message' => 'Method not allowed, requires POST'], 405);
 		}
 
+		$this->checkSecurityToken();
+
 		$deployment = DNDeployment::get()->byId($request->postVar('id'));
 		$errorResponse = $this->validateDeployment($deployment);
 		if ($errorResponse instanceof \SS_HTTPResponse) {
@@ -170,6 +174,8 @@ class ApprovalsDispatcher extends Dispatcher {
 		if ($request->httpMethod() !== 'POST') {
 			return $this->getAPIResponse(['message' => 'Method not allowed, requires POST'], 405);
 		}
+
+		$this->checkSecurityToken();
 
 		$deployment = DNDeployment::get()->byId($request->postVar('id'));
 		$errorResponse = $this->validateDeployment($deployment);
@@ -238,6 +244,8 @@ class ApprovalsDispatcher extends Dispatcher {
 			return $this->getAPIResponse(['message' => 'Method not allowed, requires POST'], 405);
 		}
 
+		$this->checkSecurityToken();
+
 		$deployment = DNDeployment::get()->byId($request->postVar('id'));
 		$errorResponse = $this->validateDeployment($deployment);
 		if ($errorResponse instanceof \SS_HTTPResponse) {
@@ -277,7 +285,7 @@ class ApprovalsDispatcher extends Dispatcher {
 	 *
 	 * @return null|SS_HTTPResponse
 	 */
-	protected function validateDeployment(\DNDeployment $deployment) {
+	protected function validateDeployment($deployment) {
 		if (!$deployment || !$deployment->exists()) {
 			return $this->getAPIResponse(['message' => 'This deployment does not exist'], 404);
 		}

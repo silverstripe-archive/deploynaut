@@ -170,20 +170,29 @@ const DeployModal = React.createClass({
 			content[3] = (<Deployment key={3} />);
 		}
 
+		let options = [];
+		if (this.props.deployment_id && constants.canDelete(this.props.state)) {
+			options.push({
+				title: "Delete",
+				handler: this.props.onDelete
+			});
+		}
+
 		return (
 			<Modal
 				show={this.props.is_open}
 				className="deploy"
 				closeHandler={this.props.onClose}
-				title={"Deploy to " + this.props.environment_name}
+				title={"Deploy to " + this.props.project_name + ' / ' + this.props.environment_name}
 				closeTitle="Close"
+				options={options}
 			>
 				<div className="row">
 					<div className="col-md-3 menu affix">
 						<StepMenu
 							steps={steps}
 							value={this.props.active_step}
-							onClick={this.props.onTabClick}
+							onClick={this.props.onStepClick}
 						/>
 					</div>
 					<div className="col-md-9 main" >
@@ -253,17 +262,23 @@ const mapStateToProps = function(state, ownProps) {
 		can_deploy: state.deployment.approved,
 		state: state.deployment.state,
 		active_step: active_step,
-		environment_name: state.environment.name
+		environment_name: state.environment.name,
+		project_name: state.environment.project_name,
+		deployment_id: state.deployment.id
 	};
 };
 
-const mapDispatchToProps = function() {
+const mapDispatchToProps = function(dispatch) {
 	return {
 		onClose: function() {
 			actions.history.push('/');
 		},
-		onTabClick: function(active_step) {
+		onStepClick: function(active_step) {
 			document.location.hash = active_step;
+		},
+		onDelete: function() {
+			dispatch(actions.deleteDeployment())
+				.then(() => actions.history.push('/'));
 		}
 	};
 };

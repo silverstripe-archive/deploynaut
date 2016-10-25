@@ -7,6 +7,7 @@ module.exports = function environment(state, action) {
 		return {
 			id: null,
 			name: null,
+			project_name: null,
 			usage: null,
 			supported_options: {}
 		};
@@ -17,6 +18,7 @@ module.exports = function environment(state, action) {
 			return _.assign({}, state, {
 				id: action.data.id,
 				name: action.data.name,
+				project_name: action.data.project_name,
 				usage: action.data.usage,
 				supported_options: action.data.supported_options
 			});
