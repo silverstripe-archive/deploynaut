@@ -26,7 +26,7 @@ gulp.task('sass', function () {
 // Rerun when files changes
 gulp.task('watch', function () {
 	gulp.watch('./sass/**/*.sass', ['sass']);
-	gulp.watch(path.JS, ['js-debug', 'js']);
+	gulp.watch(path.JS, ['js']);
 });
 
 // the default task just compiles all the things
