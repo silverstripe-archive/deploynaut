@@ -6,19 +6,15 @@
  * command line. It should perform checks to ensure that this is the case.
  *
  * @package deploynaut
- * @subpackage control
+ * @subpackage tasks
  */
-class CheckPipelineStatus extends Controller {
-	public function index() {
-		// @TODO Check that we have been called via the daemon
-		if(php_sapi_name() != "cli") {
-			throw new Exception("CheckPipelineStatus must be run from the command-line.");
+class CheckPipelineStatusTask extends BuildTask {
+
+	public function run($request) {
+		if (!Director::is_cli()) {
+			throw new \Exception('This task must be run from the command line');
 		}
 
-		$this->run();
-	}
-
-	private function run() {
 		// Note that a pipeline must be started prior to being picked up by this task
 		$runningPipelines = Pipeline::get()->filter('Status', array('Running', 'Rollback'));
 
@@ -34,4 +30,5 @@ class CheckPipelineStatus extends Controller {
 
 		echo "done!" . PHP_EOL;
 	}
+
 }

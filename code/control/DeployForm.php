@@ -208,7 +208,7 @@ END;
 		foreach($project->DNTagList()->setLimit(null) as $tag) {
 			$sha = $tag->SHA();
 			$name = $tag->Name();
-			$tags[$sha . '-' . $tag] = $name . ' (' . substr($sha,0,8) . ', ' . $tag->Created()->TimeDiff() . ' old)';
+			$tags[$sha . '-' . $name] = $name . ' (' . substr($sha,0,8) . ', ' . $tag->Created()->TimeDiff() . ' old)';
 		}
 		$tags = array_reverse($tags);
 
