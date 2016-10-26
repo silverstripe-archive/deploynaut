@@ -107,7 +107,7 @@ class DeployForm extends Form {
 				substr($sha, 0, 8),
 				$branch->LastUpdated()->TimeDiff()
 			);
-			$tags[$sha . '-' . $tag] = $tagValue;
+			$tags[$sha . '-' . $name] = $tagValue;
 		}
 		$tags = array_reverse($tags);
 
