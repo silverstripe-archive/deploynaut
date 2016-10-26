@@ -8,6 +8,6 @@ ROOT="/sites/deploynaut/www"
 while true
 do
 	cd $ROOT
-	framework/sake CheckPipelineStatus
+	framework/sake dev/tasks/CheckPipelineStatusTask
 	sleep 5s # sleep for 5 seconds before running again
 done

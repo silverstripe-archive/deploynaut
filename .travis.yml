@@ -4,19 +4,18 @@ language: php
 
 sudo: false
 
-php:
- - 5.4
-
 env:
   global:
     - CORE_RELEASE=3.1
-  matrix:
-    - DB=MYSQL
 
 matrix:
   include:
-    - php: 5.3
+    - php: 5.4
       env: DB=MYSQL
+    - php: 5.5
+      env: DB=MYSQL
+    - php: 5.6
+      env: DB=MYSQL CORE_RELEASE=3.4
 
 before_script:
  - composer self-update || true
@@ -27,7 +26,5 @@ before_script:
  - git config --global user.email "travis@example.com"
  - git config --global user.name "Travis test-runner"
 
-
-script: 
+script:
   - vendor/bin/phpunit deploynaut/tests/
-
