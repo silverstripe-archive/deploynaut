@@ -12,6 +12,7 @@ const DeployPlan = require('./DeployPlan.jsx');
 const DeployPlanRO = require('./DeployPlanRO.jsx');
 const Messages = require('../components/Messages.jsx');
 const Modal = require('../Modal.jsx');
+const LoadingBar = require('../components/LoadingBar.jsx');
 
 const actions = require('../_actions.js');
 const constants = require('../constants/deployment.js');
@@ -149,6 +150,12 @@ const DeployModal = React.createClass({
 		const steps = calculateSteps(this.props);
 
 		const content = [];
+
+		content[0] = (
+			<div key={0} className="section">
+				<LoadingBar show={true} />
+			</div>
+		);
 		if (steps[0].show) {
 			if (this.props.can_edit) {
 				content[0] = (<TargetRelease key={0} />);
@@ -235,7 +242,7 @@ const mapStateToProps = function(state, ownProps) {
 
 	return {
 		show: [
-			true,
+			(!state.git.is_loading && !state.deployment.is_loading),
 			state.git.selected_ref !== "",
 			state.deployment.id !== "",
 			state.deployment.approved

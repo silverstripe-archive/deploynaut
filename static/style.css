@@ -11567,6 +11567,40 @@ select.selectize-control,
 .deploy-plan .summary_of_changes {
   white-space: pre-wrap; }
 
+.loading-bar {
+  position: relative;
+  margin: 0 auto 0;
+  width: 70px;
+  text-align: center; }
+  .loading-bar > div {
+    width: 16px;
+    height: 16px;
+    background-color: #3aaef9;
+    border-radius: 100%;
+    display: inline-block;
+    -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+    animation: sk-bouncedelay 1.4s infinite ease-in-out both; }
+  .loading-bar .bounce1 {
+    -webkit-animation-delay: -0.32s;
+    animation-delay: -0.32s; }
+  .loading-bar .bounce2 {
+    -webkit-animation-delay: -0.16s;
+    animation-delay: -0.16s; }
+
+@-webkit-keyframes sk-bouncedelay {
+  0%, 80%, 100% {
+    -webkit-transform: scale(0); }
+  40% {
+    -webkit-transform: scale(1); } }
+
+@keyframes sk-bouncedelay {
+  0%, 80%, 100% {
+    -webkit-transform: scale(0);
+    transform: scale(0); }
+  40% {
+    -webkit-transform: scale(1);
+    transform: scale(1); } }
+
 .status-box {
   background: #eeeeee;
   padding: 10px 20px;
@@ -12716,79 +12750,6 @@ button.abort {
   min-width: 110px;
   padding: 1px 4px;
   margin: -5px 0px 0px; }
-
-.loading-horizontal {
-  position: relative;
-  width: 162px;
-  height: 20px;
-  margin: auto; }
-  .loading-horizontal div {
-    background: transparent;
-    position: absolute;
-    top: 0;
-    width: 20px;
-    height: 20px;
-    animation-name: bounce_loading;
-    animation-duration: 1.3s;
-    animation-iteration-count: infinite;
-    animation-direction: normal;
-    transform: scale(0.3); }
-  .loading-horizontal #loading-horizontal-1 {
-    left: 0;
-    animation-delay: 0.52s; }
-  .loading-horizontal #loading-horizontal-2 {
-    left: 20px;
-    animation-delay: 0.65s; }
-  .loading-horizontal #loading-horizontal-3 {
-    left: 40px;
-    animation-delay: 0.78s; }
-  .loading-horizontal #loading-horizontal-4 {
-    left: 61px;
-    animation-delay: 0.91s; }
-  .loading-horizontal #loading-horizontal-5 {
-    left: 81px;
-    animation-delay: 1.04s; }
-  .loading-horizontal #loading-horizontal-6 {
-    left: 101px;
-    animation-delay: 1.17s; }
-  .loading-horizontal #loading-horizontal-7 {
-    left: 121px;
-    animation-delay: 1.3s; }
-  .loading-horizontal #loading-horizontal-8 {
-    left: 142px;
-    animation-delay: 1.43s; }
-
-@keyframes bounce_loading {
-  0% {
-    transform: scale(1);
-    background-color: #3aaef9; }
-  100% {
-    transform: scale(0.3);
-    background-color: transparent; } }
-
-@-o-keyframes bounce_loading {
-  0% {
-    background-color: #3aaef9; }
-  100% {
-    background-color: transparent; } }
-
-@-ms-keyframes bounce_loading {
-  .loading-horizontal 0% {
-    background-color: #3aaef9; }
-  .loading-horizontal 100% {
-    background-color: transparent; } }
-
-@-webkit-keyframes bounce_loading {
-  0% {
-    background-color: #3aaef9; }
-  100% {
-    background-color: transparent; } }
-
-@-moz-keyframes bounce_loading {
-  0% {
-    background-color: #3aaef9; }
-  100% {
-    background-color: transparent; } }
 
 .fade-in {
   opacity: 0;
