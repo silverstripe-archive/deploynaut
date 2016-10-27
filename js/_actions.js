@@ -321,7 +321,9 @@ export function submitForApproval() {
 		dispatch(startApprovalSubmit());
 		return approvalsAPI.call(getState, '/submit', 'post', {
 			id: getState().deployment.id,
-			approver_id: getState().deployment.approver_id
+			approver_id: getState().deployment.approver_id,
+			title: getState().plan.title,
+			summary: getState().plan.summary_of_changes
 		})
 			.then(function(data) {
 				dispatch(succeedApprovalSubmit(data));
@@ -389,7 +391,9 @@ export function approveDeployment() {
 	return (dispatch, getState) => {
 		dispatch(startApprovalApprove());
 		return approvalsAPI.call(getState, '/approve', 'post', {
-			id: getState().deployment.id
+			id: getState().deployment.id,
+			title: getState().plan.title,
+			summary: getState().plan.summary_of_changes
 		})
 			.then(function(data) {
 				dispatch(succeedApprovalApprove(data));

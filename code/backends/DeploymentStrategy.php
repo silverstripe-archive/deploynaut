@@ -311,7 +311,7 @@ class DeploymentStrategy extends ViewableData {
 	 * @return DNDeployment
 	 */
 	public function createDeployment() {
-		$deployment = DNDeployment::create();
+		$deployment = \DNDeployment::create();
 		$deployment->EnvironmentID = $this->environment->ID;
 		// Pull out the SHA from the options so we can make it queryable.
 		$deployment->SHA = $this->getOption('sha');
@@ -324,10 +324,8 @@ class DeploymentStrategy extends ViewableData {
 		$deployment->DeployerID = \Member::currentUserID();
 		$deployment->write();
 
-		// re-get the deployment so we have the correct state
-		$deployment = DNDeployment::get()->byId($deployment->ID);
-
-		return $deployment;
+		// re-get and return the deployment so we have the correct state
+		return \DNDeployment::get()->byId($deployment->ID);
 	}
 
 }

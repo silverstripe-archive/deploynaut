@@ -115,6 +115,14 @@ class ApprovalsDispatcher extends Dispatcher {
 			$deployment->write();
 		}
 
+		// title and summary may have changed, ensure they are saved
+		if ($request->postVar('title')) {
+			$deployment->Title = $request->postVar('title');
+		}
+		if ($request->postVar('summary')) {
+			$deployment->Summary = $request->postVar('summary');
+		}
+
 		try {
 			$deployment->getMachine()->apply(DNDeployment::TR_SUBMIT);
 		} catch (\Exception $e) {
@@ -219,6 +227,14 @@ class ApprovalsDispatcher extends Dispatcher {
 				$deployment->ApproverID = Member::currentUserID();
 				$deployment->write();
 			}
+		}
+
+		// title and summary may have changed, ensure they are saved
+		if ($request->postVar('title')) {
+			$deployment->Title = $request->postVar('title');
+		}
+		if ($request->postVar('summary')) {
+			$deployment->Summary = $request->postVar('summary');
 		}
 
 		try {
