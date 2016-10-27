@@ -86,7 +86,8 @@ class EnvironmentOverview extends Dispatcher {
 				'name' => $this->environment->Name,
 				'project_name' => $this->getCurrentProject()->Name,
 				'usage' => $this->environment->Usage,
-				'supported_options' => $this->environment->getSupportedOptions()->map('name', 'defaultValue')
+				'supported_options' => $this->environment->getSupportedOptions()->map('name', 'defaultValue'),
+				'redeploy' => $this->request->getVar('redeploy')
 			],
 			'user' => [
 				'can_approve' => $this->getCurrentProject()->allowed(
