@@ -18,6 +18,7 @@ class DeployDispatcher extends Dispatcher {
 		'show',
 		'delete',
 		'log',
+		'redeploy',
 		'createdeployment',
 		'start'
 	];
@@ -166,6 +167,26 @@ class DeployDispatcher extends Dispatcher {
 			'status' => $deployment->Status,
 			'deployment' => $this->formatter->getDeploymentData($deployment),
 		], 200);
+	}
+
+	/**
+	 * @param \SS_HTTPRequest $request
+	 * @return \SS_HTTPResponse
+	 */
+	public function redeploy(\SS_HTTPRequest $request) {
+		$currentBuild = $this->environment->CurrentBuild();
+		if (!$currentBuild || !$currentBuild->exists()) {
+			return $this->redirect(Controller::join_links($this->environment->Link('overview'), 'deployment', 'new'));
+		}
+
+		$strategy = $this->environment->Backend()->planDeploy($this->environment, [
+			'sha' => $currentBuild->SHA,
+			'ref_type' => \GitDispatcher::REF_TYPE_PREVIOUS,
+			'branch' => $currentBuild->Branch
+		]);
+		$deployment = $strategy->createDeployment();
+
+		return $this->redirect($deployment->Link());
 	}
 
 	/**

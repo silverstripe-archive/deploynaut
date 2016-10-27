@@ -85,6 +85,12 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 		'Deployer.Name' => 'Deployer'
 	);
 
+	/**
+	 * Set to true to ensure links go to the new deployment form.
+	 * @var bool
+	 */
+	private static $new_deploy_form = false;
+
 	public function setResqueToken($token) {
 		$this->ResqueToken = $token;
 	}
@@ -107,7 +113,11 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 	}
 
 	public function Link() {
-		return Controller::join_links($this->Environment()->Link(), 'deploy', $this->ID);
+		if ($this->config()->new_deploy_form) {
+			return \Controller::join_links($this->Environment()->Link('overview'), 'deployment', $this->ID);
+		} else {
+			return \Controller::join_links($this->Environment()->Link(), 'deploy', $this->ID);
+		}
 	}
 
 	public function LogLink() {
@@ -367,7 +377,7 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 				$environment->getFullName(),
 				$deployer->getName(),
 				$deployer->Email,
-				Controller::curr()->getRequest()->getIP()
+				\Controller::curr()->getRequest()->getIP()
 			);
 			$log->write($message);
 		}
