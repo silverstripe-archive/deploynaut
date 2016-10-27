@@ -154,13 +154,13 @@ class EmergencyRollbackStep extends LongRunningPipelineStep {
 		return array(
 			'rollback' => array(
 				'ButtonText' => _t('EmergencyRollbackStep.ROLLBACKBUTTON', 'Rollback'),
-				'ButtonType' => 'btn-success',
+				'ButtonType' => 'btn-danger',
 				'Link' => $this->Pipeline()->StepLink('rollback'),
 				'Title' => _t('EmergencyRollbackStep.ROLLBACKTHEDEPLOYMENTTITLE', 'Rollback the deployment')
 			),
 			'dismiss' => array(
 				'ButtonText' => _t('EmergencyRollbackStep.DISMISS', 'Dismiss'),
-				'ButtonType' => 'btn-info',
+				'ButtonType' => 'btn-success',
 				'Link' => $this->Pipeline()->StepLink('dismiss'),
 				'Title' => _t('EmergencyRollbackStep.ROLLBACKTHEDEPLOYMENTTITLE', 'Dismiss this option')
 			)
