@@ -141,7 +141,7 @@ export function setDeployHistoryPage(page) {
 export function getRevisions() {
 	return (dispatch, getState) => {
 		dispatch(startRevisionGet());
-		return gitAPI.call(getState, `/show?environmentId=${getState().environment.id}`, 'get')
+		return gitAPI.call(getState, `/show?environmentId=${getState().environment.id}&redeploy=${getState().environment.redeploy}`, 'get')
 			.then(json => dispatch(succeedRevisionsGet(json)))
 			.catch(err => dispatch(failRevisionsGet(err)));
 	};
@@ -182,7 +182,7 @@ export function updateRepoAndGetRevisions() {
 			.then(() => dispatch(succeedRepoUpdate()))
 			.catch(err => dispatch(failRepoUpdate(err)))
 			.then(() => dispatch(startRevisionGet()))
-			.then(() => gitAPI.call(getState, `/show?environmentId=${getState().environment.id}`, 'get'))
+			.then(() => gitAPI.call(getState, `/show?environmentId=${getState().environment.id}&redeploy=${getState().environment.redeploy}`, 'get'))
 			.then(json => dispatch(succeedRevisionsGet(json)))
 			.catch(err => dispatch(failRevisionsGet(err)));
 	};

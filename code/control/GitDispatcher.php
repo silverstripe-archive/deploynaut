@@ -166,12 +166,28 @@ class GitDispatcher extends Dispatcher {
 			$lastFetchedAgo = $fetch->obj('LastEdited')->Ago();
 		}
 
-		return $this->getAPIResponse([
+		$responseData = [
 			'refs' => $refs,
 			'options' => $options,
 			'last_fetched_date' => $lastFetchedDate,
 			'last_fetched_ago' => $lastFetchedAgo
-		], 200);
+		];
+
+		$current = $targetEnvironment ? $targetEnvironment->CurrentBuild() : null;
+		if ($request->getVar('redeploy') && $request->getVar('redeploy') == '1') {
+			if ($current && $current->exists()) {
+				$responseData['preselected_type'] = self::REF_TYPE_PREVIOUS;
+				$responseData['preselected_sha'] = $current->SHA;
+			} else {
+				$master = $this->project->DNBranchList()->byName('master');
+				if ($master) {
+					$responseData['preselected_type'] = self::REF_TYPE_BRANCH;
+					$responseData['preselected_sha'] = $master->SHA();
+				}
+			}
+		}
+
+		return $this->getAPIResponse($responseData, 200);
 	}
 
 	/**

@@ -111,13 +111,24 @@ module.exports = function git(state, action) {
 				listAsArray = _.assign({}, action.data.refs);
 			}
 
+			let selected_type = "";
+			let selected_ref = "";
+			if (action.data.preselected_type) {
+				selected_type = action.data.preselected_type;
+			}
+			if (action.data.preselected_sha) {
+				selected_ref = action.data.preselected_sha;
+			}
+
 			return _.assign({}, state, {
 				is_fetching: false,
 				list: listAsArray,
 				options: action.data.options,
 				last_fetched_date: action.data.last_fetched_date,
 				last_fetched_ago: action.data.last_fetched_ago,
-				last_updated: action.received_at
+				last_updated: action.received_at,
+				selected_type: selected_type,
+				selected_ref: selected_ref
 			});
 		}
 		case actions.FAIL_REVISIONS_GET:
