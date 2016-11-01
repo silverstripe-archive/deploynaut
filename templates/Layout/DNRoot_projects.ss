@@ -20,6 +20,7 @@
 			<thead>
 				<tr>
 					<th>Stack title</th>
+					<th>Stack type</th>
 					<th>Production URL</th>
 					<th>UAT URL</th>
 					<th>Code</th>
@@ -27,40 +28,47 @@
 			</thead>
 			<tbody>
 			<% if $DNProjectList %>
-			<% loop $DNProjectList %>
-				<tr>
-					<td class="project-name">
-						<a class="title" href="$Link">$Name</a>
-						<% include ProjectIcons %>
-					</td>
-					<td>
-						<% if $EnvironmentsByUsage("Production").First %>
-							<% with $EnvironmentsByUsage("Production").First %><a href="$URL" target="_blank">$BareURL</a><% end_with %>
-						<% else %>
-							-
-						<% end_if %>
-					</td>
-					<td>
-						<% if $EnvironmentsByUsage("UAT").First %>
-							<% with $EnvironmentsByUsage("UAT").First %><a href="$URL" target="_blank">$BareURL</a><% end_with %>
-						<% else %>
-							-
-						<% end_if %>
-					</td>
-					<td>
-						<% if $RepositoryInterface %>
-							<% with $RepositoryInterface %>
-								<div class="repo-ux">
-									<img src="$Icon" />
-									<a href="$URL">View code<i class="fa fa-external-link-square superscript"></i></a>
-								</div>
-							<% end_with %>
-						<% else %>
-							-
-						<% end_if %>
-					</td>
-				</tr>
-			<% end_loop %>
+				<% loop $DNProjectList %>
+					<tr>
+						<td class="project-name">
+							<a class="title" href="$Link">$Name</a>
+							<% include ProjectIcons %>
+						</td>
+						<td>
+							<% if $ClassName == VirtualProject %>
+								<span class="plat-icon icon-virtual"></span>Virtual
+							<% else %>
+								<span class="plat-icon icon-stack"></span>Base
+							<% end_if %>
+						</td>
+						<td>
+							<% if $EnvironmentsByUsage("Production").First %>
+								<% with $EnvironmentsByUsage("Production").First %><a href="$URL" target="_blank">$BareURL</a><% end_with %>
+							<% else %>
+								-
+							<% end_if %>
+						</td>
+						<td>
+							<% if $EnvironmentsByUsage("UAT").First %>
+								<% with $EnvironmentsByUsage("UAT").First %><a href="$URL" target="_blank">$BareURL</a><% end_with %>
+							<% else %>
+								-
+							<% end_if %>
+						</td>
+						<td>
+							<% if $RepositoryInterface %>
+								<% with $RepositoryInterface %>
+									<div class="repo-ux">
+										<img src="$Icon" />
+										<a href="$URL">View code<i class="fa fa-external-link-square superscript"></i></a>
+									</div>
+								<% end_with %>
+							<% else %>
+								-
+							<% end_if %>
+						</td>
+					</tr>
+				<% end_loop %>
 			<% else %>
 				<tr>
 					<td colspan="5">No stacks are currently available to you.</td>
