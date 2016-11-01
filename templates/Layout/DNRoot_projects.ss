@@ -35,7 +35,7 @@
 							<% include ProjectIcons %>
 						</td>
 						<td>
-							<a href="https://www.silverstripe.org/blog/announcing-stack-share-support-for-multiple-site-hosting-within-silverstripe-platform/">
+							<a href="$Link">
 								<% if $ClassName == VirtualProject %>
 									Virtual
 								<% else %>
