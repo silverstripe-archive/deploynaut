@@ -35,11 +35,13 @@
 							<% include ProjectIcons %>
 						</td>
 						<td>
-							<% if $ClassName == VirtualProject %>
-								<span class="plat-icon icon-virtual"></span>Virtual
-							<% else %>
-								<span class="plat-icon icon-stack"></span>Base
-							<% end_if %>
+							<a href="https://www.silverstripe.org/blog/announcing-stack-share-support-for-multiple-site-hosting-within-silverstripe-platform/">
+								<% if $ClassName == VirtualProject %>
+									Virtual
+								<% else %>
+									Base
+								<% end_if %>
+							</a>
 						</td>
 						<td>
 							<% if $EnvironmentsByUsage("Production").First %>
