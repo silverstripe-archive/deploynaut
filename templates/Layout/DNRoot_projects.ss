@@ -36,9 +36,9 @@
 						</td>
 						<td>
 							<% if $ClassName == VirtualProject %>
-								<span class="plat-icon icon-virtual"></span>Virtual
+								<span class="plat-icon icon-virtual-overview plat-icon-long"></span>
 							<% else %>
-								<span class="plat-icon icon-stack"></span>Base
+								<span class="plat-icon icon-stack-overview plat-icon-long"></span>
 							<% end_if %>
 						</td>
 						<td>
