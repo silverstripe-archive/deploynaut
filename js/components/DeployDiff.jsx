@@ -8,7 +8,7 @@ var DeployDiff = function (props) {
 		changes: {}
 	};
 	Object.keys(props.changes).forEach(function(key) {
-		if (props.changes[key].to === props.changes[key].from) {
+		if (props.changes[key].to === props.changes[key].from && !props.changes[key].description) {
 			return;
 		}
 		filteredProps.changes[key] = props.changes[key];
