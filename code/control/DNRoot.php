@@ -976,7 +976,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 					'Project' => $project,
 					'IsCurrentEnvironment' => $isCurrentEnvironment,
 					'IsActive' => $currentProject && $currentProject->ID == $project->ID,
-					'IsOverview' => $actionType == self::PROJECT_OVERVIEW && $currentProject->ID == $project->ID
+					'IsOverview' => $actionType == self::PROJECT_OVERVIEW && !$isCurrentEnvironment && $currentProject->ID == $project->ID
 				]);
 			}
 
