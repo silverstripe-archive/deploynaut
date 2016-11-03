@@ -213,14 +213,6 @@ This file can be used for backups, restores, and setting up local development en
 
 	wget --no-check-certificate https://raw.github.com/silverstripe/sspak/gh-pages/sspak.phar; sudo cp sspak.phar /usr/local/bin/sspak
 
-Set up feature flags in `_ss_environment.php`:
-
-	// Enable for beta testers.
-	//define('FLAG_SNAPSHOTS_ENABLED_FOR_MEMBERS', 'tester1@somewhere.com;tester2@somewhere.com');
-	
-	// Enable for everyone.
-	define('FLAG_SNAPSHOTS_ENABLED', true);
-
 ## Securing Snapshot Downloads
 
 Deploynaut provides the ability to backup database and/or assets from a specific environment

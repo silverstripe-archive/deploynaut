@@ -189,27 +189,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 * Check for feature flags:
-	 * - FLAG_SNAPSHOTS_ENABLED: set to true to enable globally
-	 * - FLAG_SNAPSHOTS_ENABLED_FOR_MEMBERS: set to semicolon-separated list of email addresses of allowed users.
-	 *
-	 * @return boolean
-	 */
-	public static function FlagSnapshotsEnabled() {
-		if (defined('FLAG_SNAPSHOTS_ENABLED') && FLAG_SNAPSHOTS_ENABLED) {
-			return true;
-		}
-		if (defined('FLAG_SNAPSHOTS_ENABLED_FOR_MEMBERS') && FLAG_SNAPSHOTS_ENABLED_FOR_MEMBERS) {
-			$allowedMembers = explode(';', FLAG_SNAPSHOTS_ENABLED_FOR_MEMBERS);
-			$member = Member::currentUser();
-			if ($allowedMembers && $member && in_array($member->Email, $allowedMembers)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * @return ArrayList
 	 */
 	public static function get_support_links() {
@@ -738,7 +717,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 
 		return $this->render([
 			'DNEnvironmentList' => $this->getCurrentProject()->DNEnvironmentList(),
-			'FlagSnapshotsEnabled' => $this->FlagSnapshotsEnabled(),
 			'Redeploy' => (bool) $request->getVar('redeploy')
 		]);
 	}

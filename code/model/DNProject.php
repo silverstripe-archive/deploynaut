@@ -253,7 +253,7 @@ class DNProject extends DataObject {
 		$controller = Controller::curr();
 		$actionType = $controller->getField('CurrentActionType');
 
-		if (DNRoot::FlagSnapshotsEnabled() && $this->isProjectReady()) {
+		if ($this->isProjectReady()) {
 			$list->push(new ArrayData([
 				'Link' => sprintf('naut/project/%s/snapshots', $this->Name),
 				'Title' => 'Snapshots',
