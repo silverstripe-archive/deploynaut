@@ -26,7 +26,7 @@
 							<ul class="collapse <% if $IsActive %> in<% end_if %>" id="collapseLevel2-$Pos">
 							<% loop $DNEnvironmentList %>
 								<li<% if $IsSection && $Up.ID == $Project.ID %> class="active"<% end_if %>>
-									<a href="$Up.Link/environment/$Name">$Name</a>
+									<a href="$DeploymentsLink">$Name</a>
 								</li>
 							<% end_loop %>
 							</ul>

@@ -70,7 +70,7 @@ class EnvironmentOverview extends Dispatcher {
 	public function getModel($name = '') {
 		$base = Director::absoluteBaseURL();
 		return [
-			'basename' => Director::baseURL() . $this->getCurrentEnvironment()->Link('overview'),
+			'basename' => Director::baseURL() . $this->getCurrentEnvironment()->Link(self::ACTION_OVERVIEW),
 			'dispatchers' => [
 				'git' => $base . $this->getCurrentProject()->Link('git'),
 				'plan' => $base . $this->getCurrentEnvironment()->Link('plan'),

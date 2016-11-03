@@ -228,10 +228,10 @@ class DNEnvironment extends DataObject {
 		$actionType = $controller->getField('CurrentActionType');
 
 		$list->push(new ArrayData([
-			'Link' => sprintf('naut/project/%s/environment/%s', $this->Project()->Name, $this->Name),
+			'Link' => $this->DeploymentsLink(),
 			'Title' => 'Deployments',
 			'IsCurrent' => $this->isCurrent(),
-			'IsSection' => $this->isSection() && $actionType == DNRoot::ACTION_DEPLOY
+			'IsSection' => $this->isSection() && ($actionType == DNRoot::ACTION_DEPLOY || $actionType == \EnvironmentOverview::ACTION_OVERVIEW)
 		]));
 
 		$this->extend('updateMenu', $list);
@@ -710,12 +710,25 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
+	 * This provides the link to the deployments depending on whether
+	 * the feature flag for the new deployment is enabled.
+	 *
+	 * @return string
+	 */
+	public function DeploymentsLink() {
+		if (\DNDeployment::flag_new_deploy_enabled()) {
+			return $this->Link(\EnvironmentOverview::ACTION_OVERVIEW);
+		}
+		return $this->Link();
+	}
+
+	/**
 	 * @param string $action
 	 *
 	 * @return string
 	 */
 	public function Link($action = '') {
-		return \Controller::join_links($this->Project()->Link(), "environment", $this->Name, $action);
+		return \Controller::join_links($this->Project()->Link(), 'environment', $this->Name, $action);
 	}
 
 	/**
