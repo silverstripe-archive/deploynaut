@@ -176,7 +176,11 @@ class DeployDispatcher extends Dispatcher {
 	public function redeploy(\SS_HTTPRequest $request) {
 		$currentBuild = $this->environment->CurrentBuild();
 		if (!$currentBuild || !$currentBuild->exists()) {
-			return $this->redirect(Controller::join_links($this->environment->Link('overview'), 'deployment', 'new'));
+			return $this->redirect(Controller::join_links(
+				$this->environment->Link(\EnvironmentOverview::ACTION_OVERVIEW),
+				'deployment',
+				'new'
+			));
 		}
 
 		$strategy = $this->environment->Backend()->planDeploy($this->environment, [
