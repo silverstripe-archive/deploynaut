@@ -986,7 +986,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 					'Project' => $currentProject,
 					'IsActive' => true,
 					'IsCurrentEnvironment' => $currentEnvironment,
-					'IsOverview' => $actionType == self::PROJECT_OVERVIEW
+					'IsOverview' => $actionType == self::PROJECT_OVERVIEW && !$currentEnvironment
 				]);
 				if ($limit > 0 && $navigation->count() > $limit) {
 					$navigation->pop();
