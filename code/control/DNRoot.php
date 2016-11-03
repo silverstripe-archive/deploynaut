@@ -63,7 +63,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'toggleprojectstar',
 		'branch',
 		'environment',
-		'metrics',
 		'createenvlog',
 		'createenv',
 		'getDeployForm',
@@ -105,7 +104,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		'project/$Project/MoveForm' => 'getMoveForm',
 		'project/$Project/UploadSnapshotForm' => 'getUploadSnapshotForm',
 		'project/$Project/PostSnapshotForm' => 'getPostSnapshotForm',
-		'project/$Project/environment/$Environment/metrics' => 'metrics',
 		'project/$Project/environment/$Environment/deploy_summary' => 'deploySummary',
 		'project/$Project/environment/$Environment/git_revisions' => 'gitRevisions',
 		'project/$Project/environment/$Environment/start-deploy' => 'startDeploy',
@@ -884,27 +882,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$job->start();
 
 		return $this->redirect($project->Link('createenv') . '/' . $job->ID);
-	}
-
-	/**
-	 *
-	 * @param \SS_HTTPRequest $request
-	 * @return \SS_HTTPResponse
-	 */
-	public function metrics(\SS_HTTPRequest $request) {
-		// Performs canView permission check by limiting visible projects
-		$project = $this->getCurrentProject();
-		if (!$project) {
-			return $this->project404Response();
-		}
-
-		// Performs canView permission check by limiting visible projects
-		$env = $this->getCurrentEnvironment($project);
-		if (!$env) {
-			return $this->environment404Response();
-		}
-
-		return $this->render();
 	}
 
 	/**
