@@ -255,7 +255,7 @@ class DNProject extends DataObject {
 
 		if ($this->isProjectReady()) {
 			$list->push(new ArrayData([
-				'Link' => sprintf('naut/project/%s/snapshots', $this->Name),
+				'Link' => $this->Link('snapshots'),
 				'Title' => 'Snapshots',
 				'IsCurrent' => $this->isSection() && $controller->getAction() == 'snapshots',
 				'IsSection' => $this->isSection() && $actionType == DNRoot::ACTION_SNAPSHOT
