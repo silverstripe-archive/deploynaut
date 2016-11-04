@@ -1370,6 +1370,23 @@ textarea.deploy-key
 				.build-details
 					display: block
 
+				&.approval
+
+					.approval-action
+						@extend a
+						display: block
+						float: right
+
+					.state
+						color: $body-text
+						font-weight: bold
+
+					.state.submitted
+						color: $status-pending
+					.state.rejected
+						color: $status-rejected
+					.state.approved
+						color: $status-approved
 
 .content .variables-description p
 	max-width: none
