@@ -902,7 +902,7 @@ class DNProject extends DataObject {
 						isset($interface['commit']) ? $interface['commit'] : 'commit'
 					);
 				}
-
+				
 				return new ArrayData([
 					'Name' => isset($interface['name']) ? $interface['name'] : ucfirst($components[0]),
 					'Icon' => isset($interface['icon']) ? $interface['icon'] : 'deploynaut/img/git.png',
