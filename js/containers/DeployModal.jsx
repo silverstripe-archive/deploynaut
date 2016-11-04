@@ -235,11 +235,6 @@ const mapStateToProps = function(state, ownProps) {
 		active_step = parseInt(window.location.hash.substring(1), 10);
 	}
 
-	let currentState = 'new';
-	if (typeof state.deployment.list[ownProps.params.id] !== 'undefined') {
-		currentState = state.deployment.list[ownProps.params.id].state;
-	}
-
 	return {
 		show: [
 			(!state.git.is_loading && !state.deployment.is_loading),
@@ -251,13 +246,13 @@ const mapStateToProps = function(state, ownProps) {
 			state.git.is_loading || state.git.is_updating,
 			state.plan.is_loading || state.deployment.is_loading,
 			state.deployment.approval_is_loading,
-			constants.isDeploying(currentState)
+			constants.isDeploying(state.deployment.state)
 		],
 		is_finished: [
 			state.git.selected_ref !== "",
 			state.deployment.id !== "",
 			deployPlanIsOk() && state.deployment.approved,
-			constants.isDeployDone(currentState)
+			constants.isDeployDone(state.deployment.state)
 		],
 		can_edit: constants.canEdit(state),
 		is_open: typeof (ownProps.params.id) !== 'undefined' && ownProps.params.id !== null,
