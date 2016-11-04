@@ -410,7 +410,7 @@ export function startApprovalReject() {
 export const SUCCEED_APPROVAL_REJECT = "SUCCEED_APPROVAL_REJECT";
 export function succeedApprovalReject(data) {
 	return {
-		type: START_APPROVAL_REJECT,
+		type: SUCCEED_APPROVAL_REJECT,
 		data: data
 	};
 }
