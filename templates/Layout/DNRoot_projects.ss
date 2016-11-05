@@ -20,7 +20,6 @@
 			<thead>
 				<tr>
 					<th>Stack title</th>
-					<th>Stack type</th>
 					<th>Production URL</th>
 					<th>UAT URL</th>
 					<th>Code</th>
@@ -29,47 +28,78 @@
 			<tbody>
 			<% if $DNProjectList %>
 				<% loop $DNProjectList %>
-					<tr>
-						<td class="project-name">
-							<a class="title" href="$Link">$Name</a>
-							<% include ProjectIcons %>
-						</td>
-						<td>
-							<a href="$Link">
-								<% if $ClassName == VirtualProject %>
-									Virtual
+					<% if $Classname == DNProject %>
+						<tr>
+							<td class="project-name">
+								<a class="title" href="$Link">$Name</a>
+								<% include ProjectIcons %>
+							</td>
+							<td>
+								<% if $EnvironmentsByUsage("Production").First %>
+									<% with $EnvironmentsByUsage("Production").First %><a href="$URL" target="_blank">$BareURL</a><% end_with %>
 								<% else %>
-									Base
+									-
 								<% end_if %>
-							</a>
-						</td>
-						<td>
-							<% if $EnvironmentsByUsage("Production").First %>
-								<% with $EnvironmentsByUsage("Production").First %><a href="$URL" target="_blank">$BareURL</a><% end_with %>
-							<% else %>
-								-
-							<% end_if %>
-						</td>
-						<td>
-							<% if $EnvironmentsByUsage("UAT").First %>
-								<% with $EnvironmentsByUsage("UAT").First %><a href="$URL" target="_blank">$BareURL</a><% end_with %>
-							<% else %>
-								-
-							<% end_if %>
-						</td>
-						<td>
-							<% if $RepositoryInterface %>
-								<% with $RepositoryInterface %>
-									<div class="repo-ux">
-										<img src="$Icon" />
-										<a href="$URL">View code<i class="fa fa-external-link-square superscript"></i></a>
-									</div>
-								<% end_with %>
-							<% else %>
-								-
-							<% end_if %>
-						</td>
-					</tr>
+							</td>
+							<td>
+								<% if $EnvironmentsByUsage("UAT").First %>
+									<% with $EnvironmentsByUsage("UAT").First %><a href="$URL" target="_blank">$BareURL</a><% end_with %>
+								<% else %>
+									-
+								<% end_if %>
+							</td>
+							<td>
+								<% if $RepositoryInterface %>
+									<% with $RepositoryInterface %>
+										<div class="repo-ux">
+											<img src="$Icon" />
+											<a href="$URL">View code<i class="fa fa-external-link-square superscript"></i></a>
+										</div>
+									<% end_with %>
+								<% else %>
+									-
+								<% end_if %>
+							</td>
+						</tr>
+						<% if VirtualSelectMenu($ID) %>
+							<% loop VirtualSelectMenu($ID) %>
+								<% if $IsVirtual %>
+									<tr class="virtual-row">
+										<td class="project-name">
+											<a class="title" href="$Link">$Name</a>
+											<% include ProjectIcons %>
+										</td>
+										<td>
+											<% if $EnvironmentsByUsageProd.First %>
+												<% with $EnvironmentsByUsageProd.First %><a href="$URL" target="_blank">$BareURL</a><% end_with %>
+											<% else %>
+												-
+											<% end_if %>
+										</td>
+										<td>
+											<% if $EnvironmentsByUsageUAT.First %>
+												<% with $EnvironmentsByUsageUAT.First %><a href="$URL" target="_blank">$BareURL</a><% end_with %>
+											<% else %>
+												-
+											<% end_if %>
+										</td>
+										<td>
+											<% if $RepositoryInterface %>
+												<% with $RepositoryInterface %>
+													<div class="repo-ux">
+														<img src="$Icon" />
+														<a href="$URL">View code<i class="fa fa-external-link-square superscript"></i></a>
+													</div>
+												<% end_with %>
+											<% else %>
+												-
+											<% end_if %>
+										</td>
+									</tr>
+								<% end_if %>
+							<% end_loop %>
+						<% end_if %>
+					<% end_if %>	
 				<% end_loop %>
 			<% else %>
 				<tr>
