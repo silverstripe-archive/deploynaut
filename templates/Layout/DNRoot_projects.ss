@@ -20,7 +20,6 @@
 			<thead>
 				<tr>
 					<th>Stack title</th>
-					<th>Stack type</th>
 					<th>Production URL</th>
 					<th>UAT URL</th>
 					<th>Code</th>
@@ -33,15 +32,6 @@
 						<td class="project-name">
 							<a class="title" href="$Link">$Name</a>
 							<% include ProjectIcons %>
-						</td>
-						<td>
-							<a href="$Link">
-								<% if $ClassName == VirtualProject %>
-									Virtual
-								<% else %>
-									Base
-								<% end_if %>
-							</a>
 						</td>
 						<td>
 							<% if $EnvironmentsByUsage("Production").First %>
