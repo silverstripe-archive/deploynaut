@@ -526,8 +526,7 @@ export function failDeployLogUpdate(err) {
 
 export function getDeployLog() {
 	return (dispatch, getState) => {
-		const currentState = getState().deployment.list[getState().deployment.id].state;
-		if (!constants.hasLogs(currentState)) {
+		if (!constants.hasLogs(getState().deployment.state)) {
 			return;
 		}
 		deployAPI.waitForSuccess(getState, `/log/${getState().deployment.id}`, 100, function(data) {
