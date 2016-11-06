@@ -710,13 +710,39 @@ class DNEnvironment extends DataObject {
 	}
 
 	/**
+	 * Check if the new deployment form is enabled by whether the project has it,
+	 * falling back to environment variables on whether it's enabled.
+	 *
+	 * @return bool
+	 */
+	public function IsNewDeployEnabled() {
+		if ($this->Project()->IsNewDeployEnabled) {
+			return true;
+		}
+		// Check for feature flags:
+		// - FLAG_NEWDEPLOY_ENABLED: set to true to enable globally
+		// - FLAG_NEWDEPLOY_ENABLED_FOR_MEMBERS: set to semicolon-separated list of email addresses of allowed users.
+		if (defined('FLAG_NEWDEPLOY_ENABLED') && FLAG_NEWDEPLOY_ENABLED) {
+			return true;
+		}
+		if (defined('FLAG_NEWDEPLOY_ENABLED_FOR_MEMBERS') && FLAG_NEWDEPLOY_ENABLED_FOR_MEMBERS) {
+			$allowedMembers = explode(';', FLAG_NEWDEPLOY_ENABLED_FOR_MEMBERS);
+			$member = Member::currentUser();
+			if ($allowedMembers && $member && in_array($member->Email, $allowedMembers)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * This provides the link to the deployments depending on whether
 	 * the feature flag for the new deployment is enabled.
 	 *
 	 * @return string
 	 */
 	public function DeploymentsLink() {
-		if (\DNDeployment::flag_new_deploy_enabled()) {
+		if ($this->IsNewDeployEnabled()) {
 			return $this->Link(\EnvironmentOverview::ACTION_OVERVIEW);
 		}
 		return $this->Link();
