@@ -6,6 +6,8 @@ class StateMachineFactory extends Object {
 
 	private static $handlers = [];
 
+	private static $initialised = [];
+
 	public function forDNDeployment(\DNDeployment $obj) {
 		$loader = new Finite\Loader\ArrayLoader([
 			'class'   => 'DNDeployment',
@@ -73,9 +75,16 @@ class StateMachineFactory extends Object {
 			]
 		]);
 		$stateMachine = Injector::inst()->get('Finite\StateMachine\StateMachine', true, [$obj]);
-		$loader->load($stateMachine);
-		$stateMachine->initialize();
-		$this->addHandlers($stateMachine);
+
+		// if we have already initialised a state machine for the given \DNDeployment
+		// then don't re-initialise it again, as this causes bugs with transition events
+		// being called multiple times.
+		if (empty(self::$initialised[$obj->ID])) {
+			$loader->load($stateMachine);
+			$stateMachine->initialize();
+			$this->addHandlers($stateMachine);
+			self::$initialised[$obj->ID] = true;
+		}
 		return $stateMachine;
 	}
 
