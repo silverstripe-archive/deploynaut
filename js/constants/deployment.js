@@ -28,6 +28,12 @@ export function hasLogs(deployState) {
 	if (deployState === STATE_INVALID) {
 		return false;
 	}
+	if (deployState === STATE_APPROVED) {
+		return false;
+	}
+	if (deployState === STATE_REJECTED) {
+		return false;
+	}
 	return true;
 }
 

@@ -13236,49 +13236,6 @@ button.sidebar-open {
       margin-bottom: 30px; }
     .deploy-form-outer .deploy-form .center, .deploy-form-loading .deploy-form .center {
       text-align: center; }
-    .deploy-form-outer .deploy-form button.deploy, .deploy-form-loading .deploy-form button.deploy {
-      float: left;
-      border: none;
-      font-family: inherit;
-      font-size: inherit;
-      background: none;
-      cursor: pointer;
-      padding: 17px 35px 14px;
-      display: inline-block;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      outline: none;
-      position: relative;
-      border-radius: 5px;
-      background: #2DB475;
-      color: #fff;
-      box-shadow: 0 6px #119e4d;
-      -webkit-transition: none;
-      -moz-transition: none;
-      transition: none;
-      margin-bottom: 20px;
-      margin-right: 20px; }
-      .deploy-form-outer .deploy-form button.deploy:after, .deploy-form-loading .deploy-form button.deploy:after {
-        content: '';
-        position: absolute;
-        z-index: -1;
-        -webkit-transition: all 0.3s;
-        -moz-transition: all 0.3s;
-        transition: all 0.3s; }
-      .deploy-form-outer .deploy-form button.deploy:hover, .deploy-form-loading .deploy-form button.deploy:hover {
-        box-shadow: 0 8px #119e4d;
-        top: -2px; }
-      .deploy-form-outer .deploy-form button.deploy:active, .deploy-form-loading .deploy-form button.deploy:active {
-        box-shadow: 0 0 #119e4d;
-        top: 6px; }
-      .deploy-form-outer .deploy-form button.deploy:disabled, .deploy-form-loading .deploy-form button.deploy:disabled {
-        cursor: not-allowed;
-        color: #fff;
-        background: #DDDDDD;
-        box-shadow: 0 6px #999999; }
-        .deploy-form-outer .deploy-form button.deploy:disabled:hover, .deploy-form-loading .deploy-form button.deploy:disabled:hover {
-          top: 0;
-          box-shadow: 0 6px #999999; }
     .deploy-form-outer .deploy-form dl.quick-summary, .deploy-form-loading .deploy-form dl.quick-summary {
       float: left;
       opacity: 0.7;
@@ -13296,6 +13253,50 @@ button.sidebar-open {
         clear: left; }
       .deploy-form-outer .deploy-form dl.quick-summary dd, .deploy-form-loading .deploy-form dl.quick-summary dd {
         margin-left: 80px; }
+
+button.deploy {
+  float: left;
+  border: none;
+  font-family: inherit;
+  font-size: inherit;
+  background: none;
+  cursor: pointer;
+  padding: 17px 35px 14px;
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  outline: none;
+  position: relative;
+  border-radius: 5px;
+  background: #2DB475;
+  color: #fff;
+  box-shadow: 0 6px #119e4d;
+  -webkit-transition: none;
+  -moz-transition: none;
+  transition: none;
+  margin-bottom: 20px;
+  margin-right: 20px; }
+  button.deploy:after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    transition: all 0.3s; }
+  button.deploy:hover {
+    box-shadow: 0 8px #119e4d;
+    top: -2px; }
+  button.deploy:active {
+    box-shadow: 0 0 #119e4d;
+    top: 6px; }
+  button.deploy:disabled {
+    cursor: not-allowed;
+    color: #fff;
+    background: #DDDDDD;
+    box-shadow: 0 6px #999999; }
+    button.deploy:disabled:hover {
+      top: 0;
+      box-shadow: 0 6px #999999; }
 
 .deploy-history {
   margin-top: 10px; }
@@ -13729,6 +13730,12 @@ textarea.deploy-key {
       .modal.deploy .modal-dialog .modal-content .fetch.approval .state.approved,
       .modal.deploy .modal-dialog .modal-content .section.approval .state.approved {
         color: #5cb85c; }
+      .modal.deploy .modal-dialog .modal-content .fetch.deployment .deploy-btn-container,
+      .modal.deploy .modal-dialog .modal-content .section.deployment .deploy-btn-container {
+        text-align: center; }
+        .modal.deploy .modal-dialog .modal-content .fetch.deployment .deploy-btn-container button.deploy,
+        .modal.deploy .modal-dialog .modal-content .section.deployment .deploy-btn-container button.deploy {
+          float: none; }
 
 .content .variables-description p {
   max-width: none; }

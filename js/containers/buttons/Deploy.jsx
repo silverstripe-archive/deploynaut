@@ -1,7 +1,7 @@
-var ReactRedux = require('react-redux');
+const React = require('react');
+const ReactRedux = require('react-redux');
 
-var actions = require('../../_actions.js');
-var Button = require('../../components/Button.jsx');
+const actions = require('../../_actions.js');
 const constants = require('../../constants/deployment.js');
 
 function canDeploy(state) {
@@ -17,11 +17,25 @@ function canDeploy(state) {
 	return false;
 }
 
+function deployButton(props) {
+
+	if (!props.display) {
+		return null;
+	}
+	return (
+		<button
+			value="Confirm Deployment"
+			className="deploy"
+			onClick={props.onClick}
+		>
+			Start Deployment
+		</button>
+	);
+}
+
 const mapStateToProps = function(state) {
 	return {
-		display: canDeploy(state),
-		style: "btn-success",
-		value: "Deploy"
+		display: canDeploy(state)
 	};
 };
 
@@ -33,4 +47,4 @@ const mapDispatchToProps = function(dispatch, ownProps) {
 	};
 };
 
-module.exports = ReactRedux.connect(mapStateToProps, mapDispatchToProps)(Button);
+module.exports = ReactRedux.connect(mapStateToProps, mapDispatchToProps)(deployButton);
