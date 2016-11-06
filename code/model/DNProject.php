@@ -19,9 +19,10 @@ class DNProject extends DataObject {
 	 */
 	private static $db = [
 		"Name" => "Varchar",
+		"IsNewDeployEnabled" => "Boolean",
 		"CVSPath" => "Varchar(255)",
 		"DiskQuotaMB" => "Int",
-		"AllowedEnvironmentType" => "Varchar(255)",
+		"AllowedEnvironmentType" => "Varchar(255)"
 	];
 
 	/**
@@ -38,7 +39,7 @@ class DNProject extends DataObject {
 	 */
 	private static $many_many = [
 		"Viewers" => "Group",
-		'StarredBy' => "Member"
+		"StarredBy" => "Member"
 	];
 
 	/**
@@ -641,6 +642,10 @@ class DNProject extends DataObject {
 		$fields->fieldByName('Root.Main.Name')
 			->setTitle('Project name')
 			->setDescription($projectNameDesc);
+
+		$fields->fieldByName('Root.Main.IsNewDeployEnabled')
+			->setTitle('New deploy form enabled for this project')
+			->setDescription('Feature flag to change links to environment and deployments to the new deployment form for this project');
 
 		$fields->fieldByName('Root.Main.CVSPath')
 			->setTitle('Git repository')

@@ -85,27 +85,6 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 		'Deployer.Name' => 'Deployer'
 	);
 
-	/**
-	 * Check for feature flags:
-	 * - FLAG_NEWDEPLOY_ENABLED: set to true to enable globally
-	 * - FLAG_NEWDEPLOY_ENABLED_FOR_MEMBERS: set to semicolon-separated list of email addresses of allowed users.
-	 *
-	 * @return boolean
-	 */
-	public static function flag_new_deploy_enabled() {
-		if (defined('FLAG_NEWDEPLOY_ENABLED') && FLAG_NEWDEPLOY_ENABLED) {
-			return true;
-		}
-		if (defined('FLAG_NEWDEPLOY_ENABLED_FOR_MEMBERS') && FLAG_NEWDEPLOY_ENABLED_FOR_MEMBERS) {
-			$allowedMembers = explode(';', FLAG_NEWDEPLOY_ENABLED_FOR_MEMBERS);
-			$member = Member::currentUser();
-			if ($allowedMembers && $member && in_array($member->Email, $allowedMembers)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	public function setResqueToken($token) {
 		$this->ResqueToken = $token;
 	}
@@ -128,7 +107,7 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 	}
 
 	public function Link() {
-		if (self::flag_new_deploy_enabled()) {
+		if ($this->Environment()->IsNewDeployEnabled()) {
 			return \Controller::join_links($this->Environment()->Link(\EnvironmentOverview::ACTION_OVERVIEW), 'deployment', $this->ID);
 		} else {
 			return \Controller::join_links($this->Environment()->Link(), 'deploy', $this->ID);
