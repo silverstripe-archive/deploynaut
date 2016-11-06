@@ -715,11 +715,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return $this->environment404Response();
 		}
 
-		// we redirect to the EnvironmentOverview dispatcher if using the new deploy form.
-		if (\DNDeployment::flag_new_deploy_enabled()) {
-			return $this->redirect($env->Link(\EnvironmentOverview::ACTION_OVERVIEW));
-		}
-
 		return $this->render([
 			'DNEnvironmentList' => $this->getCurrentProject()->DNEnvironmentList(),
 			'Redeploy' => (bool) $request->getVar('redeploy')
