@@ -869,56 +869,6 @@ button.sidebar-open
 		.center
 			text-align: center
 
-		button.deploy
-			float: left
-			border: none
-			font-family: inherit
-			font-size: inherit
-			background: none
-			cursor: pointer
-			padding: 17px 35px 14px
-			display: inline-block
-			text-transform: uppercase
-			letter-spacing: 1px
-			outline: none
-			position: relative
-			border-radius: 5px
-			background: #2DB475
-			color: #fff
-			box-shadow: 0 6px #119e4d
-			-webkit-transition: none
-			-moz-transition: none
-			transition: none
-			margin-bottom: 20px
-			margin-right: 20px
-
-			&:after
-				content: ''
-				position: absolute
-				z-index: -1
-				-webkit-transition: all 0.3s
-				-moz-transition: all 0.3s
-				transition: all 0.3s
-
-			&:hover
-				box-shadow: 0 8px #119e4d
-				top: -2px
-
-			&:active
-				box-shadow: 0 0 #119e4d
-				top: 6px
-
-			&:disabled
-				cursor: not-allowed
-				color: #fff
-				background: #DDDDDD
-				box-shadow: 0 6px #999999
-
-				&:hover
-					top: 0
-					box-shadow: 0 6px #999999
-
-
 		dl.quick-summary
 			@extend .small
 
@@ -941,7 +891,54 @@ button.sidebar-open
 			dd
 				margin-left: 80px
 
+button.deploy
+	float: left
+	border: none
+	font-family: inherit
+	font-size: inherit
+	background: none
+	cursor: pointer
+	padding: 17px 35px 14px
+	display: inline-block
+	text-transform: uppercase
+	letter-spacing: 1px
+	outline: none
+	position: relative
+	border-radius: 5px
+	background: #2DB475
+	color: #fff
+	box-shadow: 0 6px #119e4d
+	-webkit-transition: none
+	-moz-transition: none
+	transition: none
+	margin-bottom: 20px
+	margin-right: 20px
 
+	&:after
+		content: ''
+		position: absolute
+		z-index: -1
+		-webkit-transition: all 0.3s
+		-moz-transition: all 0.3s
+		transition: all 0.3s
+
+	&:hover
+		box-shadow: 0 8px #119e4d
+		top: -2px
+
+	&:active
+		box-shadow: 0 0 #119e4d
+		top: 6px
+
+	&:disabled
+		cursor: not-allowed
+		color: #fff
+		background: #DDDDDD
+		box-shadow: 0 6px #999999
+
+		&:hover
+			top: 0
+			box-shadow: 0 6px #999999
 
 .deploy-history
 	margin-top: $padding-large-vertical
@@ -1370,6 +1367,31 @@ textarea.deploy-key
 				.build-details
 					display: block
 
+				&.approval
+
+					.approval-action
+						@extend a
+						display: block
+						float: right
+
+					.state
+						color: $body-text
+						font-weight: bold
+
+					.state.submitted
+						color: $status-pending
+					.state.rejected
+						color: $status-rejected
+					.state.approved
+						color: $status-approved
+
+				&.deployment
+
+					.deploy-btn-container
+						text-align: center
+
+						button.deploy
+							float: none
 
 .content .variables-description p
 	max-width: none

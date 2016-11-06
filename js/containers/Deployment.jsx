@@ -36,11 +36,12 @@ const deployment = function(props) {
 	}
 
 	return (
-		<div className="section">
-			<header id="3">Deployment</header>
+		<div className="section deployment">
 			{error}
-			<div>
+			<div className="deploy-btn-container">
 				<Deploy sha={props.selected_ref} />
+			</div>
+			<div>
 				{logOutput}
 			</div>
 		</div>

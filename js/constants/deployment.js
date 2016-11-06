@@ -10,6 +10,14 @@ export const STATE_ABORTING = 'Aborting';
 export const STATE_COMPLETED = 'Completed';
 export const STATE_FAILED = 'Failed';
 
+// These constants are a subset of the deploynaut states
+// this is because an approval can be bypassed and also
+// several deployment states maps to 'approved'.
+export const APPROVAL_SUBMITTED = 'submitted';
+export const APPROVAL_REJECTED = 'rejected';
+export const APPROVAL_BYPASSED = 'bypassed';
+export const APPROVAL_APPROVED = 'approved';
+
 export function hasLogs(deployState) {
 	if (deployState === STATE_NEW) {
 		return false;
@@ -18,6 +26,12 @@ export function hasLogs(deployState) {
 		return false;
 	}
 	if (deployState === STATE_INVALID) {
+		return false;
+	}
+	if (deployState === STATE_APPROVED) {
+		return false;
+	}
+	if (deployState === STATE_REJECTED) {
 		return false;
 	}
 	return true;
@@ -85,5 +99,30 @@ export function canEdit(state) {
 	if (state.deployment.queued) {
 		return false;
 	}
+	if (state.deployment.rejected) {
+		return false;
+	}
 	return true;
+}
+
+// this function maps deployment state to an approval state
+export function getApprovalState(deployState, approverName) {
+	switch (deployState) {
+		case STATE_SUBMITTED:
+			return APPROVAL_SUBMITTED;
+		case STATE_REJECTED:
+			return APPROVAL_REJECTED;
+		case STATE_APPROVED:
+		case STATE_QUEUED:
+		case STATE_DEPLOYING:
+		case STATE_INVALID:
+		case STATE_FAILED:
+		case STATE_COMPLETED:
+			if (!approverName) {
+				return APPROVAL_BYPASSED
+			}
+			return APPROVAL_APPROVED;
+		default:
+			return '';
+	}
 }

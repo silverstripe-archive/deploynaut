@@ -7,6 +7,7 @@ const TargetReleaseRO = require('./TargetReleaseRO.jsx');
 const ButtonGitUpdate = require('./buttons/GitUpdate.jsx');
 
 const Approval = require('./Approval.jsx');
+const ApprovalRO = require('./ApprovalRO.jsx');
 const Deployment = require('./Deployment.jsx');
 const DeployPlan = require('./DeployPlan.jsx');
 const DeployPlanRO = require('./DeployPlanRO.jsx');
@@ -171,7 +172,11 @@ const DeployModal = React.createClass({
 			}
 		}
 		if (steps[2].show) {
-			content[2] = (<Approval key={2} />);
+			if (this.props.can_edit) {
+				content[2] = (<Approval key={2}/>);
+			} else {
+				content[2] = (<ApprovalRO key={2}/>);
+			}
 		}
 		if (steps[3].show) {
 			content[3] = (<Deployment key={3} />);
