@@ -106,7 +106,7 @@ const mapStateToProps = function(state) {
 	});
 
 	return {
-		approval_state: constants.getApprovalState(state.deployment.state),
+		approval_state: constants.getApprovalState(state.deployment.state, approver),
 		date_requested_nice: state.deployment.data.date_requested_nice,
 		date_approved_nice: state.deployment.data.date_approved_nice,
 		approver: approver,
