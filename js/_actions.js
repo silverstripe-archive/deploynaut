@@ -506,7 +506,7 @@ export function getDeployLog() {
 		if (!constants.hasLogs(getState().deployment.state)) {
 			return;
 		}
-		deployAPI.waitForSuccess(getState, `/log/${getState().deployment.id}`, 100, function(data) {
+		deployAPI.call(getState, `/log/${getState().deployment.id}`, 'get').then(data => {
 			dispatch(succeedDeployLogUpdate(data));
 		});
 	};
@@ -519,8 +519,7 @@ export function startDeploy() {
 			id: getState().deployment.id
 		})
 			.then(function(data) {
-				dispatch(succeedDeploymentEnqueue(data));
-				return dispatch(getDeployLog());
+				return dispatch(succeedDeploymentEnqueue(data));
 			})
 			.catch((error) => dispatch(failDeploymentEnqueue(error)));
 	};
@@ -565,7 +564,6 @@ export function getDeployment(id) {
 		return getDeployPromise
 			.then(data => {
 				dispatch(succeedGetDeployment(data));
-				dispatch(getDeployLog());
 			})
 			.catch(err => dispatch(failGetDeployment(err)));
 	};
