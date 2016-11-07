@@ -51,6 +51,13 @@ function Plan(props) {
 	store.dispatch(actions.setUser(props.model.user));
 
 	store.dispatch(actions.getDeployHistory());
+
+	setInterval(() => {
+		if (!store.getState().deployment.is_loading){
+			store.dispatch(actions.getDeployHistory());
+		}
+	}, 5 * 1000);
+
 	store.dispatch(actions.getRevisionsIfNeeded());
 	store.dispatch(actions.getApprovers());
 
