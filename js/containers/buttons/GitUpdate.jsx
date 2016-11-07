@@ -20,7 +20,7 @@ function isDisabled(state) {
 }
 
 const mapStateToProps = function(state) {
-	let btnValue = state.git.is_updating ? "Fetch code..." : "Fetch code";
+	let btnValue = state.git.is_updating ? 'Fetching code...' : 'Fetch code';
 
 	if (state.git.error) {
 		btnValue = state.git.error;
@@ -28,7 +28,8 @@ const mapStateToProps = function(state) {
 
 	return {
 		disabled: isDisabled(state),
-		style: "btn-default",
+		icon: 'fa fa-refresh',
+		style: 'btn-default',
 		value: btnValue
 	};
 };
