@@ -217,7 +217,7 @@ const DeployModal = React.createClass({
 									<div className="pull-right">
 										<ButtonGitUpdate />
 									</div>
-									<div>Last synced {this.props.last_fetched_date} <span className="small">{this.props.last_fetched_ago}</span></div>
+									<div><i className="fa fa-code" aria-hidden="true"></i> Last synced {this.props.last_fetched_date} <span className="small">{this.props.last_fetched_ago}</span></div>
 									<div><i>Ensure you have the most recent code before setting up your deployment</i></div>
 								</div>
 								{content}
