@@ -81,7 +81,7 @@ const Approval = React.createClass({
 		}
 
 		let removeAction = null;
-		let rejectAction = <RejectRequest />;
+		let rejectAction = null;
 		if (props.approval_state === constants.APPROVAL_SUBMITTED) {
 			removeAction = (
 				<a href={"javascript:void(0);"} className="approval-action" onClick={props.onCancel}>
