@@ -185,7 +185,8 @@ const DeployModal = React.createClass({
 		let options = [];
 		if (this.props.deployment_id && constants.canDelete(this.props.state)) {
 			options.push({
-				title: "Delete",
+				title: 'Delete',
+				icon: 'fa fa-trash',
 				handler: this.props.onDelete
 			});
 		}
