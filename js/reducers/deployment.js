@@ -10,7 +10,6 @@ const initialState = {
 	// this is a "list" (actually an object) of deployment logs keyed by the deployment id
 	logs: {},
 	history_error: null,
-	upcoming_error: null,
 	error: null,
 	state: deployStates.STATE_NEW,
 	approval_is_loading: false,
@@ -47,10 +46,6 @@ module.exports = function deployment(state, action) {
 				history_is_loading: false,
 				history_error: action.error.toString()
 			});
-		case actions.FAIL_UPCOMING_DEPLOYMENTS_GET:
-			return _.assign({}, state, {
-				upcoming_error: action.error.toString()
-			});
 		case actions.SUCCEED_DEPLOY_HISTORY_GET: {
 			// get current list
 			const newList = _.assign({}, state.list);
@@ -61,20 +56,6 @@ module.exports = function deployment(state, action) {
 			return _.assign({}, state, {
 				list: newList,
 				history_is_loading: false
-			});
-		}
-		case actions.SUCCEED_UPCOMING_DEPLOYMENTS_GET: {
-			if (action.data.list.length === 0) {
-				return state;
-			}
-			// get current list
-			const newList = _.assign({}, state.list);
-			// add or update the entries in the current list
-			for (let i = 0; i < action.data.list.length; i++) {
-				newList[action.data.list[i].id] = action.data.list[i];
-			}
-			return _.assign({}, state, {
-				list: newList,
 			});
 		}
 		case actions.NEW_DEPLOYMENT:

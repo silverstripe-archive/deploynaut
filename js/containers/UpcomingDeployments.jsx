@@ -82,8 +82,7 @@ const mapStateToProps = function(state) {
 	});
 
 	return {
-		list: upcomingList,
-		error: state.deployment.upcoming_error
+		list: upcomingList
 	};
 };
 

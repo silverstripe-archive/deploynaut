@@ -300,7 +300,7 @@ class DNEnvironment extends DataObject {
 		// if no Viewers or ViewerGroups defined, fallback to DNProject::canView permissions
 		if ($this->Viewers()->exists() || $this->ViewerGroups()->exists()) {
 			return $this->Viewers()->byID($member->ID)
-			|| $member->inGroups($this->ViewerGroups());
+				|| $member->inGroups($this->ViewerGroups());
 		}
 
 		return $this->Project()->canView($member);
@@ -332,7 +332,7 @@ class DNEnvironment extends DataObject {
 		}
 
 		return $this->Deployers()->byID($member->ID)
-		|| $member->inGroups($this->DeployerGroups());
+			|| $member->inGroups($this->DeployerGroups());
 	}
 
 	/**
@@ -371,7 +371,7 @@ class DNEnvironment extends DataObject {
 		}
 
 		return $this->CanRestoreMembers()->byID($member->ID)
-		|| $member->inGroups($this->CanRestoreGroups());
+			|| $member->inGroups($this->CanRestoreGroups());
 	}
 
 	/**
@@ -406,7 +406,7 @@ class DNEnvironment extends DataObject {
 		}
 
 		return $this->CanBackupMembers()->byID($member->ID)
-		|| $member->inGroups($this->CanBackupGroups());
+			|| $member->inGroups($this->CanBackupGroups());
 	}
 
 	/**
@@ -445,7 +445,7 @@ class DNEnvironment extends DataObject {
 		}
 
 		return $this->ArchiveUploaders()->byID($member->ID)
-		|| $member->inGroups($this->ArchiveUploaderGroups());
+			|| $member->inGroups($this->ArchiveUploaderGroups());
 	}
 
 	/**
@@ -475,7 +475,7 @@ class DNEnvironment extends DataObject {
 		}
 
 		return $this->ArchiveDownloaders()->byID($member->ID)
-		|| $member->inGroups($this->ArchiveDownloaderGroups());
+			|| $member->inGroups($this->ArchiveDownloaderGroups());
 	}
 
 	/**
@@ -505,7 +505,7 @@ class DNEnvironment extends DataObject {
 		}
 
 		return $this->ArchiveDeleters()->byID($member->ID)
-		|| $member->inGroups($this->ArchiveDeleterGroups());
+			|| $member->inGroups($this->ArchiveDeleterGroups());
 	}
 
 	/**
@@ -680,33 +680,18 @@ class DNEnvironment extends DataObject {
 		// default / fallback sort order
 		$sort['LastEdited'] = 'DESC';
 
-		return $this->Deployments()
+		$deployments = $this->Deployments()
 			->where('"SHA" IS NOT NULL')
-			->filter('State', [
+			->sort($sort);
+
+		if (!$this->IsNewDeployEnabled()) {
+			$deployments = $deployments->filter('State', [
 				DNDeployment::STATE_COMPLETED,
 				DNDeployment::STATE_FAILED,
 				DNDeployment::STATE_INVALID
-			])
-			->sort($sort);
-	}
-
-	/**
-	 * A list of upcoming or current deployments.
-	 * @return ArrayList
-	 */
-	public function UpcomingDeployments() {
-		return $this->Deployments()
-			->where('"SHA" IS NOT NULL')
-			->filter('State', [
-				DNDeployment::STATE_NEW,
-				DNDeployment::STATE_SUBMITTED,
-				DNDeployment::STATE_APPROVED,
-				DNDeployment::STATE_REJECTED,
-				DNDeployment::STATE_ABORTING,
-				DNDeployment::STATE_QUEUED,
-				DNDeployment::STATE_DEPLOYING,
-			])
-			->sort('LastEdited DESC');
+			]);
+		}
+		return $deployments;
 	}
 
 	/**

@@ -79,29 +79,6 @@ export function failRevisionsGet(err) {
 	};
 }
 
-export const START_UPCOMING_DEPLOYMENTS_GET = 'START_UPCOMING_DEPLOYMENTS_GET';
-export function startUpcomingDeploymentsGet() {
-	return {
-		type: START_UPCOMING_DEPLOYMENTS_GET
-	};
-}
-
-export const SUCCEED_UPCOMING_DEPLOYMENTS_GET = 'SUCCEED_UPCOMING_DEPLOYMENTS_GET';
-export function succeedUpcomingDeploymentsGet(data) {
-	return {
-		type: SUCCEED_UPCOMING_DEPLOYMENTS_GET,
-		data: data
-	};
-}
-
-export const FAIL_UPCOMING_DEPLOYMENTS_GET = 'FAIL_UPCOMING_DEPLOYMENTS_GET';
-export function failUpcomingDeploymentsGet(err) {
-	return {
-		type: FAIL_UPCOMING_DEPLOYMENTS_GET,
-		error: err
-	};
-}
-
 export const START_DEPLOY_HISTORY_GET = 'START_DEPLOY_HISTORY_GET';
 export function startDeployHistoryGet() {
 	return {
@@ -153,15 +130,6 @@ export function getDeployHistory() {
 		return deployAPI.call(getState, '/history', 'get')
 			.then(json => dispatch(succeedDeployHistoryGet(json)))
 			.catch(err => dispatch(failDeployHistoryGet(err)));
-	};
-}
-
-export function getUpcomingDeployments() {
-	return (dispatch, getState) => {
-		dispatch(startUpcomingDeploymentsGet());
-		return deployAPI.call(getState, '/upcoming', 'get')
-			.then(json => dispatch(succeedUpcomingDeploymentsGet(json)))
-			.catch(err => dispatch(failUpcomingDeploymentsGet(err)));
 	};
 }
 
