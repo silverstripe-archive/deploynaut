@@ -39,6 +39,10 @@ class GitDispatcher extends Dispatcher {
 		self::ACTION_GIT
 	];
 
+	private static $dependencies = [
+		'formatter' => '%$DeploynautAPIFormatter'
+	];
+
 	public function init() {
 		parent::init();
 
@@ -97,16 +101,7 @@ class GitDispatcher extends Dispatcher {
 				'id' => self::REF_TYPE_FROM_UAT,
 				'label' => 'Promote the version currently on UAT',
 				'description' => 'Promote the version currently on UAT',
-				'promote_build' => [
-					'id' => $uatBuild->ID,
-					'deployed' => DBField::create_field('SS_Datetime', $uatBuild->Created, 'Created')->Ago(),
-					'branch' => $uatBuild->Branch,
-					'tags' => $uatBuild->getTags()->toArray(),
-					'sha' => $uatBuild->SHA,
-					'short_sha' => substr($uatBuild->SHA, 0, 7),
-					'commit_message' => $uatBuild->getCommitMessage(),
-					'commit_url' => $uatBuild->getCommitURL(),
-				]
+				'promote_build' => $this->formatter->getDeploymentData($uatBuild)
 			];
 		}
 
