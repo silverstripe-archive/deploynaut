@@ -4,7 +4,6 @@ var ReactRedux = require('react-redux');
 var TextArea = require('../components/TextArea.jsx');
 var Dropdown = require('../components/Dropdown.jsx');
 var RequestApproval = require('./buttons/RequestApproval.jsx');
-var CancelApprovalRequest = require('./buttons/CancelApprovalRequest.jsx');
 var ApproveRequest = require('./buttons/ApproveRequest.jsx');
 var RejectRequest = require('./buttons/RejectRequest.jsx');
 var Bypass = require('./buttons/Bypass.jsx');
