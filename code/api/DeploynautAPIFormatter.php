@@ -83,6 +83,7 @@ class DeploynautAPIFormatter {
 			'title' => $deployment->Title,
 			'summary' => $deployment->Summary,
 			'branch' => $deployment->Branch,
+			'rejected_reason' => $deployment->RejectedReason,
 			'tags' => $tags,
 			'changes' => $deployment->getDeploymentStrategy()->getChanges(),
 			'deployment_type' => $deployment->getDeploymentStrategy()->getActionCode(),

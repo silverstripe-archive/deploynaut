@@ -7,8 +7,8 @@ const mapStateToProps = function(state) {
 	return {
 		display: state.deployment.submitted,
 		disabled: state.deployment.is_loading,
-		style: "btn-default",
-		value: "Reject deployment"
+		style: "btn-danger",
+		value: "Reject"
 	};
 };
 

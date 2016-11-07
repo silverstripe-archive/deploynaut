@@ -4,7 +4,7 @@ var TextArea = function(props) {
 	return (
 		<textarea
 			className="form-control"
-			rows="10"
+			rows={props.rows ? props.rows : "10"}
 			name={props.name}
 			value={props.value}
 			onChange={props.onChange}

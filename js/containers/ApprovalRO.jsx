@@ -1,6 +1,7 @@
 var React = require("react");
 var ReactRedux = require('react-redux');
 
+var TextArea = require('../components/TextArea.jsx');
 var Dropdown = require('../components/Dropdown.jsx');
 var RequestApproval = require('./buttons/RequestApproval.jsx');
 var CancelApprovalRequest = require('./buttons/CancelApprovalRequest.jsx');
@@ -41,62 +42,97 @@ function getStateDescription(approvalState) {
 	}
 }
 
-function Approval(props) {
-	let error = null;
-	if (props.error) {
-		error = (
-			<div className="alert alert-danger">
-				<div className="">
-					{props.error}
-				</div>
-			</div>
-		);
-	}
+const Approval = React.createClass({
 
-	let stateTitle = getStateTitle(props.approval_state);
-	let approver_name = props.approver ? props.approver.name : '';
+	getInitialState: function() {
+		return {
+			rejected_reason_open: this.props.approval_state === constants.APPROVAL_REJECTED
+		};
+	},
 
-	let date = '';
-	if (props.date_approved_nice) {
-		date = props.date_approved_nice;
-	} else if (props.date_requested_nice) {
-		date = props.date_requested_nice;
-	}
+	toggleRejectOpen: function() {
+		this.setState({
+			rejected_reason_open: !this.state.rejected_reason_open
+		});
+	},
 
-	let action = null;
-	if (props.approval_state === constants.APPROVAL_SUBMITTED) {
-		action = (
-			<a className="approval-action" onClick={props.onCancel}>
-				<i className="fa fa-times-circle"></i> Remove
-			</a>
-		);
-	}
+	render: function() {
+		const props = this.props;
 
-	return (
-		<div className="section approval">
-			<header id="2">Approval</header>
-			<p>
-				{getStateDescription(props.approval_state)}
-			</p>
-			<StatusBox type={props.approval_state}>
-				<div>
-					{action}
-					<div className={"state " + props.approval_state}>
-						{stateTitle}
+		let error = null;
+		if (props.error) {
+			error = (
+				<div className="alert alert-danger">
+					<div className="">
+						{props.error}
 					</div>
 				</div>
-				<div>{approver_name} <small>{date}</small></div>
-			</StatusBox>
-			<div>
-				<ApproveRequest /> <RejectRequest />
+			);
+		}
+
+		let stateTitle = getStateTitle(props.approval_state);
+		let approver_name = props.approver ? props.approver.name : '';
+
+		let date = '';
+		if (props.date_approved_nice) {
+			date = props.date_approved_nice;
+		} else if (props.date_requested_nice) {
+			date = props.date_requested_nice;
+		}
+
+		let removeAction = null;
+		let rejectAction = <RejectRequest />;
+		if (props.approval_state === constants.APPROVAL_SUBMITTED) {
+			removeAction = (
+				<a href={"javascript:void(0);"} className="approval-action" onClick={props.onCancel}>
+					<i className="fa fa-times-circle"></i> Remove
+				</a>
+			);
+			rejectAction = (
+				<a href={"javascript:void(0);"} className="btn-link" onClick={this.toggleRejectOpen}>
+					Reject
+				</a>
+			);
+		}
+
+		return (
+			<div className="section approval">
+				<header id="2">Approval</header>
+				<p>
+					{getStateDescription(props.approval_state)}
+				</p>
+				<StatusBox type={props.approval_state}>
+					<div>
+						{removeAction}
+						<div className={"state " + props.approval_state}>
+							{stateTitle}
+						</div>
+					</div>
+					<div>{approver_name} <small>{date}</small></div>
+				</StatusBox>
+				<div>
+					<ApproveRequest /> {rejectAction}
+				</div>
+				<div className={this.state.rejected_reason_open ? "" : "hide"}>
+					<label>Provide a reason why the deployment has been rejected</label>
+					<TextArea
+						name="rejected_reason"
+						value={props.rejected_reason}
+						rows="5"
+						onChange={props.onRejectReasonChange}
+						disabled={props.approval_state === constants.APPROVAL_REJECTED}
+					/>
+					<RejectRequest />
+				</div>
+				<div>
+					<Bypass />
+				</div>
+				{error}
 			</div>
-			<div>
-				<Bypass />
-			</div>
-			{error}
-		</div>
-	);
-}
+		);
+	}
+
+});
 
 const mapStateToProps = function(state) {
 	let approver = state.deployment.approvers.find(function(val) {
@@ -110,6 +146,7 @@ const mapStateToProps = function(state) {
 		date_requested_nice: state.deployment.data.date_requested_nice,
 		date_approved_nice: state.deployment.data.date_approved_nice,
 		approver: approver,
+		rejected_reason: state.deployment.rejected_reason,
 		error: state.deployment.error,
 		is_loading: state.deployment.is_loading
 	};
@@ -122,6 +159,9 @@ const mapDispatchToProps = function(dispatch) {
 		},
 		onCancel: function() {
 			dispatch(actions.cancelApprovalRequest());
+		},
+		onRejectReasonChange: function(e) {
+			dispatch(actions.setRejectReason(e.target.value));
 		}
 	};
 };

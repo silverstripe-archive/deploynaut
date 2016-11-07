@@ -206,6 +206,14 @@ export function setGitRef(id) {
 	return {type: SET_REVISION, id};
 }
 
+export const SET_REJECT_REASON = 'SET_REJECT_REASON';
+export function setRejectReason(value) {
+	return {
+		type: SET_REJECT_REASON,
+		value: value
+	};
+}
+
 export const START_SUMMARY_GET = 'START_SUMMARY_GET';
 export function startSummaryGet() {
 	return {
@@ -427,7 +435,8 @@ export function rejectDeployment() {
 	return (dispatch, getState) => {
 		dispatch(startApprovalReject());
 		return approvalsAPI.call(getState, '/reject', 'post', {
-			id: getState().deployment.id
+			id: getState().deployment.id,
+			rejected_reason: getState().deployment.rejected_reason
 		})
 			.then(function(data) {
 				dispatch(succeedApprovalReject(data));
