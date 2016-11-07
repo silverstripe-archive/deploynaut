@@ -120,6 +120,9 @@ const Approval = React.createClass({
 						disabled={props.approval_state === constants.APPROVAL_REJECTED}
 					/>
 					<RejectRequest />
+					<a href={"javascript:void(0);"} className="btn btn-link" onClick={this.toggleRejectOpen}>
+						Cancel
+					</a>
 				</div>
 				<div>
 					<Bypass />
