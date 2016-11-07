@@ -279,6 +279,10 @@ class ApprovalsDispatcher extends Dispatcher {
 			$deployment->write();
 		}
 
+		if ($request->postVar('rejected_reason')) {
+			$deployment->RejectedReason = $request->postVar('rejected_reason');
+		}
+
 		try {
 			$deployment->getMachine()->apply(DNDeployment::TR_REJECT);
 		} catch (\Exception $e) {

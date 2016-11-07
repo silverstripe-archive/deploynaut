@@ -17,6 +17,7 @@ const initialState = {
 	submitted: false,
 	approved: false,
 	rejected: false,
+	rejected_reason: "",
 	queued: false,
 	approvers: [],
 	approver_id: 0,
@@ -101,6 +102,11 @@ module.exports = function deployment(state, action) {
 				approver_id: action.id
 			});
 
+		case actions.SET_REJECT_REASON:
+			return _.assign({}, state, {
+				rejected_reason: action.value
+			});
+
 		case actions.START_APPROVERS_GET:
 			return _.assign({}, state, {
 				approval_is_loading: true
@@ -145,6 +151,7 @@ module.exports = function deployment(state, action) {
 				submitted: deployStates.isSubmitted(action.data.deployment.state),
 				approved: deployStates.isApproved(action.data.deployment.state),
 				rejected: deployStates.isRejected(action.data.deployment.state),
+				rejected_reason: action.data.deployment.rejected_reason,
 				approver_id: action.data.deployment.approver ? action.data.deployment.approver.id : 0,
 				data: action.data.deployment,
 				list: newList

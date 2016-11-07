@@ -59,7 +59,8 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 		// the date and time the deploy was queued
 		"DeployStarted" => "SS_Datetime",
 		// the date and time a deployment was requested to be approved
-		"DeployRequested" => "SS_Datetime"
+		"DeployRequested" => "SS_Datetime",
+		"RejectedReason" => "Text"
 	);
 
 	/**
