@@ -2,8 +2,6 @@ var React = require("react");
 var ReactRedux = require('react-redux');
 
 var TextArea = require('../components/TextArea.jsx');
-var Dropdown = require('../components/Dropdown.jsx');
-var RequestApproval = require('./buttons/RequestApproval.jsx');
 var ApproveRequest = require('./buttons/ApproveRequest.jsx');
 var RejectRequest = require('./buttons/RejectRequest.jsx');
 var Bypass = require('./buttons/Bypass.jsx');
@@ -21,7 +19,7 @@ function getStateTitle(approvalState) {
 		case constants.APPROVAL_APPROVED:
 			return 'Approved by:';
 		case constants.APPROVAL_BYPASSED:
-			return 'Approval has been bypassed'
+			return 'Approval has been bypassed';
 		default:
 			return '';
 	}
@@ -134,7 +132,7 @@ const Approval = React.createClass({
 });
 
 const mapStateToProps = function(state) {
-	let approver = state.deployment.approvers.find(function(val) {
+	const approver = state.deployment.approvers.find(function(val) {
 		if (val.id === state.deployment.approver_id) {
 			return val;
 		}

@@ -119,7 +119,7 @@ export function getApprovalState(deployState, approverName) {
 		case STATE_FAILED:
 		case STATE_COMPLETED:
 			if (!approverName) {
-				return APPROVAL_BYPASSED
+				return APPROVAL_BYPASSED;
 			}
 			return APPROVAL_APPROVED;
 		default:

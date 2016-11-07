@@ -40,8 +40,8 @@ module.exports = function git(state, action) {
 				selected_ref: "",
 				selected_name: ""
 			});
-		case actions.TOGGLE_OPTION:
-			let selected_options = state.selected_options;
+		case actions.TOGGLE_OPTION: {
+			const selected_options = state.selected_options;
 			if (selected_options[action.name] === true) {
 				selected_options[action.name] = false;
 			} else {
@@ -50,7 +50,8 @@ module.exports = function git(state, action) {
 			return _.assign({}, state, {
 				selected_options: selected_options
 			});
-		case actions.SUCCEED_DEPLOYMENT_GET:
+		}
+		case actions.SUCCEED_DEPLOYMENT_GET: {
 			let options = action.data.deployment.options;
 			if (action.data.deployment.options.constructor === Array) {
 				options = _.assign({}, action.data.deployment.options);
@@ -61,6 +62,7 @@ module.exports = function git(state, action) {
 				selected_type: action.data.deployment.ref_type,
 				selected_options: options
 			});
+		}
 		case actions.SET_REVISION: {
 			// get the 'nice' name of the commit, i.e the branch or tag name
 			const gitRefs = state.list[state.selected_type] || [];

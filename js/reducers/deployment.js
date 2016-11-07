@@ -197,7 +197,7 @@ module.exports = function deployment(state, action) {
 			});
 		}
 		case actions.SUCCEED_DEPLOYMENT_DELETE: {
-			let newList = _.assign({}, state.list);
+			const newList = _.assign({}, state.list);
 			delete newList[action.data.id];
 
 			return _.assign({}, state, {

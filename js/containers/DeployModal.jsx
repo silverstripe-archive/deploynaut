@@ -154,7 +154,7 @@ const DeployModal = React.createClass({
 
 		content[0] = (
 			<div key={0} className="section">
-				<LoadingBar show={true} />
+				<LoadingBar show />
 			</div>
 		);
 		if (steps[0].show) {
@@ -173,9 +173,9 @@ const DeployModal = React.createClass({
 		}
 		if (steps[2].show) {
 			if (this.props.can_edit) {
-				content[2] = (<Approval key={2}/>);
+				content[2] = (<Approval key={2} />);
 			} else {
-				content[2] = (<ApprovalRO key={2}/>);
+				content[2] = (<ApprovalRO key={2} />);
 			}
 		}
 		if (steps[3].show) {
