@@ -24,8 +24,13 @@ var BuildStatus = function(props) {
 		);
 	}
 
+	let classes = null;
+	if (props.status_box) {
+		classes = 'status-box default';
+	}
+
 	return (
-		<div>
+		<div className={classes}>
 			{link}
 			{label}
 			{props.deployment.title}<br />

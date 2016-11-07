@@ -12130,6 +12130,24 @@ select.selectize-control,
 .target-release table {
   margin-top: 10px; }
 
+.target-release .radio-list,
+.target-release .checkbox-list {
+  padding: 0;
+  list-style-type: none; }
+  .target-release .radio-list label,
+  .target-release .checkbox-list label {
+    color: #505050; }
+
+.target-release .radio-list {
+  padding-top: 10px; }
+  .target-release .radio-list li {
+    border-top: 1px solid #eeeeee;
+    padding: 5px 0; }
+  .target-release .radio-list .status-box {
+    margin-left: 20px; }
+  .target-release .radio-list .selectize-control {
+    padding-left: 20px; }
+
 ul.list,
 ol.list {
   list-style: none;
@@ -13638,8 +13656,7 @@ textarea.deploy-key {
     opacity: .5;
     font-weight: lighter; }
   .modal-header .icon {
-    padding-right: 10px;
-    font-weight: normal; }
+    padding-right: 10px; }
   .modal-header p, .modal-header h1, .modal-header h2, .modal-header h3, .modal-header h4, .modal.deploy .modal-dialog .modal-content .modal-header .nav > li > a, .modal.deploy .modal-dialog .modal-content .modal-header .deploy-form-outer .deploy-form .SelectionGroup > li > a, .deploy-form-outer .deploy-form .modal.deploy .modal-dialog .modal-content .modal-header .SelectionGroup > li > a, .modal.deploy .modal-dialog .modal-content .modal-header .deploy-form-loading .deploy-form .SelectionGroup > li > a, .deploy-form-loading .deploy-form .modal.deploy .modal-dialog .modal-content .modal-header .SelectionGroup > li > a, .modal.deploy .modal-dialog .modal-content .modal-header .fetch.approval .nav > li > .approval-action, .modal.deploy .modal-dialog .modal-content .fetch.approval .modal-header .nav > li > .approval-action, .modal.deploy .modal-dialog .modal-content .modal-header .deploy-form-outer .deploy-form .fetch.approval .SelectionGroup > li > .approval-action, .modal.deploy .modal-dialog .modal-content .fetch.approval .modal-header .deploy-form-outer .deploy-form .SelectionGroup > li > .approval-action, .deploy-form-outer .deploy-form .modal.deploy .modal-dialog .modal-content .modal-header .fetch.approval .SelectionGroup > li > .approval-action, .deploy-form-outer .deploy-form .modal.deploy .modal-dialog .modal-content .fetch.approval .modal-header .SelectionGroup > li > .approval-action, .modal.deploy .modal-dialog .modal-content .modal-header .deploy-form-loading .deploy-form .fetch.approval .SelectionGroup > li > .approval-action, .modal.deploy .modal-dialog .modal-content .fetch.approval .modal-header .deploy-form-loading .deploy-form .SelectionGroup > li > .approval-action, .deploy-form-loading .deploy-form .modal.deploy .modal-dialog .modal-content .modal-header .fetch.approval .SelectionGroup > li > .approval-action, .deploy-form-loading .deploy-form .modal.deploy .modal-dialog .modal-content .fetch.approval .modal-header .SelectionGroup > li > .approval-action, .modal.deploy .modal-dialog .modal-content .modal-header .section.approval .nav > li > .approval-action, .modal.deploy .modal-dialog .modal-content .section.approval .modal-header .nav > li > .approval-action, .modal.deploy .modal-dialog .modal-content .modal-header .deploy-form-outer .deploy-form .section.approval .SelectionGroup > li > .approval-action, .modal.deploy .modal-dialog .modal-content .section.approval .modal-header .deploy-form-outer .deploy-form .SelectionGroup > li > .approval-action, .deploy-form-outer .deploy-form .modal.deploy .modal-dialog .modal-content .modal-header .section.approval .SelectionGroup > li > .approval-action, .deploy-form-outer .deploy-form .modal.deploy .modal-dialog .modal-content .section.approval .modal-header .SelectionGroup > li > .approval-action, .modal.deploy .modal-dialog .modal-content .modal-header .deploy-form-loading .deploy-form .section.approval .SelectionGroup > li > .approval-action, .modal.deploy .modal-dialog .modal-content .section.approval .modal-header .deploy-form-loading .deploy-form .SelectionGroup > li > .approval-action, .deploy-form-loading .deploy-form .modal.deploy .modal-dialog .modal-content .modal-header .section.approval .SelectionGroup > li > .approval-action, .deploy-form-loading .deploy-form .modal.deploy .modal-dialog .modal-content .section.approval .modal-header .SelectionGroup > li > .approval-action, .modal-header h5, .modal-header .h1, .modal-header .h2, .modal-header .h3, .modal-header .h4, .modal-header .h5 {
     color: #fff; }
 
