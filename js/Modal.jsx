@@ -61,9 +61,15 @@ var Modal = React.createClass({
 					</a>
 					<ul className="dropdown-menu">
 					{this.props.options.map(function(item) {
+						let icon = null;
+						if (item.icon !== "") {
+							icon = (
+								<i className={"icon " + item.icon} aria-hidden="true"></i>
+							);
+						}
 						return (
 							<li key={item.title}>
-								<a href={"javascript:void(0);"} onClick={item.handler}>{item.title}</a>
+								<a href={"javascript:void(0);"} onClick={item.handler}>{icon}{item.title}</a>
 							</li>
 						);
 					})}
