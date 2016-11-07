@@ -127,7 +127,7 @@ export function getRevisions() {
 export function getDeployHistory() {
 	return (dispatch, getState) => {
 		dispatch(startDeployHistoryGet());
-		return deployAPI.call(getState, '/history', 'get')
+		return deployAPI.call(getState, `/history?from=${getState().deployment.server_time}`, 'get')
 			.then(json => dispatch(succeedDeployHistoryGet(json)))
 			.catch(err => dispatch(failDeployHistoryGet(err)));
 	};

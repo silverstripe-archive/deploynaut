@@ -77,6 +77,13 @@ class DeployDispatcher extends Dispatcher {
 
 		$list = $this->environment->DeployHistory('DeployStarted');
 
+		$fromTimestamp = $request->requestVar('from');
+		if ($fromTimestamp) {
+			$from = SS_Datetime::create();
+			$from->setValue($fromTimestamp);
+			$list = $list->filter('LastEdited:GreaterThan', $from->Format('Y-m-d H:i:s'));
+		}
+
 		foreach ($list as $deployment) {
 			$data[] = $this->formatter->getDeploymentData($deployment);
 		}

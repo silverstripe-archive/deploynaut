@@ -4,6 +4,9 @@ const actions = require('../_actions.js');
 const deployStates = require('../constants/deployment.js');
 
 const initialState = {
+	// this is the time of the last update we got from the server
+	// it is used for syncronising with the backend
+	server_time: 0,
 	is_loading: false,
 	id: "",
 	data: {},
@@ -54,6 +57,7 @@ module.exports = function deployment(state, action) {
 				newList[action.data.list[i].id] = action.data.list[i];
 			}
 			return _.assign({}, state, {
+				server_time: action.data.server_time,
 				list: newList,
 				history_is_loading: false
 			});

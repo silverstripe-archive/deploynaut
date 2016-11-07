@@ -141,6 +141,7 @@ abstract class Dispatcher extends DNRoot {
 	 * @return SS_HTTPResponse
 	 */
 	protected function getAPIResponse($output, $statusCode) {
+		$output['server_time'] = SS_Datetime::now()->format('U');
 		$output['status_code'] = $statusCode;
 		$response = $this->getResponse();
 		$response->addHeader('Content-Type', 'application/json');
