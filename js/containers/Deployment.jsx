@@ -49,10 +49,6 @@ const deployment = function(props) {
 };
 
 const mapStateToProps = function(state) {
-	const approvers = state.deployment.approvers.filter(function(obj) {
-		return obj.id === parseInt(state.deployment.approver_id, 10);
-	});
-
 	return {
 		error: state.deployment.error,
 		selected_ref: state.git.selected_ref,

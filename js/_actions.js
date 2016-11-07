@@ -212,8 +212,8 @@ export function getDeploySummary() {
 			return;
 		}
 
-		let options = [];
-		Object.keys(getState().git.selected_options).map(function(option) {
+		const options = [];
+		Object.keys(getState().git.selected_options).forEach(function(option) {
 			if (getState().git.selected_options[option] === true) {
 				options.push(option);
 			}
@@ -440,8 +440,8 @@ export function createDeployment() {
 			return Promise.resolve();
 		}
 
-		let options = [];
-		Object.keys(getState().git.selected_options).map(function(option) {
+		const options = [];
+		Object.keys(getState().git.selected_options).forEach(function(option) {
 			if (getState().git.selected_options[option] === true) {
 				options.push(option);
 			}
