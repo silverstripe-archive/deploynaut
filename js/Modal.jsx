@@ -63,7 +63,7 @@ var Modal = React.createClass({
 					{this.props.options.map(function(item) {
 						return (
 							<li key={item.title}>
-								<a onClick={item.handler}>{item.title}</a>
+								<a href={"javascript:void(0);"} onClick={item.handler}>{item.title}</a>
 							</li>
 						);
 					})}
