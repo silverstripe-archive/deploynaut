@@ -71,6 +71,7 @@ const Approval = React.createClass({
 
 		let stateTitle = getStateTitle(props.approval_state);
 		let approver_name = props.approver ? props.approver.name : '';
+		let approver_role = props.approver ? props.approver.role : '';
 
 		let date = '';
 		if (props.date_approved_nice) {
@@ -107,7 +108,7 @@ const Approval = React.createClass({
 							{stateTitle}
 						</div>
 					</div>
-					<div>{approver_name} <small>{date}</small></div>
+					<div>{approver_name} <small className="text-uppercase">{approver_role}</small> <small>{date}</small></div>
 				</StatusBox>
 				<div>
 					<ApproveRequest /> {rejectAction}
