@@ -50,7 +50,6 @@ function Plan(props) {
 	store.dispatch(actions.setEnvironment(props.model.environment));
 	store.dispatch(actions.setUser(props.model.user));
 
-	store.dispatch(actions.getUpcomingDeployments());
 	store.dispatch(actions.getDeployHistory());
 	store.dispatch(actions.getRevisionsIfNeeded());
 	store.dispatch(actions.getApprovers());
