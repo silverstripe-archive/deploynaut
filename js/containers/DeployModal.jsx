@@ -214,7 +214,7 @@ const DeployModal = React.createClass({
 							/>
 							<div>
 								<div className="fetch">
-									<div style={{float: "right"}}>
+									<div className="pull-right">
 										<ButtonGitUpdate />
 									</div>
 									<div>Last synced {this.props.last_fetched_date} <span className="small">{this.props.last_fetched_ago}</span></div>
