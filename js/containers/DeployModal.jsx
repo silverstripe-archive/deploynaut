@@ -134,17 +134,6 @@ const DeployModal = React.createClass({
 		for (let i = 0; i > sections.length; i++) {
 			sections[i].style.minHeight = null;
 		}
-
-		const lastSection = sections[sections.length - 1];
-		if (lastSection) {
-			const sectionHeight = sections[sections.length - 1].offsetHeight;
-			// calculate the required margin to pad the section so that it can be
-			// properly scrolled to the top
-			const sectionMargin = bodyHeight - sectionHeight;
-			if (sectionMargin > 0) {
-				lastSection.style.minHeight = sectionMargin + 'px';
-			}
-		}
 	},
 
 	render: function() {
