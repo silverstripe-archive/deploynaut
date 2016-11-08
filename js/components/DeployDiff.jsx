@@ -1,7 +1,8 @@
-var React = require("react");
-var SummaryTable = require('../SummaryTable.jsx');
+const React = require("react");
+const SummaryTable = require('../SummaryTable.jsx');
+const LoadingBar = require('../components/LoadingBar.jsx');
 
-var DeployDiff = function (props) {
+const DeployDiff = function(props) {
 
 	// filter out things that haven't changed
 	const filteredProps = {
@@ -14,16 +15,9 @@ var DeployDiff = function (props) {
 		filteredProps.changes[key] = props.changes[key];
 	});
 
-	if (props.is_loading) {
-		return (
-			<div>
-				Loading summary...
-			</div>
-		);
-	}
-
 	return (
 		<div className="fade-in">
+			<LoadingBar show={props.is_loading} />
 			<SummaryTable {...filteredProps} />
 		</div>
 	);

@@ -1,11 +1,12 @@
-var React = require("react");
-var ReactRedux = require('react-redux');
+const React = require("react");
+const ReactRedux = require('react-redux');
 
-var Dropdown = require('../components/Dropdown.jsx');
-var RequestApproval = require('./buttons/RequestApproval.jsx');
-var Bypass = require('./buttons/Bypass.jsx');
+const Dropdown = require('../components/Dropdown.jsx');
+const RequestApproval = require('./buttons/RequestApproval.jsx');
+const Bypass = require('./buttons/Bypass.jsx');
+const LoadingBar = require('../components/LoadingBar.jsx');
 
-var actions = require('../_actions.js');
+const actions = require('../_actions.js');
 
 function Approval(props) {
 	var sentTime = null;
@@ -20,15 +21,6 @@ function Approval(props) {
 				<div className="">
 					{props.error}
 				</div>
-			</div>
-		);
-	}
-
-	let loading = null;
-	if (props.is_loading) {
-		loading = (
-			<div>
-				Loading...
 			</div>
 		);
 	}
@@ -56,7 +48,7 @@ function Approval(props) {
 					manager.
 				</small>
 			</div>
-			{loading}
+			<LoadingBar show={props.is_loading} />
 			<div>
 				{sentTime}
 			</div>
