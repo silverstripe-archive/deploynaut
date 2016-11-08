@@ -6,6 +6,7 @@ const Checkbox = require('../components/Checkbox.jsx');
 const Dropdown = require('../components/Dropdown.jsx');
 const Button = require('../components/Button.jsx');
 const BuildStatus = require('../components/BuildStatus.jsx');
+const LoadingBar = require('../components/LoadingBar.jsx');
 
 const actions = require('../_actions.js');
 
@@ -49,6 +50,7 @@ const TargetRelease = React.createClass({
 					typeFields[key] = (
 						<fieldset>
 							<input
+								className="field text"
 								type="text"
 								name="selected_ref"
 								onChange={props.onShaChange}
@@ -96,6 +98,15 @@ const TargetRelease = React.createClass({
 			caret = 'down';
 		}
 
+		let options_toggle = null;
+		if (list && list.length > 0) {
+			options_toggle = (
+				<a href={"javascript:void(0);"} onClick={this.toggleOptionsOpen}>
+					Deploy options <i className={"fa fa-caret-" + caret}></i>
+				</a>
+			);
+		}
+
 		const options = props.options.map(function(option, index) {
 			return (
 				<li key={index}>
@@ -117,13 +128,12 @@ const TargetRelease = React.createClass({
 				<div>
 					Select the release you would like to deploy to {props.environment_name}
 				</div>
+				<LoadingBar show={props.is_loading} />
 				<form className="form">
 					<ul className="radio-list">
 						{list}
 					</ul>
-					<a href={"javascript:void(0);"} onClick={this.toggleOptionsOpen}>
-						Deploy options <i className={"fa fa-caret-" + caret}></i>
-					</a>
+					{options_toggle}
 					<ul className={options_classes}>
 						{options}
 					</ul>
@@ -149,8 +159,15 @@ TargetRelease.propTypes = {
 	disabled: React.PropTypes.bool.isRequired
 };
 
+function isLoading(state) {
+	if (state.git.is_fetching || state.git.is_updating) {
+		return true;
+	}
+	return false;
+}
+
 function isDisabled(state) {
-	if (state.git.is_updating || state.plan.is_loading) {
+	if (isLoading(state) || state.plan.is_loading) {
 		return true;
 	}
 	if (state.deployment.submitted) {
@@ -179,6 +196,7 @@ const mapStateToProps = function(state) {
 		selected_options: state.git.selected_options,
 		ref_list: refs,
 		selected_ref: state.git.selected_ref,
+		is_loading: isLoading(state),
 		disabled: isDisabled(state)
 	};
 };
