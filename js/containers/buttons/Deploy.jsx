@@ -8,9 +8,6 @@ function canDeploy(state) {
 	if (constants.hasDeployStarted(state.deployment.state)) {
 		return false;
 	}
-	if (state.deployment.queued) {
-		return false;
-	}
 	if (state.deployment.approved) {
 		return true;
 	}
@@ -22,19 +19,25 @@ function deployButton(props) {
 	if (!props.display) {
 		return null;
 	}
+	let btnText = 'Start Deployment';
+	if (props.queued) {
+		btnText = 'Deployment started';
+	}
 	return (
 		<button
 			value="Confirm Deployment"
 			className="deploy"
 			onClick={props.onClick}
+			disabled={props.queued}
 		>
-			Start Deployment
+			{btnText}
 		</button>
 	);
 }
 
 const mapStateToProps = function(state) {
 	return {
+		queued: state.deployment.queued,
 		display: canDeploy(state)
 	};
 };
