@@ -4,7 +4,7 @@ var actions = require('../../_actions.js');
 var Button = require('../../components/Button.jsx');
 
 function isDisabled(state) {
-	if (state.git.is_updating || state.plan.is_loading) {
+	if (state.git.is_fetching || state.git.is_updating || state.plan.is_loading) {
 		return true;
 	}
 	if (state.deployment.submitted) {
