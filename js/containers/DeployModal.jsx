@@ -21,13 +21,13 @@ const constants = require('../constants/deployment.js');
 function calculateSteps(props) {
 	return [
 		{
-			title: "Target Release",
+			title: "Target release",
 			show: props.show[0],
 			is_loading: props.is_loading[0],
 			is_finished: props.is_finished[0]
 		},
 		{
-			title: "Deployment Plan",
+			title: "Deployment plan",
 			show: props.show[1],
 			is_loading: props.is_loading[1],
 			is_finished: props.is_finished[1]

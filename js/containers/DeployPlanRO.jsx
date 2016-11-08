@@ -5,7 +5,7 @@ function DeployPlanRO(props) {
 	return (
 		<div>
 			<div className="section deploy-plan">
-				<header id="1">Deployment Plan</header>
+				<header id="1">Deployment plan</header>
 				<div className="summary_title">{props.title}</div>
 				<p className="summary_of_changes">
 					{props.summary_of_changes}
