@@ -41,9 +41,11 @@ class DeploynautAPIFormatter {
 		// failover for older deployments
 		$started = $deployment->Created;
 		$startedNice = $deployment->obj('Created')->Nice();
+		$startedAgo = $deployment->obj('Created')->Ago();
 		if($deployment->DeployStarted) {
 			$started = $deployment->DeployStarted;
 			$startedNice = $deployment->obj('DeployStarted')->Nice();
+			$startedAgo = $deployment->obj('DeployStarted')->Ago();
 		}
 
 		$isCurrentBuild = self::$_cache_current_build[$deployment->EnvironmentID]
@@ -74,12 +76,16 @@ class DeploynautAPIFormatter {
 			'id' => $deployment->ID,
 			'date_created' => $deployment->Created,
 			'date_created_nice' => $deployment->obj('Created')->Nice(),
+			'date_created_ago' => $deployment->obj('Created')->Ago(),
 			'date_started' => $started,
 			'date_started_nice' => $startedNice,
+			'date_started_ago' => $startedAgo,
 			'date_requested' => $deployment->DeployRequested,
 			'date_requested_nice' => $deployment->obj('DeployRequested')->Nice(),
+			'date_requested_ago' => $deployment->obj('DeployRequested')->Ago(),
 			'date_updated' => $deployment->LastEdited,
 			'date_updated_nice' => $deployment->obj('LastEdited')->Nice(),
+			'date_updated_ago' => $deployment->obj('LastEdited')->Ago(),
 			'title' => $deployment->Title,
 			'summary' => $deployment->Summary,
 			'branch' => $deployment->Branch,
