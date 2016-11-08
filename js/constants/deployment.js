@@ -96,10 +96,10 @@ export function canEdit(state) {
 	if (state.deployment.approved) {
 		return false;
 	}
-	if (state.deployment.queued) {
+	if (state.deployment.rejected) {
 		return false;
 	}
-	if (state.deployment.rejected) {
+	if (state.deployment.queued) {
 		return false;
 	}
 	return true;

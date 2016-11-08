@@ -14,6 +14,9 @@ function canRequest(state) {
 	if (state.deployment.approved) {
 		return false;
 	}
+	if (state.deployment.rejected) {
+		return false;
+	}
 	if (state.deployment.submitted) {
 		return false;
 	}
