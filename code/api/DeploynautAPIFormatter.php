@@ -72,6 +72,11 @@ class DeploynautAPIFormatter {
 			// gitonomy exception
 		}
 
+		$type = 'full';
+		if ($deployment->getDeploymentStrategy()->getActionCode() === 'fast') {
+			$type = 'code-only';
+		}
+
 		return [
 			'id' => $deployment->ID,
 			'date_created' => $deployment->Created,
@@ -92,7 +97,7 @@ class DeploynautAPIFormatter {
 			'rejected_reason' => $deployment->RejectedReason ?: '',
 			'tags' => $tags,
 			'changes' => $deployment->getDeploymentStrategy()->getChanges(),
-			'deployment_type' => $deployment->getDeploymentStrategy()->getActionCode(),
+			'deployment_type' => $type,
 			'deployment_estimate' => $deployment->getDeploymentStrategy()->getEstimatedTime(),
 			'sha' => $deployment->SHA,
 			'short_sha' => substr($deployment->SHA, 0, 7),
