@@ -127,6 +127,7 @@ const Approval = React.createClass({
 						disabled={props.approval_state === constants.APPROVAL_REJECTED}
 					/>
 					<RejectRequest />
+					{rejectCancel}
 				</div>
 				<div>
 					<Bypass />
