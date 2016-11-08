@@ -1,15 +1,10 @@
 const React = require("react");
 const ReactRedux = require('react-redux');
 const actions = require('../_actions.js');
+const constants = require('../constants/deployment.js');
 
 const Deploy = require('./buttons/Deploy.jsx');
-
-function shouldShowLogs(props) {
-	if (typeof props.deploy_log === 'undefined') {
-		return false;
-	}
-	return props.deploy_log.length > 0;
-}
+const LoadingBar = require('../components/LoadingBar.jsx');
 
 const deployment = React.createClass({
 
@@ -38,15 +33,20 @@ const deployment = React.createClass({
 		}
 
 		let logOutput = null;
-		if (shouldShowLogs(this.props)) {
-			const lines = Object.keys(this.props.deploy_log).map(function(key) {
-				return <div key={key}>{this.props.deploy_log[key]}</div>;
-			}.bind(this));
-			logOutput = (
-				<pre>
-				{lines}
-			</pre>
-			);
+
+		if (this.props.started) {
+			if (this.props.deploy_log) {
+				const lines = Object.keys(this.props.deploy_log).map(function(key) {
+					return <div key={key}>{this.props.deploy_log[key]}</div>;
+				}.bind(this));
+				logOutput = (
+					<pre>
+					{lines}
+				</pre>
+				);
+			} else {
+				logOutput = <LoadingBar show />
+			}
 		}
 
 		return (
@@ -65,6 +65,7 @@ const deployment = React.createClass({
 
 const mapStateToProps = function(state) {
 	return {
+		started: constants.hasDeployStarted(state.deployment.state),
 		error: state.deployment.error,
 		selected_ref: state.git.selected_ref,
 		deploy_log: state.deployment.logs[state.deployment.id],
