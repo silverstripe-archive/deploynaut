@@ -56,7 +56,7 @@ function Plan(props) {
 		if (!store.getState().deployment.is_loading){
 			store.dispatch(actions.getDeployHistory());
 		}
-	}, 5 * 1000);
+	}, 20 * 1000);
 
 	store.dispatch(actions.getRevisionsIfNeeded());
 	store.dispatch(actions.getApprovers());
