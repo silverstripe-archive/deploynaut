@@ -12,7 +12,7 @@ function DeployPlan(props) {
 	return (
 		<div>
 			<div className="section">
-				<header id="1">Deployment Plan</header>
+				<header id="1">Deployment plan</header>
 				<p>
 					Provide context for the approver or add details for future
 					reference with a summary of changes.
