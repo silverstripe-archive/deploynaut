@@ -140,6 +140,7 @@ const mapStateToProps = function(state) {
 		if (val.id === state.deployment.approver_id) {
 			return val;
 		}
+		return false;
 	});
 
 	return {
