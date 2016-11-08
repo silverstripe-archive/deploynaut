@@ -1,14 +1,15 @@
-var React = require("react");
-var ReactRedux = require('react-redux');
+const React = require("react");
+const ReactRedux = require('react-redux');
 
-var TextArea = require('../components/TextArea.jsx');
-var ApproveRequest = require('./buttons/ApproveRequest.jsx');
-var RejectRequest = require('./buttons/RejectRequest.jsx');
-var Bypass = require('./buttons/Bypass.jsx');
-var StatusBox = require('../components/StatusBox.jsx');
+const TextArea = require('../components/TextArea.jsx');
+const ApproveRequest = require('./buttons/ApproveRequest.jsx');
+const RejectRequest = require('./buttons/RejectRequest.jsx');
+const Bypass = require('./buttons/Bypass.jsx');
+const StatusBox = require('../components/StatusBox.jsx');
+const LoadingBar = require('../components/LoadingBar.jsx');
 
-var actions = require('../_actions.js');
-var constants = require('../constants/deployment.js');
+const actions = require('../_actions.js');
+const constants = require('../constants/deployment.js');
 
 function getStateTitle(approvalState) {
 	switch (approvalState) {
@@ -114,6 +115,7 @@ const Approval = React.createClass({
 					</div>
 					<div>{approver_name} <small className="text-uppercase">{approver_role}</small> <small>{date}</small></div>
 				</StatusBox>
+				<LoadingBar show={props.is_loading} />
 				<div>
 					<ApproveRequest /> {rejectAction}
 				</div>
