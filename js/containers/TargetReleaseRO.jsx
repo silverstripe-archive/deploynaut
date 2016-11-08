@@ -85,7 +85,7 @@ const TargetReleaseRO = React.createClass({
 						<dl className="dl-horizontal">
 							<dt>Requested by</dt>
 							<dd>{props.deployment.deployer.name}</dd>
-							<dt>Date Requested</dt>
+							<dt>Date requested</dt>
 							<dd>{props.deployment.date_requested_nice}</dd>
 						</dl>
 					</div>
