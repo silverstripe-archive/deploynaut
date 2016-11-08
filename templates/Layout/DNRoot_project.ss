@@ -29,7 +29,7 @@
 					<% if $DNEnvironmentList %>
 					<% loop $DNEnvironmentList %>
 					<tr>
-						<td><a href="$Link">$Name</a></td>
+						<td><a href="$DeploymentsLink">$Name</a></td>
 						<td><% if $URL %><a href="$URL">$BareURL</a><% else %>&nbsp;<% end_if %></td>
 						<td>
 							<% if $CurrentBuild %>
