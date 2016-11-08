@@ -173,6 +173,22 @@ const DeployModal = React.createClass({
 			});
 		}
 
+		let fetch = null;
+		if (this.props.last_fetched_date) {
+			fetch = (
+				<div className="fetch">
+					<div className="pull-right">
+						<ButtonGitUpdate />
+					</div>
+					<div>
+						<i className="fa fa-code" aria-hidden="true"></i> Last synced {this.props.last_fetched_date}
+						&nbsp;<span className="small">{this.props.last_fetched_ago}</span>
+					</div>
+					<div><i>Ensure you have the most recent code before setting up your deployment</i></div>
+				</div>
+			);
+		}
+
 		return (
 			<Modal
 				show={this.props.is_open}
@@ -196,13 +212,7 @@ const DeployModal = React.createClass({
 								messages={this.props.messages}
 							/>
 							<div>
-								<div className="fetch">
-									<div className="pull-right">
-										<ButtonGitUpdate />
-									</div>
-									<div><i className="fa fa-code" aria-hidden="true"></i> Last synced {this.props.last_fetched_date} <span className="small">{this.props.last_fetched_ago}</span></div>
-									<div><i>Ensure you have the most recent code before setting up your deployment</i></div>
-								</div>
+								{fetch}
 								{content}
 							</div>
 						</div>
