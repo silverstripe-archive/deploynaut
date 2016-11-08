@@ -7,6 +7,7 @@ const initialState = {
 	// this is the time of the last update we got from the server
 	// it is used for syncronising with the backend
 	server_time: 0,
+	is_creating: false,
 	is_loading: false,
 	id: "",
 	data: {},
@@ -76,6 +77,27 @@ module.exports = function deployment(state, action) {
 			});
 
 		case actions.START_DEPLOYMENT_CREATE:
+			return _.assign({}, state, {
+				is_creating: true,
+			});
+
+		case actions.SUCCEED_DEPLOYMENT_CREATE:
+			const newList = _.assign({}, state.list);
+			newList[action.data.deployment.id] = action.data.deployment;
+			return _.assign({}, state, {
+				is_creating: false,
+				id: action.data.deployment.id,
+				state: action.data.deployment.state,
+				data: action.data.deployment,
+				list: newList
+			});
+
+		case actions.FAIL_DEPLOYMENT_CREATE:
+			return _.assign({}, state, {
+				is_creating: false,
+				error: action.error.toString()
+			});
+
 		case actions.START_DEPLOYMENT_GET:
 			return _.assign({}, state, {
 				is_loading: true,
@@ -121,7 +143,6 @@ module.exports = function deployment(state, action) {
 		case actions.SUCCEED_APPROVAL_APPROVE:
 		case actions.SUCCEED_APPROVAL_REJECT:
 		case actions.SUCCEED_DEPLOYMENT_QUEUE:
-		case actions.SUCCEED_DEPLOYMENT_CREATE:
 		case actions.SUCCEED_DEPLOYMENT_GET: {
 			// get current list
 			const newList = _.assign({}, state.list);
@@ -150,10 +171,10 @@ module.exports = function deployment(state, action) {
 		case actions.FAIL_APPROVERS_GET:
 		case actions.FAIL_DEPLOYMENT_QUEUE:
 		case actions.FAIL_DEPLOY_LOG_UPDATE:
-		case actions.FAIL_DEPLOYMENT_CREATE:
 		case actions.FAIL_DEPLOYMENT_GET:
 			return _.assign({}, state, {
 				is_loading: false,
+				approval_is_loading: false,
 				error: action.error.toString()
 			});
 
