@@ -6,7 +6,7 @@ var Button = require('../../components/Button.jsx');
 const mapStateToProps = function(state) {
 	return {
 		display: state.deployment.id === "",
-		disabled: state.plan.is_loading || state.deployment.is_loading,
+		disabled: state.plan.is_loading || state.deployment.is_creating,
 		style: "btn-success",
 		value: "Continue"
 	};
