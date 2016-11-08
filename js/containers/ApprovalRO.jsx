@@ -80,6 +80,7 @@ const Approval = React.createClass({
 
 		let removeAction = null;
 		let rejectAction = null;
+		let rejectCancel = null;
 		if (props.approval_state === constants.APPROVAL_SUBMITTED) {
 			removeAction = (
 				<a href={"javascript:void(0);"} className="approval-action" onClick={props.onCancel}>
@@ -89,6 +90,11 @@ const Approval = React.createClass({
 			rejectAction = (
 				<a href={"javascript:void(0);"} className="btn btn-link" onClick={this.toggleRejectOpen}>
 					Reject
+				</a>
+			);
+			rejectCancel =(
+				<a href={"javascript:void(0);"} className="btn btn-link" onClick={this.toggleRejectOpen}>
+					Cancel
 				</a>
 			);
 		}
@@ -121,9 +127,6 @@ const Approval = React.createClass({
 						disabled={props.approval_state === constants.APPROVAL_REJECTED}
 					/>
 					<RejectRequest />
-					<a href={"javascript:void(0);"} className="btn btn-link" onClick={this.toggleRejectOpen}>
-						Cancel
-					</a>
 				</div>
 				<div>
 					<Bypass />
