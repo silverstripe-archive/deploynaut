@@ -64,6 +64,9 @@ function isDisabled(state) {
 	if (state.deployment.approved) {
 		return true;
 	}
+	if (state.deployment.rejected) {
+		return true;
+	}
 	if (state.deployment.queued) {
 		return true;
 	}
