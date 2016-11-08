@@ -61,8 +61,7 @@ const TargetReleaseRO = React.createClass({
 					<span className="deployed-detail">{props.deployment.commit_message}</span>
 					<div style={{float: "right"}}>
 						<span>
-							<a href={"javascript:void(0);"} onClick={this.toggleOpen}>{linkName}</a>&nbsp;
-							<i className={"fa fa-caret-" + caret}></i>
+							<a href={"javascript:void(0);"} onClick={this.toggleOpen}>{linkName} <i className={"fa fa-caret-" + caret}></i></a>&nbsp;
 						</span>
 					</div><br />
 
