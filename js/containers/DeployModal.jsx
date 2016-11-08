@@ -127,13 +127,6 @@ const DeployModal = React.createClass({
 		// Increase the height of the modal, this cannot be done reliable in CSS because
 		// a pixel value is required to use the "sticky" side bar
 		bodyElements[0].style.height = bodyHeight + 'px';
-
-		// first reset the height of all sections in case additional siblings have
-		// been loaded.
-		const sections = this.bodyElement.getElementsByClassName("section");
-		for (let i = 0; i > sections.length; i++) {
-			sections[i].style.minHeight = null;
-		}
 	},
 
 	render: function() {
