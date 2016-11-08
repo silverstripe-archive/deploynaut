@@ -29,12 +29,26 @@ var BuildStatus = function(props) {
 		classes = 'status-box default';
 	}
 
+	let secondaryLine = null;
+	if (props.status_ago) {
+		secondaryLine = props.deployment.date_created_ago;
+	} else {
+		secondaryLine = props.deployment.commit_message;
+	}
+
 	return (
 		<div className={classes}>
 			{link}
+			<a
+				className="sha-detail"
+				href={props.deployment.commit_url}
+				title={props.deployment.sha}
+			>
+				{props.deployment.short_sha}
+			</a>&nbsp;
 			{label}
 			{props.deployment.title}<br />
-			<small>{props.deployment.commit_message}</small>
+			<small>{secondaryLine}</small>
 		</div>
 	);
 };

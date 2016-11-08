@@ -29,7 +29,7 @@ const TargetRelease = React.createClass({
 			switch (key) {
 				case '0': // Promote build option
 					typeFields[key] = (
-						<BuildStatus status_box deployment={props.types[key].promote_build} />
+						<BuildStatus status_box status_ago deployment={props.types[key].promote_build} />
 					);
 					break;
 				case '1': // Dropdowns for branch, tags, previously released
