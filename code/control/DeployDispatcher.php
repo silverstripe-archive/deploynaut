@@ -286,7 +286,13 @@ class DeployDispatcher extends Dispatcher {
 			$deployment->DeployerID = Member::currentUserID();
 		}
 
-		$deployment->getMachine()->apply(DNDeployment::TR_QUEUE);
+		try {
+			$deployment->getMachine()->apply(DNDeployment::TR_QUEUE);
+		} catch (\Exception $e) {
+			return $this->getAPIResponse([
+				'message' => $e->getMessage()
+			], 400);
+		}
 
 		$location = \Controller::join_links(Director::absoluteBaseURL(), $this->Link('log'), $deployment->ID);
 
