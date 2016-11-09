@@ -18,8 +18,8 @@ var BuildStatus = function(props) {
 	let link = null;
 	if (props.openDeployHandler) {
 		link = (
-			<a href={"javascript:void(0);"} className="show_link pull-right" onClick={() => props.openDeployHandler(props.deployment.id)}>
-				<i className="fa fa-info-circle"></i>
+			<a href={"javascript:void(0);"} className="pull-right" onClick={() => props.openDeployHandler(props.deployment.id)}>
+				<i className="fa fa-lg fa-info-circle"></i>
 			</a>
 		);
 	}
