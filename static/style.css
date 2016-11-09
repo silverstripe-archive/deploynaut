@@ -10969,7 +10969,6 @@ select:focus,
 label {
   font-size: 14px;
   font-weight: 300;
-  color: #000;
   transition: 0.2s ease all;
   -moz-transition: 0.2s ease all;
   -webkit-transition: 0.2s ease all; }
@@ -12124,9 +12123,6 @@ select.selectize-control,
 .target-release .checkbox-list {
   padding: 0;
   list-style-type: none; }
-  .target-release .radio-list label,
-  .target-release .checkbox-list label {
-    color: #505050; }
 
 .target-release .radio-list {
   padding-top: 10px; }
