@@ -19,7 +19,6 @@ const initialState = {
 	history_error: null,
 	error: null,
 	approval_is_loading: false,
-	approvers: [],
 	current_page: 1,
 	history_is_loading: false
 };
@@ -112,17 +111,6 @@ module.exports = function deployment(state, action) {
 				list: newList
 			});
 		}
-
-		case actions.START_APPROVERS_GET:
-			return _.assign({}, state, {
-				approval_is_loading: true
-			});
-
-		case actions.SUCCEED_APPROVERS_GET:
-			return _.assign({}, state, {
-				approvers: action.data.approvers,
-				approval_is_loading: false
-			});
 
 		case actions.START_DEPLOYMENT_QUEUE:
 			return _.assign({}, state, {

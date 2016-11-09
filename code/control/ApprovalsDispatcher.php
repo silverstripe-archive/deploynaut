@@ -12,7 +12,6 @@ class ApprovalsDispatcher extends Dispatcher {
 	 * @var array
 	 */
 	private static $allowed_actions = [
-		'approvers',
 		'submit',
 		'cancel',
 		'approve',
@@ -40,12 +39,6 @@ class ApprovalsDispatcher extends Dispatcher {
 		self::ACTION_APPROVALS
 	];
 
-	/**
-	 * This is a per request cache of $this->project()->listMembers()
-	 * @var null|array
-	 */
-	private static $_cache_project_members = null;
-
 	public function init() {
 		parent::init();
 
@@ -59,33 +52,6 @@ class ApprovalsDispatcher extends Dispatcher {
 		if (!$this->environment) {
 			return $this->environment404Response();
 		}
-	}
-
-	/**
-	 * @param \SS_HTTPRequest $request
-	 * @return \SS_HTTPResponse
-	 */
-	public function approvers(\SS_HTTPRequest $request) {
-		$list = [];
-
-		if (self::$_cache_project_members === null) {
-			self::$_cache_project_members = $this->project->listMembers();
-		}
-
-		foreach (self::$_cache_project_members as $data) {
-			if ($this->project->allowed(self::ALLOW_APPROVAL, Member::get()->byId($data['MemberID']))) {
-				$list[] = [
-					'id' => $data['MemberID'],
-					'email' => $data['Email'],
-					'role' => $data['RoleTitle'],
-					'name' => $data['FullName']
-				];
-			}
-		}
-
-		return $this->getAPIResponse([
-			'approvers' => $list
-		], 200);
 	}
 
 	/**

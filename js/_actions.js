@@ -239,33 +239,6 @@ export function setSummary(text) {
 	return {type: SET_SUMMARY, text};
 }
 
-export const START_APPROVERS_GET = 'START_APPROVERS_GET';
-export function startApproversGet() {
-	return {type: START_APPROVERS_GET};
-}
-export const SUCCEED_APPROVERS_GET = 'SUCCEED_APPROVERS_GET';
-export function succeedApproversGet(data) {
-	return {
-		type: SUCCEED_APPROVERS_GET,
-		data: data
-	};
-}
-export const FAIL_APPROVERS_GET = 'FAIL_APPROVERS_GET';
-export function failApproversGet(err) {
-	return {
-		type: FAIL_APPROVERS_GET,
-		error: err
-	};
-}
-export function getApprovers() {
-	return (dispatch, getState) => {
-		dispatch(startApproversGet());
-		return approvalsAPI.call(getState, '/approvers', 'get')
-			.then(json => dispatch(succeedApproversGet(json)))
-			.catch(err => dispatch(failApproversGet(err)));
-	};
-}
-
 export const SET_APPROVER = "SET_APPROVER";
 export function setApprover(id) {
 	return {type: SET_APPROVER, id};

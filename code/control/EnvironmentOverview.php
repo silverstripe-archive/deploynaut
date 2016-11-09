@@ -68,6 +68,18 @@ class EnvironmentOverview extends Dispatcher {
 	 * @return array
 	 */
 	public function getModel($name = '') {
+		$approversList = [];
+		foreach ($this->getCurrentProject()->listMembers() as $data) {
+			if ($this->getCurrentProject()->allowed(\ApprovalsDispatcher::ALLOW_APPROVAL, Member::get()->byId($data['MemberID']))) {
+				$approversList[] = [
+					'id' => $data['MemberID'],
+					'email' => $data['Email'],
+					'role' => $data['RoleTitle'],
+					'name' => $data['FullName']
+				];
+			}
+		}
+
 		$base = Director::absoluteBaseURL();
 		return [
 			'basename' => Director::baseURL() . $this->getCurrentEnvironment()->Link(self::ACTION_OVERVIEW),
@@ -86,7 +98,8 @@ class EnvironmentOverview extends Dispatcher {
 				'name' => $this->environment->Name,
 				'project_name' => $this->getCurrentProject()->Name,
 				'usage' => $this->environment->Usage,
-				'supported_options' => $this->environment->getSupportedOptions()->map('name', 'defaultValue')
+				'supported_options' => $this->environment->getSupportedOptions()->map('name', 'defaultValue'),
+				'approvers' => $approversList
 			],
 			'user' => [
 				'can_approve' => $this->getCurrentProject()->allowed(

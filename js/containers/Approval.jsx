@@ -69,7 +69,7 @@ function isDisabled(deployState) {
 }
 
 const mapStateToProps = function(state) {
-	const approvers = state.deployment.approvers.map(function(val) {
+	const approvers = state.environment.approvers.map(function(val) {
 		return {
 			id: val.id,
 			title: val.email + " - " + val.role
