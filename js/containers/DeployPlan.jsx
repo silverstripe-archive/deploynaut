@@ -34,18 +34,16 @@ function DeployPlan(props) {
 						</div>
 						<SummaryOfChanges />
 					</div>
-					<div className="col-md-4">
-						<small>
-							<i className="fa fa-lightbulb-o" aria-hidden="true"></i> You might want to include:
-							<ul>
-								<li>Scope of work</li>
-								<li>Release plan and schedule</li>
-								<li>Supporting resources (e.g. docs)</li>
-								<li>Support and contingency plan</li>
-								<li>Anticipated deployment date</li>
-								<li>Implementation team</li>
-							</ul>
-						</small>
+					<div className="col-md-4 text-muted">
+						<i className="fa fa-lg fa-lightbulb-o" aria-hidden="true"></i> You might want to include:
+						<ul>
+							<li>Scope of work</li>
+							<li>Release plan and schedule</li>
+							<li>Supporting resources (e.g. docs)</li>
+							<li>Support and contingency plan</li>
+							<li>Anticipated deployment date</li>
+							<li>Implementation team</li>
+						</ul>
 					</div>
 				</div>
 				<DeployDiff changes={props.changes} />
