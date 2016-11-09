@@ -32,7 +32,7 @@ const mapStateToProps = function(state) {
 	return {
 		disabled: isDisabled(state),
 		icon: 'fa fa-refresh',
-		style: 'btn-default',
+		style: 'btn-wide btn-default',
 		value: btnValue
 	};
 };

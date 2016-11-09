@@ -7,7 +7,7 @@ const mapStateToProps = function(state) {
 	return {
 		display: state.user.can_approve && state.deployment.submitted,
 		disabled: state.deployment.is_loading,
-		style: "btn-success",
+		style: "btn-success btn-wide",
 		value: "Approve"
 	};
 };
