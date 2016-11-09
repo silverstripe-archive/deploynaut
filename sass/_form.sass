@@ -12,10 +12,10 @@
 	@extend .btn-primary
 	@extend .btn-lg
 
-.btn 
+.btn
 	margin-bottom: 20px;
 
-	.fa 
+	.fa
 		margin-right: 6px
 
 	.no-text
@@ -39,9 +39,9 @@ select,
 	color: #888
 	line-height: 36px
 
-.field.dataarchivefile 
+.field.dataarchivefile
 	margin-bottom: 15px
-	
+
 	label
 		position: relative;
 
@@ -68,9 +68,9 @@ fieldset
 		margin-bottom: 0
 		font-size: 14px
 
-	.radio input[type="radio"], 
-	.radio-inline input[type="radio"], 
-	.checkbox input[type="checkbox"], 
+	.radio input[type="radio"],
+	.radio-inline input[type="radio"],
+	.checkbox input[type="checkbox"],
 	.checkbox-inline input[type="checkbox"]
 		margin-left: -20px
 
@@ -115,19 +115,8 @@ fieldset
 
 .form-control
 	display: block
-	height: 36px
-	width: 100%
-	border: none
-	border-radius: 0 !important
-	font-size: 16px
-	font-weight: 300
-	padding: 0
 	background-color: transparent
 	box-shadow: none
-	border-bottom: 1px solid $input-border
-
-textarea,
-textarea.form-control
 	border-radius: $border-radius-base !important
 	font-size: $font-size-base
 	border: 1px solid $input-border
@@ -135,7 +124,7 @@ textarea.form-control
 	padding: $padding-base-vertical $padding-base-horizontal
 	width: 100%
 
-	&:focus 
+	&:focus
 		border-color: $input-border-focus
 
 .vert
@@ -148,7 +137,7 @@ textarea.form-control
 	width: 100%;
 	margin-bottom: 0;
 
-.form-control:focus 
+.form-control:focus
 	border-color: $input-border-focus;
 	outline: none;
 	box-shadow: none;
@@ -159,7 +148,7 @@ label
 	@extend .control-label
 	font-size: 14px;
 	font-weight: 300;
-	color: #6a8ea5
+	color: $gray-base
 	transition: 0.2s ease all;
 	-moz-transition: 0.2s ease all;
 	-webkit-transition: 0.2s ease all;
@@ -194,7 +183,7 @@ label
 .form-control:focus
 	~ label
 		color: #03a9f4;
-  
+
 	~ .form-bar:before, ~ .form-bar:after
 		background: #03a9f4;
 
@@ -202,7 +191,7 @@ label
 .form-group .help-block
 	position: absolute;
 
-.help-block 
+.help-block
 	color: #bdbdbd; // caption
 	font-size: 12px;
 	font-weight: 300;
@@ -228,11 +217,11 @@ label
 	.form-inline .form-group
 		margin-top: 16px;
 
-  
+
 	.input-group-btn, .input-group .form-control, .input-group-addon, .form-inline .input-group
 		display: inline-block;
 
-  
+
 	.input-group
 		width: auto;
 
@@ -286,30 +275,30 @@ label
 /* -- highlighter animation --------------------------- */
 @-webkit-keyframes inputHighlighter
 	from
-		background: #5264AE; 
+		background: #5264AE;
 	to
-		width: 0; 
+		width: 0;
 		background: transparent;
 
 @-moz-keyframes inputHighlighter
 	form-control
   		background: #5264AE;
 	to
-  		width: 0; 
+  		width: 0;
   		background: transparent;
 
 @keyframes inputHighlighter
 	from
-		background: #5264AE; 
+		background: #5264AE;
 	to
-		width: 0; 
-		background: transparent; 
+		width: 0;
+		background: transparent;
 
 
 
 /*-- Checkbox --------------------------- */
 // fork from http://codepen.io/jasonmayes/pen/wxtFr
-/* 
+/*
  * Core styles required for the checkboxes.
  * @author Jason Mayes 2014, www.jasonmayes.com */
 
@@ -331,7 +320,7 @@ label
 // 	top: 10px;
 // 	padding-left: 0;
 
-// .checkbox .chk-span 
+// .checkbox .chk-span
 // 	top: 0;
 // 	border: 1px solid #5a5a5a;
 // 	color: #1d1d1d;
@@ -369,7 +358,7 @@ label
 // // focus state
 // .checkbox input[type='checkbox']:focus ~ label
 // 	color: #03a9f4;
-  
+
 // 	.chk-span
 // 		border-color: #03a9f4;
 // 		&.checked
