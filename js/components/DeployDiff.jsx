@@ -1,6 +1,5 @@
 const React = require("react");
 const SummaryTable = require('../SummaryTable.jsx');
-const LoadingBar = require('../components/LoadingBar.jsx');
 
 const DeployDiff = function(props) {
 
@@ -17,14 +16,9 @@ const DeployDiff = function(props) {
 
 	return (
 		<div className="fade-in">
-			<LoadingBar show={props.is_loading} />
 			<SummaryTable {...filteredProps} />
 		</div>
 	);
-};
-
-DeployDiff.propTypes = {
-	is_loading: React.PropTypes.bool
 };
 
 module.exports = DeployDiff;

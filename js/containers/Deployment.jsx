@@ -68,7 +68,7 @@ const mapStateToProps = function(state) {
 		started: constants.hasDeployStarted(state.deployment.state),
 		error: state.deployment.error,
 		selected_ref: state.git.selected_ref,
-		deploy_log: state.deployment.logs[state.deployment.id],
+		deploy_log: state.deployment.logs[state.deployment.id]
 	};
 };
 

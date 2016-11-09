@@ -29,10 +29,9 @@ function Approval(props) {
 		<div className="section">
 			<header id="2">Approval</header>
 			<p>
-				Once this request has been approved, your team will be able to
-				progress to the final Deployment step.
+				Send a request to deploy this release. Once approved, team members will have the ability to deploy this release.<br />
+				Only one request can be active at a time, although approval can also be granted by others with the same permissions, e.g. Release managers.
 			</p>
-
 			<div className="form-group">
 				<label htmlFor="approver">Request approval from</label>
 				<Dropdown
@@ -42,11 +41,6 @@ function Approval(props) {
 					onSelect={props.onApproverSelect}
 					disabled={props.disabled}
 				/>
-				<small>
-					Only one request can be active at a time, approval can also
-					be granted by others with the same access level, e.g. Release
-					manager.
-				</small>
 			</div>
 			<LoadingBar show={props.is_loading} />
 			<div>
