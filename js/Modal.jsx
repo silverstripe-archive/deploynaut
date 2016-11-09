@@ -28,8 +28,6 @@ var Modal = React.createClass({
 
 	componentWillUnmount: function() {
 		this.modal('hide');
-		$('body').removeClass('modal-open');
-		$('.modal-backdrop').remove();
 	},
 
 	getCloseTitle: function() {
@@ -47,9 +45,7 @@ var Modal = React.createClass({
 	selector: null,
 
 	render: function() {
-		// tabIndex -1 fixes esc key not working. See http://stackoverflow.com/questions/12630156
-
-		let classNames = 'modal fade';
+		let classNames = 'modal';
 		if (this.props.className) {
 			classNames += ' ' + this.props.className;
 		}
