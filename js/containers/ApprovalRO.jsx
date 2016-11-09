@@ -143,7 +143,7 @@ const ApprovalRO = React.createClass({
 
 const mapStateToProps = function(state) {
 	const current = state.deployment.list[state.deployment.current_id] || {};
-	const approver = state.deployment.approvers.find(function(val) {
+	const approver = state.environment.approvers.find(function(val) {
 		if (val.id === current.approver_id) {
 			return val;
 		}

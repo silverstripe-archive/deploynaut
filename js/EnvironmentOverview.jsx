@@ -59,7 +59,6 @@ function Plan(props) {
 	}, 20 * 1000);
 
 	store.dispatch(actions.getRevisionsIfNeeded());
-	store.dispatch(actions.getApprovers());
 
 	return (
 		<ReactRedux.Provider store={store}>

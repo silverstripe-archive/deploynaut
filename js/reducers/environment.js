@@ -9,7 +9,8 @@ module.exports = function environment(state, action) {
 			name: null,
 			project_name: null,
 			usage: null,
-			supported_options: {}
+			supported_options: {},
+			approvers: []
 		};
 	}
 
@@ -20,7 +21,8 @@ module.exports = function environment(state, action) {
 				name: action.data.name,
 				project_name: action.data.project_name,
 				usage: action.data.usage,
-				supported_options: action.data.supported_options
+				supported_options: action.data.supported_options,
+				approvers: action.data.approvers
 			});
 		default:
 			return state;
