@@ -76,9 +76,7 @@ class ApprovalsDispatcher extends Dispatcher {
 			if (!$this->project->allowed(ApprovalsDispatcher::ALLOW_APPROVAL, $approver)) {
 				return $this->getAPIResponse(['message' => 'The given approver does not have permissions to approve'], 403);
 			}
-
 			$deployment->ApproverID = $approver->ID;
-			$deployment->write();
 		}
 
 		// title and summary may have changed, ensure they are saved
@@ -123,7 +121,6 @@ class ApprovalsDispatcher extends Dispatcher {
 		// if the person cancelling is not the one who created the deployment, update the deployer
 		if (Member::currentUserID() !== $deployment->DeployerID) {
 			$deployment->DeployerID = Member::currentUserID();
-			$deployment->write();
 		}
 
 		try {
@@ -185,13 +182,11 @@ class ApprovalsDispatcher extends Dispatcher {
 			// Bypassing approval: Ensure that approver is not set. This may happen when someone has requested approval,
 			// cancelled approval, then bypassed.
 			$deployment->ApproverID = 0;
-			$deployment->write();
 		} else {
 			// if the current user is not the person who was selected for approval on submit, but they got
 			// here because they still have permission, then change the approver to the current user
 			if (Member::currentUserID() !== $deployment->ApproverID) {
 				$deployment->ApproverID = Member::currentUserID();
-				$deployment->write();
 			}
 		}
 
@@ -242,7 +237,6 @@ class ApprovalsDispatcher extends Dispatcher {
 		// here because they still have permission, then change the approver to the current user
 		if (Member::currentUserID() !== $deployment->ApproverID) {
 			$deployment->ApproverID = Member::currentUserID();
-			$deployment->write();
 		}
 
 		if ($request->postVar('rejected_reason')) {
