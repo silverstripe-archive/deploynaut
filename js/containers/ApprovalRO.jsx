@@ -84,7 +84,7 @@ const ApprovalRO = React.createClass({
 		let rejectCancel = null;
 		if (props.approval_state === constants.APPROVAL_SUBMITTED) {
 			removeAction = (
-				<a href={"javascript:void(0);"} className="approval-action" onClick={props.onCancel}>
+				<a href={"javascript:void(0);"} className="approval-action pull-right" onClick={props.onCancel}>
 					<i className="fa fa-times-circle"></i> Remove
 				</a>
 			);
