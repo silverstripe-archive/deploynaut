@@ -6,6 +6,7 @@ const Checkbox = require('../components/Checkbox.jsx');
 const Dropdown = require('../components/Dropdown.jsx');
 const Button = require('../components/Button.jsx');
 const BuildStatus = require('../components/BuildStatus.jsx');
+const ButtonGitUpdate = require('./buttons/GitUpdate.jsx');
 const LoadingBar = require('../components/LoadingBar.jsx');
 
 const actions = require('../_actions.js');
@@ -124,21 +125,34 @@ const TargetRelease = React.createClass({
 		});
 
 		return (
-			<div className="section target-release">
-				<header id="0">Target release</header>
-				<div>
-					Select the release you would like to deploy to {props.environment_name}
+			<div>
+				{this.props.last_fetched_date && <div className="fetch">
+					<div className="pull-right">
+						<ButtonGitUpdate />
+					</div>
+					<div>
+						<i className="fa fa-code" aria-hidden="true"></i> Last synced {this.props.last_fetched_date}
+						&nbsp;<span className="small">{this.props.last_fetched_ago}</span>
+					</div>
+					<div><i>Ensure you have the most recent code before setting up your deployment</i></div>
+				</div>}
+
+				<div className="section target-release">
+					<header id="0">Target release</header>
+					<div>
+						Select the release you would like to deploy to {props.environment_name}
+					</div>
+					<LoadingBar show={props.is_loading} />
+					<form className="form">
+						<ul className="radio-list">
+							{list}
+						</ul>
+						{options_toggle}
+						<ul className={options_classes}>
+							{options}
+						</ul>
+					</form>
 				</div>
-				<LoadingBar show={props.is_loading} />
-				<form className="form">
-					<ul className="radio-list">
-						{list}
-					</ul>
-					{options_toggle}
-					<ul className={options_classes}>
-						{options}
-					</ul>
-				</form>
 			</div>
 		);
 	}
@@ -201,6 +215,8 @@ const mapStateToProps = function(state) {
 		selected_options: state.git.selected_options,
 		ref_list: refs,
 		selected_ref: state.git.selected_ref,
+		last_fetched_date: state.git.last_fetched_date,
+		last_fetched_ago: state.git.last_fetched_ago,
 		is_loading: isLoading(state),
 		disabled: isDisabled(state)
 	};

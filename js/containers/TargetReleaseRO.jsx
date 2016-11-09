@@ -41,7 +41,6 @@ const TargetReleaseRO = React.createClass({
 			deployDiff = <DeployDiff changes={props.deployment.changes} />;
 			linkName = 'Hide details';
 			caret = 'down';
-
 		}
 
 		return (

@@ -4,7 +4,6 @@ const ReactRedux = require('react-redux');
 const StepMenu = require('../components/StepMenu.jsx');
 const TargetRelease = require('./TargetRelease.jsx');
 const TargetReleaseRO = require('./TargetReleaseRO.jsx');
-const ButtonGitUpdate = require('./buttons/GitUpdate.jsx');
 
 const Approval = require('./Approval.jsx');
 const ApprovalRO = require('./ApprovalRO.jsx');
@@ -131,7 +130,6 @@ const DeployModal = React.createClass({
 
 	render: function() {
 		const steps = calculateSteps(this.props);
-
 		const content = [];
 
 		content[0] = (
@@ -173,22 +171,6 @@ const DeployModal = React.createClass({
 			});
 		}
 
-		let fetch = null;
-		if (this.props.last_fetched_date) {
-			fetch = (
-				<div className="fetch">
-					<div className="pull-right">
-						<ButtonGitUpdate />
-					</div>
-					<div>
-						<i className="fa fa-code" aria-hidden="true"></i> Last synced {this.props.last_fetched_date}
-						&nbsp;<span className="small">{this.props.last_fetched_ago}</span>
-					</div>
-					<div><i>Ensure you have the most recent code before setting up your deployment</i></div>
-				</div>
-			);
-		}
-
 		return (
 			<Modal
 				show={this.props.is_open}
@@ -212,7 +194,6 @@ const DeployModal = React.createClass({
 								messages={this.props.messages}
 							/>
 							<div>
-								{fetch}
 								{content}
 							</div>
 						</div>
@@ -259,8 +240,6 @@ const mapStateToProps = function(state, ownProps) {
 		plan_success: deployPlanIsOk(),
 		messages: state.messages,
 		sha_is_selected: (state.git.selected_ref !== ""),
-		last_fetched_date: state.git.last_fetched_date,
-		last_fetched_ago: state.git.last_fetched_ago,
 		can_deploy: (current.state === constants.STATE_APPROVED),
 		state: current.state,
 		active_step: active_step,
