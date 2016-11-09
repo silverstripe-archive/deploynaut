@@ -28,6 +28,8 @@ var Modal = React.createClass({
 
 	componentWillUnmount: function() {
 		this.modal('hide');
+		$('body').removeClass('modal-open');
+		$('.modal-backdrop').remove();
 	},
 
 	getCloseTitle: function() {
