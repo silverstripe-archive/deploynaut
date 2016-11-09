@@ -7,8 +7,9 @@ const mapStateToProps = function(state) {
 	return {
 		display: state.deployment.id === "",
 		disabled: state.plan.is_loading || state.deployment.is_creating,
-		style: "btn-success",
-		value: "Continue"
+		style: "btn-primary btn-lg-wide",
+		value: "Continue",
+		icon: "fa fa-long-arrow-down"
 	};
 };
 

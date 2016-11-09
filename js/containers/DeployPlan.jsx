@@ -4,6 +4,7 @@ const ReactRedux = require('react-redux');
 const SummaryOfChanges = require('./SummaryOfChanges.jsx');
 const DeployDiff = require('../components/DeployDiff.jsx');
 const SaveDeployPlan = require('./buttons/SaveDeployPlan.jsx');
+const LoadingBar = require('../components/LoadingBar.jsx');
 
 const actions = require('../_actions.js');
 const deployment = require('../constants/deployment.js');
@@ -47,18 +48,18 @@ function DeployPlan(props) {
 						</small>
 					</div>
 				</div>
-				<DeployDiff changes={props.changes} is_loading={props.is_loading} />
+				<DeployDiff changes={props.changes} />
+				<LoadingBar show={props.is_loading} />
 			</div>
 			<SaveDeployPlan />
 		</div>
-
 	);
 }
 
 const mapStateToProps = function(state) {
 	return {
 		changes: state.plan.changes,
-		is_loading: state.plan.is_loading,
+		is_loading: state.plan.is_loading || state.deployment.is_creating,
 		title: state.plan.title,
 		can_edit: deployment.canEdit(state)
 	};
