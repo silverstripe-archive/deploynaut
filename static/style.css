@@ -10932,27 +10932,17 @@ fieldset {
 select,
 .readonly span.readonly {
   display: block;
-  height: 36px;
-  width: 100%;
-  border: none;
-  border-radius: 0 !important;
-  font-size: 16px;
-  font-weight: 300;
-  padding: 0;
   background-color: transparent;
   box-shadow: none;
-  border-bottom: 1px solid #e6e6e6; }
-
-textarea,
-textarea.form-control {
   border-radius: 3px !important;
   font-size: 14px;
   border: 1px solid #e6e6e6;
   color: #555555;
   padding: 6px 14px;
   width: 100%; }
-  textarea:focus,
-  textarea.form-control:focus {
+  .form-control:focus, input.text:focus,
+  select:focus,
+  .readonly span.readonly:focus {
     border-color: #999; }
 
 .vert {
@@ -10979,7 +10969,7 @@ select:focus,
 label {
   font-size: 14px;
   font-weight: 300;
-  color: #6a8ea5;
+  color: #000;
   transition: 0.2s ease all;
   -moz-transition: 0.2s ease all;
   -webkit-transition: 0.2s ease all; }
