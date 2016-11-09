@@ -1177,7 +1177,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		// get the last time git fetch was run
 		$lastFetched = 'never';
 		$fetch = DNGitFetch::get()
-			->filter('ProjectID', $project->ID)
+			->filter([
+				'ProjectID' => $project->ID,
+				'Status' => 'Finished'
+			])
 			->sort('LastEdited', 'DESC')
 			->first();
 		if ($fetch) {

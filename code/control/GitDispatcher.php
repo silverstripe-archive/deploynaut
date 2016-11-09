@@ -153,7 +153,10 @@ class GitDispatcher extends Dispatcher {
 		$lastFetchedDate = 'never';
 		$lastFetchedAgo = null;
 		$fetch = DNGitFetch::get()
-			->filter('ProjectID', $this->project->ID)
+			->filter([
+				'ProjectID' => $this->project->ID,
+				'Status' => 'Finished'
+			])
 			->sort('LastEdited', 'DESC')
 			->first();
 		if ($fetch) {
