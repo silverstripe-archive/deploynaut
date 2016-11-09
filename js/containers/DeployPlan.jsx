@@ -5,6 +5,7 @@ const SummaryOfChanges = require('./SummaryOfChanges.jsx');
 const DeployDiff = require('../components/DeployDiff.jsx');
 const SaveDeployPlan = require('./buttons/SaveDeployPlan.jsx');
 const LoadingBar = require('../components/LoadingBar.jsx');
+const Messages = require('../components/Messages.jsx');
 
 const actions = require('../_actions.js');
 const deployment = require('../constants/deployment.js');
@@ -13,6 +14,7 @@ function DeployPlan(props) {
 	return (
 		<div>
 			<div className="section">
+				<Messages messages={props.messages} />
 				<header id="1">Deployment plan</header>
 				<p>
 					Provide context for the approver or add details for future
@@ -59,7 +61,8 @@ const mapStateToProps = function(state) {
 		changes: state.plan.changes,
 		is_loading: state.plan.is_loading || state.deployment.is_creating,
 		title: state.plan.title,
-		can_edit: deployment.canEdit(state)
+		can_edit: deployment.canEdit(state),
+		messages: state.plan.messages
 	};
 };
 

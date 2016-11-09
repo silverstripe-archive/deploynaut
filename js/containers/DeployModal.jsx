@@ -10,7 +10,6 @@ const ApprovalRO = require('./ApprovalRO.jsx');
 const Deployment = require('./Deployment.jsx');
 const DeployPlan = require('./DeployPlan.jsx');
 const DeployPlanRO = require('./DeployPlanRO.jsx');
-const Messages = require('../components/Messages.jsx');
 const Modal = require('../Modal.jsx');
 const LoadingBar = require('../components/LoadingBar.jsx');
 
@@ -137,6 +136,7 @@ const DeployModal = React.createClass({
 				<LoadingBar show />
 			</div>
 		);
+
 		if (steps[0].show) {
 			if (this.props.can_edit) {
 				content[0] = (<TargetRelease key={0} />);
@@ -190,9 +190,6 @@ const DeployModal = React.createClass({
 					</div>
 					<div className="col-md-9 main" >
 						<div className="deploy-form">
-							<Messages
-								messages={this.props.messages}
-							/>
 							<div>
 								{content}
 							</div>
@@ -238,7 +235,6 @@ const mapStateToProps = function(state, ownProps) {
 		can_edit: constants.canEdit(state),
 		is_open: typeof (ownProps.params.id) !== 'undefined' && ownProps.params.id !== null,
 		plan_success: deployPlanIsOk(),
-		messages: state.messages,
 		sha_is_selected: (state.git.selected_ref !== ""),
 		can_deploy: (current.state === constants.STATE_APPROVED),
 		state: current.state,
