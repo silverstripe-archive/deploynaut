@@ -786,7 +786,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * @param \SS_HTTPRequest $request
 	 * @return Form
 	 */
-	public function getCreateEnvironmentForm(\SS_HTTPRequest $request) {
+	public function getCreateEnvironmentForm(\SS_HTTPRequest $request = null) {
 		$this->setCurrentActionType(self::ACTION_ENVIRONMENTS);
 
 		$project = $this->getCurrentProject();
