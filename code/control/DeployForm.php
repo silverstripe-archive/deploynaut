@@ -115,7 +115,7 @@ class DeployForm extends Form {
 		$redeploy = [];
 		foreach ($project->DNEnvironmentList() as $dnEnvironment) {
 			$envName = $dnEnvironment->Name;
-			foreach ($dnEnvironment->DeployHistory() as $deploy) {
+			foreach ($dnEnvironment->DeployHistory()->filter('State', \DNDeployment::STATE_COMPLETED) as $deploy) {
 				$sha = $deploy->SHA;
 				if (!isset($redeploy[$envName])) {
 					$redeploy[$envName] = [];

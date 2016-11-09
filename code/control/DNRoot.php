@@ -1137,7 +1137,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			$envName = $dnEnvironment->Name;
 			$perEnvDeploys = [];
 
-			foreach ($dnEnvironment->DeployHistory() as $deploy) {
+			foreach ($dnEnvironment->DeployHistory()->filter('State', \DNDeployment::STATE_COMPLETED) as $deploy) {
 				$sha = $deploy->SHA;
 
 				// Check if exists to make sure the newest deployment date is used.
