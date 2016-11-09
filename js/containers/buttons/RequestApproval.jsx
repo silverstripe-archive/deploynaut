@@ -27,7 +27,7 @@ const mapStateToProps = function(state) {
 	return {
 		display: canRequest(state),
 		disabled: state.deployment.is_loading,
-		style: "btn-success",
+		style: "btn-wide btn-success",
 		value: 'Send request',
 		icon: 'fa fa-envelope'
 	};

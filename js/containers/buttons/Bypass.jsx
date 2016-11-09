@@ -27,7 +27,7 @@ const mapStateToProps = function(state) {
 	return {
 		display: canBypass(state),
 		disabled: state.deployment.is_loading,
-		style: "btn-warning",
+		style: "btn-wide btn-warning",
 		value: "Bypass approval",
 		icon: "fa fa-level-down"
 	};
