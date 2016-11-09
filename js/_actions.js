@@ -295,9 +295,10 @@ export function failApprovalSubmit(err) {
 export function submitForApproval() {
 	return (dispatch, getState) => {
 		dispatch(startApprovalSubmit());
+		const current = getState().deployment.list[getState().deployment.current_id] || {};
 		return approvalsAPI.call(getState, '/submit', 'post', {
-			id: getState().deployment.id,
-			approver_id: getState().deployment.approver_id,
+			id: getState().deployment.current_id,
+			approver_id: current.approver_id,
 			title: getState().plan.title,
 			summary: getState().plan.summary_of_changes
 		})
@@ -333,7 +334,7 @@ export function cancelApprovalRequest() {
 	return (dispatch, getState) => {
 		dispatch(startApprovalCancel());
 		return approvalsAPI.call(getState, '/cancel', 'post', {
-			id: getState().deployment.id
+			id: getState().deployment.current_id
 		})
 			.then(function(data) {
 				dispatch(succeedApprovalCancel(data));
@@ -367,7 +368,7 @@ export function approveDeployment() {
 	return (dispatch, getState) => {
 		dispatch(startApprovalApprove());
 		return approvalsAPI.call(getState, '/approve', 'post', {
-			id: getState().deployment.id,
+			id: getState().deployment.current_id,
 			title: getState().plan.title,
 			summary: getState().plan.summary_of_changes
 		})
@@ -402,9 +403,10 @@ export function failApprovalReject(err) {
 export function rejectDeployment() {
 	return (dispatch, getState) => {
 		dispatch(startApprovalReject());
+		const current = getState().deployment.list[getState().deployment.current_id] || {};
 		return approvalsAPI.call(getState, '/reject', 'post', {
-			id: getState().deployment.id,
-			rejected_reason: getState().deployment.rejected_reason
+			id: getState().deployment.current_id,
+			rejected_reason: current.rejected_reason
 		})
 			.then(function(data) {
 				dispatch(succeedApprovalReject(data));
@@ -436,7 +438,7 @@ export function failDeploymentCreate(err) {
 
 export function createDeployment() {
 	return (dispatch, getState) => {
-		if (getState().deployment.id) {
+		if (getState().deployment.current_id) {
 			return Promise.resolve();
 		}
 
@@ -448,6 +450,7 @@ export function createDeployment() {
 		});
 
 		dispatch(startDeploymentCreate());
+		const current = getState().deployment.list[getState().deployment.current_id] || {};
 		return deployAPI.call(getState, '/createdeployment', 'post', {
 			ref: getState().git.selected_ref,
 			ref_type: getState().git.selected_type,
@@ -455,7 +458,7 @@ export function createDeployment() {
 			options: options,
 			title: getState().plan.title,
 			summary: getState().plan.summary_of_changes,
-			approver_id: getState().deployment.approver_id
+			approver_id: current.approver_id
 		})
 			.then(function(data) {
 				return dispatch(succeedDeploymentCreate(data));
@@ -503,10 +506,11 @@ export function failDeployLogUpdate(err) {
 
 export function getDeployLog() {
 	return (dispatch, getState) => {
-		if (!constants.hasLogs(getState().deployment.state)) {
+		const current = getState().deployment.list[getState().deployment.current_id] || {};
+		if (!constants.hasLogs(current.state)) {
 			return;
 		}
-		deployAPI.call(getState, `/log/${getState().deployment.id}`, 'get').then(data => {
+		deployAPI.call(getState, `/log/${getState().deployment.current_id}`, 'get').then(data => {
 			dispatch(succeedDeployLogUpdate(data));
 		});
 	};
@@ -516,7 +520,7 @@ export function startDeploy() {
 	return (dispatch, getState) => {
 		dispatch(startDeploymentEnqueue());
 		return deployAPI.call(getState, '/start', 'post', {
-			id: getState().deployment.id
+			id: getState().deployment.current_id
 		})
 			.then(function(data) {
 				return dispatch(succeedDeploymentEnqueue(data));
@@ -596,7 +600,7 @@ export function deleteDeployment() {
 	return (dispatch, getState) => {
 		dispatch(startDeploymentDelete());
 		return deployAPI.call(getState, '/delete', 'post', {
-			id: getState().deployment.id
+			id: getState().deployment.current_id
 		})
 			.then(function(data) {
 				return dispatch(succeedDeploymentDelete(data));

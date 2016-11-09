@@ -96,19 +96,19 @@ const TargetReleaseRO = React.createClass({
 });
 
 const mapStateToProps = function(state) {
-	if (typeof state.deployment.list[state.deployment.id] === 'undefined') {
+	if (typeof state.deployment.list[state.deployment.current_id] === 'undefined') {
 		return {};
 	}
 
-	const deploy = state.deployment.list[state.deployment.id];
+	const current = state.deployment.list[state.deployment.current_id] || {};
 
 	let ref_type_description = "";
-	if (state.git.list[deploy.ref_type]) {
-		ref_type_description = state.git.list[deploy.ref_type].description;
+	if (state.git.list[current.ref_type]) {
+		ref_type_description = state.git.list[current.ref_type].description;
 	}
 
 	return {
-		deployment: deploy,
+		deployment: current,
 		environment: state.environment.name,
 		ref_type_description: ref_type_description
 	};

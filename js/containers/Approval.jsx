@@ -7,6 +7,7 @@ const Bypass = require('./buttons/Bypass.jsx');
 const LoadingBar = require('../components/LoadingBar.jsx');
 
 const actions = require('../_actions.js');
+const constants = require('../constants/deployment.js');
 
 function Approval(props) {
 	var sentTime = null;
@@ -54,14 +55,14 @@ function Approval(props) {
 	);
 }
 
-function isDisabled(state) {
-	if (state.deployment.approved) {
+function isDisabled(deployState) {
+	if (constants.isApproved(deployState)) {
 		return true;
 	}
-	if (state.deployment.rejected) {
+	if (constants.isRejected(deployState)) {
 		return true;
 	}
-	if (state.deployment.queued) {
+	if (constants.isQueued(deployState)) {
 		return true;
 	}
 	return false;
@@ -75,11 +76,12 @@ const mapStateToProps = function(state) {
 		};
 	});
 
+	const current = state.deployment.list[state.deployment.current_id] || {};
 	return {
-		disabled: isDisabled(state),
-		date_requested_nice: state.deployment.data.date_requested_nice,
+		disabled: isDisabled(current.state),
+		date_requested_nice: current.date_requested_nice,
 		approvers: approvers,
-		approver_id: state.deployment.approver_id,
+		approver_id: current.approver_id,
 		error: state.deployment.error,
 		is_loading: state.deployment.is_loading
 	};

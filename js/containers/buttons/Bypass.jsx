@@ -1,23 +1,21 @@
 var ReactRedux = require('react-redux');
 
-var _ = require('underscore');
 var actions = require('../../_actions.js');
 var Button = require('../../components/Button.jsx');
+var constants = require('../../constants/deployment.js');
 
 function canBypass(state) {
-	if (_.isEmpty(state.plan.changes)) {
-		return false;
-	}
 	if (!state.user.can_bypass_approval) {
 		return false;
 	}
-	if (state.deployment.approved) {
+	const current = state.deployment.list[state.deployment.current_id] || {};
+	if (constants.isApproved(current.state)) {
 		return false;
 	}
-	if (state.deployment.rejected) {
+	if (constants.isRejected(current.state)) {
 		return false;
 	}
-	if (state.deployment.submitted) {
+	if (constants.isSubmitted(current.state)) {
 		return false;
 	}
 	return true;
