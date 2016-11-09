@@ -4,13 +4,14 @@ const ReactRedux = require('react-redux');
 const actions = require('../../_actions.js');
 const constants = require('../../constants/deployment.js');
 
-function canDeploy(state) {
-	if (constants.hasDeployStarted(state.deployment.state)) {
+function canDeploy(deployState) {
+	if (constants.hasDeployStarted(deployState)) {
 		return false;
 	}
-	if (state.deployment.approved) {
+	if (constants.isApproved(deployState)) {
 		return true;
 	}
+
 	return false;
 }
 
@@ -36,9 +37,10 @@ function deployButton(props) {
 }
 
 const mapStateToProps = function(state) {
+	const current = state.deployment.list[state.deployment.current_id] || {};
 	return {
-		queued: state.deployment.queued,
-		display: canDeploy(state)
+		queued: constants.isQueued(current.state) || state.deployment.is_queuing,
+		display: canDeploy(current.state)
 	};
 };
 

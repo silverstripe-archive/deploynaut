@@ -82,6 +82,10 @@ export function isRejected(deployState) {
 	return deployState === STATE_REJECTED;
 }
 
+export function isQueued(deployState) {
+	return deployState === STATE_QUEUED;
+}
+
 export function canDelete(state) {
 	if (hasDeployStarted(state)) {
 		return false;
@@ -90,16 +94,17 @@ export function canDelete(state) {
 }
 
 export function canEdit(state) {
-	if (state.deployment.submitted) {
+	const current = state.deployment.list[state.deployment.current_id] || {};
+	if (isSubmitted(current.state)) {
 		return false;
 	}
-	if (state.deployment.approved) {
+	if (isApproved(current.state)) {
 		return false;
 	}
-	if (state.deployment.rejected) {
+	if (isRejected(current.state)) {
 		return false;
 	}
-	if (state.deployment.queued) {
+	if (isQueued(current.state)) {
 		return false;
 	}
 	return true;

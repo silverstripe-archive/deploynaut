@@ -9,23 +9,17 @@ const initialState = {
 	server_time: 0,
 	is_creating: false,
 	is_loading: false,
-	id: "",
-	data: {},
+	is_queuing: false,
+	// this is the "list" (actually an object) of all deployments that we fetched, updated etc keyed by deployment id
+	list: {},
+	// point to a deployment in the list above and is used to for the modal
+	current_id: "",
 	// this is a "list" (actually an object) of deployment logs keyed by the deployment id
 	logs: {},
 	history_error: null,
 	error: null,
-	state: deployStates.STATE_NEW,
 	approval_is_loading: false,
-	submitted: false,
-	approved: false,
-	rejected: false,
-	rejected_reason: "",
-	queued: false,
 	approvers: [],
-	approver_id: 0,
-	// this is the "list" (actually an object) of all deployments that we fetched, updated etc keyed by deployment id
-	list: {},
 	current_page: 1,
 	history_is_loading: false
 };
@@ -65,15 +59,8 @@ module.exports = function deployment(state, action) {
 		}
 		case actions.NEW_DEPLOYMENT:
 			return _.assign({}, state, {
-				id: "",
-				data: {},
+				current_id: "",
 				error: null,
-				state: deployStates.STATE_NEW,
-				submitted: false,
-				approved: false,
-				rejected: false,
-				queued: false,
-				approver_id: 0
 			});
 
 		case actions.START_DEPLOYMENT_CREATE:
@@ -81,16 +68,15 @@ module.exports = function deployment(state, action) {
 				is_creating: true,
 			});
 
-		case actions.SUCCEED_DEPLOYMENT_CREATE:
+		case actions.SUCCEED_DEPLOYMENT_CREATE: {
 			const newList = _.assign({}, state.list);
 			newList[action.data.deployment.id] = action.data.deployment;
 			return _.assign({}, state, {
 				is_creating: false,
-				id: action.data.deployment.id,
-				state: action.data.deployment.state,
-				data: action.data.deployment,
+				current_id: action.data.deployment.id,
 				list: newList
 			});
+		}
 
 		case actions.FAIL_DEPLOYMENT_CREATE:
 			return _.assign({}, state, {
@@ -104,15 +90,28 @@ module.exports = function deployment(state, action) {
 				error: null
 			});
 
-		case actions.SET_APPROVER:
+		case actions.SET_APPROVER: {
+			if (!state.list[state.current_id]) {
+				return state;
+			}
+			const newList = _.assign({}, state.list);
+			newList[state.current_id].approver_id = action.id;
 			return _.assign({}, state, {
-				approver_id: action.id
+				list: newList
 			});
+		}
 
-		case actions.SET_REJECT_REASON:
+		case actions.SET_REJECT_REASON: {
+			if (!state.list[state.current_id]) {
+				return state;
+			}
+			const newList = _.assign({}, state.list);
+			newList[state.current_id].rejected_reason = action.value;
+
 			return _.assign({}, state, {
-				rejected_reason: action.value
+				list: newList
 			});
+		}
 
 		case actions.START_APPROVERS_GET:
 			return _.assign({}, state, {
@@ -127,7 +126,7 @@ module.exports = function deployment(state, action) {
 
 		case actions.START_DEPLOYMENT_QUEUE:
 			return _.assign({}, state, {
-				queued: true
+				is_queuing: true
 			});
 
 		case actions.START_APPROVAL_SUBMIT:
@@ -151,15 +150,9 @@ module.exports = function deployment(state, action) {
 			return _.assign({}, state, {
 				approval_is_loading: false,
 				is_loading: false,
+				is_queuing: false,
 				error: null,
-				id: action.data.deployment.id,
-				state: action.data.deployment.state,
-				submitted: deployStates.isSubmitted(action.data.deployment.state),
-				approved: deployStates.isApproved(action.data.deployment.state),
-				rejected: deployStates.isRejected(action.data.deployment.state),
-				rejected_reason: action.data.deployment.rejected_reason,
-				approver_id: action.data.deployment.approver ? action.data.deployment.approver.id : 0,
-				data: action.data.deployment,
+				current_id: action.data.deployment.id,
 				list: newList
 			});
 		}
@@ -197,7 +190,6 @@ module.exports = function deployment(state, action) {
 
 			return _.assign({}, state, {
 				logs: newLogList,
-				state: action.data.status,
 				error: null,
 				list: newList
 			});
@@ -207,8 +199,6 @@ module.exports = function deployment(state, action) {
 			delete newList[action.data.id];
 
 			return _.assign({}, state, {
-				state: null,
-				data: {},
 				error: null,
 				list: newList
 			});

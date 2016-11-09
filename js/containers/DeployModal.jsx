@@ -233,24 +233,26 @@ const mapStateToProps = function(state, ownProps) {
 		active_step = parseInt(window.location.hash.substring(1), 10);
 	}
 
+	const current = state.deployment.list[state.deployment.current_id] || {};
+
 	return {
 		show: [
 			(!state.git.is_loading && !state.deployment.is_loading),
 			state.git.selected_ref !== "",
-			state.deployment.id !== "",
-			state.deployment.approved
+			state.deployment.current_id !== "",
+			constants.isApproved(current.state)
 		],
 		is_loading: [
 			state.git.is_loading || state.git.is_updating,
 			state.plan.is_loading || state.deployment.is_loading,
 			state.deployment.approval_is_loading,
-			constants.isDeploying(state.deployment.state)
+			constants.isDeploying(current.state)
 		],
 		is_finished: [
 			state.git.selected_ref !== "",
-			state.deployment.id !== "",
-			deployPlanIsOk() && state.deployment.approved,
-			constants.isDeployDone(state.deployment.state)
+			state.deployment.current_id !== "",
+			deployPlanIsOk() && constants.isApproved(current.state),
+			constants.isDeployDone(current.state)
 		],
 		can_edit: constants.canEdit(state),
 		is_open: typeof (ownProps.params.id) !== 'undefined' && ownProps.params.id !== null,
@@ -259,12 +261,12 @@ const mapStateToProps = function(state, ownProps) {
 		sha_is_selected: (state.git.selected_ref !== ""),
 		last_fetched_date: state.git.last_fetched_date,
 		last_fetched_ago: state.git.last_fetched_ago,
-		can_deploy: state.deployment.approved,
-		state: state.deployment.state,
+		can_deploy: (current.state === constants.STATE_APPROVED),
+		state: current.state,
 		active_step: active_step,
 		environment_name: state.environment.name,
 		project_name: state.environment.project_name,
-		deployment_id: state.deployment.id
+		deployment_id: state.deployment.current_id
 	};
 };
 

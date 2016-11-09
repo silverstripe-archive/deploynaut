@@ -40,7 +40,7 @@ function getStateDescription(approvalState) {
 	}
 }
 
-const Approval = React.createClass({
+const ApprovalRO = React.createClass({
 
 	getInitialState: function() {
 		return {
@@ -142,19 +142,20 @@ const Approval = React.createClass({
 });
 
 const mapStateToProps = function(state) {
+	const current = state.deployment.list[state.deployment.current_id] || {};
 	const approver = state.deployment.approvers.find(function(val) {
-		if (val.id === state.deployment.approver_id) {
+		if (val.id === current.approver_id) {
 			return val;
 		}
 		return false;
 	});
 
 	return {
-		approval_state: constants.getApprovalState(state.deployment.state, approver),
-		date_requested_nice: state.deployment.data.date_requested_nice,
-		date_approved_nice: state.deployment.data.date_approved_nice,
+		approval_state: constants.getApprovalState(current.state, approver),
+		date_requested_nice: current.date_requested_nice,
+		date_approved_nice: current.date_approved_nice,
 		approver: approver,
-		rejected_reason: state.deployment.rejected_reason,
+		rejected_reason: current.rejected_reason,
 		error: state.deployment.error,
 		is_loading: state.deployment.is_loading
 	};
@@ -174,4 +175,4 @@ const mapDispatchToProps = function(dispatch) {
 	};
 };
 
-module.exports = ReactRedux.connect(mapStateToProps, mapDispatchToProps)(Approval);
+module.exports = ReactRedux.connect(mapStateToProps, mapDispatchToProps)(ApprovalRO);

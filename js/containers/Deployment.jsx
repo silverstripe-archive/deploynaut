@@ -45,7 +45,7 @@ const deployment = React.createClass({
 				</pre>
 				);
 			} else {
-				logOutput = <LoadingBar show />
+				logOutput = <LoadingBar show />;
 			}
 		}
 
@@ -64,11 +64,12 @@ const deployment = React.createClass({
 });
 
 const mapStateToProps = function(state) {
+	const current = state.deployment.list[state.deployment.current_id] || {};
 	return {
-		started: constants.hasDeployStarted(state.deployment.state),
+		started: constants.hasDeployStarted(current.state) || state.deployment.is_queuing,
 		error: state.deployment.error,
 		selected_ref: state.git.selected_ref,
-		deploy_log: state.deployment.logs[state.deployment.id]
+		deploy_log: state.deployment.logs[state.deployment.current_id]
 	};
 };
 

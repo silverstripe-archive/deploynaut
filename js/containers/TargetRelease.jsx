@@ -9,6 +9,7 @@ const BuildStatus = require('../components/BuildStatus.jsx');
 const LoadingBar = require('../components/LoadingBar.jsx');
 
 const actions = require('../_actions.js');
+const constants = require('../constants/deployment.js');
 
 const TargetRelease = React.createClass({
 	getInitialState: function() {
@@ -170,16 +171,17 @@ function isDisabled(state) {
 	if (isLoading(state) || state.plan.is_loading) {
 		return true;
 	}
-	if (state.deployment.submitted) {
+	const current = state.deployment.list[state.deployment.current_id] || {};
+	if (constants.isSubmitted(current.state)) {
 		return true;
 	}
-	if (state.deployment.approved) {
+	if (constants.isApproved(current.state)) {
 		return true;
 	}
-	if (state.deployment.rejected) {
+	if (constants.isRejected(current.state)) {
 		return true;
 	}
-	if (state.deployment.queued) {
+	if (constants.isQueued(current.state)) {
 		return true;
 	}
 	return false;

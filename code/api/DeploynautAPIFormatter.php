@@ -34,8 +34,10 @@ class DeploynautAPIFormatter {
 		}
 		$approver = $deployment->Approver();
 		$approverData = null;
+		$approverID = "";
 		if ($approver && $approver->exists()) {
 			$approverData = $this->getStackMemberData($project, $approver);
+			$approverID = $approver->ID;
 		}
 
 		// failover for older deployments
@@ -106,6 +108,7 @@ class DeploynautAPIFormatter {
 			'commit_message' => $deployment->getCommitMessage(),
 			'commit_url' => $deployment->getCommitURL(),
 			'deployer' => $deployerData,
+			'approver_id' => $approverID,
 			'approver' => $approverData,
 			'state' => $deployment->State,
 			'is_current_build' => $isCurrentBuild

@@ -2,21 +2,23 @@ var ReactRedux = require('react-redux');
 
 var actions = require('../../_actions.js');
 var Button = require('../../components/Button.jsx');
+const constants = require('../../constants/deployment.js');
 
 function isDisabled(state) {
 	if (state.git.is_fetching || state.git.is_updating || state.plan.is_loading) {
 		return true;
 	}
-	if (state.deployment.submitted) {
+	const current = state.deployment.list[state.deployment.current_id] || {};
+	if (constants.isSubmitted(current.state)) {
 		return true;
 	}
-	if (state.deployment.approved) {
+	if (constants.isApproved(current.state)) {
 		return true;
 	}
-	if (state.deployment.rejected) {
+	if (constants.isRejected(current.state)) {
 		return true;
 	}
-	if (state.deployment.queued) {
+	if (constants.isQueued(current.state)) {
 		return true;
 	}
 	return false;
