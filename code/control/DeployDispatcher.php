@@ -271,7 +271,7 @@ class DeployDispatcher extends Dispatcher {
 		}
 
 		// The deployment cannot be started until it has been approved, or bypassed straight to approved state
-		if ($deployment->State != DNDeployment::STATE_APPROVED) {
+		if ($deployment->State !== DNDeployment::STATE_APPROVED) {
 			return $this->getAPIResponse(['message' => 'This deployment has not been approved. Cannot deploy'], 403);
 		}
 
@@ -280,7 +280,11 @@ class DeployDispatcher extends Dispatcher {
 		$options = $deployment->getDeploymentStrategy()->getOptions();
 		$strategy = $this->environment->Backend()->planDeploy($this->environment, $options);
 		$deployment->Strategy = $strategy->toJSON();
-		$deployment->write();
+
+		// if the person starting is not the one who created the deployment, update the deployer
+		if (Member::currentUserID() !== $deployment->DeployerID) {
+			$deployment->DeployerID = Member::currentUserID();
+		}
 
 		$deployment->getMachine()->apply(DNDeployment::TR_QUEUE);
 
