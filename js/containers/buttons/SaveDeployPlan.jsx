@@ -3,10 +3,22 @@ var ReactRedux = require('react-redux');
 var actions = require('../../_actions.js');
 var Button = require('../../components/Button.jsx');
 
+function isDisplayed(state) {
+	if (state.plan.is_loading || state.deployment.is_creating) {
+		return false;
+	}
+	if (state.plan.has_errors) {
+		return false;
+	}
+	if (state.deployment.current_id !== "") {
+		return false;
+	}
+	return true;
+}
+
 const mapStateToProps = function(state) {
 	return {
-		display: state.deployment.current_id === "",
-		disabled: state.plan.is_loading || state.deployment.is_creating,
+		display: isDisplayed(state),
 		style: "btn-wide btn-primary",
 		value: "Continue",
 		icon: "fa fa-long-arrow-down"
