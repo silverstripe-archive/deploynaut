@@ -12733,16 +12733,8 @@ textarea.deploy-key {
             width: 220px; } }
         .modal.deploy .modal-dialog .modal-content .modal-body .menu .step {
           font-size: 16px;
-          color: #B2B3B4;
-          padding: 10px 0 10px 16px;
-          border-left: 6px solid transparent; }
-          .modal.deploy .modal-dialog .modal-content .modal-body .menu .step.active {
-            border-color: #0685D7;
-            color: #505050;
-            cursor: pointer; }
-          .modal.deploy .modal-dialog .modal-content .modal-body .menu .step.selectable {
-            color: #505050;
-            cursor: pointer; }
+          color: #505050;
+          padding: 10px 0 10px 10px; }
       @media screen and (min-width: 992px) {
         .modal.deploy .modal-dialog .modal-content .modal-body .main {
           margin-left: 221px; } }

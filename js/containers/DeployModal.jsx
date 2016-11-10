@@ -21,25 +21,21 @@ function calculateSteps(props) {
 		{
 			title: "Target release",
 			show: props.show[0],
-			is_loading: props.is_loading[0],
 			is_finished: props.is_finished[0]
 		},
 		{
 			title: "Deployment plan",
 			show: props.show[1],
-			is_loading: props.is_loading[1],
 			is_finished: props.is_finished[1]
 		},
 		{
 			title: "Approval",
 			show: props.show[2],
-			is_loading: props.is_loading[2],
 			is_finished: props.is_finished[2]
 		},
 		{
 			title: "Deployment",
 			show: props.show[3],
-			is_loading: props.is_loading[3],
 			is_finished: props.is_finished[3]
 		}
 	];
@@ -55,52 +51,18 @@ const DeployModal = React.createClass({
 			return;
 		}
 
-		this.bodyElement = bodyElements[0];
-		this.bodyElement.addEventListener("scroll", this.calculateActiveSection);
-
 		this.resize();
-		this.calculateActiveSection();
 	},
 
 	componentDidUpdate: function() {
 		this.resize();
-		this.calculateActiveSection();
 	},
 
 	componentWillUnmount: function() {
 		window.removeEventListener("resize", this.resize);
-		if (this.bodyElement) {
-			this.bodyElement.removeEventListener("scroll", this.calculateActiveSection);
-		}
 	},
 
 	bodyElement: null,
-
-	calculateActiveSection: function() {
-		// menu items
-		const menuItems = $('.menu').find("li");
-		// section anchors corresponding to menu items
-		const scrollItems = menuItems.map(function() {
-			const item = $($(this).attr("href"));
-			if (item.length) { return item; }
-		});
-
-		// this is a carefully hand tweaked value (:P) that will ensure that when a section
-		// is reasonable in view it will mark the menu as active
-		const topOffset = 230;
-
-		// find all items that are above the topOffset
-		const cur = scrollItems.map(function() {
-			if ($(this).offset().top < topOffset) {
-				return this;
-			}
-		});
-		// we take the last item in the list above and mark it as action
-		if (cur && cur.length) {
-			$(menuItems[cur.length - 1]).addClass("active");
-			$(menuItems[cur.length - 1]).siblings().removeClass("active");
-		}
-	},
 
 	// calculate and set a pixel value on the modal height instead of a percentage
 	// value so that we get a scrollbar inside the body of the modal
@@ -184,7 +146,6 @@ const DeployModal = React.createClass({
 					<div className="col-md-3 menu affix">
 						<StepMenu
 							steps={steps}
-							value={this.props.active_step}
 							onClick={this.props.onStepClick}
 						/>
 					</div>
@@ -206,11 +167,6 @@ const mapStateToProps = function(state, ownProps) {
 		return state.plan.validation_code === 'success' || state.plan.validation_code === 'warning';
 	}
 
-	let active_step = 0;
-	if (window.location.hash) {
-		active_step = parseInt(window.location.hash.substring(1), 10);
-	}
-
 	const current = state.deployment.list[state.deployment.current_id] || {};
 
 	return {
@@ -219,12 +175,6 @@ const mapStateToProps = function(state, ownProps) {
 			state.git.selected_ref !== "",
 			state.deployment.current_id !== "" || state.deployment.is_creating,
 			constants.isApproved(current.state)
-		],
-		is_loading: [
-			state.git.is_loading || state.git.is_updating,
-			state.plan.is_loading || state.deployment.is_loading,
-			state.deployment.approval_is_loading,
-			constants.isDeploying(current.state)
 		],
 		is_finished: [
 			state.git.selected_ref !== "",
@@ -238,7 +188,6 @@ const mapStateToProps = function(state, ownProps) {
 		sha_is_selected: (state.git.selected_ref !== ""),
 		can_deploy: (current.state === constants.STATE_APPROVED),
 		state: current.state,
-		active_step: active_step,
 		environment_name: state.environment.name,
 		project_name: state.environment.project_name,
 		deployment_id: state.deployment.current_id
@@ -249,9 +198,6 @@ const mapDispatchToProps = function(dispatch) {
 	return {
 		onClose: function() {
 			actions.history.push('/');
-		},
-		onStepClick: function(active_step) {
-			document.location.hash = active_step;
 		},
 		onDelete: function() {
 			dispatch(actions.deleteDeployment())
