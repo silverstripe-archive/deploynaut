@@ -109,21 +109,6 @@ const TargetRelease = React.createClass({
 			);
 		}
 
-		const options = props.options.map(function(option, index) {
-			return (
-				<li key={index}>
-					<Checkbox
-						description={option.title}
-						name="option"
-						checked={props.selected_options[option.name] === true}
-						id={index}
-						onClick={() => props.onCheckboxClick(option.name)}
-						disabled={props.disabled}
-					/>
-				</li>
-			);
-		});
-
 		return (
 			<div>
 				{this.props.last_fetched_date && <div className="fetch">
@@ -149,7 +134,20 @@ const TargetRelease = React.createClass({
 						</ul>
 						{options_toggle}
 						<ul className={options_classes}>
-							{options}
+							{props.options.map(function(option, index) {
+								return (
+									<li key={index}>
+										<Checkbox
+											description={option.title}
+											name="option"
+											checked={props.selected_options[option.name] === true}
+											id={index}
+											onClick={() => props.onCheckboxClick(option.name)}
+											disabled={props.disabled}
+										/>
+									</li>
+								);
+							})}
 						</ul>
 					</form>
 				</div>

@@ -217,7 +217,7 @@ const mapStateToProps = function(state, ownProps) {
 		show: [
 			(!state.git.is_loading && !state.deployment.is_loading),
 			state.git.selected_ref !== "",
-			state.deployment.current_id !== "",
+			state.deployment.current_id !== "" || state.deployment.is_creating,
 			constants.isApproved(current.state)
 		],
 		is_loading: [
