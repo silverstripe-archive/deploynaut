@@ -11587,6 +11587,10 @@ select.selectize-control,
     -webkit-transform: scale(1);
     transform: scale(1); } }
 
+.log-container .log-content {
+  border: 0;
+  border-radius: 0; }
+
 .status-box {
   background: #eeeeee;
   padding: 10px 20px;
