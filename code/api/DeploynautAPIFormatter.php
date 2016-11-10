@@ -9,6 +9,12 @@ class DeploynautAPIFormatter {
 	private static $_cache_project_members = null;
 
 	/**
+	 * This is a per request cache of Members
+	 * @var null|array
+	 */
+	private static $_cache_members = null;
+
+	/**
 	 * This is a per request cache of $environment->CurrentBuild();
 	 * @var null|DNDeployment
 	 */
@@ -27,24 +33,18 @@ class DeploynautAPIFormatter {
 		$environment = $deployment->Environment();
 		$project = $environment->Project();
 
-		$deployer = $deployment->Deployer();
-		$deployerData = null;
-		if ($deployer && $deployer->exists()) {
-			$deployerData = $this->getStackMemberData($project, $deployer);
-		}
-		$approver = $deployment->Approver();
-		$approverData = null;
-		$approverID = "";
-		if ($approver && $approver->exists()) {
-			$approverData = $this->getStackMemberData($project, $approver);
-			$approverID = $approver->ID;
-		}
+		$deployerData = $this->getStackMemberData($project, $deployment->DeployerID);
+		$approverData = $this->getStackMemberData($project, $deployment->ApproverID);
 
-		// failover for older deployments
-		$started = $deployment->Created;
-		$startedNice = $deployment->obj('Created')->Nice();
-		$startedAgo = $deployment->obj('Created')->Ago();
-		if($deployment->DeployStarted) {
+		$started = null;
+		$startedNice = null;
+		$startedAgo = null;
+		// we check first, before we do a expensive ->Nice() and ->Ago()
+		if(!$deployment->DeployStarted) {
+			$started = $deployment->Created;
+			$startedNice = $deployment->obj('Created')->Nice();
+			$startedAgo = $deployment->obj('Created')->Ago();
+		} else {
 			$started = $deployment->DeployStarted;
 			$startedNice = $deployment->obj('DeployStarted')->Nice();
 			$startedAgo = $deployment->obj('DeployStarted')->Ago();
@@ -108,7 +108,7 @@ class DeploynautAPIFormatter {
 			'commit_message' => $deployment->getCommitMessage(),
 			'commit_url' => $deployment->getCommitURL(),
 			'deployer' => $deployerData,
-			'approver_id' => $approverID,
+			'approver_id' => $deployment->ApproverID ?: '',
 			'approver' => $approverData,
 			'state' => $deployment->State,
 			'is_current_build' => $isCurrentBuild
@@ -117,31 +117,43 @@ class DeploynautAPIFormatter {
 
 	/**
 	 * Return data about a particular {@link Member} of the stack for use in API response.
-	 * Note that role can be null in the response. This is the case of an admin, or an operations
+
+	 * Notes:
+	 * 1) This method returns null instead of an array if the member doesn't exists anymore
+	 * 2) 'role' can be null in the response. This is the case of an admin, or an operations
 	 * user who can create the deployment but is not part of the stack roles.
 	 *
 	 * @param \DNProject $project
-	 * @param \Member $member
-	 * @return array
+	 * @param int $memberID
+	 * @return null|array
 	 */
-	public function getStackMemberData(\DNProject $project, \Member $member) {
+	public function getStackMemberData(\DNProject $project, $memberID) {
 		if (empty(self::$_cache_project_members[$project->ID])) {
 			self::$_cache_project_members[$project->ID] = $project->listMembers();
 		}
 
 		$role = null;
 		foreach (self::$_cache_project_members[$project->ID] as $stackMember) {
-			if ($stackMember['MemberID'] !== $member->ID) {
+			if ($stackMember['MemberID'] !== $memberID) {
 				continue;
 			}
 			$role = $stackMember['RoleTitle'];
 		}
 
+		// we cache all member lookup, even the false results
+		if (!isset(self::$_cache_members[$memberID])) {
+			self::$_cache_members[$memberID] = \DataObject::get_by_id("Member", $memberID);
+		}
+
+		if(!self::$_cache_members[$memberID]) {
+			return null;
+		}
+
 		return [
-			'id' => $member->ID,
-			'email' => $member->Email,
+			'id' => $memberID,
+			'email' => self::$_cache_members[$memberID]->Email,
 			'role' => $role,
-			'name' => $member->getName()
+			'name' => self::$_cache_members[$memberID]->getName()
 		];
 	}
 
