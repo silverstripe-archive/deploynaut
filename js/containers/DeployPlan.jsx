@@ -20,36 +20,37 @@ function DeployPlan(props) {
 					Provide context for the approver or add details for future
 					reference with a summary of changes.
 				</p>
-
-				<div className="row">
-					<div className="col-md-8">
-						<div className="form-group">
-							<label htmlFor="deployTitle">Deployment name or meaningful title</label>
-							<input
-								type="text"
-								className="form-control"
-								id="deployTitle"
-								value={props.title}
-								onChange={props.onTitleChange}
-								disabled={!props.can_edit}
-							/>
+				{props.is_loading && <LoadingBar show /> ||
+					<div>
+						<div className="row">
+							<div className="col-md-8">
+								<div className="form-group">
+									<label htmlFor="deployTitle">Deployment name or meaningful title</label>
+									<input
+										type="text"
+										className="form-control"
+										id="deployTitle"
+										value={props.title}
+										onChange={props.onTitleChange}
+									/>
+								</div>
+								<SummaryOfChanges />
+							</div>
+							<div className="col-md-4 text-muted">
+								<i className="fa fa-lg fa-lightbulb-o" aria-hidden="true"></i> You might want to include:
+								<ul>
+									<li>Scope of work</li>
+									<li>Release plan and schedule</li>
+									<li>Supporting resources (e.g. docs)</li>
+									<li>Support and contingency plan</li>
+									<li>Anticipated deployment date</li>
+									<li>Implementation team</li>
+								</ul>
+							</div>
 						</div>
-						<SummaryOfChanges />
+						<DeployDiff changes={props.changes} />
 					</div>
-					<div className="col-md-4 text-muted">
-						<i className="fa fa-lg fa-lightbulb-o" aria-hidden="true"></i> You might want to include:
-						<ul>
-							<li>Scope of work</li>
-							<li>Release plan and schedule</li>
-							<li>Supporting resources (e.g. docs)</li>
-							<li>Support and contingency plan</li>
-							<li>Anticipated deployment date</li>
-							<li>Implementation team</li>
-						</ul>
-					</div>
-				</div>
-				<DeployDiff changes={props.changes} />
-				<LoadingBar show={props.is_loading} />
+				}
 			</div>
 			<SaveDeployPlan />
 		</div>
@@ -59,9 +60,8 @@ function DeployPlan(props) {
 const mapStateToProps = function(state) {
 	return {
 		changes: state.plan.changes,
-		is_loading: state.plan.is_loading || state.deployment.is_creating,
+		is_loading: state.plan.is_loading,
 		title: state.plan.title,
-		can_edit: deployment.canEdit(state),
 		messages: state.plan.messages
 	};
 };

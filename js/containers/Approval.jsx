@@ -28,29 +28,32 @@ function Approval(props) {
 
 	return (
 		<div className="section">
+			{error}
 			<header id="2">Approval</header>
 			<p>
 				Send a request to deploy this release. Once approved, team members will have the ability to deploy this release.<br />
 				Only one request can be active at a time, although approval can also be granted by others with the same permissions, e.g. Release managers.
 			</p>
-			<div className="form-group">
-				<label htmlFor="approver">Request approval from</label>
-				<Dropdown
-					name="approver"
-					options={props.approvers}
-					value={props.approver_id}
-					onSelect={props.onApproverSelect}
-					disabled={props.disabled}
-				/>
-			</div>
-			<LoadingBar show={props.is_loading} />
-			<div>
-				{sentTime}
-			</div>
-			<div>
-				<RequestApproval /> <Bypass />
-			</div>
-			{error}
+			{props.is_loading && <LoadingBar show /> ||
+				<div>
+					<div className="form-group">
+						<label htmlFor="approver">Request approval from</label>
+						<Dropdown
+							name="approver"
+							options={props.approvers}
+							value={props.approver_id}
+							onSelect={props.onApproverSelect}
+							disabled={props.disabled}
+						/>
+					</div>
+					<div>
+						{sentTime}
+					</div>
+					<div>
+						<RequestApproval /> <Bypass />
+					</div>
+				</div>
+			}
 		</div>
 	);
 }
@@ -83,7 +86,7 @@ const mapStateToProps = function(state) {
 		approvers: approvers,
 		approver_id: current.approver_id,
 		error: state.deployment.error,
-		is_loading: state.deployment.is_loading
+		is_loading: state.deployment.is_loading || state.deployment.is_creating
 	};
 };
 
