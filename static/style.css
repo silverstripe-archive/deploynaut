@@ -12724,6 +12724,7 @@ textarea.deploy-key {
       height: 100%;
       padding: 0; }
       .modal.deploy .modal-dialog .modal-content .modal-body .menu {
+        padding: 10px 20px;
         padding-right: 0; }
         .modal.deploy .modal-dialog .modal-content .modal-body .menu.affix {
           position: relative; }
@@ -12742,17 +12743,19 @@ textarea.deploy-key {
     .modal.deploy .modal-dialog .modal-content .section {
       border: 1px solid #D7D7D7;
       margin-bottom: 10px;
-      padding: 10px;
+      padding: 20px;
       background-color: #ffffff; }
       .modal.deploy .modal-dialog .modal-content .fetch.fetch,
       .modal.deploy .modal-dialog .modal-content .section.fetch {
+        padding: 10px 20px;
         border-top: 0;
         margin-bottom: 0;
         border-top: 2px solid #3aaef9;
         background-color: #EDF1F2; }
       .modal.deploy .modal-dialog .modal-content .fetch header,
       .modal.deploy .modal-dialog .modal-content .section header {
-        font-size: 18px; }
+        font-size: 20px;
+        margin-bottom: 10px; }
       .modal.deploy .modal-dialog .modal-content .fetch .build-details,
       .modal.deploy .modal-dialog .modal-content .section .build-details {
         display: block; }
