@@ -25,7 +25,7 @@ var Dropdown = React.createClass({
 
 	getDefaultProps: function() {
 		return {
-			defaultText: 'select an option'
+			defaultText: 'Select an option'
 		};
 	},
 
