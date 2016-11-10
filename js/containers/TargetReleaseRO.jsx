@@ -85,7 +85,7 @@ const TargetReleaseRO = React.createClass({
 							<dt>Requested by</dt>
 							<dd>{props.deployment.deployer.name}</dd>
 							<dt>Date requested</dt>
-							<dd>{props.deployment.date_requested_nice}</dd>
+							<dd>{props.date_requested}</dd>
 						</dl>
 					</div>
 				</div>
@@ -108,6 +108,7 @@ const mapStateToProps = function(state) {
 
 	return {
 		deployment: current,
+		date_requested: current.date_requested_nice ? current.date_requested_nice : 'n/a',
 		environment: state.environment.name,
 		ref_type_description: ref_type_description
 	};
