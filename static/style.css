@@ -12631,6 +12631,8 @@ select.validation-error, .form-group
   margin-top: -3px; }
 
 textarea.deploy-key {
+  width: 100%;
+  padding: 10px;
   display: inline-block;
   font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
   height: auto;
