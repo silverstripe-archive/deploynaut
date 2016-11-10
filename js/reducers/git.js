@@ -41,7 +41,7 @@ module.exports = function git(state, action) {
 				selected_name: ""
 			});
 		case actions.TOGGLE_OPTION: {
-			const selected_options = state.selected_options;
+			const selected_options = _.assign({}, state.selected_options);
 			if (selected_options[action.name] === true) {
 				selected_options[action.name] = false;
 			} else {
