@@ -10379,7 +10379,6 @@ fieldset {
 #MemberLoginForm_LoginForm label, #MemberLoginForm_LostPasswordForm label, #LDAPLoginForm_LoginForm label {
   position: relative;
   top: 0;
-  margin-bottom: 0;
   font-size: 14px; }
 
 #MemberLoginForm_LoginForm .radio input[type="radio"],
