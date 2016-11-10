@@ -7,6 +7,7 @@ const Dropdown = require('../components/Dropdown.jsx');
 const Button = require('../components/Button.jsx');
 const BuildStatus = require('../components/BuildStatus.jsx');
 const ButtonGitUpdate = require('./buttons/GitUpdate.jsx');
+const SaveTargetRelease = require('./buttons/SaveTargetRelease.jsx');
 const LoadingBar = require('../components/LoadingBar.jsx');
 
 const actions = require('../_actions.js');
@@ -28,6 +29,7 @@ const TargetRelease = React.createClass({
 	render: function() {
 		const props = this.props;
 		const typeFields = {};
+
 		Object.keys(props.types).forEach(function(key) {
 			switch (key) {
 				case '0': // Promote build option
@@ -50,21 +52,14 @@ const TargetRelease = React.createClass({
 					break;
 				case '4': // Input SHA option
 					typeFields[key] = (
-						<fieldset>
-							<input
-								className="field text"
-								type="text"
-								name="selected_ref"
-								onChange={props.onShaChange}
-								value={props.selected_ref}
-								disabled={props.disabled}
-							/>
-							<Button
-								onClick={(evt) => { evt.preventDefault(); props.onRefSelect(props.selected_ref); }}
-								disabled={props.disabled}
-								value="Go"
-							/>
-						</fieldset>
+						<input
+							className="field text"
+							type="text"
+							name="selected_ref"
+							onChange={props.onShaChange}
+							value={props.selected_ref}
+							disabled={props.disabled}
+						/>
 					);
 					break;
 				default:
@@ -151,6 +146,7 @@ const TargetRelease = React.createClass({
 						</ul>
 					</form>
 				</div>
+				<SaveTargetRelease />
 			</div>
 		);
 	}
@@ -226,16 +222,13 @@ const mapDispatchToProps = function(dispatch) {
 			dispatch(actions.setGitRefType(id));
 			if (type.promote_build) {
 				dispatch(actions.setGitRef(type.promote_build.sha));
-				dispatch(actions.getDeploySummary());
 			}
 		},
 		onCheckboxClick: function(name) {
 			dispatch(actions.toggleOption(name));
-			dispatch(actions.getDeploySummary());
 		},
 		onRefSelect: function(ref) {
 			dispatch(actions.setGitRef(ref));
-			dispatch(actions.getDeploySummary());
 		},
 		onShaChange: function(e) {
 			dispatch(actions.setGitRef(e.target.value));

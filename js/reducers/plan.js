@@ -6,7 +6,7 @@ const initialState = {
 	is_loading: false,
 	deployment_type: "",
 	deployment_estimate: "",
-	changes: {},
+	changes: "",
 	validation_code: "",
 	title: "",
 	summary_of_changes: "",
@@ -29,7 +29,7 @@ module.exports = function plan(state, action) {
 				deployment_estimate: "",
 				is_loading: true,
 				validation_code: "",
-				changes: {},
+				changes: "",
 				messages: [],
 				has_errors: false
 			});
@@ -38,8 +38,10 @@ module.exports = function plan(state, action) {
 		case actions.SET_REVISION:
 		case actions.SUCCEED_REPO_UPDATE:
 		case actions.SUCCEED_REVISIONS_GET:
+		case actions.TOGGLE_OPTION:
 			return _.assign({}, state, {
 				messages: [],
+				changes: "",
 				has_errors: false
 			});
 
@@ -93,7 +95,7 @@ module.exports = function plan(state, action) {
 				deployment_type: "",
 				deployment_estimate: "",
 				is_loading: false,
-				changes: {},
+				changes: "",
 				messages: [],
 				has_errors: false
 			});
