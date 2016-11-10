@@ -5,17 +5,25 @@ const constants = require('../constants/deployment.js');
 
 const Deploy = require('./buttons/Deploy.jsx');
 const LoadingBar = require('../components/LoadingBar.jsx');
+const Log = require('./Log.jsx');
 
 const deployment = React.createClass({
 
 	componentDidMount: function() {
 		this.logUpdateInterval = setInterval(() => {
 			this.props.updateLogs();
-		}, 5 * 1000);
+		}, 3000);
 	},
 
 	componentWillUnmount: function() {
 		clearInterval(this.logUpdateInterval);
+	},
+
+	getLogContent: function() {
+		if (typeof this.props.deploy_log === 'undefined') {
+			return <LoadingBar show />;
+		}
+		return <Log content={this.props.deploy_log} />;
 	},
 
 	logUpdateInterval: null,
@@ -34,19 +42,8 @@ const deployment = React.createClass({
 
 		let logOutput = null;
 
-		if (this.props.started) {
-			if (this.props.deploy_log) {
-				const lines = Object.keys(this.props.deploy_log).map(function(key) {
-					return <div key={key}>{this.props.deploy_log[key]}</div>;
-				}.bind(this));
-				logOutput = (
-					<pre>
-					{lines}
-				</pre>
-				);
-			} else {
-				logOutput = <LoadingBar show />;
-			}
+		if (this.props.deploy_started) {
+			logOutput = this.getLogContent();
 		}
 
 		return (
@@ -66,7 +63,7 @@ const deployment = React.createClass({
 const mapStateToProps = function(state) {
 	const current = state.deployment.list[state.deployment.current_id] || {};
 	return {
-		started: constants.hasDeployStarted(current.state) || state.deployment.is_queuing,
+		deploy_started: constants.hasDeployStarted(current.state) || state.deployment.is_queuing,
 		error: state.deployment.error,
 		selected_ref: state.git.selected_ref,
 		deploy_log: state.deployment.logs[state.deployment.current_id]

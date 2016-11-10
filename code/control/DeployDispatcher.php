@@ -170,8 +170,10 @@ class DeployDispatcher extends Dispatcher {
 			return $errorResponse;
 		}
 		$log = $deployment->log();
-		$content = $log->exists() ? $log->content() : 'Waiting for action to start';
-		$lines = explode(PHP_EOL, $content);
+		$lines = [];
+		if ($log->exists()) {
+			$lines = explode(PHP_EOL, $log->content());
+		}
 
 		return $this->getAPIResponse([
 			'message' => $lines,
