@@ -133,6 +133,10 @@ class DeployDispatcher extends Dispatcher {
 		return $this->getAPIResponse(['deployment' => $this->formatter->getDeploymentData($deployment)], 200);
 	}
 
+	/**
+	 * @param \SS_HTTPRequest $request
+	 * @return \SS_HTTPResponse
+	 */
 	public function delete(\SS_HTTPRequest $request) {
 		if ($request->httpMethod() !== 'POST') {
 			return $this->getAPIResponse(['message' => 'Method not allowed, requires POST'], 405);
