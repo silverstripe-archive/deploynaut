@@ -2631,7 +2631,7 @@ input[type="search"] {
   .input-group-lg > .input-group-btn > input[type="month"].deploy-dropdown,
   .input-group-lg
   input[type="month"] {
-    line-height: 45px; } }
+    line-height: 44px; } }
 
 .form-group, .field.text,
 .field.dropdown {
@@ -2811,9 +2811,9 @@ input[type="button"],
 .input-group-lg > .input-group-btn >
 input[type="reset"],
 .input-group-lg > .input-group-btn > .deploy-dropdown {
-  height: 45px;
+  height: 44px;
   padding: 10px 16px;
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1.33333;
   border-radius: 6px; }
 
@@ -2823,8 +2823,8 @@ select,
 .input-group-lg > .input-group-btn > select.btn,
 .input-group-lg > .input-group-btn > select.action,
 .input-group-lg > .input-group-btn > select.deploy-dropdown {
-  height: 45px;
-  line-height: 45px; }
+  height: 44px;
+  line-height: 44px; }
 
 textarea.input-lg, .input-group-lg > textarea.form-control,
 .input-group-lg > textarea.input-group-addon,
@@ -2843,16 +2843,16 @@ select[multiple],
 select, .form-group-lg
 .readonly span.readonly,
 .readonly .form-group-lg span.readonly {
-  height: 45px;
+  height: 44px;
   padding: 10px 16px;
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1.33333;
   border-radius: 6px; }
 
 .form-group-lg select.form-control, .form-group-lg
 select {
-  height: 45px;
-  line-height: 45px; }
+  height: 44px;
+  line-height: 44px; }
 
 .form-group-lg textarea.form-control,
 .form-group-lg select[multiple].form-control,
@@ -2861,10 +2861,10 @@ select[multiple] {
   height: auto; }
 
 .form-group-lg .form-control-static {
-  height: 45px;
-  min-height: 37px;
+  height: 44px;
+  min-height: 36px;
   padding: 11px 16px;
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1.33333; }
 
 .has-feedback {
@@ -2908,9 +2908,9 @@ select + .form-control-feedback,
 .readonly span.readonly + .form-control-feedback,
 .readonly
 .form-group-lg span.readonly + .form-control-feedback {
-  width: 45px;
-  height: 45px;
-  line-height: 45px; }
+  width: 44px;
+  height: 44px;
+  line-height: 44px; }
 
 .input-sm + .form-control-feedback, .input-group-sm > .form-control + .form-control-feedback, .input-group-sm > input.text + .form-control-feedback, .input-group-sm >
 select + .form-control-feedback,
@@ -3147,7 +3147,7 @@ select, .has-error
 @media (min-width: 768px) {
   .form-horizontal .form-group-lg .control-label, .form-horizontal .form-group-lg label {
     padding-top: 11px;
-    font-size: 17px; } }
+    font-size: 16px; } }
 
 @media (min-width: 768px) {
   .form-horizontal .form-group-sm .control-label, .form-horizontal .form-group-sm label {
@@ -3626,7 +3626,7 @@ input[type="reset"], .table-data-archives .deploy-dropdown {
 input[type="button"], .btn-group-lg >
 input[type="reset"], .btn-group-lg > .deploy-dropdown, .action, .deploy-dropdown {
   padding: 10px 16px;
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1.33333;
   border-radius: 6px; }
 
@@ -4281,7 +4281,7 @@ select,
   input.input-group-addon[type="reset"],
   .input-group-lg > .input-group-btn > .input-group-addon.deploy-dropdown {
     padding: 10px 16px;
-    font-size: 17px;
+    font-size: 16px;
     border-radius: 6px; }
   .input-group-addon input[type="radio"],
   .input-group-addon input[type="checkbox"] {
@@ -4656,7 +4656,7 @@ input[type="reset"],
 .navbar-brand {
   float: left;
   padding: 15px 15px;
-  font-size: 17px;
+  font-size: 16px;
   line-height: 20px;
   height: 50px; }
   .navbar-brand:hover, .navbar-brand:focus {
@@ -5042,7 +5042,7 @@ input[type="reset"],
 .pagination-lg > li > a,
 .pagination-lg > li > span {
   padding: 10px 16px;
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1.33333; }
 
 .pagination-lg > li:first-child > a,
@@ -10704,7 +10704,7 @@ ul ol {
   font-size: 12px; }
 
 .text-lg {
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 300; }
 
 .superscript {
@@ -11624,6 +11624,11 @@ select.selectize-control,
   .target-release .radio-list li {
     border-top: 1px solid #eeeeee;
     padding: 5px 0; }
+    .target-release .radio-list li input[type="radio"] {
+      position: absolute;
+      top: -2px; }
+    .target-release .radio-list li label {
+      font-size: 16px; }
   .target-release .radio-list .status-box {
     margin-left: 20px; }
   .target-release .radio-list .selectize-control {
@@ -12192,7 +12197,7 @@ button.sidebar-open {
       width: 100%; } }
 
 .btn-lg-wide {
-  font-size: 17px;
+  font-size: 16px;
   padding: 12px 45px; }
   @media (max-width: 992px) {
     .btn-lg-wide {
@@ -12263,7 +12268,7 @@ button.sidebar-open {
             border-right: none; } }
         .deploy-form-outer .deploy-form .SelectionGroup > li a, .deploy-form-loading .deploy-form .SelectionGroup > li a {
           color: #555555;
-          font-size: 17px;
+          font-size: 16px;
           padding: 25px 15px;
           display: block; }
         .deploy-form-outer .deploy-form .SelectionGroup > li.active, .deploy-form-loading .deploy-form .SelectionGroup > li.active {
