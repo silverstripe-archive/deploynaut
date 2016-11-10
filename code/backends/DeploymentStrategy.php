@@ -137,7 +137,7 @@ class DeploymentStrategy extends ViewableData {
 	public function getChangesModificationNeeded() {
 		$filtered = [];
 		foreach ($this->changes as $change => $details) {
-			if (array_key_exists('description', $details)) {
+			if (!empty($details['description'])) {
 				$filtered[$change] = $details;
 			} else if (
 				(array_key_exists('from', $details) || array_key_exists('to', $details))

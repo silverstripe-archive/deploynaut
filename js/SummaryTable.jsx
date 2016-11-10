@@ -11,14 +11,6 @@ var SummaryTable = React.createClass({
 		)).isRequired
 	},
 
-	isEmpty: function(obj) {
-		for (var key in obj) {
-			if (obj.hasOwnProperty(key) && obj[key]) {
-				return false;
-			}
-		}
-		return true;
-	},
 	render: function() {
 		var changes = this.props.changes;
 

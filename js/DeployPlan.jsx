@@ -61,24 +61,6 @@ var DeployPlan = React.createClass({
 	canDeploy: function() {
 		return (this.props.summary.validationCode === "success" || this.props.summary.validationCode === "warning");
 	},
-	isEmpty: function(obj) {
-		for (var key in obj) {
-			if (obj.hasOwnProperty(key) && obj[key]) {
-				return false;
-			}
-		}
-		return true;
-	},
-	showNoChangesMessage: function() {
-		var summary = this.props.summary;
-		if (summary.initialState === true) {
-			return false;
-		}
-		if (summary.messages === 'undefined') {
-			return true;
-		}
-		return (this.isEmpty(summary.changes) && summary.messages.length === 0);
-	},
 	actionTitle: function() {
 		var actionTitle = this.props.summary.actionTitle;
 		if (typeof actionTitle === 'undefined' || actionTitle === '') {
@@ -88,13 +70,6 @@ var DeployPlan = React.createClass({
 	},
 	render: function() {
 		var messages = this.props.summary.messages;
-		if (this.showNoChangesMessage()) {
-			messages = [{
-				text: "There are no changes but you can deploy anyway if you wish.",
-				code: "success"
-			}];
-		}
-
 		var deployAction;
 		if (this.canDeploy()) {
 			deployAction = (
