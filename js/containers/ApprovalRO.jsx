@@ -82,7 +82,7 @@ const ApprovalRO = React.createClass({
 		let removeAction = null;
 		let rejectAction = null;
 		let rejectCancel = null;
-		if (props.approval_state === constants.APPROVAL_SUBMITTED) {
+		if (props.can_approve && props.approval_state === constants.APPROVAL_SUBMITTED) {
 			removeAction = (
 				<a href={"javascript:void(0);"} className="approval-action pull-right" onClick={props.onCancel}>
 					<i className="fa fa-times-circle"></i> Remove
@@ -155,6 +155,7 @@ const mapStateToProps = function(state) {
 		date_requested_nice: current.date_requested_nice,
 		date_approved_nice: current.date_approved_nice,
 		approver: approver,
+		can_approve: state.user.can_approve,
 		rejected_reason: current.rejected_reason,
 		error: state.deployment.error,
 		is_loading: state.deployment.is_loading

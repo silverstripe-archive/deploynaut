@@ -1,8 +1,8 @@
-var ReactRedux = require('react-redux');
+const ReactRedux = require('react-redux');
 
-var actions = require('../../_actions.js');
-var Button = require('../../components/Button.jsx');
-var constants = require('../../constants/deployment.js');
+const actions = require('../../_actions.js');
+const Button = require('../../components/Button.jsx');
+const constants = require('../../constants/deployment.js');
 
 function canBypass(state) {
 	if (!state.user.can_bypass_approval) {
