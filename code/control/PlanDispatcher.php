@@ -120,7 +120,7 @@ class PlanDispatcher extends Dispatcher {
 		if (empty($changes['Code version'])) {
 			return false;
 		}
-		$codeVersion = ['Code version'];
+		$codeVersion = $changes['Code version'];
 		if (empty($interface)) {
 			return false;
 		}
