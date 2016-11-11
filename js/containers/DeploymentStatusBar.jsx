@@ -41,7 +41,6 @@ function getHeaderIcon(deployState) {
 }
 
 function getTimeInformation(deployState, props) {
-
 	switch (deployState) {
 		case constants.STATE_DEPLOYING:
 		case constants.STATE_QUEUED:
@@ -69,7 +68,7 @@ function DeploymentStatusBar(props) {
 				<div className="deployment-status-text-child">
 					<div className="deployment-status-header">
 						{headerText} to
-						<strong> {props.project_name} / {props.environment_name}</strong> {timeInformation}
+						<strong> {props.project_name} / {props.environment_name}</strong> <small>{timeInformation}</small>
 					</div>
 					<div className="deployment-status-close-notice">
 						You may <a
