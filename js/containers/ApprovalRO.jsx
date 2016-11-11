@@ -120,9 +120,9 @@ const ApprovalRO = React.createClass({
 					<ApproveRequest /> {rejectAction}
 				</div>
 				<div className={this.state.rejected_reason_open ? "" : "hide"}>
-					<label>Provide a reason why the deployment has been rejected</label>
+					<label htmlFor="rejected_reason">Provide a reason why the deployment has been rejected</label>
 					<TextArea
-						name="rejected_reason"
+						id="rejected_reason"
 						value={props.rejected_reason}
 						rows="5"
 						onChange={props.onRejectReasonChange}

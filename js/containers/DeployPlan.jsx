@@ -25,11 +25,11 @@ function DeployPlan(props) {
 						<div className="row">
 							<div className="col-md-8">
 								<div className="form-group">
-									<label htmlFor="deployTitle">Deployment name or meaningful title</label>
+									<label htmlFor="deploy_title">Deployment name or meaningful title</label>
 									<input
 										type="text"
 										className="form-control"
-										id="deployTitle"
+										id="deploy_title"
 										value={props.title}
 										onChange={props.onTitleChange}
 									/>
