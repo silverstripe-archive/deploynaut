@@ -1,0 +1,46 @@
+@import "../_bootstrap-variables.sass"
+
+.deployment-status-bar
+	background-color: $gray-lighter
+	border-bottom: 1px solid #D7D7D7
+	min-height: 80px
+
+	.deployment-status-icon
+		font-size: 50px
+		line-height: 80px
+		padding: 0 20px
+		float: left
+		color: $platform-blue
+
+		&.Aborting
+			color: $status-aborting
+		&.Pending
+			color: $status-pending
+		&.Submitted
+			color: $status-submitted
+		&.Approved
+			color: $status-approved
+		&.Deploying
+			color: $status-deploying
+		&.Failed
+			color: $status-failed
+		&.Invalid
+			color: $status-invalid
+		&.Rejected
+			color: $status-rejected
+
+	.deployment-status-text-parent
+		position: relative
+		min-height: 80px
+		padding: 0 10px 0 100px
+
+		.deployment-status-text-child
+			position: absolute
+			top: 50%
+			margin-top: -20px
+
+			.deployment-status-header
+				font-size: $font-size-large
+
+			.deployment-status-close-notice
+

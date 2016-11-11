@@ -39,8 +39,8 @@ function deployButton(props) {
 const mapStateToProps = function(state) {
 	const current = state.deployment.list[state.deployment.current_id] || {};
 	return {
-		queued: constants.isQueued(current.state) || state.deployment.is_queuing,
-		display: canDeploy(current.state)
+		queued: constants.isQueued(current.state),
+		display: canDeploy(current.state) && !state.deployment.is_queuing
 	};
 };
 
