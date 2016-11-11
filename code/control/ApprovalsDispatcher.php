@@ -39,6 +39,34 @@ class ApprovalsDispatcher extends Dispatcher {
 		self::ACTION_APPROVALS
 	];
 
+	/**
+	 * @param \DNEnvironment $environment
+	 * @param \Member|null $member
+	 * @return bool
+	 */
+	public static function can_approve(\DNEnvironment $environment, \Member $member = null) {
+		if ($member === null) {
+			$member = \Member::currentUser();
+		}
+		return $environment->Project()->allowed(self::ALLOW_APPROVAL, $member);
+	}
+
+	/**
+	 * @param \DNEnvironment $environment
+	 * @param \Member|null $member
+	 * @return bool
+	 */
+	public static function can_bypass_approval(\DNEnvironment $environment, \Member $member = null) {
+		if ($member === null) {
+			$member = \Member::currentUser();
+		}
+		// special case for non-Production environments: users who can deploy are able to bypass approval.
+		if ($environment->Usage !== \DNEnvironment::PRODUCTION && $environment->canDeploy($member)) {
+			return true;
+		}
+		return $environment->Project()->allowed(self::ALLOW_APPROVAL_BYPASS, $member);
+	}
+
 	public function init() {
 		parent::init();
 
@@ -65,15 +93,15 @@ class ApprovalsDispatcher extends Dispatcher {
 
 		$this->checkSecurityToken();
 
-		$deployment = DNDeployment::get()->byId($request->postVar('id'));
+		$deployment = \DNDeployment::get()->byId($request->postVar('id'));
 		$errorResponse = $this->validateDeployment($deployment);
 		if ($errorResponse instanceof \SS_HTTPResponse) {
 			return $errorResponse;
 		}
 
-		$approver = Member::get()->byId($request->postVar('approver_id'));
+		$approver = \Member::get()->byId($request->postVar('approver_id'));
 		if ($approver && $approver->exists()) {
-			if (!$this->project->allowed(ApprovalsDispatcher::ALLOW_APPROVAL, $approver)) {
+			if (!self::can_approve($this->environment, $approver)) {
 				return $this->getAPIResponse(['message' => 'The given approver does not have permissions to approve'], 403);
 			}
 			$deployment->ApproverID = $approver->ID;
@@ -88,7 +116,7 @@ class ApprovalsDispatcher extends Dispatcher {
 		}
 
 		try {
-			$deployment->getMachine()->apply(DNDeployment::TR_SUBMIT);
+			$deployment->getMachine()->apply(\DNDeployment::TR_SUBMIT);
 		} catch (\Exception $e) {
 			return $this->getAPIResponse([
 				'message' => $e->getMessage()
@@ -112,19 +140,19 @@ class ApprovalsDispatcher extends Dispatcher {
 
 		$this->checkSecurityToken();
 
-		$deployment = DNDeployment::get()->byId($request->postVar('id'));
+		$deployment = \DNDeployment::get()->byId($request->postVar('id'));
 		$errorResponse = $this->validateDeployment($deployment);
 		if ($errorResponse instanceof \SS_HTTPResponse) {
 			return $errorResponse;
 		}
 
 		// if the person cancelling is not the one who created the deployment, update the deployer
-		if (Member::currentUserID() !== $deployment->DeployerID) {
-			$deployment->DeployerID = Member::currentUserID();
+		if (\Member::currentUserID() !== $deployment->DeployerID) {
+			$deployment->DeployerID = \Member::currentUserID();
 		}
 
 		try {
-			$deployment->getMachine()->apply(DNDeployment::TR_NEW);
+			$deployment->getMachine()->apply(\DNDeployment::TR_NEW);
 		} catch (\Exception $e) {
 			return $this->getAPIResponse([
 				'message' => $e->getMessage()
@@ -148,45 +176,39 @@ class ApprovalsDispatcher extends Dispatcher {
 
 		$this->checkSecurityToken();
 
-		$deployment = DNDeployment::get()->byId($request->postVar('id'));
+		$deployment = \DNDeployment::get()->byId($request->postVar('id'));
 		$errorResponse = $this->validateDeployment($deployment);
 		if ($errorResponse instanceof \SS_HTTPResponse) {
 			return $errorResponse;
 		}
 
+		$canBypass = self::can_bypass_approval($this->environment);
+		$canApprove = self::can_approve($this->environment);
+
 		// ensure we have either bypass or approval permission of the logged in user
-		if (
-			!$this->project->allowed(self::ALLOW_APPROVAL_BYPASS, Member::currentUser())
-			|| !$this->project->allowed(self::ALLOW_APPROVAL, Member::currentUser())
-		) {
+		if (!$canBypass || !$canBypass) {
 			return $this->getAPIResponse(['message' => 'You are not authorised to approve or bypass this deployment'], 403);
 		}
 
 		// check for specific permission depending on the current state of the deployment:
 		// submitted => approved requires approval permissions
 		// new => approved requires bypass permissions.
-		if (
-			$deployment->State === DNDeployment::STATE_SUBMITTED
-			&& !$this->project->allowed(self::ALLOW_APPROVAL, Member::currentUser())
-		) {
+		if ($deployment->State === \DNDeployment::STATE_SUBMITTED && !$canApprove) {
 			return $this->getAPIResponse(['message' => 'You are not authorised to approve this deployment'], 403);
 		}
-		if (
-			$deployment->State === DNDeployment::STATE_NEW
-			&& !$this->project->allowed(self::ALLOW_APPROVAL_BYPASS, Member::currentUser())
-		) {
+		if ($deployment->State === \DNDeployment::STATE_NEW && !$canBypass) {
 			return $this->getAPIResponse(['message' => 'You are not authorised to bypass approval of this deployment'], 403);
 		}
 
-		if ($deployment->State === DNDeployment::STATE_NEW) {
+		if ($deployment->State === \DNDeployment::STATE_NEW) {
 			// Bypassing approval: Ensure that approver is not set. This may happen when someone has requested approval,
 			// cancelled approval, then bypassed.
 			$deployment->ApproverID = 0;
 		} else {
 			// if the current user is not the person who was selected for approval on submit, but they got
 			// here because they still have permission, then change the approver to the current user
-			if (Member::currentUserID() !== $deployment->ApproverID) {
-				$deployment->ApproverID = Member::currentUserID();
+			if (\Member::currentUserID() !== $deployment->ApproverID) {
+				$deployment->ApproverID = \Member::currentUserID();
 			}
 		}
 
@@ -199,7 +221,7 @@ class ApprovalsDispatcher extends Dispatcher {
 		}
 
 		try {
-			$deployment->getMachine()->apply(DNDeployment::TR_APPROVE);
+			$deployment->getMachine()->apply(\DNDeployment::TR_APPROVE);
 		} catch (\Exception $e) {
 			return $this->getAPIResponse([
 				'message' => $e->getMessage()
@@ -223,20 +245,21 @@ class ApprovalsDispatcher extends Dispatcher {
 
 		$this->checkSecurityToken();
 
-		$deployment = DNDeployment::get()->byId($request->postVar('id'));
+		$deployment = \DNDeployment::get()->byId($request->postVar('id'));
 		$errorResponse = $this->validateDeployment($deployment);
 		if ($errorResponse instanceof \SS_HTTPResponse) {
 			return $errorResponse;
 		}
+
 		// reject permissions are the same as can approve
-		if (!$this->project->allowed(self::ALLOW_APPROVAL, Member::currentUser())) {
+		if (!self::can_approve($this->environment)) {
 			return $this->getAPIResponse(['message' => 'You are not authorised to reject this deployment'], 403);
 		}
 
 		// if the current user is not the person who was selected for approval on submit, but they got
 		// here because they still have permission, then change the approver to the current user
-		if (Member::currentUserID() !== $deployment->ApproverID) {
-			$deployment->ApproverID = Member::currentUserID();
+		if (\Member::currentUserID() !== $deployment->ApproverID) {
+			$deployment->ApproverID = \Member::currentUserID();
 		}
 
 		if ($request->postVar('rejected_reason')) {
@@ -244,7 +267,7 @@ class ApprovalsDispatcher extends Dispatcher {
 		}
 
 		try {
-			$deployment->getMachine()->apply(DNDeployment::TR_REJECT);
+			$deployment->getMachine()->apply(\DNDeployment::TR_REJECT);
 		} catch (\Exception $e) {
 			return $this->getAPIResponse([
 				'message' => $e->getMessage()
