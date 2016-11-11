@@ -6,7 +6,7 @@ var TextArea = function(props) {
 			id={props.id ? props.id : null}
 			className="form-control"
 			rows={props.rows ? props.rows : "10"}
-			name={props.name}
+			name={props.name ? props.name : null}
 			value={props.value}
 			onChange={props.onChange}
 			disabled={props.disabled}
@@ -16,7 +16,6 @@ var TextArea = function(props) {
 
 TextArea.propTypes = {
 	value: React.PropTypes.string.isRequired,
-	name: React.PropTypes.string.isRequired,
 	onChange: React.PropTypes.func.isRequired,
 	disabled: React.PropTypes.bool
 };

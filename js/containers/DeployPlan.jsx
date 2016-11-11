@@ -8,7 +8,6 @@ const LoadingBar = require('../components/LoadingBar.jsx');
 const Messages = require('../components/Messages.jsx');
 
 const actions = require('../_actions.js');
-const deployment = require('../constants/deployment.js');
 
 function DeployPlan(props) {
 	return (
