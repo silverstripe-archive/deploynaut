@@ -70,7 +70,7 @@ class EnvironmentOverview extends Dispatcher {
 	public function getModel($name = '') {
 		$approversList = [];
 		foreach ($this->getCurrentProject()->listMembers() as $data) {
-			if ($this->getCurrentProject()->allowed(\ApprovalsDispatcher::ALLOW_APPROVAL, Member::get()->byId($data['MemberID']))) {
+			if ($this->getCurrentProject()->allowed(\ApprovalsDispatcher::ALLOW_APPROVAL, \Member::get()->byId($data['MemberID']))) {
 				$approversList[] = [
 					'id' => $data['MemberID'],
 					'email' => $data['Email'],
@@ -102,14 +102,8 @@ class EnvironmentOverview extends Dispatcher {
 				'approvers' => $approversList
 			],
 			'user' => [
-				'can_approve' => $this->getCurrentProject()->allowed(
-					ApprovalsDispatcher::ALLOW_APPROVAL,
-					Member::currentUser()
-				),
-				'can_bypass_approval' => $this->getCurrentProject()->allowed(
-					ApprovalsDispatcher::ALLOW_APPROVAL_BYPASS,
-					Member::currentUser()
-				)
+				'can_approve' => \ApprovalsDispatcher::can_approve($this->getCurrentEnvironment()),
+				'can_bypass_approval' => \ApprovalsDispatcher::can_bypass_approval($this->getCurrentEnvironment())
 			]
 		];
 	}
