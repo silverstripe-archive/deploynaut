@@ -10,8 +10,7 @@ const initialState = {
 	validation_code: "",
 	title: "",
 	summary_of_changes: "",
-	messages: [],
-	has_errors: false
+	messages: []
 };
 
 module.exports = function plan(state, action) {
@@ -21,28 +20,17 @@ module.exports = function plan(state, action) {
 
 	switch (action.type) {
 		case actions.NEW_DEPLOYMENT:
-			return initialState;
-
-		case actions.START_SUMMARY_GET:
-			return _.assign({}, state, {
-				deployment_type: "",
-				deployment_estimate: "",
-				is_loading: true,
-				validation_code: "",
-				changes: "",
-				messages: [],
-				has_errors: false
-			});
-
 		case actions.START_DEPLOYMENT_GET:
 		case actions.SET_REVISION:
 		case actions.SUCCEED_REPO_UPDATE:
 		case actions.SUCCEED_REVISIONS_GET:
 		case actions.TOGGLE_OPTION:
+			return initialState;
+
+		case actions.START_SUMMARY_GET:
+			_.assign({}, state, initialState);
 			return _.assign({}, state, {
-				messages: [],
-				changes: "",
-				has_errors: false
+				is_loading: true
 			});
 
 		case actions.SUCCEED_DEPLOYMENT_GET:
@@ -69,10 +57,7 @@ module.exports = function plan(state, action) {
 				is_loading: false,
 				changes: changes,
 				validation_code: action.summary.validationCode,
-				messages: action.summary.messages,
-				has_errors: action.summary.messages.filter(function(message) {
-					return message.code === 'error';
-				}).length > 0
+				messages: action.summary.messages
 			});
 		}
 		case actions.FAIL_SUMMARY_GET:
@@ -90,15 +75,6 @@ module.exports = function plan(state, action) {
 				summary_of_changes: action.text
 			});
 
-		case actions.SUCCEED_REVISIONS_GET:
-			return _.assign({}, state, {
-				deployment_type: "",
-				deployment_estimate: "",
-				is_loading: false,
-				changes: "",
-				messages: [],
-				has_errors: false
-			});
 		default:
 			return state;
 	}

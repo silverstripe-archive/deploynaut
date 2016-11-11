@@ -7,7 +7,7 @@ function isDisplayed(state) {
 	if (state.plan.is_loading || state.deployment.is_creating) {
 		return false;
 	}
-	if (state.plan.has_errors) {
+	if (state.plan.validation_code === 'error') {
 		return false;
 	}
 	if (state.deployment.current_id !== "") {

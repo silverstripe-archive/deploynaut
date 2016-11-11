@@ -93,7 +93,7 @@ const ApprovalRO = React.createClass({
 					Reject
 				</a>
 			);
-			rejectCancel =(
+			rejectCancel = (
 				<a href={"javascript:void(0);"} className="btn btn-wide btn-link" onClick={this.toggleRejectOpen}>
 					Cancel
 				</a>
