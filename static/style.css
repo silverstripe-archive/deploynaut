@@ -11557,8 +11557,6 @@ select.selectize-control,
     color: #3aaef9; }
     .deployment-status-bar .deployment-status-icon.Aborting {
       color: #f0ad4e; }
-    .deployment-status-bar .deployment-status-icon.Pending {
-      color: #f0ad4e; }
     .deployment-status-bar .deployment-status-icon.Submitted {
       color: #f0ad4e; }
     .deployment-status-bar .deployment-status-icon.Approved {
@@ -11643,8 +11641,6 @@ select.selectize-control,
   .status-box.default, .status-box.bypassed {
     border-color: #777777; }
   .status-box.aborting {
-    border-color: #f0ad4e; }
-  .status-box.pending {
     border-color: #f0ad4e; }
   .status-box.submitted {
     border-color: #f0ad4e; }
@@ -12168,8 +12164,6 @@ button.sidebar-open {
     font-size: 40px;
     content: "\2022"; }
   .deploy-status.status-Aborting {
-    color: #f0ad4e; }
-  .deploy-status.status-Pending {
     color: #f0ad4e; }
   .deploy-status.status-Submitted {
     color: #f0ad4e; }
