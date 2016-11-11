@@ -236,9 +236,14 @@ class GitDispatcher extends Dispatcher {
 	protected function getGitBranches($project) {
 		$branches = [];
 		foreach ($project->DNBranchList() as $branch) {
+			$sha = $branch->SHA();
 			$branches[] = [
-				'id' => $branch->SHA(),
-				'title' => $branch->Name(),
+				'id' => $sha,
+				'title' => sprintf('%s (%s, %s old)',
+					$branch->Name(),
+					substr($sha, 0, 8),
+					$branch->LastUpdated()->TimeDiff()
+				)
 			];
 		}
 		return $branches;
