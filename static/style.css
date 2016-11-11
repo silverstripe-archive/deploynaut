@@ -11544,6 +11544,41 @@ select.selectize-control,
   padding: 10px 20px;
   background: #E2E8EB; }
 
+.deployment-status-bar {
+  background-color: #eeeeee;
+  border-bottom: 1px solid #D7D7D7;
+  min-height: 80px; }
+  .deployment-status-bar .deployment-status-icon {
+    font-size: 50px;
+    line-height: 80px;
+    padding: 0 20px;
+    float: left;
+    color: #3aaef9; }
+    .deployment-status-bar .deployment-status-icon.Aborting {
+      color: #f0ad4e; }
+    .deployment-status-bar .deployment-status-icon.Submitted {
+      color: #f0ad4e; }
+    .deployment-status-bar .deployment-status-icon.Approved {
+      color: #5cb85c; }
+    .deployment-status-bar .deployment-status-icon.Deploying {
+      color: #3aaef9; }
+    .deployment-status-bar .deployment-status-icon.Failed {
+      color: #d9534f; }
+    .deployment-status-bar .deployment-status-icon.Invalid {
+      color: #d9534f; }
+    .deployment-status-bar .deployment-status-icon.Rejected {
+      color: #d9534f; }
+  .deployment-status-bar .deployment-status-text-parent {
+    position: relative;
+    min-height: 80px;
+    padding: 0 10px 0 100px; }
+    .deployment-status-bar .deployment-status-text-parent .deployment-status-text-child {
+      position: absolute;
+      top: 50%;
+      margin-top: -20px; }
+      .deployment-status-bar .deployment-status-text-parent .deployment-status-text-child .deployment-status-header {
+        font-size: 16px; }
+
 .deploy-plan .summary_title {
   margin: 10px 0 20px;
   font-size: 16px;
@@ -11586,9 +11621,16 @@ select.selectize-control,
     -webkit-transform: scale(1);
     transform: scale(1); } }
 
+.log-container .log-header {
+  padding: 5px 0px 5px 12px;
+  background-color: #eeeeee;
+  text-transform: uppercase;
+  font-size: 12px; }
+
 .log-container .log-content {
   border: 0;
-  border-radius: 0; }
+  border-radius: 0;
+  min-height: 450px; }
 
 .status-box {
   background: #eeeeee;
@@ -11598,8 +11640,6 @@ select.selectize-control,
   .status-box.default, .status-box.bypassed {
     border-color: #777777; }
   .status-box.aborting {
-    border-color: #f0ad4e; }
-  .status-box.pending {
     border-color: #f0ad4e; }
   .status-box.submitted {
     border-color: #f0ad4e; }
@@ -12123,8 +12163,6 @@ button.sidebar-open {
     font-size: 40px;
     content: "\2022"; }
   .deploy-status.status-Aborting {
-    color: #f0ad4e; }
-  .deploy-status.status-Pending {
     color: #f0ad4e; }
   .deploy-status.status-Submitted {
     color: #f0ad4e; }
@@ -12775,12 +12813,19 @@ textarea.deploy-key {
       .modal.deploy .modal-dialog .modal-content .fetch.approval .state.approved,
       .modal.deploy .modal-dialog .modal-content .section.approval .state.approved {
         color: #5cb85c; }
-      .modal.deploy .modal-dialog .modal-content .fetch.deployment .deploy-btn-container,
-      .modal.deploy .modal-dialog .modal-content .section.deployment .deploy-btn-container {
-        text-align: center; }
-        .modal.deploy .modal-dialog .modal-content .fetch.deployment .deploy-btn-container button.deploy,
-        .modal.deploy .modal-dialog .modal-content .section.deployment .deploy-btn-container button.deploy {
-          float: none; }
+      .modal.deploy .modal-dialog .modal-content .fetch.deployment,
+      .modal.deploy .modal-dialog .modal-content .section.deployment {
+        padding: 0; }
+        .modal.deploy .modal-dialog .modal-content .fetch.deployment .log-loading,
+        .modal.deploy .modal-dialog .modal-content .section.deployment .log-loading {
+          padding: 10px 0; }
+        .modal.deploy .modal-dialog .modal-content .fetch.deployment .deploy-btn-container,
+        .modal.deploy .modal-dialog .modal-content .section.deployment .deploy-btn-container {
+          text-align: center; }
+          .modal.deploy .modal-dialog .modal-content .fetch.deployment .deploy-btn-container button.deploy,
+          .modal.deploy .modal-dialog .modal-content .section.deployment .deploy-btn-container button.deploy {
+            margin-top: 20px;
+            float: none; }
 
 .content .variables-description p {
   max-width: none; }

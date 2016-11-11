@@ -61,6 +61,7 @@ const Log = React.createClass({
 
 		return (
 			<div className="log-container">
+				<div className="log-header">Deployment log</div>
 				<pre
 					className="log-content fade-in"
 					ref={this.contentMounted}

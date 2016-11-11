@@ -23,6 +23,7 @@ $textarea-transition-time: 0.6s
 
 // react components
 @import 'components/_current-build-status'
+@import 'components/_deployment-status-bar'
 @import 'components/_deploy-plan'
 @import 'components/_loading-bar'
 @import 'components/_logs'
@@ -615,8 +616,6 @@ button.sidebar-open
 
 	&.status-Aborting
 		color: $status-aborting
-	&.status-Pending
-		color: $status-pending
 	&.status-Submitted
 		color: $status-submitted
 	&.status-Approved
@@ -1379,18 +1378,23 @@ textarea.deploy-key
 						font-weight: bold
 
 					.state.submitted
-						color: $status-pending
+						color: $status-submitted
 					.state.rejected
 						color: $status-rejected
 					.state.approved
 						color: $status-approved
 
 				&.deployment
+					padding: 0
+
+					.log-loading
+						padding: 10px 0
 
 					.deploy-btn-container
 						text-align: center
 
 						button.deploy
+							margin-top: 20px
 							float: none
 
 .content .variables-description p

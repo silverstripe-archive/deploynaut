@@ -6,6 +6,7 @@ const constants = require('../constants/deployment.js');
 const Deploy = require('./buttons/Deploy.jsx');
 const LoadingBar = require('../components/LoadingBar.jsx');
 const Log = require('./Log.jsx');
+const DeployStatusBar = require('./DeploymentStatusBar.jsx');
 
 const deployment = React.createClass({
 
@@ -21,9 +22,21 @@ const deployment = React.createClass({
 
 	getLogContent: function() {
 		if (typeof this.props.deploy_log === 'undefined') {
-			return <LoadingBar show />;
+			return (
+				<div>
+					<DeployStatusBar />
+					<div className="log-loading">
+						<LoadingBar show />
+					</div>
+				</div>
+			);
 		}
-		return <Log content={this.props.deploy_log} />;
+		return (
+			<div>
+				<DeployStatusBar />
+				<Log content={this.props.deploy_log} />
+			</div>
+		);
 	},
 
 	logUpdateInterval: null,
@@ -52,9 +65,7 @@ const deployment = React.createClass({
 				<div className="deploy-btn-container">
 					<Deploy sha={this.props.selected_ref} />
 				</div>
-				<div>
-					{logOutput}
-				</div>
+				{logOutput}
 			</div>
 		);
 	}
