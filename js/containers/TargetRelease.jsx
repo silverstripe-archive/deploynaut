@@ -4,7 +4,6 @@ const ReactRedux = require('react-redux');
 const Radio = require('../components/Radio.jsx');
 const Checkbox = require('../components/Checkbox.jsx');
 const Dropdown = require('../components/Dropdown.jsx');
-const Button = require('../components/Button.jsx');
 const BuildStatus = require('../components/BuildStatus.jsx');
 const ButtonGitUpdate = require('./buttons/GitUpdate.jsx');
 const SaveTargetRelease = require('./buttons/SaveTargetRelease.jsx');
