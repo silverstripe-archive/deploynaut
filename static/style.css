@@ -10464,7 +10464,7 @@ select:focus,
 /* -- label styles ---------------------------------- */
 label {
   font-size: 14px;
-  font-weight: 300;
+  font-weight: normal;
   transition: 0.2s ease all;
   -moz-transition: 0.2s ease all;
   -webkit-transition: 0.2s ease all; }
