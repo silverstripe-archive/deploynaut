@@ -121,7 +121,7 @@ const TargetRelease = React.createClass({
 					<div>
 						Select the release you would like to deploy to {props.environment_name}
 					</div>
-					<LoadingBar show={props.is_loading} />
+					{props.is_loading && <LoadingBar show /> ||
 					<form className="form">
 						<ul className="radio-list">
 							{list}
@@ -144,6 +144,7 @@ const TargetRelease = React.createClass({
 							})}
 						</ul>
 					</form>
+					}
 				</div>
 				<SaveTargetRelease />
 			</div>
