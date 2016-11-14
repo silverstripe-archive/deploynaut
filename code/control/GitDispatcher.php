@@ -237,10 +237,12 @@ class GitDispatcher extends Dispatcher {
 		$branches = [];
 		foreach ($project->DNBranchList() as $branch) {
 			$sha = $branch->SHA();
+			$name = $branch->Name();
 			$branches[] = [
 				'id' => $sha,
+				'branch' => $name,
 				'title' => sprintf('%s (%s, %s old)',
-					$branch->Name(),
+					$name,
 					substr($sha, 0, 8),
 					$branch->LastUpdated()->TimeDiff()
 				)
