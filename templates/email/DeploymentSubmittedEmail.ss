@@ -24,7 +24,7 @@
 					<td>$From</th>
 					<td>&rarr;</td>
 					<td>$To</td>
-					<td><% if $CompareUrl %><a href="$CompareUrl">View diff</a><% else %>&nbsp;<% end_if %></td>
+					<td><% if $CompareUrl %><a href="$CompareUrl">View diff<i className="fa fa-external-link-square superscript"></i></a><% else %>&nbsp;<% end_if %></td>
 				<% end_if %>
 			</tr>
 			<% end_if %>
