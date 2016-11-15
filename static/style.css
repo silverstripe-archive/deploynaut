@@ -12758,6 +12758,7 @@ textarea.deploy-key {
         text-transform: uppercase; }
     .modal.deploy .modal-dialog .modal-content .modal-body {
       overflow-y: auto;
+      overflow-x: hidden;
       height: 100%;
       padding: 0; }
       .modal.deploy .modal-dialog .modal-content .modal-body .menu {
