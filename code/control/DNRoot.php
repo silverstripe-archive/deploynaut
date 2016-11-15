@@ -1198,7 +1198,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
-	 * @deprecated 2.0.0 - moved to PlanDispatcher
+	 * @deprecated 2.0.0 - moved to DeployDispatcher
 	 *
 	 * @param \SS_HTTPRequest $request
 	 *

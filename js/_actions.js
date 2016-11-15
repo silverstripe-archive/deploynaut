@@ -4,7 +4,6 @@ const api = require('./_api.js');
 const constants = require('./constants/deployment.js');
 
 const gitAPI = api.create('git');
-const planAPI = api.create('plan');
 const deployAPI = api.create('deploys');
 const approvalsAPI = api.create('approvals');
 
@@ -220,8 +219,8 @@ export function getDeploySummary() {
 		});
 
 		dispatch(startSummaryGet());
-		return planAPI.call(getState, '/deploysummary', 'post', {
-			sha: getState().git.selected_ref,
+		return deployAPI.call(getState, '/summary', 'post', {
+			ref: getState().git.selected_ref,
 			options: options
 		})
 			.then(data => dispatch(succeedSummaryGet(data)))

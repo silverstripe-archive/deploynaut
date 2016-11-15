@@ -85,7 +85,6 @@ class EnvironmentOverview extends Dispatcher {
 			'basename' => Director::baseURL() . $this->getCurrentEnvironment()->Link(self::ACTION_OVERVIEW),
 			'dispatchers' => [
 				'git' => $base . $this->getCurrentProject()->Link('git'),
-				'plan' => $base . $this->getCurrentEnvironment()->Link('plan'),
 				'deploys' => $base . $this->getCurrentEnvironment()->Link('deploys'),
 				'approvals' => $base . $this->getCurrentEnvironment()->Link('approvals')
 			],

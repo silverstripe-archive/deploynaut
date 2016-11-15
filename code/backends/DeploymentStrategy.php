@@ -120,6 +120,13 @@ class DeploymentStrategy extends ViewableData {
 	}
 
 	/**
+	 * @param array $data
+	 */
+	public function setChanges($data) {
+		$this->changes = $data;
+	}
+
+	/**
 	 * @param string $title
 	 * @param string $desc
 	 */
