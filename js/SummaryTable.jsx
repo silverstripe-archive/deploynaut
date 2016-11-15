@@ -97,7 +97,7 @@ function SummaryLine(props) {
 				rel="noopener noreferrer"
 				href={props.compareUrl}
 			>
-				View diff
+				View diff<i className="fa fa-external-link-square superscript"></i>
 			</a>
 		);
 	}
@@ -142,7 +142,7 @@ function DescriptionOnlySummaryLine(props) {
 					href={props.compareUrl}
 					rel="noopener noreferrer"
 				>
-					View diff
+					View diff<i className="fa fa-external-link-square superscript"></i>
 				</a>
 			</td>
 		);
