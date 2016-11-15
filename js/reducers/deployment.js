@@ -18,7 +18,6 @@ const initialState = {
 	logs: {},
 	history_error: null,
 	error: null,
-	approval_is_loading: false,
 	current_page: 1,
 	history_is_loading: false
 };
@@ -117,14 +116,6 @@ module.exports = function deployment(state, action) {
 				is_queuing: true
 			});
 
-		case actions.START_APPROVAL_SUBMIT:
-		case actions.START_APPROVAL_CANCEL:
-		case actions.START_APPROVAL_APPROVE:
-		case actions.START_APPROVAL_REJECT:
-			return _.assign({}, state, {
-				approval_is_loading: true
-			});
-
 		case actions.SUCCEED_APPROVAL_SUBMIT:
 		case actions.SUCCEED_APPROVAL_CANCEL:
 		case actions.SUCCEED_APPROVAL_APPROVE:
@@ -136,7 +127,6 @@ module.exports = function deployment(state, action) {
 			newList[action.data.deployment.id] = action.data.deployment;
 
 			return _.assign({}, state, {
-				approval_is_loading: false,
 				is_loading: false,
 				is_queuing: false,
 				error: null,
@@ -145,17 +135,11 @@ module.exports = function deployment(state, action) {
 			});
 		}
 
-		case actions.FAIL_APPROVAL_SUBMIT:
-		case actions.FAIL_APPROVAL_CANCEL:
-		case actions.FAIL_APPROVAL_APPROVE:
-		case actions.FAIL_APPROVAL_REJECT:
-		case actions.FAIL_APPROVERS_GET:
 		case actions.FAIL_DEPLOYMENT_QUEUE:
 		case actions.FAIL_DEPLOY_LOG_UPDATE:
 		case actions.FAIL_DEPLOYMENT_GET:
 			return _.assign({}, state, {
 				is_loading: false,
-				approval_is_loading: false,
 				error: action.error.toString()
 			});
 
