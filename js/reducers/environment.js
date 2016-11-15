@@ -10,7 +10,7 @@ module.exports = function environment(state, action) {
 			project_name: null,
 			usage: null,
 			supported_options: {},
-			approvers: []
+			approvers: {}
 		};
 	}
 
@@ -23,6 +23,14 @@ module.exports = function environment(state, action) {
 				usage: action.data.usage,
 				supported_options: action.data.supported_options,
 				approvers: action.data.approvers
+			});
+		case actions.SUCCEED_DEPLOYMENT_GET:
+			const newApprovers = _.assign({}, state.approvers);
+			if (action.data.deployment.approver_id) {
+				newApprovers[action.data.deployment.approver_id] = action.data.deployment.approver;
+			}
+			return _.assign({}, state, {
+				approvers: newApprovers
 			});
 		default:
 			return state;

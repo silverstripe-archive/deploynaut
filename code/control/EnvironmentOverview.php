@@ -71,7 +71,7 @@ class EnvironmentOverview extends Dispatcher {
 		$approversList = [];
 		foreach ($this->getCurrentProject()->listMembers() as $data) {
 			if ($this->getCurrentProject()->allowed(\ApprovalsDispatcher::ALLOW_APPROVAL, \Member::get()->byId($data['MemberID']))) {
-				$approversList[] = [
+				$approversList[$data['MemberID']] = [
 					'id' => $data['MemberID'],
 					'email' => $data['Email'],
 					'role' => $data['RoleTitle'],
