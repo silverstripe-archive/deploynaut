@@ -1,7 +1,6 @@
 var React = require("react");
 
 var Radio = function (props) {
-
 	var classes = "radio";
 	if (props.disabled === true) {
 		classes += " disabled";
@@ -12,7 +11,7 @@ var Radio = function (props) {
 				<input
 					onChange={props.onClick}
 					type="radio"
-					name={props.name + props.id}
+					name={props.name}
 					id={props.name + props.id}
 					value={props.id}
 					checked={props.checked}
