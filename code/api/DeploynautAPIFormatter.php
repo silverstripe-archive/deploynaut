@@ -132,6 +132,14 @@ class DeploynautAPIFormatter {
 			self::$_cache_project_members[$project->ID] = $project->listMembers();
 		}
 
+		// we cache all member lookup, even the false results
+		if (!isset(self::$_cache_members[$memberID])) {
+			self::$_cache_members[$memberID] = \Member::get()->byId($memberID);
+		}
+		if(!self::$_cache_members[$memberID]) {
+			return null;
+		}
+
 		$role = null;
 		foreach (self::$_cache_project_members[$project->ID] as $stackMember) {
 			if ($stackMember['MemberID'] !== $memberID) {
@@ -140,13 +148,9 @@ class DeploynautAPIFormatter {
 			$role = $stackMember['RoleTitle'];
 		}
 
-		// we cache all member lookup, even the false results
-		if (!isset(self::$_cache_members[$memberID])) {
-			self::$_cache_members[$memberID] = \DataObject::get_by_id("Member", $memberID);
-		}
-
-		if(!self::$_cache_members[$memberID]) {
-			return null;
+		// if an administator is approving, they should be shown as one
+		if ($role === null && \Permission::checkMember(self::$_cache_members[$memberID], 'ADMIN')) {
+			$role = 'Administrator';
 		}
 
 		return [

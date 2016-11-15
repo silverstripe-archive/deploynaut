@@ -72,11 +72,13 @@ function isDisabled(deployState) {
 }
 
 const mapStateToProps = function(state) {
-	const approvers = state.environment.approvers.map(function(val) {
-		return {
-			id: val.id,
-			title: val.email + " - " + val.role
-		};
+	const approvers = [];
+	Object.keys(state.environment.approvers).map(function(id) {
+		const approver = state.environment.approvers[id];
+		approvers.push({
+			id: approver.id,
+			title: approver.email + ' - ' + approver.role
+		});
 	});
 
 	const current = state.deployment.list[state.deployment.current_id] || {};
