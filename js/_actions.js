@@ -482,9 +482,11 @@ export function getDeployLog() {
 		if (!constants.hasLogs(current.state)) {
 			return;
 		}
-		deployAPI.call(getState, `/log/${getState().deployment.current_id}`, 'get').then(data => {
-			dispatch(succeedDeployLogUpdate(data));
-		});
+		return deployAPI.call(getState, `/log/${getState().deployment.current_id}`, 'get')
+			.then(function(data) {
+				dispatch(succeedDeployLogUpdate(data));
+			})
+			.catch((error) => dispatch(failDeployLogUpdate(error)));
 	};
 }
 
