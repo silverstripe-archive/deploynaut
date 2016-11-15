@@ -19,6 +19,7 @@ class DeployDispatcher extends Dispatcher {
 		'delete',
 		'log',
 		'redeploy',
+		'summary',
 		'createdeployment',
 		'start'
 	];
@@ -125,7 +126,7 @@ class DeployDispatcher extends Dispatcher {
 	 * @return \SS_HTTPResponse
 	 */
 	public function show(\SS_HTTPRequest $request) {
-		$deployment = DNDeployment::get()->byId($request->param('ID'));
+		$deployment = \DNDeployment::get()->byId($request->param('ID'));
 		$errorResponse = $this->validateDeployment($deployment);
 		if ($errorResponse instanceof \SS_HTTPResponse) {
 			return $errorResponse;
@@ -144,7 +145,7 @@ class DeployDispatcher extends Dispatcher {
 
 		$this->checkSecurityToken();
 
-		$deployment = DNDeployment::get()->byId($request->postVar('id'));
+		$deployment = \DNDeployment::get()->byId($request->postVar('id'));
 		$errorResponse = $this->validateDeployment($deployment);
 		if ($errorResponse instanceof \SS_HTTPResponse) {
 			return $errorResponse;
@@ -164,7 +165,7 @@ class DeployDispatcher extends Dispatcher {
 	 * @return \SS_HTTPResponse
 	 */
 	public function log(\SS_HTTPRequest $request) {
-		$deployment = DNDeployment::get()->byId($request->param('ID'));
+		$deployment = \DNDeployment::get()->byId($request->param('ID'));
 		$errorResponse = $this->validateDeployment($deployment);
 		if ($errorResponse instanceof \SS_HTTPResponse) {
 			return $errorResponse;
@@ -207,6 +208,29 @@ class DeployDispatcher extends Dispatcher {
 	}
 
 	/**
+	 * Return a summary of the deployment changes without creating the deployment.
+	 *
+	 * @param \SS_HTTPRequest $request
+	 * @return \SS_HTTPResponse
+	 */
+	public function summary(\SS_HTTPRequest $request) {
+		if ($request->httpMethod() !== 'POST') {
+			return $this->getAPIResponse(['message' => 'Method not allowed, requires POST'], 405);
+		}
+		$this->checkSecurityToken();
+
+		$options = ['sha' => $request->postVar('ref')];
+		if ($request->requestVar('options')) {
+			foreach (explode(',', $request->postVar('options')) as $option) {
+				$options[$option] = true;
+			}
+		}
+
+		$strategy = $this->createStrategy($options);
+		return $this->getAPIResponse($strategy->toArray(), 201);
+	}
+
+	/**
 	 * Create deployment. Can't use {@link create()} as it's taken by Object.
 	 *
 	 * @param \SS_HTTPRequest $request
@@ -238,7 +262,7 @@ class DeployDispatcher extends Dispatcher {
 			}
 		}
 
-		$strategy = $this->environment->Backend()->planDeploy($this->environment, $options);
+		$strategy = $this->createStrategy($options);
 
 		$approver = Member::get()->byId($request->postVar('approver_id'));
 		if ($approver && $approver->exists()) {
@@ -270,14 +294,14 @@ class DeployDispatcher extends Dispatcher {
 
 		$this->checkSecurityToken();
 
-		$deployment = DNDeployment::get()->byId($request->postVar('id'));
+		$deployment = \DNDeployment::get()->byId($request->postVar('id'));
 		$errorResponse = $this->validateDeployment($deployment);
 		if ($errorResponse instanceof \SS_HTTPResponse) {
 			return $errorResponse;
 		}
 
 		// The deployment cannot be started until it has been approved, or bypassed straight to approved state
-		if ($deployment->State !== DNDeployment::STATE_APPROVED) {
+		if ($deployment->State !== \DNDeployment::STATE_APPROVED) {
 			return $this->getAPIResponse(['message' => 'This deployment has not been approved. Cannot deploy'], 403);
 		}
 
@@ -293,7 +317,7 @@ class DeployDispatcher extends Dispatcher {
 		}
 
 		try {
-			$deployment->getMachine()->apply(DNDeployment::TR_QUEUE);
+			$deployment->getMachine()->apply(\DNDeployment::TR_QUEUE);
 		} catch (\Exception $e) {
 			return $this->getAPIResponse([
 				'message' => $e->getMessage()
@@ -327,6 +351,66 @@ class DeployDispatcher extends Dispatcher {
 	 */
 	public function getModel($name = '') {
 		return [];
+	}
+
+	/**
+	 * @var array
+	 * @return \DeploymentStrategy
+	 */
+	protected function createStrategy($options) {
+		$strategy = $this->environment->Backend()->planDeploy($this->environment, $options);
+		$data = $strategy->toArray();
+
+		$interface = $this->project->getRepositoryInterface();
+		if ($this->canCompareCodeVersions($interface, $data['changes'])) {
+			$compareurl = sprintf(
+				'%s/compare/%s...%s',
+				$interface->URL,
+				$data['changes']['Code version']['from'],
+				$data['changes']['Code version']['to']
+			);
+			$data['changes']['Code version']['compareUrl'] = $compareurl;
+
+			// special case for .platform.yml field so we don't show a huge blob of changes,
+			// but rather a link to where the .platform.yml changes were made in the code
+			if (isset($data['changes']['.platform.yml other'])) {
+				$data['changes']['.platform.yml other']['compareUrl'] = $compareurl;
+				$data['changes']['.platform.yml other']['description'] = '';
+			}
+		}
+		$this->extend('updateDeploySummary', $data);
+
+		// Ensure changes that would have been updated are persisted in the object,
+		// such as the comparison URL, so that they will be written to the Strategy
+		// field on the DNDeployment object as part of {@link createDeployment()}
+		$strategy->setChanges($data['changes']);
+
+		return $strategy;
+	}
+
+	/**
+	 * @param ArrayData $interface
+	 * @param $changes
+	 * @return bool
+	 */
+	protected function canCompareCodeVersions(\ArrayData $interface, $changes) {
+		if (empty($changes['Code version'])) {
+			return false;
+		}
+		$codeVersion = $changes['Code version'];
+		if (empty($interface)) {
+			return false;
+		}
+		if (empty($interface->URL)) {
+			return false;
+		}
+		if (empty($codeVersion['from']) || empty($codeVersion['to'])) {
+			return false;
+		}
+		if (strlen($codeVersion['from']) !== 40 || strlen($codeVersion['to']) !== 40) {
+			return false;
+		}
+		return true;
 	}
 
 	/**

@@ -9,7 +9,6 @@ Director:
     'naut/api//$Project/$Environment/$OtherID': 'DeploynautAPI'
     'naut/project/$Project/environment/$Environment/overview': 'EnvironmentOverview'
     'naut/project/$Project/git': 'GitDispatcher'
-    'naut/project/$Project/environment/$Environment/plan': 'PlanDispatcher'
     'naut/project/$Project/environment/$Environment/deploys': 'DeployDispatcher'
     'naut/project/$Project/environment/$Environment/approvals': 'ApprovalsDispatcher'
     'naut': 'DNRoot'
