@@ -152,7 +152,7 @@ const mapStateToProps = function(state) {
 		approver: approver,
 		can_approve: state.user.can_approve,
 		rejected_reason: current.rejected_reason,
-		error: state.deployment.error,
+		error: state.approval.error,
 		is_loading: state.deployment.is_loading
 	};
 };

@@ -87,7 +87,7 @@ const mapStateToProps = function(state) {
 		date_requested_nice: current.date_requested_nice,
 		approvers: approvers,
 		approver_id: current.approver_id,
-		error: state.deployment.error,
+		error: state.approval.error,
 		is_loading: state.deployment.is_loading || state.deployment.is_creating
 	};
 };
