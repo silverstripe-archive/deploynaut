@@ -4,7 +4,6 @@ const ReactRedux = require('react-redux');
 const Dropdown = require('../components/Dropdown.jsx');
 const RequestApproval = require('./buttons/RequestApproval.jsx');
 const Bypass = require('./buttons/Bypass.jsx');
-const LoadingBar = require('../components/LoadingBar.jsx');
 
 const actions = require('../_actions.js');
 const constants = require('../constants/deployment.js');
@@ -34,26 +33,24 @@ function Approval(props) {
 				Send a request to deploy this release. Once approved, team members will have the ability to deploy this release.<br />
 				Only one request can be active at a time, although approval can also be granted by others with the same permissions, e.g. Release managers.
 			</p>
-			{props.is_loading && <LoadingBar show /> ||
-				<div>
-					<div className="form-group">
-						<label htmlFor="approver">Request approval from</label>
-						<Dropdown
-							name="approver"
-							options={props.approvers}
-							value={props.approver_id}
-							onSelect={props.onApproverSelect}
-							disabled={props.disabled}
-						/>
-					</div>
-					<div>
-						{sentTime}
-					</div>
-					<div>
-						<RequestApproval /> <Bypass />
-					</div>
+			<div>
+				<div className="form-group">
+					<label htmlFor="approver">Request approval from</label>
+					<Dropdown
+						name="approver"
+						options={props.approvers}
+						value={props.approver_id}
+						onSelect={props.onApproverSelect}
+						disabled={props.disabled}
+					/>
 				</div>
-			}
+				<div>
+					{sentTime}
+				</div>
+				<div>
+					<RequestApproval /> <Bypass />
+				</div>
+			</div>
 		</div>
 	);
 }
@@ -87,8 +84,7 @@ const mapStateToProps = function(state) {
 		date_requested_nice: current.date_requested_nice,
 		approvers: approvers,
 		approver_id: current.approver_id,
-		error: state.approval.error,
-		is_loading: state.deployment.is_loading || state.deployment.is_creating
+		error: state.approval.error
 	};
 };
 
