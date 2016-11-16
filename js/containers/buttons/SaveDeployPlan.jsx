@@ -4,7 +4,7 @@ var actions = require('../../_actions.js');
 var Button = require('../../components/Button.jsx');
 
 function isDisplayed(state) {
-	if (state.plan.is_loading || state.deployment.is_creating) {
+	if (state.plan.is_loading) {
 		return false;
 	}
 	if (state.plan.validation_code === 'error') {
@@ -17,11 +17,14 @@ function isDisplayed(state) {
 }
 
 const mapStateToProps = function(state) {
+	const text = state.deployment.is_creating ? 'Calculating impulses' : 'Continue';
+	const icon = (state.deployment.is_creating) ? 'fa fa-refresh fa-spin' : 'fa fa-long-arrow-down';
 	return {
 		display: isDisplayed(state),
+		disabled: state.deployment.is_creating,
 		style: "btn-wide btn-primary",
-		value: "Continue",
-		icon: "fa fa-long-arrow-down"
+		value: text,
+		icon: icon
 	};
 };
 
