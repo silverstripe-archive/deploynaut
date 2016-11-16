@@ -7,7 +7,6 @@ const Dropdown = require('../components/Dropdown.jsx');
 const BuildStatus = require('../components/BuildStatus.jsx');
 const ButtonGitUpdate = require('./buttons/GitUpdate.jsx');
 const SaveTargetRelease = require('./buttons/SaveTargetRelease.jsx');
-const LoadingBar = require('../components/LoadingBar.jsx');
 
 const actions = require('../_actions.js');
 const constants = require('../constants/deployment.js');
@@ -121,7 +120,6 @@ const TargetRelease = React.createClass({
 					<div>
 						Select the release you would like to deploy to {props.environment_name}
 					</div>
-					{props.is_loading && <LoadingBar show /> ||
 					<form className="form">
 						<ul className="radio-list">
 							{list}
@@ -144,7 +142,6 @@ const TargetRelease = React.createClass({
 							})}
 						</ul>
 					</form>
-					}
 				</div>
 				<SaveTargetRelease />
 			</div>
@@ -167,13 +164,6 @@ TargetRelease.propTypes = {
 	]).isRequired,
 	disabled: React.PropTypes.bool.isRequired
 };
-
-function isLoading(state) {
-	if (state.git.is_fetching || state.git.is_updating) {
-		return true;
-	}
-	return false;
-}
 
 function isDisabled(state) {
 	if (isLoading(state) || state.plan.is_loading) {
@@ -211,7 +201,6 @@ const mapStateToProps = function(state) {
 		selected_ref: state.git.selected_ref,
 		last_fetched_date: state.git.last_fetched_date,
 		last_fetched_ago: state.git.last_fetched_ago,
-		is_loading: isLoading(state),
 		disabled: isDisabled(state)
 	};
 };
