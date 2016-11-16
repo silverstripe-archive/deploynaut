@@ -26,14 +26,14 @@ function isDisabled(state) {
 
 const mapStateToProps = function(state) {
 	let btnValue = (state.git.is_fetching || state.git.is_updating) ? 'Fetching code...' : 'Fetch code';
-
+	const icon = (state.git.is_fetching || state.git.is_updating) ? 'fa fa-refresh fa-spin' : 'fa fa-refresh';
 	if (state.git.error) {
 		btnValue = state.git.error;
 	}
 
 	return {
 		disabled: isDisabled(state),
-		icon: 'fa fa-refresh',
+		icon: icon,
 		style: 'btn-wide btn-default',
 		value: btnValue
 	};

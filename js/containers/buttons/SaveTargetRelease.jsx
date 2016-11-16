@@ -4,11 +4,14 @@ var actions = require('../../_actions.js');
 var Button = require('../../components/Button.jsx');
 
 const mapStateToProps = function(state) {
+	const text = state.plan.is_loading ? 'Reticulating splines' : 'Continue';
+	const icon = state.plan.is_loading ? 'fa fa-refresh fa-spin' : 'fa fa-long-arrow-down';
 	return {
-		display: !state.plan.changes && !state.plan.is_loading && state.git.selected_ref,
+		display: !state.plan.changes && state.git.selected_ref,
 		style: "btn-wide btn-primary",
-		value: "Continue",
-		icon: "fa fa-long-arrow-down"
+		value: text,
+		icon: icon,
+		disabled: state.plan.is_loading
 	};
 };
 

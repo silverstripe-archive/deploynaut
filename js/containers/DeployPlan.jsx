@@ -10,6 +10,17 @@ const Messages = require('../components/Messages.jsx');
 const actions = require('../_actions.js');
 
 function DeployPlan(props) {
+	// don't show the rest of the form if there is an error in the deploy plan
+	if (props.validation_code === 'error') {
+		return (
+			<div>
+				<div className="section">
+					<Messages messages={props.messages} />
+				</div>
+			</div>
+		);
+	}
+
 	return (
 		<div>
 			<div className="section">
@@ -58,6 +69,7 @@ function DeployPlan(props) {
 
 const mapStateToProps = function(state) {
 	return {
+		validation_code: state.plan.validation_code,
 		changes: state.plan.changes,
 		is_loading: state.plan.is_loading,
 		title: state.plan.title,
