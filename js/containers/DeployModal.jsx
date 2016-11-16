@@ -172,8 +172,8 @@ const mapStateToProps = function(state, ownProps) {
 
 	const current = state.deployment.list[state.deployment.current_id] || {};
 
-	const showPlan = state.git.selected_ref !== "" && (state.plan.is_loading || state.plan.changes);
-	const showApproval = state.deployment.current_id !== "" || state.deployment.is_creating;
+	const showPlan = state.git.selected_ref !== "" && (state.plan.changes);
+	const showApproval = state.deployment.current_id !== "";
 
 	return {
 		show: [
