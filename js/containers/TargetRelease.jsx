@@ -166,7 +166,7 @@ TargetRelease.propTypes = {
 };
 
 function isDisabled(state) {
-	if (isLoading(state) || state.plan.is_loading) {
+	if (state.plan.is_loading) {
 		return true;
 	}
 	const current = state.deployment.list[state.deployment.current_id] || {};
