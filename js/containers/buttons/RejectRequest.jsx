@@ -21,7 +21,7 @@ function canReject(state) {
 const mapStateToProps = function(state) {
 	return {
 		display: canReject(state),
-		disabled: state.deployment.is_loading,
+		disabled: state.approval.is_loading,
 		style: "btn-wide btn-danger",
 		value: "Reject"
 	};

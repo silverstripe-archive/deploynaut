@@ -8,7 +8,7 @@ const mapStateToProps = function(state) {
 	const current = state.deployment.list[state.deployment.current_id] || {};
 	return {
 		display: state.user.can_approve && constants.isSubmitted(current.state),
-		disabled: state.deployment.is_loading,
+		disabled: state.approval.is_loading,
 		style: "btn-success btn-wide",
 		value: "Approve"
 	};

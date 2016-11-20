@@ -23,12 +23,14 @@ function canRequest(state) {
 }
 
 const mapStateToProps = function(state) {
+	let btnValue = state.approval.submit_is_loading ? 'Sending request' : 'Send request';
+	const icon = state.approval.submit_is_loading ? 'fa fa-refresh fa-spin' : 'fa fa-envelope';
 	return {
 		display: canRequest(state),
-		disabled: state.deployment.is_loading,
+		disabled: state.approval.is_loading,
 		style: "btn-wide btn-success",
-		value: 'Send request',
-		icon: 'fa fa-envelope'
+		value: btnValue,
+		icon: icon
 	};
 };
 
