@@ -433,6 +433,7 @@ export function createDeployment() {
 			approver_id: current.approver_id
 		})
 			.then(function(data) {
+				window.history.pushState("", "", data.location);
 				return dispatch(succeedDeploymentCreate(data));
 			})
 			.catch((error) => dispatch(failDeploymentCreate(error)));
