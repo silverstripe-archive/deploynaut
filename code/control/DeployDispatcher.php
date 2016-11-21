@@ -277,10 +277,17 @@ class DeployDispatcher extends Dispatcher {
 			$deployment->write();
 		}
 
-		return $this->getAPIResponse([
+		$deploymentLink = \Controller::join_links(Director::absoluteBaseURL(), $deployment->Link());
+
+		$response = $this->getAPIResponse([
 			'message' => 'Deployment has been created',
+			'location' => $deploymentLink,
 			'deployment' => $this->formatter->getDeploymentData($deployment),
 		], 201);
+
+		$response->addHeader('Location', $deploymentLink);
+
+		return $response;
 	}
 
 	/**
