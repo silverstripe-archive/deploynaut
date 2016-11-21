@@ -23,7 +23,6 @@ module.exports = function plan(state, action) {
 		case actions.START_DEPLOYMENT_GET:
 		case actions.SET_REVISION:
 		case actions.SUCCEED_REPO_UPDATE:
-		case actions.SUCCEED_REVISIONS_GET:
 		case actions.TOGGLE_OPTION:
 			return initialState;
 
