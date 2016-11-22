@@ -1112,7 +1112,11 @@ class DNProject extends DataObject {
 		$cachekey = $this->ID . '_commit_' . $sha;
 		$cache = self::get_git_cache();
 		if (!($result = $cache->load($cachekey))) {
-			$result = $repo->getCommit($sha);
+			try {
+				$result = $repo->getCommit($sha);
+			} catch (\Gitonomy\Git\Exception\ReferenceNotFoundException $e) {
+				return false;
+			}
 			$cache->save($result, $cachekey, ['gitonomy', 'commit', 'project_' . $this->ID]);
 		}
 		return $result;
