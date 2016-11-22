@@ -198,7 +198,7 @@
 				$.get(navEl.data('nav'), function(data) {
 					navEl.html(data);
 					self.toggleClass('hollow');
-				})
+				});
 			});
 
 			e.preventDefault();
