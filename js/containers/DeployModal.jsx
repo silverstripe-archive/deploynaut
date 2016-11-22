@@ -54,8 +54,19 @@ const DeployModal = React.createClass({
 		this.resize();
 	},
 
-	componentDidUpdate: function() {
+	componentWillUpdate: function() {
+		// Before we update, we save the current scroll "position" for use in componentDidUpdate
+		this.saveScrollPosition();
+	},
+
+	componentDidUpdate: function(prevProps) {
 		this.resize();
+		// when the layout changes from write to readonly we ensure that the modal is scrolled to the same position
+		// relative to the bottom to prevent a jarring jump. This happens when sending for approval or bypassing the
+		// approval step.
+		if (prevProps.can_edit !== this.props.can_edit) {
+			this.resumeScrollPosition();
+		}
 	},
 
 	componentWillUnmount: function() {
@@ -90,6 +101,29 @@ const DeployModal = React.createClass({
 		// give some space at the bottom so user can scroll the bottom element to the
 		// middle of the modal
 		bodyElements[0].style.paddingBottom = (bodyHeight / 2) + 'px';
+	},
+
+	scrollHeight: 0,
+
+	scrollTop: 0,
+
+	// save the current scroll position
+	saveScrollPosition() {
+		const node = document.getElementsByClassName("modal-body");
+		if (node.length > 0) {
+			this.scrollHeight = node[0].scrollHeight;
+			this.scrollTop = node[0].scrollTop;
+		}
+	},
+
+	// scroll the modal window body to the position previously saved in saveScrollPosition() relative
+	// to the bottom. This will prevent the content jumping if content above the current scroll position
+	// changes height.
+	resumeScrollPosition() {
+		const node = document.getElementsByClassName("modal-body");
+		if (node.length > 0) {
+			node[0].scrollTop = this.scrollTop + (node[0].scrollHeight - this.scrollHeight);
+		}
 	},
 
 	render: function() {
