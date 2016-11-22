@@ -224,6 +224,23 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 	}
 
 	/**
+	 * Gets the commit message.
+	 *
+	 * @return string|null
+	 */
+	public function getCommitSubjectMessage() {
+		$commit = $this->getCommit();
+		if($commit) {
+			try {
+				return Convert::raw2xml($this->Environment()->getCommitSubjectMessage($commit));
+			} catch(Gitonomy\Git\Exception\ReferenceNotFoundException $e) {
+				return null;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Return all tags for the deployed commit.
 	 *
 	 * @return ArrayList

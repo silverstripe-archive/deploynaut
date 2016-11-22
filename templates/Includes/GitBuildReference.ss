@@ -27,4 +27,4 @@
 	</span>
 <% end_if %>
 
-$CommitMessage
+$CommitSubjectMessage

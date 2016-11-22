@@ -33,7 +33,7 @@ var BuildStatus = function(props) {
 	if (props.status_ago) {
 		secondaryLine = props.deployment.date_created_ago;
 	} else {
-		secondaryLine = props.deployment.commit_message;
+		secondaryLine = props.deployment.commit_subject;
 	}
 
 	return (

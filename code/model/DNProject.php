@@ -1133,6 +1133,22 @@ class DNProject extends DataObject {
 	}
 
 	/**
+	 * get the commit "subject", getCommitMessage get the full message
+	 *
+	 * @param \Gitonomy\Git\Commit $commit
+	 * @return string
+	 */
+	public function getCommitSubjectMessage(\Gitonomy\Git\Commit $commit) {
+		$cachekey = $this->ID . '_message_subject' . $commit->getRevision();
+		$cache = self::get_git_cache();
+		if (!($result = $cache->load($cachekey))) {
+			$result = $commit->getSubjectMessage();
+			$cache->save($result, $cachekey, ['gitonomy', 'message', 'project_' . $this->ID]);
+		}
+		return $result;
+	}
+
+	/**
 	 * @param \Gitonomy\Git\Commit $commit
 	 * @return mixed
 	 */
