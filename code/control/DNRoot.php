@@ -674,7 +674,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		} else {
 			$member->StarredProjects()->add($project);
 		}
-		return $this->redirectBack();
+
+		if (!$request->isAjax()) {
+			return $this->redirectBack();
+		}
 	}
 
 	/**
