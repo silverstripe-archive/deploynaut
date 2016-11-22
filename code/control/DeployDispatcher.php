@@ -13,8 +13,6 @@ class DeployDispatcher extends Dispatcher {
 	 */
 	private static $allowed_actions = [
 		'history',
-		'upcoming',
-		'currentbuild',
 		'show',
 		'delete',
 		'log',
@@ -92,33 +90,6 @@ class DeployDispatcher extends Dispatcher {
 		return $this->getAPIResponse([
 			'list' => $data,
 		], 200);
-	}
-
-	/**
-	 * @param \SS_HTTPRequest $request
-	 * @return \SS_HTTPResponse
-	 */
-	public function upcoming(\SS_HTTPRequest $request) {
-		$data = [];
-		$list = $this->environment->UpcomingDeployments();
-		foreach ($list as $deployment) {
-			$data[] = $this->formatter->getDeploymentData($deployment);
-		}
-		return $this->getAPIResponse([
-			'list' => $data,
-		], 200);
-	}
-
-	/**
-	 * @param \SS_HTTPRequest $request
-	 * @return \SS_HTTPResponse
-	 */
-	public function currentbuild(\SS_HTTPRequest $request) {
-		$currentBuild = $this->environment->CurrentBuild();
-		if (!$currentBuild) {
-			return $this->getAPIResponse(['deployment' => []], 200);
-		}
-		return $this->getAPIResponse(['deployment' => $this->formatter->getDeploymentData($currentBuild)], 200);
 	}
 
 	/**
