@@ -663,6 +663,10 @@ class DNEnvironment extends DataObject {
 		return $this->Project()->getCommitMessage($commit);
 	}
 
+	public function getCommitSubjectMessage(\Gitonomy\Git\Commit $commit) {
+		return $this->Project()->getCommitSubjectMessage($commit);
+	}
+
 	public function getCommitTags(\Gitonomy\Git\Commit $commit) {
 		return $this->Project()->getCommitTags($commit);
 	}

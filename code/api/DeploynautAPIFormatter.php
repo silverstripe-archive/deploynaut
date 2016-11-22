@@ -105,6 +105,7 @@ class DeploynautAPIFormatter {
 			'short_sha' => substr($deployment->SHA, 0, 7),
 			'ref_type' => $deployment->RefType,
 			'options' => $options,
+			'commit_subject' => $deployment->getCommitSubjectMessage(),
 			'commit_message' => $deployment->getCommitMessage(),
 			'commit_url' => $deployment->getCommitURL(),
 			'deployer' => $deployerData,
