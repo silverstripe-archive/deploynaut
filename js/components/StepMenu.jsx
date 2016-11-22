@@ -4,7 +4,7 @@ var React = require("react");
 // with the proper design
 
 var Step = function(props) {
-	let classNames = "step";
+	const classNames = "step";
 
 	var check = null;
 	if (props.is_finished) {

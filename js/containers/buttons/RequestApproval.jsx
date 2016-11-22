@@ -1,7 +1,7 @@
-var ReactRedux = require('react-redux');
+const ReactRedux = require('react-redux');
 
-var actions = require('../../_actions.js');
-var Button = require('../../components/Button.jsx');
+const actions = require('../../_actions.js');
+const Button = require('../../components/Button.jsx');
 const constants = require('../../constants/deployment.js');
 
 function canRequest(state) {
@@ -23,7 +23,7 @@ function canRequest(state) {
 }
 
 const mapStateToProps = function(state) {
-	let btnValue = state.approval.submit_is_loading ? 'Sending request' : 'Send request';
+	const btnValue = state.approval.submit_is_loading ? 'Sending request' : 'Send request';
 	const icon = state.approval.submit_is_loading ? 'fa fa-refresh fa-spin' : 'fa fa-envelope';
 	return {
 		display: canRequest(state),
