@@ -24,7 +24,7 @@ module.exports = function environment(state, action) {
 				supported_options: action.data.supported_options,
 				approvers: action.data.approvers
 			});
-		case actions.SUCCEED_DEPLOYMENT_GET:
+		case actions.SUCCEED_DEPLOYMENT_GET: {
 			const newApprovers = _.assign({}, state.approvers);
 			if (action.data.deployment.approver_id) {
 				newApprovers[action.data.deployment.approver_id] = action.data.deployment.approver;
@@ -32,6 +32,7 @@ module.exports = function environment(state, action) {
 			return _.assign({}, state, {
 				approvers: newApprovers
 			});
+		}
 		default:
 			return state;
 	}

@@ -55,7 +55,7 @@ const Log = React.createClass({
 			return <div className="alert alert-warning">No log events could be found</div>;
 		}
 
-		let lines = Object.keys(this.props.content).map(function(key) {
+		const lines = Object.keys(this.props.content).map(function(key) {
 			return <div key={key}>{this.props.content[key]}</div>;
 		}.bind(this));
 

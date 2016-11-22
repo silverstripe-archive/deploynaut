@@ -70,7 +70,7 @@ function isDisabled(deployState) {
 
 const mapStateToProps = function(state) {
 	const approvers = [];
-	Object.keys(state.environment.approvers).map(function(id) {
+	Object.keys(state.environment.approvers).forEach(function(id) {
 		const approver = state.environment.approvers[id];
 		approvers.push({
 			id: approver.id,

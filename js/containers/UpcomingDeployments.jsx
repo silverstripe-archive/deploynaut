@@ -42,12 +42,26 @@ const UpcomingDeployments = function(props) {
 						{
 							Object.keys(props.list).map(function(i) {
 								const row = props.list[i];
+
+								let approver = null;
+								let deployer = null;
+								if (row.deployer) {
+									deployer = row.deployer.name;
+								}
+								if (row.approver && deployStates.isApproved(row.state)) {
+									approver = row.approver.name;
+								} else if (deployStates.isApproved(row.state)) {
+									approver = (
+										<span className="bypassed">Bypassed</span>
+									);
+								}
+
 								return (
 									<tr className="fade-in" onClick={() => props.onItemClick(row.id)} key={i}>
 										<td>{row.date_requested_nice ? row.date_requested_nice : "-"}</td>
 										<td><BuildStatus deployment={row} /></td>
-										<td>{row.deployer ? row.deployer.name : null}</td>
-										<td>{row.approver ? row.approver.name : (deployStates.isApproved(row.state) ? <span className="bypassed">Bypassed</span> : null)}</td>
+										<td>{deployer}</td>
+										<td>{approver}</td>
 										<td className={"deploy-status status-" + row.state}><span className="deploy-status-text">{row.state}</span></td>
 									</tr>
 								);

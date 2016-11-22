@@ -127,7 +127,7 @@ const DeployModal = React.createClass({
 			content[3] = (<Deployment key={3} />);
 		}
 
-		let options = [];
+		const options = [];
 		if (this.props.deployment_id && constants.canDelete(this.props.state)) {
 			options.push({
 				title: 'Delete',

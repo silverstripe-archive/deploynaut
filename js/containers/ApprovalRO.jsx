@@ -48,12 +48,6 @@ const ApprovalRO = React.createClass({
 		};
 	},
 
-	toggleRejectOpen: function() {
-		this.setState({
-			rejected_reason_open: !this.state.rejected_reason_open
-		});
-	},
-
 	getRemoveAction: function() {
 		if (this.state.rejected_reason_open) {
 			return null;
@@ -98,6 +92,12 @@ const ApprovalRO = React.createClass({
 		);
 	},
 
+	toggleRejectOpen: function() {
+		this.setState({
+			rejected_reason_open: !this.state.rejected_reason_open
+		});
+	},
+
 	render: function() {
 		const props = this.props;
 
@@ -112,9 +112,9 @@ const ApprovalRO = React.createClass({
 			);
 		}
 
-		let stateTitle = getStateTitle(props.approval_state);
-		let approver_name = props.approver ? props.approver.name : '';
-		let approver_role = props.approver ? props.approver.role : '';
+		const stateTitle = getStateTitle(props.approval_state);
+		const approver_name = props.approver ? props.approver.name : '';
+		const approver_role = props.approver ? props.approver.role : '';
 
 		let date = '';
 		if (props.date_approved_nice) {

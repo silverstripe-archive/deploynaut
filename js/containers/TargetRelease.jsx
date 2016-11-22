@@ -120,7 +120,7 @@ const TargetRelease = React.createClass({
 					<div>
 						Select the release you would like to deploy to {props.environment_name}
 					</div>
-					<form className="form">
+					<form className="form" onSubmit={props.onSubmit}>
 						<ul className="radio-list">
 							{list}
 						</ul>
@@ -221,6 +221,10 @@ const mapDispatchToProps = function(dispatch) {
 		},
 		onShaChange: function(e) {
 			dispatch(actions.setGitRef(e.target.value));
+		},
+		onSubmit: function(e) {
+			e.preventDefault();
+			dispatch(actions.getDeploySummary());
 		}
 	};
 };
