@@ -226,8 +226,15 @@ class DeployDispatcher extends Dispatcher {
 		// if another deploy happens before this one
 		$isBranchDeploy = (int) $request->postVar('ref_type') === GitDispatcher::REF_TYPE_BRANCH;
 
+		$sha = $this->project->resolveRevision($request->postVar('ref'));
+		if (!$sha) {
+			return $this->getAPIResponse([
+				'message' => 'The given reference could not be resolved. Does it exist in the repository?'
+			], 400);
+		}
+
 		$options = [
-			'sha' => $request->postVar('ref'),
+			'sha' => $sha,
 			'ref_type' => $request->postVar('ref_type'),
 			'branch' => $isBranchDeploy ? $request->postVar('ref_name') : null,
 			'title' => $request->postVar('title'),
