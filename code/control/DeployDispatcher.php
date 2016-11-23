@@ -190,8 +190,15 @@ class DeployDispatcher extends Dispatcher {
 		}
 		$this->checkSecurityToken();
 
-		$options = ['sha' => $request->postVar('ref')];
-		if ($request->requestVar('options')) {
+		$sha = $this->project->resolveRevision($request->postVar('ref'));
+		if (!$sha) {
+			return $this->getAPIResponse([
+				'message' => 'The given reference could not be resolved. Does it exist in the repository?'
+			], 400);
+		}
+
+		$options = ['sha' => $sha];
+		if ($request->postVar('options')) {
 			foreach (explode(',', $request->postVar('options')) as $option) {
 				$options[$option] = true;
 			}

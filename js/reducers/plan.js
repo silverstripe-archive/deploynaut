@@ -59,10 +59,22 @@ module.exports = function plan(state, action) {
 				messages: action.summary.messages
 			});
 		}
-		case actions.FAIL_SUMMARY_GET:
+		case actions.FAIL_SUMMARY_GET: {
+			const messages = _.assign([], state.messages);
+			if (action.error.toString()) {
+				messages.push({
+					text: action.error.toString(),
+					code: "error"
+				});
+			}
+
 			return _.assign({}, state, {
-				is_loading: false
+				is_loading: false,
+				validation_code: "error",
+				changes: {},
+				messages: messages
 			});
+		}
 
 		case actions.SET_TITLE:
 			return _.assign({}, state, {
