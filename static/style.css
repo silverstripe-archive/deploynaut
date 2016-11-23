@@ -12910,6 +12910,9 @@ textarea.deploy-key {
             width: 220px;
             top: 70px;
             left: 0; } }
+        @media screen and (-ms-high-contrast: none) {
+          .modal.deploy .modal-dialog .modal-content .modal-body .menu.affix {
+            left: auto; } }
         .modal.deploy .modal-dialog .modal-content .modal-body .menu .step {
           font-size: 16px;
           color: #505050;

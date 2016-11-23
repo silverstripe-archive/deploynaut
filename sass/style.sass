@@ -1339,8 +1339,11 @@ textarea.deploy-key
 						&.affix
 							position: fixed
 							width: 220px
-							top: 70px;
-							left: 0;
+							top: 70px
+							left: 0
+					@media screen and (-ms-high-contrast:none)
+						&.affix
+							left: auto // IE11 doesn't work with position: fixed and relative parent properly
 
 					.step
 						font-size: 16px
