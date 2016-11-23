@@ -12907,7 +12907,9 @@ textarea.deploy-key {
         @media screen and (min-width: 992px) {
           .modal.deploy .modal-dialog .modal-content .modal-body .menu.affix {
             position: fixed;
-            width: 220px; } }
+            width: 220px;
+            top: 70px;
+            left: 0; } }
         .modal.deploy .modal-dialog .modal-content .modal-body .menu .step {
           font-size: 16px;
           color: #505050;
