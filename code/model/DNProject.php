@@ -522,7 +522,25 @@ class DNProject extends DataObject {
 			return false;
 		}
 
-		return new Gitonomy\Git\Repository($this->getLocalCVSPath());
+		return new \Gitonomy\Git\Repository($this->getLocalCVSPath());
+	}
+
+	/**
+	 * Resolve a git reference like a branch or tag into a SHA.
+	 * @return bool|string
+	 */
+	public function resolveRevision($value) {
+		$repository = $this->getRepository();
+		if (!$repository) {
+			return false;
+		}
+
+		try {
+			$revision = $this->repository->getRevision($value);
+			return $revision->getCommit()->getHash();
+		} catch (\Gitonomy\Git\Exception\ReferenceNotFoundException $e) {
+			return false;
+		}
 	}
 
 	/**
