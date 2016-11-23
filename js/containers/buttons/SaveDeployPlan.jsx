@@ -10,7 +10,8 @@ function isDisplayed(state) {
 	if (state.plan.validation_code === 'error') {
 		return false;
 	}
-	if (state.deployment.current_id !== "") {
+	const current = state.deployment.list[state.deployment.current_id] || {};
+	if (state.deployment.current_id !== "" && current.dirty !== true) {
 		return false;
 	}
 	return true;

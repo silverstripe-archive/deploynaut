@@ -410,9 +410,6 @@ export function failDeploymentCreate(err) {
 
 export function createDeployment() {
 	return (dispatch, getState) => {
-		if (getState().deployment.current_id) {
-			return Promise.resolve();
-		}
 
 		const options = [];
 		Object.keys(getState().git.selected_options).forEach(function(option) {
@@ -424,6 +421,7 @@ export function createDeployment() {
 		dispatch(startDeploymentCreate());
 		const current = getState().deployment.list[getState().deployment.current_id] || {};
 		return deployAPI.call(getState, '/createdeployment', 'post', {
+			id: current.id || 0,
 			ref: getState().git.selected_ref,
 			ref_type: getState().git.selected_type,
 			ref_name: getState().git.selected_name,

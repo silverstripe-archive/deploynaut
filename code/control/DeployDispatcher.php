@@ -249,7 +249,16 @@ class DeployDispatcher extends Dispatcher {
 			}
 		}
 
-		$deployment = $strategy->createDeployment();
+		if ($request->postVar('id')) {
+			$deployment = $strategy->updateDeployment($request->postVar('id'));
+			$message = 'Deployment has been updated';
+			$statusCode = 200;
+		} else {
+			$deployment = $strategy->createDeployment();
+			$message = 'Deployment has been created';
+			$statusCode = 201;
+		}
+
 		if ($approver && $approver->exists()) {
 			$deployment->ApproverID = $approver->ID;
 			$deployment->write();
@@ -258,10 +267,10 @@ class DeployDispatcher extends Dispatcher {
 		$deploymentLink = \Controller::join_links(Director::absoluteBaseURL(), $deployment->Link());
 
 		$response = $this->getAPIResponse([
-			'message' => 'Deployment has been created',
+			'message' => $message,
 			'location' => $deploymentLink,
 			'deployment' => $this->formatter->getDeploymentData($deployment),
-		], 201);
+		], $statusCode);
 
 		$response->addHeader('Location', $deploymentLink);
 
