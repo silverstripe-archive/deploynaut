@@ -58,21 +58,14 @@ const DeployHistory = function(props) {
 						{
 							Object.keys(props.list).map(function(i) {
 								const row = props.list[i];
-								let statusColumn = (
-									<td className={"deploy-status status-" + row.state}><span className="deploy-status-text">{row.state}</span></td>
-								);
-								if (row.is_current_build === true) {
-									statusColumn = (
-										<td className={"deploy-status status-Current"}><span className="deploy-status-text">Current</span></td>
-									);
-								}
+								const state = row.is_current_build ? 'Current' : row.state;
 								return (
-									<tr className={row.is_current_build ? "fade-in current" : "fade-in"} onClick={() => props.onItemClick(row.id)} key={i}>
+									<tr className={"fade-in status-" + state} onClick={() => props.onItemClick(row.id)} key={i}>
 										<td>{row.date_started_nice}</td>
 										<td><BuildStatus deployment={row} /></td>
 										<td>{row.approver ? row.approver.name : <span className="bypassed">Bypassed</span>}</td>
 										<td>{row.deployer ? row.deployer.name : null}</td>
-										{statusColumn}
+										<td className="deploy-status"><span className="deploy-status-text">{state}</span></td>
 									</tr>
 								);
 							})

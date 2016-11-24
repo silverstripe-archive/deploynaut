@@ -12284,7 +12284,7 @@ button.sidebar-open {
   font-style: italic;
   color: #aaaaaa; }
 
-.table-clickable > tbody > tr.current td {
+.table-clickable > tbody > tr.status-Current td {
   background: #d8effe; }
 
 .table-clickable > tbody > tr:hover {
@@ -12300,24 +12300,36 @@ button.sidebar-open {
     top: 0;
     font-size: 40px;
     content: "\2022"; }
-  .deploy-status.status-Aborting {
-    color: #f0ad4e; }
-  .deploy-status.status-Submitted {
-    color: #f0ad4e; }
-  .deploy-status.status-Approved {
-    color: #5cb85c; }
-  .deploy-status.status-Current {
-    color: #3aaef9; }
-  .deploy-status.status-Failed {
-    color: #d9534f; }
-  .deploy-status.status-Invalid {
-    color: #d9534f; }
-  .deploy-status.status-Rejected {
-    color: #d9534f; }
-  .deploy-status .deploy-status-text {
-    padding: 2px 0 0 20px;
-    display: inline-block;
-    font-style: italic; }
+
+.deploy-status-text {
+  padding: 2px 0 0 23px;
+  display: inline-block;
+  font-style: italic; }
+
+.status-Aborting .deploy-status {
+  color: #f0ad4e; }
+
+.status-Submitted .deploy-status {
+  color: #f0ad4e; }
+
+.status-Approved .deploy-status {
+  color: #5cb85c; }
+
+.status-Current .deploy-status {
+  color: #3aaef9; }
+
+.status-Failed .deploy-status {
+  color: #d9534f; }
+
+.status-Invalid .deploy-status {
+  color: #d9534f; }
+
+.status-Rejected .deploy-status {
+  color: #d9534f; }
+
+.status-Rejected .deploy-approver {
+  font-style: italic;
+  color: #d9534f; }
 
 .deploy-dropdown {
   border-radius: 3px;

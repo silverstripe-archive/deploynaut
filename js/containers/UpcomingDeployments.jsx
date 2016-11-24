@@ -48,7 +48,7 @@ const UpcomingDeployments = function(props) {
 								if (row.deployer) {
 									deployer = row.deployer.name;
 								}
-								if (row.approver && deployStates.isApproved(row.state)) {
+								if (row.approver && (deployStates.isApproved(row.state) || deployStates.isRejected(row.state))) {
 									approver = row.approver.name;
 								} else if (deployStates.isApproved(row.state)) {
 									approver = (
@@ -57,12 +57,12 @@ const UpcomingDeployments = function(props) {
 								}
 
 								return (
-									<tr className="fade-in" onClick={() => props.onItemClick(row.id)} key={i}>
+									<tr className={"fade-in status-" + row.state} onClick={() => props.onItemClick(row.id)} key={i}>
 										<td>{row.date_requested_nice ? row.date_requested_nice : "-"}</td>
 										<td><BuildStatus deployment={row} /></td>
 										<td>{deployer}</td>
-										<td>{approver}</td>
-										<td className={"deploy-status status-" + row.state}><span className="deploy-status-text">{row.state}</span></td>
+										<td className="deploy-approver">{approver}</td>
+										<td className="deploy-status"><span className="deploy-status-text">{row.state}</span></td>
 									</tr>
 								);
 							})
