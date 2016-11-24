@@ -11792,6 +11792,9 @@ select.selectize-control,
   .status-box.rejected {
     border-color: #d9534f; }
 
+.step-menu .fa-check {
+  color: #5cb85c; }
+
 .target-release table {
   margin-top: 10px; }
 

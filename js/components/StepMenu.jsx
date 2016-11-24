@@ -40,7 +40,7 @@ var StepMenu = function(props) {
 	});
 
 	return (
-		<ul className="nav nav-pills nav-stacked">
+		<ul className="step-menu nav nav-pills nav-stacked">
 			{list}
 		</ul>
 	);
