@@ -112,7 +112,8 @@ class DeploynautAPIFormatter {
 			'approver_id' => $deployment->ApproverID ?: '',
 			'approver' => $approverData,
 			'state' => $deployment->State,
-			'is_current_build' => $isCurrentBuild
+			'is_current_build' => $isCurrentBuild,
+			'dirty' => false,
 		];
 	}
 

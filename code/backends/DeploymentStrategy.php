@@ -335,5 +335,27 @@ class DeploymentStrategy extends ViewableData {
 		return \DNDeployment::get()->byId($deployment->ID);
 	}
 
+	/**
+	 * @param int $deploymentID
+	 * @return \DNDeployment
+	 */
+	public function updateDeployment($deploymentID) {
+		$deployment = \DNDeployment::get()->byId($deploymentID);
+		$deployment->EnvironmentID = $this->environment->ID;
+		// Pull out the SHA from the options so we can make it queryable.
+		$deployment->SHA = $this->getOption('sha');
+		$deployment->Branch = $this->getOption('branch');
+		// is a branch, tag, uat->prod, prev deploy or sha
+		$deployment->RefType = $this->getOption('ref_type');
+		$deployment->Summary = $this->getOption('summary');
+		$deployment->Title = $this->getOption('title');
+		$deployment->Strategy = $this->toJSON();
+		$deployment->DeployerID = \Member::currentUserID();
+		$deployment->write();
+
+		// re-get and return the deployment so we have the correct state
+		return \DNDeployment::get()->byId($deployment->ID);
+	}
+
 }
 

@@ -176,6 +176,16 @@ module.exports = function deployment(state, action) {
 			});
 		}
 
+		case actions.SET_TITLE:
+		case actions.SET_SUMMARY:
+		case actions.SET_REVISION: {
+			if (!state.list[state.current_id]) {
+				return state;
+			}
+			state.list[state.current_id].dirty = true;
+			return state;
+		}
+
 		default:
 			return state;
 	}
