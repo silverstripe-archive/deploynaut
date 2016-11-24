@@ -37,8 +37,7 @@ const mapStateToProps = function(state) {
 const mapDispatchToProps = function(dispatch) {
 	return {
 		onClick: function() {
-			dispatch(actions.createDeployment())
-				.then(() => dispatch(actions.submitForApproval()));
+			dispatch(actions.submitForApproval());
 		}
 	};
 };
