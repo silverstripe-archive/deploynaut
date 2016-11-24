@@ -1,7 +1,6 @@
 const _ = require('underscore');
 
 const actions = require('../_actions.js');
-const deployStates = require('../constants/deployment.js');
 
 const initialState = {
 	// this is the time of the last update we got from the server
@@ -44,12 +43,28 @@ module.exports = function deployment(state, action) {
 			});
 		case actions.SUCCEED_DEPLOY_HISTORY_GET: {
 			// get current list
-			const newList = _.assign({}, state.list);
+			let newList = _.assign({}, state.list);
+			let new_current_build_id = null;
 
 			// add or update the entries in the current list
 			for (let i = 0; i < action.data.list.length; i++) {
+				// if one of the new entries is the current_build,
+				// we'll be invalidating the current one for the new one
+				if (action.data.list[i].is_current_build === true) {
+					new_current_build_id = action.data.list[i].id;
+				}
 				newList[action.data.list[i].id] = action.data.list[i];
 			}
+
+			if (new_current_build_id !== null) {
+				// first of all, set everything to not be the current build
+				Object.keys(newList).forEach(function(key) {
+					newList[key].is_current_build = false;
+				});
+				// now set the item we need to current
+				newList[new_current_build_id].is_current_build = true;
+			}
+
 			return _.assign({}, state, {
 				server_time: action.data.server_time,
 				list: newList,
