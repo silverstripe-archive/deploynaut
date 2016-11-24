@@ -12933,9 +12933,13 @@ textarea.deploy-key {
       .modal.deploy .modal-dialog .modal-content .section.fetch {
         padding: 10px 20px;
         border-top: 0;
+        border-bottom: 0;
         margin-bottom: 0;
         border-top: 2px solid #3aaef9;
         background-color: #EDF1F2; }
+        .modal.deploy .modal-dialog .modal-content .fetch.fetch.loading,
+        .modal.deploy .modal-dialog .modal-content .section.fetch.loading {
+          border-top: 2px solid #F78222; }
       .modal.deploy .modal-dialog .modal-content .fetch header,
       .modal.deploy .modal-dialog .modal-content .section header {
         font-size: 20px;
