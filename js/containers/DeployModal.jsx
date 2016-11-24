@@ -98,9 +98,8 @@ const DeployModal = React.createClass({
 		// Increase the height of the modal, this cannot be done reliable in CSS because
 		// a pixel value is required to use the "sticky" side bar
 		bodyElements[0].style.height = bodyHeight + 'px';
-		// give some space at the bottom so user can scroll the bottom element to the
-		// middle of the modal
-		bodyElements[0].style.paddingBottom = (bodyHeight / 2) + 'px';
+		// give some space at the bottom so user can scroll
+		bodyElements[0].style.paddingBottom = (bodyHeight / 10) + 'px';
 	},
 
 	scrollHeight: 0,
