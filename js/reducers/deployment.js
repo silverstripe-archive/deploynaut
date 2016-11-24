@@ -43,7 +43,7 @@ module.exports = function deployment(state, action) {
 			});
 		case actions.SUCCEED_DEPLOY_HISTORY_GET: {
 			// get current list
-			let newList = _.assign({}, state.list);
+			const newList = _.assign({}, state.list);
 			let new_current_build_id = null;
 
 			// add or update the entries in the current list
