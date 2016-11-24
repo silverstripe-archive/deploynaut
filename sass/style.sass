@@ -598,7 +598,7 @@ button.sidebar-open
 	.bypassed
 		font-style: italic
 		color: $text-muted
-	&.current td
+	&.status-Current td
 		background: $platform-blue-light
 	&:hover
 		cursor: pointer
@@ -613,27 +613,35 @@ button.sidebar-open
 		top: 0
 		font-size: 40px
 		content: "\2022"
-
-	&.status-Aborting
+.deploy-status-text
+	padding: 2px 0 0 23px
+	display: inline-block
+	font-style: italic
+.status-Aborting
+	.deploy-status
 		color: $status-aborting
-	&.status-Submitted
+.status-Submitted
+	.deploy-status
 		color: $status-submitted
-	&.status-Approved
+.status-Approved
+	.deploy-status
 		color: $status-approved
-	&.status-Deploying
-	&.status-Current
+.status-Deploying
+.status-Current
+	.deploy-status
 		color: $status-deploying
-	&.status-Failed
+.status-Failed
+	.deploy-status
 		color: $status-failed
-	&.status-Invalid
+.status-Invalid
+	.deploy-status
 		color: $status-invalid
-	&.status-Rejected
+.status-Rejected
+	.deploy-status
 		color: $status-rejected
-
-	.deploy-status-text
-		padding: 2px 0 0 20px
-		display: inline-block
+	.deploy-approver
 		font-style: italic
+		color: $status-rejected
 
 // Environment
 .deploy-dropdown
