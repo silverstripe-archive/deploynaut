@@ -12306,7 +12306,7 @@ button.sidebar-open {
     color: #f0ad4e; }
   .deploy-status.status-Approved {
     color: #5cb85c; }
-  .deploy-status.status-Deploying {
+  .deploy-status.status-Current {
     color: #3aaef9; }
   .deploy-status.status-Failed {
     color: #d9534f; }
