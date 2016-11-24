@@ -188,8 +188,9 @@ module.exports = function deployment(state, action) {
 			if (!state.list[state.current_id]) {
 				return state;
 			}
-			state.list[state.current_id].dirty = true;
-			return state;
+			const newList = _.assign({}, state.list);
+			newList.list[state.current_id].dirty = true;
+			return newList;
 		}
 
 		default:

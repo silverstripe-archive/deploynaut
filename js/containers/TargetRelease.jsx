@@ -102,9 +102,10 @@ const TargetRelease = React.createClass({
 			);
 		}
 
+		const fetchClasses = this.props.git_loading ? 'loading' : '';
 		return (
 			<div>
-				{this.props.last_fetched_date && <div className="fetch">
+				{this.props.last_fetched_date && <div className={'fetch ' + fetchClasses} >
 					<div className="pull-right">
 						<ButtonGitUpdate />
 					</div>
@@ -201,7 +202,8 @@ const mapStateToProps = function(state) {
 		selected_ref: state.git.selected_ref,
 		last_fetched_date: state.git.last_fetched_date,
 		last_fetched_ago: state.git.last_fetched_ago,
-		disabled: isDisabled(state)
+		disabled: isDisabled(state),
+		git_loading: (state.git.is_fetching || state.git.is_updating)
 	};
 };
 
