@@ -53,10 +53,10 @@ function Plan(props) {
 	store.dispatch(actions.getDeployHistory());
 
 	setInterval(() => {
-		if (!store.getState().deployment.is_loading){
+		if (!store.getState().deployment.is_loading) {
 			store.dispatch(actions.getDeployHistory());
 		}
-	}, 20 * 1000);
+	}, 10000);
 
 	store.dispatch(actions.getRevisionsIfNeeded());
 

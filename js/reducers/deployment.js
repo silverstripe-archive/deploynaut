@@ -45,6 +45,7 @@ module.exports = function deployment(state, action) {
 		case actions.SUCCEED_DEPLOY_HISTORY_GET: {
 			// get current list
 			const newList = _.assign({}, state.list);
+
 			// add or update the entries in the current list
 			for (let i = 0; i < action.data.list.length; i++) {
 				newList[action.data.list[i].id] = action.data.list[i];
@@ -144,21 +145,11 @@ module.exports = function deployment(state, action) {
 			});
 
 		case actions.SUCCEED_DEPLOY_LOG_UPDATE: {
-			let newList = _.assign({}, state.list);
+			const newList = _.assign({}, state.list);
 			newList[action.data.deployment.id] = action.data.deployment;
 
 			const newLogList = _.assign({}, state.logs);
 			newLogList[action.data.deployment.id] = action.data.message;
-
-			// find the old current build and set the flag to not be the current build
-			// as the completed build in action.data.deployment is now the new current build
-			if (action.data.status === deployStates.STATE_COMPLETED) {
-				newList = _.each(newList, function(deploy) {
-					if (deploy.is_current_build && deploy.id !== action.data.deployment.id) {
-						deploy.is_current_build = false;
-					}
-				});
-			}
 
 			return _.assign({}, state, {
 				logs: newLogList,
