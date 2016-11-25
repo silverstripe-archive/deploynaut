@@ -48,7 +48,7 @@ const UpcomingDeployments = function(props) {
 								if (row.deployer) {
 									deployer = row.deployer.name;
 								}
-								if (row.approver && (deployStates.isApproved(row.state) || deployStates.isRejected(row.state))) {
+								if (row.approver) {
 									approver = row.approver.name;
 								} else if (deployStates.isApproved(row.state)) {
 									approver = (
