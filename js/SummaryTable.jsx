@@ -92,11 +92,7 @@ function SummaryLine(props) {
 	var compareUrl = null;
 	if (props.compareUrl !== null) {
 		compareUrl = (
-			<a
-				target="_blank"
-				rel="noopener noreferrer"
-				href={props.compareUrl}
-			>
+			<a href={props.compareUrl}>
 				View diff<i className="fa fa-external-link-square superscript"></i>
 			</a>
 		);
@@ -137,11 +133,7 @@ function DescriptionOnlySummaryLine(props) {
 	if (props.compareUrl !== null) {
 		compareColumn = (
 			<td className="changeAction">
-				<a
-					target="_blank"
-					href={props.compareUrl}
-					rel="noopener noreferrer"
-				>
+				<a href={props.compareUrl}>
 					View diff<i className="fa fa-external-link-square superscript"></i>
 				</a>
 			</td>

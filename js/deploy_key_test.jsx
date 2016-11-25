@@ -110,11 +110,7 @@ var DeployKeyTest = React.createClass({
 			deployKeyHelp = (
 				<p>
 					<i className="fa fa-github"></i>
-					<a
-						href="https://developer.github.com/guides/managing-deploy-keys/#deploy-keys"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
+					<a href="https://developer.github.com/guides/managing-deploy-keys/#deploy-keys">
 						Deploy key help
 					</a>
 				</p>
@@ -123,11 +119,7 @@ var DeployKeyTest = React.createClass({
 			deployKeyHelp = (
 				<p>
 					<i className="fa fa-bitbucket"></i>
-					<a
-						href="https://confluence.atlassian.com/bitbucket/use-deployment-keys-294486051.html"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
+					<a href="https://confluence.atlassian.com/bitbucket/use-deployment-keys-294486051.html">
 						Deploy key help
 					</a>
 				</p>
@@ -140,11 +132,7 @@ var DeployKeyTest = React.createClass({
 						alt="Gitlab"
 						className="gitlab-icon"
 					/>
-					<a
-						href="http://doc.gitlab.com/ce/ssh/README.html#deploy-keys"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
+					<a href="http://doc.gitlab.com/ce/ssh/README.html#deploy-keys">
 						Deploy key help
 					</a>
 				</p>
@@ -153,31 +141,19 @@ var DeployKeyTest = React.createClass({
 			deployKeyHelp = (
 				<ul className="list-inline">
 					<li><i className="fa fa-github"></i>
-						<a
-							href="https://developer.github.com/guides/managing-deploy-keys/#deploy-keys"
-							target="_blank"
-							rel="noopener noreferrer"
-						>
+						<a href="https://developer.github.com/guides/managing-deploy-keys/#deploy-keys">
 							Github
 						</a>
 					</li>
 					<li>
 						<i className="fa fa-bitbucket"></i>
-						<a
-							href="https://confluence.atlassian.com/bitbucket/use-deployment-keys-294486051.html"
-							target="_blank"
-							rel="noopener noreferrer"
-						>
+						<a href="https://confluence.atlassian.com/bitbucket/use-deployment-keys-294486051.html">
 							Bitbucket
 						</a>
 					</li>
 					<li>
 						<img src="deploynaut/img/gitlab.png" alt="Gitlab" className="gitlab-icon" />
-						<a
-							href="http://doc.gitlab.com/ce/ssh/README.html#deploy-keys"
-							target="_blank"
-							rel="noopener noreferrer"
-						>
+						<a href="http://doc.gitlab.com/ce/ssh/README.html#deploy-keys">
 							Gitlab
 						</a>
 					</li>

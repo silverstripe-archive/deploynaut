@@ -136,27 +136,14 @@ function QuickSummary(props) {
 	var moreInfo = null;
 	if (typeof props.context.deployHelp !== 'undefined' && props.context.deployHelp) {
 		moreInfo = (
-			<a
-				target="_blank"
-				className="small"
-				href={props.context.deployHelp}
-				rel="noopener noreferrer"
-			>
-				more info
-			</a>
+			<a className="small" href={props.context.deployHelp}>more info</a>
 		);
 	}
 
 	var env;
 	if (props.context.siteUrl) {
 		env = (
-			<a
-				target="_blank"
-				href={props.context.siteUrl}
-				rel="noopener noreferrer"
-			>
-				{props.context.envName}
-			</a>
+			<a href={props.context.siteUrl}>{props.context.envName}</a>
 		);
 	} else {
 		env = <span>{props.context.envName}</span>;
