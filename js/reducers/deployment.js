@@ -184,13 +184,16 @@ module.exports = function deployment(state, action) {
 
 		case actions.SET_TITLE:
 		case actions.SET_SUMMARY:
-		case actions.SET_REVISION: {
+		case actions.SET_REVISION:
+		case actions.TOGGLE_OPTION: {
 			if (!state.list[state.current_id]) {
 				return state;
 			}
 			const newList = _.assign({}, state.list);
-			newList.list[state.current_id].dirty = true;
-			return newList;
+			newList[state.current_id].dirty = true;
+			return _.assign({}, state, {
+				list: newList
+			});
 		}
 
 		default:
