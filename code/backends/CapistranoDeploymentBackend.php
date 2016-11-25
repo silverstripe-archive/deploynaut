@@ -86,69 +86,79 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 			$log->write($buffer);
 		});
 
-		// Deployment cleanup. We assume it is always safe to run this at the end, regardless of the outcome.
-		$self = $this;
-		$cleanupFn = function() use($self, $environment, $args, $log, $sha, $project) {
-			$command = $self->getCommand('deploy:cleanup', 'web', $environment, $args, $log);
-			$command->run(function($type, $buffer) use($log) {
-				$log->write($buffer);
-			});
+		$error = null;
 
-			if(!$command->isSuccessful()) {
-				$self->extend('cleanupFailure', $environment, $sha, $log, $project);
-				$log->write('Warning: Cleanup failed, but fine to continue. Needs manual cleanup sometime.');
-			}
-		};
-
-		// Once the deployment has run it's necessary to update the maintenance page status
-		// as deploying removes .htaccess
-		$this->enableMaintenance($environment, $log, $project);
-
-		$rolledBack = null;
-		if(!$command->isSuccessful() || !$this->smokeTest($environment, $log)) {
-			$cleanupFn();
-			$this->extend('deployFailure', $environment, $sha, $log, $project);
-
-			$currentBuild = $environment->CurrentBuild();
-			if (empty($currentBuild) || (!empty($options['no_rollback']) && $options['no_rollback'] !== 'false')) {
-				throw new RuntimeException($command->getErrorOutput());
-			}
-
-			// re-run deploy with the current build sha to rollback
-			$log->write('Deploy failed. Rolling back');
-			$rollbackArgs = array_merge($args, ['branch' => $currentBuild->SHA]);
-			$command = $this->getCommand('deploy', 'web', $environment, $rollbackArgs, $log);
-			$command->run(function($type, $buffer) use($log) {
-				$log->write($buffer);
-			});
-
-			// Once the deployment has run it's necessary to update the maintenance page status
-			// as deploying removes .htaccess
-			$this->enableMaintenance($environment, $log, $project);
-
-			if (!$command->isSuccessful() || !$this->smokeTest($environment, $log)) {
-				$this->extend('deployRollbackFailure', $environment, $currentBuild->SHA, $log, $project);
-				$log->write('Rollback failed');
-				throw new RuntimeException($command->getErrorOutput());
-			}
-
-			// By getting here, it means we have successfully rolled back without any errors
-			$rolledBack = true;
+		$deploySuccessful = $command->isSuccessful();
+		if ($deploySuccessful) {
+			// Deployment automatically removes .htaccess, i.e. disables maintenance. Fine to smoketest.
+			$deploySuccessful = $this->smokeTest($environment, $log);
 		}
 
-		$this->disableMaintenance($environment, $log, $project);
+		if (!$deploySuccessful) {
+			$this->enableMaintenance($environment, $log, $project);
 
-		$cleanupFn();
+			$rollbackSuccessful = $this->deployRollback($environment, $log, $project, $options, $args);
+			if ($rollbackSuccessful) {
+				// Again, .htaccess removed, maintenance off.
+				$rollbackSuccessful = $this->smokeTest($environment, $log);
+			}
 
-		// Rolling back means the rollback succeeded, but ultimately the deployment
-		// has failed. Throw an exception so the job is marked as failed accordingly.
-		if ($rolledBack === true) {
-			throw new RuntimeException('Rollback successful');
+			if (!$rollbackSuccessful) {
+				$this->enableMaintenance($environment, $log, $project);
+				$currentBuild = $environment->CurrentBuild();
+				$this->extend('deployRollbackFailure', $environment, $currentBuild, $log, $project);
+				$log->write('Rollback failed');
+
+				$error = $command->getErrorOutput();
+			} else {
+				$error = 'Rollback successful';
+			}
+		}
+
+		// Regardless of outcome, try to clean up.
+		$cleanup = $this->getCommand('deploy:cleanup', 'web', $environment, $args, $log);
+		$cleanup->run(function($type, $buffer) use($log) {
+			$log->write($buffer);
+		});
+		if(!$cleanup->isSuccessful()) {
+			$this->extend('cleanupFailure', $environment, $sha, $log, $project);
+			$log->write('Warning: Cleanup failed, but fine to continue. Needs manual cleanup sometime.');
+		}
+
+		$this->extend('deployEnd', $environment, $sha, $log, $project);
+
+		if ($error!==null) {
+			throw new RuntimeException($error);
 		}
 
 		$log->write(sprintf('Deploy of "%s" to "%s" finished', $sha, $name));
+	}
 
-		$this->extend('deployEnd', $environment, $sha, $log, $project);
+	private function deployRollback(
+		\DNEnvironment $environment,
+		\DeploynautLogFile $log,
+		\DNProject $project,
+		$options,
+		$args
+	) {
+		$sha = $options['sha'];
+
+		$this->extend('deployFailure', $environment, $sha, $log, $project);
+
+		$currentBuild = $environment->CurrentBuild();
+		if (empty($currentBuild) || (!empty($options['no_rollback']) && $options['no_rollback'] !== 'false')) {
+			throw new RuntimeException($command->getErrorOutput());
+		}
+
+		// re-run deploy with the current build sha to rollback
+		$log->write('Deploy failed. Rolling back');
+		$rollbackArgs = array_merge($args, ['branch' => $currentBuild->SHA]);
+		$command = $this->getCommand('deploy', 'web', $environment, $rollbackArgs, $log);
+		$command->run(function($type, $buffer) use($log) {
+			$log->write($buffer);
+		});
+
+		return $command->isSuccessful();
 	}
 
 	/**
