@@ -25,6 +25,6 @@
 
 <% if $CurrentEnvironment %>
 	<% with $CurrentEnvironment %>
-		<a class="environment-url" target="_blank" href="$URL.URL"><% if $BareURL %>$BareURL<% else %>$URL<% end_if %></a>
+		<a class="environment-url" href="$URL.URL"><% if $BareURL %>$BareURL<% else %>$URL<% end_if %></a>
 	<% end_with %>
 <% end_if %>

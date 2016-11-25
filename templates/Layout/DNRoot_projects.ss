@@ -35,14 +35,14 @@
 						</td>
 						<td>
 							<% if $EnvironmentsByUsage("Production").First %>
-								<% with $EnvironmentsByUsage("Production").First %><a href="$URL" target="_blank">$BareURL</a><% end_with %>
+								<% with $EnvironmentsByUsage("Production").First %><a href="$URL">$BareURL</a><% end_with %>
 							<% else %>
 								-
 							<% end_if %>
 						</td>
 						<td>
 							<% if $EnvironmentsByUsage("UAT").First %>
-								<% with $EnvironmentsByUsage("UAT").First %><a href="$URL" target="_blank">$BareURL</a><% end_with %>
+								<% with $EnvironmentsByUsage("UAT").First %><a href="$URL">$BareURL</a><% end_with %>
 							<% else %>
 								-
 							<% end_if %>

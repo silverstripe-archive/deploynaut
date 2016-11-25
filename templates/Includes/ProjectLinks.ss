@@ -8,7 +8,7 @@
 	<% if $CurrentProject.RepositoryInterface %><% with $CurrentProject.RepositoryInterface %>
 		<li>
 			<div class="repo-ux">
-				<img class="i-push" src="$Icon" /><a href="$URL" target="_blank">View code on $Name</a>
+				<img class="i-push" src="$Icon" /><a href="$URL">View code on $Name</a>
 			</div>
 		</li>
 	<% end_with %><% end_if %>
