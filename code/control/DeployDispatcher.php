@@ -368,7 +368,7 @@ class DeployDispatcher extends Dispatcher {
 		$data = $strategy->toArray();
 
 		$interface = $this->project->getRepositoryInterface();
-		if ($this->canCompareCodeVersions($interface, $data['changes'])) {
+		if ($interface instanceof \ArrayData && $this->canCompareCodeVersions($interface, $data['changes'])) {
 			$compareurl = sprintf(
 				'%s/compare/%s...%s',
 				$interface->URL,
