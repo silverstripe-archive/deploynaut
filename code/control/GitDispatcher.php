@@ -262,6 +262,7 @@ class GitDispatcher extends Dispatcher {
 			$tags[] = [
 				'id' => $tag->SHA(),
 				'ref_name' => $tag->Name(),
+				'title' => $tag->Name()
 			];
 		}
 		return $tags;
