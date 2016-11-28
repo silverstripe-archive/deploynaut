@@ -122,11 +122,16 @@ class DeployDispatcher extends Dispatcher {
 			return $errorResponse;
 		}
 
-		$id = $deployment->ID;
-		$deployment->delete();
+		try {
+			$deployment->getMachine()->apply(\DNDeployment::TR_DELETE);
+		} catch (\Exception $e) {
+			return $this->getAPIResponse([
+				'message' => $e->getMessage()
+			], 400);
+		}
 
 		return $this->getAPIResponse([
-			'id' => $id,
+			'deployment' => $this->formatter->getDeploymentData($deployment),
 			'message' => 'Deployment has been deleted'
 		], 201);
 	}

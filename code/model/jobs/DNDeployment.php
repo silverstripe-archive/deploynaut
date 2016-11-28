@@ -27,6 +27,9 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 	const STATE_ABORTING = 'Aborting';
 	const STATE_COMPLETED = 'Completed';
 	const STATE_FAILED = 'Failed';
+	// Deleted is used as 'soft-delete' which will in all regards keep the record in the DB
+	// but not display it in the UI. This is for auditing and also for UI history updates
+	const STATE_DELETED = 'Deleted';
 
 	const TR_NEW = 'new';
 	const TR_SUBMIT = 'submit';
@@ -38,6 +41,7 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 	const TR_ABORT = 'abort';
 	const TR_COMPLETE = 'complete';
 	const TR_FAIL = 'fail';
+	const TR_DELETE = 'delete';
 
 	/**
 	 * @var array
@@ -51,7 +55,7 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 		"Branch" => "Varchar(255)",
 		// is it a branch, tag etc, see GitDispatcher REF_TYPE_* constants
 		"RefType" => "Int",
-		"State" => "Enum('New, Submitted, Invalid, Approved, Rejected, Queued, Deploying, Aborting, Completed, Failed', 'New')",
+		"State" => "Enum('New, Submitted, Invalid, Approved, Rejected, Queued, Deploying, Aborting, Completed, Failed, Deleted', 'New')",
 		// JSON serialised DeploymentStrategy.
 		"Strategy" => "Text",
 		"Title" => "Varchar(255)",

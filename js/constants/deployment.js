@@ -9,6 +9,7 @@ export const STATE_DEPLOYING = 'Deploying';
 export const STATE_ABORTING = 'Aborting';
 export const STATE_COMPLETED = 'Completed';
 export const STATE_FAILED = 'Failed';
+export const STATE_DELETED = 'Deleted';
 
 // These constants are a subset of the deploynaut states
 // this is because an approval can be bypassed and also
