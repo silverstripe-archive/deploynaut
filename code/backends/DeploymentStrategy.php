@@ -320,11 +320,9 @@ class DeploymentStrategy extends ViewableData {
 	public function createDeployment() {
 		$deployment = \DNDeployment::create();
 		$deployment->EnvironmentID = $this->environment->ID;
-		// Pull out the SHA from the options so we can make it queryable.
 		$deployment->SHA = $this->getOption('sha');
-		$deployment->Branch = $this->getOption('branch');
-		// is a branch, tag, uat->prod, prev deploy or sha
 		$deployment->RefType = $this->getOption('ref_type');
+		$deployment->RefName = $this->getOption('ref_name');
 		$deployment->Summary = $this->getOption('summary');
 		$deployment->Title = $this->getOption('title');
 		$deployment->Strategy = $this->toJSON();
@@ -342,11 +340,9 @@ class DeploymentStrategy extends ViewableData {
 	public function updateDeployment($deploymentID) {
 		$deployment = \DNDeployment::get()->byId($deploymentID);
 		$deployment->EnvironmentID = $this->environment->ID;
-		// Pull out the SHA from the options so we can make it queryable.
 		$deployment->SHA = $this->getOption('sha');
-		$deployment->Branch = $this->getOption('branch');
-		// is a branch, tag, uat->prod, prev deploy or sha
 		$deployment->RefType = $this->getOption('ref_type');
+		$deployment->RefName = $this->getOption('ref_name');
 		$deployment->Summary = $this->getOption('summary');
 		$deployment->Title = $this->getOption('title');
 		$deployment->Strategy = $this->toJSON();

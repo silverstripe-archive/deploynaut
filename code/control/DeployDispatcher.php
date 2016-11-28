@@ -176,7 +176,7 @@ class DeployDispatcher extends Dispatcher {
 		$strategy = $this->environment->Backend()->planDeploy($this->environment, [
 			'sha' => $currentBuild->SHA,
 			'ref_type' => \GitDispatcher::REF_TYPE_PREVIOUS,
-			'branch' => $currentBuild->Branch
+			'ref_name' => $currentBuild->RefName
 		]);
 		$deployment = $strategy->createDeployment();
 
@@ -229,7 +229,6 @@ class DeployDispatcher extends Dispatcher {
 		// @todo the strategy should have been saved when there has been a request for an
 		// approval or a bypass. This saved state needs to be checked if it's invalidated
 		// if another deploy happens before this one
-		$isBranchDeploy = (int) $request->postVar('ref_type') === GitDispatcher::REF_TYPE_BRANCH;
 
 		$sha = $this->project->resolveRevision($request->postVar('ref'));
 		if (!$sha) {
@@ -238,10 +237,17 @@ class DeployDispatcher extends Dispatcher {
 			], 400);
 		}
 
+		// if a ref name was given that is not the sha, then set that. It could be a branch,
+		// or tag name, or anything else that git uses as a named reference
+		$refName = null;
+		if ($request->postVar('ref_name') !== $request->postVar('ref')) {
+			$refName = $request->postVar('ref_name');
+		}
+
 		$options = [
 			'sha' => $sha,
 			'ref_type' => $request->postVar('ref_type'),
-			'branch' => $isBranchDeploy ? $request->postVar('ref_name') : null,
+			'ref_name' => $refName,
 			'title' => $request->postVar('title'),
 			'summary' => $request->postVar('summary')
 		];

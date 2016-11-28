@@ -49,7 +49,7 @@ const TargetReleaseRO = React.createClass({
 				<div>{props.ref_type_description}</div>
 
 				<StatusBox type="default">
-					<span className="label label-default">{props.deployment.branch}</span>&nbsp;
+					<span className="label label-default">{props.deployment.ref_name}</span>&nbsp;
 					<a
 						className="sha-detail"
 						href={props.deployment.commit_url}

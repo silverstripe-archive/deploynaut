@@ -6,10 +6,10 @@ var BuildStatus = function(props) {
 	}
 
 	let label = null;
-	if (props.deployment.branch) {
+	if (props.deployment.ref_name) {
 		label = (
 			<span>
-				<span className="label label-default">{props.deployment.branch}</span>
+				<span className="label label-default">{props.deployment.ref_name}</span>
 				&nbsp;
 			</span>
 		);

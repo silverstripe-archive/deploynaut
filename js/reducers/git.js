@@ -67,12 +67,12 @@ module.exports = function git(state, action) {
 			// get the 'nice' name of the commit, i.e the branch or tag name
 			const gitRefs = state.list[state.selected_type] || [];
 			let ref_name = action.id;
-			if (gitRefs.list) {
+			if (gitRefs.promote_build && gitRefs.promote_build.ref_name) {
+				ref_name = gitRefs.promote_build.ref_name;
+			} else if (gitRefs.list) {
 				const ref = gitRefs.list.find(obj => obj.id === action.id);
-				if (ref.branch) {
-					ref_name = ref.branch;
-				} else if (ref.title) {
-					ref_name = ref.title;
+				if (ref.ref_name) {
+					ref_name = ref.ref_name;
 				}
 			}
 			return _.assign({}, state, {
