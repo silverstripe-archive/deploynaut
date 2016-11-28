@@ -6,9 +6,9 @@
 	<% end_loop %>
 <% end_if %>
 
-<% if $Branch %>
+<% if $RefName %>
 	<span class="deployment-branch">
-		$Branch
+		$RefName
 	</span>
 <% end_if %>
 

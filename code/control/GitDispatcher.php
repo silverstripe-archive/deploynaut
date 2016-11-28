@@ -240,7 +240,7 @@ class GitDispatcher extends Dispatcher {
 			$name = $branch->Name();
 			$branches[] = [
 				'id' => $sha,
-				'branch' => $name,
+				'ref_name' => $name,
 				'title' => sprintf('%s (%s, %s old)',
 					$name,
 					substr($sha, 0, 8),
@@ -261,7 +261,7 @@ class GitDispatcher extends Dispatcher {
 		foreach ($project->DNTagList()->setLimit(null) as $tag) {
 			$tags[] = [
 				'id' => $tag->SHA(),
-				'title' => $tag->Name(),
+				'ref_name' => $tag->Name(),
 			];
 		}
 		return $tags;

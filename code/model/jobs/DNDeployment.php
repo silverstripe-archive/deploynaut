@@ -7,6 +7,7 @@
  * @property string $ResqueToken
  * @property string $State
  * @property int $RefType
+ * @property string $RefName
  * @property SS_Datetime $DeployStarted
  * @property SS_Datetime $DeployRequested
  *
@@ -49,12 +50,13 @@ class DNDeployment extends DataObject implements Finite\StatefulInterface, HasSt
 	private static $db = array(
 		"SHA" => "GitSHA",
 		"ResqueToken" => "Varchar(255)",
-		// The branch that was used to deploy this. Can't really be inferred from Git history because
-		// the commit could appear in lots of branches that are irrelevant to the user when it comes
-		// to deployment history, and the branch may have been deleted.
-		"Branch" => "Varchar(255)",
 		// is it a branch, tag etc, see GitDispatcher REF_TYPE_* constants
 		"RefType" => "Int",
+		// The ref name that was used to deploy this, e.g. branch name or tag.
+		// Can't really be inferred from Git history because the commit could appear in lots of
+		// branches/tags that are irrelevant to the user when it comes to deployment history, and the reference
+		// may have been deleted.
+		"RefName" => "Varchar(255)",
 		"State" => "Enum('New, Submitted, Invalid, Approved, Rejected, Queued, Deploying, Aborting, Completed, Failed, Deleted', 'New')",
 		// JSON serialised DeploymentStrategy.
 		"Strategy" => "Text",
