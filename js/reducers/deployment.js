@@ -173,8 +173,9 @@ module.exports = function deployment(state, action) {
 			});
 		}
 		case actions.SUCCEED_DEPLOYMENT_DELETE: {
+			// get current list
 			const newList = _.assign({}, state.list);
-			delete newList[action.data.id];
+			newList[action.data.deployment.id] = action.data.deployment;
 
 			return _.assign({}, state, {
 				error: null,

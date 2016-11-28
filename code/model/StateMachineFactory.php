@@ -22,6 +22,7 @@ class StateMachineFactory extends Object {
 				DNDeployment::STATE_ABORTING => ['type' => StateInterface::TYPE_NORMAL],
 				DNDeployment::STATE_COMPLETED => ['type' => StateInterface::TYPE_FINAL],
 				DNDeployment::STATE_FAILED => ['type' => StateInterface::TYPE_FINAL],
+				DNDeployment::STATE_DELETED => ['type' => StateInterface::TYPE_FINAL],
 			],
 			'transitions' => [
 				DNDeployment::TR_NEW => ['from' => [DNDeployment::STATE_SUBMITTED], 'to' => DNDeployment::STATE_NEW],
@@ -71,6 +72,16 @@ class StateMachineFactory extends Object {
 						DNDeployment::STATE_ABORTING
 					],
 					'to' => DNDeployment::STATE_FAILED
+				],
+				DNDeployment::TR_DELETE  => [
+					'from' => [
+						DNDeployment::STATE_NEW,
+						DNDeployment::STATE_SUBMITTED,
+						DNDeployment::STATE_INVALID,
+						DNDeployment::STATE_APPROVED,
+						DNDeployment::STATE_REJECTED,
+					],
+					'to' => DNDeployment::STATE_DELETED
 				],
 			]
 		]);

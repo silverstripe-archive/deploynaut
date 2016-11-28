@@ -85,6 +85,7 @@ const mapStateToProps = function(state) {
 				case deployStates.STATE_COMPLETED:
 				case deployStates.STATE_INVALID:
 				case deployStates.STATE_FAILED:
+				case deployStates.STATE_DELETED:
 					return false;
 				default:
 					return true;
