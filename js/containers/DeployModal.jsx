@@ -216,8 +216,8 @@ const mapStateToProps = function(state, ownProps) {
 			constants.isApproved(current.state)
 		],
 		is_finished: [
-			state.git.selected_ref !== "",
-			state.deployment.current_id !== "",
+			deployPlanIsOk() && state.git.selected_ref !== "",
+			deployPlanIsOk() && state.deployment.current_id !== "",
 			deployPlanIsOk() && constants.isApproved(current.state),
 			constants.isDeployDone(current.state)
 		],
