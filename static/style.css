@@ -11690,8 +11690,11 @@ select.selectize-control,
     font-size: 50px;
     line-height: 80px;
     padding: 0 20px;
-    float: left;
+    display: inline-block;
     color: #3aaef9; }
+    @media (max-width: 992px) {
+      .deployment-status-bar .deployment-status-icon {
+        display: none; } }
     .deployment-status-bar .deployment-status-icon.Aborting {
       color: #f0ad4e; }
     .deployment-status-bar .deployment-status-icon.Submitted {
@@ -11707,15 +11710,21 @@ select.selectize-control,
     .deployment-status-bar .deployment-status-icon.Rejected {
       color: #d9534f; }
   .deployment-status-bar .deployment-status-text-parent {
-    position: relative;
     min-height: 80px;
-    padding: 0 10px 0 100px; }
-    .deployment-status-bar .deployment-status-text-parent .deployment-status-text-child {
-      position: absolute;
-      top: 50%;
-      margin-top: -20px; }
-      .deployment-status-bar .deployment-status-text-parent .deployment-status-text-child .deployment-status-header {
-        font-size: 16px; }
+    padding: 20px;
+    display: inline-block; }
+    .deployment-status-bar .deployment-status-text-parent .deployment-status-header {
+      font-size: 16px; }
+  .deployment-status-bar .abort-action {
+    padding: 20px 20px 0 0; }
+    .deployment-status-bar .abort-action button {
+      margin-bottom: 0; }
+    @media (max-width: 1200px) {
+      .deployment-status-bar .abort-action {
+        width: 100%;
+        padding: 0; }
+        .deployment-status-bar .abort-action button {
+          width: 100%; } }
 
 .deploy-plan .summary_title {
   margin: 10px 0 20px;
