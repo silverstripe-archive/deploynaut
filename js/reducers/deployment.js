@@ -18,7 +18,8 @@ const initialState = {
 	history_error: null,
 	error: null,
 	current_page: 1,
-	history_is_loading: false
+	history_is_loading: false,
+	abort_is_loading: false
 };
 
 module.exports = function deployment(state, action) {
@@ -194,6 +195,24 @@ module.exports = function deployment(state, action) {
 			newList[state.current_id].dirty = true;
 			return _.assign({}, state, {
 				list: newList
+			});
+		}
+
+		case actions.START_ABORT_DEPLOYMENT:
+			return _.assign({}, state, {
+				abort_is_loading: true
+			});
+		case actions.FAIL_ABORT_DEPLOYMENT:
+			return _.assign({}, state, {
+				abort_is_loading: false
+			});
+		case actions.SUCCEED_ABORT_DEPLOYMENT: {
+			const newList = _.assign({}, state.list);
+			newList[action.data.deployment.id] = action.data.deployment;
+
+			return _.assign({}, state, {
+				list: newList,
+				abort_is_loading: false
 			});
 		}
 

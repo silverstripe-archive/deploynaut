@@ -54,7 +54,6 @@ const deployment = React.createClass({
 		}
 
 		let logOutput = null;
-
 		if (this.props.deploy_started) {
 			logOutput = this.getLogContent();
 		}

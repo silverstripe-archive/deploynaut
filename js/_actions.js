@@ -505,6 +505,42 @@ export function startDeploy() {
 	};
 }
 
+export const START_ABORT_DEPLOYMENT = 'START_ABORT_DEPLOYMENT';
+export function startAbortDeployment() {
+	return {
+		type: START_ABORT_DEPLOYMENT
+	};
+}
+
+export const SUCCEED_ABORT_DEPLOYMENT = 'SUCCEED_ABORT_DEPLOYMENT';
+export function succeedAbortDeployment(data) {
+	return {
+		type: SUCCEED_ABORT_DEPLOYMENT,
+		data: data
+	}
+}
+
+export const FAIL_ABORT_DEPLOYMENT = 'FAIL_ABORT_DEPLOYMENT';
+export function failAbortDeployment(err) {
+	return {
+		type: FAIL_ABORT_DEPLOYMENT,
+		error: err
+	};
+}
+
+export function abortDeployment() {
+	return (dispatch, getState) => {
+		dispatch(startAbortDeployment());
+		return deployAPI.call(getState, '/abort', 'post', {
+			id: getState().deployment.current_id
+		})
+			.then(function(data) {
+				return dispatch(succeedAbortDeployment(data));
+			})
+			.catch((error) => dispatch(failAbortDeployment(error)));
+	};
+}
+
 export const START_DEPLOYMENT_GET = "START_DEPLOYMENT_GET";
 export function startGetDeployment() {
 	return {type: START_DEPLOYMENT_GET};
