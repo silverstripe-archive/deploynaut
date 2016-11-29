@@ -2,6 +2,10 @@ var ReactRedux = require('react-redux');
 
 var actions = require('../../_actions.js');
 var Button = require('../../components/Button.jsx');
+var message = require('../../constants/messages.js');
+
+// keep it the same between render calls by deciding the random message on import
+const loadingMessage = message.getRandom();
 
 function isDisplayed(state) {
 	if (state.plan.is_loading) {
@@ -18,7 +22,7 @@ function isDisplayed(state) {
 }
 
 const mapStateToProps = function(state) {
-	const text = state.deployment.is_creating ? 'Calculating impulses' : 'Continue';
+	const text = state.deployment.is_creating ? loadingMessage : 'Continue';
 	const icon = (state.deployment.is_creating) ? 'fa fa-refresh fa-spin' : 'fa fa-long-arrow-down';
 	return {
 		display: isDisplayed(state),
