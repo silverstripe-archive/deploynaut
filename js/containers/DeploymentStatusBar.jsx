@@ -60,7 +60,7 @@ function DeploymentStatusBar(props) {
 	const timeInformation = getTimeInformation(deployState, props);
 
 	return (
-		<div className="deployment-status-bar fade-in">
+		<div className="deployment-status-bar fade-in clearfix">
 			<div className={"deployment-status-icon " + deployState}>
 				<i className={"fa " + headerIcon} aria-hidden="true" />
 			</div>
@@ -77,9 +77,9 @@ function DeploymentStatusBar(props) {
 						>close this screen</a> {descriptionText}
 					</div>
 				</div>
-				<div className="pull-right">
-					<AbortButton />
-				</div>
+			</div>
+			<div className="abort-action pull-right">
+				<AbortButton />
 			</div>
 		</div>
 	);

@@ -9,8 +9,10 @@
 		font-size: 50px
 		line-height: 80px
 		padding: 0 20px
-		float: left
+		display: inline-block
 		color: $platform-blue
+		@media (max-width: $screen-md)
+			display: none
 
 		&.Aborting
 			color: $status-aborting
@@ -28,17 +30,18 @@
 			color: $status-rejected
 
 	.deployment-status-text-parent
-		position: relative
 		min-height: 80px
-		padding: 0 10px 0 100px
+		padding: 20px
+		display: inline-block
 
-		.deployment-status-text-child
-			position: absolute
-			top: 50%
-			margin-top: -20px
-
-			.deployment-status-header
-				font-size: $font-size-large
-
-			.deployment-status-close-notice
-
+		.deployment-status-header
+			font-size: $font-size-large
+	.abort-action
+		padding: 20px 20px 0 0
+		button
+			margin-bottom: 0
+		@media (max-width: $screen-lg)
+			width: 100%
+			padding: 0
+			button
+				width: 100%
