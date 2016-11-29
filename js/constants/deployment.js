@@ -51,6 +51,20 @@ export function isDeploying(deployState) {
 	return false;
 }
 
+export function isAborting(deployState) {
+	return deployState === STATE_ABORTING;
+}
+
+export function canAbort(deployState) {
+	if (deployState === STATE_DEPLOYING) {
+		return true;
+	}
+	if (deployState === STATE_ABORTING) {
+		return true;
+	}
+	return false;
+}
+
 export function isDeployDone(deployState) {
 	if (deployState === STATE_COMPLETED) {
 		return true;

@@ -19,7 +19,8 @@ class DeployDispatcher extends Dispatcher {
 		'redeploy',
 		'summary',
 		'createdeployment',
-		'start'
+		'start',
+		'abort'
 	];
 
 	private static $dependencies = [
@@ -42,6 +43,18 @@ class DeployDispatcher extends Dispatcher {
 	private static $action_types = [
 		self::ACTION_DEPLOY
 	];
+
+	/**
+	 * @param \DNEnvironment $environment
+	 * @param \Member|null $member
+	 * @return bool
+	 */
+	public static function can_abort_deployment(\DNEnvironment $environment, \Member $member = null) {
+		if ($member === null) {
+			$member = \Member::currentUser();
+		}
+		return \Permission::checkMember($member, 'ADMIN');
+	}
 
 	public function init() {
 		parent::init();
@@ -347,6 +360,41 @@ class DeployDispatcher extends Dispatcher {
 		$response->addHeader('Location', $location);
 
 		return $response;
+	}
+
+	/**
+	 * @param \SS_HTTPRequest $request
+	 * @return \SS_HTTPResponse
+	 */
+	public function abort(\SS_HTTPRequest $request) {
+		if ($request->httpMethod() !== 'POST') {
+			return $this->getAPIResponse(['message' => 'Method not allowed, requires POST'], 405);
+		}
+
+		$this->checkSecurityToken();
+
+		if (!self::can_abort_deployment($this->environment)) {
+			return $this->getAPIResponse(['message' => 'You are not authorised to perform this action'], 403);
+		}
+
+		$deployment = \DNDeployment::get()->byId($request->postVar('id'));
+		$errorResponse = $this->validateDeployment($deployment);
+		if ($errorResponse instanceof \SS_HTTPResponse) {
+			return $errorResponse;
+		}
+
+		try {
+			$deployment->getMachine()->apply(\DNDeployment::TR_ABORT);
+		} catch (\Exception $e) {
+			return $this->getAPIResponse([
+				'message' => $e->getMessage()
+			], 400);
+		}
+
+		return $this->sendResponse([
+			'message' => 'Deployment abort request successfully received',
+			'deployment' => $this->formatter->getDeploymentData($deployment)
+		], 200);
 	}
 
 	/**

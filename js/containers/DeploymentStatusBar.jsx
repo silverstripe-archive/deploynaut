@@ -3,6 +3,7 @@ const ReactRedux = require('react-redux');
 
 const actions = require('../_actions.js');
 const constants = require('../constants/deployment.js');
+const AbortButton = require('../containers/buttons/AbortDeployment.jsx');
 
 function getHeaderText(deployState) {
 	switch (deployState) {
@@ -51,7 +52,6 @@ function getTimeInformation(deployState, props) {
 }
 
 function DeploymentStatusBar(props) {
-
 	const deployState = props.state;
 
 	const headerText = getHeaderText(deployState);
@@ -77,15 +77,16 @@ function DeploymentStatusBar(props) {
 						>close this screen</a> {descriptionText}
 					</div>
 				</div>
+				<div className="pull-right">
+					<AbortButton />
+				</div>
 			</div>
 		</div>
 	);
 }
 
 const mapStateToProps = function(state) {
-
 	const current = state.deployment.list[state.deployment.current_id] || {};
-
 	return {
 		state: current.state,
 		environment_name: state.environment.name,

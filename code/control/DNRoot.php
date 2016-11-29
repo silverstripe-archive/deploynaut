@@ -1388,6 +1388,14 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		return $this->sendResponse($deployment->ResqueStatus(), $content);
 	}
 
+	/**
+	 * @deprecated 2.0.0 - moved to DeployDispatcher
+	 *
+	 * @param \SS_HTTPRequest $request
+	 *
+	 * @return string
+	 * @throws SS_HTTPResponse_Exception
+	 */
 	public function abortDeploy(\SS_HTTPRequest $request) {
 		$params = $request->params();
 		$deployment = DNDeployment::get()->byId($params['Identifier']);
