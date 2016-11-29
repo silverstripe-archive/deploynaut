@@ -12305,16 +12305,15 @@ button.sidebar-open {
 .table-centered-columns > tbody > tr > td {
   vertical-align: middle; }
 
-.deploy-status {
-  position: relative; }
-  .deploy-status:before {
-    position: absolute;
-    top: 0;
-    font-size: 40px;
-    content: "\2022"; }
+.deploy-status:before {
+  content: "\2022";
+  font-size: 37px;
+  line-height: 0;
+  position: relative;
+  top: 4px; }
 
 .deploy-status-text {
-  padding: 2px 0 0 23px;
+  padding: 2px 0 0 15px;
   display: inline-block;
   font-style: italic; }
 
