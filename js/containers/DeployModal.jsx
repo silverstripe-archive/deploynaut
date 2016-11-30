@@ -169,12 +169,40 @@ const DeployModal = React.createClass({
 			});
 		}
 
+		let headerText = `Deployment to ${this.props.project_name} / ${this.props.environment_name}`;
+		switch (this.props.state) {
+			case constants.STATE_COMPLETED: {
+				headerText += ` completed on ${this.props.deployment.date_started_nice}`;
+				break;
+			}
+			case constants.STATE_FAILED: {
+				headerText += ` failed at ${this.props.deployment.date_started_nice}`;
+				break;
+			}
+			case constants.STATE_REJECTED: {
+				headerText += ' has been rejected';
+				break;
+			}
+			case constants.STATE_APPROVED: {
+				headerText += ' is ready';
+				break;
+			}
+			case constants.STATE_QUEUED:
+			case constants.STATE_DEPLOYING: {
+				headerText += ' in progress...';
+				break;
+			}
+			case constants.STATE_SUBMITTED:
+				headerText += ' is awaiting approval';
+				break;
+		}
+
 		return (
 			<Modal
 				show={this.props.is_open}
-				className="deploy"
+				className={"deploy status-" + this.props.state}
 				closeHandler={this.props.onClose}
-				title={"Deploy to " + this.props.project_name + ' / ' + this.props.environment_name}
+				title={headerText}
 				closeTitle="Close"
 				options={options}
 			>
@@ -226,7 +254,8 @@ const mapStateToProps = function(state, ownProps) {
 		state: current.state,
 		environment_name: state.environment.name,
 		project_name: state.environment.project_name,
-		deployment_id: state.deployment.current_id
+		deployment_id: state.deployment.current_id,
+		deployment: current
 	};
 };
 

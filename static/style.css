@@ -12326,6 +12326,7 @@ button.sidebar-open {
 .status-Approved .deploy-status {
   color: #5cb85c; }
 
+.status-Deploying .deploy-status,
 .status-Current .deploy-status {
   color: #3aaef9; }
 
@@ -12334,6 +12335,9 @@ button.sidebar-open {
 
 .status-Invalid .deploy-status {
   color: #d9534f; }
+
+.status-Queued .deploy-status {
+  color: #666; }
 
 .status-Rejected .deploy-status {
   color: #d9534f; }
@@ -12889,115 +12893,6 @@ textarea.deploy-key {
   .modal-header p, .modal-header h1, .modal-header h2, .modal-header h3, .modal-header h4, .modal.deploy .modal-dialog .modal-content .modal-header .nav > li > a, .modal.deploy .modal-dialog .modal-content .modal-header .deploy-form-outer .deploy-form .SelectionGroup > li > a, .deploy-form-outer .deploy-form .modal.deploy .modal-dialog .modal-content .modal-header .SelectionGroup > li > a, .modal.deploy .modal-dialog .modal-content .modal-header .deploy-form-loading .deploy-form .SelectionGroup > li > a, .deploy-form-loading .deploy-form .modal.deploy .modal-dialog .modal-content .modal-header .SelectionGroup > li > a, .modal-header h5, .modal-header .h1, .modal-header .h2, .modal-header .h3, .modal-header .h4, .modal-header .h5 {
     color: #fff; }
 
-@media screen and (min-width: 992px) {
-  .modal.deploy .modal-lg {
-    width: 90%;
-    color: #505050; } }
-
-.modal.deploy .modal-dialog {
-  margin: 0 auto; }
-  .modal.deploy .modal-dialog .modal-content {
-    border-radius: 0;
-    background-color: #F0F3F4; }
-    .modal.deploy .modal-dialog .modal-content .modal-header {
-      border-radius: 0;
-      background: #ffffff;
-      border-bottom: 1px solid #D7D7D7;
-      padding: 10px 5px 10px 22px; }
-      .modal.deploy .modal-dialog .modal-content .modal-header .modal-title {
-        color: #505050;
-        margin-top: 7px; }
-      .modal.deploy .modal-dialog .modal-content .modal-header .nav > li > a, .modal.deploy .modal-dialog .modal-content .modal-header .deploy-form-outer .deploy-form .SelectionGroup > li > a, .deploy-form-outer .deploy-form .modal.deploy .modal-dialog .modal-content .modal-header .SelectionGroup > li > a, .modal.deploy .modal-dialog .modal-content .modal-header .deploy-form-loading .deploy-form .SelectionGroup > li > a, .deploy-form-loading .deploy-form .modal.deploy .modal-dialog .modal-content .modal-header .SelectionGroup > li > a {
-        background: transparent;
-        border: 0;
-        padding: 6px 20px;
-        font-size: 16px;
-        color: #505050;
-        line-height: 2;
-        opacity: 0.7;
-        margin: 0;
-        text-transform: uppercase; }
-    .modal.deploy .modal-dialog .modal-content .modal-body {
-      overflow-y: auto;
-      overflow-x: hidden;
-      height: 100%;
-      padding: 0; }
-      .modal.deploy .modal-dialog .modal-content .modal-body .menu {
-        padding: 10px 20px;
-        padding-right: 0; }
-        .modal.deploy .modal-dialog .modal-content .modal-body .menu.affix {
-          position: relative; }
-        @media screen and (min-width: 992px) {
-          .modal.deploy .modal-dialog .modal-content .modal-body .menu.affix {
-            position: fixed;
-            width: 220px;
-            top: 70px;
-            left: 0; } }
-        @media screen and (-ms-high-contrast: none) {
-          .modal.deploy .modal-dialog .modal-content .modal-body .menu.affix {
-            left: auto; } }
-        .modal.deploy .modal-dialog .modal-content .modal-body .menu .step {
-          font-size: 16px;
-          color: #505050;
-          padding: 10px 0; }
-      @media screen and (min-width: 992px) {
-        .modal.deploy .modal-dialog .modal-content .modal-body .main {
-          margin-left: 221px; } }
-    .modal.deploy .modal-dialog .modal-content .fetch,
-    .modal.deploy .modal-dialog .modal-content .section {
-      border: 1px solid #D7D7D7;
-      margin-bottom: 10px;
-      padding: 20px;
-      background-color: #ffffff; }
-      .modal.deploy .modal-dialog .modal-content .fetch.fetch,
-      .modal.deploy .modal-dialog .modal-content .section.fetch {
-        padding: 10px 20px;
-        border-top: 0;
-        border-bottom: 0;
-        margin-bottom: 0;
-        border-top: 2px solid #3aaef9;
-        background-color: #EDF1F2; }
-        .modal.deploy .modal-dialog .modal-content .fetch.fetch.loading,
-        .modal.deploy .modal-dialog .modal-content .section.fetch.loading {
-          border-top: 2px solid #F78222; }
-      .modal.deploy .modal-dialog .modal-content .fetch header,
-      .modal.deploy .modal-dialog .modal-content .section header {
-        font-size: 20px;
-        margin-bottom: 10px; }
-      .modal.deploy .modal-dialog .modal-content .fetch .build-details,
-      .modal.deploy .modal-dialog .modal-content .section .build-details {
-        display: block; }
-      .modal.deploy .modal-dialog .modal-content .fetch.approval .approval-action,
-      .modal.deploy .modal-dialog .modal-content .section.approval .approval-action {
-        position: relative;
-        top: 2px; }
-      .modal.deploy .modal-dialog .modal-content .fetch.approval .state,
-      .modal.deploy .modal-dialog .modal-content .section.approval .state {
-        color: #505050;
-        font-weight: bold; }
-      .modal.deploy .modal-dialog .modal-content .fetch.approval .state.submitted,
-      .modal.deploy .modal-dialog .modal-content .section.approval .state.submitted {
-        color: #f0ad4e; }
-      .modal.deploy .modal-dialog .modal-content .fetch.approval .state.rejected,
-      .modal.deploy .modal-dialog .modal-content .section.approval .state.rejected {
-        color: #d9534f; }
-      .modal.deploy .modal-dialog .modal-content .fetch.approval .state.approved,
-      .modal.deploy .modal-dialog .modal-content .section.approval .state.approved {
-        color: #5cb85c; }
-      .modal.deploy .modal-dialog .modal-content .fetch.deployment,
-      .modal.deploy .modal-dialog .modal-content .section.deployment {
-        padding: 0; }
-        .modal.deploy .modal-dialog .modal-content .fetch.deployment .log-loading,
-        .modal.deploy .modal-dialog .modal-content .section.deployment .log-loading {
-          padding: 10px 0; }
-        .modal.deploy .modal-dialog .modal-content .fetch.deployment .deploy-btn-container,
-        .modal.deploy .modal-dialog .modal-content .section.deployment .deploy-btn-container {
-          text-align: center; }
-          .modal.deploy .modal-dialog .modal-content .fetch.deployment .deploy-btn-container button.deploy,
-          .modal.deploy .modal-dialog .modal-content .section.deployment .deploy-btn-container button.deploy {
-            margin-top: 20px;
-            float: none; }
-
 .content .variables-description p {
   max-width: none; }
 
@@ -13038,3 +12933,122 @@ button.abort {
     opacity: 0; }
   to {
     opacity: 1; } }
+
+@media screen and (min-width: 992px) {
+  .modal.deploy .modal-lg {
+    width: 90%;
+    color: #505050; } }
+
+.modal.deploy .modal-dialog {
+  margin: 0 auto; }
+  .modal.deploy .modal-dialog .modal-content {
+    border-radius: 0;
+    background-color: #F0F3F4; }
+    .modal.deploy .modal-dialog .modal-content .modal-header {
+      border-radius: 0;
+      background: #ffffff;
+      border-bottom: 10px solid #3aaef9;
+      padding: 10px 5px 0 22px; }
+      .modal.deploy .modal-dialog .modal-content .modal-header .modal-title {
+        color: #505050;
+        margin-top: 7px; }
+      .modal.deploy .modal-dialog .modal-content .modal-header .nav > li > a, .modal.deploy .modal-dialog .modal-content .modal-header .deploy-form-outer .deploy-form .SelectionGroup > li > a, .deploy-form-outer .deploy-form .modal.deploy .modal-dialog .modal-content .modal-header .SelectionGroup > li > a, .modal.deploy .modal-dialog .modal-content .modal-header .deploy-form-loading .deploy-form .SelectionGroup > li > a, .deploy-form-loading .deploy-form .modal.deploy .modal-dialog .modal-content .modal-header .SelectionGroup > li > a {
+        background: transparent;
+        border: 0;
+        padding: 6px 20px;
+        font-size: 16px;
+        color: #505050;
+        line-height: 2;
+        opacity: 0.7;
+        margin: 0;
+        text-transform: uppercase; }
+    .modal.deploy .modal-dialog .modal-content .modal-body {
+      overflow-y: auto;
+      overflow-x: hidden;
+      height: 100%;
+      padding: 0; }
+      .modal.deploy .modal-dialog .modal-content .modal-body .menu {
+        padding: 10px 20px;
+        padding-right: 0; }
+        .modal.deploy .modal-dialog .modal-content .modal-body .menu.affix {
+          position: relative;
+          padding-left: 38px; }
+        @media screen and (min-width: 992px) {
+          .modal.deploy .modal-dialog .modal-content .modal-body .menu.affix {
+            position: fixed;
+            width: 220px; } }
+        .modal.deploy .modal-dialog .modal-content .modal-body .menu .step {
+          font-size: 16px;
+          color: #505050;
+          padding: 10px 0; }
+      @media screen and (min-width: 992px) {
+        .modal.deploy .modal-dialog .modal-content .modal-body .main {
+          margin-left: 221px; } }
+    .modal.deploy .modal-dialog .modal-content .fetch,
+    .modal.deploy .modal-dialog .modal-content .section {
+      border: 1px solid #D7D7D7;
+      margin-bottom: 10px;
+      padding: 20px;
+      background-color: #ffffff; }
+      .modal.deploy .modal-dialog .modal-content .fetch.fetch,
+      .modal.deploy .modal-dialog .modal-content .section.fetch {
+        padding: 10px 20px;
+        border-top: 0;
+        border-bottom: 0;
+        margin-bottom: 0;
+        border-top: 2px solid #3aaef9;
+        background-color: #EDF1F2; }
+        .modal.deploy .modal-dialog .modal-content .fetch.fetch.loading,
+        .modal.deploy .modal-dialog .modal-content .section.fetch.loading {
+          border-top: 2px solid #F78222; }
+      .modal.deploy .modal-dialog .modal-content .fetch header,
+      .modal.deploy .modal-dialog .modal-content .section header {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 10px; }
+      .modal.deploy .modal-dialog .modal-content .fetch .build-details,
+      .modal.deploy .modal-dialog .modal-content .section .build-details {
+        display: block; }
+      .modal.deploy .modal-dialog .modal-content .fetch.approval .approval-action,
+      .modal.deploy .modal-dialog .modal-content .section.approval .approval-action {
+        position: relative;
+        top: 2px; }
+      .modal.deploy .modal-dialog .modal-content .fetch.approval .state,
+      .modal.deploy .modal-dialog .modal-content .section.approval .state {
+        color: #505050;
+        font-weight: bold; }
+      .modal.deploy .modal-dialog .modal-content .fetch.approval .state.submitted,
+      .modal.deploy .modal-dialog .modal-content .section.approval .state.submitted {
+        color: #f0ad4e; }
+      .modal.deploy .modal-dialog .modal-content .fetch.approval .state.rejected,
+      .modal.deploy .modal-dialog .modal-content .section.approval .state.rejected {
+        color: #d9534f; }
+      .modal.deploy .modal-dialog .modal-content .fetch.approval .state.approved,
+      .modal.deploy .modal-dialog .modal-content .section.approval .state.approved {
+        color: #5cb85c; }
+      .modal.deploy .modal-dialog .modal-content .fetch.deployment,
+      .modal.deploy .modal-dialog .modal-content .section.deployment {
+        padding: 0; }
+        .modal.deploy .modal-dialog .modal-content .fetch.deployment .log-loading,
+        .modal.deploy .modal-dialog .modal-content .section.deployment .log-loading {
+          padding: 10px 0; }
+        .modal.deploy .modal-dialog .modal-content .fetch.deployment .deploy-btn-container,
+        .modal.deploy .modal-dialog .modal-content .section.deployment .deploy-btn-container {
+          text-align: center; }
+          .modal.deploy .modal-dialog .modal-content .fetch.deployment .deploy-btn-container button.deploy,
+          .modal.deploy .modal-dialog .modal-content .section.deployment .deploy-btn-container button.deploy {
+            margin-top: 20px;
+            float: none; }
+
+.modal.deploy.modal-dialog {
+  border-bottom-width: 10px; }
+
+.modal.deploy.status-Failed .modal-dialog .modal-content .modal-header,
+.modal.deploy.status-Rejected .modal-dialog .modal-content .modal-header {
+  border-color: #d9534f; }
+
+.modal.deploy.status-Submitted .modal-dialog .modal-content .modal-header {
+  border-color: #f0ad4e; }
+
+.modal.deploy.status-Completed .modal-dialog .modal-content .modal-header {
+  border-color: #5cb85c; }
