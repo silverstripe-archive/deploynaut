@@ -627,7 +627,7 @@ button.sidebar-open
 .status-Approved
 	.deploy-status
 		color: $status-approved
-.status-Deploying
+.status-Deploying,
 .status-Current
 	.deploy-status
 		color: $status-deploying
@@ -1292,131 +1292,6 @@ textarea.deploy-key
 	p, h1, h2, h3, h4, h5, .h1, .h2, .h3, .h4, .h5
 		color: #fff
 
-.modal.deploy
-
-	.modal-lg
-		@media screen and (min-width: $screen-md)
-			width: 90%
-			color: $body-text
-
-	.modal-dialog
-		margin: 0 auto
-
-		.modal-content
-			border-radius: 0
-			background-color: #F0F3F4
-
-			.modal-header
-				border-radius: 0
-				background: #ffffff
-				border-bottom: 1px solid #D7D7D7
-				padding: 10px 5px 10px 22px
-
-				.modal-title
-					color: $body-text
-					margin-top: 7px
-
-				.nav > li > a
-					// same as .modal-title
-					@extend h4
-					background: transparent
-					border: 0
-					padding: 6px 20px
-					font-size: 16px
-					color: $body-text
-					line-height: 2
-					opacity: 0.7
-					margin: 0
-					text-transform: uppercase
-
-			.modal-body
-				// ensure that there is a scrollbar inside the modal
-				overflow-y: auto
-				overflow-x: hidden
-				height: 100%
-				// we remove padding here so the menu can do a left aligned active indicator
-				padding: 0
-
-				.menu
-					padding: 10px 20px
-					padding-right: 0
-
-					// ensure that small screens dont get a sticky side nav
-					&.affix
-						position: relative
-
-					@media screen and (min-width: $screen-md)
-						&.affix
-							position: fixed
-							width: 220px
-							top: 70px
-							left: 0
-					@media screen and (-ms-high-contrast:none)
-						&.affix
-							left: auto // IE11 doesn't work with position: fixed and relative parent properly
-
-					.step
-						font-size: 16px
-						color: $body-text
-						padding: 10px 0
-
-				.main
-					@media screen and (min-width: $screen-md)
-						margin-left: 221px
-
-			.fetch,
-			.section
-				border: 1px solid #D7D7D7
-				margin-bottom: 10px
-				padding: 20px
-				background-color: #ffffff
-				&.fetch
-					padding: 10px 20px
-					border-top: 0
-					border-bottom: 0
-					margin-bottom: 0
-					border-top: 2px solid $platform-blue
-					background-color: #EDF1F2
-					&.loading
-						// using a specific color here instead of $brand-warning or $platform-secondary because the
-						// border looks muddy with them
-						border-top: 2px solid #F78222
-
-				header
-					font-size: $font-size-h4
-					margin-bottom: 10px
-
-				.build-details
-					display: block
-
-				&.approval
-					.approval-action
-						position: relative
-						top: 2px
-
-					.state
-						color: $body-text
-						font-weight: bold
-
-					.state.submitted
-						color: $status-submitted
-					.state.rejected
-						color: $status-rejected
-					.state.approved
-						color: $status-approved
-
-				&.deployment
-					padding: 0
-
-					.log-loading
-						padding: 10px 0
-
-					.deploy-btn-container
-						text-align: center
-
-						button.deploy
-							margin-top: 20px
-							float: none
 
 .content .variables-description p
 	max-width: none
@@ -1459,3 +1334,4 @@ button.abort
 		to
 			opacity: 1
 
+@import 'components/_deploy_modal'
