@@ -12321,11 +12321,11 @@ button.sidebar-open {
   color: #f0ad4e; }
 
 .status-Submitted .deploy-status {
-  color: #f0ad4e; }
+  color: #ec971f; }
 
 .status-Submitted .deploy-approver {
   font-style: italic;
-  color: #f0ad4e; }
+  color: #ec971f; }
 
 .status-Approved .deploy-status {
   color: #5cb85c; }
