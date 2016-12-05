@@ -69,8 +69,17 @@ class EnvironmentOverview extends Dispatcher {
 	 */
 	public function getModel($name = '') {
 		$approversList = [];
-		foreach ($this->getCurrentProject()->listMembers() as $data) {
-			if ($this->getCurrentProject()->allowed(\ApprovalsDispatcher::ALLOW_APPROVAL, \Member::get()->byId($data['MemberID']))) {
+
+		// virtual stacks have a special case in that they need to look at the base project
+		// due to the team setup being on the base.
+		if ($this->getCurrentProject() instanceof VirtualProject) {
+			$baseProject = $this->getCurrentProject()->BaseProject();
+		} else {
+			$baseProject = $this->getCurrentProject();
+		}
+
+		foreach ($baseProject->listMembers() as $data) {
+			if ($baseProject->allowed(\ApprovalsDispatcher::ALLOW_APPROVAL, \Member::get()->byId($data['MemberID']))) {
 				$approversList[$data['MemberID']] = [
 					'id' => $data['MemberID'],
 					'email' => $data['Email'],
