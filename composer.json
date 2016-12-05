@@ -1,12 +1,12 @@
 {
 	"name": "silverstripe/deploynaut",
 	"type": "silverstripe-module",
-	"description": "The SilverStripe deployment framework based on Capistrano",
+	"description": "The SilverStripe deployment framework",
 	"license": "BSD-3-Clause",
 	"keywords": ["silverstripe", "capistrano", "deploy"],
 	"require": {
-		"php": ">=5.4.0",
-		"silverstripe/framework": "~3.1",
+		"php": ">=5.6.0",
+		"silverstripe/framework": "~3.4",
 		"stojg/silverstripe-resque": "~1.2",
 		"gitonomy/gitlib": "dev-master",
 		"undefinedoffset/sortablegridfield": "*",
