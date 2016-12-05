@@ -6,7 +6,7 @@ sudo: false
 
 env:
   global:
-    - CORE_RELEASE=344
+    - CORE_RELEASE=3.4
 
 matrix:
   include:
