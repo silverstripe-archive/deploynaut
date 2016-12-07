@@ -2,7 +2,7 @@ const React = require('react');
 const Redux = require('redux');
 const ReactRedux = require('react-redux');
 const ReactRouter = require('react-router');
-const thunkMiddleware = require('redux-thunk').default;
+const thunk = require('redux-thunk').default;
 const createLogger = require('redux-logger');
 
 const App = require('./containers/App.jsx');
@@ -15,12 +15,15 @@ const actions = require('./_actions.js');
 const createHistory = require('history').createHistory;
 const useRouterHistory = require('react-router').useRouterHistory;
 
+const middleware = [thunk];
+if (process.env.NODE_ENV !== "production") {
+	const logger = createLogger();
+	middleware.push(logger);
+}
+
 const store = Redux.createStore(
 	reducers,
-	Redux.applyMiddleware(
-		thunkMiddleware,
-		createLogger()
-	)
+	Redux.applyMiddleware(...middleware)
 );
 
 /**
