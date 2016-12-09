@@ -40,6 +40,7 @@ class DNDataTransfer extends DataObject {
 		"Direction" => "Enum('get, push', 'get')",
 		"Mode" => "Enum('all, assets, db', '')",
 		"Origin" => "Enum('EnvironmentTransfer,ManualUpload', 'EnvironmentTransfer')",
+		"IncludeResampled" => "Boolean",
 	);
 
 	private static $has_one = array(
@@ -60,6 +61,7 @@ class DNDataTransfer extends DataObject {
 		'Environment.Name' => 'Environment',
 		'Status' => 'Status',
 		'Origin' => 'Origin',
+		'IncludeResampled.Nice' => 'Included Resampled?',
 	);
 
 	private static $searchable_fields = array(
@@ -166,7 +168,8 @@ class DNDataTransfer extends DataObject {
 		$args = array(
 			'dataTransferID' => $this->ID,
 			'logfile' => $this->logfile(),
-			'backupBeforePush' => $this->backupBeforePush
+			'backupBeforePush' => $this->backupBeforePush,
+			'includeResampled' => $this->IncludeResampled,
 		);
 
 		if(!$this->AuthorID) {
