@@ -1456,7 +1456,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			}
 		}
 
-		$envsField =  DropdownField::create('EnvironmentID', 'Environment', $items)
+		$envsField = DropdownField::create('EnvironmentID', 'Environment', $items)
 			->setEmptyString('Select an environment');
 		$envsField->setDisabledItems($disabledEnvironments);
 
@@ -1467,14 +1467,26 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			$formAction->setDisabled(true);
 		}
 
-		$form = Form::create(
-			$this,
-			'DataTransferForm',
-			FieldList::create(
+		// Allow the _resampled dir to be included if we are a Rainforest Env
+		if ($this->getCurrentProject()->DNEnvironmentList()->first() instanceof RainforestEnvironment) {
+			$fields = FieldList::create(
+				HiddenField::create('Direction', null, 'get'),
+				$envsField,
+				DropdownField::create('Mode', 'Transfer', DNDataArchive::get_mode_map()),
+				CheckboxField::create('IncludeResampled', 'Include Resampled Images Directory? (e.g. for total content migration)')
+			);
+		} else {
+			$fields = FieldList::create(
 				HiddenField::create('Direction', null, 'get'),
 				$envsField,
 				DropdownField::create('Mode', 'Transfer', DNDataArchive::get_mode_map())
-			),
+			);
+		}
+
+		$form = Form::create(
+			$this,
+			'DataTransferForm',
+			$fields,
 			FieldList::create($formAction)
 		);
 		$form->setFormAction($this->getRequest()->getURL() . '/DataTransferForm');
@@ -1544,6 +1556,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 		$transfer->Direction = $data['Direction'];
 		$transfer->Mode = $data['Mode'];
 		$transfer->DataArchiveID = $dataArchive ? $dataArchive->ID : null;
+		$transfer->IncludeResampled = $data['IncludeResampled'];
 		if ($data['Direction'] == 'push') {
 			$transfer->setBackupBeforePush(!empty($data['BackupBeforePush']));
 		}
