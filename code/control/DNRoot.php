@@ -141,6 +141,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * @var array
 	 */
+	private static $logged_in_links = [];
+
+	/**
+	 * @var array
+	 */
 	private static $platform_specific_strings = [];
 
 	/**
@@ -199,6 +204,16 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
+	 * @return ArrayList
+	 */
+	public static function get_logged_in_links() {
+		$loggedInLinks = self::config()->logged_in_links;
+		if ($loggedInLinks) {
+			return new ArrayList($loggedInLinks);
+		}
+	}
+
+	/**
 	 * @return array
 	 */
 	public static function get_template_global_variables() {
@@ -206,7 +221,8 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			'RedisUnavailable' => 'RedisUnavailable',
 			'RedisWorkersCount' => 'RedisWorkersCount',
 			'SidebarLinks' => 'SidebarLinks',
-			"SupportLinks" => 'get_support_links'
+			'SupportLinks' => 'get_support_links',
+			'LoggedInLinks' => 'get_logged_in_links',
 		];
 	}
 
