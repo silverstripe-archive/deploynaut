@@ -48,10 +48,18 @@
 	<% end_if %>
 <% end_if %>
 
-<% if $SupportLinks %>
+<% if $SupportLinks || $LoggedInLinks %>
 	<li class="nav-main-heading">Support</li>
-
-	<% loop $SupportLinks %>
-		<li><a href="$URL"><span class="plat-icon $IconClass"></span>$Title</a></li>
-	<% end_loop %>
+	<% if $SupportLinks %>
+		<% loop $SupportLinks %>
+			<li><a href="$URL"><span class="plat-icon $IconClass"></span>$Title</a></li>
+		<% end_loop %>
+	<% end_if %>
+	<% if $LoggedInLinks %>
+		<% if $CurrentMember %>
+			<% loop $LoggedInLinks %>
+				<li><a href="$URL"><span class="plat-icon $IconClass"></span>$Title</a></li>
+			<% end_loop %>
+		<% end_if %>
+	<% end_if %>
 <% end_if %>
