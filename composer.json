@@ -11,7 +11,7 @@
 		"gitonomy/gitlib": "dev-master",
 		"undefinedoffset/sortablegridfield": "*",
 		"silverstripe/secureassets": "dev-master",
-		"silverstripe-australia/gridfieldextensions": "dev-master",
+		"silverstripe-australia/gridfieldextensions": "1.4.2",
 		"league/event": "^2.1",
 		"yohang/finite": "~1.1"
 	},
