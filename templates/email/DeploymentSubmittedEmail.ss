@@ -5,4 +5,4 @@
 <p>Please <a href="$Link">open the deployment details</a> to approve or reject the request.</p>
 
 <p>Kind regards,<br>
-SilverStripe Platform team</p>
+$PlatformTitle team</p>

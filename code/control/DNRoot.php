@@ -214,10 +214,22 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
+	 * Return the platform title if configured, defaulting to "Deploynaut".
+	 * @return string
+	 */
+	public static function platform_title() {
+		if (defined('DEPLOYNAUT_PLATFORM_TITLE')) {
+			return DEPLOYNAUT_PLATFORM_TITLE;
+		}
+		return 'Deploynaut';
+	}
+
+	/**
 	 * @return array
 	 */
 	public static function get_template_global_variables() {
 		return [
+			'PlatformTitle' => 'platform_title',
 			'RedisUnavailable' => 'RedisUnavailable',
 			'RedisWorkersCount' => 'RedisWorkersCount',
 			'SidebarLinks' => 'SidebarLinks',
