@@ -1,4 +1,4 @@
-<h1>Deploynaut</h1>
+<h1>$PlatformTitle</h1>
 
 $Content
 $Form

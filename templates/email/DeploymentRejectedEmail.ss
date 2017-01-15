@@ -8,4 +8,4 @@
 <% end_if %>
 
 <p>Kind regards,<br>
-SilverStripe Platform team</p>
+$PlatformTitle team</p>
