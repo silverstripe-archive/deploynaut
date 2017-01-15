@@ -213,6 +213,15 @@ class DNProject extends DataObject {
 	}
 
 	/**
+	 * @return string
+	 */
+	public function getPrimaryEnvType() {
+		$envClasses = $this->Environments()->column("ClassName");
+		$topClass = array_count_values($envClasses);
+		return str_replace("Environment", "", array_search(max($topClass), $topClass));
+	}
+
+	/**
 	 * Has the disk quota been exceeded?
 	 *
 	 * @return boolean
@@ -598,6 +607,12 @@ class DNProject extends DataObject {
 		return Controller::join_links("naut", "project", $this->Name, $action);
 	}
 
+	/**
+	 * @return string
+	 */
+	public function getCMSEditLink() {
+		return Controller::join_links("admin", "naut", "DNProject", "EditForm", "field", "DNProject", "item", $this->ID, "edit");
+	}
 	/**
 	 * @return string|null
 	 */
