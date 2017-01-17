@@ -78,6 +78,10 @@ class EnvironmentOverview extends Dispatcher {
 			$baseProject = $this->getCurrentProject();
 		}
 
+		if (!$baseProject->hasMethod('listMembers')) {
+			return [];
+		}
+
 		foreach ($baseProject->listMembers() as $data) {
 			if ($baseProject->allowed(\ApprovalsDispatcher::ALLOW_APPROVAL, \Member::get()->byId($data['MemberID']))) {
 				$approversList[$data['MemberID']] = [
