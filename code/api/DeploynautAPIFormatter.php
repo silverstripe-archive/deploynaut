@@ -130,6 +130,10 @@ class DeploynautAPIFormatter {
 	 * @return null|array
 	 */
 	public function getStackMemberData(\DNProject $project, $memberID) {
+		if (!$project->hasMethod('listMembers')) {
+			return null;
+		}
+
 		if (empty(self::$_cache_project_members[$project->ID])) {
 			self::$_cache_project_members[$project->ID] = $project->listMembers();
 		}
