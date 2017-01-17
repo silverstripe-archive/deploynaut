@@ -190,6 +190,10 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			}
 		}
 
+		// We need to include javascript here so that prerequisite js object(s) from
+		// the deploynaut module have been loaded
+		Requirements::javascript('static/platform.js');
+
 		Requirements::css('deploynaut/static/style.css');
 	}
 
