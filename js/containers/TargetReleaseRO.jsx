@@ -43,6 +43,11 @@ const TargetReleaseRO = React.createClass({
 			caret = 'down';
 		}
 
+		let deployer = null;
+		if (props.deployment.deployer) {
+			deployer = props.deployment.deployer.name;
+		}
+
 		return (
 			<div className="section target-release">
 				<header id="0">Target release</header>
@@ -83,7 +88,7 @@ const TargetReleaseRO = React.createClass({
 					<div className="col-md-6">
 						<dl className="dl-horizontal">
 							<dt>Requested by</dt>
-							<dd>{props.deployment.deployer.name}</dd>
+							<dd>{deployer}</dd>
 							<dt>Date requested</dt>
 							<dd>{props.date_requested}</dd>
 						</dl>
