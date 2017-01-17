@@ -1,3 +1,5 @@
+# This project is no longer maintained
+
 # Deploynaut
 
 [![Build Status](https://secure.travis-ci.org/silverstripe/deploynaut.png)](https://travis-ci.org/silverstripe/deploynaut)
