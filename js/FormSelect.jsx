@@ -28,7 +28,12 @@ module.exports = React.createClass({
 
 		var options = this.props.options.map(function(option) {
 			return (
-				<option key={option.id} value={option.id}>{option.value}</option>
+				<option
+					key={option.id}
+					value={option.id}
+				>
+					{option.value}
+				</option>
 			);
 		});
 

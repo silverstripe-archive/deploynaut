@@ -40,3 +40,7 @@ coding_style:
         general: lower
       constants:
         true_false_null: lower
+  javascript:
+    indentation:
+      general:
+        use_tabs: true
