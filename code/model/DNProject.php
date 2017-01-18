@@ -720,6 +720,12 @@ class DNProject extends DataObject {
 				->setEmptyString(' - None - '),
 		]);
 
+		$fields->addFieldToTab(
+			'Root.DeployKey',
+			$key = \DeployKeyField::create('PublicKey', 'Deploy Key')->addExtraClass('generate-deploykey')
+		);
+		$key->setShowButton(!file_exists($this->getPublicKeyPath()));
+
 		return $fields;
 	}
 
@@ -1270,6 +1276,32 @@ class DNProject extends DataObject {
 			}
 		}
 		return $validation;
+	}
+
+	/**
+	 * Creates a deploy key for this project.
+	 * @return bool
+	 */
+	public function createKeyPair() {
+		$filter = \FileNameFilter::create();
+		$name = $filter->filter($this->owner->Name);
+
+		$createKeypair = new \CreateKeypair();
+		$createKeypair->setUp();
+		$createKeypair->args = [
+			'keyDir' => $this->owner->getKeyDir(),
+			'name' => $name,
+			'overwrite' => false,
+		];
+
+		try {
+			$createKeypair->perform();
+			return true;
+		} catch (\Exception $exception) {
+			// todo do something with the exception
+		}
+
+		return false;
 	}
 
 }
