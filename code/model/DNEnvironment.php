@@ -264,6 +264,9 @@ class DNEnvironment extends DataObject {
 		return null;
 	}
 
+	/**
+	 * @return null|string
+	 */
 	public function getBareURL() {
 		$url = parse_url($this->URL);
 		if (isset($url['host'])) {

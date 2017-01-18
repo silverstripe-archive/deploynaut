@@ -487,7 +487,7 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		$timeout = 600;
 		$tick = 60;
 
-		if(!$url) {
+		if($url === null) {
 			$log->write('Skipping site accessible check: no URL found.');
 			return true;
 		}
