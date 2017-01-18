@@ -36,9 +36,6 @@ class DeploynautAPIFormatter {
 		$deployerData = $this->getStackMemberData($project, $deployment->DeployerID);
 		$approverData = $this->getStackMemberData($project, $deployment->ApproverID);
 
-		$started = null;
-		$startedNice = null;
-		$startedAgo = null;
 		// we check first, before we do a expensive ->Nice() and ->Ago()
 		if(!$deployment->DeployStarted) {
 			$started = $deployment->Created;
