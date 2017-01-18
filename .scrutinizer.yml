@@ -20,6 +20,10 @@ checks:
     properties_in_camelcaps: true
     prefer_while_loop_over_for_loop: true
     more_specific_types_in_doc_comments: true
+    properties_in_camelcaps: false
+    parameters_in_camelcaps: false
+    one_class_per_file: false
+    side_effects_or_types: false
 
 coding_style:
   php:
