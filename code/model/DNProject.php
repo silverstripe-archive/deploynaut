@@ -86,13 +86,6 @@ class DNProject extends DataObject {
 	protected static $_current_member_cache = null;
 
 	/**
-	 * Display the repository URL on the project page.
-	 *
-	 * @var bool
-	 */
-	private static $show_repository_url = false;
-
-	/**
 	 * In-memory cache to determine whether clone repo was called.
 	 * @var array
 	 */
@@ -913,10 +906,7 @@ class DNProject extends DataObject {
 	 * @return void|string
 	 */
 	public function getRepositoryURL() {
-		$showUrl = Config::inst()->get($this->class, 'show_repository_url');
-		if ($showUrl) {
-			return $this->CVSPath;
-		}
+		return $this->CVSPath;
 	}
 
 	/**
