@@ -115,6 +115,14 @@ class DNProject extends DataObject {
 			'icon' => 'deploynaut/img/github.png',
 			'name' => 'Github.com',
 		],
+		'gitlab.cwp.govt.nz' => [
+			'icon' => 'deploynaut/img/gitlab.png',
+			'name' => 'Gitlab'
+		],
+		'code.platform.silverstripe.com' => [
+			'icon' => 'deploynaut/img/gitlab.png',
+			'name' => 'Gitlab'
+		],
 		'bitbucket.org' => [
 			'commit' => 'commits',
 			'name' => 'Bitbucket.org',
