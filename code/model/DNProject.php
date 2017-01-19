@@ -699,6 +699,7 @@ class DNProject extends DataObject {
 
 		$environmentTypes = ClassInfo::implementorsOf('EnvironmentCreateBackend');
 
+		$fields->removeFieldFromTab('Root', 'Fetches');
 		if(count($environmentTypes) < 1 ) {
 			$fields->removeByName('AllowedEnvironmentType');
 			$fields->removeFieldFromTab('Root', 'CreateEnvironments');
