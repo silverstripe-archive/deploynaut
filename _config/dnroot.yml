@@ -5,9 +5,9 @@ Injector:
   DNData:
     properties:
       # Set EnvironmentDir and KeyDir to absolute paths in your live project
-      EnvironmentDir: "../deploynaut-resources/envs"
-      KeyDir: "../deploynaut-resources/gitkeys"
-      SignalDir: "../deploynaut-resources/signals"
+      EnvironmentDir: "../../deploynaut-resources/envs"
+      KeyDir: "../../deploynaut-resources/gitkeys"
+      SignalDir: "../../deploynaut-resources/signals"
       # Set to an absolute path, or a relative path to append to BASE_PATH
       DataTransferDir: "assets/transfers"
       # User to run commands as locally
@@ -30,5 +30,5 @@ Injector:
   PackageCache:
     class: SizeRestrictedPackageCache
     properties:
-      BaseDir: "../deploynaut-resources/build-cache"
+      BaseDir: "../../deploynaut-resources/build-cache"
       CacheSize: 5
