@@ -845,15 +845,20 @@ class DNProject extends DataObject {
 
 	/**
 	 * Fetch the public key for this project.
-	 *
-	 * @return string|void
+	 * @return string
+	 * @throws \ValidationException
 	 */
 	public function getPublicKey() {
 		$key = $this->getPublicKeyPath();
 
 		if (file_exists($key)) {
+			if(!is_readable($key)) {
+				// throw a validation error so that the CMS pop up will show the message instead of a file and line number
+				throw new \ValidationException(sprintf("Key file '%s' is not readable", $key));
+			}
 			return trim(file_get_contents($key));
 		}
+		return '';
 	}
 
 	/**
