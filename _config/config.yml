@@ -1,6 +1,14 @@
 ---
 Name: deploynautconfig
 ---
+Debug:
+  friendly_error_httpcode: true
+MySQLDatabase:
+  connection_charset: "utf8"
+Deploynaut:
+  snapshot_post_address: 'Operations Team<br />Level 5,<br />101-103 Courtenay Place<br />Wellington<br />6011<br />New Zealand'
+Email:
+  admin_email: 'support@silverstripe.com'
 AdminRootController:
   default_panel: 'DNAdmin'
 DNProject:
