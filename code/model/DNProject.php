@@ -698,20 +698,27 @@ class DNProject extends DataObject {
 		$this->setEnvironmentFields($fields, $environments);
 
 		$environmentTypes = ClassInfo::implementorsOf('EnvironmentCreateBackend');
-		$types = [];
-		foreach ($environmentTypes as $type) {
-			$types[$type] = $type;
+
+		$fields->removeFieldFromTab('Root', 'Fetches');
+		if(count($environmentTypes) < 1 ) {
+			$fields->removeByName('AllowedEnvironmentType');
+			$fields->removeFieldFromTab('Root', 'CreateEnvironments');
+		} else {
+			$types = [];
+			foreach ($environmentTypes as $type) {
+				$types[$type] = $type;
+			}
+			$fields->addFieldsToTab('Root.Main', [
+				DropdownField::create(
+					'AllowedEnvironmentType',
+					'Allowed Environment Type',
+					$types
+				)->setDescription('This defined which form to show on the front end for '
+					. 'environment creation. This will not affect backend functionality.')
+					->setEmptyString(' - None - '),
+			]);
 		}
 
-		$fields->addFieldsToTab('Root.Main', [
-			DropdownField::create(
-				'AllowedEnvironmentType',
-				'Allowed Environment Type',
-				$types
-			)->setDescription('This defined which form to show on the front end for '
-				. 'environment creation. This will not affect backend functionality.')
-				->setEmptyString(' - None - '),
-		]);
 
 		$fields->addFieldToTab(
 			'Root.DeployKey',
