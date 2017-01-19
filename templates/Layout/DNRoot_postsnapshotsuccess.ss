@@ -26,7 +26,7 @@
 
 	<ul>
 		<li>Create an *.sspak file containing your database and/or assets</li>
-		<li>Label the file with: <pre>deploynaut-upload-$DataArchive.UploadToken</pre></li>
+		<li>Label the file with: <pre>{$PlatformTitle}-$DataArchive.UploadToken</pre></li>
 		<li>Make the file available to SilverStripe in some way, for example by:
 			<ul>
 				<li>burning and sending a DVD by post to the address below</li>
