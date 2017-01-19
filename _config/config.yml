@@ -24,6 +24,9 @@ Injector:
   Finite\StateMachine\StateMachine:
     class: Finite\StateMachine\StateMachine
     type: prototype
+  LDAPChangePasswordForm:
+    class: 'DeploynautLDAPChangePasswordForm'
+
 StateMachineFactory:
   handlers:
     DNDeployment:
