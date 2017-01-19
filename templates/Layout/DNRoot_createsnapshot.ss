@@ -21,7 +21,7 @@
 		<div class="col-md-8 col-md-offset-2">
 			<h3 class="">Create a snapshot</h3>
 
-			<p>Back up the database and/or assets into a file and transfer it to deploynaut. From there it can be downloaded or used for later restores</p>
+			<p>Back up the database and/or assets into a file and transfer it to $PlatformTitle. From there it can be downloaded or used for later restores</p>
 
 			<% with $DataTransferForm %>
 			<form $FormAttributes class="">
