@@ -56,6 +56,12 @@
 											// Keep waiting
 											return;
 									}
+								},
+								error: function() {
+									clearInterval(window.fetchInterval);
+									self.updateKey();
+									// re-enable the button
+									self.enableButton();
 								}
 							});
 						}, 2000);
