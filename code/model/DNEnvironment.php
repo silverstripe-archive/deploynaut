@@ -134,13 +134,6 @@ class DNEnvironment extends DataObject {
 	private static $template_file = '';
 
 	/**
-	 * Set this to true to allow editing of the environment files via the web admin
-	 *
-	 * @var bool
-	 */
-	private static $allow_web_editing = false;
-
-	/**
 	 * @var array
 	 */
 	private static $casting = [
@@ -954,7 +947,7 @@ PHP
 		parent::onAfterDelete();
 
 		// Create a basic new environment config from a template
-		if ($this->config()->get('allow_web_editing') && $this->envFileExists()) {
+		if ($this->envFileExists()) {
 			unlink($this->getConfigFilename());
 		}
 
@@ -1118,10 +1111,6 @@ PHP
 	 * @param FieldList $fields
 	 */
 	protected function setDeployConfigurationFields(&$fields) {
-		if (!$this->config()->get('allow_web_editing')) {
-			return;
-		}
-
 		if ($this->envFileExists()) {
 			$deployConfig = new TextareaField('DeployConfig', 'Deploy config', $this->getEnvironmentConfig());
 			$deployConfig->setRows(40);
@@ -1153,10 +1142,6 @@ PHP
 	 * Write the deployment config file to filesystem
 	 */
 	protected function writeConfigFile() {
-		if (!$this->config()->get('allow_web_editing')) {
-			return;
-		}
-
 		// Create a basic new environment config from a template
 		if (!$this->envFileExists()
 			&& $this->Filename

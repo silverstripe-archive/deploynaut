@@ -840,7 +840,7 @@ class DNProject extends DataObject {
 		}
 
 		// Delete project template
-		if (file_exists($this->getProjectFolderPath()) && Config::inst()->get('DNEnvironment', 'allow_web_editing')) {
+		if (file_exists($this->getProjectFolderPath())) {
 			Filesystem::removeFolder($this->getProjectFolderPath());
 		}
 
@@ -1232,11 +1232,9 @@ class DNProject extends DataObject {
 		$environments->getConfig()->removeComponentsByType('GridFieldAddExistingAutocompleter');
 		$environments->getConfig()->removeComponentsByType('GridFieldDeleteAction');
 		$environments->getConfig()->removeComponentsByType('GridFieldPageCount');
-		if (Config::inst()->get('DNEnvironment', 'allow_web_editing')) {
-			$addNewRelease = new GridFieldAddNewButton('toolbar-header-right');
-			$addNewRelease->setButtonName('Add');
-			$environments->getConfig()->addComponent($addNewRelease);
-		}
+		$addNewRelease = new GridFieldAddNewButton('toolbar-header-right');
+		$addNewRelease->setButtonName('Add');
+		$environments->getConfig()->addComponent($addNewRelease);
 
 		$fields->addFieldToTab("Root.Main", $environments);
 	}
