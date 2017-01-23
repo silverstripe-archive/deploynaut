@@ -10529,7 +10529,7 @@ fieldset {
 #LDAPLoginForm_LoginForm .radio-inline input[type="radio"],
 #LDAPLoginForm_LoginForm .checkbox input[type="checkbox"],
 #LDAPLoginForm_LoginForm .checkbox-inline input[type="checkbox"] {
-  margin-left: -20px; }
+  margin-left: 0; }
 
 #MemberLoginForm_LoginForm .field.checkbox, #MemberLoginForm_LostPasswordForm .field.checkbox, #LDAPLoginForm_LoginForm .field.checkbox {
   margin-bottom: 30px;
