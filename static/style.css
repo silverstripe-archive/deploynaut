@@ -10538,6 +10538,11 @@ fieldset {
 #MemberLoginForm_LoginForm fieldset + .Actions, #MemberLoginForm_LostPasswordForm fieldset + .Actions, #LDAPLoginForm_LoginForm fieldset + .Actions {
   margin-top: 0; }
 
+#ForgotPassword {
+  text-align: right;
+  float: right;
+  margin-top: 13px; }
+
 .select2-container .select2-selection--single {
   height: 35px;
   font-size: 16px; }
