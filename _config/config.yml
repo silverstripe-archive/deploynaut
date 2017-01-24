@@ -26,6 +26,10 @@ Injector:
     type: prototype
   LDAPChangePasswordForm:
     class: 'DeploynautLDAPChangePasswordForm'
+  EventEmitter:
+    class: 'League\Event\Emitter'
+  SS_Datetime:
+    class: 'SS_Datetimezone'
 
 StateMachineFactory:
   handlers:
@@ -44,7 +48,11 @@ StateMachineFactory:
         DNDeploymentHandlers: onAbort
 Member:
   extensions:
+    - ProjectMemberExtension
     - TimezoneMemberExtension
-Injector:
-  SS_Datetime:
-    class: SS_Datetimezone
+File:
+  extensions:
+    - DeploynautFileExtension
+Security:
+  extensions:
+    - DeploynautSecurityExtension
