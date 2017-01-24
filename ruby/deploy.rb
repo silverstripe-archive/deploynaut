@@ -36,10 +36,10 @@ namespace :deploy do
 		if (sake_path != false)
 			bash = if exists?(:webserver_user) then "sudo -u #{webserver_user} bash" else "bash" end
 			sake = "#{bash} #{latest_release}/#{sake_path}";
-			
+
 			# Prepare temporary cache
 			unless exists?(:webserver_user) then run "mkdir -p #{latest_release}/silverstripe-cache" end
-			
+
 			# Flush and build database
 			run "#{sake} dev flush=1" # Flush all servers
 			run "#{sake} dev/build", :once => true # Limit DB operations to a single node
@@ -48,10 +48,10 @@ namespace :deploy do
 			if exists?(:solr_configure)
 				run "#{sake} dev/tasks/Solr_Configure", :once => true
 			end
-			
+
 			# Cleanup temporary cache
 			unless exists?(:webserver_user) then run "rm -rf #{latest_release}/silverstripe-cache" end
-			
+
 			# Initialise the cache, in case dev/build wasn't executed on all hosts
 			run "#{sake} dev"
 		end
@@ -66,29 +66,9 @@ namespace :deploy do
 	task :update_code, :except => { :no_release => true } do
 		on_rollback { run "rm -rf #{release_path}; true" }
 
-		if exists?(:build_filename)
-			deploy_code_from_file!
-		else
-			strategy.deploy!
-		end
+		strategy.deploy!
 
 		finalize_update
-	end
-
-	# distribute the tar.gz and unpack it on the target servers
-	task :deploy_code_from_file! do
-		# Determine the build name by removing the file extension from the file
-		build_name = /([^\/]+).tar.gz$/.match("#{build_filename}")[1]
-		set :deploy_timestamped, false
-		set :release_name, build_name
-
-		# Dont upload and unpack the release if it's been deployed previously
-		unless releases.include?(build_name)
-			# Sftp the file up
-			top.upload build_filename, "#{release_path}.tar.gz"
-			run "tar -C #{releases_path} -xzf #{release_path}.tar.gz"
-			run "rm #{release_path}.tar.gz"
-		end
 	end
 
 	task :restart do

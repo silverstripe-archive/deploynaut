@@ -2,16 +2,6 @@
 
 class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 
-	protected $packageGenerator;
-
-	public function getPackageGenerator() {
-		return $this->packageGenerator;
-	}
-
-	public function setPackageGenerator(PackageGenerator $packageGenerator) {
-		$this->packageGenerator = $packageGenerator;
-	}
-
 	/**
 	 * Create a deployment strategy.
 	 *
@@ -63,23 +53,6 @@ class CapistranoDeploymentBackend extends Object implements DeploymentBackend {
 		$log->write(sprintf('Deploying "%s" to "%s"', $sha, $name));
 
 		$this->enableMaintenance($environment, $log, $project);
-
-		// Use a package generator if specified, otherwise run a direct deploy, which is the default behaviour
-		// if build_filename isn't specified
-		if($this->packageGenerator) {
-			$log->write(sprintf('Using package generator "%s"', get_class($this->packageGenerator)));
-
-			try {
-				$args['build_filename'] = $this->packageGenerator->getPackageFilename($project->Name, $sha, $repository, $log);
-			} catch (Exception $e) {
-				$log->write($e->getMessage());
-				throw $e;
-			}
-
-			if(empty($args['build_filename'])) {
-				throw new RuntimeException('Failed to generate package.');
-			}
-		}
 
 		$command = $this->getCommand('deploy', 'web', $environment, $args, $log);
 		$command->run(function($type, $buffer) use($log) {
