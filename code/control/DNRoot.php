@@ -229,11 +229,32 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	}
 
 	/**
+	 * Return the version number of this deploynaut install
+	 */
+	public static function app_version_number() {
+		$basePath = BASE_PATH;
+		if(is_dir("$basePath/.git")) {
+			$CLI_git = escapeshellarg("$basePath/.git");
+			return trim(`git --git-dir $CLI_git describe --tags HEAD`);
+
+		} else if(file_exists("$basePath/.app-version-number")) {
+			return trim(file_get_contents("$basePath/.app-version-number"));
+
+		} else if(file_exists("$basePath/REVISION")) {
+			return 'Version ' . substr(trim(file_get_contents("$basePath/REVISION")),0,7);
+
+		} else {
+			return "";
+		}
+	}
+
+	/**
 	 * @return array
 	 */
 	public static function get_template_global_variables() {
 		return [
 			'PlatformTitle' => 'platform_title',
+			'AppVersionNumber' => 'app_version_number',
 			'RedisUnavailable' => 'RedisUnavailable',
 			'RedisWorkersCount' => 'RedisWorkersCount',
 			'SidebarLinks' => 'SidebarLinks',

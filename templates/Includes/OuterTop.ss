@@ -23,6 +23,7 @@
 <div class="page-container">
     <nav class="sidebar navbar-inverse">
 		<% include Header %>
+        <div class="version-number">$AppVersionNumber</div>
     </nav>
 
     <% if $AmbientMenu %>
