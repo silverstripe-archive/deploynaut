@@ -12121,7 +12121,7 @@ nav.sidebar .project-name {
   position: absolute;
   right: 15px;
   top: 12px;
-  background: transparent url(../img/Platform_icon-arrow.svg) no-repeat; }
+  background: transparent url(../img/icon-arrow.svg) no-repeat; }
   .icon-arrow ul.nav ul, .icon-arrow .deploy-form-outer .deploy-form ul.SelectionGroup ul, .deploy-form-outer .deploy-form .icon-arrow ul.SelectionGroup ul, .icon-arrow .deploy-form-loading .deploy-form ul.SelectionGroup ul, .deploy-form-loading .deploy-form .icon-arrow ul.SelectionGroup ul {
     background-color: rgba(0, 0, 0, 0.15);
     padding: 0;
