@@ -141,11 +141,77 @@ class DNEnvironmentTest extends DeploynautTest {
 	}
 }
 
-class BackendOne extends DemoDeploymentBackend implements TestOnly {
+class BackendOne extends Object implements DeploymentBackend, TestOnly {
+
+	public function planDeploy(\DNEnvironment $environment, $options) {
+		// noop
+	}
+
+	public function deploy(
+		\DNEnvironment $environment,
+		\DeploynautLogFile $log,
+		\DNProject $project,
+		$options
+	) {
+		// noop
+	}
+
+	public function getDeployOptions(\DNEnvironment $environment) {
+		// noop
+	}
+
+	public function dataTransfer(\DNDataTransfer $dataTransfer, \DeploynautLogFile $log) {
+		// noop
+	}
+
+	public function enableMaintenance(\DNEnvironment $environment, \DeploynautLogFile $log, \DNProject $project) {
+		// noop
+	}
+
+	public function disableMaintenance(\DNEnvironment $environment, \DeploynautLogFile $log, \DNProject $project) {
+		// noop
+	}
+
+	public function ping(\DNEnvironment $environment, \DeploynautLogFile $log, \DNProject $project) {
+		// noop
+	}
 
 }
 
-class BackendTwo extends DemoDeploymentBackend implements TestOnly  {
+class BackendTwo extends Object implements DeploymentBackend, TestOnly {
+
+	public function planDeploy(\DNEnvironment $environment, $options) {
+		// noop
+	}
+
+	public function deploy(
+		\DNEnvironment $environment,
+		\DeploynautLogFile $log,
+		\DNProject $project,
+		$options
+	) {
+		// noop
+	}
+
+	public function getDeployOptions(\DNEnvironment $environment) {
+		// noop
+	}
+
+	public function dataTransfer(\DNDataTransfer $dataTransfer, \DeploynautLogFile $log) {
+		// noop
+	}
+
+	public function enableMaintenance(\DNEnvironment $environment, \DeploynautLogFile $log, \DNProject $project) {
+		// noop
+	}
+
+	public function disableMaintenance(\DNEnvironment $environment, \DeploynautLogFile $log, \DNProject $project) {
+		// noop
+	}
+
+	public function ping(\DNEnvironment $environment, \DeploynautLogFile $log, \DNProject $project) {
+		// noop
+	}
 
 }
 
