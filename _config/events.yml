@@ -1,3 +1,0 @@
-Injector:
-    EventEmitter:
-        class: 'League\Event\Emitter'

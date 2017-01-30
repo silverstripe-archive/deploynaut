@@ -1,5 +1,0 @@
----
-Name: deploynautmessaging
----
-Injector:
-  ConfirmationMessagingService: EmailMessagingService

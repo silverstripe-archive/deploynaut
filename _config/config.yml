@@ -21,11 +21,27 @@ GridFieldDetailForm_ItemRequest:
   extensions:
     - FrontendLink
 Injector:
+  DNData:
+    properties:
+      # Set EnvironmentDir and KeyDir to absolute paths in your live project
+      EnvironmentDir: "../../deploynaut-resources/envs"
+      KeyDir: "../../deploynaut-resources/gitkeys"
+      SignalDir: "../../deploynaut-resources/signals"
+      # Set to an absolute path, or a relative path to append to BASE_PATH
+      DataTransferDir: "assets/transfers"
+      # User to run commands as locally
+      GitUser: ''
+  DeploymentBackend:
+    class: CapistranoDeploymentBackend
   Finite\StateMachine\StateMachine:
     class: Finite\StateMachine\StateMachine
     type: prototype
   LDAPChangePasswordForm:
     class: 'DeploynautLDAPChangePasswordForm'
+  EventEmitter:
+    class: 'League\Event\Emitter'
+  SS_Datetime:
+    class: 'SS_Datetimezone'
 
 StateMachineFactory:
   handlers:
@@ -44,7 +60,11 @@ StateMachineFactory:
         DNDeploymentHandlers: onAbort
 Member:
   extensions:
+    - ProjectMemberExtension
     - TimezoneMemberExtension
-Injector:
-  SS_Datetime:
-    class: SS_Datetimezone
+File:
+  extensions:
+    - DeploynautFileExtension
+Security:
+  extensions:
+    - DeploynautSecurityExtension
