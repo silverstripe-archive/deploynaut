@@ -60,8 +60,7 @@ StateMachineFactory:
         DNDeploymentHandlers: onAbort
 Member:
   extensions:
-    - ProjectMemberExtension
-    - TimezoneMemberExtension
+    - DeploynautMemberExtension
 File:
   extensions:
     - DeploynautFileExtension
