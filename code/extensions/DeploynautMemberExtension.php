@@ -21,8 +21,8 @@ class DeploynautMemberExtension extends DataExtension {
 		$field = DropdownField::create(
 			'Timezone',
 			'Timezone',
-		$this->getTimezones())->setEmptyString('For NZ, choose Pacific/Auckland');
-		$fields->addFieldToTab('Root.timezone', $field);
+		$this->getTimezones())->setEmptyString('Select timezone');
+		$fields->insertBefore('DateFormat', $field);
 		return $fields;
 	}
 
