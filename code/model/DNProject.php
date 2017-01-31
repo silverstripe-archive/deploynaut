@@ -1263,10 +1263,6 @@ class DNProject extends DataObject {
 				return $validation->error('Project name can only contain alphanumeric, hyphens and underscores.');
 			}
 
-			if (empty($this->CVSPath)) {
-				return $validation->error('You must provide a repository URL.');
-			}
-
 			$existing = DNProject::get()->filter('Name', $this->Name);
 			if ($this->ID) {
 				$existing = $existing->exclude('ID', $this->ID);
