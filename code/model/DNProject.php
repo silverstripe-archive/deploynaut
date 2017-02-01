@@ -681,6 +681,11 @@ class DNProject extends DataObject {
 			->setTitle('New deploy form enabled for this project')
 			->setDescription('Feature flag to change links to environment and deployments to the new deployment form for this project');
 
+		// if we've already enabled the new deploy form globally, don't show the checkbox to turn it on
+		if (defined('FLAG_NEWDEPLOY_ENABLED') && FLAG_NEWDEPLOY_ENABLED === true) {
+			$fields->removeByName('IsNewDeployEnabled');
+		}
+
 		$fields->fieldByName('Root.Main.CVSPath')
 			->setTitle('Git repository')
 			->setDescription('E.g. git@github.com:silverstripe/silverstripe-installer.git');
