@@ -11,7 +11,7 @@
 	<% include ProjectsActions %>
 
 	<%-- Dont show the search/filter if there are less than 5 projects in the list --%>
-	<% if $DNProjectList.count > 5 %>
+	<% if $DNProjectList && $DNProjectList.count > 5 %>
 	<input type="search" class="table-filter form-control" data-table="table-projects" placeholder="Search for stack">
 	<% end_if %>
 
