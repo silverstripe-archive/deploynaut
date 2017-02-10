@@ -942,9 +942,11 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 			return DNProject::get();
 		}
 
-		$projects = Member::get()->filter('ID', $memberId)
-			->relation('Groups')
-			->relation('Projects');
+		$groups = Member::get()->filter('ID', $memberId)->relation('Groups');
+		$projects = new ArrayList();
+		if ($groups && $groups->exists()) {
+			$projects = $groups->relation('Projects');
+		}
 
 		$this->extend('updateDNProjectList', $projects);
 		return $projects;
