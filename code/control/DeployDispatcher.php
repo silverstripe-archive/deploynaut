@@ -38,13 +38,6 @@ class DeployDispatcher extends Dispatcher {
 	protected $environment = null;
 
 	/**
-	 * @var array
-	 */
-	private static $action_types = [
-		self::ACTION_DEPLOY
-	];
-
-	/**
 	 * @param \DNEnvironment $environment
 	 * @param \Member|null $member
 	 * @return bool

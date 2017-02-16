@@ -10,13 +10,6 @@ class EnvironmentOverview extends Dispatcher {
 	const ACTION_OVERVIEW = 'overview';
 
 	/**
-	 * @var array
-	 */
-	private static $action_types = [
-		self::ACTION_OVERVIEW
-	];
-
-	/**
 	 * The "deployment" action here should only go to index, it gets used by
 	 * the frontend routing.
 	 */

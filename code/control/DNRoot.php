@@ -149,15 +149,6 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	private static $platform_specific_strings = [];
 
 	/**
-	 * @var array
-	 */
-	private static $action_types = [
-		self::ACTION_DEPLOY,
-		self::ACTION_SNAPSHOT,
-		self::PROJECT_OVERVIEW
-	];
-
-	/**
 	 * Include requirements that deploynaut needs, such as javascript.
 	 */
 	public static function include_requirements() {
@@ -2109,7 +2100,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	 * So we just have each action handler calll setCurrentActionType to define what sort of
 	 * action it is.
 	 *
-	 * @return string - one of the consts from self::$action_types
+	 * @return string - one of the consts representing actions.
 	 */
 	public function getCurrentActionType() {
 		return $this->actionType;
@@ -2118,7 +2109,7 @@ class DNRoot extends Controller implements PermissionProvider, TemplateGlobalPro
 	/**
 	 * Sets the current action type
 	 *
-	 * @param string $actionType string - one of the consts from self::$action_types
+	 * @param string $actionType string - one of the action consts
 	 */
 	public function setCurrentActionType($actionType) {
 		$this->actionType = $actionType;

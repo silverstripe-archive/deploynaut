@@ -32,13 +32,6 @@ class GitDispatcher extends Dispatcher {
 	 */
 	protected $environment = null;
 
-	/**
-	 * @var array
-	 */
-	private static $action_types = [
-		self::ACTION_GIT
-	];
-
 	private static $dependencies = [
 		'formatter' => '%$DeploynautAPIFormatter'
 	];
