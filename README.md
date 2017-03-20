@@ -1,3 +1,5 @@
+**ATTENTION This project is no longer maintained**
+
 # Deploynaut
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/silverstripe/deploynaut/badges/quality-score.png?b=master&s=16782e1e07b981494a68b7cf1b0898c1856bbd16)](https://scrutinizer-ci.com/g/silverstripe/deploynaut/?branch=master)
