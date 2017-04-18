@@ -42,6 +42,8 @@
 	<% else %>
 		<h3>Initiate the release process</h3>
 		<p class="alert alert-info">$GenericPipelineConfig.PipelineConfig.Description</p>
+		<p class="alert alert-warning">There are currently known issues with deploying signed commits. Be aware that
+		these may interfere with the deployment process, and that you may only be able to deploy unsigned commits.</p>
 		$DeployForm
 		<% if DependentFilteredCommits %>
 			<% with $GenericPipelineConfig.PipelineConfig %>
