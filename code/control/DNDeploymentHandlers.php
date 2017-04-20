@@ -7,11 +7,12 @@ class DNDeploymentHandlers extends Object {
 	public function onAfterTransition(TransitionEvent $e) {
 		/** @var DNDeployment $deployment */
 		$deployment = $e->getStateMachine()->getObject();
-		$deployment->log()->write(sprintf(
-			'State transitioned from "%s" to "%s"',
-			$e->getInitialState()->getName(),
-			$e->getTransition()->getState()
-		));
+
+		$from = $e->getInitialState()->getName();
+		$to = $e->getTransition()->getState();
+		if ($from !== $to) {
+			$deployment->log()->write(sprintf('State transitioned from "%s" to "%s"', $from, $to));
+		}
 	}
 
 	public function onNew(TransitionEvent $e) {
