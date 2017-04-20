@@ -51,6 +51,9 @@ abstract class PackageGenerator {
 	public function getPackageFilename($identifier, $sha, $repositoryDir, \DeploynautLogFile $log) {
 		// Fetch through the cache
 		if($this->cache) {
+			if (!$this->cache->getBaseDir()) {
+				$this->cache->setBaseDir("/var/www/mysite/deploynaut-resources/build-cache");
+			}
 			$identifier .= '-' . get_class($this) . '-' . $this->getIdentifier();
  			return $this->cache->getPackageFilename($this, $identifier, $sha, $repositoryDir, $log);
 
