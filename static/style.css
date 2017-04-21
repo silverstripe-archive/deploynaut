@@ -11733,6 +11733,8 @@ select.selectize-control,
 
 .deploy-plan .summary_of_changes {
   white-space: pre-wrap; }
+  .deploy-plan .summary_of_changes p {
+    margin-bottom: 0; }
 
 .loading-bar {
   position: relative;
